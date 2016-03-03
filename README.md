@@ -4,10 +4,7 @@ This backend use Dragome tool to generate your libgdx code to javascript. Its si
 * Easy to use
 * Lightweight
 * Use bytecodes code and not source code
-* Customize downloading assets \*
-
-
-\* Downloading assets is similar to AssetManager: Render anything you want when downloading; Do full download or partial download for current scene.
+* Full or partial assets downloading 
 
 # Demos
-
+* [AnimationTest](http://xpenatan.github.io/dragome-backend/index.html) 
