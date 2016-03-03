@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" metadata-complete="false" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+        http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+  <display-name>Web Application</display-name>
+
+  <servlet>
+    <servlet-name>DragomeResourcesServlet</servlet-name>
+    <servlet-class>com.dragome.web.serverside.servlets.DragomeResourcesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DragomeResourcesServlet</servlet-name>
+    <url-pattern>/dragome-resources/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ClassTransformerInvokerServlet</servlet-name>
+    <servlet-class>com.dragome.web.serverside.servlets.ClassTransformerInvokerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ClassTransformerInvokerServlet</servlet-name>
+    <url-pattern>/service-invoker</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>CompilerServlet</servlet-name>
+    <servlet-class>com.dragome.web.serverside.servlets.CompilerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CompilerServlet</servlet-name>
+    <url-pattern>/compiler-service</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>PageAliasesServlet</servlet-name>
+    <servlet-class>com.dragome.web.serverside.servlets.PageAliasesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PageAliasesServlet</servlet-name>
+    <url-pattern>/pages</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>DragomeIEFilter</filter-name>
+    <filter-class>com.dragome.web.serverside.servlets.DragomeIEFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>DragomeIEFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <description>DragomeWebSocketFilter</description>
+    <servlet-name>DragomeWebSocketFilter</servlet-name>
+    <servlet-class>com.dragome.web.serverside.servlets.DragomeWebSocketFilter</servlet-class>
+    <init-param>
+      <param-name>org.atmosphere.cpr.packages</param-name>
+      <param-value>com.dragome.serverside.debugging.websocket</param-value>
+    </init-param>
+    <init-param>
+      <param-name>org.atmosphere.websocket.maxTextMessageSize</param-name>
+      <param-value>100000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>org.atmosphere.websocket.maxBinaryMessageSize</param-name>
+      <param-value>100000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>org.atmosphere.websocket.binaryWrite</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+    <async-supported>true</async-supported>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DragomeWebSocketFilter</servlet-name>
+    <url-pattern>/dragome-websocket/*</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>DragomeWro4jFilter</filter-name>
+    <filter-class>com.dragome.web.serverside.servlets.DragomeWro4jFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>DragomeWro4jFilter</filter-name>
+    <url-pattern>/dragome/*</url-pattern>
+  </filter-mapping>
+
+</web-app>

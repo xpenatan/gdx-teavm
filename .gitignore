@@ -6,7 +6,6 @@
 .gradle/
 build/
 bin/
-target/
 obj/
 out/
 classes/
@@ -39,6 +38,7 @@ bin/
 *.userprefs
 *.sdf
 *.class
+*.cache
 
 libgdx-*.zip
 libgdx-*.zip.MD5
