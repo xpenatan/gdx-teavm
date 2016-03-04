@@ -22,7 +22,6 @@ import com.badlogic.gdx.backends.dragome.DragomeApplication;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;

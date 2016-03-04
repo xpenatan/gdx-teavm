@@ -3,14 +3,10 @@ package com.badlogic.gdx.tests.dragome.examples;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.backends.dragome.DragomeApplication;
-import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
-import com.badlogic.gdx.backends.dragome.typedarrays.shared.Float32Array;
-import com.badlogic.gdx.backends.dragome.typedarrays.shared.Int32Array;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -25,18 +21,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.dragome.commons.compiler.annotations.MethodAlias;
-import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
-import com.dragome.web.html.dom.html5canvas.interfaces.ImageElement;
 
 //TODO In progress
 public class GearsDemo implements ApplicationListener {
@@ -165,7 +152,6 @@ public class GearsDemo implements ApplicationListener {
 //		
 		if(modelBatch != null)
 		{
-			System.out.println("aaaa");
 			modelBatch.begin(cam);
 			modelBatch.render(instance, environment);
 			modelBatch.end();
