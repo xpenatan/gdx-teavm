@@ -59,7 +59,7 @@ public interface Float32Array extends ArrayBufferView {
 
 	float get (int index);
 
-	void set (int index, float value); // Dont work
+	void set (int index, float value);
 
 	void set (Float32Array array, int offset);
 

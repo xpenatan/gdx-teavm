@@ -56,6 +56,7 @@ public class DragomeGraphics implements Graphics {
 		Object instance = ScriptHelper.eval("canvas.node.getContext('webgl')", this);
 		if (instance == null) return false;
 		WebGLRenderingContext context = JsDelegateFactory.createFrom(instance, WebGLRenderingContext.class);
+//		gl = new DragomeGL20Debug(context);
 		gl = new DragomeGL20(context);
 		return true;
 	}

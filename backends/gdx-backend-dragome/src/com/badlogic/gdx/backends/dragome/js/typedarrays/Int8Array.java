@@ -59,7 +59,7 @@ public interface Int8Array extends ArrayBufferView {
 
 	byte get (int index);
 
-	void set (int index, int value); // Dont work
+	void set (int index, int value);
 
 	void set (Int8Array array, int offset);
 

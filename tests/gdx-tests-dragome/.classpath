@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-dragome"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/webapp/WEB-INF/classes"/>
 </classpath>
