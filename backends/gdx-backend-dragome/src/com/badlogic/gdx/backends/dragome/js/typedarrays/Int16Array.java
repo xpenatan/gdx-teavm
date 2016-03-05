@@ -59,7 +59,7 @@ public interface Int16Array extends ArrayBufferView {
 
 	short get (int index);
 
-	void set (int index, int value); // Dont work
+	void set (int index, int value);
 
 	void set (Int16Array array, int offset);
 

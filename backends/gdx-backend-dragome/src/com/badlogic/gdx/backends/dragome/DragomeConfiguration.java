@@ -17,6 +17,7 @@
 package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -114,7 +115,25 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		methodLoggerConfigurator = new MethodLoggerConfigurator();
 		methodLoggerConfigurator.setEnabled(true);
 
+		this.setClasspathFilter(new DefaultClasspathFilter() {
+			
+			@Override
+			public boolean accept (File pathname) {
+				boolean accept = super.accept(pathname);
+				
+				String absolutePath = pathname.getAbsolutePath();
+				
+				if(absolutePath.contains("utils\\Json"))
+					return false;
+				
+//				System.out.println("absolutePath: " + absolutePath);
+				return accept;
+			}
+		});
+		
 		init(callbackEvictorConfigurator, methodLoggerConfigurator);
+		
+
 
 	}
 
@@ -128,7 +147,10 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			new DefaultDelegateStrategy() {
 				@Override
 				public String createMethodCall (CtMethod method, StringBuffer code, String params) throws NotFoundException {
+					if(params == null)
+						params = "";
 					String longName = method.getLongName();
+					String name = method.getName();
 					if (longName.contains("Int32Array.set(int,int)") || longName.contains("Int16Array.set(int,int)")
 						|| longName.contains("Int8Array.set(int,int)") || longName.contains("Uint8ClampedArray.set(int,int)")
 						|| longName.contains("Uint32Array.set(int,int)") || longName.contains("Uint16Array.set(int,int)")
@@ -141,10 +163,48 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 						|| longName.contains("Uint8Array.get(int)") || longName.contains("Float32Array.get(int)")
 						|| longName.contains("Float64Array.get(int)"))
 						return "this.node[$1];";
-					else if (longName.contains("getSupportedExtensions")) {
+					else{
 						return super.createMethodCall(method, code, params);
-					} else
-						return super.createMethodCall(method, code, params);
+					}
+//					else if(name.startsWith("get"))
+//					{
+//						String replaceName = name.replace("get", "").toLowerCase();
+//						
+//						if(replaceName.length() == 0)
+//							throw new UnsupportedOperationException("Method cannot match a generic implementation. Method:  " + longName);
+//						
+//						String func1 = "this.node." + name;
+//						String func2 = "this.node." + replaceName;
+//						String exception = "dragomeJs.createException('java.lang.UnsupportedOperationException', Method cannot match a generic implementation'');";
+//						
+//						
+//						String cond1 ="if(typeof(" + func1 + ") === typeof(Function)){ return "+ func1 +"("+ params +")}";
+//						String cond2 = " else { return " + func2  + "}";
+//						String code3 = "else {"+ exception + "}";
+//						String finalCond = cond1 + cond2;
+//						return finalCond;
+//					}
+//					else if(name.startsWith("set"))
+//					{
+//						String replaceName = name.replace("set", "").toLowerCase();
+//						
+//						String func1 = "this.node." + name;
+//						String func2 = "this.node." + replaceName;
+//						
+//						String exception = "dragomeJs.createException('java.lang.UnsupportedOperationException', Method cannot match a generic implementation'');";
+//						
+//						String cond1 ="if(typeof(" + func1 + ") === typeof(Function)){ return "+ func1 +"("+ params +")}";
+//						String cond2 = "";
+//						String code3 = "else {"+ exception + "}";
+//						if(replaceName.length() == 1)
+//						{
+//							
+//						}
+//						cond2 = " else { return " + func2  + " = " + params +  "}";
+//						String finalCond = cond1 + cond2 + code3;
+//						return finalCond;
+//					}
+//					return null;
 				}
 			});
 

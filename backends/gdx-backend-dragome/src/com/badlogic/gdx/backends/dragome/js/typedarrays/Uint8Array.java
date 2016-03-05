@@ -59,7 +59,7 @@ public interface Uint8Array extends ArrayBufferView {
 
 	short get (int index);
 
-	void set (int index, int value); // Dont work
+	void set (int index, int value);
 
 	void set (Uint8Array array, int offset);
 

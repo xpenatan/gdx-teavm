@@ -59,7 +59,7 @@ public interface Int32Array extends ArrayBufferView {
 
 	int get (int index);
 
-	void set (int index, int value); // Dont work
+	void set (int index, int value);
 
 	void set (Int32Array array, int offset);
 

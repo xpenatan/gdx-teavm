@@ -61,7 +61,7 @@ public interface Uint32Array extends ArrayBufferView {
 
 	double getAsDouble (int index);
 
-	void set (int index, long value); // Dont work
+	void set (int index, long value);
 
 	void set (int index, double value);
 
