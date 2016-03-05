@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.dragome;
+package com.badlogic.gdx.tests.dragome;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -264,8 +264,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		boolean flag = super.filterClassPath(aClassPathEntry);
 
 		if (aClassPathEntry.contains(projName)) flag = true;
-		if (aClassPathEntry.contains("gdx.jar") || aClassPathEntry.contains("gdx\\bin")) flag = true;
-		if (aClassPathEntry.contains("gdx.jar") || aClassPathEntry.contains("gdx\\bin")) flag = true;
+		if (aClassPathEntry.contains("gdx-") || aClassPathEntry.contains("gdx\\bin")) flag = true;
+		if (aClassPathEntry.contains("gdx-") || aClassPathEntry.contains("gdx\\bin")) flag = true;
 		if (aClassPathEntry.contains("dragome.jar") || aClassPathEntry.contains("gdx-backend-dragome\\bin")) flag = true;
 		if (aClassPathEntry.contains("dragome-js-commons")) flag = true;
 		if (aClassPathEntry.contains("dragome-js-jre")) flag = true;
