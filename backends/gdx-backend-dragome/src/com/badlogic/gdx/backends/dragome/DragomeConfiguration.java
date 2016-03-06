@@ -14,18 +14,23 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.tests.dragome;
+package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.events.Event;
 
+import com.badlogic.gdx.backends.dragome.js.storage.Storage;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
@@ -53,6 +58,7 @@ import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.ExecutionHandler;
 import com.dragome.commons.compiler.annotations.CompilerType;
+import com.dragome.helpers.Utils;
 import com.dragome.methodlogger.MethodLoggerConfigurator;
 import com.dragome.web.enhancers.jsdelegate.DefaultDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
@@ -64,14 +70,6 @@ import com.dragome.web.html.dom.html5canvas.interfaces.ImageElement;
 
 import javassist.CtMethod;
 import javassist.NotFoundException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.w3c.dom.events.Event;
-
-import com.dragome.helpers.Utils;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor
@@ -104,37 +102,25 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				if (absolutePath.contains("gdx-backend-dragome")) {
 					paths.add(className);
 				}
+				
+				if(absolutePath.contains("utils\\Json"))
+					return false;
+				
 				return accept;
 			}
 
 		});
 
 		callbackEvictorConfigurator = new CallbackEvictorConfigurator();
-		callbackEvictorConfigurator.setEnabled(true);
+		callbackEvictorConfigurator.setEnabled(false);
 
-		methodLoggerConfigurator = new MethodLoggerConfigurator();
+//		methodLoggerConfigurator= new MethodLoggerConfigurator(Person.class.getName(), TimerDemoPage.class.getName(), ContinuationExample.class.getName(), RepeatWithFilter.class.getPackage().getName());
+//		methodLoggerConfigurator.setEnabled(true);
+		
+		methodLoggerConfigurator = new MethodLoggerConfigurator(DragomeApplication.class.getName());
 		methodLoggerConfigurator.setEnabled(true);
 
-		this.setClasspathFilter(new DefaultClasspathFilter() {
-			
-			@Override
-			public boolean accept (File pathname) {
-				boolean accept = super.accept(pathname);
-				
-				String absolutePath = pathname.getAbsolutePath();
-				
-				if(absolutePath.contains("utils\\Json"))
-					return false;
-				
-//				System.out.println("absolutePath: " + absolutePath);
-				return accept;
-			}
-		});
-		
 		init(callbackEvictorConfigurator, methodLoggerConfigurator);
-		
-
-
 	}
 
 	public void add (Class<?> clazz) {
@@ -166,45 +152,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 					else{
 						return super.createMethodCall(method, code, params);
 					}
-//					else if(name.startsWith("get"))
-//					{
-//						String replaceName = name.replace("get", "").toLowerCase();
-//						
-//						if(replaceName.length() == 0)
-//							throw new UnsupportedOperationException("Method cannot match a generic implementation. Method:  " + longName);
-//						
-//						String func1 = "this.node." + name;
-//						String func2 = "this.node." + replaceName;
-//						String exception = "dragomeJs.createException('java.lang.UnsupportedOperationException', Method cannot match a generic implementation'');";
-//						
-//						
-//						String cond1 ="if(typeof(" + func1 + ") === typeof(Function)){ return "+ func1 +"("+ params +")}";
-//						String cond2 = " else { return " + func2  + "}";
-//						String code3 = "else {"+ exception + "}";
-//						String finalCond = cond1 + cond2;
-//						return finalCond;
-//					}
-//					else if(name.startsWith("set"))
-//					{
-//						String replaceName = name.replace("set", "").toLowerCase();
-//						
-//						String func1 = "this.node." + name;
-//						String func2 = "this.node." + replaceName;
-//						
-//						String exception = "dragomeJs.createException('java.lang.UnsupportedOperationException', Method cannot match a generic implementation'');";
-//						
-//						String cond1 ="if(typeof(" + func1 + ") === typeof(Function)){ return "+ func1 +"("+ params +")}";
-//						String cond2 = "";
-//						String code3 = "else {"+ exception + "}";
-//						if(replaceName.length() == 1)
-//						{
-//							
-//						}
-//						cond2 = " else { return " + func2  + " = " + params +  "}";
-//						String finalCond = cond1 + cond2 + code3;
-//						return finalCond;
-//					}
-//					return null;
 				}
 			});
 
@@ -254,7 +201,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		add(Uint8Array.class);
 		add(Uint8ClampedArray.class);
 
-// add(Storage.class);
+		add(Storage.class);
 		return result;
 	}
 
@@ -264,20 +211,19 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		boolean flag = super.filterClassPath(aClassPathEntry);
 
 		if (aClassPathEntry.contains(projName)) flag = true;
-		if (aClassPathEntry.contains("gdx-") || aClassPathEntry.contains("gdx\\bin")) flag = true;
-		if (aClassPathEntry.contains("gdx-") || aClassPathEntry.contains("gdx\\bin")) flag = true;
-		if (aClassPathEntry.contains("dragome.jar") || aClassPathEntry.contains("gdx-backend-dragome\\bin")) flag = true;
-		if (aClassPathEntry.contains("dragome-js-commons")) flag = true;
-		if (aClassPathEntry.contains("dragome-js-jre")) flag = true;
-		if (aClassPathEntry.contains("dragome-callback-evictor")) flag = true;
-		if (aClassPathEntry.contains("dragome-form-bindings")) flag = true;
-		if (aClassPathEntry.contains("dragome-core")) flag = true;
-		if (aClassPathEntry.contains("dragome-method-logger")) flag = true;
-		if (aClassPathEntry.contains("dragome-web")) flag = true;
-		if (aClassPathEntry.contains("dragome-guia-web")) flag = true;
-		if (aClassPathEntry.contains("dragome-guia")) flag = true;
+		else if (aClassPathEntry.contains("repository") && aClassPathEntry.contains("gdx") || aClassPathEntry.contains("gdx.jar") || aClassPathEntry.contains("gdx\\bin")) flag = true;
+		else if (aClassPathEntry.contains("repository\\gdx-backend-dragome") || aClassPathEntry.contains("gdx-backend-dragome\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-js-commons")) flag = true;
+		else if (aClassPathEntry.contains("dragome-js-jre")) flag = true;
+		else if (aClassPathEntry.contains("dragome-callback-evictor")) flag = true;
+		else if (aClassPathEntry.contains("dragome-form-bindings")) flag = true;
+		else if (aClassPathEntry.contains("dragome-core")) flag = true;
+		else if (aClassPathEntry.contains("dragome-method-logger")) flag = true;
+		else if (aClassPathEntry.contains("dragome-web")) flag = true;
+		else if (aClassPathEntry.contains("dragome-guia-web")) flag = true;
+		else if (aClassPathEntry.contains("dragome-guia")) flag = true;
 
-// System.out.println("flag: " + flag + " path: " + aClassPathEntry);
+		System.out.println("flag: " + flag + " path: " + aClassPathEntry);
 		return flag;
 	}
 
