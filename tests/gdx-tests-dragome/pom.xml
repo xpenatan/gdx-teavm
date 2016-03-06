@@ -32,22 +32,21 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>4.3.5.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.2.8</version>
+    </dependency>
 		<dependency>
 			<groupId>com.dragome</groupId>
 			<artifactId>dragome-sdk</artifactId>
 			<version>0.96-beta2</version>
 			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>gdx-backend-dragome</groupId>
-			<artifactId>gdx-backend-dragome</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
@@ -57,15 +56,15 @@
 	</dependencies>
 
 	<build>
-		<finalName>examples-java7</finalName>
-		<outputDirectory>${project.build.directory}/classes</outputDirectory>
+		<finalName>gdx-tests-dragome</finalName>
+		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -79,14 +78,17 @@
 					</webApp>
 					<webAppConfig>
 						<contextPath>/examples</contextPath>
-						<extraClasspath>${project.build.directory}/classes;${basedir}/../../backends/gdx-backend-dragome/target/classes</extraClasspath>
+						<extraClasspath>${basedir}/../../backends/gdx-backend-dragome/bin</extraClasspath>
 					</webAppConfig>
 					<scanTargets>
-						<scanTarget>${project.build.directory}/classes</scanTarget>
-						<scanTarget>${basedir}/../../backends/gdx-backend-dragome/target/classes</scanTarget>
+						<scanTarget>${basedir}/src/main/webapp/WEB-INF/classes</scanTarget>
+						<scanTarget>${basedir}/../../backends/gdx-backend-dragome/bin</scanTarget>
 					</scanTargets>
 
-					<classesDirectory>${project.build.directory}/classes;${basedir}/../../backends/gdx-backend-dragome/target/classes</classesDirectory>
+					
+					<classesDirectory>${basedir}/src/main/webapp/WEB-INF/classes</classesDirectory>
+					<classesDirectory>${basedir}/../../backends/gdx-backend-dragome/bin</classesDirectory>
+					
 					<webAppSourceDirectory>${basedir}/src/main/webapp</webAppSourceDirectory>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.ServerConnector">

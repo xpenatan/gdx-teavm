@@ -29,8 +29,7 @@ x86/
 ipch/
 /dist
 compiled-js/
-classes/
-bin/
+target/
 
 *.a
 *.dll
