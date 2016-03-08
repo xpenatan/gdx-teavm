@@ -11,6 +11,10 @@
 			<url>http://repository.jboss.org/nexus/content/groups/public</url>
 		</repository>
 		<repository>
+			<id>sonatype-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+		<repository>
 			<id>dragome</id>
 			<name>dragome</name>
 			<url>https://raw.github.com/dragome/dragome/master/maven</url>
@@ -41,7 +45,7 @@
 		<dependency>
 			<groupId>com.dragome</groupId>
 			<artifactId>dragome-sdk</artifactId>
-			<version>0.96-beta2</version>
+			<version>0.96-beta3-SNAPSHOT</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
