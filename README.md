@@ -1,5 +1,5 @@
 # Libgdx Dragome Backend
-This backend use Dragome tool to generate your libgdx code to javascript. Its similar to GWT but better.
+This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate your libgdx code to javascript. Its similar to GWT but better.
 * Its faster to compile
 * Easy to use
 * Lightweight
