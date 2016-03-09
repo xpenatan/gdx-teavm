@@ -60,7 +60,7 @@ public interface Int32Array extends ArrayBufferView {
 		return node;
 	};
 
-	int getLength ();
+	int get_length ();
 
 	@DelegateCode(eval = "this.node[$1]")
 	int get (int index);

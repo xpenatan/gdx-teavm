@@ -92,7 +92,7 @@ public class DragomeGL20 implements GL20 {
 	}
 
 	private void ensureCapacity (IntBuffer buffer) {
-		if (buffer.remaining() > intBuffer.getLength()) {
+		if (buffer.remaining() > intBuffer.get_length()) {
 			intBuffer = TypedArrays.createInt32Array(buffer.remaining());
 		}
 	}
