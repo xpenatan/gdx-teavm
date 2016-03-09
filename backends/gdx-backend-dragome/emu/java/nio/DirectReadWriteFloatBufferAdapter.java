@@ -44,7 +44,7 @@ final class DirectReadWriteFloatBufferAdapter extends FloatBuffer implements Has
 		super((byteBuffer.capacity() >> 2));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.floatArray = TypedArrays.createFloat32Array(byteBuffer.byteArray.getBuffer(), byteBuffer.byteArray.getByteOffset(), capacity);
+		this.floatArray = TypedArrays.createFloat32Array(byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
 	}
 
 	// TODO(haustein) This will be slow

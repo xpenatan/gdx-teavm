@@ -40,7 +40,7 @@ abstract class DirectByteBuffer extends BaseByteBuffer implements HasArrayBuffer
 	}
 
 	DirectByteBuffer (ArrayBuffer buf) {
-		this(buf, buf.byteLength(), 0);
+		this(buf, buf.get_byteLength(), 0);
 	}
 
 	DirectByteBuffer (ArrayBuffer buffer, int capacity, int offset) {

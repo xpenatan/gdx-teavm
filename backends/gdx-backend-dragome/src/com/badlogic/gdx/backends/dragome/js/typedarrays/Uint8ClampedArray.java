@@ -16,12 +16,14 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
 /** @author xpenatan */
 public interface Uint8ClampedArray extends Uint8Array {
 
+	@DelegateCode(ignore = true)
 	public static Uint8ClampedArray createClamped (ArrayBuffer buffer) {
 		ScriptHelper.put("buffer", buffer, null);
 		Object instance = ScriptHelper.eval("new Uint8ClampedArray(buffer.node);", null);
@@ -29,6 +31,7 @@ public interface Uint8ClampedArray extends Uint8Array {
 		return node;
 	}
 
+	@DelegateCode(ignore = true)
 	public static Uint8ClampedArray createClamped (ArrayBuffer buffer, int byteOffset) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -37,6 +40,7 @@ public interface Uint8ClampedArray extends Uint8Array {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Uint8ClampedArray createClamped (ArrayBuffer buffer, int byteOffset, int length) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -46,6 +50,7 @@ public interface Uint8ClampedArray extends Uint8Array {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Uint8ClampedArray createClamped (int length) {
 		ScriptHelper.put("length", length, null);
 		Object instance = ScriptHelper.eval("new Uint8ClampedArray(length);", null);

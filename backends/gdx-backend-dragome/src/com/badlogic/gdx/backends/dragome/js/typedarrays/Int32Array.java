@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
@@ -24,13 +25,15 @@ public interface Int32Array extends ArrayBufferView {
 
 	final int BYTES_PER_ELEMENT = 4;
 
+	@DelegateCode(ignore = true)
 	public static Int32Array create (ArrayBuffer buffer) {
 		ScriptHelper.put("buffer", buffer, null);
 		Object instance = ScriptHelper.eval("new Int32Array(buffer.node);", null);
 		Int32Array node = JsDelegateFactory.createFrom(instance, Int32Array.class);
 		return node;
 	}
-
+	
+	@DelegateCode(ignore = true)
 	public static Int32Array create (ArrayBuffer buffer, int byteOffset) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -39,6 +42,7 @@ public interface Int32Array extends ArrayBufferView {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Int32Array create (ArrayBuffer buffer, int byteOffset, int length) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -48,6 +52,7 @@ public interface Int32Array extends ArrayBufferView {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Int32Array create (int length) {
 		ScriptHelper.put("length", length, null);
 		Object instance = ScriptHelper.eval("new Int32Array(length);", null);
@@ -57,8 +62,10 @@ public interface Int32Array extends ArrayBufferView {
 
 	int getLength ();
 
+	@DelegateCode(eval = "this.node[$1]")
 	int get (int index);
 
+	@DelegateCode(eval = "this.node[$1] = $2")
 	void set (int index, int value);
 
 	void set (Int32Array array, int offset);

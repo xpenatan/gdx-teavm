@@ -44,7 +44,7 @@ final class DirectReadOnlyFloatBufferAdapter extends FloatBuffer implements HasA
 		super((byteBuffer.capacity() >> 2));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.floatArray = TypedArrays.createFloat32Array(byteBuffer.byteArray.getBuffer(), byteBuffer.byteArray.getByteOffset(), capacity);
+		this.floatArray = TypedArrays.createFloat32Array(byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
 	}
 
 	@Override

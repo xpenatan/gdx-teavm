@@ -30,8 +30,8 @@ public class Numbers {
 	}
 
 	static Int8Array wba = Int8Array.create(4);
-	static Int32Array wia = Int32Array.create(wba.getBuffer(), 0, 1);
-	static Float32Array wfa = Float32Array.create(wba.getBuffer(), 0, 1);
+	static Int32Array wia = Int32Array.create(wba.get_buffer(), 0, 1);
+	static Float32Array wfa = Float32Array.create(wba.get_buffer(), 0, 1);
 
 	public static final float intBitsToFloat (int i) {
 		wia.set(0, i);

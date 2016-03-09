@@ -17,10 +17,12 @@
 package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,13 +55,9 @@ import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLShader;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLTexture;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLUniformLocation;
-import com.dragome.callbackevictor.CallbackEvictorConfigurator;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
-import com.dragome.commons.ExecutionHandler;
 import com.dragome.commons.compiler.annotations.CompilerType;
-import com.dragome.helpers.Utils;
-import com.dragome.methodlogger.MethodLoggerConfigurator;
 import com.dragome.web.enhancers.jsdelegate.DefaultDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
 import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
@@ -72,12 +70,11 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 
 /** @author xpenatan */
-@DragomeConfiguratorImplementor
+@DragomeConfiguratorImplementor(priority = 10)
 public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigurator {
-	private CallbackEvictorConfigurator callbackEvictorConfigurator;
-	private MethodLoggerConfigurator methodLoggerConfigurator;
 	HashSet<String> paths;
 	String projName;
+	String projPath;
 	List<File> result;
 	private JsDelegateGenerator jsDelegateGenerator;
 
@@ -87,7 +84,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 // System.setProperty("dragome-compile-mode", CompilerMode.Debug.toString());
 
 		result = new ArrayList<File>();
-		String projPath = System.getProperty("user.dir");
+		projPath = System.getProperty("user.dir");
 		File file = new File(projPath);
 		projName = file.getName();
 		paths = new HashSet<String>();
@@ -111,16 +108,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 		});
 
-		callbackEvictorConfigurator = new CallbackEvictorConfigurator();
-		callbackEvictorConfigurator.setEnabled(false);
-
-//		methodLoggerConfigurator= new MethodLoggerConfigurator(Person.class.getName(), TimerDemoPage.class.getName(), ContinuationExample.class.getName(), RepeatWithFilter.class.getPackage().getName());
-//		methodLoggerConfigurator.setEnabled(true);
-		
-		methodLoggerConfigurator = new MethodLoggerConfigurator(DragomeApplication.class.getName());
-		methodLoggerConfigurator.setEnabled(true);
-
-		init(callbackEvictorConfigurator, methodLoggerConfigurator);
 	}
 
 	public void add (Class<?> clazz) {
@@ -129,27 +116,45 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	}
 
 	private void createJsDelegateGenerator (String classpath) {
-		jsDelegateGenerator = new JsDelegateGenerator(Utils.createTempDir("jsdelegate"), classpath.replace(";", ":"),
+		
+		File file2 = new File(projPath + "\\target\\dragome.cache");
+		if (file2.exists()) 
+			file2.delete();
+		File file1 = new File(projPath + "\\target\\jsdelegate");
+		try {
+
+			if (file1.exists()) 
+				FileUtils.deleteDirectory(file1);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		jsDelegateGenerator = new JsDelegateGenerator(file1, classpath.replace(";", ":"),
 			new DefaultDelegateStrategy() {
 				@Override
 				public String createMethodCall (CtMethod method, StringBuffer code, String params) throws NotFoundException {
-					if(params == null)
-						params = "";
+					if (params == null) params = "";
 					String longName = method.getLongName();
 					String name = method.getName();
-					if (longName.contains("Int32Array.set(int,int)") || longName.contains("Int16Array.set(int,int)")
-						|| longName.contains("Int8Array.set(int,int)") || longName.contains("Uint8ClampedArray.set(int,int)")
-						|| longName.contains("Uint32Array.set(int,int)") || longName.contains("Uint16Array.set(int,int)")
-						|| longName.contains("Uint8Array.set(int,int)") || longName.contains("Float32Array.set(int,float)")
-						|| longName.contains("Float64Array.set(int,float)"))
-						return "this.node[$1] = $2;";
-					else if (longName.contains("Int32Array.get(int)") || longName.contains("Int16Array.get(int)")
-						|| longName.contains("Int8Array.get(int)") || longName.contains("Uint8ClampedArray.get(int)")
-						|| longName.contains("Uint32Array.get(int)") || longName.contains("Uint16Array.get(int)")
-						|| longName.contains("Uint8Array.get(int)") || longName.contains("Float32Array.get(int)")
-						|| longName.contains("Float64Array.get(int)"))
-						return "this.node[$1];";
-					else{
+
+					System.out.println("Interfaces: " + longName);
+
+					if (longName.contains("WebGLRenderingContext") 	|| longName.contains("js.typedarrays")) {
+
+						String codeStr = null;
+						
+						if(name.startsWith("set_") && method.getParameterTypes().length == 1) {
+							String variableName = name.replace("set_", "");
+							codeStr = "this.node." + variableName + "=" + params;
+						}
+						else if(method.getName().startsWith("get_") && method.getParameterTypes().length == 0) {
+							String variableName = name.replace("get_", "");
+							codeStr = "this.node." + variableName;
+						}
+						else
+							codeStr = "this.node." + name + "(" + params + ")";
+						return codeStr;
+					} else {
 						return super.createMethodCall(method, code, params);
 					}
 				}
@@ -207,28 +212,21 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 	@Override
 	public boolean filterClassPath (String aClassPathEntry) {
-
-		boolean flag = super.filterClassPath(aClassPathEntry);
-
+		boolean flag = false;
 		if (aClassPathEntry.contains(projName)) flag = true;
 		else if (aClassPathEntry.contains("repository") && aClassPathEntry.contains("gdx") || aClassPathEntry.contains("gdx.jar") || aClassPathEntry.contains("gdx\\bin")) flag = true;
 		else if (aClassPathEntry.contains("repository\\gdx-backend-dragome") || aClassPathEntry.contains("gdx-backend-dragome\\bin")) flag = true;
-		else if (aClassPathEntry.contains("dragome-js-commons")) flag = true;
-		else if (aClassPathEntry.contains("dragome-js-jre")) flag = true;
-		else if (aClassPathEntry.contains("dragome-callback-evictor")) flag = true;
-		else if (aClassPathEntry.contains("dragome-form-bindings")) flag = true;
-		else if (aClassPathEntry.contains("dragome-core")) flag = true;
-		else if (aClassPathEntry.contains("dragome-method-logger")) flag = true;
-		else if (aClassPathEntry.contains("dragome-web")) flag = true;
-		else if (aClassPathEntry.contains("dragome-guia-web")) flag = true;
-		else if (aClassPathEntry.contains("dragome-guia")) flag = true;
-
+		else if (aClassPathEntry.contains("dragome-js-commons-") || aClassPathEntry.contains("dragome-js-commons\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-js-jre-") || aClassPathEntry.contains("dragome-js-jre\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-callback-evictor-") || aClassPathEntry.contains("dragome-callback-evictor\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-form-bindings-") || aClassPathEntry.contains("dragome-form-bindings\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-core-") || aClassPathEntry.contains("dragome-core\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-method-logger-") || aClassPathEntry.contains("dragome-method-logger\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-web-") || aClassPathEntry.contains("dragome-web\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-guia-web-") || aClassPathEntry.contains("dragome-guia-web\\bin")) flag = true;
+		else if (aClassPathEntry.contains("dragome-guia-") || aClassPathEntry.contains("dragome-guia\\bin")) flag = true;
 		System.out.println("flag: " + flag + " path: " + aClassPathEntry);
 		return flag;
-	}
-
-	public ExecutionHandler getExecutionHandler () {
-		return callbackEvictorConfigurator.getExecutionHandler();
 	}
 
 	public CompilerType getDefaultCompilerType () {

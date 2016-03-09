@@ -16,12 +16,14 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
 /** @author xpenatan */
 public interface ArrayBuffer {
 
+	@DelegateCode(ignore = true)
 	public static ArrayBuffer create (int length) {
 		ScriptHelper.put("lenght", length, null);
 		Object instance = ScriptHelper.eval("new ArrayBuffer(length);", null);
@@ -29,5 +31,5 @@ public interface ArrayBuffer {
 		return node;
 	}
 
-	int byteLength ();
+	int get_byteLength ();
 }

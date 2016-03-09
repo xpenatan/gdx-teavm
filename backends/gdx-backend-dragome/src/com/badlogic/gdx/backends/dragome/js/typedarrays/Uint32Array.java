@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
@@ -24,6 +25,7 @@ public interface Uint32Array extends ArrayBufferView {
 
 	final int BYTES_PER_ELEMENT = 4;
 
+	@DelegateCode(ignore = true)
 	public static Uint32Array create (ArrayBuffer buffer) {
 		ScriptHelper.put("buffer", buffer, null);
 		Object instance = ScriptHelper.eval("new Uint32Array(buffer.node);", null);
@@ -31,6 +33,7 @@ public interface Uint32Array extends ArrayBufferView {
 		return node;
 	}
 
+	@DelegateCode(ignore = true)
 	public static Uint32Array create (ArrayBuffer buffer, int byteOffset) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -39,6 +42,7 @@ public interface Uint32Array extends ArrayBufferView {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Uint32Array create (ArrayBuffer buffer, int byteOffset, int length) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -48,6 +52,7 @@ public interface Uint32Array extends ArrayBufferView {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static Uint32Array create (int length) {
 		ScriptHelper.put("length", length, null);
 		Object instance = ScriptHelper.eval("new Uint32Array(length);", null);
@@ -55,14 +60,18 @@ public interface Uint32Array extends ArrayBufferView {
 		return node;
 	};
 
-	int getLength ();
+	int get_length ();
 
+	@DelegateCode(eval = "this.node[$1]")
 	long get (int index);
 
+	@DelegateCode(eval = "this.node[$1]")
 	double getAsDouble (int index);
 
+	@DelegateCode(eval = "this.node[$1] = $2")
 	void set (int index, long value);
 
+	@DelegateCode(eval = "this.node[$1] = $2")
 	void set (int index, double value);
 
 	void set (Uint32Array array, int offset);

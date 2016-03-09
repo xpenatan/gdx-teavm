@@ -14,8 +14,8 @@ public class AppStarter extends DragomeApplication
 	@Override
 	public ApplicationListener createApplicationListener() 
 	{
-//		return new MyApp();
-//		return new GearsDemo();
+//		return new SimpleTest();
+//		return new GearsDemo(); 
 		return new AnimationTest();
 	}
 

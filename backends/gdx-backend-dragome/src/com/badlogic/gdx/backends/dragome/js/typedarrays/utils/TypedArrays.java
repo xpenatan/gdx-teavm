@@ -52,22 +52,22 @@ public class TypedArrays {
 		public abstract ArrayBuffer createArrayBuffer (int length);
 
 		public DataView createDataView (ArrayBuffer buffer) {
-			return createDataView(buffer, 0, buffer.byteLength());
+			return createDataView(buffer, 0, buffer.get_byteLength());
 		}
 
 		public DataView createDataView (ArrayBuffer buffer, int offset) {
-			return createDataView(buffer, offset, buffer.byteLength() - offset);
+			return createDataView(buffer, offset, buffer.get_byteLength() - offset);
 		}
 
 		public abstract DataView createDataView (ArrayBuffer buffer, int byteOffset, int byteLength);
 
 		public Float32Array createFloat32Array (ArrayBuffer buffer) {
-			return createFloat32Array(buffer, 0, getElementCount(buffer.byteLength(), Float32Array.BYTES_PER_ELEMENT));
+			return createFloat32Array(buffer, 0, getElementCount(buffer.get_byteLength(), Float32Array.BYTES_PER_ELEMENT));
 		}
 
 		public Float32Array createFloat32Array (ArrayBuffer buffer, int byteOffset) {
 			return createFloat32Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Float32Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Float32Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Float32Array createFloat32Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -83,12 +83,12 @@ public class TypedArrays {
 		}
 
 		public Float64Array createFloat64Array (ArrayBuffer buffer) {
-			return createFloat64Array(buffer, 0, getElementCount(buffer.byteLength(), Float64Array.BYTES_PER_ELEMENT));
+			return createFloat64Array(buffer, 0, getElementCount(buffer.get_byteLength(), Float64Array.BYTES_PER_ELEMENT));
 		}
 
 		public Float64Array createFloat64Array (ArrayBuffer buffer, int byteOffset) {
 			return createFloat64Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Float64Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Float64Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Float64Array createFloat64Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -104,12 +104,12 @@ public class TypedArrays {
 		}
 
 		public Int16Array createInt16Array (ArrayBuffer buffer) {
-			return createInt16Array(buffer, 0, getElementCount(buffer.byteLength(), Int16Array.BYTES_PER_ELEMENT));
+			return createInt16Array(buffer, 0, getElementCount(buffer.get_byteLength(), Int16Array.BYTES_PER_ELEMENT));
 		}
 
 		public Int16Array createInt16Array (ArrayBuffer buffer, int byteOffset) {
 			return createInt16Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Int16Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Int16Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Int16Array createInt16Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -125,12 +125,12 @@ public class TypedArrays {
 		}
 
 		public Int32Array createInt32Array (ArrayBuffer buffer) {
-			return createInt32Array(buffer, 0, getElementCount(buffer.byteLength(), Int32Array.BYTES_PER_ELEMENT));
+			return createInt32Array(buffer, 0, getElementCount(buffer.get_byteLength(), Int32Array.BYTES_PER_ELEMENT));
 		}
 
 		public Int32Array createInt32Array (ArrayBuffer buffer, int byteOffset) {
 			return createInt32Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Int32Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Int32Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Int32Array createInt32Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -146,11 +146,11 @@ public class TypedArrays {
 		}
 
 		public Int8Array createInt8Array (ArrayBuffer buffer) {
-			return createInt8Array(buffer, 0, buffer.byteLength());
+			return createInt8Array(buffer, 0, buffer.get_byteLength());
 		}
 
 		public Int8Array createInt8Array (ArrayBuffer buffer, int byteOffset) {
-			return createInt8Array(buffer, byteOffset, buffer.byteLength() - byteOffset);
+			return createInt8Array(buffer, byteOffset, buffer.get_byteLength() - byteOffset);
 		}
 
 		public abstract Int8Array createInt8Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -166,12 +166,12 @@ public class TypedArrays {
 		}
 
 		public Uint16Array createUint16Array (ArrayBuffer buffer) {
-			return createUint16Array(buffer, 0, getElementCount(buffer.byteLength(), Uint16Array.BYTES_PER_ELEMENT));
+			return createUint16Array(buffer, 0, getElementCount(buffer.get_byteLength(), Uint16Array.BYTES_PER_ELEMENT));
 		}
 
 		public Uint16Array createUint16Array (ArrayBuffer buffer, int byteOffset) {
 			return createUint16Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Uint16Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Uint16Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Uint16Array createUint16Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -187,12 +187,12 @@ public class TypedArrays {
 		}
 
 		public Uint32Array createUint32Array (ArrayBuffer buffer) {
-			return createUint32Array(buffer, 0, getElementCount(buffer.byteLength(), Uint32Array.BYTES_PER_ELEMENT));
+			return createUint32Array(buffer, 0, getElementCount(buffer.get_byteLength(), Uint32Array.BYTES_PER_ELEMENT));
 		}
 
 		public Uint32Array createUint32Array (ArrayBuffer buffer, int byteOffset) {
 			return createUint32Array(buffer, byteOffset,
-				getElementCount(buffer.byteLength() - byteOffset, Uint32Array.BYTES_PER_ELEMENT));
+				getElementCount(buffer.get_byteLength() - byteOffset, Uint32Array.BYTES_PER_ELEMENT));
 		}
 
 		public abstract Uint32Array createUint32Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -214,11 +214,11 @@ public class TypedArrays {
 		}
 
 		public Uint8Array createUint8Array (ArrayBuffer buffer) {
-			return createUint8Array(buffer, 0, buffer.byteLength());
+			return createUint8Array(buffer, 0, buffer.get_byteLength());
 		}
 
 		public Uint8Array createUint8Array (ArrayBuffer buffer, int byteOffset) {
-			return createUint8Array(buffer, byteOffset, buffer.byteLength() - byteOffset);
+			return createUint8Array(buffer, byteOffset, buffer.get_byteLength() - byteOffset);
 		}
 
 		public abstract Uint8Array createUint8Array (ArrayBuffer buffer, int byteOffset, int length);
@@ -234,11 +234,11 @@ public class TypedArrays {
 		}
 
 		public Uint8ClampedArray createUint8ClampedArray (ArrayBuffer buffer) {
-			return createUint8ClampedArray(buffer, 0, buffer.byteLength());
+			return createUint8ClampedArray(buffer, 0, buffer.get_byteLength());
 		}
 
 		public Uint8ClampedArray createUint8ClampedArray (ArrayBuffer buffer, int byteOffset) {
-			return createUint8ClampedArray(buffer, byteOffset, buffer.byteLength() - byteOffset);
+			return createUint8ClampedArray(buffer, byteOffset, buffer.get_byteLength() - byteOffset);
 		}
 
 		public abstract Uint8ClampedArray createUint8ClampedArray (ArrayBuffer buffer, int byteOffset, int length);
@@ -631,7 +631,7 @@ public class TypedArrays {
 	 * @param buffer underlying {@link ArrayBuffer}
 	 * @return an {@link Uint8ClampedArray} instance */
 	public static Uint8ClampedArray createUint8ClampedArray (ArrayBuffer buffer) {
-		return Instance.impl.createUint8ClampedArray(buffer, 0, buffer.byteLength());
+		return Instance.impl.createUint8ClampedArray(buffer, 0, buffer.get_byteLength());
 	}
 
 	/** Create a {@link Uint8ClampedArray} instance on {@code buffer}, starting at {@code byteOffset} into the buffer, continuing

@@ -19,9 +19,9 @@ package com.badlogic.gdx.backends.dragome.js.typedarrays;
 /** @author xpenatan */
 public interface ArrayBufferView {
 
-	ArrayBuffer getBuffer ();
+	ArrayBuffer get_buffer ();
 
-	int getByteLength ();
+	int get_byteLength ();
 
-	int getByteOffset ();
+	int get_byteOffset ();
 }

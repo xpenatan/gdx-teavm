@@ -30,7 +30,7 @@ public final class Blob {
 	}
 
 	public int length () {
-		return data.getLength();
+		return data.get_length();
 	}
 
 	public byte get (int i) {
@@ -56,7 +56,7 @@ public final class Blob {
 	}
 
 	public String toBase64 () {
-		int length = data.getLength();
+		int length = data.get_length();
 		String base64code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		StringBuilder encoded = new StringBuilder(length * 4 / 3 + 2);
 		for (int i = 0; i < length; i += 3) {

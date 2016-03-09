@@ -44,7 +44,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	private ApplicationListener listener;
 	BrowserDomHandler elementBySelector;
-
+ 
 	DragomeGraphics graphics;
 	DragomeInput input;
 	DragomeNet net;
@@ -73,7 +73,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	private void prepate () {
-		listener = createApplicationListener();
+		listener = createApplicationListener(); 
 		if (listener == null) return;
 		DragomeApplicationConfiguration config = getConfig();
 		graphics = new DragomeGraphics(this, config);

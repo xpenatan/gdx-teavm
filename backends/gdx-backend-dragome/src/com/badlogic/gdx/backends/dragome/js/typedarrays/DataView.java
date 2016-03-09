@@ -16,12 +16,14 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
 /** @author xpenatan */
 public interface DataView extends ArrayBufferView {
 
+	@DelegateCode(ignore = true)
 	public static DataView create (ArrayBuffer buffer) {
 		ScriptHelper.put("buffer", buffer, null);
 		Object instance = ScriptHelper.eval("new DataView(buffer.node);", null);
@@ -29,6 +31,7 @@ public interface DataView extends ArrayBufferView {
 		return node;
 	}
 
+	@DelegateCode(ignore = true)
 	public static DataView create (ArrayBuffer buffer, int byteOffset) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -37,6 +40,7 @@ public interface DataView extends ArrayBufferView {
 		return node;
 	};
 
+	@DelegateCode(ignore = true)
 	public static DataView create (ArrayBuffer buffer, int byteOffset, int length) {
 		ScriptHelper.put("buffer", buffer, null);
 		ScriptHelper.put("byteOffset", byteOffset, null);
@@ -54,6 +58,8 @@ public interface DataView extends ArrayBufferView {
 
 	double getFloat64 (int byteOffset, boolean littleEndian);
 
+	byte getInt8 (int byteOffset);
+
 	short getInt16 (int byteOffset);
 
 	short getInt16 (int byteOffset, boolean littleEndian);
@@ -62,7 +68,7 @@ public interface DataView extends ArrayBufferView {
 
 	int getInt32 (int byteOffset, boolean littleEndian);
 
-	byte getInt8 (int byteOffset);
+	short getUint8 (int byteOffset);
 
 	int getUint16 (int byteOffset);
 
@@ -76,8 +82,6 @@ public interface DataView extends ArrayBufferView {
 
 	double getUint32AsDouble (int byteOffset, boolean littleEndian);
 
-	short getUint8 (int byteOffset);
-
 	void setFloat32 (int byteOffset, float value);
 
 	void setFloat32 (int byteOffset, float value, boolean littleEndian);
@@ -85,6 +89,8 @@ public interface DataView extends ArrayBufferView {
 	void setFloat64 (int byteOffset, double value);
 
 	void setFloat64 (int byteOffset, double value, boolean littleEndian);
+
+	void setInt8 (int byteOffset, int value);
 
 	void setInt16 (int byteOffset, int value);
 
@@ -94,7 +100,7 @@ public interface DataView extends ArrayBufferView {
 
 	void setInt32 (int byteOffset, int value, boolean littleEndian);
 
-	void setInt8 (int byteOffset, int value);
+	void setUint8 (int byteOffset, int i);
 
 	void setUint16 (int byteOffset, int value);
 
@@ -104,9 +110,4 @@ public interface DataView extends ArrayBufferView {
 
 	void setUint32 (int byteOffset, long value, boolean littleEndian);
 
-	void setUint32FromDouble (int byteOffset, double value);
-
-	void setUint32FromDouble (int byteOffset, double value, boolean littleEndian);
-
-	void setUint8 (int byteOffset, int i);
 }
