@@ -20,4 +20,9 @@ package com.badlogic.gdx.backends.dragome;
 public class DragomeApplicationConfiguration {
 	/** whether to use a stencil buffer **/
 	public boolean stencil = false;
+	public boolean antialiasing = false;
+	public boolean alpha = false;
+	public boolean premultipliedAlpha = false;
+	public boolean preserveDrawingBuffer = false;
+	public boolean useDebugGL = false;
 }

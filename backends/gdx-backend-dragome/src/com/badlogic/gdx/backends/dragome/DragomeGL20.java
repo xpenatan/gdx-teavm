@@ -746,17 +746,17 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
 		WebGLActiveInfo activeAttrib = gl.getActiveAttrib(programs.get(program), index);
-		size.put(activeAttrib.getSize());
-		((IntBuffer)type).put(activeAttrib.getType());
-		return activeAttrib.getName();
+		size.put(activeAttrib.get_size());
+		((IntBuffer)type).put(activeAttrib.get_type());
+		return activeAttrib.get_name();
 	}
 
 	@Override
 	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
 		WebGLActiveInfo activeUniform = gl.getActiveUniform(programs.get(program), index);
-		size.put(activeUniform.getSize());
-		((IntBuffer)type).put(activeUniform.getType());
-		return activeUniform.getName();
+		size.put(activeUniform.get_size());
+		((IntBuffer)type).put(activeUniform.get_type());
+		return activeUniform.get_name();
 	}
 
 	@Override
@@ -813,7 +813,7 @@ public class DragomeGL20 implements GL20 {
 			ScriptHelper.put("program", programs.get(program), this);
 			ScriptHelper.put("pname", pname, this);
 			int result = ScriptHelper.evalInt("context.node.getProgramParameter(program.node, pname);", this);
-			params.put(result, pname);
+			params.put(result);
 		}
 	}
 

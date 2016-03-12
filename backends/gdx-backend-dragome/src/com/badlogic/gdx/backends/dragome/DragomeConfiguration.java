@@ -78,6 +78,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	List<File> result;
 	private JsDelegateGenerator jsDelegateGenerator;
 
+	boolean cache = false;
+	
 	public DragomeConfiguration () {
 
 // System.setProperty("dragome-compile-mode", CompilerMode.Production.toString());
@@ -93,6 +95,9 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				boolean accept = super.accept(pathname);
 				String absolutePath = pathname.getAbsolutePath();
 
+				if(absolutePath.contains("utils\\Json"))
+					return false;
+
 				String className = pathname.getName().replace(".class", "");
 				if (paths.contains(className)) return false;
 
@@ -100,8 +105,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 					paths.add(className);
 				}
 				
-				if(absolutePath.contains("utils\\Json"))
-					return false;
+				
+				System.out.println("ClassPathFilter: " + accept + " - " + absolutePath);
 				
 				return accept;
 			}
@@ -117,9 +122,11 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 	private void createJsDelegateGenerator (String classpath) {
 		
-		File file2 = new File(projPath + "\\target\\dragome.cache");
-		if (file2.exists()) 
-			file2.delete();
+		if(cache == false) {
+			File file2 = new File(projPath + "\\target\\dragome.cache");
+			if (file2.exists()) 
+				file2.delete();
+		}
 		File file1 = new File(projPath + "\\target\\jsdelegate");
 		try {
 
@@ -137,9 +144,9 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 					String longName = method.getLongName();
 					String name = method.getName();
 
-					System.out.println("Interfaces: " + longName);
+//					System.out.println("Interfaces: " + longName);
 
-					if (longName.contains("WebGLRenderingContext") 	|| longName.contains("js.typedarrays")) {
+					if (longName.contains(".js.")) {
 
 						String codeStr = null;
 						
