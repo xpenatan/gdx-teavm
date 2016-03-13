@@ -76,6 +76,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		listener = createApplicationListener(); 
 		if (listener == null) return;
 		DragomeApplicationConfiguration config = getConfig();
+		if(config == null)
+			config = new DragomeApplicationConfiguration();
 		graphics = new DragomeGraphics(this, config);
 		if (!graphics.init()) {
 			error("DragomeApplication", "WebGL not supported.");
@@ -116,7 +118,20 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			}
 		});
 
-		new Timer().setInterval(new Runnable() {
+//		new Timer().setInterval(new Runnable() {
+//			public void run () {
+//				try {
+//					mainLoop();
+//				} catch (Throwable t) {
+//					error("DragomeApplication", "exception: " + t.getMessage(), t);
+//					throw new RuntimeException(t);
+//				}
+//			}
+//		}, 0);
+		
+		DragomeWindow.requestAnimationFrame(new Runnable() {
+
+			@Override
 			public void run () {
 				try {
 					mainLoop();
@@ -124,8 +139,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 					error("DragomeApplication", "exception: " + t.getMessage(), t);
 					throw new RuntimeException(t);
 				}
+				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
-		}, 0);
+		}, graphics.canvas);
+		
 
 		init = true;
 	}

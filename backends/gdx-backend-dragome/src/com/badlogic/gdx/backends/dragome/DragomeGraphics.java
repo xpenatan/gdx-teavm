@@ -20,6 +20,7 @@ import org.w3c.dom.Element;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.backends.dragome.js.webgl.WebGLContextAttributes;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
@@ -49,15 +50,26 @@ public class DragomeGraphics implements Graphics {
 		this.app = app;
 		Element canvasElement = app.elementBySelector.getElementBySelector("canvas");
 		canvas = JsDelegateFactory.createFromNode(canvasElement, HTMLCanvasElement.class);
+		this.config = config;
 	}
 
 	public boolean init () {
 		ScriptHelper.put("canvas", canvas, this);
-		Object instance = ScriptHelper.eval("canvas.node.getContext('webgl')", this);
+		WebGLContextAttributes attributes = WebGLContextAttributes.create();
+		attributes.set_antialias(config.antialiasing);
+		attributes.set_stencil(config.stencil);
+		attributes.set_alpha(config.alpha);
+		attributes.set_premultipliedAlpha(config.premultipliedAlpha);
+		attributes.set_preserveDrawingBuffer(config.preserveDrawingBuffer);
+		ScriptHelper.evalNoResult("var names = [ 'experimental-webgl', 'webgl', 'moz-webgl', 'webkit-webgl', 'webkit-3d']", this);
+		ScriptHelper.evalNoResult("var obj; for ( var i = 0; i < names.length; i++) { try {var ctx = canvas.node.getContext(names[i], attributes); if (ctx != null) { obj = ctx; } } catch (e) { } }", this);
+		Object instance =  ScriptHelper.eval("obj", this);
 		if (instance == null) return false;
 		WebGLRenderingContext context = JsDelegateFactory.createFrom(instance, WebGLRenderingContext.class);
-//		gl = new DragomeGL20Debug(context);
-		gl = new DragomeGL20(context);
+		if(config.useDebugGL)
+			gl = new DragomeGL20Debug(context);
+		else
+			gl = new DragomeGL20(context);
 		return true;
 	}
 

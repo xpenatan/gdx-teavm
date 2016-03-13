@@ -4,19 +4,16 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.dragome.DragomeApplication;
 import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
-import com.badlogic.gdx.tests.dragome.examples.AnimationTest;
+import com.badlogic.gdx.tests.dragome.examples.GearsDemo;
 import com.dragome.web.annotations.PageAlias;
 
-@PageAlias(alias= "index")
-public class AppStarter extends DragomeApplication
+@PageAlias(alias= "Gears")
+public class GearsLauncher extends DragomeApplication
 {
 
 	@Override
-	public ApplicationListener createApplicationListener() 
-	{
-//		return new SimpleTest();
-//		return new GearsDemo(); 
-		return new AnimationTest();
+	public ApplicationListener createApplicationListener() {
+		return new GearsDemo(); 
 	}
 
 	@Override

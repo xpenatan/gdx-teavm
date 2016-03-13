@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2016 Natan Guilherme.
+ * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.dragome.js.webgl;
+package java.io;
 
-/** @author xpenatan */
-public interface WebGLShaderPrecisionFormat {
-	public int get_rangeMin ();
+public class BufferedInputStream extends FilterInputStream {
+	public BufferedInputStream (InputStream in) {
+		super(in);
+	}
 
-	public int get_rangeMax ();
-
-	public int get_precision ();
+	public BufferedInputStream (InputStream in, int size) {
+		super(in);
+	}
 }
