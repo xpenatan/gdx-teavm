@@ -36,16 +36,16 @@
 	</pluginRepositories>
 
 	<dependencies>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>4.3.5.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.2.8</version>
-    </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.3.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.2.8</version>
+		</dependency>
 		<dependency>
 			<groupId>com.dragome</groupId>
 			<artifactId>dragome-sdk</artifactId>
@@ -83,7 +83,7 @@
 				<version>9.1.3.v20140225</version>
 				<configuration>
 					<webApp>
-						<defaultsDescriptor>${basedir}/resources/webdefault.xml</defaultsDescriptor>
+						<defaultsDescriptor>${basedir}/../../backends/gdx-backend-dragome/resources/webdefault.xml</defaultsDescriptor>
 					</webApp>
 					<webAppConfig>
 						<contextPath>/examples</contextPath>
@@ -93,10 +93,10 @@
 						<scanTarget>${basedir}/webapp/WEB-INF/classes</scanTarget>
 						<scanTarget>${basedir}/../../backends/gdx-backend-dragome/target/classes</scanTarget>
 					</scanTargets>
-					
+
 					<classesDirectory>${basedir}/webapp/WEB-INF/classes</classesDirectory>
 					<classesDirectory>${basedir}/../../backends/gdx-backend-dragome/target/classes</classesDirectory>
-					
+
 					<webAppSourceDirectory>${basedir}/webapp</webAppSourceDirectory>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.ServerConnector">
@@ -119,6 +119,41 @@
 					</dependency>
 				</dependencies>
 
+			</plugin>
+
+
+			<plugin>
+				<groupId>com.dragome</groupId>
+				<artifactId>dragome-maven-plugin</artifactId>
+				<version>0.96-beta3-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>compileclient</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<destinationDirectory>${project.build.directory}/${project.build.finalName}</destinationDirectory>
+					<forceRebuild>true</forceRebuild>
+					<removeCache>false</removeCache>
+					<targetClassName>com.badlogic.gdx.tests.dragome.GearsLauncher</targetClassName>
+					<compress>true</compress>
+					<processSingle>true</processSingle>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>gdx-backend-dragome</groupId>
+						<artifactId>gdx-backend-dragome</artifactId>
+						<version>0.0.1-SNAPSHOT</version>
+					</dependency>
+					<dependency>
+						<groupId>gdx-tests-dragome</groupId>
+						<artifactId>gdx-tests-dragome</artifactId>
+						<version>0.0.1-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 		</plugins>
