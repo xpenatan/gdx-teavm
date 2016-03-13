@@ -57,11 +57,16 @@
 			<artifactId>gdx</artifactId>
 			<version>1.9.2</version>
 		</dependency>
+		<dependency>
+			<groupId>gdx-backend-dragome</groupId>
+			<artifactId>gdx-backend-dragome</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<finalName>gdx-tests-dragome</finalName>
-		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
+		<outputDirectory>${basedir}/webapp/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -78,22 +83,21 @@
 				<version>9.1.3.v20140225</version>
 				<configuration>
 					<webApp>
-						<defaultsDescriptor>${basedir}/src/main/resources/webdefault.xml</defaultsDescriptor>
+						<defaultsDescriptor>${basedir}/resources/webdefault.xml</defaultsDescriptor>
 					</webApp>
 					<webAppConfig>
 						<contextPath>/examples</contextPath>
-						<extraClasspath>${basedir}/../../backends/gdx-backend-dragome/bin</extraClasspath>
+						<extraClasspath>${basedir}/../../backends/gdx-backend-dragome/target/classes</extraClasspath>
 					</webAppConfig>
 					<scanTargets>
-						<scanTarget>${basedir}/src/main/webapp/WEB-INF/classes</scanTarget>
-						<scanTarget>${basedir}/../../backends/gdx-backend-dragome/bin</scanTarget>
+						<scanTarget>${basedir}/webapp/WEB-INF/classes</scanTarget>
+						<scanTarget>${basedir}/../../backends/gdx-backend-dragome/target/classes</scanTarget>
 					</scanTargets>
-
 					
-					<classesDirectory>${basedir}/src/main/webapp/WEB-INF/classes</classesDirectory>
-					<classesDirectory>${basedir}/../../backends/gdx-backend-dragome/bin</classesDirectory>
+					<classesDirectory>${basedir}/webapp/WEB-INF/classes</classesDirectory>
+					<classesDirectory>${basedir}/../../backends/gdx-backend-dragome/target/classes</classesDirectory>
 					
-					<webAppSourceDirectory>${basedir}/src/main/webapp</webAppSourceDirectory>
+					<webAppSourceDirectory>${basedir}/webapp</webAppSourceDirectory>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.ServerConnector">
 							<port>4016</port>
