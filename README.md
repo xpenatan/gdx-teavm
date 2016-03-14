@@ -7,7 +7,7 @@ This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generat
 * Full or partial assets downloading 
 
 #Example
-![alt tag](http://i.imgur.com/Tf8vUA1.png)
+![alt tag](http://i.imgur.com/0LWcHQF.gif)
 
 
 ## Demos

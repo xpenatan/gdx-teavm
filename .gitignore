@@ -46,5 +46,6 @@ libgdx-*.zip.MD5
 /.idea/
 
 /backends/gdx-backend-dragome/libs/
-
-
+.project
+.classpath
+.settings

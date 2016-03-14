@@ -58,8 +58,10 @@ import com.badlogic.gdx.backends.dragome.js.webgl.WebGLUniformLocation;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.annotations.CompilerType;
+import com.dragome.web.config.NodeSubTypeFactory;
 import com.dragome.web.enhancers.jsdelegate.DefaultDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
+import com.dragome.web.enhancers.jsdelegate.interfaces.SubTypeFactory;
 import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
 import com.dragome.web.html.dom.html5canvas.interfaces.CanvasImageSource;
 import com.dragome.web.html.dom.html5canvas.interfaces.CanvasRenderingContext2D;
@@ -164,6 +166,22 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 					} else {
 						return super.createMethodCall(method, code, params);
 					}
+				}
+				
+				public String getSubTypeExtractorFor(Class<?> interface1, String methodName)
+				{
+					if (methodName.equals("item") || methodName.equals("cloneNode"))
+						return "temp.nodeType";
+
+					return null;
+				}
+
+				public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName)
+				{
+					if (methodName.equals("item") || methodName.equals("cloneNode"))
+						return NodeSubTypeFactory.class;
+
+					return null;
 				}
 			});
 
