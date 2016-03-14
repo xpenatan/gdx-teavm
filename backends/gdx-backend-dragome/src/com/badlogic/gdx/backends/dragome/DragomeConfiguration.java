@@ -97,9 +97,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				boolean accept = super.accept(pathname);
 				String absolutePath = pathname.getAbsolutePath();
 
-				if(absolutePath.contains("utils\\Json"))
-					return false;
-
 				String className = pathname.getName().replace(".class", "");
 				if (paths.contains(className)) return false;
 
