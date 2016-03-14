@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
@@ -34,6 +35,7 @@ import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 /** @author xpenatan */
 public class DragomeGraphics implements Graphics {
 
+	GLVersion glVersion;
 	HTMLCanvasElement canvas;
 	GL20 gl;
 	String extensions;
@@ -269,5 +271,10 @@ public class DragomeGraphics implements Graphics {
 
 	@Override
 	public void setSystemCursor (SystemCursor systemCursor) {
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return glVersion;
 	}
 }
