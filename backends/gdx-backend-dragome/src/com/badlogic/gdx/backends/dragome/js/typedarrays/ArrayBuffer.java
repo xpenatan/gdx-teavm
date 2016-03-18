@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,20 +16,8 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
-import com.dragome.commons.DelegateCode;
-import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
-
 /** @author xpenatan */
-public interface ArrayBuffer {
-
-	@DelegateCode(ignore = true)
-	public static ArrayBuffer create (int length) {
-		ScriptHelper.put("lenght", length, null);
-		Object instance = ScriptHelper.eval("new ArrayBuffer(length);", null);
-		ArrayBuffer node = JsDelegateFactory.createFrom(instance, ArrayBuffer.class);
-		return node;
-	}
-
-	int get_byteLength ();
+public interface ArrayBuffer
+{
+	int get_byteLength();
 }

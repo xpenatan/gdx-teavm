@@ -17,8 +17,8 @@
 package java.nio;
 
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
+import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.utils.TypedArrays;
 
 /** This class wraps a byte buffer to be a float buffer.
  * <p>
@@ -44,7 +44,7 @@ final class DirectReadWriteFloatBufferAdapter extends FloatBuffer implements Has
 		super((byteBuffer.capacity() >> 2));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.floatArray = TypedArrays.createFloat32Array(byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
+		this.floatArray = FerTypedArraysFactory.create(Float32Array.class,byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
 	}
 
 	// TODO(haustein) This will be slow

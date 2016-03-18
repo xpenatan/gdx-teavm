@@ -10,7 +10,6 @@ import com.dragome.web.annotations.PageAlias;
 @PageAlias(alias= "Gears")
 public class GearsLauncher extends DragomeApplication
 {
-
 	@Override
 	public ApplicationListener createApplicationListener() {
 		return new GearsDemo(); 

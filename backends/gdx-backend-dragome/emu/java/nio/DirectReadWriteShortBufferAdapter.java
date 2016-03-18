@@ -17,8 +17,8 @@
 package java.nio;
 
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
+import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.utils.TypedArrays;
 
 /** This class wraps a byte buffer to be a short buffer.
  * <p>
@@ -44,7 +44,7 @@ final class DirectReadWriteShortBufferAdapter extends ShortBuffer implements Has
 		super((byteBuffer.capacity() >> 1));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.shortArray = TypedArrays.createInt16Array(byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
+		this.shortArray = FerTypedArraysFactory.create(Int16Array.class,byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
 	}
 
 	// TODO(haustein) This will be slow
