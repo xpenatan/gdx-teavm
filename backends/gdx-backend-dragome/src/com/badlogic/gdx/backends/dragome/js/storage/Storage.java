@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.backends.dragome.js.storage;
 
+import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 
@@ -53,4 +55,13 @@ public interface Storage {
 	void removeItem (String key);
 
 	void clear ();
+
+	@DelegateCode(ignore= true)
+	static ArrayBuffer createArrayBuffer(int length)
+	{
+		ScriptHelper.put("lenght", length, null);
+		Object instance= ScriptHelper.eval("new ArrayBuffer(length);", null);
+		ArrayBuffer node= JsDelegateFactory.createFrom(instance, ArrayBuffer.class);
+		return node;
+	}
 }

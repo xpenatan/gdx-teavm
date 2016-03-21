@@ -16,28 +16,13 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
-import com.dragome.commons.DelegateCode;
-
 /** @author xpenatan */
-public interface Int8Array extends ArrayBufferView {
+public interface Int8Array extends TypedArray<Int8Array>
+{
+	final int BYTES_PER_ELEMENT= 1;
 
-	final int BYTES_PER_ELEMENT = 1;
-
-	int get_length ();
-
-	@DelegateCode(eval = "this.node[$1]")
-	byte get (int index);
-
-	@DelegateCode(eval = "this.node[$1] = $2")
-	void set (int index, int value);
-
-	void set (Int8Array array, int offset);
-
-	void set (byte[] array, int offset);
-
-	void set (int[] array, int offset);
-
-	Int8Array subarray (int begin);
-
-	Int8Array subarray (int begin, int end);
+	byte get(int index);
+	void set(int index, int value);
+	void set(byte[] array, int offset);
+	void set(int[] array, int offset);
 }

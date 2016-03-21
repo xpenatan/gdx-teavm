@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
@@ -73,27 +72,27 @@ public class DragomeGL20 implements GL20 {
 
 	public DragomeGL20 (WebGLRenderingContext gl) {
 		this.gl = gl;
-		floatBuffer= FerTypedArraysFactory.create(Float32Array.class, 2000 * 20);
-		intBuffer= FerTypedArraysFactory.create(Int32Array.class, 2000 * 6);
-		shortBuffer = FerTypedArraysFactory.create(Int16Array.class, 2000 * 6);
+		floatBuffer= TypedArraysFactory.createInstanceOf(Float32Array.class, 2000 * 20);
+		intBuffer= TypedArraysFactory.createInstanceOf(Int32Array.class, 2000 * 6);
+		shortBuffer = TypedArraysFactory.createInstanceOf(Int16Array.class, 2000 * 6);
 		this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 	}
 
 	private void ensureCapacity (FloatBuffer buffer) {
-		if (buffer.remaining() > floatBuffer.get_length()) {
-			floatBuffer= FerTypedArraysFactory.create(Float32Array.class, buffer.remaining());
+		if (buffer.remaining() > floatBuffer.getLength()) {
+			floatBuffer= TypedArraysFactory.createInstanceOf(Float32Array.class, buffer.remaining());
 		}
 	}
 
 	private void ensureCapacity (ShortBuffer buffer) {
-		if (buffer.remaining() > shortBuffer.get_length()) {
-			shortBuffer = FerTypedArraysFactory.create(Int16Array.class, buffer.remaining());
+		if (buffer.remaining() > shortBuffer.getLength()) {
+			shortBuffer = TypedArraysFactory.createInstanceOf(Int16Array.class, buffer.remaining());
 		}
 	}
 
 	private void ensureCapacity (IntBuffer buffer) {
-		if (buffer.remaining() > intBuffer.get_length()) {
-			intBuffer = FerTypedArraysFactory.create(Int32Array.class, buffer.remaining());
+		if (buffer.remaining() > intBuffer.getLength()) {
+			intBuffer = TypedArraysFactory.createInstanceOf(Int32Array.class, buffer.remaining());
 		}
 	}
 
@@ -108,7 +107,7 @@ public class DragomeGL20 implements GL20 {
 	public Int16Array copy (ShortBuffer buffer) {
 		ensureCapacity(buffer);
 		for (int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-			shortBuffer.set(j, buffer.get(i));
+			shortBuffer.set(j, (int) buffer.get(i));
 		}
 		return shortBuffer.subarray(0, buffer.remaining());
 	}
@@ -417,7 +416,7 @@ public class DragomeGL20 implements GL20 {
 
 		// create new ArrayBufferView (4 bytes per pixel)
 		int size = 4 * width * height;
-		Uint8Array buffer = FerTypedArraysFactory.create(Uint8Array.class, size);
+		Uint8Array buffer = TypedArraysFactory.createInstanceOf(Uint8Array.class, size);
 
 		// read bytes to ArrayBufferView
 		gl.readPixels(x, y, width, height, format, type, buffer);
@@ -461,9 +460,9 @@ public class DragomeGL20 implements GL20 {
 				ArrayBufferView webGLArray = arrayHolder.getTypedArray();
 				int remainingBytes = pixels.remaining() * 4;
 
-				int byteOffset = webGLArray.get_byteOffset() + pixels.position() * 4;
+				int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
 
-				Uint8Array buffer = FerTypedArraysFactory.create(Uint8Array.class, webGLArray.get_buffer(), byteOffset, remainingBytes);
+				Uint8Array buffer = TypedArraysFactory.createInstanceOf(Uint8Array.class, webGLArray.getBuffer(), byteOffset, remainingBytes);
 
 				gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
 			} else {
@@ -487,9 +486,9 @@ public class DragomeGL20 implements GL20 {
 			ArrayBufferView webGLArray = arrayHolder.getTypedArray();
 			int remainingBytes = pixels.remaining() * 4;
 
-			int byteOffset = webGLArray.get_byteOffset() + pixels.position() * 4;
+			int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
 
-			Uint8Array buffer = FerTypedArraysFactory.create(Uint8Array.class, webGLArray.get_buffer(), byteOffset, remainingBytes);
+			Uint8Array buffer = TypedArraysFactory.createInstanceOf(Uint8Array.class, webGLArray.getBuffer(), byteOffset, remainingBytes);
 
 			gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
 		} else {
@@ -746,17 +745,17 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
 		WebGLActiveInfo activeAttrib = gl.getActiveAttrib(programs.get(program), index);
-		size.put(activeAttrib.get_size());
-		((IntBuffer)type).put(activeAttrib.get_type());
-		return activeAttrib.get_name();
+		size.put(activeAttrib.getSize());
+		((IntBuffer)type).put(activeAttrib.getType());
+		return activeAttrib.getName();
 	}
 
 	@Override
 	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
 		WebGLActiveInfo activeUniform = gl.getActiveUniform(programs.get(program), index);
-		size.put(activeUniform.get_size());
-		((IntBuffer)type).put(activeUniform.get_type());
-		return activeUniform.get_name();
+		size.put(activeUniform.getSize());
+		((IntBuffer)type).put(activeUniform.getType());
+		return activeUniform.getName();
 	}
 
 	@Override

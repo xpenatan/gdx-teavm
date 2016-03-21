@@ -18,9 +18,9 @@ package com.badlogic.gdx.backends.dragome.js.webgl;
 
 /** @author xpenatan */
 public interface WebGLShaderPrecisionFormat {
-	public int get_rangeMin ();
+	public int getRangeMin ();
 
-	public int get_rangeMax ();
+	public int getRangeMax ();
 
-	public int get_precision ();
+	public int getPrecision ();
 }

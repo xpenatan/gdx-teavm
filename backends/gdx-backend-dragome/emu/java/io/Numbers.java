@@ -16,7 +16,7 @@
 
 package java.io;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
+import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
@@ -32,9 +32,9 @@ public class Numbers
 		return wia.get(0);
 	}
 
-	static Int8Array wba= FerTypedArraysFactory.create(Int8Array.class, 4);
-	static Int32Array wia= FerTypedArraysFactory.create(Int32Array.class, wba.get_buffer(), 0, 1);
-	static Float32Array wfa= FerTypedArraysFactory.create(Float32Array.class, wba.get_buffer(), 0, 1);
+	static Int8Array wba= TypedArraysFactory.createInstanceOf(Int8Array.class, 4);
+	static Int32Array wia= TypedArraysFactory.createInstanceOf(Int32Array.class, wba.getBuffer(), 0, 1);
+	static Float32Array wfa= TypedArraysFactory.createInstanceOf(Float32Array.class, wba.getBuffer(), 0, 1);
 
 	public static final float intBitsToFloat(int i)
 	{

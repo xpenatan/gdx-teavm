@@ -16,8 +16,8 @@
 
 package java.nio;
 
+import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
 
 /** This class wraps a byte buffer to be a float buffer.
@@ -44,7 +44,7 @@ final class DirectReadOnlyFloatBufferAdapter extends FloatBuffer implements HasA
 		super((byteBuffer.capacity() >> 2));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.floatArray = FerTypedArraysFactory.create(Float32Array.class,byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
+		this.floatArray = TypedArraysFactory.createInstanceOf(Float32Array.class,byteBuffer.byteArray.getBuffer(), byteBuffer.byteArray.getByteOffset(), capacity);
 	}
 
 	@Override

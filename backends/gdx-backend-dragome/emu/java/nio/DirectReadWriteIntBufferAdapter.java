@@ -16,8 +16,8 @@
 
 package java.nio;
 
+import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
 
 /** This class wraps a byte buffer to be a int buffer.
@@ -43,7 +43,7 @@ final class DirectReadWriteIntBufferAdapter extends IntBuffer implements HasArra
 		super((byteBuffer.capacity() >> 2));
 		this.byteBuffer = byteBuffer;
 		this.byteBuffer.clear();
-		this.intArray = FerTypedArraysFactory.create(Int32Array.class,byteBuffer.byteArray.get_buffer(), byteBuffer.byteArray.get_byteOffset(), capacity);
+		this.intArray = TypedArraysFactory.createInstanceOf(Int32Array.class,byteBuffer.byteArray.getBuffer(), byteBuffer.byteArray.getByteOffset(), capacity);
 	}
 
 	// TODO(haustein) This will be slow

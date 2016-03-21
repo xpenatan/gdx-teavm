@@ -18,10 +18,10 @@ package com.badlogic.gdx.backends.dragome.preloader;
 
 import org.w3c.dom.events.Event;
 
+import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest.ReadyStateChangeHandler;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest.ResponseType;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -120,7 +120,7 @@ public class AssetDownloader {
 						listener.onFailure();
 					} else {
 
-						Int8Array data= FerTypedArraysFactory.create(Int8Array.class, xhr.getResponseArrayBuffer());
+						Int8Array data= TypedArraysFactory.createInstanceOf(Int8Array.class, xhr.getResponseArrayBuffer());
 						listener.onSuccess(new Blob(data));
 					}
 				}

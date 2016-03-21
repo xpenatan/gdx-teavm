@@ -16,26 +16,11 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
-import com.dragome.commons.DelegateCode;
-
 /** @author xpenatan */
-public interface Float64Array extends ArrayBufferView {
-
-	final int BYTES_PER_ELEMENT = 8;
-
-	int get_length ();
-
-	@DelegateCode(eval = "this.node[$1]")
-	double get (int index);
-
-	@DelegateCode(eval = "this.node[$1] = $2")
-	void set (int index, double value);
-
-	void set (Float64Array array, int offset);
-
-	void set (double[] array, int offset);
-
-	Float64Array subarray (int begin);
-
-	Float64Array subarray (int begin, int end);
+public interface Float64Array extends TypedArray<Float64Array>
+{
+	final int BYTES_PER_ELEMENT= 8;
+	double get(int index);
+	void set(int index, double value);
+	void set(double[] array, int offset);
 }

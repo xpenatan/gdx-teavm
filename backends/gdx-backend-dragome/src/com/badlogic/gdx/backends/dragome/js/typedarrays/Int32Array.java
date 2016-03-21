@@ -16,26 +16,12 @@
 
 package com.badlogic.gdx.backends.dragome.js.typedarrays;
 
-import com.dragome.commons.DelegateCode;
-import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
-
 /** @author xpenatan */
-public interface Int32Array extends ArrayBufferView {
+public interface Int32Array extends TypedArray<Int32Array>
+{
+	final int BYTES_PER_ELEMENT= 4;
 
-	final int BYTES_PER_ELEMENT = 4;
-
-	int get_length ();
-
-	@DelegateCode(eval = "this.node[$1]")
-	int get (int index);
-
-	@DelegateCode(eval = "this.node[$1] = $2")
-	void set (int index, int value);
-
-	void set (Int32Array array, int offset);
-
-	void set (int[] array, int offset);
-
-	Int32Array subarray (int begin, int end);
+	int get(int index);
+	void set(int index, int value);
+	void set(int[] array, int offset);
 }

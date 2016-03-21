@@ -19,9 +19,10 @@ package java.nio;
 
 import java.io.Numbers;
 
+import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
+import com.badlogic.gdx.backends.dragome.js.storage.Storage;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.FerTypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
 import com.badlogic.gdx.backends.dragome.utils.Endianness;
 
@@ -39,7 +40,7 @@ abstract class DirectByteBuffer extends BaseByteBuffer implements HasArrayBuffer
 
 	DirectByteBuffer(int capacity)
 	{
-		this(FerTypedArraysFactory.createArrayBuffer(capacity), capacity, 0);
+		this(Storage.createArrayBuffer(capacity), capacity, 0);
 	}
 
 	DirectByteBuffer(ArrayBuffer buf)
@@ -50,7 +51,7 @@ abstract class DirectByteBuffer extends BaseByteBuffer implements HasArrayBuffer
 	DirectByteBuffer(ArrayBuffer buffer, int capacity, int offset)
 	{
 		super(capacity);
-		byteArray= FerTypedArraysFactory.create(Int8Array.class, buffer, offset, capacity);
+		byteArray= TypedArraysFactory.createInstanceOf(Int8Array.class, buffer, offset, capacity);
 	}
 
 	public ArrayBufferView getTypedArray()

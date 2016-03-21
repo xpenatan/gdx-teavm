@@ -16,30 +16,18 @@
 
 package com.badlogic.gdx.backends.dragome.js.webgl;
 
-import com.dragome.commons.DelegateCode;
-import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
-
 /** @author xpenatan */
 public interface WebGLContextAttributes {
 	
-	@DelegateCode(ignore = true)
-	public static WebGLContextAttributes create() {
-		WebGLContextAttributes attr = null;
-		Object instance = ScriptHelper.eval("{premultipliedAlpha:false}", null);
-		attr = JsDelegateFactory.createFrom(instance, WebGLContextAttributes.class);
-		return attr;
-	}
-	
-	public void set_alpha (boolean alpha);
+	public void setAlpha (boolean alpha);
 
-	public void set_antialias (boolean antialias);
+	public void setAntialias (boolean antialias);
 
-	public void set_depth (boolean depth);
+	public void setDepth (boolean depth);
 
-	public void set_premultipliedAlpha (boolean premultipliedAlpha);
+	public void setPremultipliedAlpha (boolean premultipliedAlpha);
 
-	public void set_preserveDrawingBuffer (boolean preserveDrawingBuffer);
+	public void setPreserveDrawingBuffer (boolean preserveDrawingBuffer);
 
-	public void set_stencil (boolean stencil);
+	public void setStencil (boolean stencil);
 }

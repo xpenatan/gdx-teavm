@@ -29,8 +29,8 @@ import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
 final class DirectReadOnlyByteBuffer extends DirectByteBuffer {
 
 	static DirectReadOnlyByteBuffer copy (DirectByteBuffer other, int markOfOther) {
-		DirectReadOnlyByteBuffer buf = new DirectReadOnlyByteBuffer(other.byteArray.get_buffer(), other.capacity(),
-			other.byteArray.get_byteOffset());
+		DirectReadOnlyByteBuffer buf = new DirectReadOnlyByteBuffer(other.byteArray.getBuffer(), other.capacity(),
+			other.byteArray.getByteOffset());
 		buf.limit = other.limit();
 		buf.position = other.position();
 		buf.mark = markOfOther;
@@ -139,7 +139,7 @@ final class DirectReadOnlyByteBuffer extends DirectByteBuffer {
 	}
 
 	public ByteBuffer slice () {
-		DirectReadOnlyByteBuffer slice = new DirectReadOnlyByteBuffer(byteArray.get_buffer(), remaining(), byteArray.get_byteOffset()
+		DirectReadOnlyByteBuffer slice = new DirectReadOnlyByteBuffer(byteArray.getBuffer(), remaining(), byteArray.getByteOffset()
 			+ position);
 		slice.order = order;
 		return slice;

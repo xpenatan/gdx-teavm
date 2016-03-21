@@ -18,9 +18,9 @@ package com.badlogic.gdx.backends.dragome.js.webgl;
 
 /** @author xpenatan */
 public interface WebGLActiveInfo {
-	public int get_size ();
+	public int getSize ();
 
-	public int get_type ();
+	public int getType ();
 
-	public String get_name ();
+	public String getName ();
 }
