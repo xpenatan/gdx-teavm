@@ -12,26 +12,27 @@ public class AnimationLauncher extends DragomeApplication
 {
 
 	@Override
-	public ApplicationListener createApplicationListener() {
+	public ApplicationListener createApplicationListener()
+	{
 		return new AnimationTest();
 	}
 
 	@Override
-	public DragomeApplicationConfiguration getConfig() {
+	public DragomeApplicationConfiguration getConfig()
+	{
 		return null;
 	}
 
-	
 	@Override
-	protected void onResize() {
-		
-		int clientWidth = DragomeWindow.getInnerWidth();
-		int clientHeight = DragomeWindow.getInnerHeight();
+	protected void onResize()
+	{
+		int clientWidth= DragomeWindow.getInnerWidth();
+		int clientHeight= DragomeWindow.getInnerHeight();
 		getCanvas().setWidth(clientWidth);
 		getCanvas().setHeight(clientHeight);
 		getCanvas().setCoordinateSpaceWidth(clientWidth);
 		getCanvas().setCoordinateSpaceHeight(clientHeight);
-		
+
 		super.onResize();
 	}
 }

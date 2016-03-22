@@ -1,5 +1,7 @@
 package com.badlogic.gdx.backends.dragome.js.webgl;
 
+import org.w3c.dom.webgl.WebGLContextAttributes;
+
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 

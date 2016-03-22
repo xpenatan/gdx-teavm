@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,16 +35,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.view.DefaultVisualActivity;
 import com.dragome.web.dispatcher.EventDispatcherImpl;
-import com.dragome.web.html.dom.Timer;
-import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
+import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 
 /** @author xpenatan */
 public abstract class DragomeApplication extends DefaultVisualActivity implements Application {
 
 	private ApplicationListener listener;
 	BrowserDomHandler elementBySelector;
- 
+
 	DragomeGraphics graphics;
 	DragomeInput input;
 	DragomeNet net;
@@ -73,7 +72,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	private void prepate () {
-		listener = createApplicationListener(); 
+		listener = createApplicationListener();
 		if (listener == null) return;
 		DragomeApplicationConfiguration config = getConfig();
 		if(config == null)
@@ -128,7 +127,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 //				}
 //			}
 //		}, 0);
-		
+
 		DragomeWindow.requestAnimationFrame(new Runnable() {
 
 			@Override
@@ -142,7 +141,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
 		}, graphics.canvas);
-		
+
 
 		init = true;
 	}
@@ -295,14 +294,14 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		}
 	}
 
-	public HTMLCanvasElement getCanvas () {
+	public HTMLCanvasElementExtension getCanvas () {
 		return graphics.canvas;
 	}
 
 	public Preloader getPreloader () {
 		return preloader;
 	}
-	
+
 	public void addEventListener (EventListener aEventListener, String... aEvent) {
 		Element theElement = elementBySelector.getElementBySelector("body");
 		EventDispatcherImpl.setEventListener(theElement, aEventListener, aEvent);

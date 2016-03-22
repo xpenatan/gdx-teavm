@@ -17,6 +17,7 @@
 package com.badlogic.gdx.backends.dragome.preloader;
 
 import org.w3c.dom.events.Event;
+import org.w3c.dom.html.HTMLImageElement;
 import org.w3c.dom.typedarray.Int8Array;
 
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
@@ -28,7 +29,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
-import com.dragome.web.html.dom.html5canvas.interfaces.ImageElement;
+import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 
 /** Adapted from gwt backend
  * @author xpenatan */
@@ -70,7 +71,7 @@ public class AssetDownloader {
 			loadText(url, (AssetLoaderListener<String>)listener);
 			break;
 		case Image:
-			loadImage(url, mimeType, (AssetLoaderListener<ImageElement>)listener);
+			loadImage(url, mimeType, (AssetLoaderListener<HTMLImageElement>)listener);
 			break;
 		case Binary:
 			loadBinary(url, (AssetLoaderListener<Blob>)listener);
@@ -156,12 +157,12 @@ public class AssetDownloader {
 		}
 	}
 
-	public void loadImage (final String url, final String mimeType, final AssetLoaderListener<ImageElement> listener) {
+	public void loadImage (final String url, final String mimeType, final AssetLoaderListener<HTMLImageElement> listener) {
 		loadImage(url, mimeType, null, listener);
 	}
 
 	public void loadImage (final String url, final String mimeType, final String crossOrigin,
-		final AssetLoaderListener<ImageElement> listener) {
+		final AssetLoaderListener<HTMLImageElement> listener) {
 		if (useBrowserCache || useInlineBase64) {
 			loadBinary(url, new AssetLoaderListener<Blob>() {
 				@Override
@@ -176,7 +177,7 @@ public class AssetDownloader {
 
 				@Override
 				public void onSuccess (Blob result) {
-					final ImageElement image = createImage();
+					final HTMLImageElementExtension image = createImage();
 
 					if (crossOrigin != null) {
 						image.setAttribute("crossOrigin", crossOrigin);
@@ -199,7 +200,7 @@ public class AssetDownloader {
 
 			});
 		} else {
-			final ImageElement image = createImage();
+			final HTMLImageElementExtension image = createImage();
 			if (crossOrigin != null) {
 				image.setAttribute("crossOrigin", crossOrigin);
 			}
@@ -221,7 +222,7 @@ public class AssetDownloader {
 		public void onEvent (Event event);
 	}
 
-	static void hookImgListener (ImageElement img, ImgEventListener h) {
+	static void hookImgListener (HTMLImageElementExtension img, ImgEventListener h) {
 		ScriptHelper.put("img", img, null);
 		ScriptHelper.put("h", h, null);
 
@@ -235,9 +236,9 @@ public class AssetDownloader {
 		h.onEvent(event);
 	}
 
-	static ImageElement createImage () {
+	static HTMLImageElementExtension createImage () {
 		Object instance = ScriptHelper.eval("new Image()", null);
-		ImageElement img = JsDelegateFactory.createFrom(instance, ImageElement.class);
+		HTMLImageElementExtension img = JsDelegateFactory.createFrom(instance, HTMLImageElementExtension.class);
 		return img;
 	}
 

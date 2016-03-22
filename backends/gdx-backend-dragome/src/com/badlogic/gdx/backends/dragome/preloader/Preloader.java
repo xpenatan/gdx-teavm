@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,21 +23,21 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
-import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.dragome.web.html.dom.html5canvas.interfaces.ImageElement;
+import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 
 /** Adapted from gwt backend
  * @author xpenatan */
 public class Preloader {
 	public ObjectMap<String, Void> directories = new ObjectMap<String, Void>();
-	public ObjectMap<String, ImageElement> images = new ObjectMap<String, ImageElement>();
+	public ObjectMap<String, HTMLImageElementExtension> images = new ObjectMap<String, HTMLImageElementExtension>();
 	public ObjectMap<String, Void> audio = new ObjectMap<String, Void>();
 	public ObjectMap<String, String> texts = new ObjectMap<String, String>();
 	public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
@@ -150,7 +150,7 @@ public class Preloader {
 					texts.put(url, (String)result);
 					break;
 				case Image:
-					images.put(url, (ImageElement)result);
+					images.put(url, (HTMLImageElementExtension)result);
 					break;
 				case Binary:
 					binaries.put(url, (Blob)result);

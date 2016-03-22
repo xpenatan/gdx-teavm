@@ -60,6 +60,11 @@
       <artifactId>gdx-backend-dragome</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>com.dragome</groupId>
+      <artifactId>dragome-w3c-standards</artifactId>
+      <version>0.96-beta3-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>

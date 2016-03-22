@@ -30,6 +30,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.events.Event;
+import org.w3c.dom.html.CanvasRenderingContext2D;
+import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.ArrayBufferView;
 import org.w3c.dom.typedarray.Float32Array;
@@ -40,33 +42,30 @@ import org.w3c.dom.typedarray.Int8Array;
 import org.w3c.dom.typedarray.Uint16Array;
 import org.w3c.dom.typedarray.Uint32Array;
 import org.w3c.dom.typedarray.Uint8Array;
+import org.w3c.dom.webgl.WebGLActiveInfo;
+import org.w3c.dom.webgl.WebGLBuffer;
+import org.w3c.dom.webgl.WebGLContextAttributes;
+import org.w3c.dom.webgl.WebGLFramebuffer;
+import org.w3c.dom.webgl.WebGLObject;
+import org.w3c.dom.webgl.WebGLProgram;
+import org.w3c.dom.webgl.WebGLRenderbuffer;
+import org.w3c.dom.webgl.WebGLRenderingContext;
+import org.w3c.dom.webgl.WebGLShader;
+import org.w3c.dom.webgl.WebGLTexture;
+import org.w3c.dom.webgl.WebGLUniformLocation;
 
 import com.badlogic.gdx.backends.dragome.js.storage.Storage;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLActiveInfo;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLBuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLContextAttributes;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFramebuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLObject;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLProgram;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderbuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLShader;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLTexture;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLUniformLocation;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.ClasspathFile;
 import com.dragome.commons.compiler.InMemoryClasspathFile;
 import com.dragome.commons.compiler.annotations.CompilerType;
-import com.dragome.web.config.NodeSubTypeFactory;
-import com.dragome.web.enhancers.jsdelegate.DefaultDelegateStrategy;
+import com.dragome.web.config.DomHandlerDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
-import com.dragome.web.enhancers.jsdelegate.interfaces.SubTypeFactory;
 import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
-import com.dragome.web.html.dom.html5canvas.interfaces.CanvasImageSource;
-import com.dragome.web.html.dom.html5canvas.interfaces.CanvasRenderingContext2D;
-import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
-import com.dragome.web.html.dom.html5canvas.interfaces.ImageElement;
+import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
+import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
+import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
@@ -130,7 +129,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 	private void createJsDelegateGenerator(String classpath)
 	{
-		jsDelegateGenerator= new JsDelegateGenerator(classpath.replace(";", ":"), new DefaultDelegateStrategy()
+		jsDelegateGenerator= new JsDelegateGenerator(classpath.replace(";", ":"), new DomHandlerDelegateStrategy()
 		{
 			public String createMethodCall(Method method, String params)
 			{
@@ -149,22 +148,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 				return super.createMethodCall(method, params);
 			}
-
-			public String getSubTypeExtractorFor(Class<?> interface1, String methodName)
-			{
-				if (methodName.equals("item") || methodName.equals("cloneNode"))
-					return "temp.nodeType";
-
-				return null;
-			}
-
-			public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName)
-			{
-				if (methodName.equals("item") || methodName.equals("cloneNode"))
-					return NodeSubTypeFactory.class;
-
-				return null;
-			}
 		});
 	}
 
@@ -182,8 +165,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		add(Text.class);
 		add(HTMLCanvasElement.class);
 		add(CanvasRenderingContext2D.class);
-		add(CanvasImageSource.class);
-		add(ImageElement.class);
+		add(HTMLImageElementExtension.class);
+		add(HTMLCanvasElementExtension.class);
 		add(Event.class);
 
 		add(WebGLActiveInfo.class);
@@ -197,7 +180,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		add(WebGLShader.class);
 		add(WebGLTexture.class);
 		add(WebGLUniformLocation.class);
-
+		add(WebGLRenderingContextExtension.class);
 		add(ArrayBuffer.class);
 		add(ArrayBufferView.class);
 
@@ -231,6 +214,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		else if (aClassPathEntry.contains("dragome-js-commons-") || aClassPathEntry.contains("dragome-js-commons\\bin"))
 			flag= true;
 		else if (aClassPathEntry.contains("dragome-js-jre-") || aClassPathEntry.contains("dragome-js-jre\\bin"))
+			flag= true;
+		else if (aClassPathEntry.contains("dragome-w3c-standards-") || aClassPathEntry.contains("dragome-w3c-standards\\bin"))
 			flag= true;
 		else if (aClassPathEntry.contains("dragome-callback-evictor-") || aClassPathEntry.contains("dragome-callback-evictor\\bin"))
 			flag= true;

@@ -18,7 +18,6 @@
 package java.io;
 
 import java.nio.CharBuffer;
-import java.nio.ReadOnlyBufferException;
 
 /*** The base class for all readers. A reader is a means of reading data from a source in a character-wise manner. Some readers also
  * support marking a position in the input and returning to this position later.

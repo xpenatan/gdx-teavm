@@ -30,20 +30,21 @@ import org.w3c.dom.typedarray.Float32Array;
 import org.w3c.dom.typedarray.Int16Array;
 import org.w3c.dom.typedarray.Int32Array;
 import org.w3c.dom.typedarray.Uint8Array;
+import org.w3c.dom.webgl.WebGLActiveInfo;
+import org.w3c.dom.webgl.WebGLBuffer;
+import org.w3c.dom.webgl.WebGLFramebuffer;
+import org.w3c.dom.webgl.WebGLProgram;
+import org.w3c.dom.webgl.WebGLRenderbuffer;
+import org.w3c.dom.webgl.WebGLRenderingContext;
+import org.w3c.dom.webgl.WebGLShader;
+import org.w3c.dom.webgl.WebGLTexture;
+import org.w3c.dom.webgl.WebGLUniformLocation;
 
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLActiveInfo;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLBuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFramebuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLProgram;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderbuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLShader;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLTexture;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLUniformLocation;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
+import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** Ported from GWT backend.
  * @author xpenatan */
@@ -69,9 +70,9 @@ public class DragomeGL20 implements GL20 {
 	Int16Array shortBuffer;
 	float[] floatArray = new float[16000];
 
-	WebGLRenderingContext gl;
+	WebGLRenderingContextExtension gl;
 
-	public DragomeGL20 (WebGLRenderingContext gl) {
+	public DragomeGL20 (WebGLRenderingContextExtension gl) {
 		this.gl = gl;
 		floatBuffer= TypedArraysFactory.createInstanceOf(Float32Array.class, 2000 * 20);
 		intBuffer= TypedArraysFactory.createInstanceOf(Int32Array.class, 2000 * 6);
