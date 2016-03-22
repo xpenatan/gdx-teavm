@@ -44,6 +44,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
+import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** Ported from GWT backend.

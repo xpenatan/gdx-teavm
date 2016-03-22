@@ -20,7 +20,6 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.html.HTMLImageElement;
 import org.w3c.dom.typedarray.Int8Array;
 
-import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest.ReadyStateChangeHandler;
 import com.badlogic.gdx.backends.dragome.js.XMLHttpRequest.ResponseType;
@@ -30,6 +29,7 @@ import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
+import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 
 /** Adapted from gwt backend
  * @author xpenatan */

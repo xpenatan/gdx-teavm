@@ -65,6 +65,7 @@ import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
+import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** @author xpenatan */
