@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,21 +27,21 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * In IndexBufferObject wraps OpenGL's index buffer functionality to be used in conjunction with VBOs. This class can be
  * seamlessly used with OpenGL ES 1.x and 2.0.
  * </p>
- * 
+ *
  * <p>
  * Uses indirect Buffers on Android 1.5/1.6 to fix GC invocation due to leaking PlatformAddress instances.
  * </p>
- * 
+ *
  * <p>
  * You can also use this to store indices for vertex arrays. Do not call {@link #bind()} or {@link #unbind()} in this case but
  * rather use {@link #getBuffer()} to use the buffer directly with glDrawElements. You must also create the IndexBufferObject with
  * the second constructor and specify isDirect as true as glDrawElements in conjunction with vertex arrays needs direct buffers.
  * </p>
- * 
+ *
  * <p>
  * VertexBufferObjects must be disposed via the {@link #dispose()} method when no longer needed
  * </p>
- * 
+ *
  * @author mzechner */
 public class IndexBufferObject implements IndexData {
 	ShortBuffer buffer;
@@ -52,7 +52,7 @@ public class IndexBufferObject implements IndexData {
 	final int usage;
 
 	/** Creates a new IndexBufferObject.
-	 * 
+	 *
 	 * @param isStatic whether the index buffer is static
 	 * @param maxIndices the maximum number of indices this buffer can hold */
 	public IndexBufferObject (boolean isStatic, int maxIndices) {
@@ -64,7 +64,7 @@ public class IndexBufferObject implements IndexData {
 	}
 
 	/** Creates a new IndexBufferObject to be used with vertex arrays.
-	 * 
+	 *
 	 * @param maxIndices the maximum number of indices this buffer can hold */
 	public IndexBufferObject (int maxIndices) {
 		this.isDirect = true;
@@ -88,11 +88,11 @@ public class IndexBufferObject implements IndexData {
 	 * Sets the indices of this IndexBufferObject, discarding the old indices. The count must equal the number of indices to be
 	 * copied to this IndexBufferObject.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This can be called in between calls to {@link #bind()} and {@link #unbind()}. The index data will be updated instantly.
 	 * </p>
-	 * 
+	 *
 	 * @param indices the vertex data
 	 * @param offset the offset to start copying the data from
 	 * @param count the number of shorts to copy */
@@ -107,25 +107,37 @@ public class IndexBufferObject implements IndexData {
 			isDirty = false;
 		}
 	}
-	
+
 	public void setIndices (ShortBuffer indices) {
 		isDirty = true;
 		buffer.clear();
 		buffer.put(indices);
 		buffer.flip();
-		
+
 		if (isBound) {
 			Gdx.gl20.glBufferData(GL20.GL_ELEMENT_ARRAY_BUFFER, buffer.limit(), buffer, usage);
 			isDirty = false;
 		}
 	}
 
+	public void updateIndices (int targetOffset, short[] indices, int offset, int count) {
+		isDirty = true;
+		final int pos = buffer.position();
+		buffer.position(targetOffset);
+		BufferUtils.copy(indices, offset, buffer, count);
+		buffer.position(pos);
+
+		if (isBound) {
+			Gdx.gl20.glBufferData(GL20.GL_ELEMENT_ARRAY_BUFFER, buffer.limit(), buffer, usage);
+			isDirty = false;
+		}
+	}
 
 	/** <p>
 	 * Returns the underlying ShortBuffer. If you modify the buffer contents they wil be uploaded on the call to {@link #bind()}.
 	 * If you need immediate uploading use {@link #setIndices(short[], int, int)}.
 	 * </p>
-	 * 
+	 *
 	 * @return the underlying short buffer. */
 	public ShortBuffer getBuffer () {
 		isDirty = true;
@@ -161,6 +173,6 @@ public class IndexBufferObject implements IndexData {
 		GL20 gl = Gdx.gl20;
 		gl.glBindBuffer(GL20.GL_ELEMENT_ARRAY_BUFFER, 0);
 		gl.glDeleteBuffer(bufferHandle);
-		bufferHandle = 0;		
+		bufferHandle = 0;
 	}
 }
