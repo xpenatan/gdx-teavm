@@ -17,21 +17,12 @@
 package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.w3c.dom.events.Event;
-import org.w3c.dom.html.CanvasRenderingContext2D;
-import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.ArrayBufferView;
 import org.w3c.dom.typedarray.Float32Array;
@@ -54,13 +45,10 @@ import org.w3c.dom.webgl.WebGLShader;
 import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 
-import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.ClasspathFile;
-import com.dragome.commons.compiler.InMemoryClasspathFile;
 import com.dragome.commons.compiler.annotations.CompilerType;
-import com.dragome.web.config.DomHandlerDelegateStrategy;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
+import com.dragome.web.config.DomHandlerApplicationConfigurator;
 import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
@@ -70,19 +58,25 @@ import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
-public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigurator
+public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 {
 	HashSet<String> paths;
 	String projName;
 	String projPath;
 	List<ClasspathFile> extraClasspathFiles;
-	private JsDelegateGenerator jsDelegateGenerator;
+	static List<Class<?>> additonalClasses= Arrays.asList(HTMLImageElementExtension.class, HTMLCanvasElementExtension.class, Event.class, //
+			WebGLActiveInfo.class, WebGLBuffer.class, WebGLContextAttributes.class, WebGLFramebuffer.class, //
+			WebGLObject.class, WebGLProgram.class, WebGLRenderbuffer.class, WebGLRenderingContext.class, //
+			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class, WebGLRenderingContextExtension.class, //
+			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class, //
+			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, //
+			ArrayBufferFactory.class, TypedArraysFactory.class);
 
 	boolean cache= false;
 
 	public DragomeConfiguration()
 	{
-
+		super(additonalClasses);
 		// System.setProperty("dragome-compile-mode", CompilerMode.Production.toString());
 		// System.setProperty("dragome-compile-mode", CompilerMode.Debug.toString());
 
@@ -118,88 +112,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 		});
 
-	}
-
-	public void add(Class<?> clazz)
-	{
-		byte[] bytecode= jsDelegateGenerator.generate(clazz);
-		String classname= JsDelegateGenerator.createDelegateClassName(clazz.getName());
-		addClassBytecode(bytecode, classname);
-		extraClasspathFiles.add(new InMemoryClasspathFile(classname, bytecode));
-	}
-
-	private void createJsDelegateGenerator(String classpath)
-	{
-		jsDelegateGenerator= new JsDelegateGenerator(classpath.replace(";", ":"), new DomHandlerDelegateStrategy()
-		{
-			public String createMethodCall(Method method, String params)
-			{
-				if (params == null)
-					params= "";
-
-				String name= method.getName();
-				Class<?>[] superclass= method.getDeclaringClass().getInterfaces();
-				if (superclass.length > 0 && superclass[0].equals(ArrayBufferView.class))
-				{
-					if (name.equals("set") && method.getParameterTypes().length == 2 && method.getParameterTypes()[0].equals(int.class))
-						return "this.node[$1] = $2";
-					else if ((name.equals("get") || name.equals("getAsDouble")) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(int.class))
-						return "this.node[$1]";
-				}
-
-				return super.createMethodCall(method, params);
-			}
-		});
-	}
-
-	public List<ClasspathFile> getExtraClasspath(String classpath)
-	{
-		if (jsDelegateGenerator == null)
-			createJsDelegateGenerator(classpath);
-
-		add(Document.class);
-		add(Element.class);
-		add(Attr.class);
-		add(NodeList.class);
-		add(Node.class);
-		add(NamedNodeMap.class);
-		add(Text.class);
-		add(HTMLCanvasElement.class);
-		add(CanvasRenderingContext2D.class);
-		add(HTMLImageElementExtension.class);
-		add(HTMLCanvasElementExtension.class);
-		add(Event.class);
-
-		add(WebGLActiveInfo.class);
-		add(WebGLBuffer.class);
-		add(WebGLContextAttributes.class);
-		add(WebGLFramebuffer.class);
-		add(WebGLObject.class);
-		add(WebGLProgram.class);
-		add(WebGLRenderbuffer.class);
-		add(WebGLRenderingContext.class);
-		add(WebGLShader.class);
-		add(WebGLTexture.class);
-		add(WebGLUniformLocation.class);
-		add(WebGLRenderingContextExtension.class);
-		add(ArrayBuffer.class);
-		add(ArrayBufferView.class);
-
-		// add(DataView.class);
-		// add(DataViewStream.class);
-		add(Float32Array.class);
-		add(Float64Array.class);
-		add(Int16Array.class);
-		add(Int32Array.class);
-		add(Int8Array.class);
-		add(Uint16Array.class);
-		add(Uint32Array.class);
-		add(Uint8Array.class);
-
-		add(ArrayBufferFactory.class);
-		add(TypedArraysFactory.class);
-
-		return extraClasspathFiles;
 	}
 
 	@Override
@@ -241,7 +153,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		return CompilerType.Standard;
 	}
 
-	@Override
 	public boolean isCheckingCast()
 	{
 		return false;
