@@ -36,7 +36,7 @@
  *  IN THE SOFTWARE.
  ******************************************************************************/
 
-package com.badlogic.gdx.utils;
+package java.io;
 
 /** Utf8Decoder converts UTF-8 encoded bytes into characters properly handling buffer boundaries.
  *

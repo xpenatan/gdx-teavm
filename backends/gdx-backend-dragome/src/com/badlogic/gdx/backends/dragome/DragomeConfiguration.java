@@ -54,7 +54,6 @@ import org.w3c.dom.webgl.WebGLShader;
 import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 
-import com.badlogic.gdx.backends.dragome.js.storage.Storage;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.ClasspathFile;
@@ -63,6 +62,7 @@ import com.dragome.commons.compiler.annotations.CompilerType;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
 import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
+import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
@@ -195,7 +195,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		add(Uint32Array.class);
 		add(Uint8Array.class);
 
-		add(Storage.class);
+		add(ArrayBufferFactory.class);
 		add(TypedArraysFactory.class);
 
 		return extraClasspathFiles;

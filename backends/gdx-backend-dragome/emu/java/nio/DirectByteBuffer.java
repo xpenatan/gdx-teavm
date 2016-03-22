@@ -24,8 +24,8 @@ import org.w3c.dom.typedarray.ArrayBufferView;
 import org.w3c.dom.typedarray.Int8Array;
 
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
-import com.badlogic.gdx.backends.dragome.js.storage.Storage;
 import com.badlogic.gdx.backends.dragome.utils.Endianness;
+import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 
 /** DirectByteBuffer, DirectReadWriteByteBuffer and DirectReadOnlyHeapByteBuffer compose the implementation of direct byte buffers.
  * <p>
@@ -41,7 +41,7 @@ abstract class DirectByteBuffer extends BaseByteBuffer implements HasArrayBuffer
 
 	DirectByteBuffer(int capacity)
 	{
-		this(Storage.createArrayBuffer(capacity), capacity, 0);
+		this(ArrayBufferFactory.createArrayBuffer(capacity), capacity, 0);
 	}
 
 	DirectByteBuffer(ArrayBuffer buf)

@@ -21,6 +21,7 @@ import org.w3c.dom.typedarray.ArrayBuffer;
 import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
  * @author xpenatan */
@@ -28,11 +29,11 @@ public interface Storage {
 	static final boolean localStorageSupported = checkStorageSupport("localStorage");
 	static final boolean sessionStorageSupported = checkStorageSupport("sessionStorage");
 
-	public static Storage getLocalStorageIfSupported () {
-		Storage storage = null;
+	public static ArrayBufferFactory getLocalStorageIfSupported () {
+		ArrayBufferFactory storage = null;
 		if (localStorageSupported || sessionStorageSupported) {
 			Object instance = ScriptHelper.eval("window.localStorage", null);
-			storage = JsDelegateFactory.createFrom(instance, Storage.class);
+			storage = JsDelegateFactory.createFrom(instance, ArrayBufferFactory.class);
 		}
 		return storage;
 	}
