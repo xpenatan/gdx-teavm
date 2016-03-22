@@ -1,7 +1,8 @@
 package com.badlogic.gdx.backends.dragome;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+
 import com.dragome.commons.javascript.ScriptHelper;
 
 public class TypedArraysFactory

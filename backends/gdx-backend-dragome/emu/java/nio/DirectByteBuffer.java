@@ -19,11 +19,12 @@ package java.nio;
 
 import java.io.Numbers;
 
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Int8Array;
+
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.js.storage.Storage;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
 import com.badlogic.gdx.backends.dragome.utils.Endianness;
 
 /** DirectByteBuffer, DirectReadWriteByteBuffer and DirectReadOnlyHeapByteBuffer compose the implementation of direct byte buffers.
@@ -45,7 +46,7 @@ abstract class DirectByteBuffer extends BaseByteBuffer implements HasArrayBuffer
 
 	DirectByteBuffer(ArrayBuffer buf)
 	{
-		this(buf, buf.get_byteLength(), 0);
+		this(buf, buf.getByteLength(), 0);
 	}
 
 	DirectByteBuffer(ArrayBuffer buffer, int capacity, int offset)

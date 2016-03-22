@@ -30,20 +30,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.events.Event;
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Float64Array;
+import org.w3c.dom.typedarray.Int16Array;
+import org.w3c.dom.typedarray.Int32Array;
+import org.w3c.dom.typedarray.Int8Array;
+import org.w3c.dom.typedarray.Uint16Array;
+import org.w3c.dom.typedarray.Uint32Array;
+import org.w3c.dom.typedarray.Uint8Array;
 
 import com.badlogic.gdx.backends.dragome.js.storage.Storage;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float64Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.TypedArray;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint8Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint8ClampedArray;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLActiveInfo;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLBuffer;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLContextAttributes;
@@ -95,24 +93,25 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		paths= new HashSet<String>();
 		setClasspathFilter(new DefaultClasspathFilter()
 		{
-			public boolean accept(File pathname)
+			public boolean accept(File pathname, File folder)
 			{
-				boolean accept= super.accept(pathname);
-				String absolutePath= pathname.getAbsolutePath();
+				boolean accept= super.accept(pathname, folder);
 
-				if (absolutePath.contains("utils\\Json"))
+				String relativePath= folder.toURI().relativize(pathname.toURI()).getPath();
+
+				if (relativePath.contains("utils\\Json"))
 					return false;
 
-				String className= pathname.getName().replace(".class", "");
+				String className= relativePath.replace(".class", "");
 				if (paths.contains(className))
 					return false;
 
-				if (absolutePath.contains("gdx-backend-dragome"))
+				if (relativePath.contains("gdx-backend-dragome"))
 				{
 					paths.add(className);
 				}
 
-				System.out.println("ClassPathFilter: " + accept + " - " + absolutePath);
+				System.out.println("ClassPathFilter: " + accept + " - " + relativePath);
 
 				return accept;
 			}
@@ -140,7 +139,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 
 				String name= method.getName();
 				Class<?>[] superclass= method.getDeclaringClass().getInterfaces();
-				if (superclass.length > 0 && superclass[0].equals(TypedArray.class))
+				if (superclass.length > 0 && superclass[0].equals(ArrayBufferView.class))
 				{
 					if (name.equals("set") && method.getParameterTypes().length == 2 && method.getParameterTypes()[0].equals(int.class))
 						return "this.node[$1] = $2";
@@ -212,7 +211,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		add(Uint16Array.class);
 		add(Uint32Array.class);
 		add(Uint8Array.class);
-		add(Uint8ClampedArray.class);
 
 		add(Storage.class);
 		add(TypedArraysFactory.class);

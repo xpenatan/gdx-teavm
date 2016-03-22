@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +17,11 @@
 package com.badlogic.gdx.backends.dragome.js.webgl;
 
 import org.w3c.dom.html.HTMLImageElement;
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Int32Array;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.SharedArrayBuffer;
 import com.dragome.web.html.dom.html5canvas.interfaces.HTMLCanvasElement;
 import com.dragome.web.html.dom.html5canvas.interfaces.ImageData;
 
@@ -77,13 +76,9 @@ public interface WebGLRenderingContext {
 
 	public void bufferData (int target, ArrayBuffer data, int usage);
 
-	public void bufferData (int target, SharedArrayBuffer data, int usage);
-
 	public void bufferSubData (int target, int offset, ArrayBufferView data);
 
 	public void bufferSubData (int target, int offset, ArrayBuffer data);
-
-	public void bufferSubData (int target, int offset, SharedArrayBuffer data);
 
 	public int checkFramebufferStatus (int target);
 

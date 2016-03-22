@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,8 @@
 
 package com.badlogic.gdx.backends.dragome.js;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBuffer;
+
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
@@ -72,7 +73,7 @@ public class XMLHttpRequest {
 	 * <p>
 	 * See <a href="http://www.w3.org/TR/XMLHttpRequest/#the-responsetext-attribute" >http://www.w3.org/TR/XMLHttpRequest/#the-
 	 * responsetext-attribute</a>.
-	 * 
+	 *
 	 * @return the response text */
 	public String getResponseText () {
 		ScriptHelper.put("instance", instance, this);
@@ -96,7 +97,7 @@ public class XMLHttpRequest {
 	 * <p>
 	 * See <a href="http://www.w3.org/TR/XMLHttpRequest/#the-open-method" >http://
 	 * www.w3.org/TR/XMLHttpRequest/#the-open-method</a>.
-	 * 
+	 *
 	 * @param httpMethod the HTTP method to use
 	 * @param url the URL to be opened */
 	public void open (String httpMethod, String url) {
@@ -110,7 +111,7 @@ public class XMLHttpRequest {
 	 * <p>
 	 * See <a href="http://www.w3.org/TR/XMLHttpRequest/#the-open-method" >http://
 	 * www.w3.org/TR/XMLHttpRequest/#the-open-method</a>.
-	 * 
+	 *
 	 * @param httpMethod the HTTP method to use
 	 * @param url the URL to be opened
 	 * @param user user to use in the URL */
@@ -171,7 +172,7 @@ public class XMLHttpRequest {
 	 * <p>
 	 * See <a href="http://www.w3.org/TR/XMLHttpRequest/#the-send-method" >http://
 	 * www.w3.org/TR/XMLHttpRequest/#the-send-method</a>.
-	 * 
+	 *
 	 * @param requestData the data to be sent with the request */
 	public void send (String requestData) {
 		ScriptHelper.put("instance", instance, this);
@@ -203,7 +204,7 @@ public class XMLHttpRequest {
 	public interface ReadyStateChangeHandler {
 
 		/** This is called whenever the state of the XMLHttpRequest changes. See {@link XMLHttpRequest#setOnReadyStateChange}.
-		 * 
+		 *
 		 * @param xhr the object whose state has changed. */
 		@MethodAlias(local_alias = "onReadyStateChange")
 		void onReadyStateChange (XMLHttpRequest xhr);

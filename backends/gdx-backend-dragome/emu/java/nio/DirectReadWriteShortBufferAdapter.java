@@ -16,9 +16,10 @@
 
 package java.nio;
 
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Int16Array;
+
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
 
 /** This class wraps a byte buffer to be a short buffer.
  * <p>
@@ -144,7 +145,7 @@ final class DirectReadWriteShortBufferAdapter extends ShortBuffer implements Has
 		// if (position == limit) {
 		// throw new BufferOverflowException();
 		// }
-		shortArray.set(position++, (int) c);
+		shortArray.set(position++, c);
 		return this;
 	}
 
@@ -154,7 +155,7 @@ final class DirectReadWriteShortBufferAdapter extends ShortBuffer implements Has
 		// if (index < 0 || index >= limit) {
 		// throw new IndexOutOfBoundsException();
 		// }
-		shortArray.set(index, (int) c);
+		shortArray.set(index, c);
 		return this;
 	}
 

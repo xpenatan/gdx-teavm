@@ -18,7 +18,7 @@ package java.nio;
 
 import java.io.Numbers;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBuffer;
 
 /** DirectByteBuffer, DirectReadWriteByteBuffer and DirectReadOnlyByteBuffer compose the implementation of direct byte buffers.
  * <p>

@@ -16,9 +16,10 @@
 
 package java.nio;
 
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Int32Array;
+
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
 
 /** This class wraps a byte buffer to be a int buffer.
  * <p>

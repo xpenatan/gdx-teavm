@@ -16,9 +16,10 @@
 
 package java.nio;
 
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
 
 /** This class wraps a byte buffer to be a float buffer.
  * <p>

@@ -16,7 +16,8 @@
 
 package com.badlogic.gdx.backends.dragome.js.storage;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBuffer;
+
 import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;

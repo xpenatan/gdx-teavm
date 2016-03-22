@@ -16,7 +16,7 @@
 
 package java.nio;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
+import org.w3c.dom.typedarray.ArrayBufferView;
 
 public interface HasArrayBufferView {
 

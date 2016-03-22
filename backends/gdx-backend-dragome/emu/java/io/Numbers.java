@@ -16,10 +16,11 @@
 
 package java.io;
 
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Int32Array;
+import org.w3c.dom.typedarray.Int8Array;
+
 import com.badlogic.gdx.backends.dragome.TypedArraysFactory;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
 
 public class Numbers
 {

@@ -25,11 +25,12 @@ import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint8Array;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Int16Array;
+import org.w3c.dom.typedarray.Int32Array;
+import org.w3c.dom.typedarray.Uint8Array;
+
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLActiveInfo;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLBuffer;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFramebuffer;
@@ -107,7 +108,7 @@ public class DragomeGL20 implements GL20 {
 	public Int16Array copy (ShortBuffer buffer) {
 		ensureCapacity(buffer);
 		for (int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-			shortBuffer.set(j, (int) buffer.get(i));
+			shortBuffer.set(j, buffer.get(i));
 		}
 		return shortBuffer.subarray(0, buffer.remaining());
 	}
