@@ -84,7 +84,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		}
 
 		preloader = new Preloader(AssetDownloader.getHostPageBaseURL());
-		input = new DragomeInput();
+		input = new DragomeInput(this);
 		net = new DragomeNet();
 		files = new DragomeFiles(preloader);
 		audio = new DragomeAudio();

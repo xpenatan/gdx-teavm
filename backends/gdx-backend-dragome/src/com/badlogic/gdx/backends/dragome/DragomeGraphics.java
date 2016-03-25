@@ -19,6 +19,7 @@ package com.badlogic.gdx.backends.dragome;
 import org.w3c.dom.Element;
 import org.w3c.dom.webgl.WebGLContextAttributes;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFactory;
@@ -27,6 +28,7 @@ import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
@@ -35,6 +37,7 @@ import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 /** @author xpenatan */
 public class DragomeGraphics implements Graphics
 {
+	GLVersion glVersion;
 	HTMLCanvasElementExtension canvas;
 	GL20 gl;
 	String extensions;
@@ -73,7 +76,11 @@ public class DragomeGraphics implements Graphics
 			gl= new DragomeGL20Debug(context);
 		else
 			gl= new DragomeGL20(context);
-
+		
+		String versionString = gl.glGetString(GL20.GL_VERSION);
+		String vendorString = gl.glGetString(GL20.GL_VENDOR);
+		String rendererString = gl.glGetString(GL20.GL_RENDERER);
+//		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString); //FIXME needs fix
 		return true;
 	}
 
@@ -327,5 +334,10 @@ public class DragomeGraphics implements Graphics
 	@Override
 	public void setSystemCursor(SystemCursor systemCursor)
 	{
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return glVersion;
 	}
 }

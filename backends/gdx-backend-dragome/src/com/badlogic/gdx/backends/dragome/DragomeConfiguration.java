@@ -93,18 +93,13 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 
 				String relativePath= folder.toURI().relativize(pathname.toURI()).getPath();
 
-				if (relativePath.contains("utils\\Json"))
-					return false;
-
 				String className= relativePath.replace(".class", "");
 				if (paths.contains(className))
 					return false;
 
 				if (relativePath.contains("gdx-backend-dragome"))
-				{
 					paths.add(className);
-				}
-
+				
 				System.out.println("ClassPathFilter: " + accept + " - " + relativePath);
 
 				return accept;
