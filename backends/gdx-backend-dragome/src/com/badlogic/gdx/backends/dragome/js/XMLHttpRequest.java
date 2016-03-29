@@ -20,7 +20,7 @@ import org.w3c.dom.typedarray.ArrayBuffer;
 
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 
 /** @author xpenatan */
 public class XMLHttpRequest {
@@ -83,7 +83,7 @@ public class XMLHttpRequest {
 	public ArrayBuffer getResponseArrayBuffer () {
 		ScriptHelper.put("instance", instance, this);
 		Object instance = ScriptHelper.eval("instance.response", this);
-		return JsDelegateFactory.createFrom(instance, ArrayBuffer.class);
+		return JsCast.castTo(instance, ArrayBuffer.class);
 	}
 
 	public String getResponseHeader (String header) {

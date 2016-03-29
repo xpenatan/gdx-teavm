@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.html.CanvasPixelArray;
 import org.w3c.dom.html.CanvasRenderingContext2D;
 import org.w3c.dom.html.HTMLCanvasElement;
-import org.w3c.dom.html.Window;
 
 import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.files.FileHandle;
@@ -34,7 +33,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.services.WebServiceLocator;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 
 public class Pixmap implements Disposable
@@ -152,7 +151,7 @@ public class Pixmap implements Disposable
 		this.format= Format.RGBA8888;
 		Document document= WebServiceLocator.getInstance().getDomHandler().getDocument();
 		Element createElement= document.createElement("canvas");
-		canvas= JsDelegateFactory.createFromNode(createElement, HTMLCanvasElement.class);
+		canvas= JsCast.castTo(createElement, HTMLCanvasElement.class);
 		canvas.setWidth(width);
 		canvas.setHeight(height);
 		context= (CanvasRenderingContext2D) canvas.getContext("2d");

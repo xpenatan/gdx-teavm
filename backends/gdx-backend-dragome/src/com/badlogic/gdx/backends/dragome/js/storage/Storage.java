@@ -17,7 +17,7 @@
 package com.badlogic.gdx.backends.dragome.js.storage;
 
 import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
@@ -30,7 +30,7 @@ public interface Storage {
 		ArrayBufferFactory storage = null;
 		if (localStorageSupported || sessionStorageSupported) {
 			Object instance = ScriptHelper.eval("window.localStorage", null);
-			storage = JsDelegateFactory.createFrom(instance, ArrayBufferFactory.class);
+			storage = JsCast.castTo(instance, ArrayBufferFactory.class);
 		}
 		return storage;
 	}

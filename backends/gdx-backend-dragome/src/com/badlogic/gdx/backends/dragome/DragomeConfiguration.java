@@ -70,7 +70,7 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class, WebGLRenderingContextExtension.class, //
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class, //
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, //
-			ArrayBufferFactory.class, TypedArraysFactory.class);
+			ArrayBufferFactory.class, TypedArraysFactory.class, Object.class);
 
 	boolean cache= false;
 
@@ -99,7 +99,7 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 
 				if (relativePath.contains("gdx-backend-dragome"))
 					paths.add(className);
-				
+
 				System.out.println("ClassPathFilter: " + accept + " - " + relativePath);
 
 				return accept;

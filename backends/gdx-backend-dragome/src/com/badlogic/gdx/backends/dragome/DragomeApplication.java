@@ -18,6 +18,7 @@ package com.badlogic.gdx.backends.dragome;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -35,6 +36,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.view.DefaultVisualActivity;
 import com.dragome.web.dispatcher.EventDispatcherImpl;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 
@@ -302,8 +304,9 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		return preloader;
 	}
 
-	public void addEventListener (EventListener aEventListener, String... aEvent) {
+	public void addEventListener (EventListener aEventListener, String aEvent) {
 		Element theElement = elementBySelector.getElementBySelector("body");
-		EventDispatcherImpl.setEventListener(theElement, aEventListener, aEvent);
+		EventTarget eventTarget= JsCast.castTo(theElement, EventTarget.class);
+		eventTarget.addEventListener(aEvent, aEventListener, false);
 	}
 }

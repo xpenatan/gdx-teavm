@@ -3,7 +3,7 @@ package com.badlogic.gdx.backends.dragome.js.webgl;
 import org.w3c.dom.webgl.WebGLContextAttributes;
 
 import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 
 public class WebGLFactory
 {
@@ -11,7 +11,7 @@ public class WebGLFactory
 	{
 		WebGLContextAttributes attr= null;
 		Object instance= ScriptHelper.eval("{premultipliedAlpha:false}", null);
-		attr= JsDelegateFactory.createFrom(instance, WebGLContextAttributes.class);
+		attr= JsCast.castTo(instance, WebGLContextAttributes.class);
 		return attr;
 	}
 }

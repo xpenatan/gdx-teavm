@@ -27,7 +27,7 @@ import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 
@@ -232,13 +232,13 @@ public class AssetDownloader {
 
 	@MethodAlias(alias = "AssetDownloader_myEvent")
 	private static void myEvent (ImgEventListener h, Object instance) {
-		Event event = JsDelegateFactory.createFrom(instance, Event.class);
+		Event event = JsCast.castTo(instance, Event.class);
 		h.onEvent(event);
 	}
 
 	static HTMLImageElementExtension createImage () {
 		Object instance = ScriptHelper.eval("new Image()", null);
-		HTMLImageElementExtension img = JsDelegateFactory.createFrom(instance, HTMLImageElementExtension.class);
+		HTMLImageElementExtension img = JsCast.castTo(instance, HTMLImageElementExtension.class);
 		return img;
 	}
 

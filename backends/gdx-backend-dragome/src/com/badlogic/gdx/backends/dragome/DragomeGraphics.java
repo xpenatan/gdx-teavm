@@ -30,7 +30,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.dragome.commons.javascript.ScriptHelper;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateFactory;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
@@ -54,7 +54,7 @@ public class DragomeGraphics implements Graphics
 	{
 		this.app= app;
 		Element canvasElement= app.elementBySelector.getElementBySelector("canvas");
-		canvas= JsDelegateFactory.createFromNode(canvasElement, HTMLCanvasElementExtension.class);
+		canvas= JsCast.castTo(canvasElement, HTMLCanvasElementExtension.class);
 		this.config= config;
 	}
 
@@ -76,7 +76,7 @@ public class DragomeGraphics implements Graphics
 			gl= new DragomeGL20Debug(context);
 		else
 			gl= new DragomeGL20(context);
-		
+
 		String versionString = gl.glGetString(GL20.GL_VERSION);
 		String vendorString = gl.glGetString(GL20.GL_VENDOR);
 		String rendererString = gl.glGetString(GL20.GL_RENDERER);
@@ -336,7 +336,6 @@ public class DragomeGraphics implements Graphics
 	{
 	}
 
-	@Override
 	public GLVersion getGLVersion() {
 		return glVersion;
 	}
