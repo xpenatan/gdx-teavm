@@ -19,10 +19,8 @@ package com.badlogic.gdx.backends.dragome;
 import org.w3c.dom.Element;
 import org.w3c.dom.webgl.WebGLContextAttributes;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFactory;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
@@ -61,7 +59,7 @@ public class DragomeGraphics implements Graphics
 	public boolean init()
 	{
 		ScriptHelper.put("canvas", canvas, this);
-		WebGLContextAttributes attributes= WebGLFactory.create();
+		WebGLContextAttributes attributes= ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributes.class, null);
 		attributes.setAntialias(config.antialiasing);
 		attributes.setStencil(config.stencil);
 		attributes.setAlpha(config.alpha);
@@ -77,10 +75,10 @@ public class DragomeGraphics implements Graphics
 		else
 			gl= new DragomeGL20(context);
 
-		String versionString = gl.glGetString(GL20.GL_VERSION);
-		String vendorString = gl.glGetString(GL20.GL_VENDOR);
-		String rendererString = gl.glGetString(GL20.GL_RENDERER);
-//		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString); //FIXME needs fix
+		String versionString= gl.glGetString(GL20.GL_VERSION);
+		String vendorString= gl.glGetString(GL20.GL_VENDOR);
+		String rendererString= gl.glGetString(GL20.GL_RENDERER);
+		//		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString); //FIXME needs fix
 		return true;
 	}
 
@@ -336,7 +334,8 @@ public class DragomeGraphics implements Graphics
 	{
 	}
 
-	public GLVersion getGLVersion() {
+	public GLVersion getGLVersion()
+	{
 		return glVersion;
 	}
 }

@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.w3c.dom.XMLHttpRequest;
 import org.w3c.dom.events.Event;
+import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.ArrayBufferView;
 import org.w3c.dom.typedarray.Float32Array;
@@ -70,7 +72,7 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class, WebGLRenderingContextExtension.class, //
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class, //
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, //
-			ArrayBufferFactory.class, TypedArraysFactory.class, Object.class);
+			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, ProgressEvent.class);
 
 	boolean cache= false;
 
