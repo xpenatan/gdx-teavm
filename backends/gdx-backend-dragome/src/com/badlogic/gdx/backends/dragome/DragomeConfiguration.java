@@ -93,16 +93,20 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 			{
 				boolean accept= super.accept(pathname, folder);
 
+				
 				String relativePath= folder.toURI().relativize(pathname.toURI()).getPath();
 
 				String className= relativePath.replace(".class", "");
 				if (paths.contains(className))
-					return false;
+					accept = false;
+				
+				if(relativePath.contains("DragomeConfiguration"))
+					accept = false;
 
-				if (relativePath.contains("gdx-backend-dragome"))
+				if (accept && relativePath.contains("gdx-backend-dragome"))
 					paths.add(className);
 
-				System.out.println("ClassPathFilter: " + accept + " - " + relativePath);
+				System.out.println("ClassPathFilter: " + accept + " - " + relativePath + " FOLDER: " + folder.getAbsolutePath());
 
 				return accept;
 			}
