@@ -338,4 +338,10 @@ public class DragomeGraphics implements Graphics
 	{
 		return glVersion;
 	}
+
+	public void setUndecorated(boolean undecorated) {
+	}
+
+	public void setResizable(boolean resizable) {
+	}
 }
