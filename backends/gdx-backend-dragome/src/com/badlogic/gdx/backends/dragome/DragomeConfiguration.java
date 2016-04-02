@@ -127,20 +127,11 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 			flag= true;
 		else if (aClassPathEntry.contains("dragome-w3c-standards-") || aClassPathEntry.contains("dragome-w3c-standards\\bin"))
 			flag= true;
-		else if (aClassPathEntry.contains("dragome-callback-evictor-") || aClassPathEntry.contains("dragome-callback-evictor\\bin"))
-			flag= true;
-		else if (aClassPathEntry.contains("dragome-form-bindings-") || aClassPathEntry.contains("dragome-form-bindings\\bin"))
-			flag= true;
 		else if (aClassPathEntry.contains("dragome-core-") || aClassPathEntry.contains("dragome-core\\bin"))
-			flag= true;
-		else if (aClassPathEntry.contains("dragome-method-logger-") || aClassPathEntry.contains("dragome-method-logger\\bin"))
 			flag= true;
 		else if (aClassPathEntry.contains("dragome-web-") || aClassPathEntry.contains("dragome-web\\bin"))
 			flag= true;
-		else if (aClassPathEntry.contains("dragome-guia-web-") || aClassPathEntry.contains("dragome-guia-web\\bin"))
-			flag= true;
-		else if (aClassPathEntry.contains("dragome-guia-") || aClassPathEntry.contains("dragome-guia\\bin"))
-			flag= true;
+
 		System.out.println("flag: " + flag + " path: " + aClassPathEntry);
 		return flag;
 	}

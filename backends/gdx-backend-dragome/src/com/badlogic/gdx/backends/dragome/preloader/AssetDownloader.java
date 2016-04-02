@@ -19,6 +19,8 @@ package com.badlogic.gdx.backends.dragome.preloader;
 import org.w3c.dom.EventHandler;
 import org.w3c.dom.XMLHttpRequest;
 import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.html.HTMLImageElement;
 import org.w3c.dom.typedarray.ArrayBuffer;
@@ -279,18 +281,16 @@ public class AssetDownloader
 
 	static void hookImgListener(HTMLImageElementExtension img, ImgEventListener h)
 	{
-		ScriptHelper.put("img", img, null);
-		ScriptHelper.put("h", h, null);
-
-		ScriptHelper.evalNoResult("img.node.addEventListener('load', function(e) {AssetDownloader_myEvent(h, e);}, false)", null);
-		ScriptHelper.evalNoResult("img.node.addEventListener('error', function(e) {AssetDownloader_myEvent(h, e);}, false)", null);
-	}
-
-	@MethodAlias(alias= "AssetDownloader_myEvent")
-	private static void myEvent(ImgEventListener h, Object instance)
-	{
-		Event event= JsCast.castTo(instance, Event.class);
-		h.onEvent(event);
+		EventTarget eventTarget= JsCast.castTo(img, EventTarget.class);
+		EventListener listener= new EventListener()
+		{
+			public void handleEvent(Event evt)
+			{
+				h.onEvent(evt);
+			}
+		};
+		eventTarget.addEventListener("load", listener, false);
+		eventTarget.addEventListener("error", listener, false);
 	}
 
 	static HTMLImageElementExtension createImage()
