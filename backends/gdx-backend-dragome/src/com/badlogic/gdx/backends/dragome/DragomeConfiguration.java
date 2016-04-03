@@ -17,7 +17,6 @@
 package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
-import java.util.Comparator;
 
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.ClassPath;
