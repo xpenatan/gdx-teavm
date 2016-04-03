@@ -17,6 +17,7 @@
 package com.badlogic.gdx.backends.dragome;
 
 import java.io.File;
+import java.net.URL;
 
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.ClassPath;
@@ -68,6 +69,11 @@ public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 					return 0;
 			}
 		});
+	}
+
+	public URL getAdditionalCodeKeepConfigFile()
+	{
+		return DragomeConfiguration.class.getResource("/additional-code-keep.conf");
 	}
 
 	public boolean isCheckingCast()
