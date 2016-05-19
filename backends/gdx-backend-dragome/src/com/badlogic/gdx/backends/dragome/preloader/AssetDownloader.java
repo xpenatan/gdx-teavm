@@ -98,7 +98,7 @@ public class AssetDownloader
 		}
 	}
 
-	public void loadText(String url, final AssetLoaderListener<String> listener)
+	public static void loadText(String url, final AssetLoaderListener<String> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 
@@ -121,7 +121,41 @@ public class AssetDownloader
 			}
 		});
 
-		ScriptHelper.put("request", request, this);
+		ScriptHelper.put("request", request, null);
+		setOnProgress(request, listener);
+		request.open("GET", url);
+		request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
+		request.send();
+	}
+	
+	public static void loadScript(String url, final AssetLoaderListener<String> listener)
+	{
+		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
+		
+		request.setOnreadystatechange(new EventHandler()
+		{
+			@Override
+			public void handleEvent(Event evt)
+			{
+				if (request.getReadyState() == XMLHttpRequest.DONE)
+				{
+					if (request.getStatus() != 200)
+					{
+						listener.onFailure();
+					}
+					else
+					{
+						ScriptHelper.put("code", request.getResponse(), this);
+						ScriptHelper.evalNoResult(""
+						+ "var newScriptTag = document.createElement('script');"
+						+ "newScriptTag.appendChild(document.createTextNode(code.node));"
+						+ "document.body.appendChild(newScriptTag);", this);
+						listener.onSuccess(request.getResponseText());
+					}
+				}
+			}
+		});
+		ScriptHelper.put("request", request, null);
 		setOnProgress(request, listener);
 		request.open("GET", url);
 		request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");

@@ -35,7 +35,6 @@ import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.view.DefaultVisualActivity;
-import com.dragome.web.dispatcher.EventDispatcherImpl;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
@@ -70,10 +69,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 // Element elementById = document.getElementById("body");
 // elementById.appendChild(createElement);
 
-		prepate();
+		prepare();
 	}
 
-	private void prepate () {
+	private void prepare () {
 		listener = createApplicationListener();
 		if (listener == null) return;
 		DragomeApplicationConfiguration config = getConfig();

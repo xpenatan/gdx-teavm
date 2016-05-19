@@ -30,12 +30,20 @@ import com.dragome.web.config.DomHandlerApplicationConfigurator;
 public class DragomeConfiguration extends DomHandlerApplicationConfigurator
 {
 	String projName;
+	
+	boolean deleteCache = true;
 
 	public DragomeConfiguration()
 	{
 		String projPath= System.getProperty("user.dir");
 		File file= new File(projPath);
 		projName= file.getName();
+		
+		if(deleteCache) {
+			File file2 = new File(projPath + "\\target\\dragome.cache");
+			if (file2.exists()) 
+				file2.delete();
+		}
 	}
 
 	public boolean filterClassPath(String aClassPathEntry)
