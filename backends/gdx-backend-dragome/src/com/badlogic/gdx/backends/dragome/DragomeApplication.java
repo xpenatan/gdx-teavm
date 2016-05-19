@@ -101,22 +101,6 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		lastWidth = graphics.getWidth();
 		lastHeight = graphics.getHeight();
 
-		try {
-			listener.create();
-			onResize();
-		} catch (Throwable t) {
-			error("DragomeApplication", "exception: " + t.getMessage(), t);
-			t.printStackTrace();
-			throw new RuntimeException(t);
-		}
-
-		DragomeWindow.onResize(new Runnable() {
-
-			@Override
-			public void run () {
-				onResize();
-			}
-		});
 
 //		new Timer().setInterval(new Runnable() {
 //			public void run () {
@@ -134,7 +118,24 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			@Override
 			public void run () {
 				try {
-					mainLoop();
+					if(init == false)
+					{
+						if(AssetDownloader.getQueue() == 0)
+						{
+							init = true;
+							listener.create();
+							onResize();
+							
+							DragomeWindow.onResize(new Runnable() {
+								@Override
+								public void run () {
+									onResize();
+								}
+							});
+						}
+					}
+					else
+						mainLoop();
 				} catch (Throwable t) {
 					error("DragomeApplication", "exception: " + t.getMessage(), t);
 					throw new RuntimeException(t);
@@ -142,9 +143,6 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
 		}, graphics.canvas);
-
-
-		init = true;
 	}
 
 	protected void onResize () {

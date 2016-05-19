@@ -38,6 +38,7 @@ import com.dragome.web.html.dom.w3c.TypedArraysFactory;
  * @author xpenatan */
 public class AssetDownloader
 {
+	static int queue;
 	public AssetDownloader()
 	{
 		useBrowserCache= true;
@@ -152,9 +153,11 @@ public class AssetDownloader
 						+ "document.body.appendChild(newScriptTag);", this);
 						listener.onSuccess(request.getResponseText());
 					}
+					queue--;
 				}
 			}
 		});
+		queue++;
 		ScriptHelper.put("request", request, null);
 		setOnProgress(request, listener);
 		request.open("GET", url);
@@ -162,6 +165,10 @@ public class AssetDownloader
 		request.send();
 	}
 
+	public static int getQueue()
+	{
+		return queue;
+	}
 	public ArrayBuffer getResponseArrayBuffer(XMLHttpRequest anInstance)
 	{
 		ScriptHelper.put("instance", anInstance, this);
