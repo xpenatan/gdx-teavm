@@ -22,7 +22,7 @@ import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
  * @author xpenatan */
-public interface Storage {
+public interface Storage { // FIXME need to finish this class.
 	static final boolean localStorageSupported = checkStorageSupport("localStorage");
 	static final boolean sessionStorageSupported = checkStorageSupport("sessionStorage");
 

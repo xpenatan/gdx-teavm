@@ -60,18 +60,16 @@ public class Preloader {
 	}
 
 	public final String baseUrl;
-	AssetDownloader loader;
 
 	public Preloader (String newBaseURL) {
 
 		baseUrl = newBaseURL;
-		loader = new AssetDownloader();
 
 	}
 
 	public void preload (final String assetFileUrl) {
 
-		loader.loadText(baseUrl + assetFileUrl, new AssetLoaderListener<String>() {
+		AssetDownloader.loadText(baseUrl + assetFileUrl, new AssetLoaderListener<String>() {
 			@Override
 			public void onProgress (double amount) {
 			}
@@ -96,7 +94,7 @@ public class Preloader {
 					if (tokens[0].equals("a")) type = AssetType.Audio;
 					if (tokens[0].equals("d")) type = AssetType.Directory;
 					long size = Long.parseLong(tokens[2]);
-					if (type == AssetType.Audio && !loader.isUseBrowserCache()) {
+					if (type == AssetType.Audio && !AssetDownloader.isUseBrowserCache()) {
 						size = 0;
 					}
 					assets.add(new Asset(tokens[1].trim(), type, size, tokens[3]));
@@ -130,9 +128,8 @@ public class Preloader {
 		});
 	}
 
-	public void loadAsset (final String url, final AssetType type, final String mimeType,
-		final AssetLoaderListener<Object> listener) {
-		loader.load(baseUrl + "assets/" + url, type, mimeType, new AssetLoaderListener<Object>() {
+	public void loadAsset (final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
+		AssetDownloader.load(baseUrl + "assets/" + url, type, mimeType, new AssetLoaderListener<Object>() {
 			@Override
 			public void onProgress (double amount) {
 				listener.onProgress(amount);

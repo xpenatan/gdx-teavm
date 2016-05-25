@@ -31,9 +31,12 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
+import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
+import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
+import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.view.DefaultVisualActivity;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
@@ -53,7 +56,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	Clipboard clipboard;
 	boolean init;
 	Preloader preloader;
-
+	private int logLevel = LOG_INFO;
 	private Array<Runnable> runnables = new Array<Runnable>();
 	private Array<Runnable> runnablesHelper = new Array<Runnable>();
 	private Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(); // FIXME need a proper impl
@@ -73,6 +76,12 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	private void prepare () {
+		preloader = new Preloader(AssetDownloader.getHostPageBaseURL());
+		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<Object>();
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
 		listener = createApplicationListener();
 		if (listener == null) return;
 		DragomeApplicationConfiguration config = getConfig();
@@ -84,7 +93,6 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			return;
 		}
 
-		preloader = new Preloader(AssetDownloader.getHostPageBaseURL());
 		input = new DragomeInput(this);
 		net = new DragomeNet();
 		files = new DragomeFiles(preloader);
@@ -209,36 +217,58 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	@Override
-	public void log (String tag, String message) {
-	}
-
-	@Override
-	public void log (String tag, String message, Throwable exception) {
-	}
-
-	@Override
-	public void error (String tag, String message) {
-	}
-
-	@Override
-	public void error (String tag, String message, Throwable exception) {
-	}
-
-	@Override
 	public void debug (String tag, String message) {
+		if (logLevel >= LOG_DEBUG) {
+			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+		}
 	}
 
 	@Override
 	public void debug (String tag, String message, Throwable exception) {
+		if (logLevel >= LOG_DEBUG) {
+			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+			exception.printStackTrace(System.out);
+		}
+	}
+
+	@Override
+	public void log (String tag, String message) {
+		if (logLevel >= LOG_INFO) {
+			System.out.println(tag + ": " + message);
+		}
+	}
+
+	@Override
+	public void log (String tag, String message, Throwable exception) {
+		if (logLevel >= LOG_INFO) {
+			System.out.println(tag + ": " + message);
+			exception.printStackTrace(System.out);
+		}
+	}
+
+	@Override
+	public void error (String tag, String message) {
+		if (logLevel >= LOG_ERROR) {
+			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+		}
+	}
+
+	@Override
+	public void error (String tag, String message, Throwable exception) {
+		if (logLevel >= LOG_ERROR) {
+			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+			exception.printStackTrace(System.err);
+		}
 	}
 
 	@Override
 	public void setLogLevel (int logLevel) {
+		this.logLevel = logLevel;
 	}
 
 	@Override
 	public int getLogLevel () {
-		return 0;
+		return logLevel;
 	}
 
 	@Override

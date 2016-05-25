@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.dragome.DragomeApplication;
 import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
+import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
+import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.tests.dragome.examples.AnimationTest;
 import com.dragome.web.annotations.PageAlias;
 
@@ -13,6 +15,7 @@ public class AnimationLauncher extends DragomeApplication
 	@Override
 	public ApplicationListener createApplicationListener()
 	{
+		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<Object>());
 		return new AnimationTest();
 	}
 

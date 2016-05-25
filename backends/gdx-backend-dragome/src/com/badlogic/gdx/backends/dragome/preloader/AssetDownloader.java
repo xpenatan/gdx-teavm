@@ -39,43 +39,43 @@ import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 public class AssetDownloader
 {
 	static int queue;
-	public AssetDownloader()
+	static boolean useBrowserCache = true;
+	static boolean useInlineBase64;
+	
+	
+	private AssetDownloader(){}
+
+	public static void setUseBrowserCache(boolean useBrowserCache)
 	{
-		useBrowserCache= true;
-		useInlineBase64= false;
+		AssetDownloader.useBrowserCache= useBrowserCache;
 	}
 
-	public void setUseBrowserCache(boolean useBrowserCache)
+	public static boolean isUseBrowserCache()
 	{
-		this.useBrowserCache= useBrowserCache;
+		return AssetDownloader.useBrowserCache;
 	}
 
-	public boolean isUseBrowserCache()
+	public static void setUseInlineBase64(boolean useInlineBase64)
 	{
-		return useBrowserCache;
+		AssetDownloader.useInlineBase64= useInlineBase64;
 	}
 
-	public void setUseInlineBase64(boolean useInlineBase64)
+	public static boolean isUseInlineBase64()
 	{
-		this.useInlineBase64= useInlineBase64;
+		return AssetDownloader.useInlineBase64;
 	}
 
-	public boolean isUseInlineBase64()
-	{
-		return useInlineBase64;
-	}
-
-	public interface AssetLoaderListener<T>
+	public static class AssetLoaderListener<T>
 	{
 		@MethodAlias(local_alias= "onProgress")
-		public void onProgress(double amount);
+		public void onProgress(double amount){}
 
-		public void onFailure();
+		public void onFailure(){}
 
-		public void onSuccess(T result);
+		public void onSuccess(T result){}
 	}
 
-	public void load(String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
+	public static void load(String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
 	{
 		switch (type)
 		{
@@ -118,10 +118,11 @@ public class AssetDownloader
 					{
 						listener.onSuccess(request.getResponseText());
 					}
+					queue--;
 				}
 			}
 		});
-
+		queue++;
 		ScriptHelper.put("request", request, null);
 		setOnProgress(request, listener);
 		request.open("GET", url);
@@ -129,7 +130,7 @@ public class AssetDownloader
 		request.send();
 	}
 	
-	public static void loadScript(String url, final AssetLoaderListener<String> listener)
+	public static void loadScript(String url, final AssetLoaderListener<Object> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 		
@@ -169,14 +170,14 @@ public class AssetDownloader
 	{
 		return queue;
 	}
-	public ArrayBuffer getResponseArrayBuffer(XMLHttpRequest anInstance)
+	public static ArrayBuffer getResponseArrayBuffer(XMLHttpRequest anInstance)
 	{
-		ScriptHelper.put("instance", anInstance, this);
-		Object instance= ScriptHelper.eval("instance.node.response", this);
+		ScriptHelper.put("instance", anInstance, null);
+		Object instance= ScriptHelper.eval("instance.node.response", null);
 		return JsCast.castTo(instance, ArrayBuffer.class);
 	}
 
-	public void loadBinary(final String url, final AssetLoaderListener<Blob> listener)
+	public static void loadBinary(final String url, final AssetLoaderListener<Blob> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 		request.setOnreadystatechange(new EventHandler()
@@ -196,16 +197,18 @@ public class AssetDownloader
 						Int8Array data= TypedArraysFactory.createInstanceOf(Int8Array.class, responseArrayBuffer);
 						listener.onSuccess(new Blob(data));
 					}
+					queue--;
 				}
 			}
 		});
+		queue++;
 		setOnProgress(request, listener);
 		request.open("GET", url);
 		request.setResponseType("arraybuffer");
 		request.send();
 	}
 
-	public void loadAudio(String url, final AssetLoaderListener<Void> listener)
+	public static void loadAudio(String url, final AssetLoaderListener<Void> listener)
 	{
 		if (useBrowserCache)
 		{
@@ -237,12 +240,12 @@ public class AssetDownloader
 		}
 	}
 
-	public void loadImage(final String url, final String mimeType, final AssetLoaderListener<HTMLImageElement> listener)
+	public static void loadImage(final String url, final String mimeType, final AssetLoaderListener<HTMLImageElement> listener)
 	{
 		loadImage(url, mimeType, null, listener);
 	}
 
-	public void loadImage(final String url, final String mimeType, final String crossOrigin, final AssetLoaderListener<HTMLImageElement> listener)
+	public static void loadImage(final String url, final String mimeType, final String crossOrigin, final AssetLoaderListener<HTMLImageElement> listener)
 	{
 		if (useBrowserCache || useInlineBase64)
 		{
@@ -269,6 +272,7 @@ public class AssetDownloader
 					{
 						image.setAttribute("crossOrigin", crossOrigin);
 					}
+					queue++;
 					hookImgListener(image, new ImgEventListener()
 					{
 						@Override
@@ -278,6 +282,7 @@ public class AssetDownloader
 								listener.onFailure();
 							else
 								listener.onSuccess(image);
+							queue--;
 						}
 					});
 					if (isUseInlineBase64())
@@ -299,6 +304,7 @@ public class AssetDownloader
 			{
 				image.setAttribute("crossOrigin", crossOrigin);
 			}
+			queue++;
 			hookImgListener(image, new ImgEventListener()
 			{
 				@Override
@@ -308,6 +314,7 @@ public class AssetDownloader
 						listener.onFailure();
 					else
 						listener.onSuccess(image);
+					queue--;
 				}
 			});
 			image.setSrc(url);
@@ -352,10 +359,6 @@ public class AssetDownloader
 			}
 		});
 	}
-
-	private boolean useBrowserCache;
-
-	private boolean useInlineBase64;
 
 	public static String getHostPageBaseURL()
 	{
