@@ -13,8 +13,7 @@ This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generat
 ## Demos:
 * [AnimationTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?AnimationTest) 
 * [Gears Demo](http://xpenatan.github.io/gdx-dragome-backend/index.html?Gears)
-* BulletTest - soon (Creating JS project generator)
-
+* [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest) (Experimental)
 
 ## Instructions for Eclipse (Import and launch)
 * Must have Libgdx source project set in eclipse.
