@@ -23,16 +23,17 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.html.HTMLImageElement;
-import org.w3c.dom.typedarray.ArrayBuffer;
-import org.w3c.dom.typedarray.Int8Array;
 
+import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
+import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
+import com.badlogic.gdx.backends.dragome.js.typedarrays.utils.TypedArrays;
+import com.badlogic.gdx.backends.dragome.js.typedarrays.utils.TypedArraysFactory;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
-import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 
 /** Adapted from gwt backend
  * @author xpenatan */
@@ -194,7 +195,7 @@ public class AssetDownloader
 					else
 					{
 						ArrayBuffer responseArrayBuffer= getResponseArrayBuffer(request);
-						Int8Array data= TypedArraysFactory.createInstanceOf(Int8Array.class, responseArrayBuffer);
+						Int8Array data= TypedArrays.createInt8Array(responseArrayBuffer);
 						listener.onSuccess(new Blob(data));
 					}
 					queue--;
@@ -327,7 +328,7 @@ public class AssetDownloader
 		public void onEvent(Event event);
 	}
 
-	static void hookImgListener(HTMLImageElementExtension img, ImgEventListener h)
+	static void hookImgListener(HTMLImageElementExtension img, final ImgEventListener h)
 	{
 		EventTarget eventTarget= JsCast.castTo(img, EventTarget.class);
 		EventListener listener= new EventListener()
@@ -348,7 +349,7 @@ public class AssetDownloader
 		return img;
 	}
 
-	private static void setOnProgress(XMLHttpRequest req, AssetLoaderListener<?> listener)
+	private static void setOnProgress(XMLHttpRequest req, final AssetLoaderListener<?> listener)
 	{
 		req.setOnprogress(new EventHandler()
 		{

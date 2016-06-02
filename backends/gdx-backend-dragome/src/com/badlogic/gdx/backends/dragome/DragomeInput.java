@@ -17,15 +17,26 @@
 package com.badlogic.gdx.backends.dragome;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.KeyboardEvent;
+import org.w3c.dom.events.MouseEvent;
+import org.w3c.dom.events.Touch;
+import org.w3c.dom.html.HTMLCanvasElement;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.backends.dragome.utils.KeyCodes;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.dragome.commons.javascript.ScriptHelper;
+import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 
-/** Ported from GWT backend. //FIXME need to finish.
+/** Ported from GWT backend.
  * @author xpenatan */
 public class DragomeInput implements Input {
 
@@ -50,45 +61,58 @@ public class DragomeInput implements Input {
 	final HTMLCanvasElementExtension canvas;
 	boolean hasFocus = true;
 	
+	/** The left JS mouse button. */
+	private static final int BUTTON_LEFT = 1;
+	/** The middle JS mouse button. */
+	private static final int BUTTON_MIDDLE = 4;
+	/** The right JS mouse button. */
+	private static final int BUTTON_RIGHT = 2;
+	
 	public DragomeInput (DragomeApplication app) {
 		this.canvas = app.graphics.canvas;
 		document = app.elementBySelector.getDocument();
-//		hookEvents();
+		hookEvents();
 	}
 	
 	private void hookEvents () {
-		addEventListener(canvas, "mousedown", this, true);
-		addEventListener(document, "mousedown", this, true);
-		addEventListener(canvas, "mouseup", this, true);
-		addEventListener(document, "mouseup", this, true);
-		addEventListener(canvas, "mousemove", this, true);
-		addEventListener(document, "mousemove", this, true);
-		addEventListener(canvas, getMouseWheelEvent(), this, true);
-		addEventListener(document, "keydown", this, false);
-		addEventListener(document, "keyup", this, false);
-		addEventListener(document, "keypress", this, false);
-
-		addEventListener(canvas, "touchstart", this, true);
-		addEventListener(canvas, "touchmove", this, true);
-		addEventListener(canvas, "touchcancel", this, true);
-		addEventListener(canvas, "touchend", this, true);
-
-	}
-	
-	// kindly borrowed from our dear playn friends...
-		static void addEventListener (Object target, String name, DragomeInput handler, boolean capture) {
-			
-			
-			ScriptHelper.evalNoResult("target.addEventListener(name,function(e){ },capture)", null);
-			
-//			target
-//					.addEventListener(
-//							name,
-//							function(e) {
-//								handler.@com.badlogic.gdx.backends.gwt.GwtInput::handleEvent(Lcom/google/gwt/dom/client/NativeEvent;)(e);
-//							}, capture);
+		
+		EventListener eventListener = new EventListener() {
+			@Override
+			public void handleEvent(Event evt) {
+				DragomeInput.this.handleEvent(evt);
+			}
 		};
 		
+//		EventTarget win = ScriptHelper.evalCasting("window", EventTarget.class, this);
+//		win.addEventListener("keydown", eventListener, false);
+//		MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
+		
+		
+		EventTarget docTarget = JsCast.castTo(document, EventTarget.class);
+		EventTarget canvasTarget = JsCast.castTo(canvas, EventTarget.class);
+		
+		
+		canvasTarget.addEventListener("mousedown", eventListener, false);
+//		docTarget.addEventListener("mousedown", eventListener, false);
+		canvasTarget.addEventListener("mouseup", eventListener, false);
+		docTarget.addEventListener("mouseup", eventListener, false);
+		canvasTarget.addEventListener("mousemove", eventListener, false);
+		docTarget.addEventListener("mousemove", eventListener, false);
+		
+//		addEventListener(canvas, getMouseWheelEvent(), this, true);
+		docTarget.addEventListener("keydown", eventListener, false);
+		docTarget.addEventListener("keyup", eventListener, false);
+		docTarget.addEventListener("keypress", eventListener, false);
+//
+//		addEventListener(canvas, "touchstart", this, true);
+//		addEventListener(canvas, "touchmove", this, true);
+//		addEventListener(canvas, "touchcancel", this, true);
+//		addEventListener(canvas, "touchend", this, true);
+		
+		
+	
+	}
+	
 		
 	/** Kindly borrowed from PlayN. **/
 	protected static String getMouseWheelEvent() {
@@ -99,8 +123,38 @@ public class DragomeInput implements Input {
 		}
 	};
 	
-//	private void handleEvent (Event e) {
-//		if (e.getType().equals("mousedown")) {
+	
+	
+	/** from https://github.com/toji/game-shim/blob/master/game-shim.js
+	 * @param event JavaScript Mouse Event
+	 * @return movement in x direction */
+	private float getMovementXJS (Event event) {
+		return ScriptHelper.evalFloat("event.node.movementX || event.node.webkitMovementX || 0", this);
+	};
+
+	/** from https://github.com/toji/game-shim/blob/master/game-shim.js
+	 * @param event JavaScript Mouse Event
+	 * @return movement in y direction */
+	private float getMovementYJS (Event event) { 
+		return ScriptHelper.evalFloat("event.node.movementY || event.node.webkitMovementY || 0", this);
+	};
+
+//	private static native boolean isTouchScreen () /*-{
+//		return (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
+//	}-*/;
+//	
+	
+	private int getButton (int button) {
+		if (button == BUTTON_LEFT) return Buttons.LEFT;
+		if (button == BUTTON_RIGHT) return Buttons.RIGHT;
+		if (button == BUTTON_MIDDLE) return Buttons.MIDDLE;
+		return Buttons.LEFT;
+	}
+	
+	private void handleEvent (Event evt) {
+		String type = evt.getType();
+		if (type.equals("mousedown")) {
+			MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
 //			if (!e.getTarget().equals(canvas) || touched[0]) {
 //				float mouseX = getRelativeX(e, canvas);
 //				float mouseY = getRelativeY(e, canvas);
@@ -109,109 +163,115 @@ public class DragomeInput implements Input {
 //				}
 //				return;
 //			}
-//			hasFocus = true;
-//			this.justTouched = true;
-//			this.touched[0] = true;
-//			this.pressedButtons.add(getButton(e.getButton()));
-//			this.deltaX[0] = 0;
-//			this.deltaY[0] = 0;
-//			if (isCursorCatched()) {
-//				this.touchX[0] += getMovementXJSNI(e);
-//				this.touchY[0] += getMovementYJSNI(e);
-//			} else {
-//				this.touchX[0] = getRelativeX(e, canvas);
-//				this.touchY[0] = getRelativeY(e, canvas);
-//			}
-//			this.currentEventTimeStamp = TimeUtils.nanoTime();
-//			if (processor != null) processor.touchDown(touchX[0], touchY[0], 0, getButton(e.getButton()));
-//		}
-//
-//		if (e.getType().equals("mousemove")) {
-//			if (isCursorCatched()) {
-//				this.deltaX[0] = (int)getMovementXJSNI(e);
-//				this.deltaY[0] = (int)getMovementYJSNI(e);
-//				this.touchX[0] += getMovementXJSNI(e);
-//				this.touchY[0] += getMovementYJSNI(e);
-//			} else {
-//				this.deltaX[0] = getRelativeX(e, canvas) - touchX[0];
-//				this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
-//				this.touchX[0] = getRelativeX(e, canvas);
-//				this.touchY[0] = getRelativeY(e, canvas);
-//			}
-//			this.currentEventTimeStamp = TimeUtils.nanoTime();
-//			if (processor != null) {
-//				if (touched[0])
-//					processor.touchDragged(touchX[0], touchY[0], 0);
-//				else
-//					processor.mouseMoved(touchX[0], touchY[0]);
-//			}
-//		}
-//
-//		if (e.getType().equals("mouseup")) {
-//			if (!touched[0]) return;
-//			this.pressedButtons.remove(getButton(e.getButton()));
-//			this.touched[0] = pressedButtons.size > 0;
-//			if (isCursorCatched()) {
-//				this.deltaX[0] = (int)getMovementXJSNI(e);
-//				this.deltaY[0] = (int)getMovementYJSNI(e);
-//				this.touchX[0] += getMovementXJSNI(e);
-//				this.touchY[0] += getMovementYJSNI(e);
-//			} else {
-//				this.deltaX[0] = getRelativeX(e, canvas) - touchX[0];
-//				this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
-//				this.touchX[0] = getRelativeX(e, canvas);
-//				this.touchY[0] = getRelativeY(e, canvas);
-//			}
-//			this.currentEventTimeStamp = TimeUtils.nanoTime();
-//			this.touched[0] = false;
-//			if (processor != null) processor.touchUp(touchX[0], touchY[0], 0, getButton(e.getButton()));
-//		}
-//		if (e.getType().equals(getMouseWheelEvent())) {
+			hasFocus = true;
+			this.justTouched = true;
+			this.touched[0] = true;
+			this.pressedButtons.add(getButton(e.getButton()));
+			this.deltaX[0] = 0;
+			this.deltaY[0] = 0;
+			if (isCursorCatched()) {
+				this.touchX[0] += getMovementXJS(e);
+				this.touchY[0] += getMovementYJS(e);
+			} else {
+				this.touchX[0] = getRelativeX(e, canvas);
+				this.touchY[0] = getRelativeY(e, canvas);
+			}
+			this.currentEventTimeStamp = TimeUtils.nanoTime();
+			if (processor != null)
+				processor.touchDown(touchX[0], touchY[0], 0, getButton(e.getButton()));
+		}
+				
+		
+
+		if (type.equals("mousemove")) {
+			MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
+			if (isCursorCatched()) {
+				this.deltaX[0] = (int)getMovementXJS(e);
+				this.deltaY[0] = (int)getMovementYJS(e);
+				this.touchX[0] += getMovementXJS(e);
+				this.touchY[0] += getMovementYJS(e);
+			} else {
+				this.deltaX[0] = getRelativeX(e, canvas) - touchX[0];
+				this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
+				this.touchX[0] = getRelativeX(e, canvas);
+				this.touchY[0] = getRelativeY(e, canvas);
+			}
+			this.currentEventTimeStamp = TimeUtils.nanoTime();
+			if (processor != null) {
+				if (touched[0])
+					processor.touchDragged(touchX[0], touchY[0], 0);
+				else
+					processor.mouseMoved(touchX[0], touchY[0]);
+			}
+		}
+
+		if (type.equals("mouseup")) {
+			MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
+			if (!touched[0]) return;
+			this.pressedButtons.remove(getButton(e.getButton()));
+			this.touched[0] = pressedButtons.size > 0;
+			if (isCursorCatched()) {
+				this.deltaX[0] = (int)getMovementXJS(e);
+				this.deltaY[0] = (int)getMovementYJS(e);
+				this.touchX[0] += getMovementXJS(e);
+				this.touchY[0] += getMovementYJS(e);
+			} else {
+				this.deltaX[0] = getRelativeX(e, canvas) - touchX[0];
+				this.deltaY[0] = getRelativeY(e, canvas) - touchY[0];
+				this.touchX[0] = getRelativeX(e, canvas);
+				this.touchY[0] = getRelativeY(e, canvas);
+			}
+			this.currentEventTimeStamp = TimeUtils.nanoTime();
+			this.touched[0] = false;
+			if (processor != null) processor.touchUp(touchX[0], touchY[0], 0, getButton(e.getButton()));
+		}
+//		if (type.equals(getMouseWheelEvent())) {
+//			MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
 //			if (processor != null) {
 //				processor.scrolled((int)getMouseWheelVelocity(e));
 //			}
 //			this.currentEventTimeStamp = TimeUtils.nanoTime();
 //			e.preventDefault();
 //		}
-//		if (e.getType().equals("keydown") && hasFocus) {
-//			// System.out.println("keydown");
-//			int code = keyForCode(e.getKeyCode());
-//			if (code == 67) {
-//				e.preventDefault();
-//				if (processor != null) {
-//					processor.keyDown(code);
-//					processor.keyTyped('\b');
-//				}
-//			} else {
-//				if (!pressedKeys[code]) {
-//					pressedKeyCount++;
-//					pressedKeys[code] = true;
-//					keyJustPressed = true;
-//					justPressedKeys[code] = true;
-//					if (processor != null) {
-//						processor.keyDown(code);
-//					}
-//				}
-//			}
-//		}
-//
-//		if (e.getType().equals("keypress") && hasFocus) {
-//			// System.out.println("keypress");
-//			char c = (char)e.getCharCode();
-//			if (processor != null) processor.keyTyped(c);
-//		}
-//
-//		if (e.getType().equals("keyup") && hasFocus) {
-//			// System.out.println("keyup");
-//			int code = keyForCode(e.getKeyCode());
-//			if (pressedKeys[code]) {
-//				pressedKeyCount--;
-//				pressedKeys[code] = false;
-//			}
-//			if (processor != null) {
-//				processor.keyUp(code);
-//			}
-//		}
+		if (type.equals("keydown") && hasFocus) {
+			KeyboardEvent e = JsCast.castTo(evt, KeyboardEvent.class);
+			int code = keyForCode(e.getKeyCode());
+			if (code == 67) {
+				e.preventDefault();
+				if (processor != null) {
+					processor.keyDown(code);
+					processor.keyTyped('\b');
+				}
+			} else {
+				if (!pressedKeys[code]) {
+					pressedKeyCount++;
+					pressedKeys[code] = true;
+					keyJustPressed = true;
+					justPressedKeys[code] = true;
+					if (processor != null) {
+						processor.keyDown(code);
+					}
+				}
+			}
+		}
+
+		if (type.equals("keypress") && hasFocus) {
+			KeyboardEvent e = JsCast.castTo(evt, KeyboardEvent.class);
+			char c = (char)e.getCharCode();
+			if (processor != null) processor.keyTyped(c);
+		}
+
+		if (type.equals("keyup") && hasFocus) {
+			KeyboardEvent e = JsCast.castTo(evt, KeyboardEvent.class);
+			int code = keyForCode(e.getKeyCode());
+			if (pressedKeys[code]) {
+				pressedKeyCount--;
+				pressedKeys[code] = false;
+			}
+			if (processor != null) {
+				processor.keyUp(code);
+			}
+		}
 //
 //		if (e.getType().equals("touchstart")) {
 //			this.justTouched = true;
@@ -269,7 +329,7 @@ public class DragomeInput implements Input {
 //			this.currentEventTimeStamp = TimeUtils.nanoTime();
 //			e.preventDefault();
 //		}
-//		if (e.getType().equals("touchend")) {
+//		if (type.equals("touchend")) {
 //			JsArray<Touch> touches = e.getChangedTouches();
 //			for (int i = 0, j = touches.length(); i < j; i++) {
 //				Touch touch = touches.get(i);
@@ -288,34 +348,44 @@ public class DragomeInput implements Input {
 //			this.currentEventTimeStamp = TimeUtils.nanoTime();
 //			e.preventDefault();
 //		}
-//	}
+	}
 	
 //	/** Kindly borrowed from PlayN. **/
-//	protected int getRelativeX (NativeEvent e, HTMLCanvasElement target) {
+	protected int getRelativeX (MouseEvent e, HTMLCanvasElement target) {
 //		float xScaleRatio = target.getWidth() * 1f / target.getClientWidth(); // Correct for canvas CSS scaling
 //		return Math.round(xScaleRatio
 //			* (e.getClientX() - target.getAbsoluteLeft() + target.getScrollLeft() + target.getOwnerDocument().getScrollLeft()));
-//	}
-//
-//	/** Kindly borrowed from PlayN. **/
-//	protected int getRelativeY (NativeEvent e, HTMLCanvasElement target) {
+		return e.getClientX();
+	}
+
+	/** Kindly borrowed from PlayN. **/
+	protected int getRelativeY (MouseEvent e, HTMLCanvasElement target) {
 //		float yScaleRatio = target.getHeight() * 1f / target.getClientHeight(); // Correct for canvas CSS scaling
 //		return Math.round(yScaleRatio
 //			* (e.getClientY() - target.getAbsoluteTop() + target.getScrollTop() + target.getOwnerDocument().getScrollTop()));
-//	}
-//
-//	protected int getRelativeX (Touch touch, HTMLCanvasElement target) {
+		return e.getClientY();
+	}
+
+	protected int getRelativeX (Touch touch, HTMLCanvasElement target) {
 //		float xScaleRatio = target.getWidth() * 1f / target.getClientWidth(); // Correct for canvas CSS scaling
 //		return Math.round(xScaleRatio * touch.getRelativeX(target));
-//	}
-//
-//	protected int getRelativeY (Touch touch, HTMLCanvasElement target) {
+		return touch.getClientX();
+	}
+
+	protected int getRelativeY (Touch touch, HTMLCanvasElement target) {
 //		float yScaleRatio = target.getHeight() * 1f / target.getClientHeight(); // Correct for canvas CSS scaling
 //		return Math.round(yScaleRatio * touch.getRelativeY(target));
-//	}
+		return touch.getClientY();
+	}
 	
 	public void reset () {
-
+		justTouched = false;
+		if (keyJustPressed) {
+			keyJustPressed = false;
+			for (int i = 0; i < justPressedKeys.length; i++) {
+				justPressedKeys[i] = false;
+			}
+		}
 	}
 
 	@Override
@@ -350,76 +420,110 @@ public class DragomeInput implements Input {
 
 	@Override
 	public int getX () {
-		return 0;
+		return touchX[0];
 	}
 
 	@Override
 	public int getX (int pointer) {
-		return 0;
+		return touchX[pointer];
 	}
 
 	@Override
 	public int getDeltaX () {
-		return 0;
+		return deltaX[0];
 	}
 
 	@Override
 	public int getDeltaX (int pointer) {
-		return 0;
+		return deltaX[pointer];
 	}
 
 	@Override
 	public int getY () {
-		return 0;
+		return touchY[0];
 	}
 
 	@Override
 	public int getY (int pointer) {
-		return 0;
+		return touchY[pointer];
 	}
 
 	@Override
 	public int getDeltaY () {
-		return 0;
+		return deltaY[0];
 	}
 
 	@Override
 	public int getDeltaY (int pointer) {
-		return 0;
+		return deltaY[pointer];
 	}
 
 	@Override
 	public boolean isTouched () {
+		for (int pointer = 0; pointer < MAX_TOUCHES; pointer++) {
+			if (touched[pointer]) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean justTouched () {
-		return false;
+		return justTouched;
 	}
 
 	@Override
 	public boolean isTouched (int pointer) {
-		return false;
+		return touched[pointer];
 	}
 
 	@Override
 	public boolean isButtonPressed (int button) {
-		return false;
+		return pressedButtons.contains(button) && touched[0];
 	}
 
 	@Override
 	public boolean isKeyPressed (int key) {
-		return false;
+		if (key == Keys.ANY_KEY) {
+			return pressedKeyCount > 0;
+		}
+		if (key < 0 || key > 255) {
+			return false;
+		}
+		return pressedKeys[key];
 	}
 
 	@Override
 	public boolean isKeyJustPressed (int key) {
-		return false;
+		if (key == Keys.ANY_KEY) {
+			return keyJustPressed;
+		}
+		if (key < 0 || key > 255) {
+			return false;
+		}
+		return justPressedKeys[key];
 	}
 
 	@Override
 	public void getTextInput (TextInputListener listener, String title, String text, String hint) {
+//		TextInputDialogBox dialog = new TextInputDialogBox(title, text, hint); // TODO need impl
+//		final TextInputListener capturedListener = listener;
+//		dialog.setListener(new TextInputDialogListener() {
+//			@Override
+//			public void onPositive (String text) {
+//				if (capturedListener != null) {
+//					capturedListener.input(text);
+//				}
+//			}
+//
+//			@Override
+//			public void onNegative () {
+//				if (capturedListener != null) {
+//					capturedListener.canceled();
+//				}
+//			}
+//		});
 	}
 
 	@Override
@@ -459,7 +563,7 @@ public class DragomeInput implements Input {
 
 	@Override
 	public long getCurrentEventTime () {
-		return 0;
+		return currentEventTimeStamp;
 	}
 
 	@Override
@@ -482,11 +586,12 @@ public class DragomeInput implements Input {
 
 	@Override
 	public void setInputProcessor (InputProcessor processor) {
+		this.processor = processor;
 	}
 
 	@Override
 	public InputProcessor getInputProcessor () {
-		return null;
+		return processor;
 	}
 
 	@Override
@@ -501,7 +606,7 @@ public class DragomeInput implements Input {
 
 	@Override
 	public Orientation getNativeOrientation () {
-		return null;
+		return Orientation.Landscape;
 	}
 
 	@Override
@@ -516,5 +621,297 @@ public class DragomeInput implements Input {
 	@Override
 	public void setCursorPosition (int x, int y) {
 	}
+	
+	
+	/** borrowed from PlayN, thanks guys **/
+	private static int keyForCode (int keyCode) {
+		switch (keyCode) {
+		case KeyCodes.KEY_ALT:
+			return Keys.ALT_LEFT;
+		case KeyCodes.KEY_BACKSPACE:
+			return Keys.BACKSPACE;
+		case KeyCodes.KEY_CTRL:
+			return Keys.CONTROL_LEFT;
+		case KeyCodes.KEY_DELETE:
+			return Keys.DEL;
+		case KeyCodes.KEY_DOWN:
+			return Keys.DOWN;
+		case KeyCodes.KEY_END:
+			return Keys.END;
+		case KeyCodes.KEY_ENTER:
+			return Keys.ENTER;
+		case KeyCodes.KEY_ESCAPE:
+			return Keys.ESCAPE;
+		case KeyCodes.KEY_HOME:
+			return Keys.HOME;
+		case KeyCodes.KEY_LEFT:
+			return Keys.LEFT;
+		case KeyCodes.KEY_PAGEDOWN:
+			return Keys.PAGE_DOWN;
+		case KeyCodes.KEY_PAGEUP:
+			return Keys.PAGE_UP;
+		case KeyCodes.KEY_RIGHT:
+			return Keys.RIGHT;
+		case KeyCodes.KEY_SHIFT:
+			return Keys.SHIFT_LEFT;
+		case KeyCodes.KEY_TAB:
+			return Keys.TAB;
+		case KeyCodes.KEY_UP:
+			return Keys.UP;
+
+		case KEY_PAUSE:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_CAPS_LOCK:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_SPACE:
+			return Keys.SPACE;
+		case KEY_INSERT:
+			return Keys.INSERT;
+		case KEY_0:
+			return Keys.NUM_0;
+		case KEY_1:
+			return Keys.NUM_1;
+		case KEY_2:
+			return Keys.NUM_2;
+		case KEY_3:
+			return Keys.NUM_3;
+		case KEY_4:
+			return Keys.NUM_4;
+		case KEY_5:
+			return Keys.NUM_5;
+		case KEY_6:
+			return Keys.NUM_6;
+		case KEY_7:
+			return Keys.NUM_7;
+		case KEY_8:
+			return Keys.NUM_8;
+		case KEY_9:
+			return Keys.NUM_9;
+		case KEY_A:
+			return Keys.A;
+		case KEY_B:
+			return Keys.B;
+		case KEY_C:
+			return Keys.C;
+		case KEY_D:
+			return Keys.D;
+		case KEY_E:
+			return Keys.E;
+		case KEY_F:
+			return Keys.F;
+		case KEY_G:
+			return Keys.G;
+		case KEY_H:
+			return Keys.H;
+		case KEY_I:
+			return Keys.I;
+		case KEY_J:
+			return Keys.J;
+		case KEY_K:
+			return Keys.K;
+		case KEY_L:
+			return Keys.L;
+		case KEY_M:
+			return Keys.M;
+		case KEY_N:
+			return Keys.N;
+		case KEY_O:
+			return Keys.O;
+		case KEY_P:
+			return Keys.P;
+		case KEY_Q:
+			return Keys.Q;
+		case KEY_R:
+			return Keys.R;
+		case KEY_S:
+			return Keys.S;
+		case KEY_T:
+			return Keys.T;
+		case KEY_U:
+			return Keys.U;
+		case KEY_V:
+			return Keys.V;
+		case KEY_W:
+			return Keys.W;
+		case KEY_X:
+			return Keys.X;
+		case KEY_Y:
+			return Keys.Y;
+		case KEY_Z:
+			return Keys.Z;
+		case KEY_LEFT_WINDOW_KEY:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_RIGHT_WINDOW_KEY:
+			return Keys.UNKNOWN; // FIXME
+			// case KEY_SELECT_KEY: return Keys.SELECT_KEY;
+		case KEY_NUMPAD0:
+			return Keys.NUMPAD_0;
+		case KEY_NUMPAD1:
+			return Keys.NUMPAD_1;
+		case KEY_NUMPAD2:
+			return Keys.NUMPAD_2;
+		case KEY_NUMPAD3:
+			return Keys.NUMPAD_3;
+		case KEY_NUMPAD4:
+			return Keys.NUMPAD_4;
+		case KEY_NUMPAD5:
+			return Keys.NUMPAD_5;
+		case KEY_NUMPAD6:
+			return Keys.NUMPAD_6;
+		case KEY_NUMPAD7:
+			return Keys.NUMPAD_7;
+		case KEY_NUMPAD8:
+			return Keys.NUMPAD_8;
+		case KEY_NUMPAD9:
+			return Keys.NUMPAD_9;
+		case KEY_MULTIPLY:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_ADD:
+			return Keys.PLUS;
+		case KEY_SUBTRACT:
+			return Keys.MINUS;
+		case KEY_DECIMAL_POINT_KEY:
+			return Keys.PERIOD;
+		case KEY_DIVIDE:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_F1:
+			return Keys.F1;
+		case KEY_F2:
+			return Keys.F2;
+		case KEY_F3:
+			return Keys.F3;
+		case KEY_F4:
+			return Keys.F4;
+		case KEY_F5:
+			return Keys.F5;
+		case KEY_F6:
+			return Keys.F6;
+		case KEY_F7:
+			return Keys.F7;
+		case KEY_F8:
+			return Keys.F8;
+		case KEY_F9:
+			return Keys.F9;
+		case KEY_F10:
+			return Keys.F10;
+		case KEY_F11:
+			return Keys.F11;
+		case KEY_F12:
+			return Keys.F12;
+		case KEY_NUM_LOCK:
+			return Keys.NUM;
+		case KEY_SCROLL_LOCK:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_SEMICOLON:
+			return Keys.SEMICOLON;
+		case KEY_EQUALS:
+			return Keys.EQUALS;
+		case KEY_COMMA:
+			return Keys.COMMA;
+		case KEY_DASH:
+			return Keys.MINUS;
+		case KEY_PERIOD:
+			return Keys.PERIOD;
+		case KEY_FORWARD_SLASH:
+			return Keys.SLASH;
+		case KEY_GRAVE_ACCENT:
+			return Keys.UNKNOWN; // FIXME
+		case KEY_OPEN_BRACKET:
+			return Keys.LEFT_BRACKET;
+		case KEY_BACKSLASH:
+			return Keys.BACKSLASH;
+		case KEY_CLOSE_BRACKET:
+			return Keys.RIGHT_BRACKET;
+		case KEY_SINGLE_QUOTE:
+			return Keys.APOSTROPHE;
+		default:
+			return Keys.UNKNOWN;
+		}
+	}
+
+	// these are absent from KeyCodes; we know not why...
+	private static final int KEY_PAUSE = 19;
+	private static final int KEY_CAPS_LOCK = 20;
+	private static final int KEY_SPACE = 32;
+	private static final int KEY_INSERT = 45;
+	private static final int KEY_0 = 48;
+	private static final int KEY_1 = 49;
+	private static final int KEY_2 = 50;
+	private static final int KEY_3 = 51;
+	private static final int KEY_4 = 52;
+	private static final int KEY_5 = 53;
+	private static final int KEY_6 = 54;
+	private static final int KEY_7 = 55;
+	private static final int KEY_8 = 56;
+	private static final int KEY_9 = 57;
+	private static final int KEY_A = 65;
+	private static final int KEY_B = 66;
+	private static final int KEY_C = 67;
+	private static final int KEY_D = 68;
+	private static final int KEY_E = 69;
+	private static final int KEY_F = 70;
+	private static final int KEY_G = 71;
+	private static final int KEY_H = 72;
+	private static final int KEY_I = 73;
+	private static final int KEY_J = 74;
+	private static final int KEY_K = 75;
+	private static final int KEY_L = 76;
+	private static final int KEY_M = 77;
+	private static final int KEY_N = 78;
+	private static final int KEY_O = 79;
+	private static final int KEY_P = 80;
+	private static final int KEY_Q = 81;
+	private static final int KEY_R = 82;
+	private static final int KEY_S = 83;
+	private static final int KEY_T = 84;
+	private static final int KEY_U = 85;
+	private static final int KEY_V = 86;
+	private static final int KEY_W = 87;
+	private static final int KEY_X = 88;
+	private static final int KEY_Y = 89;
+	private static final int KEY_Z = 90;
+	private static final int KEY_LEFT_WINDOW_KEY = 91;
+	private static final int KEY_RIGHT_WINDOW_KEY = 92;
+	private static final int KEY_SELECT_KEY = 93;
+	private static final int KEY_NUMPAD0 = 96;
+	private static final int KEY_NUMPAD1 = 97;
+	private static final int KEY_NUMPAD2 = 98;
+	private static final int KEY_NUMPAD3 = 99;
+	private static final int KEY_NUMPAD4 = 100;
+	private static final int KEY_NUMPAD5 = 101;
+	private static final int KEY_NUMPAD6 = 102;
+	private static final int KEY_NUMPAD7 = 103;
+	private static final int KEY_NUMPAD8 = 104;
+	private static final int KEY_NUMPAD9 = 105;
+	private static final int KEY_MULTIPLY = 106;
+	private static final int KEY_ADD = 107;
+	private static final int KEY_SUBTRACT = 109;
+	private static final int KEY_DECIMAL_POINT_KEY = 110;
+	private static final int KEY_DIVIDE = 111;
+	private static final int KEY_F1 = 112;
+	private static final int KEY_F2 = 113;
+	private static final int KEY_F3 = 114;
+	private static final int KEY_F4 = 115;
+	private static final int KEY_F5 = 116;
+	private static final int KEY_F6 = 117;
+	private static final int KEY_F7 = 118;
+	private static final int KEY_F8 = 119;
+	private static final int KEY_F9 = 120;
+	private static final int KEY_F10 = 121;
+	private static final int KEY_F11 = 122;
+	private static final int KEY_F12 = 123;
+	private static final int KEY_NUM_LOCK = 144;
+	private static final int KEY_SCROLL_LOCK = 145;
+	private static final int KEY_SEMICOLON = 186;
+	private static final int KEY_EQUALS = 187;
+	private static final int KEY_COMMA = 188;
+	private static final int KEY_DASH = 189;
+	private static final int KEY_PERIOD = 190;
+	private static final int KEY_FORWARD_SLASH = 191;
+	private static final int KEY_GRAVE_ACCENT = 192;
+	private static final int KEY_OPEN_BRACKET = 219;
+	private static final int KEY_BACKSLASH = 220;
+	private static final int KEY_CLOSE_BRACKET = 221;
+	private static final int KEY_SINGLE_QUOTE = 222;
 
 }

@@ -128,6 +128,10 @@ public class Pixmap implements Disposable
 		context.setGlobalCompositeOperation(getComposite());
 	}
 
+	public CanvasRenderingContext2D getContext() {
+		return context;
+	}
+	
 	private static String getComposite()
 	{
 		return Composite.SOURCE_OVER;

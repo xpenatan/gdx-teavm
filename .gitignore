@@ -27,7 +27,7 @@ Release/
 x64/
 x86/
 ipch/
-/dist
+dist/
 compiled-js/
 target/
 
@@ -38,6 +38,7 @@ target/
 *.sdf
 *.class
 *.cache
+*.js
 
 libgdx-*.zip
 libgdx-*.zip.MD5
@@ -45,7 +46,8 @@ libgdx-*.zip.MD5
 *.iml
 /.idea/
 
-/backends/gdx-backend-dragome/libs/
-.project
-.classpath
-.settings
+binaries/
+libs/
+**/jni/*
+!**/jni/src
+!**/jni/emscripten

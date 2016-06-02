@@ -76,6 +76,8 @@ public class AnimationTest implements ApplicationListener {
 		}
 		batch = new SpriteBatch();
 		fpsLog = new FPSLogger();
+		
+		System.out.println("1 Width: " + Gdx.graphics.getWidth() + " Height: " + Gdx.graphics.getHeight());
 	}
 
 	@Override
@@ -106,6 +108,7 @@ public class AnimationTest implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
+		System.out.println("2 Width: " + Gdx.graphics.getWidth() + " Height: " + Gdx.graphics.getHeight());
 	}
 
 	@Override

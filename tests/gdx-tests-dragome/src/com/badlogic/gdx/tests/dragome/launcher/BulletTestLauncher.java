@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.dragome.DragomeApplication;
 import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
+import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
+import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.tests.dragome.examples.BulletTest;
 import com.dragome.web.annotations.PageAlias;
 
@@ -13,6 +15,8 @@ public class BulletTestLauncher extends DragomeApplication
 	@Override
 	public ApplicationListener createApplicationListener()
 	{
+		AssetLoaderListener<Object> listener = new AssetLoaderListener<Object>();
+		AssetDownloader.loadScript("XpeBullet.js", listener);
 		return new BulletTest();
 	}
 

@@ -17,10 +17,12 @@
 package com.badlogic.gdx.backends.dragome;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.webgl.WebGLContextAttributes;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.backends.dragome.js.webgl.WebGLContextAttributes;
+import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,7 +32,6 @@ import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
-import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 /** @author xpenatan */
 public class DragomeGraphics implements Graphics
@@ -59,14 +60,15 @@ public class DragomeGraphics implements Graphics
 	public boolean init()
 	{
 		ScriptHelper.put("canvas", canvas, this);
-		WebGLContextAttributes attributes= ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributes.class, null);
-		attributes.setAntialias(config.antialiasing);
-		attributes.setStencil(config.stencil);
-		attributes.setAlpha(config.alpha);
-		attributes.setPremultipliedAlpha(config.premultipliedAlpha);
-		attributes.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
+		
+		WebGLContextAttributes attributes= WebGLContextAttributes.create();
+		attributes.set_antialias(config.antialiasing);
+		attributes.set_stencil(config.stencil);
+		attributes.set_alpha(config.alpha);
+		attributes.set_premultipliedAlpha(config.premultipliedAlpha);
+		attributes.set_preserveDrawingBuffer(config.preserveDrawingBuffer);
 
-		WebGLRenderingContextExtension context= findWebGLContext();
+		WebGLRenderingContext context= findWebGLContext();
 		if (context == null)
 			return false;
 
@@ -78,18 +80,18 @@ public class DragomeGraphics implements Graphics
 		String versionString= gl.glGetString(GL20.GL_VERSION);
 		String vendorString= gl.glGetString(GL20.GL_VENDOR);
 		String rendererString= gl.glGetString(GL20.GL_RENDERER);
-		//		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString); //FIXME needs fix
+//		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString); //FIXME needs fix
 		return true;
 	}
 
-	private WebGLRenderingContextExtension findWebGLContext()
+	private WebGLRenderingContext findWebGLContext()
 	{
 		String[] contextNames= new String[] { "moz-webgl", "webgl", "experimental-webgl", "webkit-webgl", "webkit-3d" };
 		for (String contextName : contextNames)
 		{
 			Object context= canvas.getContext(contextName);
 			if (context != null)
-				return (WebGLRenderingContextExtension) context;
+				return (WebGLRenderingContext) context;
 		}
 
 		return null;

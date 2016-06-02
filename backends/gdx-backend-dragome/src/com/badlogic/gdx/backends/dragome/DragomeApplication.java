@@ -126,18 +126,21 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			@Override
 			public void run () {
 				try {
-					if(init == false)
-					{
-						if(AssetDownloader.getQueue() == 0)
-						{
+					if(init == false) {
+						if(AssetDownloader.getQueue() == 0) {
 							init = true;
-							listener.create();
+							graphics.update();
 							onResize();
-							
+							lastWidth = graphics.getWidth();
+							lastHeight = graphics.getHeight();
+							Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
+							listener.create();
+							DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
 							DragomeWindow.onResize(new Runnable() {
 								@Override
 								public void run () {
 									onResize();
+									DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
 								}
 							});
 						}
@@ -153,15 +156,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		}, graphics.canvas);
 	}
 
-	protected void onResize () {
-		if (init == false) return;
-		try {
-			mainLoop();
-		} catch (Throwable t) {
-			error("DragomeApplication", "exception: " + t.getMessage(), t);
-			throw new RuntimeException(t);
-		}
-	}
+	protected void onResize () {}
 
 	private void mainLoop () {
 		graphics.update();

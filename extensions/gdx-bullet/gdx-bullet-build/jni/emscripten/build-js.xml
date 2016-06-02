@@ -1,0 +1,133 @@
+<project name="gdx-bullet-js" basedir="." default="postcompile">
+	<!-- include the environment -->
+	<property environment="env"/>	
+	<!-- output directory for temporary object files -->
+	<property name="buildDir" value="../target/js" />
+	<!-- output directory for the shared library -->
+	<property name="libsDir" value="../../natives" />
+	<!-- the name of the shared library -->
+	<property name="libName" value="XpeBullet.js"/>
+	
+	<property name="emscripten_SDK" value="C:\Emscripten\emscripten\tag-1.36.5\"/>
+	
+	<property name="em++_args" value="-O3 -g0 -Wall --llvm-lto 1 -s NO_EXIT_RUNTIME=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s NO_DYNAMIC_EXECUTION=1 --memory-init-file 0 -s NO_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=[] -s MODULARIZE=1"/>
+	<property name="glue_args" value="-I../src/bullet -c -include ../../emscripten/custom_glue.cpp -include btBulletDynamicsCommon.h -include BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h -include BulletCollision\CollisionDispatch\btGhostObject.h -include BulletDynamics\Character\btKinematicCharacterController.h -include BulletSoftBody\btSoftBody.h -include BulletSoftBody\btSoftRigidDynamicsWorld.h -include BulletSoftBody\btDefaultSoftBodySolver.h -include BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h -include BulletSoftBody\btSoftBodyHelpers.h"/>
+
+	<property name="g++" value="em++"/>
+
+	<fileset id="g++-files" dir="../">
+		<exclude name="target/"/>
+		<exclude name="emscripten/"/>
+		<include name="src/**/*.cpp"/>
+
+		<exclude name="src/bullet/BulletMultiThreaded/GpuSoftBodySolvers/**"/>
+		<exclude name="src/custom/gdx/common/**"/>
+		<exclude name="src/custom/gdx/linearmath/**"/>
+	</fileset>
+	
+	<target name="clean">
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${buildDir}"/>
+			<fileset dir="${libsDir}" includes="**/*" excludes="**/.svn"/>
+		</delete>
+	</target>
+	
+	<target name="precompile">
+		<condition property="compiler-found">
+			<and>
+				<or>
+					<available file="${g++}" filepath="${env.PATH}"/>
+					<available file="${g++}" filepath="${env.Path}"/>
+				</or>
+			</and>
+		</condition>
+		<condition property="has-compiler">
+			<equals arg1="${compiler-found}" arg2="true"/>
+		</condition>
+		
+	</target>
+	
+
+	<target name="create-build-dir" >
+		<mkdir dir="${buildDir}"/>
+		<copy todir="${buildDir}">
+			<fileset refid="g++-files"/>
+		</copy>
+		<delete>
+			<fileset dir="${buildDir}">
+				<include name="*"/>
+				<exclude name="*.o"/>
+			</fileset>
+		</delete>
+	</target>	
+	
+	<target name="webidl" depends="create-build-dir" >
+		
+		<exec executable="python" failonerror="true" dir="${buildDir}">
+			<arg line="${basedir}/webidl_binder.py" />
+			<arg line="${basedir}/bullet.idl" />
+			<arg line="glue" />
+			<arg line="${emscripten_SDK}/tools" />
+		</exec>
+	</target>	
+
+	<target name="compileGlue" depends="webidl">
+		<exec executable="python" failonerror="true" dir=".">
+			<arg line="${emscripten_SDK}\${g++}" />
+			<arg line="${buildDir}/glue.cpp"/>
+			<arg line="${glue_args}"/>
+			<arg line="-o"/>
+			<arg line="${buildDir}/glue.bc"/>
+		</exec>
+	</target>	
+
+	<target name="compile" depends="compileGlue">
+		<apply failonerror="true" executable="python" dest="${buildDir}" verbose="true">
+			<arg line="${emscripten_SDK}\${g++}" />
+			<arg line="${em++_args}"/>
+			<arg value="-I."/>
+			<arg value="-I../src/bullet/"/>
+			<arg value="-I../src/custom/"/>
+			<arg value="-I../src/extras/Serialize/"/>
+
+			<srcfile/>
+			<arg value="-o"/>
+			<targetfile/>
+			<fileset refid="g++-files"/>
+			<compositemapper>
+				<mapper type="glob" from="*.cpp" to="*.o"/>
+			</compositemapper>
+		</apply>
+	</target>	
+		
+	<target name="link" depends="compile">
+		<fileset dir="${buildDir}" id="objFileSet">
+			<patternset>
+				<include name="**/*.o" />
+			</patternset>
+		</fileset>
+		<pathconvert pathsep=" " property="objFiles" refid="objFileSet" />
+		<mkdir dir="${libsDir}" />
+		<exec executable="python" failonerror="true" dir="${buildDir}">
+			<arg line="${emscripten_SDK}\${g++}" />
+			<arg line="-s"/>
+			<arg value="EXPORT_NAME='BulletLib'"/>
+			<arg line="${em++_args}"/>
+			<arg line="${objFiles}"/>
+			<arg line="glue.bc"/>
+			<arg line="--post-js"/>
+			<arg line="glue.js"/>
+			<arg value="-o" />
+			<arg path="${libsDir}/${libName}" />
+		
+		</exec>
+	</target>		
+	
+	<target name="Wrap" depends="link">
+		<echo file="${libsDir}/${libName}" append="true">Bullet = BulletLib();</echo>
+	</target>	
+	 
+	<target name="postcompile" depends="Wrap">
+		
+	</target>
+</project>

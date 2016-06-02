@@ -16,10 +16,9 @@
 
 package com.badlogic.gdx.graphics.profiling;
 
-import static com.badlogic.gdx.graphics.profiling.GLProfiler.resolveErrorNumber;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import static com.badlogic.gdx.graphics.profiling.GLProfiler.resolveErrorNumber;
 
 /** @see GLProfiler
  * @author Jan Polák */
