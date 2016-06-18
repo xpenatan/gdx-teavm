@@ -7,13 +7,14 @@ This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generat
 * Full or partial assets downloading 
 
 #Example
-![alt tag](http://i.imgur.com/0LWcHQF.gif)
+<p align="center"><img src="http://i.imgur.com/r3c3lhX.gif"/></p>
+<p align="center"><img src="http://i.imgur.com/0LWcHQF.gif"/></p>
 
 
 ## Demos:
 * [AnimationTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?AnimationTest) 
 * [Gears Demo](http://xpenatan.github.io/gdx-dragome-backend/index.html?Gears)
-* [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest) (Experimental)
+* [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest)
 
 ## Instructions for Eclipse (Import and launch)
 * Must have Libgdx source project set in eclipse.
