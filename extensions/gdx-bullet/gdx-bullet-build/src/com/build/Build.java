@@ -83,7 +83,7 @@ public class Build {
 		ios.headerDirs = headers;
 		ios.cppFlags += cppFlags;
 
-//		new AntScriptGenerator().generate(new BuildConfig("gdx-bullet", "target", "natives", "jni"), win32home, win32, win64, lin32, lin64, mac, mac64, android, ios);
+		new AntScriptGenerator().generate(new BuildConfig("gdx-bullet", "target", "natives", "jni"), win32home, win32, win64, lin32, lin64, mac, mac64, android, ios);
 //		new FileHandle(new File("jni/Application.mk")).writeString("\nAPP_STL := stlport_static\n", true);
 		
 		boolean success = true;
@@ -93,7 +93,7 @@ public class Build {
 		if(success)
 			success = BuildExecutor.executeAnt("jni/build-windows32.xml", "-v -Dhas-compiler=true postcompile");
 		
-//		if(success)
-//			BuildExecutor.executeAnt("jni/build.xml", "-v pack-natives");
+		if(success)
+			BuildExecutor.executeAnt("jni/build.xml", "-v pack-natives");
     }
 }

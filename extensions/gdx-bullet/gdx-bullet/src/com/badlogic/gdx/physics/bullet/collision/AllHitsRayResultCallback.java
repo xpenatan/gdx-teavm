@@ -99,6 +99,10 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 		long addr = cPointer;  #J
 		var cobj = Bullet.wrapPointer(addr, Bullet.MyAllHitsRayResultCallback);
 		Bullet.destroy(cobj);
+		objArray.resetObj(0, false); #J
+		hitnormalArray.resetObj(0, false); #J
+		hitpointArray.resetObj(0, false); #J
+		hitfractionArray.resetObj(0, false); #J
 	*/
 	
 	private static native void deletePointer(long addr); /*

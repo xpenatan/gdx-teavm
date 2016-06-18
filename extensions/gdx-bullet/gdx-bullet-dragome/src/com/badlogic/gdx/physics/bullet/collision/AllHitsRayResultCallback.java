@@ -43,6 +43,10 @@ public class AllHitsRayResultCallback extends RayResultCallback {
     protected void delete() {
 		long addr = cPointer;
 		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var cobj=Bullet.wrapPointer(addr,Bullet.MyAllHitsRayResultCallback);Bullet.destroy(cobj);",this);
+		objArray.resetObj(0, false);
+		hitnormalArray.resetObj(0, false);
+		hitpointArray.resetObj(0, false);
+		hitfractionArray.resetObj(0, false);
     }
 
     public btCollisionObjectArray getCollisionObjects() {
