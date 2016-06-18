@@ -1,4 +1,4 @@
-- Modified btMotionState and btIDebufDraw to have body in virtual methods
+
 
 -------------------------------
 - Update the bullet source files
