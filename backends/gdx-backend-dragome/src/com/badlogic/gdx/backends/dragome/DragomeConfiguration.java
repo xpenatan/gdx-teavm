@@ -40,30 +40,29 @@ import org.w3c.dom.events.MouseEvent;
 import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.html.CanvasRenderingContext2D;
 import org.w3c.dom.html.HTMLCanvasElement;
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Float64Array;
+import org.w3c.dom.typedarray.Int16Array;
+import org.w3c.dom.typedarray.Int32Array;
+import org.w3c.dom.typedarray.Int8Array;
+import org.w3c.dom.typedarray.Uint16Array;
+import org.w3c.dom.typedarray.Uint32Array;
+import org.w3c.dom.typedarray.Uint8Array;
+import org.w3c.dom.webgl.WebGLActiveInfo;
+import org.w3c.dom.webgl.WebGLBuffer;
+import org.w3c.dom.webgl.WebGLContextAttributes;
+import org.w3c.dom.webgl.WebGLFramebuffer;
+import org.w3c.dom.webgl.WebGLObject;
+import org.w3c.dom.webgl.WebGLProgram;
+import org.w3c.dom.webgl.WebGLRenderbuffer;
+import org.w3c.dom.webgl.WebGLRenderingContext;
+import org.w3c.dom.webgl.WebGLShader;
+import org.w3c.dom.webgl.WebGLTexture;
+import org.w3c.dom.webgl.WebGLUniformLocation;
 import org.w3c.dom.websocket.WebSocket;
 
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBuffer;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Float64Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Int8Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint16Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint32Array;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.Uint8Array;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLActiveInfo;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLBuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLContextAttributes;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLFramebuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLObject;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLProgram;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderbuffer;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLShader;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLTexture;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLUniformLocation;
-import com.badlogic.gdx.backends.dragome.utils.GdxContextSubTypeFactory;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.PrioritySolver;
@@ -74,12 +73,13 @@ import com.dragome.commons.compiler.classpath.ClasspathFileFilter;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.VirtualFolderClasspathEntry;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
-import com.dragome.web.config.NodeSubTypeFactory;
 import com.dragome.web.debugging.MessageEvent;
 import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
-import com.dragome.web.enhancers.jsdelegate.interfaces.SubTypeFactory;
+import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
+import com.dragome.web.html.dom.w3c.TypedArraysFactory;
+import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 
 /** @author xpenatan */
@@ -95,16 +95,14 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Document.class, Element.class, Attr.class, NodeList.class, 
 			Node.class, NamedNodeMap.class, Text.class, HTMLCanvasElement.class, CanvasRenderingContext2D.class, EventTarget.class, 
 			EventListener.class, Event.class, HTMLImageElementExtension.class, HTMLCanvasElementExtension.class, MouseEvent.class, KeyboardEvent.class, 
-			
 			WebGLActiveInfo.class, WebGLBuffer.class, WebGLContextAttributes.class, WebGLFramebuffer.class,
 			WebGLObject.class, WebGLProgram.class, WebGLRenderbuffer.class, WebGLRenderingContext.class, 
-			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class,
+			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class, WebGLRenderingContextExtension.class, 
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, 
-			
-			XMLHttpRequest.class, Object.class, ProgressEvent.class, 
+			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, ProgressEvent.class, 
 			EventTarget.class, Event.class, XMLHttpRequest.class, WebSocket.class, MessageEvent.class, XMLHttpRequestExtension.class));
-
+	
 	public DragomeConfiguration()
 	{
 		String projPath= System.getProperty("user.dir");
@@ -122,13 +120,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			@Override
 			public boolean accept(File pathname, File folder) {
 				boolean flag = true;
-				String absolutePath = pathname.getAbsolutePath();
-				
-				if(absolutePath.contains("dom\\webgl") || absolutePath.contains("dom\\typedarray") || absolutePath.contains("w3c\\TypedArraysFactory") 
-						|| absolutePath.contains("WebGLRenderingContextExtension"))
-					flag = false;
-				
-				System.out.println("absolutePath: " + flag + " - " + absolutePath);
+//				String absolutePath = pathname.getAbsolutePath();
+//				System.out.println("absolutePath: " + flag + " - " + absolutePath);
 				return flag;
 			}
 		});
@@ -182,16 +175,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				else
 					return super.createMethodCall(method, params);
 			}
-			
-			public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName)
-			{
-				if (methodName.equals("item") || methodName.equals("cloneNode"))
-					return NodeSubTypeFactory.class;
-				else if (HTMLCanvasElement.class.isAssignableFrom(interface1) && methodName.equals("getContext"))
-					return GdxContextSubTypeFactory.class;
-		
-				return null;
-			}
 		});
 	}
 	
@@ -241,11 +224,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			System.out.println(iterator.next());
 		}
 		System.out.println("-------------------------");
-		
-		
-		
-		
-		
 	}
 
 	public URL getAdditionalCodeKeepConfigFile()

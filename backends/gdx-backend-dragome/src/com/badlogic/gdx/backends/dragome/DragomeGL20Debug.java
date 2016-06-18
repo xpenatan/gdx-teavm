@@ -21,17 +21,18 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.dragome.js.webgl.WebGLRenderingContext;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.dragome.commons.javascript.ScriptHelper;
+import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
 public class DragomeGL20Debug extends DragomeGL20 {
 
-	protected DragomeGL20Debug (WebGLRenderingContext gl) {
+	protected DragomeGL20Debug (WebGLRenderingContextExtension gl) {
 		super(gl);
 	}
 
 	private void checkError () {
-		int error = gl.getError();
+		int error = ScriptHelper.evalInt("this.$$$gl.node.getError()", this);
 		if (error != GL_NO_ERROR) {
 			GdxRuntimeException gdxRuntimeException = new GdxRuntimeException("GL error: " + error + ", " + Integer.toHexString(error));
 			Gdx.app.error("GL20", "Error: " + error + ", " + Integer.toHexString(error));

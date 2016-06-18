@@ -4,7 +4,6 @@
 .DS_STORE
 
 .gradle/
-build/
 bin/
 obj/
 out/
@@ -46,7 +45,7 @@ libgdx-*.zip.MD5
 *.iml
 /.idea/
 
-binaries/
+natives/
 libs/
 **/jni/*
 !**/jni/src

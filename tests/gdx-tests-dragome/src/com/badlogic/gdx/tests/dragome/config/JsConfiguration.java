@@ -8,7 +8,7 @@ public class JsConfiguration extends DragomeConfiguration{
 	@Override
 	public boolean filterClassPath(String aClassPathEntry) {
 		boolean include = super.filterClassPath(aClassPathEntry);
-		include|= aClassPathEntry.contains("bullet-js.jar") || aClassPathEntry.contains("bullet-js\\bin");
+		include|= aClassPathEntry.contains("bullet-dragome.jar") || aClassPathEntry.contains("bullet-dragome\\bin");
 		return include;
 	}
 }

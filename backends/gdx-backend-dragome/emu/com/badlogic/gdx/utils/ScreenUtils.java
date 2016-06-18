@@ -20,9 +20,9 @@ import java.nio.ByteBuffer;
 import java.nio.HasArrayBufferView;
 
 import org.w3c.dom.html.CanvasRenderingContext2D;
+import org.w3c.dom.typedarray.ArrayBufferView;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.dragome.js.typedarrays.ArrayBufferView;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
