@@ -19,7 +19,7 @@ This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generat
 ## Instructions for Eclipse (Import and launch)
 * Must have Libgdx source project set in eclipse.
 * Must have DragomeSDK source project set in eclipse.
-  * DragomeSDK requires some dependecies. Use Ant with pom.xml to get them.
+  * DragomeSDK requires some dependecies, download them at [release](https://github.com/xpenatan/gdx-dragome-backend/releases). It contains the libs and the project settings (put in dragome source folder and import).
   * May need to have the forked [Dragome project] (https://github.com/xpenatan/dragome-sdk) (There is a chance it has modifications that is not yet in official branch).
 * Recommended plugin: ( http://xzer.github.io/run-jetty-run-updatesite/nightly/ ). Also install Jetty 93 support. You have to change run/debug configuration to use jetty 9.3.6 (default is 6.1). 
   * At jetty configuration classpath you have to remove "javaee-web" or it wont compile.
