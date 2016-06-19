@@ -166,17 +166,14 @@ public class BulletTest implements ApplicationListener, InputProcessor
 	{
 		ModelInstance modelInstance = new ModelInstance(model);
 
-		
 		ColorAttribute attr = ColorAttribute.createDiffuse(colorR, colorG, colorB, 1);
-        modelInstance.materials.get(0).set(attr);
-		
-        
-        modelInstance.transform.translate(x, y, z);
-        
-        modelInstance.transform.rotate(Vector3.X, axiX);
-        modelInstance.transform.rotate(Vector3.Y, axiY);
-        modelInstance.transform.rotate(Vector3.Z, axiZ);
-        
+		modelInstance.materials.get(0).set(attr);
+
+		modelInstance.transform.translate(x, y, z);
+
+		modelInstance.transform.rotate(Vector3.X, axiX);
+		modelInstance.transform.rotate(Vector3.Y, axiY);
+		modelInstance.transform.rotate(Vector3.Z, axiZ);
         
 		btDefaultMotionState motionState = new btDefaultMotionState(modelInstance.transform);
 		btBoxShape shape = new btBoxShape(tmp.set(x1/2f, y1/2f, z1/2f));
