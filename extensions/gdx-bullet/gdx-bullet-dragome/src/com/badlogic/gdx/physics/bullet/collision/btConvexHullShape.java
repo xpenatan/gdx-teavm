@@ -31,12 +31,12 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
     public void addPoint(Vector3 point) {
 		checkPointer();
 		float x=point.x, y=point.y,z=point.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.Temp.prototype.btVec3_1(x,y,z);vec.setValue(x,y,z);this.$$$jsObj.addPoint(vec,true);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);vec.setValue(x,y,z);this.$$$jsObj.addPoint(vec,true);",this);
     }
 
     public void addPoint(Vector3 point, boolean recalculateLocalAabb) {
 		checkPointer();
 		float x=point.x, y=point.y,z=point.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.Temp.prototype.btVec3_1(x,y,z);this.$$$jsObj.addPoint(vec,recalculateLocalAabb);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.addPoint(vec,recalculateLocalAabb);",this);
     }
 }
