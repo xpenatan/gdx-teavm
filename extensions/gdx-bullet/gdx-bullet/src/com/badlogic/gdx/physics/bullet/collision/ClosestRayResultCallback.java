@@ -138,8 +138,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
 	/*[0;X;L]
 		checkPointer();  #J
 		float x=value.x,y=value.y,z=value.z; #J
-		var vec = Bullet.MyTemp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.set_m_rayFromWorld(vec);
 	*/
 	
@@ -178,8 +177,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
 	/*[0;X;L]
 		checkPointer();  #J
 		float x=value.x,y=value.y,z=value.z; #J
-		var vec = Bullet.MyTemp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.set_m_rayToWorld(vec);
 	*/
 	
@@ -219,8 +217,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
 	/*[0;X;L]
 		checkPointer();  #J
 		float x=value.x,y=value.y,z=value.z; #J
-		var vec = Bullet.MyTemp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.set_m_hitNormalWorld(vec);
 	*/
 	
@@ -259,8 +256,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
 	/*[0;X;L]
 		checkPointer();  #J
 		float x=value.x,y=value.y,z=value.z; #J
-		var vec = Bullet.MyTemp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.set_m_hitPointWorld(vec);
 	*/
 	

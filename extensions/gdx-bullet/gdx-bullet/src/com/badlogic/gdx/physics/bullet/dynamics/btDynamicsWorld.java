@@ -103,8 +103,7 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
-	 	var gravity = Bullet.MyTemp.prototype.btVec3();
-	 	gravity.setValue(x,y,z);
+	 	var gravity = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.setGravity(gravity);
 	*/
 	

@@ -60,7 +60,7 @@ public class btDynamicsWorld extends btCollisionWorld {
 
     public void setGravity(float x, float y, float z) {
 		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var gravity=Bullet.MyTemp.prototype.btVec3();gravity.setValue(x,y,z);this.$$$jsObj.setGravity(gravity);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var gravity=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.setGravity(gravity);",this);
     }
 
     public void getGravity(Vector3 out) {

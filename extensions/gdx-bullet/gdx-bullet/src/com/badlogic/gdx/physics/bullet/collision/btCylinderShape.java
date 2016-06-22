@@ -18,8 +18,7 @@ public class btCylinderShape extends btConvexInternalShape {
 		return (jlong)new btCylinderShape(vec);
 	*/
 	/*[0;X;L]
-		var vec = Bullet.Temp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		var vec = Bullet.Temp.prototype.btVec3_1(x,y,z);
 		return Bullet.getPointer(new Bullet.btCylinderShape(vec));
 	*/
 	

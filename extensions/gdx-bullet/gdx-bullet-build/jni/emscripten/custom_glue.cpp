@@ -23,8 +23,11 @@ class MyClassHelper {
 
 class MyTemp {
 	public:
-		static btVector3 btVec3() {
-			return btVector3();
+		static btVector3 btVec3_1(float x, float y, float z) {
+			return btVector3(x,y,z);
+		}
+		static btVector3 btVec3_2(float x, float y, float z) {
+			return btVector3(x,y,z);
 		}
 		static btQuaternion btQuat() {
 			return btQuaternion();

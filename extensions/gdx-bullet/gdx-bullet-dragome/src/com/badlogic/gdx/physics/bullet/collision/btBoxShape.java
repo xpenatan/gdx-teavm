@@ -15,7 +15,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
     }
 
     public static long createNative(float x, float y, float z) {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var tmp=Bullet.MyTemp.prototype.btVec3();tmp.setValue(x,y,z);",null);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var tmp=Bullet.MyTemp.prototype.btVec3_1(x,y,z);",null);
 		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btBoxShape(tmp));",null);
     }
 

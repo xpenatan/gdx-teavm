@@ -15,7 +15,7 @@ public class btCylinderShape extends btConvexInternalShape {
     }
 
     public static long createNative(float x, float y, float z) {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.Temp.prototype.btVec3();vec.setValue(x,y,z);",null);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.Temp.prototype.btVec3_1(x,y,z);",null);
 		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btCylinderShape(vec));",null);
     }
 

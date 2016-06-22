@@ -13,18 +13,18 @@ import com.escplay.codegen.XpeCodeGen;
 
 public class Build {
 	
-    static public void main (String[] args) throws Exception {
-    	
-    	boolean flag = true;
-    	if(flag) {
-    		// generate JS code
-    		XpeCodeGen.generate("../gdx-bullet/src", "../gdx-bullet-dragome/src", new DragomeWrapper()); 
-    		return;
-    	}
-    	
-    	// generate C/C++ code
-    	RobustJavaMethodParser.CustomIgnoreTag = "[";
-		new NativeCodeGenerator().generate("../gdx-bullet/src", "../gdx-bullet/bin" + File.pathSeparator + "../../../../../../Libgdx/gdx/bin", "jni");
+	static public void main (String[] args) throws Exception {
+
+		boolean flag = true;
+		if (flag) {
+			// generate JS code
+			XpeCodeGen.generate("../gdx-bullet/src", "../gdx-bullet-dragome/src", new DragomeWrapper());
+			return;
+		}
+
+		// generate C/C++ code
+		RobustJavaMethodParser.CustomIgnoreTag = "[";
+		new NativeCodeGenerator().generate("../gdx-bullet/src", "../gdx-bullet/bin" + File.pathSeparator + "../../../../Projects/Libgdx/gdx/bin", "jni");
 
 		String cppFlags = "";
 		cppFlags += " -fno-strict-aliasing";
@@ -93,7 +93,7 @@ public class Build {
 		if(success)
 			success = BuildExecutor.executeAnt("jni/build-windows32.xml", "-v -Dhas-compiler=true postcompile");
 		
-		if(success)
+		if (success) 
 			BuildExecutor.executeAnt("jni/build.xml", "-v pack-natives");
-    }
+	}
 }

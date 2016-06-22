@@ -47,7 +47,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public void setRayFromWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_rayFromWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_rayFromWorld(vec);",this);
     }
 
     public void getRayToWorld(Vector3 out) {
@@ -60,7 +60,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public void setRayToWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_rayToWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_rayToWorld(vec);",this);
     }
 
     public void getHitNormalWorld(Vector3 out) {
@@ -73,7 +73,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public void setHitNormalWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_hitNormalWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_hitNormalWorld(vec);",this);
     }
 
     public void getHitPointWorld(Vector3 out) {
@@ -86,6 +86,6 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public void setHitPointWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_hitPointWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_hitPointWorld(vec);",this);
     }
 }

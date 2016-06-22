@@ -67,7 +67,7 @@ public class AllHitsRayResultCallback extends RayResultCallback {
     public void setRayFromWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_rayFromWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_rayFromWorld(vec);",this);
     }
 
     public void getRayToWorld(Vector3 out) {
@@ -80,7 +80,7 @@ public class AllHitsRayResultCallback extends RayResultCallback {
     public void setRayToWorld(Vector3 value) {
 		checkPointer();
 		float x=value.x,y=value.y,z=value.z;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3();vec.setValue(x,y,z);this.$$$jsObj.set_m_rayToWorld(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);this.$$$jsObj.set_m_rayToWorld(vec);",this);
     }
 
     public btVector3Array getHitNormalWorld() {

@@ -21,8 +21,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
 		return (jlong)new btBoxShape(tmp);
 	*/
 	/*[0;X;L]
-		var tmp = Bullet.MyTemp.prototype.btVec3();
-		tmp.setValue(x,y,z);
+		var tmp = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		return Bullet.getPointer(new Bullet.btBoxShape(tmp));
 	*/
 	

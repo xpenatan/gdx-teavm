@@ -47,9 +47,9 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 		addPoint(cPointer, point.x, point.y, point.z, true);
 	}
 	/*[0;X;L]
-	 	checkPointer(); #J
-	 	float x=point.x, y=point.y,z=point.z; #J
-	 	var vec = Bullet.Temp.prototype.btVec3();
+		checkPointer(); #J
+		float x=point.x, y=point.y,z=point.z; #J
+		var vec = Bullet.Temp.prototype.btVec3_1(x,y,z);
 		vec.setValue(x,y,z);
 		this.$$$jsObj.addPoint(vec, true);
 	*/
@@ -59,10 +59,9 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 		addPoint(cPointer, point.x, point.y, point.z, recalculateLocalAabb);
 	}
 	/*[0;X;L]
-	 	checkPointer(); #J
-	 	float x=point.x, y=point.y,z=point.z; #J
-	 	var vec = Bullet.Temp.prototype.btVec3();
-		vec.setValue(x,y,z);
+		checkPointer(); #J
+		float x=point.x, y=point.y,z=point.z; #J
+		var vec = Bullet.Temp.prototype.btVec3_1(x,y,z);
 		this.$$$jsObj.addPoint(vec, recalculateLocalAabb);
 	*/
 	
