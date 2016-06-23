@@ -26,7 +26,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
     @Override
     protected void delete() {
 		long addr = cPointer;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.wrapPointer(addr,Bullet.btBoxShape);Bullet.destroy(vec);",this);
+		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var jsObj=Bullet.wrapPointer(addr,Bullet.btBoxShape);Bullet.destroy(jsObj);",this);
     }
 
     public void getHalfExtentsWithMargin(Vector3 out) {

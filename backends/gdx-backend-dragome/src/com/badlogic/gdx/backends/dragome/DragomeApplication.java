@@ -34,6 +34,7 @@ import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.dragome.commons.javascript.ScriptHelper;
@@ -80,6 +81,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<Object>();
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
 		listener = createApplicationListener();
@@ -108,6 +111,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		this.clipboard = new DragomeClipboard();
 		lastWidth = graphics.getWidth();
 		lastHeight = graphics.getHeight();
+		
+		onResize();
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 
 //		new Timer().setInterval(new Runnable() {

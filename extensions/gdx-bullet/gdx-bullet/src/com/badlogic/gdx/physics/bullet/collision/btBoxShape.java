@@ -10,7 +10,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
 	/*JNI
 		#include <src/bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 	*/
-		
+
 	public btBoxShape(Vector3 boxHalfExtents) {
 		resetObj(createNative(boxHalfExtents.x, boxHalfExtents.y, boxHalfExtents.z), true);
 	}
@@ -37,8 +37,8 @@ public class btBoxShape extends btPolyhedralConvexShape {
 	}
 	/*[0;X;L]
 		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.btBoxShape);
-		Bullet.destroy(vec);
+		var jsObj = Bullet.wrapPointer(addr, Bullet.btBoxShape);
+		Bullet.destroy(jsObj);
 	*/
 	
 	private static native void deletePointer(long addr); /*
