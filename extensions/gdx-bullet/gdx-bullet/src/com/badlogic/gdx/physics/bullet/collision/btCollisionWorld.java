@@ -218,8 +218,13 @@ public class btCollisionWorld extends BulletBase {
 	}
 	
 	public int getNumCollisionObjects() {
-		return bodies.size;
+		checkPointer();
+		return getNumCollisionObjects(cPointer);
 	}
+	/*[0;X;L]
+	 	checkPointer();  #J
+		return this.$$$jsObj.getNumCollisionObjects();
+	*/
 
 	private static native int getNumCollisionObjects(long addr); /*
 		btCollisionWorld * world = (btCollisionWorld *)addr;

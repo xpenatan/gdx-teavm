@@ -13,6 +13,8 @@ public class btCollisionObject extends BulletBase {
 	
 	btCollisionWorld world;
 	
+	int userValue;
+	
 	public Object userData;
 	
 	protected btCollisionShape shape;
@@ -965,6 +967,10 @@ public class btCollisionObject extends BulletBase {
 	*/
 	/*[0;X;D]*/
 	
+	public int getUserValue() {
+		return this.userValue;
+	}
+	
 	public void setUserIndex(int index) {
 		checkPointer();
 		setUserIndex(cPointer, index);
@@ -979,7 +985,11 @@ public class btCollisionObject extends BulletBase {
 		cobj->setUserIndex(index);
 	*/
 	/*[0;X;D]*/
-	
+
+	public void setUserValue(int userValue) {
+		this.userValue = userValue;
+	}
+
 	public int getUpdateRevisionInternal() {
 		checkPointer();
 		return getUpdateRevisionInternal(cPointer);

@@ -97,14 +97,23 @@ public class btDynamicsWorld extends btCollisionWorld {
 	*/
 	/*[0;X;D]*/
 
+	public void setGravity(Vector3 gravity) {
+		checkPointer();
+		setGravity(cPointer, gravity.x, gravity.y, gravity.z);
+	}
+	/*[0;X;L]
+ 		checkPointer(); #J
+ 		float x = gravity.x, y = gravity.y, z = gravity.z; #J
+		this.$$$jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
+	*/
+	
 	public void setGravity(float x, float y, float z) {
 		checkPointer();
 		setGravity(cPointer, x, y, z);
 	}
 	/*[0;X;L]
  		checkPointer(); #J
-	 	var gravity = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setGravity(gravity);
+		this.$$$jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
 	*/
 	
 	private static native void setGravity(long addr, float x, float y, float z); /*

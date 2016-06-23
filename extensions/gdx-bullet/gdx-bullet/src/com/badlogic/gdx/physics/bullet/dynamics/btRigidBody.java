@@ -67,9 +67,9 @@ public class btRigidBody extends btCollisionObject {
 		return ret;
 	*/
 	/*[0;X;L]
-	 	var motion = Bullet.wrapPointer(motionStateAddr, Bullet.btMotionState);
-	 	var shape = Bullet.wrapPointer(collisionShapeAddr, Bullet.btCollisionShape);
-	 	var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
+		var motion = Bullet.wrapPointer(motionStateAddr, Bullet.btMotionState);
+		var shape = Bullet.wrapPointer(collisionShapeAddr, Bullet.btCollisionShape);
+		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		var cobj = new Bullet.btRigidBody(mass,motion,shape,vec);
 		return Bullet.getPointer(cobj);
 	*/
@@ -1344,24 +1344,31 @@ public class btRigidBody extends btCollisionObject {
 			resetObj(createNative(mass, motionState != null ? motionState.cPointer : 0, collisionShape != null ? collisionShape.cPointer : 0, localInertia.x,localInertia.y,localInertia.z), true);
 		}
 	
-	public btRigidBodyConstructionInfo(float mass, btMotionState motionState, btCollisionShape collisionShape) {
+		public btRigidBodyConstructionInfo(float mass, btMotionState motionState, btCollisionShape collisionShape) {
 			this.motionState = motionState;
 			this.collisionShape = collisionShape;
 			resetObj(createNative(mass, motionState != null ? motionState.cPointer : 0, collisionShape != null ? collisionShape.cPointer : 0, 0, 0, 0), true);
 		}
 		
-	private static native long createNative(float mass, long motionStateAddr, long collisionShapeAddr, float x, float y, float z); /*
+		private static native long createNative(float mass, long motionStateAddr, long collisionShapeAddr, float x, float y, float z); /*
 			btMotionState * motionState = (btMotionState *)motionStateAddr;
 			btCollisionShape * collShape = (btCollisionShape *)collisionShapeAddr;
 			btVector3 vec(x,y,z);
 			return (jlong)new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, collShape, vec);
 		*/
+		/*[0;X;L]
+			var motion = Bullet.wrapPointer(motionStateAddr, Bullet.btMotionState);
+			var shape = Bullet.wrapPointer(collisionShapeAddr, Bullet.btCollisionShape);
+			var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
+			var cobj = new Bullet.btRigidBodyConstructionInfo(mass,motion,shape,vec);
+			return Bullet.getPointer(cobj);
+		*/
 	
-	public void setLinearDamping(float value) {
+		public void setLinearDamping(float value) {
 			checkPointer();
 			setLinearDamping(cPointer, value);
 		}
-	/*[0;X;D]*/
+		/*[0;X;D]*/
 	
 		private static native void setLinearDamping(long addr, float value); /*
 			btRigidBody::btRigidBodyConstructionInfo * construct = (btRigidBody::btRigidBodyConstructionInfo *)addr;

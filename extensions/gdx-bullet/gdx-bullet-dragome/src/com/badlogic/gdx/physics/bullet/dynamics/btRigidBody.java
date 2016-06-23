@@ -489,7 +489,10 @@ public class btRigidBody extends btCollisionObject {
             resetObj(createNative(mass, motionState != null ? motionState.cPointer : 0, collisionShape != null ? collisionShape.cPointer : 0, 0, 0, 0), true);
         }
 
-        private static native long createNative(float mass, long motionStateAddr, long collisionShapeAddr, float x, float y, float z);
+        private static long createNative(float mass, long motionStateAddr, long collisionShapeAddr, float x, float y, float z) {
+			com.dragome.commons.javascript.ScriptHelper.evalNoResult("var motion=Bullet.wrapPointer(motionStateAddr,Bullet.btMotionState);var shape=Bullet.wrapPointer(collisionShapeAddr,Bullet.btCollisionShape);var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);var cobj=new Bullet.btRigidBodyConstructionInfo(mass,motion,shape,vec);",null);
+			return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(cobj);",null);
+        }
         //TODO need to finish other methods
     }
 }

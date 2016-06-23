@@ -15,6 +15,8 @@ public class btCollisionObject extends BulletBase {
 
     btCollisionWorld world;
 
+    int userValue;
+
     public Object userData;
 
     protected btCollisionShape shape;
@@ -364,9 +366,17 @@ public class btCollisionObject extends BulletBase {
 		return com.dragome.commons.javascript.ScriptHelper.evalInt("this.$$$jsObj.getUserIndex();",this);
     }
 
+    public int getUserValue() {
+        return this.userValue;
+    }
+
     public void setUserIndex(int index) {
 		checkPointer();
 		com.dragome.commons.javascript.ScriptHelper.evalNoResult("this.$$$jsObj.setUserIndex(index);",this);
+    }
+
+    public void setUserValue(int userValue) {
+        this.userValue = userValue;
     }
 
     public int getUpdateRevisionInternal() {

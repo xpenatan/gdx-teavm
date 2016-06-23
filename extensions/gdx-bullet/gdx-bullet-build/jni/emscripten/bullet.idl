@@ -164,7 +164,7 @@ interface btCollisionWorld {
 	//btIDebugDraw getDebugDrawer(); //Not needed
 	void debugDrawWorld();
 	void debugDrawObject ([Const, Ref] btTransform worldTransform, [Const] btCollisionShape shape, [Const, Ref] btVector3 color);
-	//long getNumCollisionObjects(); //Not needed
+	long getNumCollisionObjects();
 	void rayTest([Const, Ref]btVector3 rayFromWorld, [Const, Ref]btVector3 rayToWorld, [Ref]RayResultCallback resultCallback);
 	void convexSweepTest([Const]btConvexShape castShape, [Const, Ref]btTransform from, [Const, Ref]btTransform to, [Ref]ConvexResultCallback resultCallback, optional float allowedCcdPenetration);
 	void contactTest([Const]btCollisionObject colObj, [Ref]ContactResultCallback resultCallback);

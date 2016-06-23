@@ -131,7 +131,8 @@ public class btCollisionWorld extends BulletBase {
     }
 
     public int getNumCollisionObjects() {
-        return bodies.size;
+		checkPointer();
+		return com.dragome.commons.javascript.ScriptHelper.evalInt("this.$$$jsObj.getNumCollisionObjects();",this);
     }
 
     public void rayTest(Vector3 rayFromWorld, Vector3 rayToWorld, RayResultCallback resultCallback) {
