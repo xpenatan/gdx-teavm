@@ -6,7 +6,7 @@
 	<!-- output directory for the shared library -->
 	<property name="libsDir" value="../../natives" />
 	<!-- the name of the shared library -->
-	<property name="libName" value="XpeBullet.js"/>
+	<property name="libName" value="gdxBullet.js"/>
 	
 	<property name="emscripten_SDK" value="C:\Emscripten\emscripten\tag-1.36.5\"/>
 	

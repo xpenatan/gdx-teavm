@@ -70,13 +70,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	@Override
 	public void build () {
-
 		elementBySelector = new BrowserDomHandler();
-
-// Element createElement = document.createElement("canvas");
-// Element elementById = document.getElementById("body");
-// elementById.appendChild(createElement);
-
 		prepare();
 	}
 

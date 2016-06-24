@@ -16,7 +16,7 @@ public class BulletTestLauncher extends DragomeApplication
 	public ApplicationListener createApplicationListener()
 	{
 		AssetLoaderListener<Object> listener = new AssetLoaderListener<Object>();
-		AssetDownloader.loadScript("XpeBullet.js", listener);
+		AssetDownloader.loadScript("gdxBullet.js", listener);
 		return new BulletTest();
 	}
 

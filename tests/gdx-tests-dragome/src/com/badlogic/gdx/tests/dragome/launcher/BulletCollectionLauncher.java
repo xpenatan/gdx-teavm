@@ -17,7 +17,7 @@ public class BulletCollectionLauncher extends DragomeApplication
 	public ApplicationListener createApplicationListener()
 	{
 		AssetLoaderListener<Object> listener = new AssetLoaderListener<Object>();
-		AssetDownloader.loadScript("XpeBullet.js", listener);
+		AssetDownloader.loadScript("gdxBullet.js", listener);
 		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<Object>());
 		return new BulletTestCollection();
 	}

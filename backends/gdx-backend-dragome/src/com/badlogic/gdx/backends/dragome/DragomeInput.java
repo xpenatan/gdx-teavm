@@ -25,7 +25,6 @@ import org.w3c.dom.events.MouseEvent;
 import org.w3c.dom.events.Touch;
 import org.w3c.dom.html.HTMLCanvasElement;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.dragome.utils.KeyCodes;

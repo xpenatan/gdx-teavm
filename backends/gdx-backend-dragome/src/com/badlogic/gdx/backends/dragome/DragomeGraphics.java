@@ -18,7 +18,6 @@ package com.badlogic.gdx.backends.dragome;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.webgl.WebGLContextAttributes;
-import org.w3c.dom.webgl.WebGLRenderingContext;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
