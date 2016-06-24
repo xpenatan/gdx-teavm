@@ -18,11 +18,14 @@ package com.badlogic.gdx.backends.dragome;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
+import com.badlogic.gdx.backends.dragome.utils.Storage;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /** @author xpenatan */
 public class DragomeFiles implements Files {
+
+	public static final Storage LocalStorage = Storage.getLocalStorageIfSupported();
 
 	final Preloader preloader;
 

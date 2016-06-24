@@ -16,7 +16,9 @@
 
 package com.badlogic.gdx.backends.dragome;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
@@ -37,6 +39,7 @@ import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.view.DefaultVisualActivity;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
@@ -60,7 +63,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	private int logLevel = LOG_INFO;
 	private Array<Runnable> runnables = new Array<Runnable>();
 	private Array<Runnable> runnablesHelper = new Array<Runnable>();
-	private Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(); // FIXME need a proper impl
+	private Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>();
+	private ObjectMap<String, Preferences> prefs = new ObjectMap<String, Preferences>();
 	private int lastWidth;
 	private int lastHeight;
 
@@ -115,7 +119,16 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		onResize();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		Document document = elementBySelector.getDocument();
+		EventTarget doc = JsCast.castTo(document, EventTarget.class);
+		EventListener eventListener = new EventListener() {
+			@Override
+			public void handleEvent (Event evt) {
+				onVisibilityChange(!ScriptHelper.evalBoolean("document.hidden", this));
+			}
+		};
 
+		doc.addEventListener("visibilitychange", eventListener, false);
 
 //		new Timer().setInterval(new Runnable() {
 //			public void run () {
@@ -190,7 +203,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	@Override
 	public ApplicationListener getApplicationListener () {
-		return null;
+		return listener;
 	}
 
 	@Override
@@ -275,7 +288,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	@Override
 	public ApplicationType getType () {
-		return null;
+		return ApplicationType.WebGL;
 	}
 
 	@Override
@@ -295,7 +308,12 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	@Override
 	public Preferences getPreferences (String name) {
-		return null;
+		Preferences pref = prefs.get(name);
+		if (pref == null) {
+			pref = new DragomePreferences(name);
+			prefs.put(name, pref);
+		}
+		return pref;
 	}
 
 	@Override
@@ -305,6 +323,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	@Override
 	public void postRunnable (Runnable runnable) {
+		runnables.add(runnable);
 	}
 
 	@Override
@@ -322,6 +341,20 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	public void removeLifecycleListener (LifecycleListener listener) {
 		synchronized (lifecycleListeners) {
 			lifecycleListeners.removeValue(listener, true);
+		}
+	}
+
+	private void onVisibilityChange (boolean visible) {
+		if (visible) {
+			for (LifecycleListener listener : lifecycleListeners) {
+				listener.resume();
+			}
+			listener.resume();
+		} else {
+			for (LifecycleListener listener : lifecycleListeners) {
+				listener.pause();
+			}
+			listener.pause();
 		}
 	}
 

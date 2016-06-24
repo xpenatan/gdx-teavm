@@ -889,6 +889,8 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public int glGetUniformLocation (int program, String name) {
 		WebGLUniformLocation location = gl.getUniformLocation(programs.get(program), name);
+		if(location == null)
+			return -1;
 		return allocateUniformLocationId(program, location);
 	}
 

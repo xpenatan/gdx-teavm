@@ -63,13 +63,13 @@ import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 import org.w3c.dom.websocket.WebSocket;
 
+import com.badlogic.gdx.backends.dragome.utils.Storage;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.PrioritySolver;
 import com.dragome.commons.compiler.classpath.Classpath;
 import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.commons.compiler.classpath.ClasspathFile;
-import com.dragome.commons.compiler.classpath.ClasspathFileFilter;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.VirtualFolderClasspathEntry;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
@@ -101,7 +101,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, 
 			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, ProgressEvent.class, 
-			EventTarget.class, Event.class, XMLHttpRequest.class, WebSocket.class, MessageEvent.class, XMLHttpRequestExtension.class));
+			EventTarget.class, Event.class, XMLHttpRequest.class, WebSocket.class, MessageEvent.class, XMLHttpRequestExtension.class, Storage.class));
 	
 	public DragomeConfiguration()
 	{
@@ -114,19 +114,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			if (file2.exists()) 
 				file2.delete();
 		}
-		
-		setClasspathFilter( new ClasspathFileFilter() {
-			
-			@Override
-			public boolean accept(File pathname, File folder) {
-				boolean flag = true;
-//				String absolutePath = pathname.getAbsolutePath();
-//				System.out.println("absolutePath: " + flag + " - " + absolutePath);
-				return flag;
-			}
-		});
-		
-		
 	}
 	
 	public List<ClasspathEntry> getExtraClasspath(Classpath classpath)

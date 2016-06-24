@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 See AUTHORS file.
+ * Copyright 2016 Natan Guilherme.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 
+/** Ported from GWT backend.
+ * @author xpenatan */
 public class DragomeGL20Debug extends DragomeGL20 {
 
 	protected DragomeGL20Debug (WebGLRenderingContextExtension gl) {
