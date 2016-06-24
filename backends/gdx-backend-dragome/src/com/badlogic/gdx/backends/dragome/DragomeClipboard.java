@@ -18,14 +18,19 @@ package com.badlogic.gdx.backends.dragome;
 
 import com.badlogic.gdx.utils.Clipboard;
 
-/** @author xpenatan */
+/** Ported from GWT backend
+ * @author xpenatan */
 public class DragomeClipboard implements Clipboard {
+
+	private String content = "";
+
 	@Override
 	public String getContents () {
-		return null;
+		return content;
 	}
 
 	@Override
 	public void setContents (String content) {
+		this.content = content;
 	}
 }
