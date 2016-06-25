@@ -22,27 +22,29 @@ import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
-/** @author xpenatan */
+/** Ported from GWT backend
+ * @author xpenatan */
 public class DragomeAudio implements Audio {
 
 	@Override
 	public AudioDevice newAudioDevice (int samplingRate, boolean isMono) {
-		return null;
+		throw new GdxRuntimeException("AudioDevice not supported by Dragome backend");
 	}
 
 	@Override
 	public AudioRecorder newAudioRecorder (int samplingRate, boolean isMono) {
-		return null;
+		throw new GdxRuntimeException("AudioRecorder not supported by Dragome backend");
 	}
 
 	@Override
 	public Sound newSound (FileHandle fileHandle) {
-		return null;
+		return new DragomeSound(fileHandle);
 	}
 
 	@Override
 	public Music newMusic (FileHandle file) {
-		return null;
+		return new DragomeMusic(file);
 	}
 }

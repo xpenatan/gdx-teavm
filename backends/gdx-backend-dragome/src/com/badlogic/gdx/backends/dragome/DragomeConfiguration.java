@@ -63,6 +63,8 @@ import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 import org.w3c.dom.websocket.WebSocket;
 
+import com.badlogic.gdx.backends.dragome.soundmanager2.SMSound;
+import com.badlogic.gdx.backends.dragome.soundmanager2.SoundManager;
 import com.badlogic.gdx.backends.dragome.utils.Storage;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
@@ -101,7 +103,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, 
 			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, ProgressEvent.class, 
-			EventTarget.class, Event.class, XMLHttpRequest.class, WebSocket.class, MessageEvent.class, XMLHttpRequestExtension.class, Storage.class));
+			EventTarget.class, Event.class, XMLHttpRequest.class, WebSocket.class, MessageEvent.class, XMLHttpRequestExtension.class, Storage.class, SoundManager.class, SMSound.class));
 	
 	public DragomeConfiguration()
 	{

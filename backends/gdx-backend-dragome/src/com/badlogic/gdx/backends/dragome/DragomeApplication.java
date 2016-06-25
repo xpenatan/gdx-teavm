@@ -36,6 +36,7 @@ import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
+import com.badlogic.gdx.backends.dragome.soundmanager2.SoundManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
@@ -52,6 +53,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	private ApplicationListener listener;
 	BrowserDomHandler elementBySelector;
 
+	DragomeApplicationConfiguration config;
 	DragomeGraphics graphics;
 	DragomeInput input;
 	DragomeNet net;
@@ -75,8 +77,9 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	private void prepare () {
-		preloader = new Preloader(AssetDownloader.getHostPageBaseURL());
+		preloader = new Preloader(AssetDownloader.getHostPageBaseURL() + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<Object>();
+		AssetDownloader.loadScript("soundmanager2-jsmin.js", assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
@@ -85,7 +88,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
 		listener = createApplicationListener();
 		if (listener == null) return;
-		DragomeApplicationConfiguration config = getConfig();
+		config = getConfig();
 		if(config == null)
 			config = new DragomeApplicationConfiguration();
 		graphics = new DragomeGraphics(this, config);
@@ -142,19 +145,30 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 				try {
 					if(init == false) {
 						if(AssetDownloader.getQueue() == 0) {
-							init = true;
-							graphics.update();
-							onResize();
-							lastWidth = graphics.getWidth();
-							lastHeight = graphics.getHeight();
-							Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
-							listener.create();
-							DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
-							DragomeWindow.onResize(new Runnable() {
+							// initialize SoundManager2
+							SoundManager.init(getAssetUrl(), 9, config.preferFlash, new SoundManager.SoundManagerCallback() {
 								@Override
-								public void run () {
+								public void onready () {
+									init = true;
+									graphics.update();
 									onResize();
+									lastWidth = graphics.getWidth();
+									lastHeight = graphics.getHeight();
+									Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
+									listener.create();
 									DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+									DragomeWindow.onResize(new Runnable() {
+										@Override
+										public void run () {
+											onResize();
+											DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+										}
+									});
+								}
+
+								@Override
+								public void ontimeout (String status, String errorType) {
+									error("SoundManager", status + " " + errorType);
 								}
 							});
 						}
@@ -354,6 +368,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	public HTMLCanvasElementExtension getCanvas () {
 		return graphics.canvas;
+	}
+	
+	public String getAssetUrl () {
+		return preloader.baseUrl;
 	}
 
 	public Preloader getPreloader () {

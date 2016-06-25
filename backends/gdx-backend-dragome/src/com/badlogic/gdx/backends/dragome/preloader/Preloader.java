@@ -62,9 +62,7 @@ public class Preloader {
 	public final String baseUrl;
 
 	public Preloader (String newBaseURL) {
-
 		baseUrl = newBaseURL;
-
 	}
 
 	public void preload (final String assetFileUrl) {
@@ -129,7 +127,7 @@ public class Preloader {
 	}
 
 	public void loadAsset (final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
-		AssetDownloader.load(baseUrl + "assets/" + url, type, mimeType, new AssetLoaderListener<Object>() {
+		AssetDownloader.load(baseUrl + url, type, mimeType, new AssetLoaderListener<Object>() {
 			@Override
 			public void onProgress (double amount) {
 				listener.onProgress(amount);
