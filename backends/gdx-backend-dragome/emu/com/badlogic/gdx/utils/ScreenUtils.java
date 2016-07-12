@@ -19,9 +19,6 @@ package com.badlogic.gdx.utils;
 import java.nio.ByteBuffer;
 import java.nio.HasArrayBufferView;
 
-import org.w3c.dom.html.CanvasRenderingContext2D;
-import org.w3c.dom.typedarray.ArrayBufferView;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -84,16 +81,18 @@ public final class ScreenUtils {
 
 	public static void putPixelsBack (Pixmap pixmap, ByteBuffer pixels) {
 		if (pixmap.getWidth() == 0 || pixmap.getHeight() == 0) return;
-		putPixelsBack(((HasArrayBufferView)pixels).getTypedArray(), pixmap.getWidth(), pixmap.getHeight(), pixmap.getContext());
-	}
-
-	private static void putPixelsBack (ArrayBufferView pixels, int width, int height, CanvasRenderingContext2D ctx) {
+		int width = pixmap.getWidth();
+		int height = pixmap.getWidth();
+		ScriptHelper.put("width", width, null);
+		ScriptHelper.put("height", height, null);
+		ScriptHelper.put("pixels", ((HasArrayBufferView)pixels).getTypedArray(), null);
+		ScriptHelper.put("ctx", pixmap.getContext(), null);
 		ScriptHelper.evalNoResult("var imgData = ctx.node.createImageData(width, height);", null);
 		ScriptHelper.evalNoResult("var data = imgData.data;", null);
 		for (int i = 0, len = width * height * 4; i < len; i++) {
 			ScriptHelper.evalNoResult("data[i] = pixels.node[i] & 0xff;", null); // TODO need to check
 		}
-		ScriptHelper.evalNoResult("ctx.putImageData(imgData, 0, 0);", null);
+		ScriptHelper.evalNoResult("ctx.node.putImageData(imgData, 0, 0);", null);
 	}
 
 	/** Returns the default framebuffer contents as a byte[] array with a length equal to screen width * height * 4. The byte[]

@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.backends.dragome.soundmanager2;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 
@@ -29,7 +30,7 @@ public interface SoundManager {
 		@MethodAlias(local_alias= "ontimeout")
 		public void ontimeout (String status, String errorType);
 	}
-
+	@DelegateCode(ignore= true)
 	public static SoundManager getInstance () {
 		return ScriptHelper.evalCasting("window.soundManager", SoundManager.class, null);
 	};
@@ -45,13 +46,15 @@ public interface SoundManager {
 	/** Creates a new sound object from the supplied url.
 	 * @param url the location of the sound file.
 	 * @return the created sound object. */
+	@DelegateCode(ignore= true)
 	public static SMSound createSound (String url) {
 		return ScriptHelper.evalCasting("window.soundManager.createSound({url: url})", SMSound.class, null);
 	}
 
 	public void reboot ();
 	public boolean ok ();
-
+	
+	@DelegateCode(ignore= true)
 	public static void init (String moduleBaseURL, int flashVersion, boolean preferFlash, SoundManagerCallback callback) {
 		ScriptHelper.evalNoResult("window.soundManager = new SoundManager();", null);
 		ScriptHelper.evalNoResult("window.soundManager.setup({ "

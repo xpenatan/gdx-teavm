@@ -29,6 +29,7 @@ ipch/
 dist/
 compiled-js/
 target/
+build/
 
 *.a
 *.dll

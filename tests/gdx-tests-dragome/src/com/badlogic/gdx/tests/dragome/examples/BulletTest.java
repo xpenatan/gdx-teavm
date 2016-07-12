@@ -2,6 +2,7 @@ package com.badlogic.gdx.tests.dragome.examples;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -90,8 +91,6 @@ public class BulletTest implements ApplicationListener, InputProcessor
 	
 	@Override
 	public void create() {
-		
-		
 		Bullet.init();
 		
 		btVersion = btScalar.btGetVersion();
@@ -341,27 +340,25 @@ public class BulletTest implements ApplicationListener, InputProcessor
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		
 //		System.out.println("touchDown: " + screenX + " ; " + screenY);
-		Ray ray = camera.getPickRay(screenX, screenY);
-		float ScaleToMeter = 1;
-		rayFrom.set(ray.origin.scl(ScaleToMeter));
-		rayTo.set(ray.direction).scl(200).add(rayFrom);
-		raycast.setClosestHitFraction(1f);
-		world.rayTest(rayFrom, rayTo, raycast);
 		
-		if (raycast.hasHit())
-		{
-			btCollisionObject collisionObject = raycast.getCollisionObject(world);
-			System.out.println("HIT");
-			btCollisionObjectArray collisionObjects = raycast.getCollisionObjects();
-			
-			for(int i = 0; i < collisionObjects.size();i++)
-			{
-				btCollisionObject at = collisionObjects.at(i, world);
-				System.out.println(at.userData);
+		if(button == Buttons.LEFT) {
+			Ray ray = camera.getPickRay(screenX, screenY);
+			float ScaleToMeter = 1;
+			rayFrom.set(ray.origin.scl(ScaleToMeter));
+			rayTo.set(ray.direction).scl(200).add(rayFrom);
+			raycast.setClosestHitFraction(1f);
+			world.rayTest(rayFrom, rayTo, raycast);
+
+			if (raycast.hasHit()) {
+				btCollisionObject collisionObject = raycast.getCollisionObject(world);
+				btCollisionObjectArray collisionObjects = raycast.getCollisionObjects();
+				for (int i = 0; i < collisionObjects.size(); i++) {
+					btCollisionObject at = collisionObjects.at(i, world);
+					System.out.println("HIT Body:" + at.userData);
+				}
 			}
+			raycast.clear();
 		}
-		raycast.clear();
-			
 		return false;
 	}
 

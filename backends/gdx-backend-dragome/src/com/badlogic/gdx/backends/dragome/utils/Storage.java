@@ -1,6 +1,7 @@
 
 package com.badlogic.gdx.backends.dragome.utils;
 
+import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 
@@ -10,6 +11,7 @@ public interface Storage {
 	static final boolean localStorageSupported = checkStorageSupport("localStorage");
 	static final boolean sessionStorageSupported = checkStorageSupport("sessionStorage");
 
+	@DelegateCode(ignore= true)
 	public static Storage getLocalStorageIfSupported () {
 		Storage storage = null;
 		if (localStorageSupported || sessionStorageSupported) {
@@ -18,7 +20,7 @@ public interface Storage {
 		}
 		return storage;
 	}
-
+	@DelegateCode(ignore= true)
 	public static boolean checkStorageSupport (String type) {
 		ScriptHelper.evalBoolean("var flag=false;try{window[type].setItem('HelloWorld','HelloWorld');window[type].removeItem('HelloWorld');flag=true;}catch(e){flag=false;}", null);
 		return ScriptHelper.evalBoolean("flag", null);

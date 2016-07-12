@@ -37,6 +37,7 @@ import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderLi
 import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.backends.dragome.soundmanager2.SoundManager;
+import com.badlogic.gdx.backends.dragome.utils.AgentInfo;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
@@ -60,7 +61,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	DragomeFiles files;
 	DragomeAudio audio;
 	Clipboard clipboard;
-	boolean init;
+	int init = 0;
 	Preloader preloader;
 	private int logLevel = LOG_INFO;
 	private Array<Runnable> runnables = new Array<Runnable>();
@@ -69,6 +70,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	private ObjectMap<String, Preferences> prefs = new ObjectMap<String, Preferences>();
 	private int lastWidth;
 	private int lastHeight;
+	private static AgentInfo agentInfo;
 
 	@Override
 	public void build () {
@@ -109,6 +111,17 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		Gdx.net = net;
 		Gdx.files = files;
 		Gdx.audio = audio;
+		DragomeApplication.agentInfo = AgentInfo.computeAgentInfo();
+		
+		if(agentInfo.isWindows() == true)
+			System.setProperty("os.name", "Windows");
+		else if(agentInfo.isMacOS() == true)
+			System.setProperty("os.name", "OS X");
+		else if(agentInfo.isLinux() == true)
+			System.setProperty("os.name", "Linux");
+		else
+			System.setProperty("os.name", "no OS");
+		
 		this.clipboard = new DragomeClipboard();
 		lastWidth = graphics.getWidth();
 		lastHeight = graphics.getHeight();
@@ -143,34 +156,37 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			@Override
 			public void run () {
 				try {
-					if(init == false) {
+					if(init != 2) { // #TODO not the best solution but a working solution.
 						if(AssetDownloader.getQueue() == 0) {
-							// initialize SoundManager2
-							SoundManager.init(getAssetUrl(), 9, config.preferFlash, new SoundManager.SoundManagerCallback() {
-								@Override
-								public void onready () {
-									init = true;
-									graphics.update();
-									onResize();
-									lastWidth = graphics.getWidth();
-									lastHeight = graphics.getHeight();
-									Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
-									listener.create();
-									DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
-									DragomeWindow.onResize(new Runnable() {
-										@Override
-										public void run () {
-											onResize();
-											DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
-										}
-									});
-								}
+							if(init == 0) {
+								init = 1;
+								// initialize SoundManager2
+								SoundManager.init(getAssetUrl(), 9, config.preferFlash, new SoundManager.SoundManagerCallback() {
+									@Override
+									public void onready () {
+										graphics.update();
+										onResize();
+										lastWidth = graphics.getWidth();
+										lastHeight = graphics.getHeight();
+										Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
+										listener.create();
+										DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+										DragomeWindow.onResize(new Runnable() {
+											@Override
+											public void run () {
+												onResize();
+												DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+											}
+										});
+										init = 2;
+									}
 
-								@Override
-								public void ontimeout (String status, String errorType) {
-									error("SoundManager", status + " " + errorType);
-								}
-							});
+									@Override
+									public void ontimeout (String status, String errorType) {
+										error("SoundManager", status + " " + errorType);
+									}
+								});
+							}
 						}
 					}
 					else
@@ -382,5 +398,11 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		Element theElement = elementBySelector.getElementBySelector("body");
 		EventTarget eventTarget= JsCast.castTo(theElement, EventTarget.class);
 		eventTarget.addEventListener(aEvent, aEventListener, false);
+	}
+	
+	/** Contains precomputed information on the user-agent. Useful for dealing with browser and OS behavioral differences. Kindly
+	 * borrowed from PlayN */
+	public static AgentInfo agentInfo () {
+		return agentInfo;
 	}
 }
