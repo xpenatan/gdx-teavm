@@ -24,7 +24,8 @@ public class btCylinderShape extends btConvexInternalShape {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btCylinderShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btCylinderShape); #EVAL
 		}
 	*/
 	
@@ -32,11 +33,7 @@ public class btCylinderShape extends btConvexInternalShape {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.btCylinderShape);
-		Bullet.destroy(vec);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btCylinderShape * cobj = (btCylinderShape *)addr;

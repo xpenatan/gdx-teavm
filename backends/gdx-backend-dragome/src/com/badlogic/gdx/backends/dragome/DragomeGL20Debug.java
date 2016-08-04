@@ -34,7 +34,8 @@ public class DragomeGL20Debug extends DragomeGL20 {
 	}
 
 	private void checkError () {
-		int error = ScriptHelper.evalInt("this.$$$gl.node.getError()", this);
+		ScriptHelper.put("gl", this.gl, this);
+		int error = ScriptHelper.evalInt("gl.node.getError()", this);
 		if (error != GL_NO_ERROR) {
 			GdxRuntimeException gdxRuntimeException = new GdxRuntimeException("GL error: " + error + ", " + Integer.toHexString(error));
 			Gdx.app.error("GL20", "Error: " + error + ", " + Integer.toHexString(error));

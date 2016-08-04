@@ -15,7 +15,8 @@ public class btCollisionAlgorithm extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btCollisionAlgorithm);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionAlgorithm); #EVAL
 		}
 	*/
 	
@@ -25,7 +26,9 @@ public class btCollisionAlgorithm extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.getAllContactManifolds(manifoldArray.$$$jsObj);
+		jsObj, this.jsObj #P
+		mObj, manifoldArray.jsObj #P
+		jsObj.getAllContactManifolds(mObj);
 	*/
 	
 	private static native void getAllContactManifolds(long addr, long manifoldArrayAddr); /*

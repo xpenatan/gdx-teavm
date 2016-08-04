@@ -125,13 +125,15 @@ public class DragomeInput implements Input {
 	 * @param event JavaScript Mouse Event
 	 * @return movement in x direction */
 	private float getMovementXJS (Event event) {
+		ScriptHelper.put("event", event, this);
 		return ScriptHelper.evalFloat("event.node.movementX || event.node.webkitMovementX || 0", this);
 	};
 
 	/** from https://github.com/toji/game-shim/blob/master/game-shim.js
 	 * @param event JavaScript Mouse Event
 	 * @return movement in y direction */
-	private float getMovementYJS (Event event) { 
+	private float getMovementYJS (Event event) {
+		ScriptHelper.put("event", event, this);
 		return ScriptHelper.evalFloat("event.node.movementY || event.node.webkitMovementY || 0", this);
 	};
 
@@ -354,15 +356,20 @@ public class DragomeInput implements Input {
 	}
 
 	private static float getMouseWheelVelocity (MouseEvent event) {
+		ScriptHelper.put("event", event, null);
 		float delta = 0;
+		ScriptHelper.put("delta", delta, null);
 		AgentInfo agent = DragomeApplication.agentInfo();
+		ScriptHelper.put("agent", agent, null);
 		Object agentInfo = ScriptHelper.eval("agent.node", null);
+		ScriptHelper.put("agentInfo", agentInfo, null);
 		Object evt = ScriptHelper.eval("event.node", null);
+		ScriptHelper.put("evt", evt, null);
 		ScriptHelper.evalNoResult("if(agentInfo.isFirefox){if(agentInfo.isMacOS){delta=1.0*evt.detail;}else{delta = 1.0*evt.detail/3;}}"
 			+ "else if(agentInfo.isOpera){if(agentInfo.isLinux){delta=-1.0*evt.wheelDelta/80;}else{delta=-1.0*evt.wheelDelta/40;}}"
 			+ "else if(agentInfo.isChrome||agentInfo.isSafari){delta=-1.0*evt.wheelDelta/120;"
 			+ "if(Math.abs(delta)<1){if(agentInfo.isWindows){delta=-1.0*evt.wheelDelta;}else if(agentInfo.isMacOS){delta=-1.0*evt.wheelDelta/3;}}}", null);
-		return delta;
+		return ScriptHelper.evalFloat("delta", null);
 	}
 
 	private static int toInt32 (double val) {

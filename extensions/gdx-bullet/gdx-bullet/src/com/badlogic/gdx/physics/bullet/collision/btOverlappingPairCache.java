@@ -15,7 +15,8 @@ public class btOverlappingPairCache extends btOverlappingPairCallback {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btOverlappingPairCache);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btOverlappingPairCache); #EVAL
 		}
 	*/
 	
@@ -27,8 +28,8 @@ public class btOverlappingPairCache extends btOverlappingPairCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getOverlappingPairArray());
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getOverlappingPairArray()); #EVALLONG
 		tmp.resetObj(addr, false); #J
 		return tmp; #J
 	*/

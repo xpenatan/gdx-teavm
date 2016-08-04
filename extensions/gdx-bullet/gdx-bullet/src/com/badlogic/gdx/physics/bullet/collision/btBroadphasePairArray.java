@@ -17,7 +17,8 @@ public class btBroadphasePairArray extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btBroadphasePairArray);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btBroadphasePairArray); #EVAL
 		}
 	*/
 	
@@ -27,7 +28,8 @@ public class btBroadphasePairArray extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.size();
+		jsObj, this.jsObj #P
+		return jsObj.size();
 	*/
 	
 	private static native int size(long addr); /*
@@ -47,8 +49,8 @@ public class btBroadphasePairArray extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.at(n));
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.at(n)) #EVALLONG
 		tmp.resetObj(addr, false); #J
 		return tmp; #J
 	*/
@@ -65,7 +67,8 @@ public class btBroadphasePairArray extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.capacity();
+		jsObj, this.jsObj #P
+		return jsObj.capacity();
 	*/
 	
 	private static native int capacity(long addr); /*
@@ -80,7 +83,8 @@ public class btBroadphasePairArray extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.resize(newsize);
+		jsObj, this.jsObj #P
+		jsObj.resize(newsize);
 	*/
 	
 	private static native void resize(long addr, int newsize); /*

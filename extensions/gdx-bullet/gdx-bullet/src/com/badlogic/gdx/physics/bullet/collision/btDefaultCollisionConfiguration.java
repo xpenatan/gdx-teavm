@@ -24,7 +24,8 @@ public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btDefaultCollisionConfiguration);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDefaultCollisionConfiguration); #EVAL
 		}
 	*/
 	
@@ -32,11 +33,7 @@ public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var conf = Bullet.wrapPointer(addr, Bullet.btDefaultCollisionConfiguration);
-		Bullet.destroy(conf);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btDefaultCollisionConfiguration * cobj = (btDefaultCollisionConfiguration *)addr;

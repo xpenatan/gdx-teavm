@@ -22,7 +22,8 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btConvexHullShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btConvexHullShape); #EVAL
 		}
 	*/
 	
@@ -30,11 +31,7 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.btConvexHullShape);
-		Bullet.destroy(vec);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btConvexHullShape * cobj = (btConvexHullShape *)addr;
@@ -48,10 +45,13 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=point.x, y=point.y,z=point.z; #J
+		jsObj, this.jsObj #P
+		x, point.x #P
+		y, point.y #P
+		z, point.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 		vec.setValue(x,y,z);
-		this.$$$jsObj.addPoint(vec, true);
+		jsObj.addPoint(vec, true);
 	*/
 	
 	public void addPoint(Vector3 point, boolean recalculateLocalAabb) {
@@ -60,9 +60,12 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=point.x, y=point.y,z=point.z; #J
+		jsObj, this.jsObj #P
+		x, point.x #P
+		y, point.y #P
+		z, point.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.addPoint(vec, recalculateLocalAabb);
+		jsObj.addPoint(vec, recalculateLocalAabb);
 	*/
 	
 	private static native void addPoint(long addr, float x, float y, float z, boolean recalculateLocalAabb); /*

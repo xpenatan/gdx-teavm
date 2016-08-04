@@ -22,7 +22,8 @@ public class btMatrix3x3 extends BulletBase{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btMatrix3x3);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btMatrix3x3); #EVAL
 		}
 	*/
 	
@@ -30,11 +31,7 @@ public class btMatrix3x3 extends BulletBase{
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var mat = Bullet.wrapPointer(addr, Bullet.btMatrix3x3);
-		Bullet.destroy(mat);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btMatrix3x3 * cobj = (btMatrix3x3 *)addr;
@@ -48,8 +45,9 @@ public class btMatrix3x3 extends BulletBase{
 	}
 	/*[0;X;L]
 	 	mat.checkPointer(); #J
-		Object mat3 = mat.jsObj;  #J
-		mat3.setValue(value[0],value[3],value[6],value[1],value[4],value[7],value[2],value[5],value[8]);	*/
+		jsObj, mat.jsObj #P
+		jsObj.setValue(value[0],value[3],value[6],value[1],value[4],value[7],value[2],value[5],value[8]);	
+	*/
 
 	// Convert to column-major
 	private static native void set(long addr, float[] value); /*
@@ -94,21 +92,21 @@ public class btMatrix3x3 extends BulletBase{
 	*/
 	/*[0;X;D]*/
 	
-	public static void set(Matrix3 in, btMatrix3x3 out) {
+	public static void set(Matrix3 inn, btMatrix3x3 out) {
 		out.checkPointer();
-		btMatrix3x3.set(out.cPointer, in.val);
+		btMatrix3x3.set(out.cPointer, inn.val);
 	}
 	/*[0;X;L]
 	 	out.checkPointer(); #J
-		btMatrix3x3.set(out, in.val); #J
+		btMatrix3x3.set(out, inn.val); #J
 	*/
 
-	public static void get(btMatrix3x3 in, Matrix3 out) {
-		in.checkPointer();
-		btMatrix3x3.get(in.cPointer, out.val);
+	public static void get(btMatrix3x3 inn, Matrix3 out) {
+		inn.checkPointer();
+		btMatrix3x3.get(inn.cPointer, out.val);
 	}
 	/*[0;X;L]
-	 	in.checkPointer(); #J
-		btMatrix3x3.get(in, out.val); #J
+	 	inn.checkPointer(); #J
+		btMatrix3x3.get(inn, out.val); #J
 	*/
 }

@@ -108,8 +108,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			WebGLShader.class, WebGLTexture.class, WebGLUniformLocation.class, WebGLRenderingContextExtension.class, 
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class, 
-			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class, 
-			Storage.class, SoundManager.class, SMSound.class, AgentInfo.class));
+			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class));
 	
 	public DragomeConfiguration()
 	{
@@ -158,11 +157,21 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				flag &= !absolutePath.contains("\\JDOMAbout");
 				flag &= !absolutePath.contains("\\junit\\");
 				flag &= !absolutePath.contains("com\\dragome\\tests\\");
-				if(flag == false)
-					flag = classClassPathFilter(pathname, folder);
+				flag |= absolutePath.contains("net\\sf\\flexjson");
 				flag &= !absolutePath.contains("\\DragomeConfiguration");
 				flag &= !absolutePath.contains("\\JsConfiguration");
-//				System.out.println("Flag: " + flag + " Path: " + absolutePath);
+				flag &= !absolutePath.contains("com\\dragome\\commons");
+				flag &= !absolutePath.contains("DragomeConfigurator");
+				flag &= !absolutePath.contains("ApplicationConfigurator");
+				flag |= absolutePath.contains("\\commons\\javascript");
+				flag |= absolutePath.contains("\\compiler\\annotations\\");
+				flag |= absolutePath.contains("\\commons\\AbstractProxyRelatedInvocationHandler");
+				flag |= absolutePath.contains("\\commons\\ProxyRelatedInvocationHandler");
+				flag |= absolutePath.contains("\\commons\\DragomeConfiguratorImplementor");
+				if(flag == false)
+					flag = classClassPathFilter(pathname, folder);
+//				if(flag)
+//					System.out.println("Flag: " + flag + " Path: " + absolutePath);
 				return flag;
 			}
 		});
@@ -222,21 +231,21 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		classes.addAll(additionalDelegates);
 	}
 
-	public boolean filterClassPath(String aClassPathEntry)
+	public boolean filterClassPath(String classpathEntry)
 	{
-		boolean include= false;
-		include |= aClassPathEntry.contains(projName); // FIME fix the bug that project can be dragome and allow all other libs.
-		include |= aClassPathEntry.contains("repository") && aClassPathEntry.contains("gdx") || aClassPathEntry.contains("gdx.jar") || aClassPathEntry.contains("gdx\\bin") || aClassPathEntry.contains(".gdx\\gdx\\");
-		include |= aClassPathEntry.contains("gdx-backend-dragome-") || aClassPathEntry.contains("gdx-backend-dragome\\bin");
-		include |= aClassPathEntry.contains("dragome-js-commons-") || aClassPathEntry.contains("dragome-js-commons\\bin");
-		include |= aClassPathEntry.contains("dragome-js-jre-") || aClassPathEntry.contains("dragome-js-jre\\bin");
-		include |= aClassPathEntry.contains("dragome-w3c-standards-") || aClassPathEntry.contains("dragome-w3c-standards\\bin");
-		include |= aClassPathEntry.contains("dragome-core-") || aClassPathEntry.contains("dragome-core\\bin");
-		include |= aClassPathEntry.contains("dragome-web-") || aClassPathEntry.contains("dragome-web\\bin");
+		boolean include= super.filterClassPath(classpathEntry);
+		include |= classpathEntry.contains(projName) && classpathEntry.contains("\\bin"); // TODO check if this fix the bug that project name can be "dragome" and allow others classpaths.
+		include |= classpathEntry.contains(projName) && classpathEntry.contains("\\classes");
+		include |= classpathEntry.contains("repository") && classpathEntry.contains("gdx") || classpathEntry.contains("gdx.jar") || classpathEntry.contains("gdx\\bin") || classpathEntry.contains(".gdx\\gdx\\");
+		if(classpathEntry.contains("gdx-backend-dragome")) {
+			include|= classpathEntry.contains("gdx-backend-dragome-");
+			include|= classpathEntry.contains("\\bin");
+			include|= classpathEntry.contains("\\classes");
+		}
 		if(include == false)
-			include = projectClassPathFilter(aClassPathEntry);
-		include &= !aClassPathEntry.contains("\\resources\\");
-		System.out.println("Allow Project: " + include + " path: " + aClassPathEntry);
+			include = projectClassPathFilter(classpathEntry);
+		include &= !classpathEntry.contains("\\resources\\");
+//		System.out.println("Allow Project: " + include + " path: " + classpathEntry);
 		return include;
 	}
 	
@@ -256,13 +265,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			public int getPriorityOf(ClasspathEntry string)
 			{
 				String name = string.getName();
-				if (name.contains("gdx-backend-dragome-")) {
-//					if(name.contains("ALL"))
-//						return 4;
-//					else
-//						return 1;
-					return 4;
-				}
+				if (name.contains("gdx-backend-dragome"))
+					return 4; // dragome backend is first so it can override any dragome classes
 				else if (name.contains("dragome-js-jre"))
 					return 3;
 				else if (name.contains("dragome-"))
@@ -296,5 +300,12 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	@Override
 	public boolean isCaching () {
 		return false;
+	}
+	
+	@Override
+	public String getCompiledPath () {
+		String compiledPath = new File("").getAbsolutePath() + "\\webapp";
+		System.out.println("Generating javascript to " + compiledPath);
+		return compiledPath;
 	}
 }

@@ -220,6 +220,7 @@ public class DragomeNet implements Net {
 		XMLHttpRequest request = requests.get(httpRequest);
 
 		if (httpResponseListener != null && request != null) {
+			ScriptHelper.put("request", request, this);
 			ScriptHelper.evalNoResult("request.node.onreadystatechange=function(){};", this);
 			request.abort();
 			httpResponseListener.cancelled();
@@ -245,8 +246,9 @@ public class DragomeNet implements Net {
 
 	@Override
 	public boolean openURI (String URI) {
-		@SuppressWarnings("unused")
 		String features = null;
+		ScriptHelper.put("URI", URI, this);
+		ScriptHelper.put("features", features, this);
 		ScriptHelper.evalNoResult("window.open(URI, _blank, features);", this);
 		return true;
 	}

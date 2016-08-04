@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btScalarArray;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3Array;
+/*[0;X] com.dragome.commons.compiler.annotations.MethodAlias */
 
 /** @author xpenatan */
 public class AllHitsRayResultCallback extends RayResultCallback {
@@ -68,24 +69,31 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 		return (jlong)new MyAllHitsRayResultCallback(from,to, overriden, weakRef);
 	*/
 	/*[0;X;L]
-		LocalRayResult tmpLocal = RayResultCallback.tmpLocalRes; #J
 		var from = new Bullet.btVector3(x1,y1,z1);
 		var to = new Bullet.btVector3(x2,y2,z2);
 		var cobj = new Bullet.MyAllHitsRayResultCallback(from,to);
-		var self = this; #B
-		cobj.addSingleResult=function(rayResult,normalInWorldSpace) {
-			tmpLocal.$resetObj___long__boolean$void(rayResult, false);
-			return self.$addSingleResult___com_badlogic_gdx_physics_bullet_collision_LocalRayResult__boolean$float(tmpLocal,normalInWorldSpace);  #I
-		}; #E
+		cobj.self = this; 
+		cobj.addSingleResult = this.addSA;
 		return Bullet.getPointer(cobj);
 	*/
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.MyAllHitsRayResultCallback);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.MyAllHitsRayResultCallback); #EVAL
 		}
 	*/
-	
+
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "addSA")
+		private float addSingleR(long rayResult, boolean normalInWorldSpace) {
+			LocalRayResult tmpLocal = RayResultCallback.tmpLocalRes; #J
+			tmpLocal.resetObj(rayResult, false); #J
+			AllHitsRayResultCallback callback = this.self = AllHitsRayResultCallback #EVAL
+			return callback.addSingleResult(tmpLocal, normalInWorldSpace); #J
+		}
+	*/
+
 	@Override
 	protected void delete() {
 		super.delete();
@@ -96,9 +104,7 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 		hitfractionArray.resetObj(0, false);
 	}
 	/*[0;X;L]
-		long addr = cPointer;  #J
-		var cobj = Bullet.wrapPointer(addr, Bullet.MyAllHitsRayResultCallback);
-		Bullet.destroy(cobj);
+		super.delete();  #J
 		objArray.resetObj(0, false); #J
 		hitnormalArray.resetObj(0, false); #J
 		hitpointArray.resetObj(0, false); #J
@@ -118,8 +124,8 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long ptr = 0; #J
-		ptr = Bullet.getPointer(this.$$$jsObj.get_m_collisionObjects());
+		jsObj, this.jsObj #P
+		long ptr = Bullet.getPointer(jsObj.get_m_collisionObjects()); #EVALLONG
 		objArray.resetObj(ptr, false); #J
 		return objArray; #J
 	*/
@@ -136,10 +142,11 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.get_m_rayFromWorld();
-		x=vec.x(); z=vec.y(); y=vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.get_m_rayFromWorld();
+		out.x = vec.x(); #EVALFLOAT
+		out.z = vec.y(); #EVALFLOAT
+		out.y = vec.z(); #EVALFLOAT
 	*/
 	
 	private static native void getRayFromWorld(long addr, float [] value); /*
@@ -158,9 +165,12 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		float x=value.x,y=value.y,z=value.z; #J
+		jsObj, this.jsObj #P
+		x, value.x #P
+		y, value.y #P
+		z, value.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.set_m_rayFromWorld(vec);
+		jsObj.set_m_rayFromWorld(vec);
 	*/
 	
 	private static native void setRayFromWorld(long addr, float [] value); /*
@@ -175,10 +185,11 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.get_m_rayToWorld();
-		x=vec.x(); z=vec.y(); y=vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.get_m_rayToWorld();
+		out.x = vec.x(); #EVALFLOAT
+		out.z = vec.y(); #EVALFLOAT
+		out.y = vec.z(); #EVALFLOAT
 	*/
 	
 	private static native void getRayToWorld(long addr, float [] value); /*
@@ -197,9 +208,12 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		float x=value.x,y=value.y,z=value.z; #J
+		jsObj, this.jsObj #P
+		x, value.x #P
+		y, value.y #P
+		z, value.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.set_m_rayToWorld(vec);
+		jsObj.set_m_rayToWorld(vec);
 	*/
 	
 	private static native void setRayToWorld(long addr, float [] value); /*
@@ -215,8 +229,8 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long ptr = 0; #J
-		ptr = Bullet.getPointer(this.$$$jsObj.get_m_hitNormalWorld());
+		jsObj, this.jsObj #P
+		long ptr = Bullet.getPointer(jsObj.get_m_hitNormalWorld()); #EVALLONG
 		hitnormalArray.resetObj(ptr, false); #J
 		return hitnormalArray; #J
 	*/
@@ -234,8 +248,8 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long ptr = 0; #J
-		ptr = Bullet.getPointer(this.$$$jsObj.get_m_hitPointWorld());
+		jsObj, this.jsObj #P
+		long ptr = Bullet.getPointer(jsObj.get_m_hitPointWorld()); #EVALLONG
 		hitpointArray.resetObj(ptr, false); #J
 		return hitpointArray; #J
 	*/
@@ -253,8 +267,8 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long ptr = 0; #J
-		ptr = Bullet.getPointer(this.$$$jsObj.get_m_hitFractions());
+		jsObj, this.jsObj #P
+		long ptr = Bullet.getPointer(jsObj.get_m_hitFractions()); #EVALLONG
 		hitfractionArray.resetObj(ptr, false); #J
 		return hitfractionArray; #J
 	*/
@@ -276,8 +290,9 @@ public class AllHitsRayResultCallback extends RayResultCallback {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		Object locRay = rayResult.jsObj;  #J
-		return this.$$$jsObj.addSingleResultSuper(locRay, normalInWorldSpace);
+		jsObj, this.jsObj #P
+		locRay, rayResult.jsObj  #P
+		return jsObj.addSingleResultSuper(locRay, normalInWorldSpace);
 	*/
 	
 	private static native float addSingleResult(long addr, long rayResultAddr, boolean normalInWorldSpace); /*

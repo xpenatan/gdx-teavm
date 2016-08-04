@@ -21,7 +21,8 @@ public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btSequentialImpulseConstraintSolver);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btSequentialImpulseConstraintSolver); #EVAL
 		}
 	*/
 	
@@ -29,11 +30,7 @@ public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var cobj = Bullet.wrapPointer(addr, Bullet.btSequentialImpulseConstraintSolver);
-		Bullet.destroy(cobj);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btSequentialImpulseConstraintSolver * cobj = (btSequentialImpulseConstraintSolver *)addr;

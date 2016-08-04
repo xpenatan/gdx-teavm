@@ -16,17 +16,15 @@
 
 package com.badlogic.gdx.backends.dragome.utils;
 
-import com.dragome.commons.DelegateCode;
 import com.dragome.commons.javascript.ScriptHelper;
 
 /** Ported from GWT backend
  * @author xpenatan */
-public interface AgentInfo {
+public class AgentInfo {
 	
-	@DelegateCode(ignore = true)
 	public static AgentInfo computeAgentInfo () {
 		ScriptHelper.evalNoResult("var userAgent = navigator.userAgent.toLowerCase();", null);
-		return ScriptHelper.evalCasting("{ isFirefox : userAgent.indexOf('firefox') != -1,"
+		Object node = ScriptHelper.eval("{ isFirefox : userAgent.indexOf('firefox') != -1,"
 			+ "isChrome : userAgent.indexOf('chrome') != -1,"
 			+ "isSafari : userAgent.indexOf('safari') != -1,"
 			+ "isOpera : userAgent.indexOf('opera') != -1,"
@@ -34,23 +32,42 @@ public interface AgentInfo {
 			+ "isMacOS : userAgent.indexOf('mac') != -1,"
 			+ "isLinux : userAgent.indexOf('linux') != -1,"
 			+ "isWindows : userAgent.indexOf('win') != -1"
-			+ "}", AgentInfo.class, null);
+			+ "}", null);
+		AgentInfo agent = new AgentInfo();
+		ScriptHelper.put("agent", agent, null);
+		ScriptHelper.put("agent.node", node, null);
+		return agent;
 	}
 
-	@DelegateCode(eval = "this.node.isFirefox")
-	public boolean isFirefox ();
-	@DelegateCode(eval = "this.node.isChrome")
-	public boolean isChrome ();
-	@DelegateCode(eval = "this.node.isSafari")
-	public boolean isSafari ();
-	@DelegateCode(eval = "this.node.isOpera")
-	public boolean isOpera ();
-	@DelegateCode(eval = "this.node.isIE")
-	public boolean isIE ();
-	@DelegateCode(eval = "this.node.isMacOS")
-	public boolean isMacOS ();
-	@DelegateCode(eval = "this.node.isLinux")
-	public boolean isLinux ();
-	@DelegateCode(eval = "this.node.isWindows")
-	public boolean isWindows ();
+	public boolean isFirefox () {
+		return ScriptHelper.evalBoolean("this.node.isFirefox", this);
+	}
+
+	public boolean isChrome () {
+		return ScriptHelper.evalBoolean("this.node.isChrome", this);
+	}
+
+	public boolean isSafari () {
+		return ScriptHelper.evalBoolean("this.node.isSafari", this);
+	}
+
+	public boolean isOpera () {
+		return ScriptHelper.evalBoolean("this.node.isOpera", this);
+	}
+
+	public boolean isIE () {
+		return ScriptHelper.evalBoolean("this.node.isIE", this);
+	}
+
+	public boolean isMacOS () {
+		return ScriptHelper.evalBoolean("this.node.isMacOS", this);
+	}
+
+	public boolean isLinux () {
+		return ScriptHelper.evalBoolean("this.node.isLinux", this);
+	}
+
+	public boolean isWindows () {
+		return ScriptHelper.evalBoolean("this.node.isWindows", this);
+	}
 }

@@ -1,31 +1,13 @@
 # Libgdx Dragome Backend
-This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate your libgdx code to javascript. Its similar to GWT but better.
+This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate libgdx games to javascript. Its similar to GWT but better.
 * Its faster to compile
 * Easy to use
 * Lightweight
-* Use bytecodes code and not source code
-* Full or partial assets downloading 
+* Use bytecodes and not source code
+* ProGuard ready Shrink/Obfuscate
+* Reflection ready
 
 #Example
 <p align="center"><img src="http://i.imgur.com/r3c3lhX.gif"/></p>
-<p align="center"><img src="http://i.imgur.com/0LWcHQF.gif"/></p>
 
-
-## Demos:
-* [AnimationTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?AnimationTest) 
-* [Gears Demo](http://xpenatan.github.io/gdx-dragome-backend/index.html?Gears)
-* [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest)
-* [BulletTestCollection](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletCollection)
-* [Quantum](https://xpenatan.github.io/gdx-quantum/)
-
-
-## Instructions for Eclipse (Import and launch)
-* Must have Libgdx source project set in eclipse.
-* Must have DragomeSDK source project set in eclipse.
-  * DragomeSDK requires some dependecies, download them at [release](https://github.com/xpenatan/gdx-dragome-backend/releases). It contains the libs and the project settings (put in dragome source folder and import).
-  * May need to have the forked [Dragome project] (https://github.com/xpenatan/dragome-sdk) (There is a chance it has modifications that is not yet in official branch).
-* Recommended plugin: ( http://xzer.github.io/run-jetty-run-updatesite/nightly/ ). Also install Jetty 93 support. You have to change run/debug configuration to use jetty 9.3.6 (default is 6.1). 
-  * At jetty configuration classpath you have to remove "javaee-web" or it wont compile.
-  * Run/Debug project (Ex Gdx-tests-dragome) as "Run Jetty".
-  * Look for context configuration to know the http link for testing. Ex: http://localhost:8080/[CONTEXT]/index.html
-
+# Go to [Wiki] ( https://github.com/xpenatan/gdx-dragome-backend/wiki ) for more information.

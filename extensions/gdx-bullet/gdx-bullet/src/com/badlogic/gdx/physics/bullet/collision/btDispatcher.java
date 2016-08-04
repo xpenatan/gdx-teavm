@@ -14,7 +14,8 @@ public class btDispatcher extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btDispatcher);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDispatcher); #EVAL
 		}
 	*/
 	
@@ -24,7 +25,8 @@ public class btDispatcher extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.getNumManifolds();
+		jsObj, this.jsObj #P
+		return jsObj.getNumManifolds();
 	*/
 	
 	private static native int getNumManifolds(long addr); /*
@@ -41,8 +43,8 @@ public class btDispatcher extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getManifoldByIndexInternal(index));
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getManifoldByIndexInternal(index)); #EVALLONG
 		manifold.resetObj(addr, false); #J
 		return manifold; #J
 	*/

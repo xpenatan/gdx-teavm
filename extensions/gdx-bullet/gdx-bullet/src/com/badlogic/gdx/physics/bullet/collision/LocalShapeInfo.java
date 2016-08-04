@@ -14,7 +14,8 @@ public class LocalShapeInfo extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.LocalShapeInfo);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.LocalShapeInfo); #EVAL
 		}
 	*/
 	
@@ -22,11 +23,7 @@ public class LocalShapeInfo extends BulletBase {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.LocalShapeInfo);
-		Bullet.destroy(vec);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btCollisionWorld::LocalShapeInfo * cobj = (btCollisionWorld::LocalShapeInfo *)addr;
@@ -40,7 +37,8 @@ public class LocalShapeInfo extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		this.$$$jsObj.set_m_shapePart(value);
+	 	jsObj, this.jsObj #P
+		jsObj.set_m_shapePart(value);
 	*/
 
 	private static native void setShapePart(long addr, int value); /*
@@ -55,7 +53,8 @@ public class LocalShapeInfo extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.get_m_shapePart();
+	 	jsObj, this.jsObj #P
+		return jsObj.get_m_shapePart();
 	*/
 	
 	private static native int getShapePart(long addr); /*
@@ -70,7 +69,8 @@ public class LocalShapeInfo extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		this.$$$jsObj.set_m_triangleIndex(value);
+	 	jsObj, this.jsObj #P
+		jsObj.set_m_triangleIndex(value);
 	*/
 	
 	private static native void setTriangleIndex(long addr, int value); /*
@@ -86,7 +86,8 @@ public class LocalShapeInfo extends BulletBase {
 	
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.get_m_triangleIndex();
+	 	jsObj, this.jsObj #P
+		return jsObj.get_m_triangleIndex();
 	*/
 	
 	private static native int getTriangleIndex(long addr); /*

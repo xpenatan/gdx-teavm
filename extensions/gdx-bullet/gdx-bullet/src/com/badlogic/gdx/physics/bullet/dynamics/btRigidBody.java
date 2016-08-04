@@ -9,8 +9,8 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btQuaternion;
-import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+/*[0;X] com.badlogic.gdx.physics.bullet.linearmath.btTransform; */
 
 /** @author xpenatan */
 public class btRigidBody extends btCollisionObject {
@@ -76,7 +76,8 @@ public class btRigidBody extends btCollisionObject {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btRigidBody);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btRigidBody); #EVAL
 		}
 	*/
 	
@@ -94,7 +95,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.set_m_contactSolverType(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_contactSolverType(value);
 	*/
 
 	private static native void setContactSolverType(long addr, int value); /*
@@ -109,7 +111,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.get_m_contactSolverType();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_contactSolverType();
 	*/
 
 	private static native int getContactSolverType(long addr); /*
@@ -124,7 +127,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.set_m_frictionSolverType(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_frictionSolverType(value);
 	*/
 
 	private static native void setFrictionSolverType(long addr, int value); /*
@@ -139,7 +143,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.get_m_frictionSolverType();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_frictionSolverType();
 	*/
 
 	private static native int getFrictionSolverType(long addr); /*
@@ -154,10 +159,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float [] value = newTrans.val; #J
+		value, newTrans.val #P
 		var tran = Bullet.MyTemp.prototype.btTran();
 		tran.setFromOpenGLMatrix(value);
-		this.$$$jsObj.proceedToTransform(tran);
+		jsObj, this.jsObj #P
+		jsObj.proceedToTransform(tran);
 	*/
 
 	private static native void proceedToTransform(long addr, float [] value); /*
@@ -177,15 +183,16 @@ public class btRigidBody extends btCollisionObject {
 		float [] value = predictedTransform.val; #J
 		var tran = Bullet.MyTemp.prototype.btTran();
 		tran.setFromOpenGLMatrix(value);
-		this.$$$jsObj.predictIntegratedTransform(step, tran);
-	 */
+		jsObj, this.jsObj #P
+		jsObj.predictIntegratedTransform(step, tran);
+	*/
 	
 	private static native void predictIntegratedTransform(long addr, float step, float [] value); /*
 		btRigidBody * cobj = (btRigidBody *)addr;
 		btTransform tran;
 		tran.setFromOpenGLMatrix(value);
 		cobj->predictIntegratedTransform(step, tran);
-	 */
+	*/
 	/*[0;X;D]*/
 
 	public void saveKinematicState(float step) {
@@ -194,8 +201,9 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.saveKinematicState(step);
-	 */
+		jsObj, this.jsObj #P
+		jsObj.saveKinematicState(step);
+	*/
 
 	private static native void saveKinematicState(long addr, float step); /*
 		btRigidBody * cobj = (btRigidBody *)addr;
@@ -209,7 +217,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.applyGravity();
+		jsObj, this.jsObj #P
+		jsObj.applyGravity();
 	*/
 
 	private static native void applyGravity(long addr); /*
@@ -224,9 +233,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=acceleration.x,y=acceleration.y,z=acceleration.z; #J
+		x, acceleration.x #P
+		y, acceleration.y #P
+		z, acceleration.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setGravity(vec);
+		jsObj, this.jsObj #P
+		jsObj.setGravity(vec);
 	*/
 
 	private static native void setGravity(long addr, float x,float y, float z); /*
@@ -243,12 +255,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getGravity();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getGravity();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getGravity(long addr, float [] value); /*
@@ -266,7 +277,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.setDamping(lin_damping,ang_damping);
+		jsObj, this.jsObj #P
+		jsObj.setDamping(lin_damping,ang_damping);
 	*/
 
 	private static native void setDamping(long addr, float lin_damping, float ang_damping); /*
@@ -281,7 +293,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getLinearDamping();
+		jsObj, this.jsObj #P
+		return jsObj.getLinearDamping();
 	*/
 
 	private static native float getLinearDamping(long addr); /*
@@ -296,7 +309,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getAngularDamping();
+		jsObj, this.jsObj #P
+		return jsObj.getAngularDamping();
 	*/
 
 	private static native float getAngularDamping(long addr); /*
@@ -311,7 +325,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getLinearSleepingThreshold();
+		jsObj, this.jsObj #P
+		return jsObj.getLinearSleepingThreshold();
 	*/
 
 	private static native float getLinearSleepingThreshold(long addr); /*
@@ -326,7 +341,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getAngularSleepingThreshold();
+		jsObj, this.jsObj #P
+		return jsObj.getAngularSleepingThreshold();
 	*/
 
 	private static native float getAngularSleepingThreshold(long addr); /*
@@ -341,7 +357,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.applyDamping(timeStep);
+		jsObj, this.jsObj #P
+		jsObj.applyDamping(timeStep);
 	*/
 
 	private static native void applyDamping(long addr, float timeStep); /*
@@ -356,9 +373,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=inertia.x,y=inertia.y,z=inertia.z; #J
+		x, inertia.x #P
+		y, inertia.y #P
+		z, inertia.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setMassProps(mass, vec);
+		jsObj, this.jsObj #P
+		jsObj.setMassProps(mass, vec);
 	*/
 
 	private static native void setMassProps(long addr, float mass, float x, float y, float z); /*
@@ -375,12 +395,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getLinearFactor();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getLinearFactor();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getLinearFactor(long addr, float [] value); /*
@@ -398,9 +417,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=linearFactor.x,y=linearFactor.y,z=linearFactor.z; #J
+		x, linearFactor.x #P
+		y, linearFactor.y #P
+		z, linearFactor.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setLinearFactor(vec);
+		jsObj, this.jsObj #P
+		jsObj.setLinearFactor(vec);
 	*/
 
 	private static native void setLinearFactor(long addr, float x, float y, float z); /*
@@ -416,7 +438,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getInvMass();
+		jsObj, this.jsObj #P
+		return jsObj.getInvMass();
 	*/
 
 	private static native float getInvMass(long addr); /*
@@ -431,16 +454,17 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		var mat = this.$$$jsObj.getInvInertiaTensorWorld();
-		value[0] = mat.getColumn(0).x();
-		value[1] = mat.getColumn(0).y();
-		value[2] = mat.getColumn(0).z();
-		value[3] = mat.getColumn(1).x();
-		value[4] = mat.getColumn(1).y();
-		value[5] = mat.getColumn(1).z();
-		value[6] = mat.getColumn(2).x();
-		value[7] = mat.getColumn(2).y();
-		value[8] = mat.getColumn(2).z();
+		jsObj, this.jsObj #P
+		var mat = jsObj.getInvInertiaTensorWorld();
+		out.val[0] = mat.getColumn(0).x(); #EVALFLOAT
+		out.val[1] = mat.getColumn(0).y(); #EVALFLOAT
+		out.val[2] = mat.getColumn(0).z(); #EVALFLOAT
+		out.val[3] = mat.getColumn(1).x(); #EVALFLOAT
+		out.val[4] = mat.getColumn(1).y(); #EVALFLOAT
+		out.val[5] = mat.getColumn(1).z(); #EVALFLOAT
+		out.val[6] = mat.getColumn(2).x(); #EVALFLOAT
+		out.val[7] = mat.getColumn(2).y(); #EVALFLOAT
+		out.val[8] = mat.getColumn(2).z(); #EVALFLOAT
 	*/
 	
 	private static native void getInvInertiaTensorWorld(long addr, float [] value); /*
@@ -464,7 +488,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.integrateVelocities(step);
+		jsObj, this.jsObj #P
+		jsObj.integrateVelocities(step);
 	*/
 
 	private static native void integrateVelocities(long addr, float step); /*
@@ -479,10 +504,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float [] value = xform.val; #J
+	 	value, xform.val #P
+		jsObj, this.jsObj #P
 		var tran = Bullet.MyTemp.prototype.btTran();
 		tran.setFromOpenGLMatrix(value);
-		this.$$$jsObj.setCenterOfMassTransform(tran);
+		jsObj.setCenterOfMassTransform(tran);
 	*/
 
 	private static native void setCenterOfMassTransform(long addr, float [] value); /*
@@ -499,9 +525,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=force.x,y=force.y,z=force.z; #J
+		jsObj, this.jsObj #P
+		x, force.x #P
+		y, force.y #P
+		z, force.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.applyCentralForce(vec);
+		jsObj.applyCentralForce(vec);
 	*/
 
 	private static native void applyCentralForce(long addr, float x,float y,float z); /*
@@ -518,12 +547,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getTotalForce();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getTotalForce();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getTotalForce(long addr, float [] value); /*
@@ -542,12 +570,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getTotalTorque();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getTotalTorque();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getTotalTorque(long addr, float [] value); /*
@@ -566,12 +593,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getInvInertiaDiagLocal();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getInvInertiaDiagLocal();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getInvInertiaDiagLocal(long addr, float [] value); /*
@@ -589,9 +615,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=diagInvInertia.x,y=diagInvInertia.y,z=diagInvInertia.z; #J
+		jsObj, this.jsObj #P
+		x, diagInvInertia.x #P
+		y, diagInvInertia.y #P
+		z, diagInvInertia.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setInvInertiaDiagLocal(vec);
+		jsObj.setInvInertiaDiagLocal(vec);
 	*/
 
 	private static native void setInvInertiaDiagLocal(long addr, float x,float y,float z); /*
@@ -607,7 +636,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.setSleepingThresholds(linear, angular);
+		jsObj, this.jsObj #P
+		jsObj.setSleepingThresholds(linear, angular);
 	*/
 
 	private static native void setSleepingThresholds(long addr, float linear, float angular); /*
@@ -622,9 +652,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=torque.x,y=torque.y,z=torque.z; #J
+		jsObj, this.jsObj #P
+		x, torque.x #P
+		y, torque.y #P
+		z, torque.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.applyTorque(vec);
+		jsObj.applyTorque(vec);
 	*/
 
 	private static native void applyTorque(long addr, float x,float y,float z); /*
@@ -640,11 +673,16 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x1=force.x,y1=force.y,z1=force.z; #J
-		float x2=rel_pos.x,y2=rel_pos.y,z2=rel_pos.z; #J
+		jsObj, this.jsObj #P
+		x1, force.x #P
+		y1, force.y #P
+		z1, force.z #P
+		x2, rel_pos.x #P
+		y2, rel_pos.y #P
+		z2, rel_pos.z #P
 		var vec1 = Bullet.MyTemp.prototype.btVec3_1(x1,y1,z1);
 		var vec2 = Bullet.MyTemp.prototype.btVec3_2(x2,y2,z2);
-		this.$$$jsObj.applyForce(vec1, vec2);
+		jsObj.applyForce(vec1, vec2);
 	*/
 
 	private static native void applyForce(long addr, float x1,float y1,float z1, float x2,float y2,float z2); /*
@@ -661,9 +699,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=impulse.x,y=impulse.y,z=impulse.z; #J
+		jsObj, this.jsObj #P
+		x, impulse.x #P
+		y, impulse.y #P
+		z, impulse.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.applyCentralImpulse(vec);
+		jsObj.applyCentralImpulse(vec);
 	*/
 
 	private static native void applyCentralImpulse(long addr, float x,float y,float z); /*
@@ -679,9 +720,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=torque.x,y=torque.y,z=torque.z; #J
+		jsObj, this.jsObj #P
+		x, torque.x #P
+		y, torque.y #P
+		z, torque.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.applyTorqueImpulse(vec);
+		jsObj.applyTorqueImpulse(vec);
 	*/
 
 	private static native void applyTorqueImpulse(long addr, float x,float y,float z); /*
@@ -697,11 +741,16 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x1=impulse.x,y1=impulse.y,z1=impulse.z; #J
-		float x2=rel_pos.x,y2=rel_pos.y,z2=rel_pos.z; #J
+		jsObj, this.jsObj #P
+		x1, impulse.x #P
+		y1, impulse.y #P
+		z1, impulse.z #P
+		x2, rel_pos.x #P
+		y2, rel_pos.y #P
+		z2, rel_pos.z #P
 		var vec1 = Bullet.MyTemp.prototype.btVec3_1(x1,y1,z1);
 		var vec2 = Bullet.MyTemp.prototype.btVec3_2(x2,y2,z2);
-		this.$$$jsObj.applyImpulse(vec1, vec2);
+		jsObj.applyImpulse(vec1, vec2);
 	*/
 
 	private static native void applyImpulse(long addr, float x1,float y1,float z1, float x2,float y2,float z2); /*
@@ -718,7 +767,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.clearForces();
+		jsObj, this.jsObj #P
+		jsObj.clearForces();
 	*/
 
 	private static native void clearForces(long addr); /*
@@ -733,7 +783,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.updateInertiaTensor();
+		jsObj, this.jsObj #P
+		jsObj.updateInertiaTensor();
 	*/
 
 	private static native void updateInertiaTensor(long addr); /*
@@ -749,12 +800,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getCenterOfMassPosition();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getCenterOfMassPosition();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getCenterOfMassPosition(long addr, float [] value); /*
@@ -773,13 +823,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0,w=0; #J
-		var quat = this.$$$jsObj.getOrientation();
-		x = quat.x();
-		y = quat.y();
-		z = quat.z();
-		w = quat.w();
-		out.set(x,y,z,w); #J
+		jsObj, this.jsObj #P
+		var quat = jsObj.getOrientation();
+		out.x = quat.x(); #EVALFLOAT
+		out.y = quat.y(); #EVALFLOAT
+		out.z = quat.z(); #EVALFLOAT
+		out.w = quat.w(); #EVALFLOAT
 	*/
 
 	private static native void getOrientation(long addr, float [] value); /*
@@ -798,8 +847,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		Object tran = null; #J
-		tran = this.$$$jsObj.getCenterOfMassTransform();
+		jsObj, this.jsObj #P
+		Object tran = jsObj.getCenterOfMassTransform(); #EVAL
 		btTransform.getOpenGLMatrix(tran, out.val); #J 
 	*/
 
@@ -817,12 +866,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getLinearVelocity();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getLinearVelocity();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getLinearVelocity(long addr, float [] value); /*
@@ -841,12 +889,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getAngularVelocity();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getAngularVelocity();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getAngularVelocity(long addr, float [] value); /*
@@ -864,9 +911,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=lin_vel.x,y=lin_vel.y,z=lin_vel.z; #J
+		jsObj, this.jsObj #P
+		x, lin_vel.x #P
+		y, lin_vel.y #P
+		z, lin_vel.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setLinearVelocity(vec);
+		jsObj.setLinearVelocity(vec);
 	*/
 
 	private static native void setLinearVelocity(long addr, float x,float y,float z); /*
@@ -882,9 +932,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=ang_vel.x,y=ang_vel.y,z=ang_vel.z; #J
+		jsObj, this.jsObj #P
+		x, ang_vel.x #P
+		y, ang_vel.y #P
+		z, ang_vel.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setAngularVelocity(vec);
+		jsObj.setAngularVelocity(vec);
 	*/
 
 	private static native void setAngularVelocity(long addr, float x,float y,float z); /*
@@ -901,13 +954,15 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=rel_pos.x,y=rel_pos.y,z=rel_pos.z; #J
+		jsObj, this.jsObj #P
+		x, rel_pos.x #P
+		y, rel_pos.y #P
+		z, rel_pos.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		vec = this.$$$jsObj.getVelocityInLocalPoint(vec);
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		vec = jsObj.getVelocityInLocalPoint(vec);
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getVelocityInLocalPoint(long addr, float x,float y,float z, float [] value); /*
@@ -926,9 +981,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=v.x,y=v.y,z=v.z; #J
+		jsObj, this.jsObj #P
+		x, v.x #P
+		y, v.y #P
+		z, v.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.translate(vec);
+		jsObj.translate(vec);
 	*/
 
 	private static native void translate(long addr, float x,float y,float z); /*
@@ -946,17 +1004,17 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
+		jsObj, this.jsObj #P
 		var vec1 = Bullet.MyTemp.prototype.btVec3_1(0,0,0);
 		var vec2 = Bullet.MyTemp.prototype.btVec3_2(0,0,0);
-		this.$$$jsObj.getAabb(vec1, vec2);
-		x = vec1.x();
-		y = vec1.y();
-		z = vec1.z();
+		jsObj.getAabb(vec1, vec2);
+		float x = vec1.x(); #EVALFLOAT
+		float y = vec1.y(); #EVALFLOAT
+		float z = vec1.z(); #EVALFLOAT
 		aabbMin.set(x,y,z); #J
-		x = vec2.x();
-		y = vec2.y();
-		z = vec2.z();
+		x = vec2.x(); #EVALFLOAT
+		y = vec2.y(); #EVALFLOAT
+		z = vec2.z(); #EVALFLOAT
 		aabbMax.set(x,y,z); #J
 	*/
 
@@ -980,11 +1038,16 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x1=pos.x,y1=pos.y,z1=pos.z; #J
-		float x2=normal.x,y2=normal.y,z2=normal.z; #J
+		jsObj, this.jsObj #P
+		x1, pos.x #P
+		y1, pos.y #P
+		z1, pos.z #P
+		x2, normal.x #P
+		y2, normal.y #P
+		z2, normal.z #P
 		var vec1 = Bullet.MyTemp.prototype.btVec3_1(x1,y1,z1);
 		var vec2 = Bullet.MyTemp.prototype.btVec3_2(x2,y2,z2);
-		return this.$$$jsObj.computeImpulseDenominator(vec1, vec2);
+		return jsObj.computeImpulseDenominator(vec1, vec2);
 	*/
 
 	private static native float computeImpulseDenominator(long addr, float x1,float y1, float z1, float x2,float y2,float z2); /*
@@ -1001,9 +1064,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=axis.x,y=axis.y,z=axis.z; #J
+		jsObj, this.jsObj #P
+		x, axis.x #P
+		y, axis.y #P
+		z, axis.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		return this.$$$jsObj.computeAngularImpulseDenominator(vec);
+		return jsObj.computeAngularImpulseDenominator(vec);
 	*/
 
 	private static native float computeAngularImpulseDenominator(long addr, float x1,float y1,float z1); /*
@@ -1019,7 +1085,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.updateDeactivation(timeStep);
+		jsObj, this.jsObj #P
+		jsObj.updateDeactivation(timeStep);
 	*/
 
 	private static native void updateDeactivation(long addr, float timeStep); /*
@@ -1034,7 +1101,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.wantsSleeping();
+		jsObj, this.jsObj #P
+		return jsObj.wantsSleeping();
 	*/
 
 	private static native boolean wantsSleeping(long addr); /*
@@ -1055,10 +1123,12 @@ public class btRigidBody extends btCollisionObject {
 	/*[0;X;L]
 		checkPointer(); #J
 		this.motionState = motionState; #J
-		Object jsObj = null; #J
-		if(motionState != null) #J
-			jsObj = motionState.$$$jsObj;
-		this.$$$jsObj.setMotionState(jsObj);
+		jsObj, this.jsObj #P
+		var motionObj = null;
+		if(motionState != null) { #J
+			motionObj, motionState.jsObj #P
+		} #J
+		jsObj.setMotionState(motionObj);
 	*/
 
 	private static native void setMotionState(long addr, long motionStateAddr); /*
@@ -1076,9 +1146,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=angFac.x,y=angFac.y,z=angFac.z; #J
+		jsObj, this.jsObj #P
+		x, angFac.x #P
+		y, angFac.y #P
+		z, angFac.z #P
 		var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
-		this.$$$jsObj.setAngularFactor(vec);
+		jsObj.setAngularFactor(vec);
 	*/
 
 	private static native void setAngularFactor(long addr, float x1,float y1,float z1); /*
@@ -1095,12 +1168,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getAngularFactor();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getAngularFactor();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getAngularFactor(long addr, float [] value); /*
@@ -1118,7 +1190,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isInWorld();
+		jsObj, this.jsObj #P
+		return jsObj.isInWorld();
 	*/
 
 	private static native boolean isInWorld(long addr); /*
@@ -1138,7 +1211,9 @@ public class btRigidBody extends btCollisionObject {
 	/*[0;X;L]
 		checkPointer(); #J
 		c.checkPointer(); #J
-		this.$$$jsObj.addConstraintRef(c.$$$jsObj);
+		jsObj, this.jsObj #P
+		cjsObj, c.jsObj #P
+		jsObj.addConstraintRef(cjsObj);
 	*/
 
 	private static native void addConstraintRef(long addr, long typedConstraintAddr); /*
@@ -1156,7 +1231,9 @@ public class btRigidBody extends btCollisionObject {
 	/*[0;X;L]
 		checkPointer(); #J
 		c.checkPointer(); #J
-		this.$$$jsObj.removeConstraintRef(c.$$$jsObj);
+		jsObj, this.jsObj #P
+		cjsObj, c.jsObj #P
+		jsObj.removeConstraintRef(cjsObj);
 	*/
 
 	private static native void removeConstraintRef(long addr, long typedConstraintAddr); /*
@@ -1176,12 +1253,12 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		Object jsConstraint = null; #J
-		jsConstraint = this.$$$jsObj.getConstraintRef(index);
-		if(jsConstraint == null) #J
+		jsObj, this.jsObj #P
+		Object jsConstraint = jsObj.getConstraintRef(index); #EVAL
+		if(jsConstraint == null) { #J
 			return null; #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(jsConstraint);
+		} #J
+		long addr = Bullet.getPointer(jsConstraint); #EVALLONG
 		typedConstraint.resetObj(addr, false); #J
 		return typedConstraint; #J
 	*/
@@ -1198,7 +1275,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getNumConstraintRefs();
+		jsObj, this.jsObj #P
+		return jsObj.getNumConstraintRefs();
 	*/
 
 	private static native int getNumConstraintRefs(long addr); /*
@@ -1213,7 +1291,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		this.$$$jsObj.setFlags(flags);
+		jsObj, this.jsObj #P
+		jsObj.setFlags(flags);
 	*/
 
 	private static native void setFlags(long addr, int flags); /*
@@ -1228,7 +1307,8 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getFlags();
+		jsObj, this.jsObj #P
+		return jsObj.getFlags();
 	*/
 
 	private static native int getFlags(long addr); /*
@@ -1244,12 +1324,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.computeGyroscopicImpulseImplicit_World(dt);
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.computeGyroscopicImpulseImplicit_World(dt);
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void computeGyroscopicImpulseImplicit_World(long addr, float dt, float [] value); /*
@@ -1268,12 +1347,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.computeGyroscopicImpulseImplicit_Body(step);
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.computeGyroscopicImpulseImplicit_Body(step);
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void computeGyroscopicImpulseImplicit_Body(long addr, float step, float [] value); /*
@@ -1292,12 +1370,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.computeGyroscopicForceExplicit(maxGyroscopicForce);
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.computeGyroscopicForceExplicit(maxGyroscopicForce);
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void computeGyroscopicForceExplicit(long addr, float maxGyroscopicForce, float [] value); /*
@@ -1316,12 +1393,11 @@ public class btRigidBody extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getLocalInertia();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getLocalInertia();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 
 	private static native void getLocalInertia(long addr,  float [] value); /*
@@ -1362,6 +1438,13 @@ public class btRigidBody extends btCollisionObject {
 			var vec = Bullet.MyTemp.prototype.btVec3_1(x,y,z);
 			var cobj = new Bullet.btRigidBodyConstructionInfo(mass,motion,shape,vec);
 			return Bullet.getPointer(cobj);
+		*/
+		
+		/*[0;X;F;L]
+			protected void cacheObj() {
+				addr, this.cPointer #P
+				this.jsObj = Bullet.wrapPointer(addr, Bullet.btRigidBodyConstructionInfo); #EVAL
+			}
 		*/
 	
 		public void setLinearDamping(float value) {

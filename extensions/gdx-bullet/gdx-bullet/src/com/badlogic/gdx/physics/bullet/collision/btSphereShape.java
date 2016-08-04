@@ -20,7 +20,8 @@ public class btSphereShape extends btConvexInternalShape {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btSphereShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btSphereShape); #EVAL
 		}
 	*/
 	
@@ -28,11 +29,7 @@ public class btSphereShape extends btConvexInternalShape {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.btSphereShape);
-		Bullet.destroy(vec);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btSphereShape * cobj = (btSphereShape *)addr;
@@ -45,7 +42,8 @@ public class btSphereShape extends btConvexInternalShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.getRadius();
+		jsObj, this.jsObj #P
+		return jsObj.getRadius();
 	*/
 	
 	private static native float getRadius(long addr); /*
@@ -59,7 +57,8 @@ public class btSphereShape extends btConvexInternalShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.setUnscaledRadius(radius);
+		jsObj, this.jsObj #P
+		jsObj.setUnscaledRadius(radius);
 	 */
 	
 	private static native void setUnscaledRadius(long addr, float radius); /*
@@ -73,7 +72,8 @@ public class btSphereShape extends btConvexInternalShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.setMargin(margin);
+		jsObj, this.jsObj #P
+		jsObj.setMargin(margin);
 	 */
 	
 	private static native void setMargin(long addr, float margin); /*
@@ -87,7 +87,8 @@ public class btSphereShape extends btConvexInternalShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.getMargin();
+		jsObj, this.jsObj #P
+		return jsObj.getMargin();
 	 */
 	
 	private static native float getMargin(long addr); /*

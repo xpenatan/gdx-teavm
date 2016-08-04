@@ -1021,7 +1021,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform1fv (int location, int count, float[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform1fv(loc.node,v);", this);
 //		gl.uniform1fv(loc, v);
 	}
@@ -1041,7 +1043,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform1iv (int location, int count, int[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform1iv(loc.node,v);", this);
 //		gl.uniform1iv(loc, v);
 	}
@@ -1061,7 +1065,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform2fv (int location, int count, float[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform2fv(loc.node,v);", this);
 //		gl.uniform2fv(loc, v);
 	}
@@ -1081,7 +1087,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform2iv (int location, int count, int[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform2iv(loc.node,v);", this);
 //		gl.uniform2iv(loc, v);
 	}
@@ -1101,7 +1109,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform3fv (int location, int count, float[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform3fv(loc.node,v);", this);
 //		gl.uniform3fv(loc, v);
 	}
@@ -1121,7 +1131,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform3iv (int location, int count, int[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform3iv(loc.node,v);", this);
 //		gl.uniform3iv(loc, v);
 	}
@@ -1141,7 +1153,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform4fv (int location, int count, float[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform4fv(loc.node,v);", this);
 //		gl.uniform4fv(loc, v);
 	}
@@ -1161,7 +1175,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniform4iv (int location, int count, int[] v, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
 		ScriptHelper.put("gl", gl, this);
+		ScriptHelper.put("v", v, this);
 		ScriptHelper.evalNoResult("gl.node.uniform4iv(loc.node,v);", this);
 //		gl.uniform4iv(loc, v);
 	}
@@ -1175,6 +1191,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniformMatrix2fv (int location, int count, boolean transpose, float[] value, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
+		ScriptHelper.put("transpose", transpose, this);
+		ScriptHelper.put("value", value, this);
 		ScriptHelper.put("gl", gl, this);
 		ScriptHelper.evalNoResult("gl.node.uniformMatrix2fv(loc.node,transpose,value);", this);
 //		gl.uniformMatrix2fv(loc, transpose, value);
@@ -1189,6 +1208,9 @@ public class DragomeGL20 implements GL20 {
 	@Override
 	public void glUniformMatrix3fv (int location, int count, boolean transpose, float[] value, int offset) {
 		WebGLUniformLocation loc = getUniformLocation(location);
+		ScriptHelper.put("loc", loc, this);
+		ScriptHelper.put("transpose", transpose, this);
+		ScriptHelper.put("value", value, this);
 		ScriptHelper.put("gl", gl, this);
 		if(loc != null)
 			ScriptHelper.evalNoResult("gl.node.uniformMatrix3fv(loc.node,transpose,value);", this);

@@ -15,7 +15,8 @@ public class btShapeHull extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btShapeHull);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btShapeHull); #EVAL
 		}
 	*/
 
@@ -25,7 +26,8 @@ public class btShapeHull extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.buildHull(margin);
+	 	jsObj, this.jsObj #P
+		return jsObj.buildHull(margin);
 	*/
 	
 	private static native boolean buildHull(long addr, float margin); /*
@@ -40,7 +42,8 @@ public class btShapeHull extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.numTriangles();
+	 	jsObj, this.jsObj #P
+		return jsObj.numTriangles();
 	*/
 	
 	private static native int numTriangles(long addr); /*
@@ -55,7 +58,8 @@ public class btShapeHull extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.numVertices();
+	 	jsObj, this.jsObj #P
+		return jsObj.numVertices();
 	*/
 	
 	private static native int numVertices(long addr); /*
@@ -70,7 +74,8 @@ public class btShapeHull extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.numIndices();
+	 	jsObj, this.jsObj #P
+		return jsObj.numIndices();
 	*/
 	
 	private static native int numIndices(long addr); /*

@@ -16,7 +16,8 @@ public class btBroadphasePair extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btBroadphasePair);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btBroadphasePair); #EVAL
 		}
 	*/
 	
@@ -28,8 +29,8 @@ public class btBroadphasePair extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.get_m_algorithm());
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.get_m_algorithm()); #EVALLONG
 		if(addr == 0) return null; #J
 		tmp.resetObj(addr, false); #J
 		return tmp; #J

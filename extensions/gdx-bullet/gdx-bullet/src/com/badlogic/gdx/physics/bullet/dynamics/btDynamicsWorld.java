@@ -34,7 +34,8 @@ public class btDynamicsWorld extends btCollisionWorld {
 		return ret;
 	*/
 	/*[0;X;L]
-		return this.$$$jsObj.stepSimulation(timeStep,maxSubSteps,fixedTimeStep);
+		jsObj, this.jsObj #P
+		return jsObj.stepSimulation(timeStep,maxSubSteps,fixedTimeStep);
 	*/
 	
 	public void addConstraint(btTypedConstraint constraint, boolean disableCollisionsBetweenLinkedBodies) {
@@ -51,8 +52,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 		world->addConstraint(typedConstraint, disableCollisionsBetweenLinkedBodies);
 	*/
 	/*[0;X;L]
+		jsObj, this.jsObj #P
 		var typedCon = Bullet.wrapPointer(typedConstraintAddr, Bullet.btTypedConstraint);
-		this.$$$jsObj.addConstraint(typedCon, disableCollisionsBetweenLinkedBodies);
+		jsObj.addConstraint(typedCon, disableCollisionsBetweenLinkedBodies);
 	*/
 	
 	public void removeConstraint(btTypedConstraint constraint) {
@@ -65,15 +67,18 @@ public class btDynamicsWorld extends btCollisionWorld {
 		world->removeConstraint(typedConstraint);
 	*/
 	/*[0;X;L]
+		jsObj, this.jsObj #P
 		var typedCon = Bullet.wrapPointer(typedConstraintAddr, Bullet.btTypedConstraint);
-		this.$$$jsObj.removeConstraint(typedCon);
+		jsObj.removeConstraint(typedCon);
 	*/
 	
 	public void addAction(btActionInterface action) {
 		addAction(cPointer, action.cPointer);
 	}
 	/*[0;X;L]
-		this.$$$jsObj.addAction(action.$$$jsObj);
+		jsObj, this.jsObj #P
+		jsAct, action.jsObj #P
+		jsObj.addAction(jsAct);
 	*/
 	
 	private static native void addAction(long addr, long actionAddr); /*
@@ -87,7 +92,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 		removeAction(cPointer, action.cPointer);
 	}
 	/*[0;X;L]
-		this.$$$jsObj.removeAction(action.$$$jsObj);
+		jsObj, this.jsObj #P
+		jsAct, action.jsObj #P
+		jsObj.removeAction(jsAct);
 	 */
 	
 	private static native void removeAction(long addr, long actionAddr); /*
@@ -103,8 +110,11 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
- 		float x = gravity.x, y = gravity.y, z = gravity.z; #J
-		this.$$$jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
+ 		jsObj, this.jsObj #P
+ 		x, gravity.x #P
+ 		y, gravity.y #P 
+ 		z, gravity.z #P
+		jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
 	*/
 	
 	public void setGravity(float x, float y, float z) {
@@ -113,7 +123,8 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
-		this.$$$jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
+ 		jsObj, this.jsObj #P
+		jsObj.setGravity(Bullet.MyTemp.prototype.btVec3_1(x,y,z));
 	*/
 	
 	private static native void setGravity(long addr, float x, float y, float z); /*
@@ -131,12 +142,11 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
- 		float x=0,y=0,z=0; #J
-		var gravity = this.$$$jsObj.getGravity();
-		x = gravity.x();
-		y = gravity.y();
-		z = gravity.z();
-		out.set(x,y,z); #J
+ 		jsObj, this.jsObj #P
+		var gravity = jsObj.getGravity();
+		out.x = gravity.x(); #EVALFLOAT
+		out.y = gravity.y(); #EVALFLOAT
+		out.z = gravity.z(); #EVALFLOAT
 	*/
 	
 	private static native void getGravity(long addr, float [] value); /*
@@ -156,7 +166,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 	/*[0;X;L]
 	 	checkPointer(); #J
  		addBody(body); #J
-		this.$$$jsObj.addRigidBody(body.$$$jsObj);
+ 		jsObj, this.jsObj #P
+ 		jsBod, body.jsObj #P
+		jsObj.addRigidBody(jsBod);
 	*/
 	
 	private static native void addRigidBody(long addr, long bodyAddr); /*
@@ -174,7 +186,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 	/*[0;X;L]
  		checkPointer(); #J
  		addBody(body); #J
-		this.$$$jsObj.addRigidBody(body.$$$jsObj,group,mask);
+ 		jsObj, this.jsObj #P
+ 		jsBod, body.jsObj #P
+		jsObj.addRigidBody(jsBod,group,mask);
 	*/
 
 	private static native void addRigidBody(long addr, long bodyAddr, short group, short mask); /*
@@ -192,7 +206,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 	/*[0;X;L]
  		checkPointer(); #J
  		removeBody(body); #J
-		this.$$$jsObj.removeRigidBody(body.$$$jsObj);
+ 		jsObj, this.jsObj #P
+ 		jsBod, body.jsObj #P
+		jsObj.removeRigidBody(jsBod);
 	*/
 
 	private static native void removeRigidBody(long addr, long bodyAddr); /*
@@ -210,7 +226,9 @@ public class btDynamicsWorld extends btCollisionWorld {
 	/*[0;X;L]
  		checkPointer(); #J
  		this.constraintSolver = solver; #J
-		this.$$$jsObj.setConstraintSolver(solver.$$$jsObj);
+ 		jsObj, this.jsObj #P
+ 		jsSol, solver.jsObj #P
+		jsObj.setConstraintSolver(jsSol);
 	*/
 
 	private static native void setConstraintSolver(long addr, long solverAddr); /*
@@ -230,7 +248,8 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
-		return this.$$$jsObj.getNumConstraints();
+ 		jsObj, this.jsObj #P
+		return jsObj.getNumConstraints();
 	*/
 
 	private static native int getNumConstraints(long addr); /*
@@ -245,7 +264,8 @@ public class btDynamicsWorld extends btCollisionWorld {
 	}
 	/*[0;X;L]
  		checkPointer(); #J
-		this.$$$jsObj.clearForces();
+ 		jsObj, this.jsObj #P
+		jsObj.clearForces();
 	*/
 	
 	private static native void clearForces(long addr); /*

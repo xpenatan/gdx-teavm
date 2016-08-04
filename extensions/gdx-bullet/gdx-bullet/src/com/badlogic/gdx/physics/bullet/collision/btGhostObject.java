@@ -21,7 +21,8 @@ public class btGhostObject extends btCollisionObject {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btGhostObject);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btGhostObject); #EVAL
 		}
 	*/
 	
@@ -31,7 +32,8 @@ public class btGhostObject extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.getNumOverlappingObjects();
+		jsObj, this.jsObj #P
+		return jsObj.getNumOverlappingObjects();
 	*/
 	
 	private static native int getNumOverlappingObjects(long addr); /*
@@ -47,8 +49,8 @@ public class btGhostObject extends btCollisionObject {
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getOverlappingObject(index));
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getOverlappingObject(index)); #EVALLONG
 		return world.bodies.get(addr); #J
 	*/
 	

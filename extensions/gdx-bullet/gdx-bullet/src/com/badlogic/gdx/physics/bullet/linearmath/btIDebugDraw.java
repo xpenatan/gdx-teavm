@@ -2,6 +2,7 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
+/*[0;X] com.dragome.commons.compiler.annotations.MethodAlias */
 
 /** @author xpenatan */
 public class btIDebugDraw extends BulletBase{
@@ -72,73 +73,80 @@ public class btIDebugDraw extends BulletBase{
 		return  (jlong)new CustomDebugDraw(weakRef);
 	*/
 	/*[0;X;L]
-		Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1; #J
-		Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2; #J
-		Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3; #J
-		
 		var debugDraw=new Bullet.MyDebugDraw(); #B
-		var self=this;
-		debugDraw.drawLine=function(vecFrom,vecTo,color){ 
-			vecFrom=Bullet.wrapPointer(vecFrom,Bullet.btVector3);
-			vecTo=Bullet.wrapPointer(vecTo,Bullet.btVector3);
-			color=Bullet.wrapPointer(color,Bullet.btVector3);
-			tmp1.$$$x=vecFrom.x();
-			tmp1.$$$y=vecFrom.y();
-			tmp1.$$$z=vecFrom.z();
-			tmp2.$$$x=vecTo.x();
-			tmp2.$$$y=vecTo.y();
-			tmp2.$$$z=vecTo.z();
-			tmp3.$$$x=color.x();
-			tmp3.$$$y=color.y();
-			tmp3.$$$z=color.z();
-			self.$drawLine___com_badlogic_gdx_math_Vector3__com_badlogic_gdx_math_Vector3__com_badlogic_gdx_math_Vector3$void(tmp1,tmp2,tmp3);
-		};
-		
-		debugDraw.drawContactPoint=function(pointOnB,normalOnB,distance,lifeTime,color){
-			pointOnB=Bullet.wrapPointer(pointOnB,Bullet.btVector3);
-			normalOnB=Bullet.wrapPointer(normalOnB,Bullet.btVector3);
-			color=Bullet.wrapPointer(color,Bullet.btVector3);
-			tmp1.$$$x=pointOnB.x();
-			tmp1.$$$y=pointOnB.y();
-			tmp1.$$$z=pointOnB.z();
-			tmp2.$$$x=normalOnB.x();
-			tmp2.$$$y=normalOnB.y();
-			tmp2.$$$z=normalOnB.z();
-			tmp3.$$$x=color.x();
-			tmp3.$$$y=color.y();
-			tmp3.$$$z=color.z();
-			self.$drawContactPoint___com_badlogic_gdx_math_Vector3__com_badlogic_gdx_math_Vector3__float__int__com_badlogic_gdx_math_Vector3$void(tmp1,tmp2,distance,lifeTime,tmp3);
-		};
-				
-		debugDraw.draw3dText=function(location,textString){ 
-			location=Bullet.wrapPointer(location,Bullet.btVector3);
-			
-			
-		};
-		
-		debugDraw.getDebugMode=function(){ 
-			return self.$getDebugMode$int();  #I
-		}; #E
-		
-		
+		debugDraw.self = this;
+		debugDraw.drawLine = this.drawFuc;
+		debugDraw.drawContactPoint = this.drawCont;
+		debugDraw.getDebugMode = this.getDebug;
 		return Bullet.getPointer(debugDraw); 
 	*/
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.MyDebugDraw);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.MyDebugDraw); #EVAL
 		}
 	*/
+	
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "drawFuc")
+		private void debugDrawFuc(long vecFrom, long vecTo, long color) {
+			Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1; #J
+			Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2; #J
+			Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3; #J
+			vecFrom=Bullet.wrapPointer(vecFrom,Bullet.btVector3);
+			vecTo=Bullet.wrapPointer(vecTo,Bullet.btVector3);
+			color=Bullet.wrapPointer(color,Bullet.btVector3);
+			tmp1.x = vecFrom.x(); #EVALFLOAT
+			tmp1.y = vecFrom.y(); #EVALFLOAT
+			tmp1.z = vecFrom.z(); #EVALFLOAT
+			tmp2.x = vecTo.x(); #EVALFLOAT
+			tmp2.y = vecTo.y(); #EVALFLOAT
+			tmp2.z = vecTo.z(); #EVALFLOAT
+			tmp3.x = color.x(); #EVALFLOAT
+			tmp3.y = color.y(); #EVALFLOAT
+			tmp3.z = color.z(); #EVALFLOAT
+			btIDebugDraw debugDraw = this.self = btIDebugDraw #EVAL
+			debugDraw.drawLine(tmp1, tmp2, tmp3); #J
+		}
+	*/
+	
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "drawCont")
+		private void drawContactFunc(long pointOnB,long normalOnB, float distance, int lifeTime, long color) {
+			Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1; #J
+			Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2; #J
+			Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3; #J
+			vecFrom=Bullet.wrapPointer(pointOnB,Bullet.btVector3);
+			vecTo=Bullet.wrapPointer(normalOnB,Bullet.btVector3);
+			color=Bullet.wrapPointer(color,Bullet.btVector3);
+			tmp1.x = vecFrom.x(); #EVALFLOAT
+			tmp1.y = vecFrom.y(); #EVALFLOAT
+			tmp1.z = vecFrom.z(); #EVALFLOAT
+			tmp2.x = vecTo.x(); #EVALFLOAT
+			tmp2.y = vecTo.y(); #EVALFLOAT
+			tmp2.z = vecTo.z(); #EVALFLOAT
+			tmp3.x = color.x(); #EVALFLOAT
+			tmp3.y = color.y(); #EVALFLOAT
+			tmp3.z = color.z(); #EVALFLOAT
+			btIDebugDraw debugDraw = this.self = btIDebugDraw #EVAL
+			debugDraw.drawContactPoint(tmp1, tmp2, distance, lifeTime, tmp3); #J
+		}
+	*/
+	
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "getDebug")
+		private int drawContactFunc() {
+			btIDebugDraw debugDraw = this.self = btIDebugDraw #EVAL
+			return debugDraw.getDebugMode(); #J
+		}
+	 */
 
 	@Override
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var cobj = Bullet.wrapPointer(addr, Bullet.MyDebugDraw);
-		Bullet.destroy(cobj);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		CustomDebugDraw * cobj = (CustomDebugDraw *)addr;

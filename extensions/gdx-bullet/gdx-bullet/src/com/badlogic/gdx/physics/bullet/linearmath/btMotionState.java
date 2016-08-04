@@ -2,7 +2,7 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.BulletBase;
-
+/*[0;X] com.dragome.commons.compiler.annotations.MethodAlias */
 /** @author xpenatan */
 public class btMotionState extends BulletBase {
 	/*JNI
@@ -62,11 +62,7 @@ public class btMotionState extends BulletBase {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var cobj = Bullet.wrapPointer(addr, Bullet.MyMotionState);
-		Bullet.destroy(cobj);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		CustomMotionState * cobj = (CustomMotionState *)addr;
@@ -84,56 +80,84 @@ public class btMotionState extends BulletBase {
 		return (jlong)new CustomMotionState(weakRef);
 	*/
 	/*[0;X;L]
-		Matrix4 tmpMat=btTransform.tmp_param1;  #J #B
-		var self=this; 
-		var jsMotionState=new Bullet.MyMotionState();
-		jsMotionState.getWorldTransform=function(worldTrans){
-			var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);
-			self.$getWorldTransform___com_badlogic_gdx_math_Matrix4$void(tmpMat);
-			var origin=worldTrans.getOrigin();
-			var matrix3x3=worldTrans.getBasis();
-			var row0=matrix3x3.getRow(0);
-			var row1=matrix3x3.getRow(1);
-			var row2=matrix3x3.getRow(2);
-			row0.setValue(tmpMat.$$$val[0],tmpMat.$$$val[4],tmpMat.$$$val[8]);
-			row1.setValue(tmpMat.$$$val[1],tmpMat.$$$val[5],tmpMat.$$$val[9]);
-			row2.setValue(tmpMat.$$$val[2],tmpMat.$$$val[6],tmpMat.$$$val[10]);
-			origin.setValue(tmpMat.$$$val[12], tmpMat.$$$val[13], tmpMat.$$$val[14]);
-		};
-		jsMotionState.setWorldTransform=function(worldTrans){
-			var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);
-			var origin=worldTrans.getOrigin();
-			var matrix3x3=worldTrans.getBasis();
-			var row0=matrix3x3.getRow(0);
-			var row1=matrix3x3.getRow(1);
-			var row2=matrix3x3.getRow(2);
-			tmpMat.$$$val[0]=row0.x();
-			tmpMat.$$$val[1]=row1.x();
-			tmpMat.$$$val[2]=row2.x();
-			tmpMat.$$$val[3]=0;
-			tmpMat.$$$val[4]=row0.y();
-			tmpMat.$$$val[5]=row1.y();
-			tmpMat.$$$val[6]=row2.y();
-			tmpMat.$$$val[7]=0;
-			tmpMat.$$$val[8]=row0.z();
-			tmpMat.$$$val[9]=row1.z();
-			tmpMat.$$$val[10]=row2.z();
-			tmpMat.$$$val[11]=0;
-			tmpMat.$$$val[12]=origin.x();
-			tmpMat.$$$val[13]=origin.y();
-			tmpMat.$$$val[14]=origin.z();
-			tmpMat.$$$val[15]=1.0;
-			self.$setWorldTransform___com_badlogic_gdx_math_Matrix4$void(tmpMat);
-		}; 
+		var jsMotionState = new Bullet.MyMotionState();
+		jsMotionState.self = this; 
+		jsMotionState.getWorldTransform = this.getT;
+		jsMotionState.setWorldTransform = this.setT;
 		return Bullet.getPointer(jsMotionState); #E
 	*/
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.MyMotionState);
+			addr,this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.MyMotionState); #EVAL
 		}
 	*/
 	
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "getT")
+		private void getWorldTran(long worldTrans) {
+			Matrix4 tmpMat = btTransform.tmp_param1; #J
+			tmpMat.idt(); #J
+			btMotionState motion = this.self = btMotionState #EVAL
+			motion.getWorldTransform(tmpMat); #J
+			var worldTrans = Bullet.wrapPointer(worldTrans, Bullet.btTransform);
+			var origin = worldTrans.getOrigin();
+			var matrix3x3 = worldTrans.getBasis();
+			var row0 = matrix3x3.getRow(0);
+			var row1 = matrix3x3.getRow(1);
+			var row2 = matrix3x3.getRow(2);
+			x, tmpMat.val[0] #P
+			y, tmpMat.val[4] #P
+			z, tmpMat.val[8] #P
+			row0.setValue(x, y, z);
+			x, tmpMat.val[1] #P
+			y, tmpMat.val[5] #P
+			z, tmpMat.val[9] #P
+			row1.setValue(x, y, z);
+			x, tmpMat.val[2] #P
+			y, tmpMat.val[6] #P
+			z, tmpMat.val[10] #P
+			row2.setValue(x, y, z);
+			x, tmpMat.val[12] #P
+			y, tmpMat.val[13] #P
+			z, tmpMat.val[14] #P
+			origin.setValue(x, y, z);
+		}
+	*/
+	
+	/*[0;X;F;L]
+		@MethodAlias(local_alias= "setT")
+		private void setWorldTran(long worldTrans) {
+			Matrix4 tmpMat = btTransform.tmp_param1; #J
+			
+			var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);
+			var origin=worldTrans.getOrigin();
+			var matrix3x3=worldTrans.getBasis();
+			var row0=matrix3x3.getRow(0);
+			var row1=matrix3x3.getRow(1);
+			var row2=matrix3x3.getRow(2);
+			tmpMat.val[0] = row0.x(); #EVALFLOAT
+			tmpMat.val[1] = row1.x(); #EVALFLOAT
+			tmpMat.val[2] = row2.x(); #EVALFLOAT
+			tmpMat.val[3] = 0; #J
+			tmpMat.val[4] = row0.y(); #EVALFLOAT
+			tmpMat.val[5] = row1.y(); #EVALFLOAT
+			tmpMat.val[6] = row2.y(); #EVALFLOAT
+			tmpMat.val[7] = 0; #J
+			tmpMat.val[8] = row0.z(); #EVALFLOAT
+			tmpMat.val[9] = row1.z(); #EVALFLOAT
+			tmpMat.val[10] = row2.z(); #EVALFLOAT
+			tmpMat.val[11] = 0; #J
+			tmpMat.val[12] = origin.x(); #EVALFLOAT
+			tmpMat.val[13] = origin.y(); #EVALFLOAT
+			tmpMat.val[14] = origin.z(); #EVALFLOAT
+			tmpMat.val[15] = 1.0f; #J
+			btMotionState motion = this.self = btMotionState #EVAL
+			motion.setWorldTransform(tmpMat); #J
+		}
+	 */
+
 	private float [] getWorldTransform() {
 		btTransform.tmp_param1.idt();
 		getWorldTransform(btTransform.tmp_param1);

@@ -110,23 +110,31 @@ public abstract class Timer {
 	}
 
 	private static Object createCallback(Timer timer, int cancelCounter) {
+		ScriptHelper.put("timer", timer, null);
+		ScriptHelper.put("cancelCounter", cancelCounter, null);
 		Object obj = ScriptHelper.eval("function() { timer.fire(cancelCounter); }", null);
 		return obj;
 	}
 
 	private static int setInterval(Object func, int time) {
+		ScriptHelper.put("func", func, null);
+		ScriptHelper.put("time", time, null);
 		return ScriptHelper.evalInt("setInterval(func, time)", null);
 	}
 
 	private static int setTimeout(Object func, int time) {
+		ScriptHelper.put("func", func, null);
+		ScriptHelper.put("time", time, null);
 		return ScriptHelper.evalInt("setTimeout(func, time);", null);
 	}
 
 	private static void clearInterval(int timerId) {
+		ScriptHelper.put("timerId", timerId, null);
 		ScriptHelper.evalNoResult("clearInterval(timerId);", null);
 	}
 
 	private static void clearTimeout(int timerId) {
+		ScriptHelper.put("timerId", timerId, null);
 		ScriptHelper.evalNoResult("clearTimeout(timerId);", null);
 	}
 }

@@ -18,7 +18,11 @@ public class BulletBase implements Disposable {
 	/** Do not call directly. Called when object is owned and dispose is called. */
 	protected void delete() {
 	}
-	
+	/*[0;X;L]
+		jsObj, this.jsObj #P
+		Bullet.destroy(jsObj);
+	*/
+
 	/**
 	 * Internal use. Can cause memory leak if not used correctly.
 	 */
@@ -41,6 +45,8 @@ public class BulletBase implements Disposable {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
+			jsObj, this.jsObj #P
+			
 		}
 	*/
 	

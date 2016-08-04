@@ -17,7 +17,8 @@ public class btPersistentManifold extends btTypedObject {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btPersistentManifold);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btPersistentManifold); #EVAL
 		}
 	*/
 	
@@ -29,8 +30,8 @@ public class btPersistentManifold extends btTypedObject {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getContactPoint(index));
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getContactPoint(index)); #EVALLONG
 		maniFoldPoint.resetObj(addr, false); #J
 		return maniFoldPoint; #J
 	*/
@@ -48,7 +49,8 @@ public class btPersistentManifold extends btTypedObject {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.getNumContacts();
+		jsObj, this.jsObj #P
+		return jsObj.getNumContacts();
 	*/
 	
 	private static native int getNumContacts(long addr); /*
@@ -64,8 +66,8 @@ public class btPersistentManifold extends btTypedObject {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getBody0());
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getBody0()); #EVALLONG
 		return world.bodies.get(addr); #J
 	*/
 	
@@ -82,8 +84,8 @@ public class btPersistentManifold extends btTypedObject {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		long addr = 0; #J
-		addr = Bullet.getPointer(this.$$$jsObj.getBody1());
+		jsObj, this.jsObj #P
+		long addr = Bullet.getPointer(jsObj.getBody1()); #EVALLONG
 		return world.bodies.get(addr); #J
 	*/
 	

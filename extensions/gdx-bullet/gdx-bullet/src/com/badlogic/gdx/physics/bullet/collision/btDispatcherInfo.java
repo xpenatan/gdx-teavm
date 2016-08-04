@@ -16,7 +16,8 @@ public class btDispatcherInfo extends BulletBase{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btDispatcherInfo);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDispatcherInfo); #EVAL
 		}
 	 */
 
@@ -26,7 +27,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_timeStep(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_timeStep(value);
 	*/
 	
 	
@@ -42,7 +44,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_timeStep();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_timeStep();
 	*/
 
 	private static native float getTimeStep(long addr); /*
@@ -57,7 +60,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_stepCount(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_stepCount(value);
 	*/
 	
 	private static native void setStepCount(long addr, int value); /*
@@ -72,7 +76,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_stepCount();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_stepCount();
 	*/
 	
 	private static native int getStepCount(long addr); /*
@@ -87,7 +92,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_dispatchFunc(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_dispatchFunc(value);
 	*/
 	
 	private static native void setDispatchFunc(long addr, int value); /*
@@ -102,7 +108,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_dispatchFunc();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_dispatchFunc();
 	*/
 
 	private static native int getDispatchFunc(long addr); /*
@@ -117,7 +124,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_timeOfImpact(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_timeOfImpact(value);
 	*/
 	
 	private static native void setTimeOfImpact(long addr, float value); /*
@@ -132,7 +140,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_timeOfImpact();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_timeOfImpact();
 	*/
 
 	private static native float getTimeOfImpact(long addr); /*
@@ -147,7 +156,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_useContinuous(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_useContinuous(value);
 	*/
 	
 	private static native void setUseContinuous(long addr, boolean value); /*
@@ -162,7 +172,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_useContinuous();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_useContinuous();
 	*/
 
 	private static native boolean getUseContinuous(long addr); /*
@@ -188,7 +199,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_enableSatConvex(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_enableSatConvex(value);
 	*/
 	
 	private static native void setEnableSatConvex(long addr, boolean value); /*
@@ -203,7 +215,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_enableSatConvex();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_enableSatConvex();
 	*/
 
 	private static native boolean getEnableSatConvex(long addr); /*
@@ -218,7 +231,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_enableSPU(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_enableSPU(value);
 	*/
 	
 	private static native void setEnableSPU(long addr, boolean value); /*
@@ -233,7 +247,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_enableSPU();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_enableSPU();
 	*/
 	
 	private static native boolean getEnableSPU(long addr); /*
@@ -247,7 +262,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_useEpa(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_useEpa(value);
 	*/
 	
 	private static native void setUseEpa(long addr, boolean value); /*
@@ -262,7 +278,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_useEpa();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_useEpa();
 	*/
 
 	private static native boolean getUseEpa(long addr); /*
@@ -277,7 +294,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_allowedCcdPenetration(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_allowedCcdPenetration(value);
 	*/
 	
 	private static native void setAllowedCcdPenetration(long addr, float value); /*
@@ -292,7 +310,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_allowedCcdPenetration();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_allowedCcdPenetration();
 	*/
 
 	private static native float getAllowedCcdPenetration(long addr); /*
@@ -307,7 +326,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_useConvexConservativeDistanceUtil(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_useConvexConservativeDistanceUtil(value);
 	*/
 	
 	private static native void setUseConvexConservativeDistanceUtil(long addr, boolean value); /*
@@ -322,7 +342,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_useConvexConservativeDistanceUtil();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_useConvexConservativeDistanceUtil();
 	*/
 
 	private static native boolean getUseConvexConservativeDistanceUtil(long addr); /*
@@ -337,7 +358,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.set_m_convexConservativeDistanceThreshold(value);
+		jsObj, this.jsObj #P
+		jsObj.set_m_convexConservativeDistanceThreshold(value);
 	*/
 	
 	private static native void setConvexConservativeDistanceThreshold(long addr, float value); /*
@@ -352,7 +374,8 @@ public class btDispatcherInfo extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.get_m_convexConservativeDistanceThreshold();
+		jsObj, this.jsObj #P
+		return jsObj.get_m_convexConservativeDistanceThreshold();
 	*/
 
 	private static native float getConvexConservativeDistanceThreshold(long addr); /*

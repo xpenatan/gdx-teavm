@@ -258,6 +258,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	@Override
 	public void debug (String tag, String message) {
 		if (logLevel >= LOG_DEBUG) {
+			ScriptHelper.put("tag", tag, this);
+			ScriptHelper.put("message", message, this);
 			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
 		}
 	}
@@ -265,6 +267,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	@Override
 	public void debug (String tag, String message, Throwable exception) {
 		if (logLevel >= LOG_DEBUG) {
+			ScriptHelper.put("tag", tag, this);
+			ScriptHelper.put("message", message, this);
 			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
 			exception.printStackTrace(System.out);
 		}
@@ -288,6 +292,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	@Override
 	public void error (String tag, String message) {
 		if (logLevel >= LOG_ERROR) {
+			ScriptHelper.put("tag", tag, this);
+			ScriptHelper.put("message", message, this);
 			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
 		}
 	}
@@ -295,6 +301,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	@Override
 	public void error (String tag, String message, Throwable exception) {
 		if (logLevel >= LOG_ERROR) {
+			ScriptHelper.put("tag", tag, this);
+			ScriptHelper.put("message", message, this);
 			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
 			exception.printStackTrace(System.err);
 		}

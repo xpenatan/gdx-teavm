@@ -90,6 +90,7 @@ public final class ScreenUtils {
 		ScriptHelper.evalNoResult("var imgData = ctx.node.createImageData(width, height);", null);
 		ScriptHelper.evalNoResult("var data = imgData.data;", null);
 		for (int i = 0, len = width * height * 4; i < len; i++) {
+			ScriptHelper.put("i", i, null);
 			ScriptHelper.evalNoResult("data[i] = pixels.node[i] & 0xff;", null); // TODO need to check
 		}
 		ScriptHelper.evalNoResult("ctx.node.putImageData(imgData, 0, 0);", null);

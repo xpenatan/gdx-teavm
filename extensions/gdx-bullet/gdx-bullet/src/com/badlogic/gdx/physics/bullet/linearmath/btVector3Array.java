@@ -17,7 +17,8 @@ public class btVector3Array extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.MyVector3Array);
+			addr,this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.MyVector3Array) #EVAL
 		}
 	*/
 	
@@ -27,7 +28,8 @@ public class btVector3Array extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.size();
+		jsObj, this.jsObj #P
+		return jsObj.size();
 	*/
 	
 	private static native int size(long addr); /*
@@ -44,7 +46,8 @@ public class btVector3Array extends BulletBase {
 	/*[0;X;L]
 		checkPointer();  #J
 		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.at(n);
+		jsObj, this.jsObj #P
+		var vec = jsObj.at(n);
 		x = vec.x();
 		y = vec.y();
 		z = vec.z();
@@ -66,7 +69,8 @@ public class btVector3Array extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.capacity();
+		jsObj, this.jsObj #P
+		return jsObj.capacity();
 	*/
 	
 	private static native int capacity(long addr); /*
@@ -81,7 +85,8 @@ public class btVector3Array extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.resize(newsize);
+		jsObj, this.jsObj #P
+		jsObj.resize(newsize);
 	*/
 	
 	private static native void resize(long addr, int newsize); /*

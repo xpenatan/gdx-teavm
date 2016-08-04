@@ -11,7 +11,8 @@ public class ContactResultCallback extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.ContactResultCallback);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.ContactResultCallback); #EVAL
 		}
 	*/
 }

@@ -29,7 +29,8 @@ public class btTransform extends BulletBase{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btTransform);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btTransform); #EVAL
 		}
 	*/
 	
@@ -37,11 +38,7 @@ public class btTransform extends BulletBase{
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var mat = Bullet.wrapPointer(addr, Bullet.btTransform);
-		Bullet.destroy(mat);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btTransform * cobj = (btTransform *)addr;
@@ -55,7 +52,7 @@ public class btTransform extends BulletBase{
 	}
 	/*[0;X;L]
 	 	tra.checkPointer(); #J
-		Object transform = tra.jsObj;  #J
+		transform, tra.jsObj #P
 		transform.setFromOpenGLMatrix(value);
 	*/
 
@@ -71,8 +68,7 @@ public class btTransform extends BulletBase{
 	}
 	/*[0;X;L]
 	 	tra.checkPointer(); #J
-		Object transform = tra.jsObj; #J
-		getOpenGLMatrix(transform, value); #J	
+		getOpenGLMatrix(tra.jsObj, value); #J	
 	*/
 	
 	/*[0;X;F;L]

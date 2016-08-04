@@ -6,7 +6,8 @@ public class btConvexShape extends btCollisionShape {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btConvexShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btConvexShape); #EVAL
 		}
 	*/
 }

@@ -23,7 +23,8 @@ public class btCollisionDispatcher extends btDispatcher{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btCollisionDispatcher);
+			addr, this.cPointer #P
+			jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionDispatcher); #EVAL
 		}
 	*/
 	
@@ -31,11 +32,7 @@ public class btCollisionDispatcher extends btDispatcher{
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var disp = Bullet.wrapPointer(addr, Bullet.btCollisionDispatcher);
-		Bullet.destroy(disp);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btCollisionDispatcher * cobj = (btCollisionDispatcher *)addr;

@@ -34,7 +34,8 @@ public class btQuaternion extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btQuaternion);
+			addr, this.cPointer #P
+			jsObj = Bullet.wrapPointer(addr, Bullet.btQuaternion); #EVAL
 		}
 	*/
 	
@@ -42,11 +43,7 @@ public class btQuaternion extends BulletBase {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var quat = Bullet.wrapPointer(addr, Bullet.btTransform);
-		Bullet.destroy(quat);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btQuaternion * cobj = (btQuaternion *)addr;
@@ -60,7 +57,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	quat.checkPointer();  #J
-		this.$$$jsObj.setValue(value[0],value[1],value[2],value[3]);
+	 	jsObj, quat.jsObj #P
+		jsObj.setValue(value[0],value[1],value[2],value[3]);
 	*/
 
 	private static native void set(long addr, float[] value); /*
@@ -126,7 +124,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		this.$$$jsObj.setValue(x,y,z,w);
+	 	jsObj, this.jsObj #P
+		jsObj.setValue(x,y,z,w);
 	*/
 	
 	private static native void setValue(long addr, float x, float y, float z, float w); /*
@@ -141,7 +140,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		return this.$$$jsObj.x();
+	 	jsObj, this.jsObj #P
+		return jsObj.x();
 	*/
 	
 	private static native float getX(long addr); /*
@@ -156,7 +156,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		return this.$$$jsObj.y();
+	 	jsObj, this.jsObj #P
+		return jsObj.y();
 	*/
 	
 	private static native float getY(long addr); /*
@@ -171,7 +172,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		return this.$$$jsObj.z();
+	 	jsObj, this.jsObj #P
+		return jsObj.z();
 	*/
 	
 	private static native float getZ(long addr); /*
@@ -186,7 +188,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		return this.$$$jsObj.w();
+	 	jsObj, this.jsObj #P
+		return jsObj.w();
 	*/
 	
 	private static native float getW(long addr); /*
@@ -201,7 +204,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		this.$$$jsObj.setX(x);
+	 	jsObj, this.jsObj #P
+		jsObj.setX(x);
 	*/
 	
 	private static native void setX(long addr, float x); /*
@@ -216,7 +220,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		this.$$$jsObj.setY(y);
+	 	jsObj, this.jsObj #P
+		jsObj.setY(y);
 	*/
 	
 	private static native void setY(long addr, float y); /*
@@ -231,7 +236,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		this.$$$jsObj.setZ(z);
+	 	jsObj, this.jsObj #P
+		jsObj.setZ(z);
 	*/
 	
 	private static native void setZ(long addr, float z); /*
@@ -246,7 +252,8 @@ public class btQuaternion extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer();  #J
-		this.$$$jsObj.setW(w);
+	 	jsObj, this.jsObj #P
+		jsObj.setW(w);
 	*/
 	
 	private static native void setW(long addr, float w); /*

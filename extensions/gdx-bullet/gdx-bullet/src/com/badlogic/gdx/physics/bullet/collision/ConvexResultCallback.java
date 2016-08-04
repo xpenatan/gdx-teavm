@@ -11,7 +11,8 @@ public class ConvexResultCallback extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.ConvexResultCallback);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.ConvexResultCallback); #EVAL
 		}
 	*/
 }

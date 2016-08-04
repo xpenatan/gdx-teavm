@@ -45,12 +45,13 @@ public class btCollisionShape extends BulletBase{
 	public void getBoundingSphere(float [] value) {
 		checkPointer();
 		getBoundingSphere(cPointer, value);
-	}
+	} //TODO need to fix js radius
 	/*[0;X;L]	
 		checkPointer(); #J
-		Object center =  com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj; #J
-		var radius;
-		this.$$$jsObj.getBoundingSphere(vec, radius);
+		jsObj, this.jsObj #P
+		center, com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj #P
+		var radius = 0;
+		jsObj.getBoundingSphere(center, radius);
 		value[0] = center.x();
 		value[1] = center.y();
 		value[2] = center.z();
@@ -77,7 +78,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.getAngularMotionDisc();
+	 	jsObj, this.jsObj #P
+		return jsObj.getAngularMotionDisc();
 	*/
 	
 	private static native float getAngularMotionDisc(long addr); /*
@@ -92,7 +94,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isPolyhedral();
+		jsObj, this.jsObj #P
+		return jsObj.isPolyhedral();
 	*/
 	
 	private static native boolean isPolyhedral(long addr); /*
@@ -107,7 +110,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.isConvex2d();
+	 	jsObj, this.jsObj #P
+		return jsObj.isConvex2d();
 	*/
 	
 	private static native boolean isConvex2d(long addr); /*
@@ -122,7 +126,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isConvex();
+		jsObj, this.jsObj #P
+		return jsObj.isConvex();
 	*/
 	
 	private static native boolean isConvex(long addr); /*
@@ -137,7 +142,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
-		return this.$$$jsObj.isNonMoving();
+	 	jsObj, this.jsObj #P
+		return jsObj.isNonMoving();
 	*/
 	
 	private static native boolean isNonMoving(long addr); /*
@@ -152,7 +158,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isConcave();
+		jsObj, this.jsObj #P
+		return jsObj.isConcave();
 	*/
 	
 	private static native boolean isConcave(long addr); /*
@@ -167,7 +174,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isCompound();
+		jsObj, this.jsObj #P
+		return jsObj.isCompound();
 	*/
 	
 	private static native boolean isCompound(long addr); /*
@@ -182,7 +190,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isSoftBody();
+		jsObj, this.jsObj #P
+		return jsObj.isSoftBody();
 	*/
 	
 	private static native boolean isSoftBody(long addr); /*
@@ -197,7 +206,8 @@ public class btCollisionShape extends BulletBase{
 	}
 	/*[0;X;L]
 		checkPointer(); #J
-		return this.$$$jsObj.isInfinite();
+		jsObj, this.jsObj #P
+		return jsObj.isInfinite();
 	*/
 	
 	private static native boolean isInfinite(long addr); /*
@@ -212,13 +222,14 @@ public class btCollisionShape extends BulletBase{
 		setLocalScaling(cPointer, scaling.x, scaling.y, scaling.z);
 	}
 	/*[0;X;L]
-		checkPointer(); #J   
-		float x = scaling.x; #J
-		float y = scaling.y; #J
-		float z = scaling.z; #J
-		Object vec =  com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj; #J 
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		x, scaling.x #P
+		y, scaling.y #P
+		z, scaling.z #P
+		vec,  com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj #P
 		vec.setValue(x,y,z);
-		this.$$$jsObj.setLocalScaling(vec);
+		jsObj.setLocalScaling(vec);
 	*/
 	
 	private static native void setLocalScaling(long addr, float x, float y, float z); /*
@@ -236,13 +247,12 @@ public class btCollisionShape extends BulletBase{
 		out.z = btVector3.localArr_1[2];
 	}
 	/*[0;X;L]
-		checkPointer(); #J   
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getLocalScaling();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getLocalScaling();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 	
 	private static native void getLocalScaling(long addr, float [] value); /*
@@ -262,14 +272,13 @@ public class btCollisionShape extends BulletBase{
 		inertia.z = btVector3.localArr_1[2];
 	}
 	/*[0;X;L]
-		checkPointer(); #J   
-		float x=0,y=0,z=0; #J
-		Object vec3 =  com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj; #J
-		this.$$$jsObj.calculateLocalInertia(mass, vec3);
-		x = vec3.x();
-		y = vec3.y();
-		z = vec3.z();
-		inertia.set(x,y,z); #J
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		vec3, com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.jsObj #P
+		jsObj.calculateLocalInertia(mass, vec3);
+		inertia.x = vec3.x(); #EVALFLOAT
+		inertia.y = vec3.y(); #EVALFLOAT
+		inertia.z = vec3.z(); #EVALFLOAT
 	*/
 	
 	private static native void calculateLocalInertia(long addr, float mass, float [] value); /*
@@ -286,8 +295,9 @@ public class btCollisionShape extends BulletBase{
 		return getShapeType(cPointer);
 	}
 	/*[0;X;L]
-		checkPointer(); #J   
-		return this.$$$jsObj.getShapeType();
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		return jsObj.getShapeType();
 	*/
 	
 	private static native int getShapeType(long addr); /*
@@ -304,13 +314,12 @@ public class btCollisionShape extends BulletBase{
 		out.z = btVector3.localArr_1[2];
 	}
 	/*[0;X;L]
-		checkPointer(); #J   
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getAnisotropicRollingFrictionDirection();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getAnisotropicRollingFrictionDirection();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	 */
 
 	private static native void getAnisotropicRollingFrictionDirection(long addr, float [] value); /*
@@ -327,8 +336,9 @@ public class btCollisionShape extends BulletBase{
 		setMargin(cPointer, margin);
 	}
 	/*[0;X;D]
-	 	checkPointer(); #J   
-		this.$$$jsObj.setMargin(margin);
+	 	checkPointer(); #J
+		jsObj, this.jsObj #P
+		jsObj.setMargin(margin);
 	 */
 	
 	private static native void setMargin(long addr, float margin); /*
@@ -342,8 +352,9 @@ public class btCollisionShape extends BulletBase{
 		return getMargin(cPointer);
 	}
 	/*[0;X;L]
-	 	checkPointer(); #J   
-		return this.$$$jsObj.getMargin();
+	 	checkPointer(); #J
+	 	jsObj, this.jsObj #P
+		return jsObj.getMargin();
 	*/
 	
 	private static native float getMargin(long addr); /*
@@ -357,8 +368,9 @@ public class btCollisionShape extends BulletBase{
 		return getUserIndex(cPointer);
 	}
 	/*[0;X;L]
-	 	checkPointer(); #J   
-		return this.$$$jsObj.getUserIndex();
+	 	checkPointer(); #J
+	 	jsObj, this.jsObj #P
+		return jsObj.getUserIndex();
 	*/
 
 	private static native int getUserIndex(long addr); /*
@@ -372,8 +384,9 @@ public class btCollisionShape extends BulletBase{
 		setUserIndex(cPointer, index);
 	}
 	/*[0;X;L]
-	 	checkPointer(); #J   
-		this.$$$jsObj.setUserIndex(index);
+	 	checkPointer(); #J
+	 	jsObj, this.jsObj #P
+		jsObj.setUserIndex(index);
 	*/
 	
 	private static native void setUserIndex(long addr, int index); /*

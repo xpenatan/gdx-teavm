@@ -21,7 +21,8 @@ public class btPairCachingGhostObject extends btGhostObject{
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btPairCachingGhostObject);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btPairCachingGhostObject); #EVAL
 		}
 	*/
 }

@@ -27,7 +27,8 @@ public class btBoxShape extends btPolyhedralConvexShape {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btBoxShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btBoxShape); #EVAL
 		}
 	*/
 	
@@ -35,11 +36,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var jsObj = Bullet.wrapPointer(addr, Bullet.btBoxShape);
-		Bullet.destroy(jsObj);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btBoxShape * cobj = (btBoxShape *)addr;
@@ -53,13 +50,12 @@ public class btBoxShape extends btPolyhedralConvexShape {
 		out.set(btVector3.localArr_1);
 	}
 	/*[0;X;L]	
-		checkPointer(); #J   
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getHalfExtentsWithMargin();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getHalfExtentsWithMargin();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 	
 	private static native void getHalfExtentsWithMargin(long addr, float [] value); /*
@@ -77,13 +73,12 @@ public class btBoxShape extends btPolyhedralConvexShape {
 		out.set(btVector3.localArr_1);
 	}
 	/*[0;X;L]	
-		checkPointer(); #J   
-		float x=0,y=0,z=0; #J
-		var vec = this.$$$jsObj.getHalfExtentsWithoutMargin();
-		x = vec.x();
-		y = vec.y();
-		z = vec.z();
-		out.set(x,y,z); #J
+		checkPointer(); #J
+		jsObj, this.jsObj #P
+		var vec = jsObj.getHalfExtentsWithoutMargin();
+		out.x = vec.x(); #EVALFLOAT
+		out.y = vec.y(); #EVALFLOAT
+		out.z = vec.z(); #EVALFLOAT
 	*/
 	
 	private static native void getHalfExtentsWithoutMargin(long addr, float [] value); /*

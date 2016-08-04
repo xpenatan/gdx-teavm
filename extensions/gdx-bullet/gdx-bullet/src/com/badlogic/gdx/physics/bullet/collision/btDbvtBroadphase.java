@@ -21,7 +21,8 @@ public class btDbvtBroadphase extends btBroadphaseInterface {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btDbvtBroadphase);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDbvtBroadphase); #EVAL
 		}
 	*/
 	
@@ -29,11 +30,7 @@ public class btDbvtBroadphase extends btBroadphaseInterface {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var dbvt = Bullet.wrapPointer(addr, Bullet.btDbvtBroadphase);
-		Bullet.destroy(dbvt);
-	*/
+	/*[0;X;D]*/
 	
 	private static native void deletePointer(long addr); /*
 		btDbvtBroadphase * cobj = (btDbvtBroadphase *)addr;

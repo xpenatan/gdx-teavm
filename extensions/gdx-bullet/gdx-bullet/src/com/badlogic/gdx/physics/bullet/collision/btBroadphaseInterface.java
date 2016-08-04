@@ -14,7 +14,8 @@ public class btBroadphaseInterface extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btBroadphaseInterface);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btBroadphaseInterface); #EVAL
 		}
 	*/
 	
@@ -26,9 +27,9 @@ public class btBroadphaseInterface extends BulletBase {
 	}
 	/*[0;X;L]
 	 	checkPointer(); #J
+	 	jsObj, this.jsObj #P
 	 	if(overlappingPairCache.cPointer == 0) { #J
-	 		long addr = 0; #J
-	 		var pairCache = this.$$$jsObj.getOverlappingPairCache();
+	 		long addr = jsObj.getOverlappingPairCache(); #EVALLONG
 	 		addr = Bullet.getPointer(pairCache);
 	 		overlappingPairCache.resetObj(addr,false); #J
 	 	} #J

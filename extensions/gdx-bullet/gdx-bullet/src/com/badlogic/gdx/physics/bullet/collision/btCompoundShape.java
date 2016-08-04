@@ -20,7 +20,8 @@ public class btCompoundShape extends btCollisionShape {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btCompoundShape);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btCompoundShape); #EVAL
 		}
 	*/
 	
@@ -37,9 +38,7 @@ public class btCompoundShape extends btCollisionShape {
 		children.clear();
 	}
 	/*[0;X;L]
-		long addr = cPointer;  #J
-		var vec = Bullet.wrapPointer(addr, Bullet.btCompoundShape);
-		Bullet.destroy(vec);
+		super.delete(); #J
 		children.clear(); #J
 	*/
 	
@@ -56,10 +55,12 @@ public class btCompoundShape extends btCollisionShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		float [] value = localTransform.val; #J
+		jsObj, this.jsObj #P
+		shapeObj, shape.jsObj #P
+		value, localTransform.val #P
 		var tran = Bullet.MyTemp.prototype.btTran();
 		tran.setFromOpenGLMatrix(value);
-		this.$$$jsObj.addChildShape(tran, shape.$$$jsObj);
+		jsObj.addChildShape(tran, shapeObj);
 		children.add(shape); #J
 	*/
 	
@@ -79,7 +80,9 @@ public class btCompoundShape extends btCollisionShape {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		this.$$$jsObj.removeChildShape(shape.$$$jsObj);
+		jsObj, this.jsObj #P
+		shapeObj, shape.jsObj #P
+		jsObj.removeChildShape(shapeObj);
 		children.removeValue(shape, true); #J
 	*/
 	

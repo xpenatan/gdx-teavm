@@ -35,7 +35,8 @@ public class btDiscreteDynamicsWorld extends btDynamicsWorld {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btDiscreteDynamicsWorld);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDiscreteDynamicsWorld); #EVAL
 		}
 	*/
 	
@@ -43,12 +44,8 @@ public class btDiscreteDynamicsWorld extends btDynamicsWorld {
 	protected void delete() {
 		deletePointer(cPointer);
 	}
-	/*[0;X;L]
-		long addr = cPointer;  #J
-		var cobj = Bullet.wrapPointer(addr, Bullet.btDiscreteDynamicsWorld);
-		Bullet.destroy(cobj);
-	*/
-	
+	/*[0;X;D]*/
+
 	private static native void deletePointer(long addr); /*
 		btDiscreteDynamicsWorld * cobj = (btDiscreteDynamicsWorld *)addr;
 		delete cobj;

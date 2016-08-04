@@ -16,7 +16,8 @@ public class btManifoldPoint extends BulletBase {
 	
 	/*[0;X;F;L]
 		protected void cacheObj() {
-			this.$$$jsObj = Bullet.wrapPointer(this.$$$cPointer, Bullet.btManifoldPoint);
+			addr, this.cPointer #P
+			this.jsObj = Bullet.wrapPointer(addr, Bullet.btManifoldPoint); #EVAL
 		}
 	*/
 	
@@ -26,7 +27,8 @@ public class btManifoldPoint extends BulletBase {
 	}
 	/*[0;X;L]
 		checkPointer();  #J
-		return this.$$$jsObj.getDistance();
+		jsObj, this.jsObj #P
+		return jsObj.getDistance();
 	*/
 	
 	private static native float getDistance(long addr); /*
