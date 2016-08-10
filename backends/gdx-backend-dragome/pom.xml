@@ -59,17 +59,17 @@
     <dependency>
       <groupId>com.dragome</groupId>
       <artifactId>dragome-web</artifactId>
-      <version>0.96-beta3-SNAPSHOT</version>
+      <version>0.96-beta4</version>
     </dependency>
     <dependency>
       <groupId>com.dragome</groupId>
       <artifactId>dragome-bytecode-js-compiler</artifactId>
-      <version>0.96-beta3-SNAPSHOT</version>
+      <version>0.96-beta4</version>
     </dependency>
     <dependency>
       <groupId>com.dragome</groupId>
       <artifactId>dragome-js-jre</artifactId>
-      <version>0.96-beta3-SNAPSHOT</version>
+      <version>0.96-beta4</version>
     </dependency>
 
     <dependency>
