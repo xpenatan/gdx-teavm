@@ -67,10 +67,6 @@ import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 import org.w3c.dom.websocket.WebSocket;
 
-import com.badlogic.gdx.backends.dragome.soundmanager2.SMSound;
-import com.badlogic.gdx.backends.dragome.soundmanager2.SoundManager;
-import com.badlogic.gdx.backends.dragome.utils.AgentInfo;
-import com.badlogic.gdx.backends.dragome.utils.Storage;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.PrioritySolver;
@@ -78,10 +74,10 @@ import com.dragome.commons.compiler.classpath.Classpath;
 import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.commons.compiler.classpath.ClasspathFile;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
-import com.dragome.commons.compiler.classpath.VirtualFolderClasspathEntry;
+import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathEntry;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
-import com.dragome.web.enhancers.jsdelegate.JsDelegateGenerator;
-import com.dragome.web.helpers.serverside.DefaultClasspathFilter;
+import com.dragome.web.enhancers.jsdelegate.serverside.JsDelegateGenerator;
+import com.dragome.web.helpers.DefaultClasspathFileFilter;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
@@ -116,62 +112,66 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		File file= new File(projPath);
 		projName= file.getName();
 		
-		setClasspathFilter( new DefaultClasspathFilter() {
+		setClasspathFilter( new DefaultClasspathFileFilter() {
 			
 			@Override
-			public boolean accept(File pathname, File folder) {
-				if(!super.accept(pathname, folder))
+			public boolean accept(ClasspathFile classpathFile) {
+				if(!super.accept(classpathFile))
 					return false;
 				boolean flag = true;
-				String absolutePath = pathname.getAbsolutePath();
-				flag &= !absolutePath.contains("\\apache\\");
-				flag &= !absolutePath.contains("\\org\\xmlvm\\");
-				flag &= !absolutePath.contains("\\org\\xml\\");
-				flag &= !absolutePath.contains("\\org\\mockito\\");
-				flag &= !absolutePath.contains("\\org\\atmosphere\\");
-				flag &= !absolutePath.contains("\\org\\objectweb\\");
-				flag &= !absolutePath.contains("\\org\\objenesis\\");
-				flag &= !absolutePath.contains("\\org\\hamcrest\\");
-				flag &= !absolutePath.contains("\\org\\dom4j\\");
-				flag &= !absolutePath.contains("\\org\\slf4j\\");
-				flag &= !absolutePath.contains("\\org\\jdom\\");
-				flag &= !absolutePath.contains("\\org\\reflections\\");
-				flag &= !absolutePath.contains("\\javax\\");
-				flag |= absolutePath.contains("\\javax\\persistence\\");
-				flag |= absolutePath.contains("\\javax\\script\\");
-				flag |= absolutePath.contains("\\javax\\swing\\");
-				flag &= !absolutePath.contains("\\proguard\\");
-				flag &= !absolutePath.contains("\\google\\");
-				flag &= !absolutePath.contains("\\javassist\\");
-				flag &= !absolutePath.contains("\\ro\\");
-				flag &= !absolutePath.contains("\\io\\netty\\");
-				flag &= !absolutePath.contains("\\net\\sf\\dexlib\\");
-				flag &= !absolutePath.contains("\\net\\jpountz\\");
-				flag &= !absolutePath.contains("\\javolution\\");
-				flag &= !absolutePath.contains("\\android\\");
-				flag &= !absolutePath.contains("\\framework\\");
-				flag &= !absolutePath.contains("\\runner\\");
-				flag &= !absolutePath.contains("\\textui\\");
-				flag &= !absolutePath.contains("\\dragome\\compiler");
-				flag &= !absolutePath.contains("\\net\\sf\\");
-				flag &= !absolutePath.contains("\\JDOMAbout");
-				flag &= !absolutePath.contains("\\junit\\");
-				flag &= !absolutePath.contains("com\\dragome\\tests\\");
-				flag |= absolutePath.contains("net\\sf\\flexjson");
-				flag &= !absolutePath.contains("\\DragomeConfiguration");
-				flag &= !absolutePath.contains("\\JsConfiguration");
-				flag &= !absolutePath.contains("com\\dragome\\commons");
-				flag &= !absolutePath.contains("DragomeConfigurator");
-				flag &= !absolutePath.contains("ApplicationConfigurator");
-				flag |= absolutePath.contains("\\commons\\javascript");
-				flag |= absolutePath.contains("\\compiler\\annotations\\");
-				flag |= absolutePath.contains("\\commons\\AbstractProxyRelatedInvocationHandler");
-				flag |= absolutePath.contains("\\commons\\ProxyRelatedInvocationHandler");
-				flag |= absolutePath.contains("\\commons\\DragomeConfiguratorImplementor");
+				String fileName = classpathFile.getFilename();
+				String path = classpathFile.getPath();
+				path = path.replace("\\", "/");
+				flag &= !path.contains("/apache/");
+				flag &= !path.contains("/org/xmlvm/");
+				flag &= !path.contains("/org/xml/");
+				flag &= !path.contains("/org/mockito/");
+				flag &= !path.contains("/org/atmosphere/");
+				flag &= !path.contains("/org/objectweb/");
+				flag &= !path.contains("/org/objenesis/");
+				flag &= !path.contains("/org/hamcrest/");
+				flag &= !path.contains("/org/dom4j/");
+				flag &= !path.contains("/org/slf4j/");
+				flag &= !path.contains("/org/jdom/");
+				flag &= !path.contains("/org/reflections/");
+				flag &= !path.contains("/javax/");
+				flag |= path.contains("/javax/persistence/");
+				flag |= path.contains("/javax/script/");
+				flag |= path.contains("/javax/swing/");
+				flag &= !path.contains("/proguard/");
+				flag &= !path.contains("/google/");
+				flag &= !path.contains("/javassist/");
+				flag &= !path.contains("/ro/");
+				flag &= !path.contains("/io/netty/");
+				flag &= !path.contains("/net/sf/dexlib/");
+				flag &= !path.contains("/net/jpountz/");
+				flag &= !path.contains("/javolution/");
+				flag &= !path.contains("/android/");
+				flag &= !path.contains("/framework/");
+				flag &= !path.contains("/runner/");
+				flag &= !path.contains("/textui/");
+				
+				flag &= !path.contains("/dragome/compiler");
+				flag &= !path.contains("com/dragome/web/helpers");
+				flag &= !path.contains("/net/sf/");
+				flag &= !path.contains("/JDOMAbout");
+				flag &= !path.contains("/junit/");
+				flag &= !path.contains("com/dragome/tests/");
+				flag |= path.contains("net/sf/flexjson");
+				flag &= !path.contains("/DragomeConfiguration");
+				flag &= !path.contains("/JsConfiguration");
+				flag &= !path.contains("com/dragome/commons");
+				flag &= !path.contains("DragomeConfigurator");
+				flag &= !path.contains("ApplicationConfigurator");
+				flag |= path.contains("/commons/javascript");
+				flag |= path.contains("/compiler/annotations/");
+				flag |= path.contains("/commons/AbstractProxyRelatedInvocationHandler");
+				flag |= path.contains("/commons/ProxyRelatedInvocationHandler");
+				flag |= path.contains("/commons/DragomeConfiguratorImplementor");
 				if(flag == false)
-					flag = classClassPathFilter(pathname, folder);
+					flag = classClassPathFilter(fileName, path);
 //				if(flag)
-//					System.out.println("Flag: " + flag + " Path: " + absolutePath);
+//					System.out.println("Flag: " + flag + " Path: " + path);
 				return flag;
 			}
 		});
@@ -256,7 +256,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	/**
 	 * Return true to allow a class in allowed project to be compiled to javascript.
 	 */
-	public boolean classClassPathFilter(File pathname, File folder) {return false;}
+	public boolean classClassPathFilter(String fileName, String path) {return false;}
 	
 	public void sortClassPath(Classpath classPath)
 	{
