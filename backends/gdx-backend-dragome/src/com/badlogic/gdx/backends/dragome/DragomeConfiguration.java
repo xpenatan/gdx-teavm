@@ -110,7 +110,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	{
 		String projPath= System.getProperty("user.dir");
 		File file= new File(projPath);
-		projName= file.getName();
+		projName = file.getName().replace("\\", "/");
 		
 		setClasspathFilter( new DefaultClasspathFileFilter() {
 			
@@ -234,17 +234,39 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	public boolean filterClassPath(String classpathEntry)
 	{
 		boolean include= super.filterClassPath(classpathEntry);
-		include |= classpathEntry.contains(projName) && classpathEntry.contains("\\bin"); // TODO check if this fix the bug that project name can be "dragome" and allow others classpaths.
-		include |= classpathEntry.contains(projName) && classpathEntry.contains("\\classes");
-		include |= classpathEntry.contains("repository") && classpathEntry.contains("gdx") || classpathEntry.contains("gdx.jar") || classpathEntry.contains("gdx\\bin") || classpathEntry.contains(".gdx\\gdx\\");
-		if(classpathEntry.contains("gdx-backend-dragome")) {
-			include|= classpathEntry.contains("gdx-backend-dragome-");
-			include|= classpathEntry.contains("\\bin");
-			include|= classpathEntry.contains("\\classes");
+		classpathEntry = classpathEntry.replace("\\", "/");
+		include |= classpathEntry.contains(projName) && classpathEntry.contains("/bin"); // TODO check if this fix the bug that project name can be "dragome" and allow others classpaths.
+		include |= classpathEntry.contains(projName) && classpathEntry.contains("/classes");
+		if(classpathEntry.contains("gdx")) {
+			include|= classpathEntry.contains("gdx.jar");
+			include|= classpathEntry.contains("gdx/bin");
+			include|= classpathEntry.contains("gdx/classes");
+			
+			if(classpathEntry.contains("gdx-box2d")) {
+				include|= classpathEntry.contains("gdx-box2d-dragome-");
+				include|= classpathEntry.contains("gdx-box2d-gwt-");
+				include|= classpathEntry.contains("/bin");
+				include|= classpathEntry.contains("/classes");
+			}
+			else if(classpathEntry.contains("gdx-bullet-dragome")) {
+				include|= classpathEntry.contains("gdx-bullet-dragome-");
+				include|= classpathEntry.contains("/bin");
+				include|= classpathEntry.contains("/classes");
+			}
+			else if(classpathEntry.contains("gdx-backend-dragome")) {
+				include|= classpathEntry.contains("gdx-backend-dragome-");
+				include|= classpathEntry.contains("/bin");
+				include|= classpathEntry.contains("/classes");
+			}
+			else if(include == false) {
+				String[] split = classpathEntry.split("-");
+				if(split.length == 2)
+					include |= (split[0].toLowerCase().endsWith("gdx") && Character.isDigit(split[1].charAt(0)));
+			}
 		}
+		include &= !classpathEntry.contains("/resources/");
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
-		include &= !classpathEntry.contains("\\resources\\");
 //		System.out.println("Allow Project: " + include + " path: " + classpathEntry);
 		return include;
 	}
