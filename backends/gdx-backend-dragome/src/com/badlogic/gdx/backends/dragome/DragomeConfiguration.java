@@ -235,8 +235,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	{
 		boolean include= super.filterClassPath(classpathEntry);
 		classpathEntry = classpathEntry.replace("\\", "/");
-		include |= classpathEntry.contains(projName) && classpathEntry.contains("/bin"); // TODO check if this fix the bug that project name can be "dragome" and allow others classpaths.
-		include |= classpathEntry.contains(projName) && classpathEntry.contains("/classes");
+		include |= classpathEntry.contains(projName + "/") && classpathEntry.contains("/bin"); // TODO check if this fix the bug that project name can be "dragome" and allow others classpaths.
+		include |= classpathEntry.contains(projName + "/") && classpathEntry.contains("/classes");
 		if(classpathEntry.contains("gdx")) {
 			include|= classpathEntry.contains("gdx.jar");
 			include|= classpathEntry.contains("gdx/bin");
