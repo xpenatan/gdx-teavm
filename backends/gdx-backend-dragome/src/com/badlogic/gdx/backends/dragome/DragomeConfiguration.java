@@ -242,7 +242,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			include|= classpathEntry.contains("gdx/bin");
 			include|= classpathEntry.contains("gdx/classes");
 			
-			if(classpathEntry.contains("gdx-box2d")) {
+			if(classpathEntry.contains("gdx-box2d-")) {
 				include|= classpathEntry.contains("gdx-box2d-dragome-");
 				include|= classpathEntry.contains("gdx-box2d-gwt-");
 				include|= classpathEntry.contains("/bin");
