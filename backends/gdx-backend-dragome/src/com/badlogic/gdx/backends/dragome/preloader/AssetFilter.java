@@ -21,16 +21,6 @@ package com.badlogic.gdx.backends.dragome.preloader;
  * is used if user doesn't specify a custom filter in the module gwt.xml file.
  * @author mzechner */
 public interface AssetFilter {
-	public enum AssetType {
-		Image("i"), Audio("a"), Text("t"), Binary("b"), Directory("d");
-
-		public final String code;
-
-		private AssetType (String code) {
-			this.code = code;
-		}
-	}
-
 	/** @param file the file to filter
 	 * @param isDirectory whether the file is a directory
 	 * @return whether to include the file in the war/ folder or not. */
@@ -41,7 +31,7 @@ public interface AssetFilter {
 	public AssetType getType (String file);
 
 	/** @param file the file to get the bundle name for
-	 * @return the name of the bundle to which this file should be added */	
-	public String getBundleName(String file);
+	 * @return the name of the bundle to which this file should be added */
+	public String getBundleName (String file);
 
 }

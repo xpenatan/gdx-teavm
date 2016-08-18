@@ -67,6 +67,8 @@ import org.w3c.dom.webgl.WebGLTexture;
 import org.w3c.dom.webgl.WebGLUniformLocation;
 import org.w3c.dom.websocket.WebSocket;
 
+import com.badlogic.gdx.backends.dragome.preloader.AssetsCopy;
+import com.badlogic.gdx.utils.Array;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.PrioritySolver;
@@ -170,11 +172,29 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				flag |= path.contains("/commons/DragomeConfiguratorImplementor");
 				if(flag == false)
 					flag = classClassPathFilter(fileName, path);
+
+				flag &= !path.contains("dragome/preloader/AssetFilter");
+				flag &= !path.contains("dragome/preloader/DefaultAssetFilter");
+				flag &= !path.contains("dragome/preloader/AssetsCopy");
+
 //				if(flag)
 //					System.out.println("Flag: " + flag + " Path: " + path);
 				return flag;
 			}
 		});
+		
+		
+		String compiledPath = getCompiledPath();
+		if(compiledPath != null && compiledPath.isEmpty() == false) {
+			System.out.println("WebApp path " + compiledPath);
+			
+			String assetsOutputPath = compiledPath + "\\assets";
+			Array<File> paths = new Array<File>();
+			Array<String> classPathFiles = new Array<String>();
+			assetsClasspathFiles(classPathFiles);
+			assetsPath(paths);
+			AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, generateAssetsTextFile());
+		}
 	}
 	
 	public List<ClasspathEntry> getExtraClasspath(Classpath classpath)
@@ -279,7 +299,24 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	 * Return true to allow a class in allowed project to be compiled to javascript.
 	 */
 	public boolean classClassPathFilter(String fileName, String path) {return false;}
-	
+
+	public void assetsPath (Array<File> paths) {}
+
+	public boolean generateAssetsTextFile() {
+		return false;
+	}
+
+	public void assetsClasspathFiles (Array<String> filePath) {
+		filePath.add("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl");
+		filePath.add("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl");
+		filePath.add("com/badlogic/gdx/utils/arial-15.fnt");
+		filePath.add("com/badlogic/gdx/utils/arial-15.png");
+	}
+
 	public void sortClassPath(Classpath classPath)
 	{
 		classPath.sortByPriority(new PrioritySolver()
@@ -327,7 +364,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	@Override
 	public String getCompiledPath () {
 		String compiledPath = new File("").getAbsolutePath() + "\\webapp";
-		System.out.println("Generating javascript to " + compiledPath);
 		return compiledPath;
 	}
 }

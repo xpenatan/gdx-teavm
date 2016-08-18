@@ -26,7 +26,6 @@ import org.w3c.dom.html.HTMLImageElement;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.Int8Array;
 
-import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;

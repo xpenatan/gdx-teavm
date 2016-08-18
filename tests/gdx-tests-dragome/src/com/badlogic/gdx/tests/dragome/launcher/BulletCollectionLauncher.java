@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
-import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
+import com.badlogic.gdx.backends.dragome.preloader.AssetType;
 import com.badlogic.gdx.tests.dragome.examples.bullet.BulletTestCollection;
 import com.dragome.web.annotations.PageAlias;
 

@@ -26,7 +26,6 @@ import java.io.UnsupportedEncodingException;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
-import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;

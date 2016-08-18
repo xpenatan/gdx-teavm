@@ -34,7 +34,7 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
-import com.badlogic.gdx.backends.dragome.preloader.AssetFilter.AssetType;
+import com.badlogic.gdx.backends.dragome.preloader.AssetType;
 import com.badlogic.gdx.backends.dragome.preloader.Preloader;
 import com.badlogic.gdx.backends.dragome.soundmanager2.SoundManager;
 import com.badlogic.gdx.backends.dragome.utils.AgentInfo;
