@@ -1,6 +1,7 @@
 package com.build;
 
 import java.io.File;
+import java.net.URLDecoder;
 
 import com.badlogic.gdx.jnigen.AntScriptGenerator;
 import com.badlogic.gdx.jnigen.BuildConfig;
@@ -15,16 +16,19 @@ public class Build {
 	
 	static public void main (String[] args) throws Exception {
 
-		boolean flag = true;
+		boolean flag = false;
+
+		String path = Build.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		path = URLDecoder.decode(path, "UTF-8").replace("bin/", "");
 		if (flag) {
 			// generate JS code
-			XpeCodeGen.generate("../gdx-bullet/src", "../gdx-bullet-dragome/src", new DragomeWrapper());
+			XpeCodeGen.generate(path + "../gdx-bullet/src", "../gdx-bullet-dragome/src", new DragomeWrapper());
 			return;
 		}
 
 		// generate C/C++ code
 		RobustJavaMethodParser.CustomIgnoreTag = "[";
-		new NativeCodeGenerator().generate("../gdx-bullet/src", "../gdx-bullet/bin" + File.pathSeparator + "../../../../Projects/Libgdx/gdx/bin", "jni");
+		new NativeCodeGenerator().generate(path + "../gdx-bullet/src", path + "../gdx-bullet/bin" + File.pathSeparator + path + "../../../../Projects/Libgdx/gdx/bin", path + "jni");
 
 		String cppFlags = "";
 		cppFlags += " -fno-strict-aliasing";
@@ -83,7 +87,7 @@ public class Build {
 		ios.headerDirs = headers;
 		ios.cppFlags += cppFlags;
 
-		new AntScriptGenerator().generate(new BuildConfig("gdx-bullet", "target", "natives", "jni"), win32home, win32, win64, lin32, lin64, mac, mac64, android, ios);
+		new AntScriptGenerator().generate(new BuildConfig("gdx-bullet", path + "target", "natives", path + "jni"), win32home, win32, win64, lin32, lin64, mac, mac64, android, ios);
 //		new FileHandle(new File("jni/Application.mk")).writeString("\nAPP_STL := stlport_static\n", true);
 		
 		boolean success = true;
@@ -91,9 +95,11 @@ public class Build {
 //		if(success)
 //			success = BuildExecutor.executeAnt("jni/build-windows64.xml", "-v -Dhas-compiler=true clean postcompile");
 		if(success)
-			success = BuildExecutor.executeAnt("jni/build-windows32.xml", "-v -Dhas-compiler=true postcompile");
+			success = BuildExecutor.executeAnt(path + "jni/build-windows32.xml", "-v -Dhas-compiler=true postcompile");
+		if(success)
+			success = BuildExecutor.executeAnt(path + "jni/build-windows64.xml", "-v -Dhas-compiler=true postcompile");
 		
 		if (success) 
-			BuildExecutor.executeAnt("jni/build.xml", "-v pack-natives");
+			BuildExecutor.executeAnt(path + "jni/build.xml", "-v pack-natives");
 	}
 }
