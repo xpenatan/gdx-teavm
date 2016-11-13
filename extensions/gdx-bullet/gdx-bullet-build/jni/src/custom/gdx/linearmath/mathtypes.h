@@ -2,6 +2,7 @@
 #define GDX_MATHTYPES_H
 
 #include <jni.h>
+#include <gdx/common/jniHelpers.h>
 #include <LinearMath/btVector3.h>
 #include <LinearMath/btQuaternion.h>
 #include <LinearMath/btMatrix3x3.h>

@@ -41,7 +41,6 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionShapes/btEmptyShape.h"
 #include "BulletCollision/CollisionShapes/btMultiSphereShape.h"
 #include "BulletCollision/CollisionShapes/btUniformScalingShape.h"
-#include "BulletCollision/CollisionShapes/btShapeHull.h"
 
 ///Narrowphase Collision Detector
 #include "BulletCollision/CollisionDispatch/btSphereSphereCollisionAlgorithm.h"
@@ -56,18 +55,13 @@ subject to the following restrictions:
 #include "BulletCollision/BroadphaseCollision/btMultiSapBroadphase.h"
 #include "BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
 
-
 ///Math library & Utils
 #include "LinearMath/btQuaternion.h"
 #include "LinearMath/btTransform.h"
-#include "LinearMath/btMotionState.h"
 #include "LinearMath/btDefaultMotionState.h"
 #include "LinearMath/btQuickprof.h"
 #include "LinearMath/btIDebugDraw.h"
 #include "LinearMath/btSerializer.h"
-
-///RayCast
-#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 
 #endif //BULLET_COLLISION_COMMON_H
