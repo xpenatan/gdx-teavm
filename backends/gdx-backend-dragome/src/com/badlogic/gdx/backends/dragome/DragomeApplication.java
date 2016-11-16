@@ -16,22 +16,13 @@
 
 package com.badlogic.gdx.backends.dragome;
 
+import com.badlogic.gdx.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Audio;
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.LifecycleListener;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetType;
@@ -71,6 +62,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	private int lastWidth;
 	private int lastHeight;
 	private static AgentInfo agentInfo;
+	ApplicationLogger applicationLogger;
 
 	@Override
 	public void build () {
@@ -198,6 +190,49 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
 		}, graphics.canvas);
+
+		applicationLogger =  new ApplicationLogger() {
+			@Override
+			public void log (String tag, String message) {
+				System.out.println(tag + ": " + message);
+			}
+
+			@Override
+			public void log (String tag, String message, Throwable exception) {
+				System.out.println(tag + ": " + message);
+				exception.printStackTrace(System.out);
+			}
+
+			@Override
+			public void error (String tag, String message) {
+				ScriptHelper.put("tag", tag, this);
+				ScriptHelper.put("message", message, this);
+				ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+			}
+
+			@Override
+			public void error (String tag, String message, Throwable exception) {
+				ScriptHelper.put("tag", tag, this);
+				ScriptHelper.put("message", message, this);
+				ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+				exception.printStackTrace(System.err);
+			}
+
+			@Override
+			public void debug (String tag, String message) {
+				ScriptHelper.put("tag", tag, this);
+				ScriptHelper.put("message", message, this);
+				ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+			}
+
+			@Override
+			public void debug (String tag, String message, Throwable exception) {
+				ScriptHelper.put("tag", tag, this);
+				ScriptHelper.put("message", message, this);
+				ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+				exception.printStackTrace(System.out);
+			}
+		};
 	}
 
 	protected void onResize () {}
@@ -256,56 +291,39 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	@Override
-	public void debug (String tag, String message) {
-		if (logLevel >= LOG_DEBUG) {
-			ScriptHelper.put("tag", tag, this);
-			ScriptHelper.put("message", message, this);
-			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
-		}
-	}
-
-	@Override
-	public void debug (String tag, String message, Throwable exception) {
-		if (logLevel >= LOG_DEBUG) {
-			ScriptHelper.put("tag", tag, this);
-			ScriptHelper.put("message", message, this);
-			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
-			exception.printStackTrace(System.out);
-		}
-	}
-
-	@Override
 	public void log (String tag, String message) {
-		if (logLevel >= LOG_INFO) {
-			System.out.println(tag + ": " + message);
-		}
+		if (logLevel >= LOG_INFO)
+			applicationLogger.log(tag, message);
 	}
 
 	@Override
 	public void log (String tag, String message, Throwable exception) {
-		if (logLevel >= LOG_INFO) {
-			System.out.println(tag + ": " + message);
-			exception.printStackTrace(System.out);
-		}
+		if (logLevel >= LOG_INFO)
+			applicationLogger.log(tag, message, exception);
 	}
 
 	@Override
 	public void error (String tag, String message) {
-		if (logLevel >= LOG_ERROR) {
-			ScriptHelper.put("tag", tag, this);
-			ScriptHelper.put("message", message, this);
-			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
-		}
+		if (logLevel >= LOG_ERROR)
+			applicationLogger.error(tag, message);
 	}
 
 	@Override
 	public void error (String tag, String message, Throwable exception) {
-		if (logLevel >= LOG_ERROR) {
-			ScriptHelper.put("tag", tag, this);
-			ScriptHelper.put("message", message, this);
-			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
-			exception.printStackTrace(System.err);
-		}
+		if (logLevel >= LOG_ERROR)
+			applicationLogger.error(tag, message, exception);
+	}
+
+	@Override
+	public void debug (String tag, String message) {
+		if (logLevel >= LOG_DEBUG)
+			applicationLogger.debug(tag, message);
+	}
+
+	@Override
+	public void debug (String tag, String message, Throwable exception) {
+		if (logLevel >= LOG_DEBUG)
+			applicationLogger.debug(tag, message, exception);
 	}
 
 	@Override
@@ -336,6 +354,16 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	@Override
 	public long getNativeHeap () {
 		return 0;
+	}
+
+	@Override
+	public void setApplicationLogger (ApplicationLogger applicationLogger) {
+		this.applicationLogger = applicationLogger;
+	}
+
+	@Override
+	public ApplicationLogger getApplicationLogger () {
+		return applicationLogger;
 	}
 
 	@Override
