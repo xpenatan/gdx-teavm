@@ -18,11 +18,13 @@ import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 /** @author xpenatan */
 public class Bullet {
-	
+
 	/** The version of the Bullet library used by this wrapper. */
 	public final static int VERSION = LinearMathConstants.BT_BULLET_VERSION;
 
 	protected static boolean enableLogging = true;
+
+	private static boolean bulletInit = false;
 
 	/** Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
 	 * classes/methods can be used. */
@@ -36,6 +38,9 @@ public class Bullet {
 	 *           use {@link BulletBase#obtain()} and {@link BulletBase#release()} when using reference counting.
 	 * @param logging Whether to log an error on potential errors in the application. */
 	public static void init (boolean logging) {
+		if(Bullet.bulletInit)
+			return;
+		Bullet.bulletInit = true;
 		Bullet.enableLogging = logging;
 		new SharedLibraryLoader().load("gdx-bullet");
 		final int version = btScalar.btGetVersion();
@@ -50,21 +55,21 @@ public class Bullet {
 			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
 				+ ")");
 	*/
-	
+
 	/**
 	 * Dispose static temporary objects. Use when ending app.
 	 */
 	public static void dispose() {
-		
+
 	}
 	/*[0;X]
 		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.dispose();
 		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_2.dispose();
 	*/
-	
+
 
 	protected static class ShapePart {
-		public Array<MeshPart> parts = new Array<MeshPart>();
+		public Array<MeshPart> parts = new Array<>();
 		public Matrix4 transform = new Matrix4();
 	}
 
@@ -74,7 +79,7 @@ public class Bullet {
 			return new ShapePart();
 		}
 	};
-	private final static Array<ShapePart> shapePartArray = new Array<ShapePart>();
+	private final static Array<ShapePart> shapePartArray = new Array<>();
 
 	private final static Matrix4 idt = new Matrix4();
 	private final static Matrix4 tmpM = new Matrix4();
