@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,13 +48,13 @@ public class AnimationTest implements ApplicationListener {
 		}
 	}
 
-	Animation leftWalk;
-	Animation rightWalk;
+	Animation<TextureRegion> leftWalk;
+	Animation<TextureRegion> rightWalk;
 	Caveman[] cavemen;
 	Texture texture;
 	SpriteBatch batch;
 	FPSLogger fpsLog;
-	
+
 	@Override
 	public void create () {
 		System.out.println("Dragome 2D AnimationTest");
@@ -66,8 +66,8 @@ public class AnimationTest implements ApplicationListener {
 			frame.flip(true, false);
 			rightWalkFrames[i] = frame;
 		}
-		leftWalk = new Animation(0.25f, leftWalkFrames);
-		rightWalk = new Animation(0.25f, rightWalkFrames);
+		leftWalk = new Animation<TextureRegion>(0.25f, leftWalkFrames);
+		rightWalk = new Animation<TextureRegion>(0.25f, rightWalkFrames);
 
 		cavemen = new Caveman[100];
 		for (int i = 0; i < 100; i++) {
@@ -76,7 +76,7 @@ public class AnimationTest implements ApplicationListener {
 		}
 		batch = new SpriteBatch();
 		fpsLog = new FPSLogger();
-		
+
 	}
 
 	@Override
