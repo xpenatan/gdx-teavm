@@ -55,10 +55,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	int init = 0;
 	Preloader preloader;
 	private int logLevel = LOG_INFO;
-	private Array<Runnable> runnables = new Array<Runnable>();
-	private Array<Runnable> runnablesHelper = new Array<Runnable>();
-	private Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>();
-	private ObjectMap<String, Preferences> prefs = new ObjectMap<String, Preferences>();
+	private Array<Runnable> runnables = new Array<>();
+	private Array<Runnable> runnablesHelper = new Array<>();
+	private Array<LifecycleListener> lifecycleListeners = new Array<>();
+	private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 	private int lastWidth;
 	private int lastHeight;
 	private static AgentInfo agentInfo;
@@ -72,7 +72,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	private void prepare () {
 		preloader = new Preloader(AssetDownloader.getHostPageBaseURL() + "assets/");
-		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<Object>();
+		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<>();
 		AssetDownloader.loadScript("soundmanager2-jsmin.js", assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
@@ -104,7 +104,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		Gdx.files = files;
 		Gdx.audio = audio;
 		DragomeApplication.agentInfo = AgentInfo.computeAgentInfo();
-		
+
 		if(agentInfo.isWindows() == true)
 			System.setProperty("os.name", "Windows");
 		else if(agentInfo.isMacOS() == true)
@@ -113,11 +113,11 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			System.setProperty("os.name", "Linux");
 		else
 			System.setProperty("os.name", "no OS");
-		
+
 		this.clipboard = new DragomeClipboard();
 		lastWidth = graphics.getWidth();
 		lastHeight = graphics.getHeight();
-		
+
 		onResize();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -356,10 +356,12 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		return 0;
 	}
 
+	@Override
 	public void setApplicationLogger (ApplicationLogger applicationLogger) {
 		this.applicationLogger = applicationLogger;
 	}
 
+	@Override
 	public ApplicationLogger getApplicationLogger () {
 		return applicationLogger;
 	}
@@ -419,7 +421,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	public HTMLCanvasElementExtension getCanvas () {
 		return graphics.canvas;
 	}
-	
+
 	public String getAssetUrl () {
 		return preloader.baseUrl;
 	}
@@ -433,7 +435,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		EventTarget eventTarget= JsCast.castTo(theElement, EventTarget.class);
 		eventTarget.addEventListener(aEvent, aEventListener, false);
 	}
-	
+
 	/** Contains precomputed information on the user-agent. Useful for dealing with browser and OS behavioral differences. Kindly
 	 * borrowed from PlayN */
 	public static AgentInfo agentInfo () {
