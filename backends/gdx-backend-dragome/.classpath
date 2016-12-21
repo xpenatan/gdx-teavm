@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="emu"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_91"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/dragome-web"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/dragome-bytecode-js-compiler"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/dragome-js-commons"/>
