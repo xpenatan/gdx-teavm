@@ -6,23 +6,17 @@ import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetType;
-import com.badlogic.gdx.tests.dragome.examples.UITest;
+import com.badlogic.gdx.tests.dragome.examples.AnimationTest;
 import com.dragome.web.annotations.PageAlias;
 
-@PageAlias(alias= "UITest")
-public class UITestLauncher extends DragomeApplication
+@PageAlias(alias= "AnimationTest")
+public class AnimationLauncher extends DragomeApplication
 {
 	@Override
 	public ApplicationListener createApplicationListener()
 	{
-		getPreloader().loadAsset("data/uiskin.atlas", AssetType.Text, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/uiskin.json", AssetType.Text, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/uiskin.png", AssetType.Image, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/default.fnt", AssetType.Text, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/default.png", AssetType.Image, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/badlogicsmall.jpg", AssetType.Image, null, new AssetLoaderListener<>());
-		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<>());
-		return new UITest();
+		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<Object>());
+		return new AnimationTest();
 	}
 
 	@Override
