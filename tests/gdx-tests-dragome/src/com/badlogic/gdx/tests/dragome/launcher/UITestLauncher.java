@@ -18,6 +18,10 @@ public class UITestLauncher extends DragomeApplication
 		getPreloader().loadAsset("data/uiskin.atlas", AssetType.Text, null, new AssetLoaderListener<Object>());
 		getPreloader().loadAsset("data/uiskin.json", AssetType.Text, null, new AssetLoaderListener<Object>());
 		getPreloader().loadAsset("data/uiskin.png", AssetType.Image, null, new AssetLoaderListener<Object>());
+		getPreloader().loadAsset("data/default.fnt", AssetType.Text, null, new AssetLoaderListener<Object>());
+		getPreloader().loadAsset("data/default.png", AssetType.Image, null, new AssetLoaderListener<Object>());
+		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<Object>());
+		getPreloader().loadAsset("data/badlogicsmall.jpg", AssetType.Image, null, new AssetLoaderListener<Object>());
 		return new UITest();
 	}
 

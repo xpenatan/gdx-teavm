@@ -53,7 +53,7 @@
     <dependency>
       <groupId>com.badlogicgames.gdx</groupId>
       <artifactId>gdx</artifactId>
-      <version>1.9.3</version>
+      <version>1.9.4</version>
     </dependency>
     <dependency>
       <groupId>gdx-backend-dragome</groupId>
@@ -176,7 +176,7 @@
           <forceRebuild>true</forceRebuild>
           <removeCache>false</removeCache>
           <targetClassName>com.badlogic.gdx.tests.dragome.GearsLauncher</targetClassName>
-          <compress>true</compress>
+          <compress>false</compress>
           <processSingle>true</processSingle>
           <webappDirectory>${basedir}/webapp</webappDirectory>
         </configuration>

@@ -356,12 +356,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		return 0;
 	}
 
-	@Override
 	public void setApplicationLogger (ApplicationLogger applicationLogger) {
 		this.applicationLogger = applicationLogger;
 	}
 
-	@Override
 	public ApplicationLogger getApplicationLogger () {
 		return applicationLogger;
 	}
