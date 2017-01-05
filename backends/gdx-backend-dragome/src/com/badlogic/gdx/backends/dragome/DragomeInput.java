@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class DragomeInput implements Input {
 	Document document;
 	static final int MAX_TOUCHES = 20;
 	boolean justTouched = false;
-	private IntMap<Integer> touchMap = new IntMap<Integer>(20);
+	private IntMap<Integer> touchMap = new IntMap<>(20);
 	private boolean[] touched = new boolean[MAX_TOUCHES];
 	private int[] touchX = new int[MAX_TOUCHES];
 	private int[] touchY = new int[MAX_TOUCHES];
@@ -65,53 +65,53 @@ public class DragomeInput implements Input {
 	long currentEventTimeStamp;
 	final HTMLCanvasElementExtension canvas;
 	boolean hasFocus = true;
-	
+
 	/** The left JS mouse button. */
 	private static final int BUTTON_LEFT = 1;
 	/** The middle JS mouse button. */
 	private static final int BUTTON_MIDDLE = 4;
 	/** The right JS mouse button. */
 	private static final int BUTTON_RIGHT = 2;
-	
-	
-	
+
+
+
 	public DragomeInput (DragomeApplication app) {
 		this.canvas = app.graphics.canvas;
 		document = app.elementBySelector.getDocument();
 		hookEvents();
 	}
-	
+
 	private void hookEvents () {
-		
+
 		EventListener eventListener = new EventListener() {
 			@Override
 			public void handleEvent(Event evt) {
 				DragomeInput.this.handleEvent(evt);
 			}
 		};
-		
+
 		EventTarget docTarget = JsCast.castTo(document, EventTarget.class);
 		EventTarget canvasTarget = JsCast.castTo(canvas, EventTarget.class);
-		
+
 		canvasTarget.addEventListener("mousedown", eventListener, false);
 		docTarget.addEventListener("mousedown", eventListener, false);
 		canvasTarget.addEventListener("mouseup", eventListener, false);
 		docTarget.addEventListener("mouseup", eventListener, false);
 		canvasTarget.addEventListener("mousemove", eventListener, false);
 		docTarget.addEventListener("mousemove", eventListener, false);
-		
+
 		docTarget.addEventListener(getMouseWheelEvent(), eventListener, false);
 		docTarget.addEventListener("keydown", eventListener, false);
 		docTarget.addEventListener("keyup", eventListener, false);
 		docTarget.addEventListener("keypress", eventListener, false);
-		
+
 		canvasTarget.addEventListener("touchstart", eventListener, true);
 		canvasTarget.addEventListener("touchmove", eventListener, true);
 		canvasTarget.addEventListener("touchcancel", eventListener, true);
 		canvasTarget.addEventListener("touchend", eventListener, true);
 	}
-	
-		
+
+
 	/** Kindly borrowed from PlayN. **/
 	protected static String getMouseWheelEvent() {
 		if (ScriptHelper.evalInt("navigator.userAgent.toLowerCase().indexOf('firefox')", null) != -1) {
@@ -147,7 +147,7 @@ public class DragomeInput implements Input {
 		if (button == BUTTON_MIDDLE) return Buttons.MIDDLE;
 		return Buttons.LEFT;
 	}
-	
+
 	private void handleEvent (Event evt) {
 		String type = evt.getType();
 		if (type.equals("mousedown")) {
@@ -232,13 +232,25 @@ public class DragomeInput implements Input {
 		if (type.equals("keydown") && hasFocus) {
 			KeyboardEvent e = JsCast.castTo(evt, KeyboardEvent.class);
 			int code = keyForCode(e.getKeyCode());
-			if (code == 67) {
+			char keyChar = 0;
+
+			switch (code) {
+				case Keys.DEL:
+					keyChar = 8;
+					break;
+				case Keys.FORWARD_DEL:
+					keyChar = 127;
+					break;
+				}
+
+			if (code == Input.Keys.DEL || code == Keys.FORWARD_DEL) {
 				e.preventDefault();
 				if (processor != null) {
 					processor.keyDown(code);
-					processor.keyTyped('\b');
+					processor.keyTyped(keyChar);
 				}
-			} else {
+			}
+			else {
 				if (!pressedKeys[code]) {
 					pressedKeyCount++;
 					pressedKeys[code] = true;
@@ -378,14 +390,14 @@ public class DragomeInput implements Input {
 	}
 
 	private int getClientWidth (HTMLCanvasElement target) {
-		ScriptHelper.put("target", target, this); 
+		ScriptHelper.put("target", target, this);
 		int val = ScriptHelper.evalInt("target.node.clientWidth", this); // FIXME change when dragome is fixed.
 		int int32 = toInt32(val);
 		return int32;
 	}
 
 	private int getClientHeight (HTMLCanvasElement target) {
-		ScriptHelper.put("target", target, this); 
+		ScriptHelper.put("target", target, this);
 		int val = ScriptHelper.evalInt("target.node.clientHeight", this); // FIXME change when dragome is fixed.
 		return toInt32(val);
 	}
@@ -415,7 +427,7 @@ public class DragomeInput implements Input {
 	}
 
 	private Element getCompatMode (HTMLDocument target) {
-		ScriptHelper.put("target", target, this); 
+		ScriptHelper.put("target", target, this);
 		String compatMode = (String)ScriptHelper.eval("target.node.compatMode", this); // FIXME change when dragome is fixed.
 		boolean isComp = compatMode.equals("CSS1Compat");
 		Element element = isComp ? target.getDocumentElement() : target.getBody();
@@ -423,7 +435,7 @@ public class DragomeInput implements Input {
 	}
 
 	private int getScrollLeft (Element target) {
-		ScriptHelper.put("target", target, this); 
+		ScriptHelper.put("target", target, this);
 		int val = ScriptHelper.evalInt("target.node.scrollLeft", this); // FIXME change when dragome is fixed.
 		return toInt32(val);
 	}
@@ -434,7 +446,7 @@ public class DragomeInput implements Input {
 	}
 
 	private int getScrollTop (Element target) {
-		ScriptHelper.put("target", target, this); 
+		ScriptHelper.put("target", target, this);
 		int val = ScriptHelper.evalInt("target.node.scrollTop", this); // FIXME change when dragome is fixed.
 		return toInt32(val);
 	}
@@ -738,7 +750,7 @@ public class DragomeInput implements Input {
 		case KeyCodes.KEY_CTRL:
 			return Keys.CONTROL_LEFT;
 		case KeyCodes.KEY_DELETE:
-			return Keys.DEL;
+			return Keys.FORWARD_DEL;
 		case KeyCodes.KEY_DOWN:
 			return Keys.DOWN;
 		case KeyCodes.KEY_END:
