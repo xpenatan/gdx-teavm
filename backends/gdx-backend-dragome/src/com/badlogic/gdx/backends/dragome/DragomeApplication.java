@@ -184,8 +184,12 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 					else
 						mainLoop();
 				} catch (Throwable t) {
-					error("DragomeApplication", "exception: " + t.getMessage(), t);
-					throw new RuntimeException(t);
+					ScriptHelper.put("t", t, this);
+					ScriptHelper.put("message", t.getMessage(), this);
+					ScriptHelper.evalNoResult("var stack = t.$$$stackTrace___java_lang_String;", this);
+					ScriptHelper.evalNoResult("var error = new Error(message);", this);
+					ScriptHelper.evalNoResult("error.stack = stack;", this);
+					ScriptHelper.evalNoResult("throw error;", this);
 				}
 				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
