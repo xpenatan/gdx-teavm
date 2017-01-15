@@ -74,6 +74,8 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		preloader = new Preloader(AssetDownloader.getHostPageBaseURL() + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<>();
 		AssetDownloader.loadScript("soundmanager2-jsmin.js", assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
+		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
 		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
