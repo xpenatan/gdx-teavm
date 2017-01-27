@@ -53,6 +53,11 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	DragomeAudio audio;
 	Clipboard clipboard;
 	int init = 0;
+	static int ASSETSLOADED = 1;
+	static int SOUNDINIT = 2;
+	static int TOCREATED = 3;
+	static int ISREADY = 4;
+
 	Preloader preloader;
 	private int logLevel = LOG_INFO;
 	private Array<Runnable> runnables = new Array<>();
@@ -150,48 +155,52 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 			@Override
 			public void run () {
 				try {
-					if(init != 2) { // #TODO not the best solution but a working solution.
-						if(AssetDownloader.getQueue() == 0) {
-							if(init == 0) {
-								init = 1;
-								// initialize SoundManager2
-								SoundManager.init(getAssetUrl(), 9, config.preferFlash, new SoundManager.SoundManagerCallback() {
+
+					if(init == DragomeApplication.ISREADY)
+						mainLoop();
+					else {
+						if(init == 0) {
+							if(AssetDownloader.getQueue() == 0)
+								init = DragomeApplication.ASSETSLOADED; // assets downloaded
+						}
+						else if(init == DragomeApplication.ASSETSLOADED) {
+							// init sound
+							SoundManager.init(getAssetUrl(), 9, config.preferFlash, new SoundManager.SoundManagerCallback() {
 									@Override
 									public void onready () {
-										graphics.update();
-										onResize();
-										lastWidth = graphics.getWidth();
-										lastHeight = graphics.getHeight();
-										Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
-										listener.create();
-										DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
-										DragomeWindow.onResize(new Runnable() {
-											@Override
-											public void run () {
-												onResize();
-												DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
-											}
-										});
-										init = 2;
+										init = DragomeApplication.TOCREATED;
 									}
 
 									@Override
 									public void ontimeout (String status, String errorType) {
+										init = DragomeApplication.TOCREATED;
 										error("SoundManager", status + " " + errorType);
 									}
 								});
-							}
+							init = DragomeApplication.SOUNDINIT;
+						}
+						else	if(init == DragomeApplication.TOCREATED) {
+							graphics.update();
+							onResize();
+							lastWidth = graphics.getWidth();
+							lastHeight = graphics.getHeight();
+							Gdx.gl.glViewport(0, 0, lastWidth, lastHeight);
+							listener.create();
+							DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+							DragomeWindow.onResize(new Runnable() {
+								@Override
+								public void run () {
+									onResize();
+									DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
+								}
+							});
+							init = DragomeApplication.ISREADY;
 						}
 					}
-					else
-						mainLoop();
 				} catch (Throwable t) {
-					ScriptHelper.put("t", t, this);
-					ScriptHelper.put("message", t.getMessage(), this);
-					ScriptHelper.evalNoResult("var stack = t.$$$stackTrace___java_lang_String;", this);
-					ScriptHelper.evalNoResult("var error = new Error(message);", this);
-					ScriptHelper.evalNoResult("error.stack = stack;", this);
-					ScriptHelper.evalNoResult("throw error;", this);
+					ScriptHelper.put("msg",  getAllStack(t), this);
+					ScriptHelper.evalNoResult("console.error(msg)", this);
+					ScriptHelper.evalNoResult("throw '';", this);
 				}
 				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
 			}
@@ -239,6 +248,19 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 				exception.printStackTrace(System.out);
 			}
 		};
+	}
+
+	private String getAllStack(Throwable t) {
+		if(t == null)
+			return "";
+		String message = t.getMessage();
+		ScriptHelper.put("t", t, this);
+		String stack = (String)ScriptHelper.eval("t.$$$stackTrace___java_lang_String;", this);
+		if(message != null && message.trim().isEmpty() == false)
+			message = " - " + message;
+		message = t.getClass().getSimpleName() + message + "\n";
+		String allStack = getAllStack(t.getCause());
+		return allStack + message + stack;
 	}
 
 	protected void onResize () {}

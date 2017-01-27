@@ -170,6 +170,16 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				flag |= path.contains("/commons/AbstractProxyRelatedInvocationHandler");
 				flag |= path.contains("/commons/ProxyRelatedInvocationHandler");
 				flag |= path.contains("/commons/DragomeConfiguratorImplementor");
+				flag &= !path.contains("IntersectorTest.class");
+				flag &= !path.contains("MathUtilsTest.class");
+				flag &= !path.contains("RectangleTest.class");
+				flag &= !path.contains("Shape2DTest.class");
+				flag &= !path.contains("Vector2Test.class");
+				flag &= !path.contains("Vector3Test.class");
+				flag &= !path.contains("CollisionTest.class");
+				flag &= !path.contains("BitsTest.class");
+				flag &= !path.contains("PooledLinkedListTest.class");
+				flag &= !path.contains("QueueTest.class");
 				if(flag == false)
 					flag = classClassPathFilter(fileName, path);
 
