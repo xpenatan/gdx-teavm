@@ -30,6 +30,7 @@ dist/
 compiled-js/
 target/
 build/
+**/webapp/assets/com/badlogic/
 
 *.a
 *.dll
