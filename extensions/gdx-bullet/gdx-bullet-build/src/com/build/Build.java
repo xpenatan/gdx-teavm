@@ -13,13 +13,13 @@ import com.badlogic.gdx.jnigen.NativeCodeGenerator;
 import com.escplay.codegen.XpeCodeGen;
 
 public class Build {
-	
+
 	static public void main (String[] args) throws Exception {
 
 		boolean flag = false;
 
 		String path = Build.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		path = URLDecoder.decode(path, "UTF-8").replace("bin/", "");
+		path = URLDecoder.decode(path, "UTF-8" ).replace("bin/", "");
 		if (flag) {
 			// generate JS code
 			XpeCodeGen.generate(path + "../gdx-bullet/src", "../gdx-bullet-dragome/src", new DragomeWrapper());
@@ -28,14 +28,14 @@ public class Build {
 
 		// generate C/C++ code
 		RobustJavaMethodParser.CustomIgnoreTag = "[";
-		new NativeCodeGenerator().generate(path + "../gdx-bullet/src", path + "../gdx-bullet/bin" + File.pathSeparator + path + "../../../../Projects/Libgdx/gdx/bin", path + "jni");
+		new NativeCodeGenerator().generate(path + "../gdx-bullet/src", path +  "../gdx-bullet/bin" + File.pathSeparator + path + "../../../../Projects/Libgdx/gdx/bin", path + "jni");
 
 		String cppFlags = "";
 		cppFlags += " -fno-strict-aliasing";
 		cppFlags += " -fno-rtti";
 		cppFlags += " -DBT_NO_PROFILE";
 
-		String[] excludes = { "src/bullet/BulletMultiThreaded/GpuSoftBodySolvers/**", "emscripten/**"};
+		String[] excludes = { "src/bullet/BulletMultiThreaded/GpuSoftBodySolvers/**", "emscripten/**" };
 		String[] headers = { "src/bullet/", "src/custom/", "src/extras/Serialize/" };
 
 		// generate build scripts
@@ -89,17 +89,17 @@ public class Build {
 
 		new AntScriptGenerator().generate(new BuildConfig("gdx-bullet", path + "target", "natives", path + "jni"), win32home, win32, win64, lin32, lin64, mac, mac64, android, ios);
 //		new FileHandle(new File("jni/Application.mk")).writeString("\nAPP_STL := stlport_static\n", true);
-		
+
 		boolean success = true;
-		
+
 //		if(success)
 //			success = BuildExecutor.executeAnt("jni/build-windows64.xml", "-v -Dhas-compiler=true clean postcompile");
 		if(success)
 			success = BuildExecutor.executeAnt(path + "jni/build-windows32.xml", "-v -Dhas-compiler=true postcompile");
 		if(success)
 			success = BuildExecutor.executeAnt(path + "jni/build-windows64.xml", "-v -Dhas-compiler=true postcompile");
-		
-		if (success) 
+
+		if (success)
 			BuildExecutor.executeAnt(path + "jni/build.xml", "-v pack-natives");
 	}
 }

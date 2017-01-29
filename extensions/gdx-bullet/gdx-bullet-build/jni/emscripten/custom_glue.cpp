@@ -8,6 +8,8 @@
 #include <LinearMath/btIDebugDraw.h>
 #include <LinearMath/btAlignedObjectArray.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
+#include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 
 typedef btAlignedObjectArray<btVector3>	MyVector3Array;

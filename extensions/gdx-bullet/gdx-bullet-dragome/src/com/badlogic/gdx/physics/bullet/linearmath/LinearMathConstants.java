@@ -9,7 +9,7 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 /** @author xpenatan */
 public interface LinearMathConstants {
 
-    public static final int BT_BULLET_VERSION = 283;
+    public static final int BT_BULLET_VERSION = 285;
 
     public static final double BT_LARGE_FLOAT = 1e18;
 

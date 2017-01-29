@@ -25,6 +25,8 @@ public class Bullet {
 
     protected static boolean enableLogging = true;
 
+    private static boolean bulletInit = false;
+
     /** Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
 	 * classes/methods can be used. */
     public static void init() {
@@ -37,6 +39,9 @@ public class Bullet {
 	 *           use {@link BulletBase#obtain()} and {@link BulletBase#release()} when using reference counting.
 	 * @param logging Whether to log an error on potential errors in the application. */
     public static void init(boolean logging) {
+		if(Bullet.bulletInit)
+		return;
+		Bullet.bulletInit = true;
 		Bullet.enableLogging = logging;
 		final int version = btScalar.btGetVersion();
 		if (version != VERSION)
@@ -54,7 +59,7 @@ public class Bullet {
 
     protected static class ShapePart {
 
-        public Array<MeshPart> parts = new Array<MeshPart>();
+        public Array<MeshPart> parts = new Array<>();
 
         public Matrix4 transform = new Matrix4();
     }
@@ -67,7 +72,7 @@ public class Bullet {
         }
     };
 
-    private static final Array<ShapePart> shapePartArray = new Array<ShapePart>();
+    private static final Array<ShapePart> shapePartArray = new Array<>();
 
     private static final Matrix4 idt = new Matrix4();
 

@@ -49,6 +49,9 @@ public class Bullet {
 				+ ")");
 	}
 	/*[0;X]
+		if(Bullet.bulletInit)
+			return;
+		Bullet.bulletInit = true;
 		Bullet.enableLogging = logging;
 		final int version = btScalar.btGetVersion();
 		if (version != VERSION)

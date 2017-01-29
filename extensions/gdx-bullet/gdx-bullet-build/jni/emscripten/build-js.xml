@@ -8,7 +8,7 @@
 	<!-- the name of the shared library -->
 	<property name="libName" value="gdxBullet.js"/>
 	
-	<property name="emscripten_SDK" value="C:\Emscripten\emscripten\tag-1.36.5\"/>
+	<property name="emscripten_SDK" value="C:\Emscripten\emscripten\tag-1.37.1\"/>
 	
 	<property name="em++_args" value="-O3 -g0 -Wall --llvm-lto 1 -s NO_EXIT_RUNTIME=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s NO_DYNAMIC_EXECUTION=1 --memory-init-file 0 -s NO_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=[] -s MODULARIZE=1"/>
 	<property name="glue_args" value="-I../src/bullet -c -include ../../emscripten/custom_glue.cpp -include btBulletDynamicsCommon.h -include BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h -include BulletCollision\CollisionDispatch\btGhostObject.h -include BulletDynamics\Character\btKinematicCharacterController.h -include BulletSoftBody\btSoftBody.h -include BulletSoftBody\btSoftRigidDynamicsWorld.h -include BulletSoftBody\btDefaultSoftBodySolver.h -include BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h -include BulletSoftBody\btSoftBodyHelpers.h"/>
