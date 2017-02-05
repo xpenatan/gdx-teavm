@@ -23,7 +23,7 @@ public class btBroadphaseInterface extends BulletBase {
 		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
 		if(overlappingPairCache.cPointer == 0) {
 			long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("jsObj.getOverlappingPairCache();",this);
-			com.dragome.commons.javascript.ScriptHelper.evalNoResult("addr=Bullet.getPointer(pairCache);",this);
+			com.dragome.commons.javascript.ScriptHelper.evalNoResult("addr=Bullet.getPointer(addr);",this);
 			overlappingPairCache.resetObj(addr,false);
 		}
 		return overlappingPairCache;
