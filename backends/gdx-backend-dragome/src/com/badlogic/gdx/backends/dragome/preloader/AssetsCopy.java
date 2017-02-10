@@ -19,6 +19,8 @@ package com.badlogic.gdx.backends.dragome.preloader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +52,36 @@ public class AssetsCopy {
 			System.out.println("Copying Assets from " + path + " to " + assetsOutputPath);
 			copyDirectory(source, target, defaultAssetFilter, assets);
 		}
+
+		Array<String> folderFilePaths = new Array<>();
+		for (int k = 0; k < classPathFiles.size; k++) {
+			String classpathFile = classPathFiles.get(k);
+			try {
+				URL url = AssetsCopy.class.getResource(classpathFile);
+				if (url != null) {
+					classPathFiles.removeIndex(k);
+					k--;
+					File dir;
+					dir = new File(url.toURI());
+					for (File nextFile : dir.listFiles()) {
+						boolean file = nextFile.isFile();
+						String path = nextFile.getPath();
+						if(file == false || path.contains(".class") || path.contains(".java"))
+							continue;
+						path = path.replace("/", "\\");
+						classpathFile = classpathFile.replace("/", "\\");
+						int i = path.lastIndexOf(classpathFile);
+						String substring = path.substring(i+1);
+						substring = substring.replace("\\", "/");
+						folderFilePaths.add(substring);
+					}
+				}
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+
+		classPathFiles.addAll(folderFilePaths);
 
 		for (String classpathFile : classPathFiles) {
 			if (defaultAssetFilter.accept(classpathFile, false)) {
