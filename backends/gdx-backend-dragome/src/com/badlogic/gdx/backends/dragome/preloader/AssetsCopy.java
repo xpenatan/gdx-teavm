@@ -56,23 +56,29 @@ public class AssetsCopy {
 		Array<String> folderFilePaths = new Array<>();
 		for (int k = 0; k < classPathFiles.size; k++) {
 			String classpathFile = classPathFiles.get(k);
+			classpathFile = classpathFile.replace("\\", "/");
+
+			if(classpathFile.startsWith("/") == false)
+				classpathFile = "/" + classpathFile;
+
 			try {
 				URL url = AssetsCopy.class.getResource(classpathFile);
 				if (url != null) {
+					File dir = new File(url.toURI());
+					if(dir.isDirectory() == false)
+						continue;
 					classPathFiles.removeIndex(k);
 					k--;
-					File dir;
-					dir = new File(url.toURI());
-					for (File nextFile : dir.listFiles()) {
+					File[] listFiles = dir.listFiles();
+					for (int p = 0; p < listFiles.length;p++) {
+						File nextFile = listFiles[p];
 						boolean file = nextFile.isFile();
 						String path = nextFile.getPath();
 						if(file == false || path.contains(".class") || path.contains(".java"))
 							continue;
-						path = path.replace("/", "\\");
-						classpathFile = classpathFile.replace("/", "\\");
+						path = path.replace("\\", "/");
 						int i = path.lastIndexOf(classpathFile);
 						String substring = path.substring(i+1);
-						substring = substring.replace("\\", "/");
 						folderFilePaths.add(substring);
 					}
 				}

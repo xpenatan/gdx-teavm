@@ -319,13 +319,9 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	}
 
 	public void assetsClasspathFiles (Array<String> filePath) {
-		filePath.add("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl");
-		filePath.add("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl");
-		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl");
-		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl");
-		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl");
-		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl");
-		filePath.add("com/badlogic/gdx/utils/arial-15.fnt");
+		filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
+		filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
 		filePath.add("com/badlogic/gdx/utils/arial-15.png");
 	}
 
