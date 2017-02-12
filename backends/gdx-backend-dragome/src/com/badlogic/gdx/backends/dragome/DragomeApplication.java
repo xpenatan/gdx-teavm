@@ -139,19 +139,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 		doc.addEventListener("visibilitychange", eventListener, false);
 
-//		new Timer().setInterval(new Runnable() {
-//			public void run () {
-//				try {
-//					mainLoop();
-//				} catch (Throwable t) {
-//					error("DragomeApplication", "exception: " + t.getMessage(), t);
-//					throw new RuntimeException(t);
-//				}
-//			}
-//		}, 0);
-
-		DragomeWindow.requestAnimationFrame(new Runnable() {
-
+		Runnable runnable = new Runnable() {
 			@Override
 			public void run () {
 				try {
@@ -191,20 +179,22 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 								@Override
 								public void run () {
 									onResize();
-									DragomeApplication.this.listener.resize(graphics.getWidth(), graphics.getHeight());
 								}
 							});
 							init = DragomeApplication.ISREADY;
 						}
 					}
-				} catch (Throwable t) {
+				}
+				catch (Throwable t) {
 					ScriptHelper.put("msg",  getAllStack(t), this);
 					ScriptHelper.evalNoResult("console.error(msg)", this);
 					ScriptHelper.evalNoResult("throw '';", this);
 				}
-				DragomeWindow.requestAnimationFrame(this, graphics.canvas);
+				DragomeWindow.requestAnimationFrame(this);
 			}
-		}, graphics.canvas);
+		};
+
+		runnable.run();
 
 		applicationLogger =  new ApplicationLogger() {
 			@Override

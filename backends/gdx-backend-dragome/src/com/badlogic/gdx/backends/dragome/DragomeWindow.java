@@ -41,4 +41,9 @@ public class DragomeWindow {
 		ScriptHelper.put("element", element, null);
 		ScriptHelper.evalNoResult("requestAnimationFrame(function(time) {run.$run$void();}, element)", null);
 	}
+
+	public static void requestAnimationFrame (Runnable run) {
+		ScriptHelper.put("run", run, null);
+		ScriptHelper.evalNoResult("requestAnimationFrame(function() {run.$run$void();})", null);
+	}
 }
