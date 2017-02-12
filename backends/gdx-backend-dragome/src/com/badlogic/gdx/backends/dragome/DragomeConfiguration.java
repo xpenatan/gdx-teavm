@@ -114,6 +114,8 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		File file= new File(projPath);
 		projName = file.getName().replace("\\", "/");
 
+		final String thisClassName = getClass().getSimpleName();
+
 		setClasspathFilter( new DefaultClasspathFileFilter() {
 
 			@Override
@@ -161,7 +163,6 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				flag &= !path.contains("com/dragome/tests/");
 				flag |= path.contains("net/sf/flexjson");
 				flag &= !path.contains("/DragomeConfiguration");
-				flag &= !path.contains("/JsConfiguration");
 				flag &= !path.contains("com/dragome/commons");
 				flag &= !path.contains("DragomeConfigurator");
 				flag &= !path.contains("ApplicationConfigurator");
@@ -180,6 +181,7 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				flag &= !path.contains("BitsTest.class");
 				flag &= !path.contains("PooledLinkedListTest.class");
 				flag &= !path.contains("QueueTest.class");
+				flag &= !path.contains(thisClassName); // ignores the class which extends this one
 				if(flag == false)
 					flag = classClassPathFilter(fileName, path);
 
