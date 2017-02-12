@@ -4,6 +4,7 @@ package com.badlogic.gdx.tests.dragome.examples;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -55,6 +56,7 @@ public class GearsDemo implements ApplicationListener {
 
 	BitmapFont font;
 	Viewport viewport;
+	ScreenViewport guiViewport;
 	SpriteBatch batch;
 	long time;
 	int fps;
@@ -100,6 +102,7 @@ public class GearsDemo implements ApplicationListener {
 		time = TimeUtils.millis();
 
 		viewport = new ScreenViewport(cam);
+		guiViewport = new ScreenViewport();
 
 		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider();
 		modelBatch = new ModelBatch(defaultShaderProvider);
@@ -161,7 +164,6 @@ public class GearsDemo implements ApplicationListener {
 			modelBatch.render(pLight);
 			modelBatch.end();
 
-
 			float timeSec = TimeUtils.millis() - time;
 
 			if(timeSec > 1000)
@@ -169,9 +171,8 @@ public class GearsDemo implements ApplicationListener {
 				time  = TimeUtils.millis();
 				fps = Gdx.graphics.getFramesPerSecond();
 			}
-			batch.setProjectionMatrix(viewport.getCamera().combined);
 			batch.begin();
-			font.draw(batch, "FPS: " + fps, 100, 100);
+			font.draw(batch, "FPS: " + fps, 15, Gdx.graphics.getHeight() - 15);
 			batch.end();
 		}
 	}
@@ -197,6 +198,10 @@ public class GearsDemo implements ApplicationListener {
 
 	public void resize (int width, int height) {
 		viewport.update(width, height, false);
+		guiViewport.update(width, height, true);
+		Camera guiCam = guiViewport.getCamera();
+		guiCam.update();
+		batch.setProjectionMatrix(guiCam.combined);
 	}
 
 	public void pause () {
