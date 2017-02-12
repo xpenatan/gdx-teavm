@@ -3,6 +3,7 @@ package com.badlogic.gdx.tests.dragome.examples;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -57,12 +58,16 @@ public class GearsDemo implements ApplicationListener {
 	SpriteBatch batch;
 	long time;
 	int fps;
+
+	CameraInputController cameraController;
+
 	@Override
 	public void create () {
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
-//		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, -0.5f, -0.5f));
+//		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .5f, .5f, .5f, 5f));
+		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, -0.5f, -0.5f));
 
 		sl = new PointLight().setPosition(-5, 10, -6).setColor(1, 1,1, 1)
 			.setIntensity(150);
@@ -73,7 +78,7 @@ public class GearsDemo implements ApplicationListener {
 //		sl3 = new PointLight().setPosition(0, 9, 6).setColor(0.3f, 0.3f, 0.8f, 1)
 //			.setIntensity(20);
 
-		environment.add(sl);
+//		environment.add(sl);
 //		environment.add(sl2);
 //		environment.add(sl3);
 
@@ -85,10 +90,17 @@ public class GearsDemo implements ApplicationListener {
 		cam.far = 30f;
 		cam.update();
 
+		cameraController = new CameraInputController(cam);
+		cameraController.autoUpdate = false;
+		cameraController.forwardTarget = false;
+		cameraController.translateTarget = false;
+
+		Gdx.input.setInputProcessor(new InputMultiplexer(cameraController));
+
 		time = TimeUtils.millis();
 
 		viewport = new ScreenViewport();
-		
+
 		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider();
 		modelBatch = new ModelBatch(defaultShaderProvider);
 
