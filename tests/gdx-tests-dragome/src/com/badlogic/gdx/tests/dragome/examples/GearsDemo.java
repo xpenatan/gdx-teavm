@@ -99,7 +99,7 @@ public class GearsDemo implements ApplicationListener {
 
 		time = TimeUtils.millis();
 
-		viewport = new ScreenViewport();
+		viewport = new ScreenViewport(cam);
 
 		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider();
 		modelBatch = new ModelBatch(defaultShaderProvider);
@@ -196,7 +196,7 @@ public class GearsDemo implements ApplicationListener {
 	}
 
 	public void resize (int width, int height) {
-		viewport.update(width, height, true);
+		viewport.update(width, height, false);
 	}
 
 	public void pause () {
