@@ -36,7 +36,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class GearsDemo implements ApplicationListener {
 
 	public PerspectiveCamera cam;
-	public CameraInputController inputController;
 	public ModelBatch modelBatch;
 	public Model model1;
 	public Model model2;
@@ -67,9 +66,8 @@ public class GearsDemo implements ApplicationListener {
 	public void create () {
 
 		environment = new Environment();
-//		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .5f, .5f, .5f, 5f));
-		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, -0.5f, -0.5f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .2f, .2f, .2f, 2f));
+//		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, -0.5f, -0.5f));
 
 		sl = new PointLight().setPosition(-5, 10, -6).setColor(1, 1,1, 1)
 			.setIntensity(150);
@@ -80,7 +78,7 @@ public class GearsDemo implements ApplicationListener {
 //		sl3 = new PointLight().setPosition(0, 9, 6).setColor(0.3f, 0.3f, 0.8f, 1)
 //			.setIntensity(20);
 
-//		environment.add(sl);
+		environment.add(sl);
 //		environment.add(sl2);
 //		environment.add(sl3);
 
@@ -89,7 +87,7 @@ public class GearsDemo implements ApplicationListener {
 		cam.position.set(-10, 3, 10f);
 		cam.lookAt(-3, 0, 0);
 		cam.near = 1f;
-		cam.far = 30f;
+		cam.far = 100f;
 		cam.update();
 
 		cameraController = new CameraInputController(cam);
@@ -127,8 +125,6 @@ public class GearsDemo implements ApplicationListener {
 
 	@Override
 	public void render () {
-//		inputController.update();
-
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
@@ -234,11 +230,14 @@ public class GearsDemo implements ApplicationListener {
 		dz = 0.5f * width;
 
 		builder.begin();
+
+		MeshPartBuilder part = null;
+
 		// draw front face
 		// GL_TRIANGLE_STRIP
-		MeshPartBuilder part = builder.part("gear", GL20.GL_TRIANGLE_STRIP, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(color)));
+		part = builder.part("gear", GL20.GL_TRIANGLE_STRIP, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(color)));
 		da = 2.0f * (float)Math.PI / teeth / 4.0f;
-		for (i = 0; i <= teeth; i++) {
+		for (i = 0; i < teeth; i++) {
 			angle = i * 2.0f * (float)Math.PI / teeth;
 			gear_angle(i, teeth, ar);
 			part.index(part.vertex(vertTmp1.setPos(r0 * (float)Math.cos(ar[0]), r0 * (float)Math.sin(ar[0]), dz)));
@@ -270,10 +269,10 @@ public class GearsDemo implements ApplicationListener {
 		for(i = 0; i < teeth; i++) {
 			gear_angle(i, teeth, ar);
 
+			part.index(part.vertex(vertTmp1.setPos(r1 * (float)Math.cos(ar[0]), r1 * (float)Math.sin(ar[0]), -dz)));
 			part.index(part.vertex(vertTmp1.setPos(r0 * (float)Math.cos(ar[0]), r0 * (float)Math.sin(ar[0]), -dz)));
-			part.index(part.vertex(vertTmp1.setPos(r1 * (float)Math.cos(ar[0]), r1 * (float)Math.sin(ar[0]), -dz)));
-			part.index(part.vertex(vertTmp1.setPos(r0 * (float)Math.cos(ar[3]), r0 * (float)Math.sin(ar[3]), -dz)));
-			part.index(part.vertex(vertTmp1.setPos(r1 * (float)Math.cos(ar[0]), r1 * (float)Math.sin(ar[0]), -dz)));
+			part.index(part.vertex(vertTmp1.setPos(r1 * (float)Math.cos(ar[3]), r1 * (float)Math.sin(ar[3]), -dz)));
+			part.index(part.vertex(vertTmp1.setPos(r0 * (float)Math.cos(ar[0]), r0 * (float)Math.sin(ar[0]), -dz)));
 		}
 		part.index(part.vertex(vertTmp1.setPos(r1 * (float)Math.cos(0.0f), r1 * (float)Math.sin(0.0f), -dz)));
 		part.index(part.vertex(vertTmp1.setPos(r0 * (float)Math.cos(0.0f), r0 * (float)Math.sin(0.0f), -dz)));
