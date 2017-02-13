@@ -1,0 +1,111 @@
+ext {
+    GROUPID = "com.badlogicgames.gdx"
+    VERSION = "1.0.0-NIGHTLIES"
+    gdxVersion = "1.9.5"
+	dragomeVersion = '0.96-beta4'
+}
+
+
+configure(subprojects) {
+
+    apply plugin: "java"
+	apply plugin: 'maven'
+	
+	repositories { 
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+	}
+
+    compileJava.options.encoding = 'UTF-8';
+
+    group = GROUPID
+    version = VERSION
+
+    // set source Java version
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    sourceSets.main.java.srcDirs = ["src"]
+    sourceSets.main.resources.srcDirs = ["resources"]
+	archivesBaseName = "gdx-backend-dragome"
+
+	uploadArchives {
+		repositories {
+			mavenDeployer() {
+				repository(url: "file://D:/Dev/mvn-repo/snapshots/")
+				uniqueVersion = false
+				
+				pom*.whenConfigured { pom -> pom.dependencies.clear() } 
+				
+				pom.project {
+					name project.name
+					packaging 'jar'
+					description project.description
+					url 'https://github.com/xpenatan/mvn-repo.git'
+
+					licenses {
+						license {
+							name 'The Apache Software License, Version 2.0'
+							url 'http://www.apache.org/licenses/LICENSE-2.0'
+						}
+					}
+					scm {
+						url 'scm:git@github.com:xpenatan/mvn-repo.git'
+						connection 'scm:git@github.com:xpenatan/mvn-repo.git'
+						developerConnection 'scm:git@github.com:xpenatan/mvn-repo.git'
+					}
+
+					developers {
+						developer {
+							id 'xpenatan'
+							name 'Natan Guilherme'
+						}
+					}
+				}
+				
+				
+			}
+			
+		}
+	}
+}
+
+project("backends/gdx-backend-dragome") {
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+		compile "com.dragome:dragome-bytecode-js-compiler:$dragomeVersion"
+		compile "com.dragome:dragome-core:$dragomeVersion"
+		compile "com.dragome:dragome-js-commons:$dragomeVersion"
+		compile "com.dragome:dragome-js-jre:$dragomeVersion"
+		compile "com.dragome:dragome-w3c-standards:$dragomeVersion"
+		compile "com.dragome:dragome-web:$dragomeVersion"
+    }
+	sourceSets.main.java.srcDirs += [ "emu" ]
+	
+	jar {
+		from(configurations.compile.collect {
+			
+			if(!it.isDirectory()) {
+				
+				if(it.getPath().contains("gdx-")) {
+					it
+				}
+				else 
+				{
+					println it
+					zipTree(it)
+				}
+			}
+			
+		}) 
+		{
+			exclude ("gdx-" + gdxVersion + ".jar")
+			exclude "*.template"
+			exclude "*.idl"
+			exclude "META-INF/*.DSA"
+			exclude "META-INF/*.RSA"
+			exclude "META-INF/maven/"
+		}
+	}
+}
