@@ -126,68 +126,77 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				String fileName = classpathFile.getFilename();
 				String path = classpathFile.getPath();
 				path = path.replace("\\", "/");
-				flag &= !path.contains("/apache/");
-				flag &= !path.contains("/org/xmlvm/");
-				flag &= !path.contains("/org/xml/");
-				flag &= !path.contains("/org/mockito/");
-				flag &= !path.contains("/org/atmosphere/");
-				flag &= !path.contains("/org/objectweb/");
-				flag &= !path.contains("/org/objenesis/");
-				flag &= !path.contains("/org/hamcrest/");
-				flag &= !path.contains("/org/dom4j/");
-				flag &= !path.contains("/org/slf4j/");
-				flag &= !path.contains("/org/jdom/");
-				flag &= !path.contains("/org/reflections/");
-				flag &= !path.contains("/javax/");
-				flag |= path.contains("/javax/persistence/");
-				flag |= path.contains("/javax/script/");
-				flag |= path.contains("/javax/swing/");
-				flag &= !path.contains("/proguard/");
-				flag &= !path.contains("/google/");
-				flag &= !path.contains("/javassist/");
-				flag &= !path.contains("/ro/");
-				flag &= !path.contains("/io/netty/");
-				flag &= !path.contains("/net/sf/dexlib/");
-				flag &= !path.contains("/net/jpountz/");
-				flag &= !path.contains("/javolution/");
-				flag &= !path.contains("/android/");
-				flag &= !path.contains("/framework/");
-				flag &= !path.contains("/runner/");
-				flag &= !path.contains("/textui/");
+				flag = toAccept(path, "/apache/", flag, true);
+				flag = toAccept(path, "org/xmlvm/", flag, true);
+				flag = toAccept(path, "org/xml/", flag, true);
+				flag = toAccept(path, "org/mockito/", flag, true);
+				flag = toAccept(path, "org/atmosphere/", flag, true);
+				flag = toAccept(path, "org/objectweb/", flag, true);
+				flag = toAccept(path, "org/objenesis/", flag, true);
+				flag = toAccept(path, "org/hamcrest/", flag, true);
+				flag = toAccept(path, "org/dom4j/", flag, true);
+				flag = toAccept(path, "org/slf4j/", flag, true);
+				flag = toAccept(path, "org/jdom/", flag, true);
+				flag = toAccept(path, "org/reflections/", flag, true);
+				flag = toAccept(path, "javax/", flag, true);
+				flag = toAccept(path, "javax/persistence/", flag, false);
+				flag = toAccept(path, "javax/script/", flag, false);
+				flag = toAccept(path, "javax/swing/", flag, false);
+				flag = toAccept(path, "proguard/", flag, true);
+				flag = toAccept(path, "/google/", flag, true);
+				flag = toAccept(path, "javassist/", flag, true);
+				flag = toAccept(path, "ro/", flag, true);
+				flag = toAccept(path, "io/netty/", flag, true);
+				flag = toAccept(path, "net/sf/dexlib/", flag, true);
+				flag = toAccept(path, "net/jpountz/", flag, true);
+				flag = toAccept(path, "javolution/", flag, true);
+				flag = toAccept(path, "/android/", flag, true);
+				flag = toAccept(path, "/framework/", flag, true);
+				flag = toAccept(path, "/runner/", flag, true);
+				flag = toAccept(path, "/textui/", flag, true);
 
-				flag &= !path.contains("/dragome/compiler");
-				flag &= !path.contains("com/dragome/web/helpers");
-				flag &= !path.contains("/net/sf/");
-				flag &= !path.contains("/JDOMAbout");
-				flag &= !path.contains("/junit/");
-				flag &= !path.contains("com/dragome/tests/");
-				flag |= path.contains("net/sf/flexjson");
-				flag &= !path.contains("/DragomeConfiguration");
-				flag &= !path.contains("com/dragome/commons");
-				flag &= !path.contains("DragomeConfigurator");
-				flag &= !path.contains("ApplicationConfigurator");
-				flag |= path.contains("/commons/javascript");
-				flag |= path.contains("/compiler/annotations/");
-				flag |= path.contains("/commons/AbstractProxyRelatedInvocationHandler");
-				flag |= path.contains("/commons/ProxyRelatedInvocationHandler");
-				flag |= path.contains("/commons/DragomeConfiguratorImplementor");
-				flag &= !path.contains("IntersectorTest.class");
-				flag &= !path.contains("MathUtilsTest.class");
-				flag &= !path.contains("RectangleTest.class");
-				flag &= !path.contains("Shape2DTest.class");
-				flag &= !path.contains("Vector2Test.class");
-				flag &= !path.contains("Vector3Test.class");
-				flag &= !path.contains("CollisionTest.class");
-				flag &= !path.contains("BitsTest.class");
-				flag &= !path.contains("PooledLinkedListTest.class");
-				flag &= !path.contains("QueueTest.class");
-				flag &= !path.contains(thisClassName); // ignores the class which extends this one
+				flag = toAccept(path, "/dragome/compiler/", flag, true);
+				flag = toAccept(path, "com/dragome/web/helpers/", flag, true);
+				flag = toAccept(path, "dragome/web/serverside/", flag, true);
+				flag = toAccept(path, "jsdelegate/serverside/", flag, true);
+				flag = toAccept(path, "net/sf/", flag, true);
+				flag = toAccept(path, "JDOMAbout", flag, true);
+				flag = toAccept(path, "junit/", flag, true);
+				flag = toAccept(path, "com/dragome/tests/", flag, true);
+
+				flag = toAccept(path, "net/sf/flexjson", flag, false);
+
+				flag = toAccept(path, "/DragomeConfiguration", flag, true);
+				flag = toAccept(path, "com/dragome/commons", flag, true);
+				flag = toAccept(path, "DragomeConfigurator", flag, true);
+				flag = toAccept(path, "dragome/services/serverside/", flag, true);
+				flag = toAccept(path, "ApplicationConfigurator", flag, true);
+//				flag = toAccept(path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler", flag, false);
+//				flag = toAccept(path, "com/dragome/commons/ChainedInstrumentationDragomeConfigurator", flag, false);
+				flag = toAccept(path, "/commons/javascript", flag, false);
+				flag = toAccept(path, "/commons/compiler/annotations", flag, false);
+				flag = toAccept(path, "/commons/AbstractProxyRelatedInvocationHandler", flag, false);
+				flag = toAccept(path, "/commons/ProxyRelatedInvocationHandler", flag, false);
+				flag = toAccept(path, "/commons/DragomeConfiguratorImplementor", flag, false);
+				flag = toAccept(path, "IntersectorTest.class", flag, true);
+				flag = toAccept(path, "MathUtilsTest.class", flag, true);
+				flag = toAccept(path, "RectangleTest.class", flag, true);
+				flag = toAccept(path, "Shape2DTest.class", flag, true);
+				flag = toAccept(path, "Vector2Test.class", flag, true);
+				flag = toAccept(path, "Vector3Test.class", flag, true);
+				flag = toAccept(path, "CollisionTest.class", flag, true);
+				flag = toAccept(path, "BitsTest.class", flag, true);
+				flag = toAccept(path, "PooledLinkedListTest.class", flag, true);
+				flag = toAccept(path, "QueueTest.class", flag, true);
+				flag = toAccept(path, thisClassName, flag, true);
+				if(path.endsWith("/"))
+					flag = false;
 				if(flag == false)
 					flag = classClassPathFilter(fileName, path);
 
-				flag &= !path.contains("dragome/preloader/AssetFilter");
-				flag &= !path.contains("dragome/preloader/DefaultAssetFilter");
-				flag &= !path.contains("dragome/preloader/AssetsCopy");
+				flag = toAccept(path, "dragome/preloader/AssetFilter", flag, true);
+				flag = toAccept(path, "dragome/preloader/DefaultAssetFilter", flag, true);
+				flag = toAccept(path, "dragome/preloader/AssetsCopy", flag, true);
 
 //				if(flag)
 //					System.out.println("Flag: " + flag + " Path: " + path);
@@ -196,17 +205,27 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		});
 
 
-		String compiledPath = getCompiledPath();
-		if(compiledPath != null && compiledPath.isEmpty() == false) {
-			System.out.println("WebApp path " + compiledPath);
+		if(!skipAssetCopy()) {
+			String compiledPath = getCompiledPath();
+			if(compiledPath != null && compiledPath.isEmpty() == false) {
+				System.out.println("WebApp path " + compiledPath);
 
-			String assetsOutputPath = compiledPath + "\\assets";
-			Array<File> paths = new Array<>();
-			Array<String> classPathFiles = new Array<>();
-			assetsClasspathFiles(classPathFiles);
-			assetsPath(paths);
-			AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, generateAssetsTextFile());
+				String assetsOutputPath = compiledPath + "\\assets";
+				Array<File> paths = new Array<>();
+				Array<String> classPathFiles = new Array<>();
+				assetsClasspathFiles(classPathFiles);
+				assetsPath(paths);
+				AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, generateAssetsTextFile());
+			}
 		}
+	}
+
+	public boolean toAccept(String path, String condition, boolean flag, boolean useNegAnd) {
+		if(useNegAnd)
+			flag &= !path.contains(condition);
+		else
+			flag |= path.contains(condition);
+		return flag;
 	}
 
 	@Override
@@ -357,6 +376,10 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	public URL getAdditionalCodeKeepConfigFile()
 	{
 		return DragomeConfiguration.class.getResource("/additional-code-keep.conf");
+	}
+
+	public boolean skipAssetCopy() {
+		return false;
 	}
 
 	@Override
