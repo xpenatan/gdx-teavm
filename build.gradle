@@ -71,9 +71,9 @@ configure(subprojects) {
 	}
 }
 
-project("backends/gdx-backend-dragome") {
+project(":backends:gdx-backend-dragome") {
     dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 		compile "com.dragome:dragome-bytecode-js-compiler:$dragomeVersion"
 		compile "com.dragome:dragome-core:$dragomeVersion"
 		compile "com.dragome:dragome-js-commons:$dragomeVersion"
@@ -84,6 +84,7 @@ project("backends/gdx-backend-dragome") {
 	sourceSets.main.java.srcDirs += [ "emu" ]
 	
 	jar {
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 		from(configurations.compile.collect {
 			
 			if(!it.isDirectory()) {
