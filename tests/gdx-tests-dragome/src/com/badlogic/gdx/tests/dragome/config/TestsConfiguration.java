@@ -20,7 +20,6 @@ public class TestsConfiguration extends DragomeConfiguration{
 	}
 
 	@Override
-	public void assetsClasspathFiles(Array<String> filePath) {
-		super.assetsClasspathFiles(filePath);
+	public void assetsClasspath(Array<String> classPaths) {
 	}
 }

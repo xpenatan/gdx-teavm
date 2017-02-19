@@ -90,7 +90,7 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
-public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigurator
+public abstract class DragomeConfiguration extends ChainedInstrumentationDragomeConfigurator
 {
 	String projName;
 
@@ -209,11 +209,10 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 			String compiledPath = getCompiledPath();
 			if(compiledPath != null && compiledPath.isEmpty() == false) {
 				System.out.println("WebApp path " + compiledPath);
-
 				String assetsOutputPath = compiledPath + "\\assets";
 				Array<File> paths = new Array<>();
 				Array<String> classPathFiles = new Array<>();
-				assetsClasspathFiles(classPathFiles);
+				assetsDefaultClasspath(classPathFiles);
 				assetsPath(paths);
 				AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, generateAssetsTextFile());
 			}
@@ -312,15 +311,22 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 				include|= classpathEntry.contains("/classes");
 			}
 			else if(include == false) {
-				String[] split = classpathEntry.split("-");
-				if(split.length == 2)
-					include |= (split[0].toLowerCase().endsWith("gdx") && Character.isDigit(split[1].charAt(0)));
+				try {// check if its gdx-X.X.X.jar
+					String[] split1 = classpathEntry.split("/");
+					String gdxPath = split1[split1.length-1];
+					String[] split = gdxPath.split("-");
+					if(split.length == 2)
+						include |= (split[0].toLowerCase().endsWith("gdx") && Character.isDigit(split[1].charAt(0)));
+				} catch (Exception e) {
+				}
+
 			}
 		}
 		include &= !classpathEntry.contains("/resources/");
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
-//		System.out.println("Allow Project: " + include + " path: " + classpathEntry);
+		if(filterClassPathLog())
+			System.out.println("Allow Project: " + include + " path: " + classpathEntry);
 		return include;
 	}
 
@@ -333,18 +339,29 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	 */
 	public boolean classClassPathFilter(String fileName, String path) {return false;}
 
-	public void assetsPath (Array<File> paths) {}
-
 	public boolean generateAssetsTextFile() {
 		return false;
 	}
 
-	public void assetsClasspathFiles (Array<String> filePath) {
+	private void assetsDefaultClasspath (Array<String> filePath) {
 		filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
 		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
 		filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
 		filePath.add("com/badlogic/gdx/utils/arial-15.png");
+		assetsClasspath(filePath);
 	}
+
+	@Override
+	public String getCompiledPath () {
+		File file = new File("." + File.separatorChar + "webapp");
+		if(!file.exists()) // may be false if build was not inside dragome project
+			return null;
+		return file.getAbsolutePath();
+	}
+
+	public abstract void assetsPath (Array<File> paths);
+
+	public abstract void assetsClasspath (Array<String> classPaths);
 
 	@Override
 	public void sortClassPath(Classpath classPath)
@@ -378,6 +395,10 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 		return DragomeConfiguration.class.getResource("/additional-code-keep.conf");
 	}
 
+	public boolean filterClassPathLog() {
+		return false;
+	}
+
 	public boolean skipAssetCopy() {
 		return false;
 	}
@@ -397,11 +418,5 @@ public class DragomeConfiguration extends ChainedInstrumentationDragomeConfigura
 	@Override
 	public boolean isCaching () {
 		return false;
-	}
-
-	@Override
-	public String getCompiledPath () {
-		String compiledPath = new File("").getAbsolutePath() + "\\webapp";
-		return compiledPath;
 	}
 }

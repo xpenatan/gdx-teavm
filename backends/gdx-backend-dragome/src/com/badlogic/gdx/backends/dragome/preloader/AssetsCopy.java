@@ -19,12 +19,21 @@ package com.badlogic.gdx.backends.dragome.preloader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -49,49 +58,22 @@ public class AssetsCopy {
 		for (int i = 0; i < paths.size; i++) {
 			String path = paths.get(i).getAbsolutePath();
 			FileWrapper source = new FileWrapper(path);
-			System.out.println("Copying Assets from " + path + " to " + assetsOutputPath);
+			System.out.println("Copying Assets from:");
+			System.out.println(path);
+			System.out.println("to:");
+			System.out.println(assetsOutputPath);
 			copyDirectory(source, target, defaultAssetFilter, assets);
 		}
 
-		Array<String> folderFilePaths = new Array<>();
-		for (int k = 0; k < classPathFiles.size; k++) {
-			String classpathFile = classPathFiles.get(k);
-			classpathFile = classpathFile.replace("\\", "/");
-
-			if(classpathFile.startsWith("/") == false)
-				classpathFile = "/" + classpathFile;
-
-			try {
-				URL url = AssetsCopy.class.getResource(classpathFile);
-				if (url != null) {
-					File dir = new File(url.toURI());
-					if(dir.isDirectory() == false)
-						continue;
-					classPathFiles.removeIndex(k);
-					k--;
-					File[] listFiles = dir.listFiles();
-					for (int p = 0; p < listFiles.length;p++) {
-						File nextFile = listFiles[p];
-						boolean file = nextFile.isFile();
-						String path = nextFile.getPath();
-						if(file == false || path.contains(".class") || path.contains(".java"))
-							continue;
-						path = path.replace("\\", "/");
-						int i = path.lastIndexOf(classpathFile);
-						String substring = path.substring(i+1);
-						folderFilePaths.add(substring);
-					}
-				}
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		}
-
-		classPathFiles.addAll(folderFilePaths);
+		addDirectoryClassPathFiles(classPathFiles);
 
 		for (String classpathFile : classPathFiles) {
+			if(classpathFile.startsWith("/") == false)
+				classpathFile = "/" + classpathFile;
 			if (defaultAssetFilter.accept(classpathFile, false)) {
 				try {
+					System.out.println("Copying classpath asset:");
+					System.out.println(classpathFile);
 					InputStream is = AssetsCopy.class.getClassLoader().getResourceAsStream(classpathFile);
 					FileWrapper dest = target.child(classpathFile);
 					dest.write(is, false);
@@ -135,6 +117,81 @@ public class AssetsCopy {
 			}
 			target.child(bundle.getKey() + ".txt").writeString(buffer.toString(), false);
 		}
+	}
+
+	private static void addDirectoryClassPathFiles(Array<String> classPathFiles) {
+		Array<String> folderFilePaths = new Array<>();
+		for (int k = 0; k < classPathFiles.size; k++) {
+			String classpathFile = classPathFiles.get(k);
+			classpathFile = classpathFile.replace("\\", "/");
+			if(classpathFile.startsWith("/") == false)
+				classpathFile = "/" + classpathFile;
+			URL resource = AssetsCopy.class.getResource(classpathFile);
+			if (resource != null) {
+				URI uri = null;
+				try {
+					uri = resource.toURI();
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+				if(uri == null)
+					continue;
+
+				// solution to get files inside jar/folder
+				Path myPath = null;
+				String scheme = uri.getScheme();
+				FileSystem fileSystem = null;
+				if (scheme.equals("jar")) {
+					try {
+						fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object> emptyMap());
+					} catch (IOException e) {
+						e.printStackTrace();
+						continue;
+					}
+					myPath = fileSystem.getPath(classpathFile);
+				} else {
+					myPath = Paths.get(uri);
+				}
+				Stream<Path> walk = null;
+				try {
+					walk = Files.walk(myPath, 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+					continue;
+				}
+				boolean first = true;
+				for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+					Path next = it.next();
+					String path = next.toString();
+					boolean directory = Files.isDirectory(next);
+					path = path.replace("\\", "/");
+					int i = path.lastIndexOf(classpathFile); // remove absolute path
+					path = path.substring(i+1);
+					if(path.startsWith("/") == false)
+						path = "/" + path;
+					if(path.contains(".class") || path.contains(".java"))
+						continue;
+					if(directory) {
+						if(first) {
+							first = false;
+							classPathFiles.removeIndex(k);
+							k--;
+						}
+						continue;
+					}
+					folderFilePaths.add(path);
+				}
+				walk.close();
+				if(fileSystem != null) {
+					try {
+							fileSystem.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		classPathFiles.addAll(folderFilePaths);
 	}
 
 	private static void copyFile (FileWrapper source, FileWrapper dest, AssetFilter filter, ArrayList<Asset> assets) {
