@@ -75,11 +75,7 @@
     <dependency>
       <groupId>com.badlogicgames.gdx</groupId>
       <artifactId>gdx</artifactId>
-<<<<<<< HEAD
-      <version>1.9.4</version>
-=======
       <version>1.9.5</version>
->>>>>>> refs/remotes/nosix/fix-build-error
     </dependency>
 
   </dependencies>
