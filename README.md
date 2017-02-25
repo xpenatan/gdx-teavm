@@ -1,11 +1,18 @@
 # Libgdx Dragome Backend
 This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate libgdx games to javascript. Its similar to GWT but better.
-* Its faster to compile
+* Its fast to compile ¹
 * Easy to use
-* Lightweight
+* Lightweight ²
 * Use bytecodes and not source code
-* ProGuard ready Shrink/Obfuscate
+* ProGuard ready Shrink/Obfuscate ³
 * Reflection ready
+
+
+¹: About 8 seconds using cache or/and proguard to filter unused classes.
+
+²: Fatjar is about 16mb and includes Dragome Backend, dragomeSDK and dependencies.
+
+³: Obfuscate have been tested and will be ready soon.
 
 # Go to [Wiki] ( https://github.com/xpenatan/gdx-dragome-backend/wiki ) for more information.
 
