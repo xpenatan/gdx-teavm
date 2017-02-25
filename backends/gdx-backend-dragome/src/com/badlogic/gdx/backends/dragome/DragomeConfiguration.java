@@ -198,8 +198,9 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 				flag = toAccept(path, "dragome/preloader/DefaultAssetFilter", flag, true);
 				flag = toAccept(path, "dragome/preloader/AssetsCopy", flag, true);
 
-//				if(flag)
-//					System.out.println("Flag: " + flag + " Path: " + path);
+				int filterClassLog = filterClassLog();
+				if((filterClassLog == 1 && flag) || filterClassLog == 2)
+					System.out.println("Allow Class: " + flag + " Path: " + path);
 				return flag;
 			}
 		});
@@ -395,8 +396,20 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 		return DragomeConfiguration.class.getResource("/additional-code-keep.conf");
 	}
 
+	/**
+	 * Returning true will show which classpath/project is allowed to compile.
+	 */
 	public boolean filterClassPathLog() {
 		return false;
+	}
+
+	/**
+	 * Returning 1 will show only classes that is allowed to compile. <br>
+	 * Returning 2 will show all classes that is filtered. <br>
+	 * Reutrning 0 will disable log;
+	 */
+	public int filterClassLog() {
+		return 0;
 	}
 
 	public boolean skipAssetCopy() {
