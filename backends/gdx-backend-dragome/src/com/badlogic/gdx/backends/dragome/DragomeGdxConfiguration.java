@@ -90,12 +90,10 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
-public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator
-{
+public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator {
 	String projName;
 
 	protected JsDelegateGenerator jsDelegateGenerator;
-
 
 	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Document.class, HTMLDocument.class, Element.class, Attr.class, NodeList.class,
 			Node.class, NamedNodeMap.class, Text.class, HTMLCanvasElement.class, CanvasRenderingContext2D.class, EventTarget.class,
@@ -108,8 +106,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
 			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class));
 
-	public DragomeGdxConfiguration()
-	{
+	public DragomeGdxConfiguration() {
 		String projPath= System.getProperty("user.dir");
 		File file= new File(projPath);
 		projName = file.getName().replace("\\", "/");
@@ -229,8 +226,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	}
 
 	@Override
-	public List<ClasspathEntry> getExtraClasspath(Classpath classpath)
-	{
+	public List<ClasspathEntry> getExtraClasspath(Classpath classpath) {
 		List<ClasspathEntry> result= new ArrayList<>();
 		List<ClasspathFile> classpathFiles= new ArrayList<>();
 
@@ -239,8 +235,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		if (jsDelegateGenerator == null)
 			createJsDelegateGenerator(classpath);
 
-		for (Class<?> class1 : classes)
-		{
+		for (Class<?> class1 : classes) {
 			InMemoryClasspathFile inMemoryClasspathFile= jsDelegateGenerator.generateAsClasspathFile(class1);
 			addClassBytecode(inMemoryClasspathFile.getBytecode(), inMemoryClasspathFile.getClassname());
 			classpathFiles.add(inMemoryClasspathFile);
@@ -248,8 +243,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 
 		return result;
 	}
-	private void createJsDelegateGenerator(Classpath classpath)
-	{
+	private void createJsDelegateGenerator(Classpath classpath) {
 		jsDelegateGenerator= new JsDelegateGenerator(classpath.toString().replace(";", System.getProperty("path.separator")), new DomHandlerDelegateStrategy()
 		{
 			@Override
@@ -278,14 +272,12 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		});
 	}
 
-	public DragomeGdxConfiguration(List<? extends Class<?>> additionalDelegates)
-	{
+	public DragomeGdxConfiguration(List<? extends Class<?>> additionalDelegates) {
 		classes.addAll(additionalDelegates);
 	}
 
 	@Override
-	public boolean filterClassPath(String classpathEntry)
-	{
+	public boolean filterClassPath(String classpathEntry) {
 		boolean include= super.filterClassPath(classpathEntry);
 		classpathEntry = classpathEntry.replace("\\", "/");
 		include |= classpathEntry.contains(projName + "/") && classpathEntry.contains("/bin");
@@ -365,8 +357,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	public abstract void assetsClasspath (Array<String> classPaths);
 
 	@Override
-	public void sortClassPath(Classpath classPath)
-	{
+	public void sortClassPath(Classpath classPath) {
 		classPath.sortByPriority(new PrioritySolver()
 		{
 			@Override
@@ -391,9 +382,13 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	}
 
 	@Override
-	public URL getAdditionalCodeKeepConfigFile()
-	{
-		return DragomeGdxConfiguration.class.getResource("/additional-code-keep.conf");
+	public void getAdditionalCodeKeepConfigFile(ArrayList<URL> urls) {
+		urls.add(DragomeGdxConfiguration.class.getResource("/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf"));
+	}
+
+	@Override
+	public void getAdditionalObfuscateCodeKeepConfigFile (ArrayList<URL> urls) {
+		urls.add(DragomeGdxConfiguration.class.getResource("/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf"));
 	}
 
 	/**
@@ -417,14 +412,17 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	}
 
 	@Override
-	public boolean isCheckingCast()
-	{
+	public boolean isCheckingCast() {
 		return false;
 	}
 
 	@Override
-	public boolean isRemoveUnusedCode()
-	{
+	public boolean isRemoveUnusedCode() {
+		return true;
+	}
+
+	@Override
+	public boolean isObfuscateCode () {
 		return true;
 	}
 
