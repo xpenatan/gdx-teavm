@@ -188,7 +188,6 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 				flag = toAccept(path, "BitsTest.class", flag, true);
 				flag = toAccept(path, "PooledLinkedListTest.class", flag, true);
 				flag = toAccept(path, "QueueTest.class", flag, true);
-				flag = toAccept(path, thisClassName, flag, true);
 				if(path.endsWith("/"))
 					flag = false;
 				if(flag == false)
@@ -197,6 +196,7 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 				flag = toAccept(path, "dragome/preloader/AssetFilter", flag, true);
 				flag = toAccept(path, "dragome/preloader/DefaultAssetFilter", flag, true);
 				flag = toAccept(path, "dragome/preloader/AssetsCopy", flag, true);
+				flag = toAccept(path, thisClassName, flag, true);
 
 				int filterClassLog = filterClassLog();
 				if((filterClassLog == 1 && flag) || filterClassLog == 2)
