@@ -90,7 +90,7 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
-public abstract class DragomeConfiguration extends ChainedInstrumentationDragomeConfigurator
+public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator
 {
 	String projName;
 
@@ -108,7 +108,7 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 			Int32Array.class, Int8Array.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
 			ArrayBufferFactory.class, TypedArraysFactory.class, XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class));
 
-	public DragomeConfiguration()
+	public DragomeGdxConfiguration()
 	{
 		String projPath= System.getProperty("user.dir");
 		File file= new File(projPath);
@@ -166,7 +166,7 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 
 				flag = toAccept(path, "net/sf/flexjson", flag, false);
 
-				flag = toAccept(path, "/DragomeConfiguration", flag, true);
+				flag = toAccept(path, "/DragomeGdxConfiguration", flag, true);
 				flag = toAccept(path, "com/dragome/commons", flag, true);
 				flag = toAccept(path, "DragomeConfigurator", flag, true);
 				flag = toAccept(path, "dragome/services/serverside/", flag, true);
@@ -278,7 +278,7 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 		});
 	}
 
-	public DragomeConfiguration(List<? extends Class<?>> additionalDelegates)
+	public DragomeGdxConfiguration(List<? extends Class<?>> additionalDelegates)
 	{
 		classes.addAll(additionalDelegates);
 	}
@@ -393,7 +393,7 @@ public abstract class DragomeConfiguration extends ChainedInstrumentationDragome
 	@Override
 	public URL getAdditionalCodeKeepConfigFile()
 	{
-		return DragomeConfiguration.class.getResource("/additional-code-keep.conf");
+		return DragomeGdxConfiguration.class.getResource("/additional-code-keep.conf");
 	}
 
 	/**
