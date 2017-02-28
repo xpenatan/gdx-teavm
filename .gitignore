@@ -52,3 +52,4 @@ libs/
 **/jni/*
 !**/jni/src
 !**/jni/emscripten
+/ProguardMapping.txt
