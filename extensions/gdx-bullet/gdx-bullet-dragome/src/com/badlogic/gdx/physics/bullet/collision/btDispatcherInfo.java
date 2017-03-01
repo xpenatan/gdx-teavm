@@ -7,7 +7,6 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
-import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 
 /** @author xpenatan */
 public class btDispatcherInfo extends BulletBase {
