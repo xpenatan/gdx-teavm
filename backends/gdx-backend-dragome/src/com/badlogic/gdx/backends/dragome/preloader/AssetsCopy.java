@@ -190,6 +190,10 @@ public class AssetsCopy {
 					}
 				}
 			}
+			else {// remove if it dont exist
+				classPathFiles.removeIndex(k);
+				k--;
+			}
 		}
 		classPathFiles.addAll(folderFilePaths);
 	}
