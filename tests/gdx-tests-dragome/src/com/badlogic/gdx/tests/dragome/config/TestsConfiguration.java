@@ -13,6 +13,16 @@ public class TestsConfiguration extends DragomeGdxConfiguration{
 	public int filterClassLog () {
 		return 2;
 	}
+	
+	@Override
+	public boolean isRemoveUnusedCode () {
+		return true;
+	}
+	
+	@Override
+	public boolean isObfuscateCode () {
+		return true;
+	}
 
 	@Override
 	public void assetsPath(Array<File> paths) {
@@ -21,5 +31,10 @@ public class TestsConfiguration extends DragomeGdxConfiguration{
 
 	@Override
 	public void assetsClasspath(Array<String> classPaths) {
+	}
+	
+	@Override
+	public boolean filterClassPathLog () {
+		return false;
 	}
 }

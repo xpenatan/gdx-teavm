@@ -10,5 +10,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GdxBulletDragome"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx-box2d-gwt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
