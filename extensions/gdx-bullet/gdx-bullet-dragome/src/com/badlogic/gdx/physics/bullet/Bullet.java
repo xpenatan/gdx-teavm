@@ -63,7 +63,7 @@ public class Bullet {
 
         public Matrix4 transform = new Matrix4();
     }
-
+/*
     private static final Pool<ShapePart> shapePartPool = new Pool<ShapePart>() {
 
         @Override
@@ -73,7 +73,7 @@ public class Bullet {
     };
 
     private static final Array<ShapePart> shapePartArray = new Array<>();
-
+*/
     private static final Matrix4 idt = new Matrix4();
 
     private static final Matrix4 tmpM = new Matrix4();
