@@ -33,7 +33,7 @@ configure(subprojects) {
 	uploadArchives {
 		repositories {
 			mavenDeployer() {
-				repository(url: "file://D:/Dev/mvn-repo/snapshots/")
+				repository(url: "file://d:/_work/_repo/")
 				uniqueVersion = false
 				
 				pom*.whenConfigured { pom -> pom.dependencies.clear() } 

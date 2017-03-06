@@ -380,10 +380,14 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 			}
 		});
 		Iterator<ClasspathEntry> iterator = classPath.getEntries().iterator();
-		LOGGER.info("######################## ClassPath Order ########################");
-		while(iterator.hasNext())
-			LOGGER.info(iterator.next().toString());
-		LOGGER.info("#################################################################");
+		final StringBuilder sb = new StringBuilder();
+		sb.append("######################## ClassPath Order ########################\n");
+		while(iterator.hasNext()) {
+			sb.append(iterator.next().toString());
+			sb.append("\n");
+		}
+		sb.append("#################################################################");
+		LOGGER.info(sb.toString());
 	}
 
 	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf";
