@@ -7,6 +7,7 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 
 /** @author xpenatan */

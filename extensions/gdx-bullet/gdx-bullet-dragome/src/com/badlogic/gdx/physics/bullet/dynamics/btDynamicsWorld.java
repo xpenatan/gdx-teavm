@@ -8,6 +8,7 @@ package com.badlogic.gdx.physics.bullet.dynamics;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 /** @author xpenatan */
 public class btDynamicsWorld extends btCollisionWorld {

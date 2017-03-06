@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -77,9 +78,11 @@ import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.commons.compiler.classpath.ClasspathFile;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathEntry;
+import com.dragome.compiler.utils.Log;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.serverside.JsDelegateGenerator;
 import com.dragome.web.helpers.DefaultClasspathFileFilter;
+import com.dragome.web.helpers.serverside.DragomeCompilerLauncher;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
@@ -91,6 +94,8 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
 public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator {
+	private static Logger LOGGER= Logger.getLogger(DragomeGdxConfiguration.class.getName());
+
 	String projName;
 
 	protected JsDelegateGenerator jsDelegateGenerator;
@@ -319,7 +324,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
 		if(filterClassPathLog())
-			System.out.println("Allow Project: " + include + " path: " + classpathEntry);
+			LOGGER.info("Allow Project: " + include + " path: " + classpathEntry);
 		return include;
 	}
 
@@ -375,20 +380,35 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 			}
 		});
 		Iterator<ClasspathEntry> iterator = classPath.getEntries().iterator();
-		System.out.println("######################## ClassPath Order ########################");
+		LOGGER.info("######################## ClassPath Order ########################");
 		while(iterator.hasNext())
-			System.out.println(iterator.next());
-		System.out.println("#################################################################");
+			LOGGER.info(iterator.next().toString());
+		LOGGER.info("#################################################################");
 	}
+
+	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf";
+
 
 	@Override
 	public void getAdditionalCodeKeepConfigFile(ArrayList<URL> urls) {
-		urls.add(DragomeGdxConfiguration.class.getResource("/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf"));
+		final URL resource = DragomeGdxConfiguration.class.getResource(DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF);
+		if (resource != null) {
+			urls.add(resource);
+		} else {
+			LOGGER.warning("Can not find: " + DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF);
+		}
 	}
+	
+	private static final String DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP = "/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf";
 
 	@Override
 	public void getAdditionalObfuscateCodeKeepConfigFile (ArrayList<URL> urls) {
-		urls.add(DragomeGdxConfiguration.class.getResource("/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf"));
+		final URL resource = DragomeGdxConfiguration.class.getResource(DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP);
+		if (resource != null) {
+			urls.add(resource);
+		} else {
+			LOGGER.warning("Can not find: " + DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP);
+		}
 	}
 
 	/**

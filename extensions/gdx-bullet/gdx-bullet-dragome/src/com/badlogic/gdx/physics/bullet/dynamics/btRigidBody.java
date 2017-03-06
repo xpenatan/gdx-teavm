@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btQuaternion;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btTransform;;
 
 /** @author xpenatan */
