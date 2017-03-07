@@ -29,8 +29,7 @@ public class btBroadphaseInterface extends BulletBase {
 	 	checkPointer(); #J
 	 	jsObj, this.jsObj #P
 	 	if(overlappingPairCache.cPointer == 0) { #J
-	 		long addr = jsObj.getOverlappingPairCache(); #EVALLONG
-	 		addr = Bullet.getPointer(addr);
+	 		long addr = Bullet.getPointer(jsObj.getOverlappingPairCache()); #EVALLONG
 	 		overlappingPairCache.resetObj(addr,false); #J
 	 	} #J
 	 	return overlappingPairCache; #J
