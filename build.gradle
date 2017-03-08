@@ -1,3 +1,16 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://github.com/chshawkn/maven-settings-decoder/raw/mvn-repo/' }
+    }
+    dependencies {
+        classpath 'cn.home1.tools:maven-settings-decoder:1.0.0.OSS'
+    }
+}
+
 ext {
     GROUPID = "com.badlogicgames.gdx"
     VERSION = "1.0.0-NIGHTLIES"
@@ -33,7 +46,11 @@ configure(subprojects) {
 	uploadArchives {
 		repositories {
 			mavenDeployer() {
-				repository(url: "file://D:/Dev/mvn-repo/snapshots/")
+                ext.mavenSettings = new cn.home1.tools.maven.SettingsDecoder(null, null, false); // true for debug SettingsDecoder
+                ext.mavenLocalRepositoryPath = "file://" + ext.mavenSettings.getText("//localRepository")
+                logger.info("Use local maven repository: " + mavenLocalRepositoryPath);
+                
+				repository(url: mavenLocalRepositoryPath)
 				uniqueVersion = false
 				
 				pom*.whenConfigured { pom -> pom.dependencies.clear() } 
@@ -94,7 +111,7 @@ project(":backends:gdx-backend-dragome") {
 				}
 				else 
 				{
-					println it
+					logger.info("it")
 					zipTree(it)
 				}
 			}
