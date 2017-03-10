@@ -95,6 +95,8 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 @DragomeConfiguratorImplementor(priority= 10)
 public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator {
 	private static Logger LOGGER= Logger.getLogger(DragomeGdxConfiguration.class.getName());
+	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf";
+	private static final String DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP = "/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf";
 
 	String projName;
 
@@ -390,33 +392,31 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		LOGGER.info(sb.toString());
 	}
 
-	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf";
-
-
 	@Override
-	public void getAdditionalCodeKeepConfigFile(ArrayList<URL> urls) {
+	public List<URL> getAdditionalCodeKeepConfigFile() {
+		ArrayList<URL> urls = new ArrayList<>();
 		final URL resource = DragomeGdxConfiguration.class.getResource(DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF);
-		if (resource != null) {
+		if (resource != null)
 			urls.add(resource);
-		} else {
+		else
 			LOGGER.warning("Can not find: " + DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF);
-		}
+		return urls;
 	}
-	
-	private static final String DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP = "/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf";
 
 	@Override
-	public void getAdditionalObfuscateCodeKeepConfigFile (ArrayList<URL> urls) {
+	public List<URL> getAdditionalObfuscateCodeKeepConfigFile () {
+		ArrayList<URL> urls = new ArrayList<>();
 		final URL resource = DragomeGdxConfiguration.class.getResource(DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP);
 		if (resource != null) {
 			urls.add(resource);
 		} else {
 			LOGGER.warning("Can not find: " + DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP);
 		}
+		return urls;
 	}
 
 	/**
-	 * Returning true will show which classpath/project is allowed to compile.
+	 * Returning true will show which classpath/project is allowed to compile. (Default: false)
 	 */
 	public boolean filterClassPathLog() {
 		return false;
@@ -431,6 +431,9 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		return 0;
 	}
 
+	/**
+	 * Skip asset copying. (Default: false)
+	 */
 	public boolean skipAssetCopy() {
 		return false;
 	}
@@ -440,11 +443,21 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		return false;
 	}
 
+	/**
+	 * Makes proguard to shrink and remove unused classes. <br>
+	 * Use {@link #getAdditionalCodeKeepConfigFile()} to append more proguard shrink options <br>
+	 * @return true to remove code (Default: true)
+	 */
 	@Override
 	public boolean isRemoveUnusedCode() {
 		return true;
 	}
 
+	/**
+	 * Makes proguard to obfuscate and have shorter class names. This will reduce javascript size. <br>
+	 * Use {@link #getAdditionalObfuscateCodeKeepConfigFile()} to append more proguard obfuscate options <br>
+	 * @return true to obfuscate code (Default: true)
+	 */
 	@Override
 	public boolean isObfuscateCode () {
 		return true;
