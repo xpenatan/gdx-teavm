@@ -1,0 +1,52 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer() {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+				
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: xUser, password: xPass)
+			}
+			
+			//repository(url: "file://D:/Dev/mvn-repo/")
+			
+			//uniqueVersion = false
+			
+			pom*.whenConfigured { pom -> pom.dependencies.clear() } 
+			
+			pom.project {
+				url 'https://github.com/xpenatan/gdx-dragome-backend'
+
+				licenses {
+					license {
+						name 'The Apache Software License, Version 2.0'
+						url 'http://www.apache.org/licenses/LICENSE-2.0'
+					}
+				}
+				scm {
+					url 'scm:git@github.com:xpenatan/gdx-dragome-backend.git'
+					connection 'scm:git@github.com:xpenatan/gdx-dragome-backend.git'
+					developerConnection 'scm:git@github.com:xpenatan/gdx-dragome-backend.git'
+				}
+
+				developers {
+					developer {
+						id 'xpenatan'
+						name 'Natan Guilherme'
+					}
+				}
+			}
+			
+			
+		}
+		
+	}
+}

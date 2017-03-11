@@ -1,5 +1,6 @@
 # Libgdx Dragome Backend
-This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate libgdx games to javascript. Its similar to GWT but better.
+This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate libgdx games to javascript. A alternative to gwt backend.
+
 * Its fast to compile ¹
 * Easy to use
 * Lightweight ²
@@ -7,12 +8,63 @@ This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generat
 * ProGuard ready Shrink/Obfuscate ³
 * Reflection ready
 
+<p align="left"><img src="http://i.imgur.com/Gz5CgvK.png"/></p>
 
-¹: About 8 seconds using cache or/and proguard to filter unused classes.
+¹: It can take seconds to compile when using proguard shrink + obfuscation.
 
-²: Fatjar is about 16mb and includes Dragome Backend, dragomeSDK and dependencies.
+²: All in one jar is about 16mb and includes Dragome Backend, Proguard and DragomeSDK.
 
-³: Obfuscate have been tested and will be ready soon.
+³: Shrink remove unused classes and Obfuscate makes your class/methods smaller and harder to mess with it.
+
+
+**Quick Setup:**
+
+```Gradle
+//######## Root build.gradle
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+project(":dragome") {
+    apply plugin: "java"
+
+    dependencies {
+        compile project(":core")
+        compile "com.github.xpenatan:gdx-backend-dragome:1.0.0-ALL-SNAPSHOT"
+    }
+}
+
+//######## Dragome Project build.gradle
+
+apply plugin: 'org.akhikhl.gretty'
+
+sourceCompatibility = 1.8
+
+gretty {
+  extraResourceBase 'webapp'
+}
+
+sourceSets.main.java.srcDirs = ["src"]
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.akhikhl.gretty:gretty:+'
+  }
+}
+```
+**Running:**
+```
+gradlew :dragome:jettyRun
+```
+
 
 # Go to [Wiki] ( https://github.com/xpenatan/gdx-dragome-backend/wiki ) for more information.
 

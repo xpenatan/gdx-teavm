@@ -1,3 +1,6 @@
+apply plugin: "java"
+apply from: '../../deploy.gradle'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -5,4 +8,42 @@ dependencies {
    
 }
 
+sourceSets.main.java.srcDirs = [
+        "emu",
+        "src"
+]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
 
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                name 'gdx-backend-dragome'
+                artifactId 'gdx-backend-dragome'
+                packaging 'jar'
+                description 'Java to Javascript generator'
+            }
+        }
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
