@@ -418,7 +418,7 @@ public class DragomeGL20 implements GL20 {
 
 		// create new ArrayBufferView (4 bytes per pixel)
 		int size = 4 * width * height;
-		
+
 		Uint8Array buffer = TypedArraysFactory.createInstanceOf(Uint8Array.class, ((HasArrayBufferView)pixels).getTypedArray().getBuffer(), size);
 		// read bytes to ArrayBufferView
 		gl.readPixels(x, y, width, height, format, type, buffer);
@@ -464,11 +464,17 @@ public class DragomeGL20 implements GL20 {
 				gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
 			} else {
 				Pixmap pixmap = Pixmap.pixmaps.get(((IntBuffer)pixels).get(0));
-				gl.texImage2D(target, level, internalformat, format, type, pixmap.getCanvasElement());
+				// Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
+				if (pixmap.canUseImageElement()) {
+					gl.texImage2D(target, level, internalformat, format, type, pixmap.getImageElement());
+				}
+				else {
+					gl.texImage2D(target, level, internalformat, format, type, pixmap.getCanvasElement());
+				}
 			}
 		}
 	}
-	
+
 //	HasArrayBufferView arrayHolder = (HasArrayBufferView)pixels;
 //	ArrayBufferView webGLArray = arrayHolder.getTypedArray();
 //	ArrayBufferView buffer;
@@ -1216,7 +1222,7 @@ public class DragomeGL20 implements GL20 {
 			ScriptHelper.evalNoResult("gl.node.uniformMatrix3fv(loc.node,transpose,value);", this);
 		else
 		{	 //TODO check if loc is null
-			
+
 		}
 //		gl.uniformMatrix3fv(loc, transpose, value);
 	}
