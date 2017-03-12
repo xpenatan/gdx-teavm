@@ -447,7 +447,8 @@ public class DragomeInput implements Input {
 		ScriptHelper.put("target", target, this);
 		String compatMode = (String)ScriptHelper.eval("target.node.compatMode", this); // FIXME change when dragome is fixed.
 		boolean isComp = compatMode.equals("CSS1Compat");
-		Element element = isComp ? target.getDocumentElement() : target.getBody();
+//		Element element = isComp ? target.getDocumentElement() : target.getBody(); //FIXME getBody dont exist. need to investigate.
+		Element element = isComp ? target.getDocumentElement() : (Element)ScriptHelper.eval("target", this);
 		return element;
 	}
 
