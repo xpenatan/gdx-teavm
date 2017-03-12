@@ -1,10 +1,9 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-
 signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
+	required { gradle.taskGraph.hasTask("uploadArchives") }
+	sign configurations.archives
 }
 
 uploadArchives {
@@ -15,13 +14,13 @@ uploadArchives {
 			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
 				authentication(userName: xUser, password: xPass)
 			}
-			
+
 			//repository(url: "file://D:/Dev/mvn-repo/")
-			
+
 			//uniqueVersion = false
-			
-			pom*.whenConfigured { pom -> pom.dependencies.clear() } 
-			
+
+			pom*.whenConfigured { pom -> pom.dependencies.clear() }
+
 			pom.project {
 				url 'https://github.com/xpenatan/gdx-dragome-backend'
 
@@ -44,9 +43,6 @@ uploadArchives {
 					}
 				}
 			}
-			
-			
 		}
-		
 	}
 }

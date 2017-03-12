@@ -17,6 +17,7 @@
 package com.badlogic.gdx.graphics;
 
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.services.WebServiceLocator;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
@@ -113,7 +115,7 @@ public class Pixmap implements Disposable
 	float a;
 	String color= make(r, g, b, a);
 	static String clearColor= make(255, 255, 255, 1.0f);
-	static Blending blending;
+	Blending blending;
 	CanvasPixelArray pixels;
 
 	public Pixmap(FileHandle file)
@@ -131,7 +133,7 @@ public class Pixmap implements Disposable
 	public CanvasRenderingContext2D getContext() {
 		return context;
 	}
-	
+
 	private static String getComposite()
 	{
 		return Composite.SOURCE_OVER;
@@ -173,9 +175,9 @@ public class Pixmap implements Disposable
 
 	/** Sets the type of {@link Blending} to be used for all operations. Default is {@link Blending#SourceOver}.
 	 * @param blending the blending type */
-	public static void setBlending(Blending blending)
+	public void setBlending(Blending blending)
 	{
-		Pixmap.blending= blending;
+		this.blending= blending;
 		String composite= getComposite();
 		for (Pixmap pixmap : pixmaps.values())
 		{
@@ -184,7 +186,7 @@ public class Pixmap implements Disposable
 	}
 
 	/** @return the currently set {@link Blending} */
-	public static Blending getBlending()
+	public Blending getBlending()
 	{
 		return blending;
 	}
@@ -192,7 +194,7 @@ public class Pixmap implements Disposable
 	/** Sets the type of interpolation {@link Filter} to be used in conjunction with
 	 * {@link Pixmap#drawPixmap(Pixmap, int, int, int, int, int, int, int, int)}.
 	 * @param filter the filter. */
-	public static void setFilter(Filter filter)
+	public void setFilter(Filter filter)
 	{
 	}
 
@@ -226,9 +228,10 @@ public class Pixmap implements Disposable
 		return height;
 	}
 
-	public Buffer getPixels()
+	public ByteBuffer getPixels()
 	{
-		return buffer;
+		ScriptHelper.put("buffer", this.buffer, this);
+		return (ByteBuffer)ScriptHelper.eval("buffer" , this);
 	}
 
 	@Override

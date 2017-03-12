@@ -1,45 +1,42 @@
 ext {
-    GROUPID = "com.github.xpenatan"
-    VERSION = "1.0.0"
+	GROUPID = "com.github.xpenatan"
+	VERSION = "1.0.0"
 	TYPE = "-SNAPSHOT"
-    gdxVersion = "1.9.6"
+	gdxVersion = "1.9.6"
 	dragomeVersion = '0.96-beta4'
-	
 }
 
 configurations {
-	
-  childJars
+	childJars
 }
 
 allprojects {
-	repositories { 
+	repositories {
 		mavenLocal()
 		mavenCentral()
 		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 	}
-
 }
 
 configure(subprojects) {
-    apply plugin: "java"
+	apply plugin: "java"
 	apply plugin: 'maven'
 	
-    compileJava.options.encoding = 'UTF-8';
-    group = GROUPID
-    version = VERSION + TYPE
+	compileJava.options.encoding = 'UTF-8';
+	group = GROUPID
+	version = VERSION + TYPE
 
-    // set source Java version
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    sourceSets.main.java.srcDirs = ["src"]
-    sourceSets.main.resources.srcDirs = ["resources"]
+	// set source Java version
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	sourceSets.main.java.srcDirs = ["src"]
+	sourceSets.main.resources.srcDirs = ["resources"]
 	archivesBaseName = "gdx-backend-dragome"
 }
 
 project(":backends:gdx-backend-dragome") {
-    dependencies {
+	dependencies {
 		compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 		compile "com.dragome:dragome-bytecode-js-compiler:$dragomeVersion"
 		compile "com.dragome:dragome-core:$dragomeVersion"
@@ -47,30 +44,30 @@ project(":backends:gdx-backend-dragome") {
 		compile "com.dragome:dragome-js-jre:$dragomeVersion"
 		compile "com.dragome:dragome-w3c-standards:$dragomeVersion"
 		compile "com.dragome:dragome-web:$dragomeVersion"
-    }
+	}
 }
 
 dependencies {
-  subprojects.each {
-    childJars project(it.path)
-  }
+	subprojects.each {
+		childJars project(it.path)
+	}
 }
 
 task packTest(type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
 	project.group = GROUPID
-    project.version = VERSION + "-ALL" + TYPE
+	project.version = VERSION + "-ALL" + TYPE
 
 	apply from: 'deploy.gradle'
 
 	project.archivesBaseName = 'gdx-backend-dragome'
-    project.description = 'Generate a single jar file which contains Dragome-Backend and DragomeSDK'
+	project.description = 'Generate a single jar file which contains Dragome-Backend and DragomeSDK'
 
 	dependsOn configurations.childJars
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	from 
-	{ 
-		configurations.childJars.collect 
-		{ 
+	from
+	{
+		configurations.childJars.collect
+		{
 			if(!it.isDirectory()) 
 			{
 				String path = it.getPath()
@@ -79,7 +76,7 @@ task packTest(type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
 				if(path.contains("gdx-backend-dragome") || !path.contains("gdx-")) {
 					include = true
 				}
-				
+
 				if(include) {
 					zipTree(it)
 				}
@@ -100,5 +97,5 @@ task packTest(type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
 }
 
 artifacts {
-    archives packTest
+	archives packTest
 }
