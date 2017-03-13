@@ -65,7 +65,7 @@ public class DragomeGraphics implements Graphics
 		attributes.setPremultipliedAlpha(config.premultipliedAlpha);
 		attributes.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
 
-		WebGLRenderingContextExtension context= findWebGLContext();
+		WebGLRenderingContextExtension context= findWebGLContext(attributes);
 		if (context == null)
 			return false;
 
@@ -81,16 +81,28 @@ public class DragomeGraphics implements Graphics
 		return true;
 	}
 
-	private WebGLRenderingContextExtension findWebGLContext()
+	private WebGLRenderingContextExtension findWebGLContext(WebGLContextAttributes attributes)
 	{
-		String[] contextNames= new String[] { "moz-webgl", "webgl", "experimental-webgl", "webkit-webgl", "webkit-3d" };
+//		String[] contextNames= new String[] { "experimental-webgl", "webgl", "moz-webgl", "webkit-webgl", "webkit-3d" };
+//		for (String contextName : contextNames)
+//		{
+//			Object context= canvas.getContext(contextName, attributes);
+//			if (context != null)
+//				return (WebGLRenderingContextExtension) context;
+//		}
+
+		String[] contextNames= new String[] { "experimental-webgl", "webgl", "moz-webgl", "webkit-webgl", "webkit-3d" };
+		ScriptHelper.put("canvas", canvas, this);
+		ScriptHelper.put("attr", attributes, this);
 		for (String contextName : contextNames)
 		{
-			Object context= canvas.getContext(contextName);
-			if (context != null)
-				return (WebGLRenderingContextExtension) context;
+			ScriptHelper.put("contextName", contextName, this);
+			Object con = ScriptHelper.eval("canvas.node.getContext(contextName, attr.node)", this);
+			if(con != null) {
+				ScriptHelper.put("con", con, null);
+				return ScriptHelper.evalCasting("con", WebGLRenderingContextExtension.class, null);
+			}
 		}
-
 		return null;
 	}
 
