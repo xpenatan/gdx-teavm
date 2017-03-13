@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.html.CanvasPixelArray;
 import org.w3c.dom.html.CanvasRenderingContext2D;
 import org.w3c.dom.html.HTMLCanvasElement;
-import org.w3c.dom.html.HTMLImageElement;
+import org.w3c.dom.html.ImageData;
 
 import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.files.FileHandle;
@@ -389,12 +388,21 @@ public class Pixmap implements Disposable {
 	 * @return The pixel color in RGBA8888 format. */
 	public int getPixel (int x, int y) {
 		ensureCanvasExists();
-		if (pixels == null) pixels = context.getImageData(0, 0, width, height).getData();
+		if (pixels == null)  {
+			ImageData imageData = context.getImageData(0, 0, width, height);
+			pixels = imageData.getData();
+		}
 		int i = x * 4 + y * width * 4;
-		int r = pixels.getElement(i + 0) & 0xff;
-		int g = pixels.getElement(i + 1) & 0xff;
-		int b = pixels.getElement(i + 2) & 0xff;
-		int a = pixels.getElement(i + 3) & 0xff;
+		ScriptHelper.put("pixels", pixels, this);
+		ScriptHelper.put("i", i, this);
+//		int r = pixels.getElement(i + 0) & 0xff; // getElement dont exist.
+//		int g = pixels.getElement(i + 1) & 0xff;
+//		int b = pixels.getElement(i + 2) & 0xff;
+//		int a = pixels.getElement(i + 3) & 0xff;
+		int r = ScriptHelper.evalInt("pixels.node[i+0]", this) & 0xff;
+		int g = ScriptHelper.evalInt("pixels.node[i+1]", this) & 0xff;
+		int b = ScriptHelper.evalInt("pixels.node[i+2]", this) & 0xff;
+		int a = ScriptHelper.evalInt("pixels.node[i+3]", this) & 0xff;
 		return (r << 24) | (g << 16) | (b << 8) | (a);
 	}
 

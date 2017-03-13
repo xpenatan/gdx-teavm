@@ -42,9 +42,11 @@ import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.events.Touch;
 import org.w3c.dom.events.TouchEvent;
 import org.w3c.dom.events.TouchList;
+import org.w3c.dom.html.CanvasPixelArray;
 import org.w3c.dom.html.CanvasRenderingContext2D;
 import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.html.HTMLDocument;
+import org.w3c.dom.html.ImageData;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.ArrayBufferView;
 import org.w3c.dom.typedarray.Float32Array;
@@ -78,11 +80,9 @@ import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.commons.compiler.classpath.ClasspathFile;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathEntry;
-import com.dragome.compiler.utils.Log;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
 import com.dragome.web.enhancers.jsdelegate.serverside.JsDelegateGenerator;
 import com.dragome.web.helpers.DefaultClasspathFileFilter;
-import com.dragome.web.helpers.serverside.DragomeCompilerLauncher;
 import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
@@ -104,7 +104,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 
 	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Document.class, HTMLDocument.class, Element.class, Attr.class, NodeList.class,
 			Node.class, NamedNodeMap.class, Text.class, HTMLCanvasElement.class, CanvasRenderingContext2D.class, EventTarget.class,
-			EventListener.class, HTMLImageElementExtension.class, HTMLCanvasElementExtension.class,
+			EventListener.class, HTMLImageElementExtension.class, HTMLCanvasElementExtension.class, ImageData.class, CanvasPixelArray.class,
 			Event.class, TouchEvent.class, TouchList.class, Touch.class, MouseEvent.class, KeyboardEvent.class, ProgressEvent.class, MessageEventExtension.class,
 			WebGLActiveInfo.class, WebGLBuffer.class, WebGLContextAttributes.class, WebGLFramebuffer.class,
 			WebGLObject.class, WebGLProgram.class, WebGLRenderbuffer.class, WebGLRenderingContext.class,

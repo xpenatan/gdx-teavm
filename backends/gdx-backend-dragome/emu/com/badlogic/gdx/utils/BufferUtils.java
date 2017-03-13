@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 
 /** Class with static helper methods to increase the speed of array/direct buffer and direct buffer/direct buffer transfers
- * 
+ *
  * @author mzechner */
 public final class BufferUtils {
 	/** Copies numFloats floats from src starting at offset to dst. Dst is assumed to be a direct {@link Buffer}. The method will
@@ -23,7 +23,7 @@ public final class BufferUtils {
 	 * buffer. After the copying process the position of the buffer is set to 0 and its limit is set to numFloats * 4 if it is a
 	 * ByteBuffer and numFloats if it is a FloatBuffer. In case the Buffer is neither a ByteBuffer nor a FloatBuffer the limit is
 	 * not set. This is an expert method, use at your own risk.
-	 * 
+	 *
 	 * @param src the source array
 	 * @param dst the destination buffer, has to be a direct Buffer
 	 * @param numFloats the number of floats to copy
@@ -45,7 +45,7 @@ public final class BufferUtils {
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -55,16 +55,16 @@ public final class BufferUtils {
 
 		ByteBuffer byteBuffer = (ByteBuffer)dst;
 		int oldPosition = byteBuffer.position();
+		byteBuffer.limit(oldPosition + numElements);
 		byteBuffer.put(src, srcOffset, numElements);
 		byteBuffer.position(oldPosition);
-		byteBuffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -77,16 +77,16 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or ShortBuffer");
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -99,16 +99,16 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or CharBuffer");
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -121,16 +121,16 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or IntBuffer");
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -143,16 +143,16 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or LongBuffer");
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -161,16 +161,16 @@ public final class BufferUtils {
 		FloatBuffer buffer = asFloatBuffer(dst);
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
 
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position will stay the same, the limit
 	 * will be set to position + numElements. <b>The Buffer must be a direct Buffer with native byte order. No error checking is
 	 * performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param dst the destination Buffer, its position is used as an offset.
@@ -183,15 +183,15 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or DoubleBuffer");
 
 		int oldPosition = buffer.position();
+		buffer.limit(oldPosition + numElements);
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
-		buffer.limit(oldPosition + numElements);
 	}
-	
+
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position and limit will stay the same.
 	 * <b>The Buffer must be a direct Buffer with native byte order. No error checking is performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param numElements the number of elements to copy.
@@ -211,7 +211,7 @@ public final class BufferUtils {
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position and limit will stay the same.
 	 * <b>The Buffer must be a direct Buffer with native byte order. No error checking is performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param numElements the number of elements to copy.
@@ -231,7 +231,7 @@ public final class BufferUtils {
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position and limit will stay the same.
 	 * <b>The Buffer must be a direct Buffer with native byte order. No error checking is performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param numElements the number of elements to copy.
@@ -251,7 +251,7 @@ public final class BufferUtils {
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position and limit will stay the same.
 	 * <b>The Buffer must be a direct Buffer with native byte order. No error checking is performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param numElements the number of elements to copy.
@@ -266,7 +266,7 @@ public final class BufferUtils {
 	/** Copies the contents of src to dst, starting from src[srcOffset], copying numElements elements. The {@link Buffer} instance's
 	 * {@link Buffer#position()} is used to define the offset into the Buffer itself. The position and limit will stay the same.
 	 * <b>The Buffer must be a direct Buffer with native byte order. No error checking is performed</b>.
-	 * 
+	 *
 	 * @param src the source array.
 	 * @param srcOffset the offset into the source array.
 	 * @param numElements the number of elements to copy.
@@ -277,7 +277,7 @@ public final class BufferUtils {
 			buffer = ((ByteBuffer)dst).asDoubleBuffer();
 		else if (dst instanceof DoubleBuffer) buffer = (DoubleBuffer)dst;
 		if (buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or DoubleBuffer");
-		
+
 		int oldPosition = buffer.position();
 		buffer.put(src, srcOffset, numElements);
 		buffer.position(oldPosition);
@@ -319,7 +319,7 @@ public final class BufferUtils {
 		dst.flip();
 		dst.position(dstPos);
 	}
-	
+
 	private final static FloatBuffer asFloatBuffer(final Buffer data) {
 		FloatBuffer buffer = null;
 		if (data instanceof ByteBuffer)
@@ -328,7 +328,7 @@ public final class BufferUtils {
 		if (buffer == null) throw new GdxRuntimeException("data must be a ByteBuffer or FloatBuffer");
 		return buffer;
 	}
-	
+
 	private final static float[] asFloatArray(final FloatBuffer buffer) {
 		final int pos = buffer.position();
 		final float[] result = new float[buffer.remaining()];
@@ -336,7 +336,7 @@ public final class BufferUtils {
 		buffer.position(pos);
 		return result;
 	}
-	
+
 	/** Multiply float vector components within the buffer with the specified matrix. The {@link Buffer#position()} is used as
 	 * the offset.
 	 * @param data The buffer to transform.
@@ -356,7 +356,7 @@ public final class BufferUtils {
 			final float y = arr[idx + 1];
 			final float z = dimensions >= 3 ? arr[idx + 2] : 0f;
 			final float w = dimensions >= 4 ? arr[idx + 3] : 1f;
-			arr[idx  ] = x * m[ 0] + y * m[ 4] + z * m[ 8] + w * m[12]; 
+			arr[idx  ] = x * m[ 0] + y * m[ 4] + z * m[ 8] + w * m[12];
 			arr[idx+1] = x * m[ 1] + y * m[ 5] + z * m[ 9] + w * m[13];
 			if (dimensions >= 3) {
 				arr[idx+2] = x * m[ 2] + y * m[ 6] + z * m[10] + w * m[14];
@@ -368,7 +368,7 @@ public final class BufferUtils {
 		buffer.put(arr);
 		buffer.position(pos);
 	}
-	
+
 	/** Multiply float vector components within the buffer with the specified matrix. The {@link Buffer#position()} is used as
 	 * the offset.
 	 * @param data The buffer to transform.
@@ -388,7 +388,7 @@ public final class BufferUtils {
 			final float x = arr[idx    ];
 			final float y = arr[idx + 1];
 			final float z = dimensions >= 3 ? arr[idx + 2] : 1f;
-			arr[idx  ] = x * m[ 0] + y * m[ 3] + z * m[ 6]; 
+			arr[idx  ] = x * m[ 0] + y * m[ 3] + z * m[ 6];
 			arr[idx+1] = x * m[ 1] + y * m[ 4] + z * m[ 7];
 			if (dimensions >= 3)
 				arr[idx+2] = x * m[ 2] + y * m[ 5] + z * m[8];
@@ -405,11 +405,11 @@ public final class BufferUtils {
 	public static long findFloats(float[] vertex, int strideInBytes, Buffer vertices, int numVertices) {
 		return findFloats(vertex, strideInBytes, asFloatArray(asFloatBuffer(vertices)), numVertices);
 	}
-	
+
 	public static long findFloats(Buffer vertex, int strideInBytes, float[] vertices, int numVertices) {
 		return findFloats(asFloatArray(asFloatBuffer(vertex)), strideInBytes, vertices, numVertices);
 	}
-	
+
 	public static long findFloats(float[] vertex, int strideInBytes, float[] vertices, int numVertices) {
 		final int size = strideInBytes / 4;
 		for (int i = 0; i < numVertices; i++) {
@@ -419,11 +419,11 @@ public final class BufferUtils {
 				if (vertices[offset+j] != vertex[j])
 					found = false;
 			if (found)
-				return (long)i;
+				return i;
 		}
 		return -1;
 	}
-	
+
 	public static long findFloats(Buffer vertex, int strideInBytes, Buffer vertices, int numVertices, float epsilon) {
 		return findFloats(asFloatArray(asFloatBuffer(vertex)), strideInBytes, asFloatArray(asFloatBuffer(vertices)), numVertices, epsilon);
 	}
@@ -431,11 +431,11 @@ public final class BufferUtils {
 	public static long findFloats(float[] vertex, int strideInBytes, Buffer vertices, int numVertices, float epsilon) {
 		return findFloats(vertex, strideInBytes, asFloatArray(asFloatBuffer(vertices)), numVertices, epsilon);
 	}
-	
+
 	public static long findFloats(Buffer vertex, int strideInBytes, float[] vertices, int numVertices, float epsilon) {
 		return findFloats(asFloatArray(asFloatBuffer(vertex)), strideInBytes, vertices, numVertices, epsilon);
 	}
-	
+
 	public static long findFloats(float[] vertex, int strideInBytes, float[] vertices, int numVertices, float epsilon) {
 		final int size = strideInBytes / 4;
 		for (int i = 0; i < numVertices; i++) {
@@ -445,11 +445,11 @@ public final class BufferUtils {
 				if ((vertices[offset+j] > vertex[j] ? vertices[offset+j] - vertex[j] : vertex[j] - vertices[offset+j]) > epsilon)
 					found = false;
 			if (found)
-				return (long)i;
+				return i;
 		}
 		return -1;
 	}
-	
+
 	public static FloatBuffer newFloatBuffer (int numFloats) {
 		if (Dragome.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
