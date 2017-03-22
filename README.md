@@ -66,7 +66,7 @@ gradlew :dragome:jettyRun
 ```
 
 
-# Go to [Wiki] ( https://github.com/xpenatan/gdx-dragome-backend/wiki ) for more information.
+# Go to [Wiki](https://github.com/xpenatan/gdx-dragome-backend/wiki) for more information.
 
 #Example
 <p align="center"><img src="http://i.imgur.com/v8I8lQy.gif"/></p>
