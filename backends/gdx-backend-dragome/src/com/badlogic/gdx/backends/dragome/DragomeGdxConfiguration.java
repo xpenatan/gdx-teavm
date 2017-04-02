@@ -102,6 +102,8 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 
 	protected JsDelegateGenerator jsDelegateGenerator;
 
+	final StringBuilder sb = new StringBuilder();
+
 	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Document.class, HTMLDocument.class, Element.class, Attr.class, NodeList.class,
 			Node.class, NamedNodeMap.class, Text.class, HTMLCanvasElement.class, CanvasRenderingContext2D.class, EventTarget.class,
 			EventListener.class, HTMLImageElementExtension.class, HTMLCanvasElementExtension.class, ImageData.class, CanvasPixelArray.class,
@@ -326,7 +328,13 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
 		if(filterClassPathLog())
-			LOGGER.info("Allow Project: " + include + " path: " + classpathEntry);
+		{
+			String text = "Compile: " + include + " path: " + classpathEntry + "\n";
+			if(include)
+				sb.insert(0, text);
+			else
+				sb.append(text);
+		}
 		return include;
 	}
 
@@ -381,15 +389,25 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 					return 0;
 			}
 		});
+
+		if(sb.length() > 0)
+			sb.insert(0, "\n" + "########### Libs/Classes PATH to allow Dragome to compile ###########" + "\n");
+
 		Iterator<ClasspathEntry> iterator = classPath.getEntries().iterator();
-		final StringBuilder sb = new StringBuilder();
-		sb.append("######################## ClassPath Order ########################\n");
+		int i = 0;
+		sb.append("\n" + "######################## Libs ClassPath Order ########################\n");
 		while(iterator.hasNext()) {
-			sb.append(iterator.next().toString());
+			ClasspathEntry next = iterator.next();
+			String name = next.getName();
+			if(next instanceof VirtualFolderClasspathEntry)
+				name = "Delegate Virtual Path";
+			sb.append(i + ": " + name);
 			sb.append("\n");
+			i++;
 		}
 		sb.append("#################################################################");
 		LOGGER.info(sb.toString());
+		sb.setLength(0);
 	}
 
 	@Override

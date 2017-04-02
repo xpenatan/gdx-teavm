@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.tests.dragome.examples.AnimationTest;
 import com.badlogic.gdx.tests.dragome.examples.BulletTest;
+import com.badlogic.gdx.tests.dragome.examples.DragomeLossyPremultipliedAlphaTest;
 import com.badlogic.gdx.tests.dragome.examples.GearsDemo;
 import com.badlogic.gdx.tests.dragome.examples.UITest;
 import com.badlogic.gdx.tests.dragome.examples.bullet.BulletTestCollection;
@@ -32,6 +33,6 @@ public class Main {
 			appTest = new UITest();
 
 		if(appTest != null)
-			new LwjglApplication(appTest);
+			new LwjglApplication(new DragomeLossyPremultipliedAlphaTest());
 	}
 }
