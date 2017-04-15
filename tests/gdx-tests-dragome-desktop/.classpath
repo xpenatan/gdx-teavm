@@ -5,6 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GdxBullet"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx-freetype"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-tests-dragome"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-lwjgl"/>
 	<classpathentry kind="lib" path="/GdxBulletBuild/natives/gdx-bullet-natives.jar"/>

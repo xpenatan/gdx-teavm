@@ -6,7 +6,8 @@ import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.badlogic.gdx.backends.dragome.DragomeWindow;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
-import com.badlogic.gdx.tests.dragome.examples.FreeTypeTest;
+import com.badlogic.gdx.backends.dragome.preloader.AssetType;
+import com.badlogic.gdx.tests.dragome.examples.FreeTypePackTest;
 import com.dragome.web.annotations.PageAlias;
 
 @PageAlias(alias= "FreeType")
@@ -17,7 +18,9 @@ public class FreeTypeLauncher extends DragomeApplication
 	{
 		AssetLoaderListener<Object> listener = new AssetLoaderListener<Object>();
 		AssetDownloader.loadScript("freetype.js", listener);
-		return new FreeTypeTest();
+		getPreloader().loadAsset("data/arial.ttf", AssetType.Binary, null, new AssetLoaderListener<Object>());
+		getPreloader().loadAsset("data/arial-italic.ttf", AssetType.Binary, null, new AssetLoaderListener<Object>());
+		return new FreeTypePackTest();
 	}
 
 	@Override

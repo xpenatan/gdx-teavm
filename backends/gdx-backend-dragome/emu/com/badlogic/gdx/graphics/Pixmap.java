@@ -126,7 +126,7 @@ public class Pixmap implements Disposable {
 		this.imageElement = imageElement;
 		this.width = imageElement != null ? imageElement.getWidthAsInteger() : width;
 		this.height = imageElement != null ? imageElement.getHeightAsInteger() : height;
-
+		this.format = Format.RGBA8888;
 		buffer = BufferUtils.newIntBuffer(1);
 		id = nextId++;
 		buffer.put(0, id);
@@ -151,11 +151,8 @@ public class Pixmap implements Disposable {
 	 * @param blending the blending type */
 	public void setBlending (Blending blending) {
 		this.blending = blending;
-		String composite = getComposite();
-		for (Pixmap pixmap : pixmaps.values()) {
-			pixmap.ensureCanvasExists();
-			pixmap.context.setGlobalCompositeOperation(composite);
-		}
+		this.ensureCanvasExists();
+		this.context.setGlobalCompositeOperation(getComposite());
 	}
 
 	/** @return the currently set {@link Blending} */
