@@ -65,6 +65,18 @@ buildscript {
 gradlew :dragome:jettyRun
 ```
 
+Current demos:
+* [AnimationTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?AnimationTest) 
+* [Gears Demo](http://xpenatan.github.io/gdx-dragome-backend/index.html?Gears)
+* [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest)
+* [BulletTestCollection](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletCollection)
+* [Box2DTestCollection](http://xpenatan.github.io/gdx-dragome-backend/index.html?Box2DCollection)
+* [UITest](http://xpenatan.github.io/gdx-dragome-backend/index.html?UITest)
+* [Quantum](https://xpenatan.github.io/gdx-quantum/)
+* [Shader-toy](https://xpenatan.github.io/gdx-shadertoy/) - [Github](https://github.com/xpenatan/gdx-shadertoy)
+* [Pax-Britannica](https://xpenatan.github.io/libgdx-demo-pax-britannica/) - [Github](https://github.com/xpenatan/libgdx-demo-pax-britannica)
+* [FreeType](http://xpenatan.github.io/gdx-dragome-backend/index.html?FreeType)
+
 
 # Go to [Wiki](https://github.com/xpenatan/gdx-dragome-backend/wiki) for more information.
 
