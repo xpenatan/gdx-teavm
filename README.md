@@ -66,6 +66,7 @@ gradlew :dragome:jettyRun
 ```
 
 Current demos:
+* [XpeEditor](https://xpenatan.github.io/XpeEngine/XpeEditor/index.html?XpeEditore) - A bit heavy for low end systems
 * [AnimationTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?AnimationTest) 
 * [Gears Demo](http://xpenatan.github.io/gdx-dragome-backend/index.html?Gears)
 * [BulletTest](http://xpenatan.github.io/gdx-dragome-backend/index.html?BulletTest)
