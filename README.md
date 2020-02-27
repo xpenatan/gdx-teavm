@@ -1,5 +1,5 @@
 # Libgdx Dragome Backend
-This backend use [DragomeSDK](https://github.com/dragome/dragome-sdk) to generate libgdx games to javascript. A alternative to gwt backend.
+This backend use [DragomeSDK](https://github.com/xpenatan/dragome-sdk) fork to generate libgdx games to javascript. A alternative to gwt backend.
 
 * Its fast to compile ¹
 * Easy to use
