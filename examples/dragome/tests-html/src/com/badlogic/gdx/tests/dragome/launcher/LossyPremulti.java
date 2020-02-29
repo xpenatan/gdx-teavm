@@ -1,14 +1,14 @@
 package com.badlogic.gdx.tests.dragome.launcher;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.dragome.DragomeApplication;
-import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
-import com.badlogic.gdx.backends.dragome.DragomeWindow;
-import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
-import com.badlogic.gdx.backends.dragome.preloader.AssetType;
 import com.badlogic.gdx.tests.dragome.examples.AnimationTest;
 import com.badlogic.gdx.tests.dragome.examples.DragomeLossyPremultipliedAlphaTest;
 import com.dragome.web.annotations.PageAlias;
+import com.github.xpenatan.gdx.backends.dragome.DragomeApplication;
+import com.github.xpenatan.gdx.backends.dragome.DragomeApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.dragome.DragomeWindow;
+import com.github.xpenatan.gdx.backends.dragome.preloader.AssetType;
+import com.github.xpenatan.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 
 @PageAlias(alias= "Premultiplied")
 public class LossyPremulti extends DragomeApplication

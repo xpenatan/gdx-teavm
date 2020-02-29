@@ -2,9 +2,9 @@ package com.badlogic.gdx.tests.dragome.config;
 
 import java.io.File;
 
-import com.badlogic.gdx.backends.dragome.DragomeGdxConfiguration;
 import com.badlogic.gdx.utils.Array;
 import com.dragome.commons.DragomeConfiguratorImplementor;
+import com.github.xpenatan.gdx.backends.dragome.DragomeGdxConfiguration;
 
 @DragomeConfiguratorImplementor(priority = 11)
 public class TestsConfiguration extends DragomeGdxConfiguration{

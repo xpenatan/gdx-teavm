@@ -28,7 +28,6 @@ import org.w3c.dom.html.CanvasRenderingContext2D;
 import org.w3c.dom.html.HTMLCanvasElement;
 import org.w3c.dom.html.ImageData;
 
-import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
@@ -37,6 +36,7 @@ import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.services.WebServiceLocator;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
+import com.github.xpenatan.gdx.backends.dragome.DragomeFileHandle;
 
 public class Pixmap implements Disposable {
 	public static Map<Integer, Pixmap> pixmaps = new HashMap<Integer, Pixmap>();

@@ -1,11 +1,11 @@
 package com.badlogic.gdx.tests.dragome.launcher;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.dragome.DragomeApplication;
-import com.badlogic.gdx.backends.dragome.DragomeApplicationConfiguration;
-import com.badlogic.gdx.backends.dragome.DragomeWindow;
 import com.badlogic.gdx.tests.dragome.examples.GearsDemo;
 import com.dragome.web.annotations.PageAlias;
+import com.github.xpenatan.gdx.backends.dragome.DragomeApplication;
+import com.github.xpenatan.gdx.backends.dragome.DragomeApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.dragome.DragomeWindow;
 
 @PageAlias(alias= "Gears")
 public class GearsLauncher extends DragomeApplication

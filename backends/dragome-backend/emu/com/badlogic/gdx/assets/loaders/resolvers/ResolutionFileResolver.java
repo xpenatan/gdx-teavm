@@ -18,8 +18,8 @@ package com.badlogic.gdx.assets.loaders.resolvers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.dragome.DragomeFileHandle;
 
 public class ResolutionFileResolver implements FileHandleResolver {
 	public static class Resolution {

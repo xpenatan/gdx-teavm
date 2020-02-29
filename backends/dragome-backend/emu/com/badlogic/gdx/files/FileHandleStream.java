@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.badlogic.gdx.Files.FileType;
+import com.github.xpenatan.gdx.backends.dragome.DragomeApplication;
+import com.github.xpenatan.gdx.backends.dragome.DragomeFileHandle;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.dragome.DragomeApplication;
-import com.badlogic.gdx.backends.dragome.DragomeFileHandle;
 
 /** A FileHandle intended to be subclassed for the purpose of implementing {@link #read()} and/or {@link #write(boolean)}. Methods
  * that would manipulate the file instead throw UnsupportedOperationException.
