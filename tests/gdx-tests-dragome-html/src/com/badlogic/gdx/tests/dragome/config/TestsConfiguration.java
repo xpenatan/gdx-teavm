@@ -11,17 +11,17 @@ public class TestsConfiguration extends DragomeGdxConfiguration{
 
 	@Override
 	public int filterClassLog () {
-		return 2;
+		return 1;
 	}
 
 	@Override
 	public boolean isRemoveUnusedCode () {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isObfuscateCode () {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -35,6 +35,6 @@ public class TestsConfiguration extends DragomeGdxConfiguration{
 
 	@Override
 	public boolean filterClassPathLog () {
-		return false;
+		return true;
 	}
 }

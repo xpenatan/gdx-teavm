@@ -39,7 +39,6 @@ build/
 *.sdf
 *.class
 *.cache
-*.js
 
 libgdx-*.zip
 libgdx-*.zip.MD5

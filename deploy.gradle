@@ -11,19 +11,19 @@ def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/
 uploadArchives {
 	repositories {
 		mavenDeployer() {
-			if(project.hasProperty('local')) {
-				if(project.hasProperty('localPath')) {
-					repository(url: "file://" + project.property('localPath'))
-				}
-				else {
+//			if(project.hasProperty('local')) {
+//				if(project.hasProperty('localPath')) {
+//					repository(url: "file://" + project.property('localPath'))
+//				}
+//				else {
 					repository(url: localMavenRepo )
-				}
-			} else {
-				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-					authentication(userName: xUser, password: xPass)
-				}
-			}
+//				}
+//			} else {
+//				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+//				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+//					authentication(userName: xUser, password: xPass)
+//				}
+//			}
 
 			pom*.whenConfigured { pom -> pom.dependencies.clear() }
 

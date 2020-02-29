@@ -272,8 +272,9 @@ public class DragomeGraphics implements Graphics {
 
 	@Override
 	public boolean supportsExtension (String extension) {
-		if (extensions == null) extensions = Gdx.gl.glGetString(GL20.GL_EXTENSIONS);
-		return extensions.contains(extension);
+		if (extensions == null)
+			extensions = Gdx.gl.glGetString(GL20.GL_EXTENSIONS);
+		return extensions != null ? extensions.contains(extension) : false;
 	}
 
 	@Override
@@ -315,5 +316,35 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	public void setResizable (boolean resizable) {
+	}
+
+	public void setGL20 (GL20 gl20) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setGL30 (GL30 gl30) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public int getSafeInsetLeft () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getSafeInsetTop () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getSafeInsetBottom () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getSafeInsetRight () {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

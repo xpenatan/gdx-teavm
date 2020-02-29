@@ -146,9 +146,40 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 				flag = toAccept(path, "org/jdom/", flag, true);
 				flag = toAccept(path, "org/reflections/", flag, true);
 				flag = toAccept(path, "javax/", flag, true);
-				flag = toAccept(path, "javax/persistence/", flag, false);
-				flag = toAccept(path, "javax/script/", flag, false);
-				flag = toAccept(path, "javax/swing/", flag, false);
+
+//				flag = toAccept(path, "javax/persistence/", flag, false);
+//				flag = toAccept(path, "javax/script/", flag, false);
+//				flag = toAccept(path, "javax/swing/", flag, false);
+
+				flag = toAccept(path, "javax/persistence/Entity.class", flag, false);
+				flag = toAccept(path, "javax/persistence/GeneratedValue.class", flag, false);
+				flag = toAccept(path, "javax/persistence/GenerationType.class", flag, false);
+				flag = toAccept(path, "javax/persistence/Id.class", flag, false);
+				flag = toAccept(path, "javax/script/ScriptEngine.class", flag, false);
+				flag = toAccept(path, "javax/script/ScriptEngineImpl.class", flag, false);
+				flag = toAccept(path, "javax/script/ScriptEngineManager.class", flag, false);
+				flag = toAccept(path, "javax/swing/event/TreeExpansionEvent.class", flag, false);
+				flag = toAccept(path, "javax/swing/event/TreePath.class", flag, false);
+
+				flag = toAccept(path, "META-INF/c-1_0-rt.tld", flag, true);
+				flag = toAccept(path, "META-INF/c-1_0.tld", flag, true);
+				flag = toAccept(path, "META-INF/c.tld", flag, true);
+				flag = toAccept(path, "META-INF/fmt-1_0-rt.tld", flag, true);
+				flag = toAccept(path, "META-INF/fmt-1_0.tld", flag, true);
+				flag = toAccept(path, "META-INF/fmt.tld", flag, true);
+				flag = toAccept(path, "META-INF/fn.tld", flag, true);
+				flag = toAccept(path, "META-INF/html_basic.tld", flag, true);
+				flag = toAccept(path, "META-INF/jsf_core.tld", flag, true);
+				flag = toAccept(path, "META-INF/mojarra_ext.tld", flag, true);
+				flag = toAccept(path, "META-INF/permittedTaglibs.tld", flag, true);
+				flag = toAccept(path, "META-INF/scriptfree.tld", flag, true);
+				flag = toAccept(path, "META-INF/sql-1_0-rt.tld", flag, true);
+				flag = toAccept(path, "META-INF/sql-1_0.tld", flag, true);
+				flag = toAccept(path, "META-INF/sql.tld", flag, true);
+				flag = toAccept(path, "META-INF/x-1_0-rt.tld", flag, true);
+				flag = toAccept(path, "META-INF/x-1_0.tld", flag, true);
+				flag = toAccept(path, "META-INF/x.tld", flag, true);
+
 				flag = toAccept(path, "proguard/", flag, true);
 				flag = toAccept(path, "/google/", flag, true);
 				flag = toAccept(path, "javassist/", flag, true);
@@ -290,14 +321,22 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	public boolean filterClassPath(String classpathEntry) {
 		boolean include= super.filterClassPath(classpathEntry);
 		classpathEntry = classpathEntry.replace("\\", "/");
-		include |= classpathEntry.contains(projName + "/") && classpathEntry.contains("/bin");
-		include |= classpathEntry.contains(projName + "/") && classpathEntry.contains("/classes");
+		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin");
+//		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin/main");
+		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/classes/java/main");
+		include |= classpathEntry.contains("dragome-js-jre");
+		include |= classpathEntry.contains("dragome-web");
+		include |= classpathEntry.contains("dragome-core");
+		include |= classpathEntry.contains("dragome-js-commons");
+		include |= classpathEntry.contains("dragome-w3c-standards");
+		include |= classpathEntry.contains("dragome-bytecode-js-compiler");
 		if(classpathEntry.contains("gdx")) {
-			include|= classpathEntry.contains("/gdx.jar");
+			include =true;
+			include|= classpathEntry.contains("/gdx-") && classpathEntry.contains(".jar");
 			include|= classpathEntry.contains("gdx/bin");
 			include|= classpathEntry.contains("gdx/classes");
 
-			if(classpathEntry.contains("gdx-box2d-")) {
+			if(classpathEntry.contains("gdx-box2d")) {
 				include|= classpathEntry.contains("gdx-box2d-dragome-");
 				include|= classpathEntry.contains("gdx-box2d-gwt-");
 				include|= classpathEntry.contains("/bin");
@@ -330,7 +369,13 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 
 			}
 		}
+
+		if(!include && classpathEntry.contains("/bin"))
+			include = true;
 		include &= !classpathEntry.contains("/resources/");
+		if(classpathEntry.contains("-sources."))
+			include = false;
+
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
 		if(filterClassPathLog())
@@ -362,6 +407,7 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
 		filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
 		filePath.add("com/badlogic/gdx/utils/arial-15.png");
+		filePath.add("soundmanager2-jsmin.js");
 		assetsClasspath(filePath);
 	}
 

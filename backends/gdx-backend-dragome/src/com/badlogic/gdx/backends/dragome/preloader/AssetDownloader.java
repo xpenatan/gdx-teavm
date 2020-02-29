@@ -40,8 +40,8 @@ public class AssetDownloader
 	static int queue;
 	static boolean useBrowserCache = true;
 	static boolean useInlineBase64;
-	
-	
+
+
 	private AssetDownloader(){}
 
 	public static void setUseBrowserCache(boolean useBrowserCache)
@@ -69,12 +69,12 @@ public class AssetDownloader
 		@MethodAlias(local_alias= "onProgress")
 		public void onProgress(double amount){}
 
-		public void onFailure(){}
+		public void onFailure(String url){}
 
-		public void onSuccess(T result){}
+		public void onSuccess(String url, T result){}
 	}
 
-	public static void load(String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
+	public static void load(final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
 	{
 		switch (type)
 		{
@@ -91,14 +91,14 @@ public class AssetDownloader
 				loadAudio(url, (AssetLoaderListener<Void>) listener);
 				break;
 			case Directory:
-				listener.onSuccess(null);
+				listener.onSuccess(url, null);
 				break;
 			default:
 				throw new GdxRuntimeException("Unsupported asset type " + type);
 		}
 	}
 
-	public static void loadText(String url, final AssetLoaderListener<String> listener)
+	public static void loadText(final String url, final AssetLoaderListener<String> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 
@@ -111,11 +111,11 @@ public class AssetDownloader
 				{
 					if (request.getStatus() != 200)
 					{
-						listener.onFailure();
+						listener.onFailure(url);
 					}
 					else
 					{
-						listener.onSuccess(request.getResponseText());
+						listener.onSuccess(url, request.getResponseText());
 					}
 					queue--;
 				}
@@ -128,11 +128,11 @@ public class AssetDownloader
 		request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
 		request.send();
 	}
-	
-	public static void loadScript(String url, final AssetLoaderListener<Object> listener)
+
+	public static void loadScript(final String url, final AssetLoaderListener<Object> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
-		
+
 		request.setOnreadystatechange(new EventHandler()
 		{
 			@Override
@@ -142,7 +142,7 @@ public class AssetDownloader
 				{
 					if (request.getStatus() != 200)
 					{
-						listener.onFailure();
+						listener.onFailure(url);
 					}
 					else
 					{
@@ -151,7 +151,7 @@ public class AssetDownloader
 						+ "var newScriptTag = document.createElement('script');"
 						+ "newScriptTag.appendChild(document.createTextNode(code.node));"
 						+ "document.body.appendChild(newScriptTag);", this);
-						listener.onSuccess(request.getResponseText());
+						listener.onSuccess(url, request.getResponseText());
 					}
 					queue--;
 				}
@@ -188,13 +188,13 @@ public class AssetDownloader
 				{
 					if (request.getStatus() != 200)
 					{
-						listener.onFailure();
+						listener.onFailure(url);
 					}
 					else
 					{
 						ArrayBuffer responseArrayBuffer= getResponseArrayBuffer(request);
 						Int8Array data= TypedArraysFactory.createInstanceOf(Int8Array.class, responseArrayBuffer);
-						listener.onSuccess(new Blob(data));
+						listener.onSuccess(url, new Blob(data));
 					}
 					queue--;
 				}
@@ -207,7 +207,7 @@ public class AssetDownloader
 		request.send();
 	}
 
-	public static void loadAudio(String url, final AssetLoaderListener<Void> listener)
+	public static void loadAudio(final String url, final AssetLoaderListener<Void> listener)
 	{
 		if (useBrowserCache)
 		{
@@ -220,22 +220,22 @@ public class AssetDownloader
 				}
 
 				@Override
-				public void onFailure()
+				public void onFailure(String url)
 				{
-					listener.onFailure();
+					listener.onFailure(url);
 				}
 
 				@Override
-				public void onSuccess(Blob result)
+				public void onSuccess(String url, Blob result)
 				{
-					listener.onSuccess(null);
+					listener.onSuccess(url, null);
 				}
 
 			});
 		}
 		else
 		{
-			listener.onSuccess(null);
+			listener.onSuccess(url, null);
 		}
 	}
 
@@ -257,13 +257,13 @@ public class AssetDownloader
 				}
 
 				@Override
-				public void onFailure()
+				public void onFailure(String url)
 				{
-					listener.onFailure();
+					listener.onFailure(url);
 				}
 
 				@Override
-				public void onSuccess(Blob result)
+				public void onSuccess(String url, Blob result)
 				{
 					final HTMLImageElementExtension image= createImage();
 
@@ -278,9 +278,9 @@ public class AssetDownloader
 						public void onEvent(Event event)
 						{
 							if (event.getType().equals("error"))
-								listener.onFailure();
+								listener.onFailure(url);
 							else
-								listener.onSuccess(image);
+								listener.onSuccess(url, image);
 							queue--;
 						}
 					});
@@ -310,9 +310,9 @@ public class AssetDownloader
 				public void onEvent(Event event)
 				{
 					if (event.getType().equals("error"))
-						listener.onFailure();
+						listener.onFailure(url);
 					else
-						listener.onSuccess(image);
+						listener.onSuccess(url, image);
 					queue--;
 				}
 			});
@@ -361,8 +361,8 @@ public class AssetDownloader
 
 	public static String getHostPageBaseURL()
 	{
-		String code= "var s = location.href; " + "var i = s.indexOf('#');" + "if (i != -1)" + "   s = s.substring(0, i);" + "i = s.indexOf('?');" + "if (i != -1)" + "  s = s.substring(0, i);" + "i = s.lastIndexOf('/');" + "if (i != -1)" + "  s = s.substring(0, i);" + "s.length > 0 ? s + '/' : '';";
-		String base= (String) ScriptHelper.eval(code, null);
+		String code = "var s = location.href; " + "var i = s.indexOf('#');" + "if (i != -1)" + "   s = s.substring(0, i);" + "i = s.indexOf('?');" + "if (i != -1)" + "  s = s.substring(0, i);" + "i = s.lastIndexOf('/');" + "if (i != -1)" + "  s = s.substring(0, i);" + "s.length > 0 ? s + '/' : '';";
+		String base = (String) ScriptHelper.eval(code, null);
 		return base;
 	}
 }

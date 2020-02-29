@@ -77,16 +77,17 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 	private void prepare () {
 		preloader = new Preloader(AssetDownloader.getHostPageBaseURL() + "assets/");
-		AssetLoaderListener<Object> assetListener = new AssetLoaderListener<>();
-		AssetDownloader.loadScript("soundmanager2-jsmin.js", assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
-		getPreloader().loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
+		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
+		preloader.loadScript("soundmanager2-jsmin.js", assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
+
 		listener = createApplicationListener();
 		if (listener == null) return;
 		config = getConfig();

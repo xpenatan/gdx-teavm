@@ -72,12 +72,12 @@ public class Preloader {
 			}
 
 			@Override
-			public void onFailure () {
+			public void onFailure (String url) {
 				System.out.println("ErrorLoading: " + assetFileUrl);
 			}
 
 			@Override
-			public void onSuccess (String result) {
+			public void onSuccess (String url, String result) {
 				String[] lines = result.split("\n");
 				Array<Asset> assets = new Array<Asset>(lines.length);
 				for (String line : lines) {
@@ -113,11 +113,11 @@ public class Preloader {
 						}
 
 						@Override
-						public void onFailure () {
+						public void onFailure (String url) {
 						}
 
 						@Override
-						public void onSuccess (Object result) {
+						public void onSuccess (String url, Object result) {
 						}
 					});
 				}
@@ -133,12 +133,12 @@ public class Preloader {
 			}
 
 			@Override
-			public void onFailure () {
-				listener.onFailure();
+			public void onFailure (String urll) {
+				listener.onFailure(urll);
 			}
 
 			@Override
-			public void onSuccess (Object result) {
+			public void onSuccess (String urll, Object result) {
 				switch (type) {
 				case Text:
 					texts.put(url, (String)result);
@@ -156,9 +156,13 @@ public class Preloader {
 					directories.put(url, null);
 					break;
 				}
-				listener.onSuccess(result);
+				listener.onSuccess(urll, result);
 			}
 		});
+	}
+
+	public void loadScript(final String url,  final AssetLoaderListener<Object> listener) {
+		AssetDownloader.loadScript(baseUrl + url, listener);
 	}
 
 	public InputStream read (String url) {

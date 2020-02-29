@@ -1,1 +1,1 @@
-include ":backends:gdx-backend-dragome"
+include ":backends:gdx-backend-dragome", ":tests:gdx-tests-dragome", ":tests:gdx-tests-dragome-html"

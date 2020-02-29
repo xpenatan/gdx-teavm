@@ -18,14 +18,13 @@ package com.badlogic.gdx.graphics.profiling;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import static com.badlogic.gdx.graphics.profiling.GLProfiler.resolveErrorNumber;
 
 /** @see GLProfiler
  * @author Jan Polák */
 public interface GLErrorListener {
 
 	/** Put your error logging code here.
-	 * @see GLProfiler#resolveErrorNumber(int) */
+	 * @see GLInterceptor#resolveErrorNumber(int) */
 	public void onError (int error);
 
 	// Basic implementations
@@ -51,10 +50,10 @@ public interface GLErrorListener {
 			}
 
 			if (place != null) {
-				Gdx.app.error("GLProfiler", "Error " + resolveErrorNumber(error) + " from " + place);
+				Gdx.app.error("GLProfiler", "Error " + GLInterceptor.resolveErrorNumber(error) + " from " + place);
 			} else {
 				StringBuffer buffer = new StringBuffer("Error ");
-				buffer.append(resolveErrorNumber(error));
+				buffer.append(GLInterceptor.resolveErrorNumber(error));
 				buffer.append(" at:\n");
 				try {
 					final StackTraceElement[] stack = exc.getStackTrace();
@@ -73,7 +72,7 @@ public interface GLErrorListener {
 	public static final GLErrorListener THROWING_LISTENER = new GLErrorListener() {
 
 		public void onError (int error) {
-			throw new GdxRuntimeException("GLProfiler: Got GL error " + resolveErrorNumber(error));
+			throw new GdxRuntimeException("GLProfiler: Got GL error " + GLInterceptor.resolveErrorNumber(error));
 		}
 	};
 }

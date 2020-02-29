@@ -1049,4 +1049,34 @@ public class DragomeInput implements Input {
 	private static final int KEY_CLOSE_BRACKET = 221;
 	private static final int KEY_SINGLE_QUOTE = 222;
 
+	public int getMaxPointers () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public float getPressure () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public float getPressure (int pointer) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean isButtonJustPressed (int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setCatchKey (int keycode, boolean catchKey) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean isCatchKey (int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

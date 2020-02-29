@@ -8,7 +8,6 @@ import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader;
 import com.badlogic.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
 import com.badlogic.gdx.backends.dragome.preloader.AssetType;
 import com.badlogic.gdx.tests.dragome.examples.Box2DTestCollection;
-import com.badlogic.gdx.tests.dragome.examples.bullet.BulletTestCollection;
 import com.dragome.web.annotations.PageAlias;
 
 @PageAlias(alias= "Box2DCollection")
