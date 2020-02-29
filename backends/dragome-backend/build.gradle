@@ -1,0 +1,152 @@
+apply plugin: "java"
+apply plugin: 'java-library'
+
+apply from: '../../dependencies.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets.main.java.srcDirs = [ "emu", "src" ]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+configurations {
+    provided
+    implementation.extendsFrom provided
+}
+
+dependencies {
+    api "com.github.xpenatan.dragome-sdk:dragome-js-jre:$dragomeVersion"
+    provided "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-bytecode-js-compiler:$dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-core:$dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-js-commons:$dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-w3c-standards:$dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-web:$dragomeVersion"
+}
+//
+//task packTest(type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
+//    project.group = project.groupId
+//    project.version = project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
+//
+//    project.archivesBaseName = 'gdx-backend-dragome'
+//    project.description = 'Generate a single jar file which contains Dragome-Backend and DragomeSDK'
+//
+//    dependsOn configurations.childJars
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    from
+//    {
+//        configurations.childJars.collect
+//        {
+//            if(!it.isDirectory())
+//            {
+//                String path = it.getPath()
+//                boolean include = false
+//
+//                if(path.contains("gdx-backend-dragome") || !path.contains("gdx-")) {
+//                    include = true
+//                }
+//
+//                if(include) {
+//                    zipTree(it)
+//                }
+//                else {
+//                    it
+//                }
+//            }
+//        }
+//    }
+//    {
+//        exclude ("gdx-" + gdxVersion + ".jar")
+//        exclude "*.template"
+//        exclude "*.idl"
+//        exclude "META-INF/*.DSA"
+//        exclude "META-INF/*.RSA"
+//        exclude "META-INF/maven/"
+//    }
+//}
+//
+//artifacts {
+//    archives packTest
+//}
+
+task fromClasses (type: Jar) {
+    from (sourceSets.main.output){
+    }
+}
+
+task platformAll (type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
+
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from
+    {
+        (configurations.runtimeClasspath + sourceSets.main.output - configurations.provided).collect
+        {
+            it.isDirectory() ? it : zipTree(it)
+
+//            if(!it.isDirectory())
+//            {
+//                String path = it.getPath()
+//                boolean include = true
+//
+//                println("path: " + path)
+//
+//                if(path.contains("gdx-backend-dragome") || !path.contains("gdx-")) {
+//                    include = true
+//                }
+//
+//                if(include) {
+//                    zipTree(it)
+//                }
+//                else {
+//                    it
+//                }
+//            }
+        }
+    }
+    {
+        exclude ("gdx-" + gdxVersion + ".jar")
+        exclude "*.template"
+        exclude "*.idl"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+        exclude "META-INF/maven/"
+    }
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            version project.gdxDragomeVersion + project.gdxDragomeType
+            project.version = project.gdxDragomeVersion + project.gdxDragomeType
+            artifactId "dragome-backend"
+            artifact fromClasses
+        }
+        allBuild(MavenPublication) {
+            version project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
+            project.version = project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
+            artifactId "dragome-backend"
+            artifact platformAll
+        }
+    }
+}
