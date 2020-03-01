@@ -1,4 +1,11 @@
-# Libgdx Dragome Backend
+# Gdx Web tools
+![Build](https://github.com/xpenatan/gdx-web-tools/workflows/Build/badge.svg)
+
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.xpenatan.gdx-web-tools/dragome-backend?label=dragome-backend&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/#nexus-search;gav~com.github.xpenatan.dragome-sdk~dragome-js-commons~~~~kw,versionexpand)
+
+
+#TODO
+
 This backend use [DragomeSDK](https://github.com/xpenatan/dragome-sdk) fork to generate libgdx games to javascript. A alternative to gwt backend.
 
 * Its fast to compile ¹
