@@ -1,7 +1,7 @@
 # Gdx Web tools
 ![Build](https://github.com/xpenatan/gdx-web-tools/workflows/Build/badge.svg)
 
-[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.xpenatan.gdx-web-tools/dragome-backend?label=dragome-backend&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/#nexus-search;gav~com.github.xpenatan.dragome-sdk~dragome-js-commons~~~~kw,versionexpand)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.xpenatan.gdx-web-tools/dragome-backend?label=dragome-backend&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/#nexus-search;gav~com.github.xpenatan.gdx-web-tools~dragome-backend~~~~kw,versionexpand)
 
 
 #TODO
