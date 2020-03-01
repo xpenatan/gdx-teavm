@@ -96,8 +96,8 @@ import com.github.xpenatan.gdx.backends.dragome.preloader.AssetsCopy;
 @DragomeConfiguratorImplementor(priority= 10)
 public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDragomeConfigurator {
 	private static Logger LOGGER= Logger.getLogger(DragomeGdxConfiguration.class.getName());
-	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/com/badlogic/gdx/backends/dragome/additional-shrink-code-keep.conf";
-	private static final String DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP = "/com/badlogic/gdx/backends/dragome/additional-obfuscate-code-keep.conf";
+	private static final String DRAGOME_ADDITIONAL_SHRINK_CODE_KEEP_CONF = "/dragome/additional-shrink-code-keep.conf";
+	private static final String DRAGOME_ADDITIONAL_OBFUSCATE_CODE_KEEP = "/dragome/additional-obfuscate-code-keep.conf";
 
 	String projName;
 
@@ -133,108 +133,114 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 				String fileName = classpathFile.getFilename();
 				String path = classpathFile.getPath();
 				path = path.replace("\\", "/");
-				flag = toAccept(path, "/apache/", flag, true);
-				flag = toAccept(path, "org/xmlvm/", flag, true);
-				flag = toAccept(path, "org/xml/", flag, true);
-				flag = toAccept(path, "org/mockito/", flag, true);
-				flag = toAccept(path, "org/atmosphere/", flag, true);
-				flag = toAccept(path, "org/objectweb/", flag, true);
-				flag = toAccept(path, "org/objenesis/", flag, true);
-				flag = toAccept(path, "org/hamcrest/", flag, true);
-				flag = toAccept(path, "org/dom4j/", flag, true);
-				flag = toAccept(path, "org/slf4j/", flag, true);
-				flag = toAccept(path, "org/jdom/", flag, true);
-				flag = toAccept(path, "org/reflections/", flag, true);
-				flag = toAccept(path, "javax/", flag, true);
 
-//				flag = toAccept(path, "javax/persistence/", flag, false);
-//				flag = toAccept(path, "javax/script/", flag, false);
-//				flag = toAccept(path, "javax/swing/", flag, false);
+				{
+					// All classes will compile except
+					flag = true;
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/DragomeGdxConfiguration", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".conf", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javax/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "junit/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/junit/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "sun/reflect", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".html", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".idl", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".css", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".MF", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".xml", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".txt", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".properties", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".template", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/tests/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/config/DomHandlerApplicationConfigurator", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/helpers/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/commons/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/compiler/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/android/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jf", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xmlvm/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/javaparser/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/badlogic/gdx/jnigen/", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, thisClassName, flag);
 
-				flag = toAccept(path, "javax/persistence/Entity.class", flag, false);
-				flag = toAccept(path, "javax/persistence/GeneratedValue.class", flag, false);
-				flag = toAccept(path, "javax/persistence/GenerationType.class", flag, false);
-				flag = toAccept(path, "javax/persistence/Id.class", flag, false);
-				flag = toAccept(path, "javax/script/ScriptEngine.class", flag, false);
-				flag = toAccept(path, "javax/script/ScriptEngineImpl.class", flag, false);
-				flag = toAccept(path, "javax/script/ScriptEngineManager.class", flag, false);
-				flag = toAccept(path, "javax/swing/event/TreeExpansionEvent.class", flag, false);
-				flag = toAccept(path, "javax/swing/event/TreePath.class", flag, false);
+					{
+						//Ignore classes added by gradle getty. Eclipse jetty is not needed.
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javolution/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/jpountz/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/sf/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".tld", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "proguard/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/google/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "io/netty/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "JDOMAbout", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "ro/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/apache", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xml/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/mockito/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/atmosphere/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objectweb/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objenesis/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/dom4j/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/slf4j/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jdom/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/reflections/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "META-INF/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javassist/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".vm", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".so", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".dylib", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "/serverside/", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "LICENSE", flag);
+						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "NOTICE", flag);
+					}
 
-				flag = toAccept(path, "META-INF/c-1_0-rt.tld", flag, true);
-				flag = toAccept(path, "META-INF/c-1_0.tld", flag, true);
-				flag = toAccept(path, "META-INF/c.tld", flag, true);
-				flag = toAccept(path, "META-INF/fmt-1_0-rt.tld", flag, true);
-				flag = toAccept(path, "META-INF/fmt-1_0.tld", flag, true);
-				flag = toAccept(path, "META-INF/fmt.tld", flag, true);
-				flag = toAccept(path, "META-INF/fn.tld", flag, true);
-				flag = toAccept(path, "META-INF/html_basic.tld", flag, true);
-				flag = toAccept(path, "META-INF/jsf_core.tld", flag, true);
-				flag = toAccept(path, "META-INF/mojarra_ext.tld", flag, true);
-				flag = toAccept(path, "META-INF/permittedTaglibs.tld", flag, true);
-				flag = toAccept(path, "META-INF/scriptfree.tld", flag, true);
-				flag = toAccept(path, "META-INF/sql-1_0-rt.tld", flag, true);
-				flag = toAccept(path, "META-INF/sql-1_0.tld", flag, true);
-				flag = toAccept(path, "META-INF/sql.tld", flag, true);
-				flag = toAccept(path, "META-INF/x-1_0-rt.tld", flag, true);
-				flag = toAccept(path, "META-INF/x-1_0.tld", flag, true);
-				flag = toAccept(path, "META-INF/x.tld", flag, true);
+					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler", flag);
+					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/ProxyRelatedInvocationHandler", flag);
+					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/compiler/annotations/", flag);
+					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag);
+				}
 
-				flag = toAccept(path, "proguard/", flag, true);
-				flag = toAccept(path, "/google/", flag, true);
-				flag = toAccept(path, "javassist/", flag, true);
-				flag = toAccept(path, "ro/", flag, true);
-				flag = toAccept(path, "io/netty/", flag, true);
-				flag = toAccept(path, "net/sf/dexlib/", flag, true);
-				flag = toAccept(path, "net/jpountz/", flag, true);
-				flag = toAccept(path, "javolution/", flag, true);
-				flag = toAccept(path, "/android/", flag, true);
-				flag = toAccept(path, "/framework/", flag, true);
-				flag = toAccept(path, "/runner/", flag, true);
-				flag = toAccept(path, "/textui/", flag, true);
+				{
+					// All classes will ignore except. May be used for testing
+//					flag = false;
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "org/w3c/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/web/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/badlogic/gdx/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/github/xpenatan/gdx/backends/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "org/jbox2d/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "webdefault.xml", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, ".js", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "flexjson/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/view/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/services/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/helpers/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/utils/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/ProxyRelatedInvocationHandler", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler.class", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "xmlvm2js.xsl", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "javascript/Utils.class", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag);
+//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/compiler/annotations/", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/config/DomHandlerApplicationConfigurator", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/helpers/", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/DragomeGdxConfiguration", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, thisClassName, flag);
+				}
 
-				flag = toAccept(path, "/dragome/compiler/", flag, true);
-				flag = toAccept(path, "com/dragome/web/helpers/", flag, true);
-				flag = toAccept(path, "dragome/web/serverside/", flag, true);
-				flag = toAccept(path, "jsdelegate/serverside/", flag, true);
-				flag = toAccept(path, "net/sf/", flag, true);
-				flag = toAccept(path, "JDOMAbout", flag, true);
-				flag = toAccept(path, "junit/", flag, true);
-				flag = toAccept(path, "com/dragome/tests/", flag, true);
-
-				flag = toAccept(path, "net/sf/flexjson", flag, false);
-
-				flag = toAccept(path, "/DragomeGdxConfiguration", flag, true);
-				flag = toAccept(path, "com/dragome/commons", flag, true);
-				flag = toAccept(path, "DragomeConfigurator", flag, true);
-				flag = toAccept(path, "dragome/services/serverside/", flag, true);
-				flag = toAccept(path, "ApplicationConfigurator", flag, true);
-//				flag = toAccept(path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler", flag, false);
-//				flag = toAccept(path, "com/dragome/commons/ChainedInstrumentationDragomeConfigurator", flag, false);
-				flag = toAccept(path, "/commons/javascript", flag, false);
-				flag = toAccept(path, "/commons/compiler/annotations", flag, false);
-				flag = toAccept(path, "/commons/AbstractProxyRelatedInvocationHandler", flag, false);
-				flag = toAccept(path, "/commons/ProxyRelatedInvocationHandler", flag, false);
-				flag = toAccept(path, "/commons/DragomeConfiguratorImplementor", flag, false);
-				flag = toAccept(path, "IntersectorTest.class", flag, true);
-				flag = toAccept(path, "MathUtilsTest.class", flag, true);
-				flag = toAccept(path, "RectangleTest.class", flag, true);
-				flag = toAccept(path, "Shape2DTest.class", flag, true);
-				flag = toAccept(path, "Vector2Test.class", flag, true);
-				flag = toAccept(path, "Vector3Test.class", flag, true);
-				flag = toAccept(path, "CollisionTest.class", flag, true);
-				flag = toAccept(path, "BitsTest.class", flag, true);
-				flag = toAccept(path, "PooledLinkedListTest.class", flag, true);
-				flag = toAccept(path, "QueueTest.class", flag, true);
 				if(path.endsWith("/"))
 					flag = false;
 				if(flag == false)
 					flag = classClassPathFilter(fileName, path);
-
-				flag = toAccept(path, "dragome/preloader/AssetFilter", flag, true);
-				flag = toAccept(path, "dragome/preloader/DefaultAssetFilter", flag, true);
-				flag = toAccept(path, "dragome/preloader/AssetsCopy", flag, true);
-				flag = toAccept(path, thisClassName, flag, true);
 
 				int filterClassLog = filterClassLog();
 				if((filterClassLog == 1 && flag) || filterClassLog == 2)
@@ -258,11 +264,12 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		}
 	}
 
-	public boolean toAccept(String path, String condition, boolean flag, boolean useNegAnd) {
-		if(useNegAnd)
-			flag &= !path.contains(condition);
-		else
-			flag |= path.contains(condition);
+	public boolean toAccept(ACCEPT_TYPE filter, String path, String toSearch, boolean flag) {
+		boolean contains = path.contains(toSearch);
+		if(filter == ACCEPT_TYPE.DONT_ACCEPT)
+			flag &= !contains;
+		else if(filter == ACCEPT_TYPE.ACCEPT)
+			flag |= contains;
 		return flag;
 	}
 
@@ -322,8 +329,6 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		boolean include= super.filterClassPath(classpathEntry);
 		classpathEntry = classpathEntry.replace("\\", "/");
 		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin");
-//		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin/main");
-		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/classes/java/main");
 		include |= classpathEntry.contains("dragome-js-jre");
 		include |= classpathEntry.contains("dragome-web");
 		include |= classpathEntry.contains("dragome-core");
@@ -373,8 +378,6 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 		if(!include && classpathEntry.contains("/bin"))
 			include = true;
 		include &= !classpathEntry.contains("/resources/");
-		if(classpathEntry.contains("-sources."))
-			include = false;
 
 		if(include == false)
 			include = projectClassPathFilter(classpathEntry);
@@ -437,6 +440,8 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 					return 3;
 				else if (name.contains("dragome-"))
 					return 2;
+				else if (name.contains("gdx-box2d-gwt"))
+					return 1;
 				else
 					return 0;
 			}
@@ -536,5 +541,9 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 	@Override
 	public boolean isCaching () {
 		return false;
+	}
+
+	enum ACCEPT_TYPE{
+		ACCEPT, DONT_ACCEPT
 	}
 }

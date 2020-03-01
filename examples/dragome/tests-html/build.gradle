@@ -13,4 +13,6 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
   implementation project(":backends:dragome-backend")
   implementation project(":examples:dragome:tests")
+//  implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
+  implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion"
 }

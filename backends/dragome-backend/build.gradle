@@ -43,84 +43,19 @@ dependencies {
     api "com.github.xpenatan.dragome-sdk:dragome-w3c-standards:$dragomeVersion"
     api "com.github.xpenatan.dragome-sdk:dragome-web:$dragomeVersion"
 }
-//
-//task packTest(type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
-//    project.group = project.groupId
-//    project.version = project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
-//
-//    project.archivesBaseName = 'gdx-backend-dragome'
-//    project.description = 'Generate a single jar file which contains Dragome-Backend and DragomeSDK'
-//
-//    dependsOn configurations.childJars
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    from
-//    {
-//        configurations.childJars.collect
-//        {
-//            if(!it.isDirectory())
-//            {
-//                String path = it.getPath()
-//                boolean include = false
-//
-//                if(path.contains("gdx-backend-dragome") || !path.contains("gdx-")) {
-//                    include = true
-//                }
-//
-//                if(include) {
-//                    zipTree(it)
-//                }
-//                else {
-//                    it
-//                }
-//            }
-//        }
-//    }
-//    {
-//        exclude ("gdx-" + gdxVersion + ".jar")
-//        exclude "*.template"
-//        exclude "*.idl"
-//        exclude "META-INF/*.DSA"
-//        exclude "META-INF/*.RSA"
-//        exclude "META-INF/maven/"
-//    }
-//}
-//
-//artifacts {
-//    archives packTest
-//}
 
 task fromClasses (type: Jar) {
     from (sourceSets.main.output){
     }
 }
 
-task platformAll (type: Jar, dependsOn: [':backends:gdx-backend-dragome:build']) {
-
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+task platformAll (type: Jar, dependsOn: [':backends:dragome-backend:build']) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from
     {
         (configurations.runtimeClasspath + sourceSets.main.output - configurations.provided).collect
         {
             it.isDirectory() ? it : zipTree(it)
-
-//            if(!it.isDirectory())
-//            {
-//                String path = it.getPath()
-//                boolean include = true
-//
-//                println("path: " + path)
-//
-//                if(path.contains("gdx-backend-dragome") || !path.contains("gdx-")) {
-//                    include = true
-//                }
-//
-//                if(include) {
-//                    zipTree(it)
-//                }
-//                else {
-//                    it
-//                }
-//            }
         }
     }
     {
@@ -132,7 +67,6 @@ task platformAll (type: Jar, dependsOn: [':backends:gdx-backend-dragome:build'])
         exclude "META-INF/maven/"
     }
 }
-
 
 publishing {
     publications {

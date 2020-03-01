@@ -5,8 +5,6 @@ sourceSets.main.java.srcDirs = ["src"]
 
 dependencies {
 	implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-
-	implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
-	implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+	implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 }
 
