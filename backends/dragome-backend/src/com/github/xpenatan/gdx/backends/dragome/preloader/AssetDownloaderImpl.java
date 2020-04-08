@@ -25,56 +25,61 @@ import org.w3c.dom.events.ProgressEvent;
 import org.w3c.dom.html.HTMLImageElement;
 import org.w3c.dom.typedarray.ArrayBuffer;
 import org.w3c.dom.typedarray.Int8Array;
-
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 import com.dragome.web.html.dom.w3c.TypedArraysFactory;
+import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
+import com.github.xpenatan.gdx.backend.web.preloader.Blob;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownload;
 
 /** Adapted from gwt backend
  * @author xpenatan */
-public class AssetDownloader
+public class AssetDownloaderImpl implements AssetDownload
 {
 	static int queue;
 	static boolean useBrowserCache = true;
 	static boolean useInlineBase64;
 
 
-	private AssetDownloader(){}
+	public AssetDownloaderImpl(){}
 
 	public static void setUseBrowserCache(boolean useBrowserCache)
 	{
-		AssetDownloader.useBrowserCache= useBrowserCache;
+		AssetDownloaderImpl.useBrowserCache= useBrowserCache;
 	}
 
-	public static boolean isUseBrowserCache()
+	@Override
+	public boolean isUseBrowserCache()
 	{
-		return AssetDownloader.useBrowserCache;
+		return AssetDownloaderImpl.useBrowserCache;
 	}
 
 	public static void setUseInlineBase64(boolean useInlineBase64)
 	{
-		AssetDownloader.useInlineBase64= useInlineBase64;
+		AssetDownloaderImpl.useInlineBase64= useInlineBase64;
 	}
 
 	public static boolean isUseInlineBase64()
 	{
-		return AssetDownloader.useInlineBase64;
+		return AssetDownloaderImpl.useInlineBase64;
 	}
 
-	public static class AssetLoaderListener<T>
-	{
-		@MethodAlias(local_alias= "onProgress")
-		public void onProgress(double amount){}
+//	public static class AssetLoaderListener<T>
+//	{
+//		@MethodAlias(local_alias= "onProgress")
+//		public void onProgress(double amount){}
+//
+//		public void onFailure(String url){}
+//
+//		public void onSuccess(String url, T result){}
+//	}
 
-		public void onFailure(String url){}
-
-		public void onSuccess(String url, T result){}
-	}
-
-	public static void load(final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
+	@Override
+	public void load(final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener)
 	{
 		switch (type)
 		{
@@ -98,7 +103,8 @@ public class AssetDownloader
 		}
 	}
 
-	public static void loadText(final String url, final AssetLoaderListener<String> listener)
+	@Override
+	public void loadText(final String url, final AssetLoaderListener<String> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 
@@ -129,7 +135,8 @@ public class AssetDownloader
 		request.send();
 	}
 
-	public static void loadScript(final String url, final AssetLoaderListener<Object> listener)
+	@Override
+	public void loadScript(final String url, final AssetLoaderListener<Object> listener)
 	{
 		final XMLHttpRequest request= ScriptHelper.evalCasting("new XMLHttpRequest()", XMLHttpRequest.class, null);
 
@@ -165,7 +172,8 @@ public class AssetDownloader
 		request.send();
 	}
 
-	public static int getQueue()
+	@Override
+	public int getQueue()
 	{
 		return queue;
 	}
@@ -359,7 +367,8 @@ public class AssetDownloader
 		});
 	}
 
-	public static String getHostPageBaseURL()
+	@Override
+	public String getHostPageBaseURL()
 	{
 		String code = "var s = location.href; " + "var i = s.indexOf('#');" + "if (i != -1)" + "   s = s.substring(0, i);" + "i = s.indexOf('?');" + "if (i != -1)" + "  s = s.substring(0, i);" + "i = s.lastIndexOf('/');" + "if (i != -1)" + "  s = s.substring(0, i);" + "s.length > 0 ? s + '/' : '';";
 		String base = (String) ScriptHelper.eval(code, null);

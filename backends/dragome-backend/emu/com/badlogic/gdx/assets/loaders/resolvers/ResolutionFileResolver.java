@@ -19,7 +19,7 @@ package com.badlogic.gdx.assets.loaders.resolvers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.dragome.DragomeFileHandle;
+import com.github.xpenatan.gdx.backend.web.WebFileHandle;
 
 public class ResolutionFileResolver implements FileHandleResolver {
 	public static class Resolution {
@@ -45,7 +45,7 @@ public class ResolutionFileResolver implements FileHandleResolver {
 	@Override
 	public FileHandle resolve (String fileName) {
 		Resolution bestDesc = choose(descriptors);
-		FileHandle originalHandle = new DragomeFileHandle(fileName);
+		FileHandle originalHandle = new WebFileHandle(fileName);
 		FileHandle handle = baseResolver.resolve(resolve(originalHandle, bestDesc.folder));
 		if (!handle.exists()) handle = baseResolver.resolve(fileName);
 		return handle;

@@ -1,0 +1,39 @@
+apply plugin: "java"
+apply plugin: 'java-library'
+
+apply from: '../../dependencies.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets.main.java.srcDirs = [ "emu", "src" ]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+configurations {
+    provided
+    implementation.extendsFrom provided
+}
+
+dependencies {
+    provided "com.badlogicgames.gdx:gdx:$gdxVersion"
+}

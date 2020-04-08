@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2016 Natan Guilherme.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backends.dragome;
+package com.github.xpenatan.gdx.backend.web;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,18 +25,18 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 /** Ported from GWT backend.
  * @author xpenatan */
-public class DragomePreferences implements Preferences{
+public class WebPreferences implements Preferences{
 	final String prefix;
 	ObjectMap<String, Object> values = new ObjectMap<String, Object>();
 
-	DragomePreferences (String prefix) {
+	public WebPreferences (String prefix) {
 		this.prefix = prefix + ":";
 		int prefixLength = this.prefix.length();
 		try {
-			for (int i = 0; i < DragomeFiles.LocalStorage.getLength(); i++) {
-				String key = DragomeFiles.LocalStorage.key(i);
+			for (int i = 0; i < WebFiles.LocalStorage.getLength(); i++) {
+				String key = WebFiles.LocalStorage.key(i);
 				if (key.startsWith(prefix)) {
-					String value = DragomeFiles.LocalStorage.getItem(key);
+					String value = WebFiles.LocalStorage.getItem(key);
 					values.put(key.substring(prefixLength, key.length() - 1), toObject(key, value));
 				}
 			}
@@ -65,16 +65,16 @@ public class DragomePreferences implements Preferences{
 	public void flush () {
 		try {
 			// remove all old values
-			for (int i = 0; i < DragomeFiles.LocalStorage.getLength(); i++) {
-				String key = DragomeFiles.LocalStorage.key(i);
-				if (key.startsWith(prefix)) DragomeFiles.LocalStorage.removeItem(key);
+			for (int i = 0; i < WebFiles.LocalStorage.getLength(); i++) {
+				String key = WebFiles.LocalStorage.key(i);
+				if (key.startsWith(prefix)) WebFiles.LocalStorage.removeItem(key);
 			}
 
 			// push new values to LocalStorage
 			for (String key : values.keys()) {
 				String storageKey = toStorageKey(key, values.get(key));
 				String storageValue = "" + values.get(key).toString();
-				DragomeFiles.LocalStorage.setItem(storageKey, storageValue);
+				WebFiles.LocalStorage.setItem(storageKey, storageValue);
 			}
 
 		} catch (Exception e) {

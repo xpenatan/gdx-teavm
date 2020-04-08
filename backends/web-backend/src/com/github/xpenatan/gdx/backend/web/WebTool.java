@@ -14,10 +14,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backends.dragome;
+package com.github.xpenatan.gdx.backend.web;
 
 /** @author xpenatan */
-public class Dragome {
+public class WebTool {
 	public static boolean isProdMode () {
 		return true;
 	}

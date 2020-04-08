@@ -2,25 +2,24 @@
 package com.github.xpenatan.gdx.backends.dragome.utils;
 
 import com.dragome.commons.javascript.ScriptHelper;
+import com.github.xpenatan.gdx.backend.web.utils.Storage;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
  * @author xpenatan */
-public class Storage {
-	static final boolean localStorageSupported = checkStorageSupport("localStorage");
-	static final boolean sessionStorageSupported = checkStorageSupport("sessionStorage");
+public class StorageImpl extends Storage {
 
-	public static Storage getLocalStorageIfSupported () {
+	public Storage getLocalStorageIfSupported () {
 		Storage storage = null;
-		if (localStorageSupported || sessionStorageSupported) {
+		if (Storage.getInstance().localStorageSupported || sessionStorageSupported) {
 			Object node = ScriptHelper.eval("window.localStorage", null);
-			storage = new Storage();
+			storage = this;
 			ScriptHelper.put("storage", storage, null);
 			ScriptHelper.put("storage.node", node, null);
 		}
 		return storage;
 	}
 
-	public static boolean checkStorageSupport (String type) {
+	public boolean checkStorageSupport (String type) {
 		ScriptHelper.put("type", type, null);
 		ScriptHelper.evalBoolean("var flag=false;try{window[type].setItem('HelloWorld','HelloWorld');window[type].removeItem('HelloWorld');flag=true;}catch(e){flag=false;}", null);
 		return ScriptHelper.evalBoolean("flag", null);

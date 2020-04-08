@@ -90,7 +90,7 @@ import com.dragome.web.html.dom.w3c.MessageEventExtension;
 import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
-import com.github.xpenatan.gdx.backends.dragome.preloader.AssetsCopy;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)
@@ -434,7 +434,9 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 			public int getPriorityOf(ClasspathEntry string)
 			{
 				String name = string.getName();
-				if (name.contains("dragome-backend"))
+				if (name.contains("web-backend"))
+					return 5;
+				else if (name.contains("dragome-backend"))
 					return 4; // dragome backend is first so it can override any dragome classes
 				else if (name.contains("dragome-js-jre"))
 					return 3;

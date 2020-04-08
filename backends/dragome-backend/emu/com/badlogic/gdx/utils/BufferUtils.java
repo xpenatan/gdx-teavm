@@ -12,7 +12,7 @@ import java.nio.ShortBuffer;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.github.xpenatan.gdx.backends.dragome.Dragome;
+import com.github.xpenatan.gdx.backend.web.WebTool;
 
 /** Class with static helper methods to increase the speed of array/direct buffer and direct buffer/direct buffer transfers
  *
@@ -451,7 +451,7 @@ public final class BufferUtils {
 	}
 
 	public static FloatBuffer newFloatBuffer (int numFloats) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer.asFloatBuffer();
@@ -461,7 +461,7 @@ public final class BufferUtils {
 	}
 
 	public static DoubleBuffer newDoubleBuffer (int numDoubles) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numDoubles * 8);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer.asDoubleBuffer();
@@ -471,7 +471,7 @@ public final class BufferUtils {
 	}
 
 	public static ByteBuffer newByteBuffer (int numBytes) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numBytes);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer;
@@ -481,7 +481,7 @@ public final class BufferUtils {
 	}
 
 	public static ShortBuffer newShortBuffer (int numShorts) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numShorts * 2);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer.asShortBuffer();
@@ -491,7 +491,7 @@ public final class BufferUtils {
 	}
 
 	public static CharBuffer newCharBuffer (int numChars) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numChars * 2);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer.asCharBuffer();
@@ -501,7 +501,7 @@ public final class BufferUtils {
 	}
 
 	public static IntBuffer newIntBuffer (int numInts) {
-		if (Dragome.isProdMode()) {
+		if (WebTool.isProdMode()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect(numInts * 4);
 			buffer.order(ByteOrder.nativeOrder());
 			return buffer.asIntBuffer();

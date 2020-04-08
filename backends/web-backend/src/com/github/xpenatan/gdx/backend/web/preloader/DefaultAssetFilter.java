@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backends.dragome.preloader;
+package com.github.xpenatan.gdx.backend.web.preloader;
 
 public class DefaultAssetFilter implements AssetFilter {
 	private String extension (String file) {

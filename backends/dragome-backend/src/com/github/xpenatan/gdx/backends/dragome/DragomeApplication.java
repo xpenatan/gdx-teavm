@@ -43,15 +43,20 @@ import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
 import com.github.xpenatan.gdx.*;
-import com.github.xpenatan.gdx.backends.dragome.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.dragome.preloader.AssetType;
-import com.github.xpenatan.gdx.backends.dragome.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.dragome.preloader.AssetDownloader.AssetLoaderListener;
+import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backend.web.WebFiles;
+import com.github.xpenatan.gdx.backend.web.WebPreferences;
+import com.github.xpenatan.gdx.backend.web.WebApplication;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
+import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.dragome.preloader.AssetDownloaderImpl;
 import com.github.xpenatan.gdx.backends.dragome.soundmanager2.SoundManager;
 import com.github.xpenatan.gdx.backends.dragome.utils.AgentInfo;
 
 /** @author xpenatan */
-public abstract class DragomeApplication extends DefaultVisualActivity implements Application {
+public abstract class DragomeApplication extends DefaultVisualActivity implements Application, WebApplication {
 
 	private ApplicationListener listener;
 	BrowserDomHandler elementBySelector;
@@ -60,7 +65,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	DragomeGraphics graphics;
 	DragomeInput input;
 	DragomeNet net;
-	DragomeFiles files;
+	WebFiles files;
 	DragomeAudio audio;
 	Clipboard clipboard;
 	int init = 0;
@@ -87,7 +92,10 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	}
 
 	private void prepare () {
-		preloader = new Preloader(AssetDownloader.getHostPageBaseURL() + "assets/");
+		PlatformInitializer.init();
+		AssetDownload instance = AssetDownloader.getInstance();
+		String hostPageBaseURL = instance.getHostPageBaseURL();
+		preloader = new Preloader(hostPageBaseURL + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 		preloader.loadScript("soundmanager2-jsmin.js", assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
@@ -112,7 +120,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 
 		input = new DragomeInput(this);
 		net = new DragomeNet();
-		files = new DragomeFiles(preloader);
+		files = new WebFiles(preloader);
 		audio = new DragomeAudio();
 		Gdx.app = this;
 		Gdx.graphics = graphics;
@@ -160,7 +168,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 						mainLoop();
 					else {
 						if(init == 0) {
-							if(AssetDownloader.getQueue() == 0)
+							if(AssetDownloader.getInstance().getQueue() == 0)
 								init = DragomeApplication.ASSETSLOADED; // assets downloaded
 						}
 						else if(init == DragomeApplication.ASSETSLOADED) {
@@ -400,7 +408,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 	public Preferences getPreferences (String name) {
 		Preferences pref = prefs.get(name);
 		if (pref == null) {
-			pref = new DragomePreferences(name);
+			pref = new WebPreferences(name);
 			prefs.put(name, pref);
 		}
 		return pref;

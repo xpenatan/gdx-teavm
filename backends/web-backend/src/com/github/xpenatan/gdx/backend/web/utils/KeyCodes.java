@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.github.xpenatan.gdx.backends.dragome.utils;
+package com.github.xpenatan.gdx.backend.web.utils;
 
 // From GWT
 public class KeyCodes {

@@ -36,7 +36,7 @@ import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.services.WebServiceLocator;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
-import com.github.xpenatan.gdx.backends.dragome.DragomeFileHandle;
+import com.github.xpenatan.gdx.backend.web.WebFileHandle;
 
 public class Pixmap implements Disposable {
 	public static Map<Integer, Pixmap> pixmaps = new HashMap<Integer, Pixmap>();
@@ -101,7 +101,7 @@ public class Pixmap implements Disposable {
 	private HTMLImageElementExtension imageElement;
 
 	public Pixmap (FileHandle file) {
-		this(((DragomeFileHandle)file).preloader.images.get(file.path()));
+		this((HTMLImageElementExtension)((WebFileHandle)file).preloader.images.get(file.path()));
 		if (imageElement == null) throw new GdxRuntimeException("Couldn't load image '" + file.path() + "', file does not exist");
 	}
 
