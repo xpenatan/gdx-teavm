@@ -1,0 +1,107 @@
+.progressWrap {
+	height: 25px;
+	width: 200px;
+	border: 1px solid #222;
+	text-align: center;
+	position: relative;
+}
+
+.progressStat {
+	height: 25px;
+	width: 0%;
+	background-color: #ADA;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.progressPer {
+	width: 100%;
+	height: 25px;
+	line-height: 25px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+	font-family: Verdana;
+	font-size: 13px;
+}
+
+.overlay {
+	background: rgba(55, 55, 55, 0.8);
+/* 	pointer-events: none; */
+	/* Optional: Will allow selection of text through the overlay. Does not work in IE10, will work in IE11 */
+}
+
+.stdout {
+	border: 3px solid;
+	border-color: black;
+	color: #00FF00;
+	overflow: scroll;
+	font-family: courier;
+	font-size: 11px;
+	height: 200px;
+	width: 100%;
+}
+
+.toggle {
+	float: right;
+}
+
+.collapsed {
+	float: right;
+	border: 3px solid #33AA33;
+	background: #337733;
+	width: 100px;
+	text-align: center;
+	font-family: Verdana;
+	font-size: 12px;
+	color: #00FF00;
+	cursor: hand;
+}
+
+.expanded {
+	float: right;
+	border: 3px solid #AA3333;
+	background: #773333;
+	width: 100px;
+	text-align: center;
+	font-family: Verdana;
+	font-size: 12px;
+	color: #FF0000;
+	cursor: hand;
+}
+
+.content {
+	position: relative;
+}
+
+.lower {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	width: 97%;
+}
+
+.dragome-progress-bar {
+	padding: 10px;
+}
+
+.panel {
+	display: none;
+	/*    height: 100px;*/
+	padding: 10px;
+	width: 100%;
+}
+
+.to-be-removed {
+	display: none !important;
+}
+
+.dragome-show {
+	display: block !important;
+}
+
+.dragome-hide {
+	display: none !important;
+}

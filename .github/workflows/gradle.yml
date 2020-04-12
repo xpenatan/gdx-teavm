@@ -1,27 +1,27 @@
-name: Build
-
-on:
-    push:
-      branches:
-        - master
-
-jobs:
-  build_Linux:
-    name: Linux
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - name: Change wrapper permissions
-      run: chmod +x ./gradlew
-    - name: Build Gdx Web Tools
-      run: ./gradlew build
-    - name: Upload to repository
-      run: ./gradlew publish
-      env:
-        USER: ${{ secrets.USER }}
-        PASSWORD: ${{ secrets.PASSWORD }}
+#name: Build
+#
+#on:
+#    push:
+#      branches:
+#        - master
+#
+#jobs:
+#  build_Linux:
+#    name: Linux
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v1
+#    - name: Set up JDK 1.8
+#      uses: actions/setup-java@v1
+#      with:
+#        java-version: 1.8
+#    - name: Change wrapper permissions
+#      run: chmod +x ./gradlew
+#    - name: Build Gdx Web Tools
+#      run: ./gradlew build
+#    - name: Upload to repository
+#      run: ./gradlew publish
+#      env:
+#        USER: ${{ secrets.USER }}
+#        PASSWORD: ${{ secrets.PASSWORD }}
