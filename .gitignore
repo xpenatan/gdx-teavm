@@ -53,3 +53,4 @@ libs/
 !**/jni/emscripten
 ProguardMapping.txt
 local.properties
+**/dragome-resources
