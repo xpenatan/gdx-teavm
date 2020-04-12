@@ -54,3 +54,4 @@ libs/
 ProguardMapping.txt
 local.properties
 **/dragome-resources
+**/webapp/**/*.js
