@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-classlib-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-core-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-interop-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-apis-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-impl-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-platform-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/teavm-tooling-0.6.1.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/backend-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
