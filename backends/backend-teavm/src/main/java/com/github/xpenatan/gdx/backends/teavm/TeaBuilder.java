@@ -14,7 +14,6 @@ import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
-import org.teavm.tooling.TeaVMToolException;
 
 
 public class TeaBuilder {
@@ -23,7 +22,7 @@ public class TeaBuilder {
 
 	private static final StringBuilder sb = new StringBuilder();
 
-	public static void build(TeaConfiguration configuration) {
+	public static void build(TeaBuildConfiguration configuration) {
 
 		URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 
@@ -78,14 +77,14 @@ public class TeaBuilder {
 		boolean setSourceMapsFileGenerated = false;
 		boolean setSourceFilesCopied = false;
 
-		String targetDirectory = configuration.getTargetDirectory();
+		String targetDirectory = configuration.getWebAppPath();
 
 		System.out.println("targetDirectory: " + targetDirectory);
 
 		File setTargetDirectory = new File(targetDirectory + "\\" + "teavm");
 		String setTargetFileName = "app.js";
 		boolean setMinifying = configuration.minifying();
-		String mainClass = configuration.getMain();
+		String mainClass = configuration.getMainClass().getName();
 		File setCacheDirectory = new File("C:\\TeaVMCache");;
 		boolean setIncremental = false;
 

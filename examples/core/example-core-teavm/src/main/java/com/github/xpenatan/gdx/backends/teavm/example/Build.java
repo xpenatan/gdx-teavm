@@ -4,29 +4,28 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.backends.teavm.TeaConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 
 public class Build {
 
 	public static void main(String[] args) {
+		TeaBuilder.build(new TeaBuildConfiguration() {
 
+			@Override
+			public String getWebAppPath() {
+				return new File("webapp").getAbsolutePath();
+			}
 
-		TeaBuilder.build(new TeaConfiguration() {
+			@Override
+			public Class getMainClass() {
+				return Launcher.class;
+			}
 
 			@Override
 			public boolean minifying() {
 				return false;
 			}
 
-			@Override
-			public String getTargetDirectory() {
-				return new File("webapp").getAbsolutePath();
-			}
-
-			@Override
-			public String getMain() {
-				return Launcher.class.getName();
-			}
 
 			@Override
 			public void assetsPath(ArrayList<File> paths) {
@@ -38,7 +37,5 @@ public class Build {
 
 			}
 		});
-
-
 	}
 }

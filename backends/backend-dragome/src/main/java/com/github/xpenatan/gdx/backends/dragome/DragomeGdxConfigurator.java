@@ -18,18 +18,20 @@ import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathE
 import com.dragome.web.helpers.DefaultClasspathFileFilter;
 
 @DragomeConfiguratorImplementor(priority= 10)
-public class DragomeConfigurator extends ChainedInstrumentationDragomeConfigurator
+public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator
 {
 
-	private static Logger LOGGER= Logger.getLogger(DragomeConfigurator.class.getName());
+	private static Logger LOGGER= Logger.getLogger(DragomeGdxConfigurator.class.getName());
 	final StringBuilder sb = new StringBuilder();
 
 	String projName;
 
-	public DragomeConfigurator()
+	DragomeBuildConfigurator configurator;
+
+	public DragomeGdxConfigurator(DragomeBuildConfigurator configurator)
 	{
 		super();
-
+		this.configurator = configurator;
 		String projPath= System.getProperty("user.dir");
 		File file= new File(projPath);
 		projName = file.getName().replace("\\", "/");
@@ -50,7 +52,7 @@ public class DragomeConfigurator extends ChainedInstrumentationDragomeConfigurat
 				{
 					// All classes will compile except
 					flag = true;
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeConfigurator.class.getSimpleName(), flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeGdxConfigurator.class.getSimpleName(), flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
@@ -312,6 +314,11 @@ public class DragomeConfigurator extends ChainedInstrumentationDragomeConfigurat
 		ACCEPT, DONT_ACCEPT
 	}
 
+
+	@Override
+	public String mainClassName() {
+		return configurator.getMainClass().getName();
+	}
 
 	@Override
 	public CompilerType getDefaultCompilerType() {

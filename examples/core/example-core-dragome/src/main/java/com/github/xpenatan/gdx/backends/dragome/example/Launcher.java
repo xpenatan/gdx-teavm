@@ -1,15 +1,8 @@
 package com.github.xpenatan.gdx.backends.dragome.example;
 
-import com.dragome.view.DefaultVisualActivity;
-import com.dragome.web.annotations.PageAlias;
-
-@PageAlias(alias= "Test")
-public class Launcher extends DefaultVisualActivity
+public class Launcher
 {
+	public static void main(String[] args) {
 
-	@Override
-	public void build() {
-
-		System.out.println("HEllo WORLDDDDD");
 	}
 }

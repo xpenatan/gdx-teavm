@@ -12,8 +12,8 @@ import com.dragome.web.helpers.serverside.StandaloneDragomeAppGenerator;
 
 public class DragomeBuilder {
 
-	public static void build(DragomeConfigurator configuration) {
-
+	public static void build(DragomeBuildConfigurator configurator) {
+		DragomeGdxConfigurator gdxConfiguration = new DragomeGdxConfigurator(configurator);
 //		URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 //		ArrayList<URL> acceptedURL = new ArrayList<>();
 //		ArrayList<URL> notAcceptedURL = new ArrayList<>();
@@ -35,7 +35,7 @@ public class DragomeBuilder {
 //		}
 		ServiceLocator serviceLocator = ServiceLocator.getInstance();
 		serviceLocator.setReflectionService(new ReflectionServiceImpl());
-		serviceLocator.setConfigurator(configuration);
+		serviceLocator.setConfigurator(gdxConfiguration);
 
 		String path = new File("webapp").getAbsolutePath();
 
