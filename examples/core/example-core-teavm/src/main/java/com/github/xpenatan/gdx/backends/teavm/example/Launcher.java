@@ -8,10 +8,6 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 public class Launcher {
 
 	public static void main(String[] args) {
-		new Launcher().build();
-	}
-
-	public void build() {
 		WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
 		GearsDemo gearsDemo = new GearsDemo();
 		new WebApplication(gearsDemo, config);

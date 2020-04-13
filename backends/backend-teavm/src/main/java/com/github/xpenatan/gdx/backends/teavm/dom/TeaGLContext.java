@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.dom;
 
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;

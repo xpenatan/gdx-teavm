@@ -7,7 +7,6 @@ import org.teavm.jso.webgl.WebGLRenderingContext;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.TeaGLContext;
 
 public class TeaCanvas implements HTMLCanvasElementWrapper {
 
