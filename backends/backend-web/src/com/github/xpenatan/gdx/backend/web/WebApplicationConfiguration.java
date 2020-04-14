@@ -1,11 +1,13 @@
 package com.github.xpenatan.gdx.backend.web;
 
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
 /**
  * @author xpenatan
  */
 public class WebApplicationConfiguration {
+	public WindowWrapper window;
 	public HTMLCanvasElementWrapper canvas;
 	/** whether to use a stencil buffer **/
 	public boolean stencil = false;

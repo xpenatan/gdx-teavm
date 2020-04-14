@@ -11,7 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TeaWindow;
 public class TeaApplicationConfiguration extends WebApplicationConfiguration {
 
 	public TeaApplicationConfiguration(String canvasID) {
-		WindowWrapper window = TeaWindow.getCurrent();
+		window = new TeaWindow();
 		HTMLDocumentWrapper document = window.getDocument();
 		canvas = document.getCanvas(canvasID);
 	}

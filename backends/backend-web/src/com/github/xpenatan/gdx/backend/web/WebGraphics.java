@@ -19,6 +19,13 @@ public class WebGraphics implements Graphics {
 	protected GL20 gl20;
 	protected GLVersion glVersion;
 
+	float fps = 0;
+	long lastTimeStamp = System.currentTimeMillis();
+	long frameId = -1;
+	float deltaTime = 0;
+	float time = 0;
+	int frames;
+
 	public WebGraphics(WebApplicationConfiguration config) {
 		this.config = config;
 		this.canvas = config.canvas;
@@ -28,6 +35,19 @@ public class WebGraphics implements Graphics {
 		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
 		gl20.glClearColor(1, 0, 0f, 1f);
 		gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
+
+	public void update () {
+		long currTimeStamp = System.currentTimeMillis();
+		deltaTime = (currTimeStamp - lastTimeStamp) / 1000.0f;
+		lastTimeStamp = currTimeStamp;
+		time += deltaTime;
+		frames++;
+		if (time > 1) {
+			this.fps = frames;
+			time = 0;
+			frames = 0;
+		}
 	}
 
 	@Override

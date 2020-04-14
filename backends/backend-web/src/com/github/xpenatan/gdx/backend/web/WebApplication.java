@@ -13,17 +13,22 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Clipboard;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
 
-public class WebApplication implements Application {
+public class WebApplication implements Application, Runnable {
 
 	private WebGraphics graphics;
 	private HTMLCanvasElementWrapper canvas;
 	private WebApplicationConfiguration config;
 	private ApplicationListener appListener;
+	private WindowWrapper window;
 
+//	private AppState initState = AppState.IDLE;
+	private AppState initState = AppState.IS_READY;
 
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
+		this.window = config.window;
 		this.appListener = appListener;
 		this.config = config;
 		this.canvas = config.canvas;
@@ -41,6 +46,29 @@ public class WebApplication implements Application {
 		Gdx.gl20 = graphics.getGL20();
 
 
+		window.requestAnimationFrame(this);
+	}
+
+	@Override
+	public void run() {
+		switch (initState) {
+			case IDLE:
+				break;
+			case IS_READY:
+				step();
+				break;
+			case APP_CREATE:
+				break;
+			case ASSETS_LOADED:
+				break;
+			case INIT_SOUND:
+				break;
+		}
+	}
+
+	private void step() {
+		System.out.println("TEST");
+		window.requestAnimationFrame(this);
 	}
 
 	public Preloader getPreloader() {
@@ -203,4 +231,13 @@ public class WebApplication implements Application {
 		// TODO Auto-generated method stub
 
 	}
+
+	public enum AppState {
+		IDLE,
+		ASSETS_LOADED,
+		INIT_SOUND,
+		APP_CREATE,
+		IS_READY
+	}
+
 }
