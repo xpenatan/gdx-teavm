@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebGraphics;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaWindow;

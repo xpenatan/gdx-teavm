@@ -1,7 +1,9 @@
 package com.github.xpenatan.gdx.backends.dragome;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +16,17 @@ import com.dragome.commons.compiler.annotations.CompilerType;
 import com.dragome.commons.compiler.classpath.Classpath;
 import com.dragome.commons.compiler.classpath.ClasspathEntry;
 import com.dragome.commons.compiler.classpath.ClasspathFile;
+import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathEntry;
+import com.dragome.web.config.DomHandlerDelegateStrategy;
+import com.dragome.web.enhancers.jsdelegate.serverside.JsDelegateGenerator;
 import com.dragome.web.helpers.DefaultClasspathFileFilter;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
+import org.w3c.dom.Element;
+import org.w3c.dom.html.HTMLCanvasElement;
+import org.w3c.dom.webgl.WebGLContextAttributes;
 
 @DragomeConfiguratorImplementor(priority= 10)
 public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator
@@ -27,6 +38,10 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 	String projName;
 
 	DragomeBuildConfigurator configurator;
+
+	protected JsDelegateGenerator jsDelegateGenerator;
+	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Element.class, HTMLCanvasElementWrapper.class, WebGLContextAttributes.class, HTMLCanvasElement.class, HTMLDocumentWrapper.class, WebGLRenderingContextWrapper.class));
+
 
 	public DragomeGdxConfigurator(DragomeBuildConfigurator configurator)
 	{
@@ -293,6 +308,57 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 		sb.append("#################################################################");
 		LOGGER.info(sb.toString());
 		sb.setLength(0);
+	}
+
+	@Override
+	public List<ClasspathEntry> getExtraClasspath(Classpath classpath)
+	{
+		List<ClasspathEntry> result= new ArrayList<ClasspathEntry>();
+		List<ClasspathFile> classpathFiles= new ArrayList<ClasspathFile>();
+
+		result.add(new VirtualFolderClasspathEntry(classpathFiles));
+
+		if (jsDelegateGenerator == null)
+			createJsDelegateGenerator(classpath);
+
+		for (Class<?> class1 : classes)
+		{
+			InMemoryClasspathFile inMemoryClasspathFile= jsDelegateGenerator.generateAsClasspathFile(class1);
+			addClassBytecode(inMemoryClasspathFile.getBytecode(), inMemoryClasspathFile.getClassname());
+			classpathFiles.add(inMemoryClasspathFile);
+		}
+
+		return result;
+	}
+
+	private void createJsDelegateGenerator(Classpath classpath)
+	{
+		jsDelegateGenerator= new JsDelegateGenerator(classpath.toString().replace(";", System.getProperty("path.separator")), new DomHandlerDelegateStrategy()
+		{
+			@Override
+			public String createMethodCall(Method method, String params) {
+				String longName = method.toGenericString();
+				String name = method.getName();
+				if (longName.contains(".js.")) {
+					if(params == null)
+						params = "";
+					String codeStr = null;
+					if(name.startsWith("set_") && method.getParameterTypes().length == 1) {
+						String variableName = name.replace("set_", "");
+						codeStr = "this.node." + variableName + "=" + params;
+					}
+					else if(method.getName().startsWith("get_") && method.getParameterTypes().length == 0) {
+						String variableName = name.replace("get_", "");
+						codeStr = "this.node." + variableName;
+					}
+					else
+						codeStr = "this.node." + name + "(" + params + ")";
+					return codeStr;
+				}
+				else
+					return super.createMethodCall(method, params);
+			}
+		});
 	}
 
 	@Override

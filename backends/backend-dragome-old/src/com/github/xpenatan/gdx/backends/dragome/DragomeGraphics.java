@@ -55,8 +55,7 @@ public class DragomeGraphics implements Graphics {
 	}
 
 	public boolean init () {
-		WebGLContextAttributes attributes = ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributes.class,
-			null);
+		WebGLContextAttributes attributes = ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributes.class, null);
 		attributes.setAntialias(config.antialiasing);
 		attributes.setStencil(config.stencil);
 		attributes.setAlpha(config.alpha);

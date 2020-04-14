@@ -26,7 +26,7 @@ public class WebGraphics implements Graphics {
 		gl20 = new WebGL20(context);
 
 		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
-		gl20.glClearColor(1, 1, 0f, 1f);
+		gl20.glClearColor(1, 0, 0f, 1f);
 		gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 
