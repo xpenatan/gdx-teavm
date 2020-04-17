@@ -19,13 +19,16 @@ import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
 public class WebApplication implements Application, Runnable {
 
 	private WebGraphics graphics;
+	private WebInput input;
 	private HTMLCanvasElementWrapper canvas;
 	private WebApplicationConfiguration config;
 	private ApplicationListener appListener;
 	private WindowWrapper window;
 
-//	private AppState initState = AppState.IDLE;
-	private AppState initState = AppState.IS_READY;
+	private AppState initState = AppState.IDLE;
+
+	private int lastWidth = -1;
+	private int lastHeight = 1;
 
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
 		this.window = config.window;
@@ -38,37 +41,58 @@ public class WebApplication implements Application, Runnable {
 	private void init() {
 
 		graphics = new WebGraphics(config);
+		input = new WebInput();
 
 
 		Gdx.app = this;
 		Gdx.graphics = graphics;
 		Gdx.gl = graphics.getGL20();
 		Gdx.gl20 = graphics.getGL20();
-
+		Gdx.input = input;
 
 		window.requestAnimationFrame(this);
 	}
 
 	@Override
 	public void run() {
-		switch (initState) {
+		AppState state = initState;
+		switch (state) {
 			case IDLE:
-				break;
-			case IS_READY:
-				step();
+				initState = AppState.QUEUE_ASSETS_LOADED;
 				break;
 			case APP_CREATE:
+			case APP_READY:
+				step(appListener);
 				break;
-			case ASSETS_LOADED:
+			case QUEUE_ASSETS_LOADED:
+//				initState = AppState.INIT_SOUND;
+				initState = AppState.APP_CREATE;
 				break;
-			case INIT_SOUND:
+			default:
 				break;
 		}
+
+		window.requestAnimationFrame(this);
 	}
 
-	private void step() {
-		System.out.println("TEST");
-		window.requestAnimationFrame(this);
+	private void step(ApplicationListener appListener) {
+		graphics.update();
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
+		if (width != lastWidth || height != lastHeight) {
+			lastWidth = width;
+			lastHeight = height;
+			Gdx.gl.glViewport(0, 0, width, height);
+
+			if(initState == AppState.APP_CREATE) {
+				initState = AppState.APP_READY;
+				appListener.create();
+			}
+			appListener.resize(width, height);
+		}
+		graphics.frameId++;
+		appListener.render();
+		input.reset();
 	}
 
 	public Preloader getPreloader() {
@@ -234,10 +258,10 @@ public class WebApplication implements Application, Runnable {
 
 	public enum AppState {
 		IDLE,
-		ASSETS_LOADED,
+		QUEUE_ASSETS_LOADED,
 		INIT_SOUND,
 		APP_CREATE,
-		IS_READY
+		APP_READY
 	}
 
 }

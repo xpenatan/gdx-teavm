@@ -19,13 +19,13 @@ package com.github.xpenatan.gdx.backend.web.preloader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8Array;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
 
 /** Adapted from gwt backend
  * @author xpenatan */
 public final class Blob {
 
-	public Blob (Int8Array data) {
+	public Blob (Int8ArrayWrapper data) {
 		this.data = data;
 	}
 
@@ -82,6 +82,6 @@ public final class Blob {
 		return encoded.toString();
 	}
 
-	private final Int8Array data;
+	private final Int8ArrayWrapper data;
 
 }

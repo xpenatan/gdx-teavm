@@ -8,7 +8,22 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.XMLHttpRequest;
+import org.w3c.dom.html.HTMLCanvasElement;
+import org.w3c.dom.typedarray.ArrayBuffer;
+import org.w3c.dom.typedarray.ArrayBufferView;
+import org.w3c.dom.typedarray.Float32Array;
+import org.w3c.dom.typedarray.Float64Array;
+import org.w3c.dom.typedarray.Int16Array;
+import org.w3c.dom.typedarray.Int32Array;
+import org.w3c.dom.typedarray.Int8Array;
+import org.w3c.dom.typedarray.Uint16Array;
+import org.w3c.dom.typedarray.Uint32Array;
+import org.w3c.dom.typedarray.Uint8Array;
+import org.w3c.dom.typedarray.Uint8ClampedArray;
+import org.w3c.dom.websocket.WebSocket;
 import com.dragome.commons.ChainedInstrumentationDragomeConfigurator;
 import com.dragome.commons.DragomeConfiguratorImplementor;
 import com.dragome.commons.compiler.PrioritySolver;
@@ -19,14 +34,39 @@ import com.dragome.commons.compiler.classpath.ClasspathFile;
 import com.dragome.commons.compiler.classpath.InMemoryClasspathFile;
 import com.dragome.commons.compiler.classpath.serverside.VirtualFolderClasspathEntry;
 import com.dragome.web.config.DomHandlerDelegateStrategy;
+import com.dragome.web.enhancers.jsdelegate.interfaces.SubTypeFactory;
 import com.dragome.web.enhancers.jsdelegate.serverside.JsDelegateGenerator;
 import com.dragome.web.helpers.DefaultClasspathFileFilter;
+import com.dragome.web.html.dom.w3c.ArrayBufferFactory;
+import com.dragome.web.html.dom.w3c.TypedArraysFactory;
+import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
+import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.DocumentElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.FloatArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.LongArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.ObjectArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLActiveInfoWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLBufferWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLFramebufferWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLProgramWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderbufferWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
-import org.w3c.dom.Element;
-import org.w3c.dom.html.HTMLCanvasElement;
-import org.w3c.dom.webgl.WebGLContextAttributes;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLShaderWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLTextureWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLUniformLocationWrapper;
 
 @DragomeConfiguratorImplementor(priority= 10)
 public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator
@@ -40,8 +80,19 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 	DragomeBuildConfigurator configurator;
 
 	protected JsDelegateGenerator jsDelegateGenerator;
-	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(Element.class, HTMLCanvasElementWrapper.class, WebGLContextAttributes.class, HTMLCanvasElement.class, HTMLDocumentWrapper.class, WebGLRenderingContextWrapper.class));
-
+	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(
+			WebGLActiveInfoWrapper.class, WebGLBufferWrapper.class, WebGLContextAttributesWrapper.class, WebGLFramebufferWrapper.class, WebGLProgramWrapper.class,
+			WebGLRenderbufferWrapper.class, WebGLRenderingContextWrapper.class, WebGLShaderWrapper.class, WebGLTextureWrapper.class, WebGLUniformLocationWrapper.class,
+			CanvasPixelArrayWrapper.class, DocumentElementWrapper.class, ElementWrapper.class, HTMLCanvasElementWrapper.class, HTMLDocumentWrapper.class,
+			HTMLVideoElementWrapper.class, ImageDataWrapper.class, WindowWrapper.class,
+			ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, Float32ArrayWrapper.class, FloatArrayWrapper.class, Int32ArrayWrapper.class,
+			Int8ArrayWrapper.class, LongArrayWrapper.class, ObjectArrayWrapper.class, Int16ArrayWrapper.class,
+			Element.class, Document.class, HTMLCanvasElement.class,
+			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
+			Int32Array.class, Int8Array.class, Uint8ClampedArray.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
+			ArrayBufferFactory.class, TypedArraysFactory.class,
+			XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class
+			));
 
 	public DragomeGdxConfigurator(DragomeBuildConfigurator configurator)
 	{
@@ -137,73 +188,6 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag);
 				}
 
-				boolean test2 = false;
-
-//				flag = false;
-//
-//				flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, thisClassName, flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "TestLauncher", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "MyClassTest", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "/Object.class", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "/String", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/io/PrintStream", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/io/OutputStream.class", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/lang/System.class", flag);
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "runtime.js", flag); // required to compile
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/view/VisualActivity.class", flag); // required interface to writes to js file
-//				flag = toAccept(ACCEPT_TYPE.ACCEPT, path, ".js", flag);
-
-				if(test2) {
-
-					{
-						flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/lang/", flag);
-					}
-					{
-
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/logging/", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/HashMap", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/List", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/ArrayList", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/AbstractList", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/HashSet", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/Collection", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/AbstractCollection", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/Calendar", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/TimeZone", flag); // required to compile
-	//					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util/Date", flag); // required to compile
-						flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/util", flag); // required to compile
-						flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "java/", flag); // required to compile
-					}
-
-
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "runtime.js", flag); // required to compile
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "javascript/Utils.class", flag); // required
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/view/VisualActivity.class", flag); // required interface to writes to js file
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "TestLauncher", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "PageAlias", flag);
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/compiler/annotations/", flag);  // required
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag); // required
-
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/ProxyRelatedInvocationHandler", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler.class", flag);
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "webdefault.xml", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, ".js", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "flexjson/", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/view/", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/services/", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/helpers/", flag);
-
-
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "org/w3c/", flag);   // required
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/web/", flag);   // required
-
-				}
-
 				if(path.endsWith("/"))
 					flag = false;
 
@@ -266,7 +250,6 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 		return include;
 	}
 
-
 	@Override
 	public void sortClassPath(Classpath classPath) {
 		classPath.sortByPriority(new PrioritySolver()
@@ -275,10 +258,10 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 			public int getPriorityOf(ClasspathEntry string)
 			{
 				String name = string.getName();
-				if (name.contains("web-backend"))
-					return 5;
-				else if (name.contains("dragome-backend"))
-					return 4; // dragome backend is first so it can override any dragome classes
+				if (name.contains("backend-dragome"))
+					return 5; // dragome backend is first so it can override any dragome classes
+				else if (name.contains("backend-web"))
+					return 4;
 				else if (name.contains("dragome-js-jre"))
 					return 3;
 				else if (name.contains("dragome-"))
@@ -339,24 +322,50 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 			public String createMethodCall(Method method, String params) {
 				String longName = method.toGenericString();
 				String name = method.getName();
-				if (longName.contains(".js.")) {
-					if(params == null)
-						params = "";
-					String codeStr = null;
-					if(name.startsWith("set_") && method.getParameterTypes().length == 1) {
-						String variableName = name.replace("set_", "");
-						codeStr = "this.node." + variableName + "=" + params;
+
+				String result = super.createMethodCall(method, params);
+
+				if(name.startsWith("get")) {
+					String tmpName = null;
+					if(name.endsWith("Float"))
+						tmpName = name.replace("Float", "");
+					else if(name.endsWith("Int"))
+						tmpName = name.replace("Int", "");
+					else if(name.endsWith("String"))
+						tmpName = name.replace("String", "");
+					else if(name.endsWith("Boolean"))
+						tmpName = name.replace("Boolean", "");
+					if(tmpName != null) {
+						if(params != null) {
+							result = "this.node." + tmpName + "(" + params + ")";
+						}
+						else {
+							result = "this.node." + tmpName;
+						}
 					}
-					else if(method.getName().startsWith("get_") && method.getParameterTypes().length == 0) {
-						String variableName = name.replace("get_", "");
-						codeStr = "this.node." + variableName;
-					}
-					else
-						codeStr = "this.node." + name + "(" + params + ")";
-					return codeStr;
 				}
-				else
-					return super.createMethodCall(method, params);
+
+				Class<?>[] superclass= method.getDeclaringClass().getInterfaces();
+				boolean isTypedArray= superclass.length > 0 && superclass[0].equals(ArrayBufferViewWrapper.class);
+
+				if (isTypedArray && name.equals("set") && method.getParameterTypes().length == 2 && method.getParameterTypes()[0].equals(int.class))
+					result= "this.node[$1] = $2";
+				else if (isTypedArray && (name.equals("get") || name.equals("getAsDouble")) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(int.class))
+					result= "this.node[$1]";
+
+				return result;
+			}
+
+			@Override
+			public String getSubTypeExtractorFor(Class<?> interface1, String methodName) {
+				String subTypeExtractorFor = super.getSubTypeExtractorFor(interface1, methodName);
+				return subTypeExtractorFor;
+			}
+
+			@Override
+			public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName) {
+				Class<? extends SubTypeFactory> subTypeFactoryClassFor = super.getSubTypeFactoryClassFor(interface1, methodName);
+				return subTypeFactoryClassFor;
 			}
 		});
 	}

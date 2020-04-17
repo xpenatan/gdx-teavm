@@ -6,6 +6,7 @@ import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.dragome.dom.DragomeCanvas;
+import com.github.xpenatan.gdx.backends.dragome.dom.DragomeTypedArrays;
 import com.github.xpenatan.gdx.backends.dragome.dom.DragomeWindow;
 
 public class DragomeApplicationConfiguration extends WebApplicationConfiguration {
@@ -16,5 +17,7 @@ public class DragomeApplicationConfiguration extends WebApplicationConfiguration
 		Element canvasElem = elementBySelector.getElementBySelector(canvasID);
 		HTMLCanvasElement canvasElement = JsCast.castTo(canvasElem, HTMLCanvasElement.class);
 		canvas = new DragomeCanvas(canvasElement);
+
+		new DragomeTypedArrays();
 	}
 }

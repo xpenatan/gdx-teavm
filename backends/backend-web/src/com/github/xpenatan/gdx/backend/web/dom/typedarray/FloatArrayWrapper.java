@@ -2,13 +2,13 @@
 
 package com.github.xpenatan.gdx.backend.web.dom.typedarray;
 
-public interface LongArray {
-	// LongArray
+public interface FloatArrayWrapper {
+	// FloatArray
 	public int getLength();
 
 	public void setLength(int length);
 
-	public int getElement(int index);
+	public float getElement(int index);
 
-	public void setElement(int index, int value);
+	public void setElement(int index, float value);
 }

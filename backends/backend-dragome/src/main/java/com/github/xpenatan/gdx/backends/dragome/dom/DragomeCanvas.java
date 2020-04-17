@@ -7,6 +7,7 @@ import com.dragome.commons.javascript.ScriptHelper;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
 
 public class DragomeCanvas implements HTMLCanvasElementWrapper {
@@ -20,7 +21,7 @@ public class DragomeCanvas implements HTMLCanvasElementWrapper {
 	@Override
 	public WebGLRenderingContextWrapper getGLContext(WebApplicationConfiguration config) {
 
-		WebGLContextAttributes attributes = ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributes.class, null);
+		WebGLContextAttributesWrapper attributes = ScriptHelper.evalCasting("{premultipliedAlpha:false}", WebGLContextAttributesWrapper.class, null);
 		attributes.setAntialias(config.antialiasing);
 		attributes.setStencil(config.stencil);
 		attributes.setAlpha(config.alpha);

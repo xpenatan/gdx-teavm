@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/dragome-w3c-standards"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/backend-web"/>
+	<classpathentry kind="src" path="emu"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

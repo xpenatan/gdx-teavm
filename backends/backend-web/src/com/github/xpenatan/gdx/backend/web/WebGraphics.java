@@ -33,7 +33,7 @@ public class WebGraphics implements Graphics {
 		gl20 = new WebGL20(context);
 
 		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
-		gl20.glClearColor(1, 0, 0f, 1f);
+		gl20.glClearColor(0, 0, 0f, 1f);
 		gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 
@@ -81,26 +81,22 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return canvas.getWidth();
 	}
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return canvas.getWidth();
 	}
 
 	@Override
-	public int getBackBufferWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getBackBufferWidth () {
+		return canvas.getWidth();
 	}
 
 	@Override
-	public int getBackBufferHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getBackBufferHeight () {
+		return canvas.getHeight();
 	}
 
 	@Override
@@ -129,32 +125,27 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public long getFrameId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return frameId;
 	}
 
 	@Override
 	public float getDeltaTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return deltaTime;
 	}
 
 	@Override
 	public float getRawDeltaTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return deltaTime;
 	}
 
 	@Override
 	public int getFramesPerSecond() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (int)fps;
 	}
 
 	@Override
 	public GraphicsType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return GraphicsType.WebGL;
 	}
 
 	@Override
@@ -163,33 +154,28 @@ public class WebGraphics implements Graphics {
 	}
 
 	@Override
-	public float getPpiX() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getPpiX () {
+		return 96;
 	}
 
 	@Override
-	public float getPpiY() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getPpiY () {
+		return 96;
 	}
 
 	@Override
-	public float getPpcX() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getPpcX () {
+		return 96 / 2.54f;
 	}
 
 	@Override
-	public float getPpcY() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getPpcY () {
+		return 96 / 2.54f;
 	}
 
 	@Override
-	public float getDensity() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getDensity () {
+		return 96.0f / 160;
 	}
 
 	@Override
@@ -278,8 +264,7 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public BufferFormat getBufferFormat() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BufferFormat(8, 8, 8, 0, 16, config.stencil ? 8 : 0, 0, false);
 	}
 
 	@Override

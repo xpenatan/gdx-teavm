@@ -2,10 +2,7 @@
 
 package com.github.xpenatan.gdx.backend.web.dom.typedarray;
 
-public interface ArrayBufferView
-{
-	// ArrayBufferView
-	public ArrayBuffer getBuffer();
-	public int getByteOffset();
+public interface ArrayBufferWrapper {
+	// ArrayBuffer
 	public int getByteLength();
 }

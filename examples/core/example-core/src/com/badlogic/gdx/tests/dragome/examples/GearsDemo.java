@@ -102,7 +102,7 @@ public class GearsDemo implements ApplicationListener {
 		viewport = new ScreenViewport(cam);
 		guiViewport = new ScreenViewport();
 
-		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider();
+		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider(defaultVertex, defaultFragment);
 		modelBatch = new ModelBatch(defaultShaderProvider);
 
 		ModelBuilder modelBuilder = new ModelBuilder();
@@ -115,7 +115,7 @@ public class GearsDemo implements ApplicationListener {
 		model3 = gear(modelBuilder, 1.3f, 2.0f, 1.5f, 10, 0.7f, Color.BLUE);
 		gear3 = new ModelInstance(model3);
 
-		font = new BitmapFont();
+//		font = new BitmapFont();
 
 		batch = new SpriteBatch();
 
@@ -168,7 +168,8 @@ public class GearsDemo implements ApplicationListener {
 				fps = Gdx.graphics.getFramesPerSecond();
 			}
 			batch.begin();
-			font.draw(batch, "FPS: " + fps, 15, Gdx.graphics.getHeight() - 15);
+			if(font != null)
+				font.draw(batch, "FPS: " + fps, 15, Gdx.graphics.getHeight() - 15);
 			batch.end();
 		}
 	}
@@ -360,4 +361,563 @@ public class GearsDemo implements ApplicationListener {
 
 		return builder.end();
 	}
+
+	public static String defaultFragment = "#ifdef GL_ES\r\n" +
+		"#define LOWP lowp\r\n" +
+		"#define MED mediump\r\n" +
+		"#define HIGH highp\r\n" +
+		"precision mediump float;\r\n" +
+		"#else\r\n" +
+		"#define MED\r\n" +
+		"#define LOWP\r\n" +
+		"#define HIGH\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#if defined(specularTextureFlag) || defined(specularColorFlag)\r\n" +
+		"#define specularFlag\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef normalFlag\r\n" +
+		"varying vec3 v_normal;\r\n" +
+		"#endif //normalFlag\r\n" +
+		"\r\n" +
+		"#if defined(colorFlag)\r\n" +
+		"varying vec4 v_color;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef blendedFlag\r\n" +
+		"varying float v_opacity;\r\n" +
+		"#ifdef alphaTestFlag\r\n" +
+		"varying float v_alphaTest;\r\n" +
+		"#endif //alphaTestFlag\r\n" +
+		"#endif //blendedFlag\r\n" +
+		"\r\n" +
+		"#if defined(diffuseTextureFlag) || defined(specularTextureFlag) || defined(emissiveTextureFlag)\r\n" +
+		"#define textureFlag\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef diffuseTextureFlag\r\n" +
+		"varying MED vec2 v_diffuseUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef specularTextureFlag\r\n" +
+		"varying MED vec2 v_specularUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef emissiveTextureFlag\r\n" +
+		"varying MED vec2 v_emissiveUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef diffuseColorFlag\r\n" +
+		"uniform vec4 u_diffuseColor;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef diffuseTextureFlag\r\n" +
+		"uniform sampler2D u_diffuseTexture;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef specularColorFlag\r\n" +
+		"uniform vec4 u_specularColor;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef specularTextureFlag\r\n" +
+		"uniform sampler2D u_specularTexture;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef normalTextureFlag\r\n" +
+		"uniform sampler2D u_normalTexture;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef emissiveColorFlag\r\n" +
+		"uniform vec4 u_emissiveColor;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef emissiveTextureFlag\r\n" +
+		"uniform sampler2D u_emissiveTexture;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef lightingFlag\r\n" +
+		"varying vec3 v_lightDiffuse;\r\n" +
+		"\r\n" +
+		"#if	defined(ambientLightFlag) || defined(ambientCubemapFlag) || defined(sphericalHarmonicsFlag)\r\n" +
+		"#define ambientFlag\r\n" +
+		"#endif //ambientFlag\r\n" +
+		"\r\n" +
+		"#ifdef specularFlag\r\n" +
+		"varying vec3 v_lightSpecular;\r\n" +
+		"#endif //specularFlag\r\n" +
+		"\r\n" +
+		"#ifdef shadowMapFlag\r\n" +
+		"uniform sampler2D u_shadowTexture;\r\n" +
+		"uniform float u_shadowPCFOffset;\r\n" +
+		"varying vec3 v_shadowMapUv;\r\n" +
+		"#define separateAmbientFlag\r\n" +
+		"\r\n" +
+		"float getShadowness(vec2 offset)\r\n" +
+		"{\r\n" +
+		"    const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0);\r\n" +
+		"    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset), bitShifts));//+(1.0/255.0));\r\n" +
+		"}\r\n" +
+		"\r\n" +
+		"float getShadow()\r\n" +
+		"{\r\n" +
+		"	return (//getShadowness(vec2(0,0)) +\r\n" +
+		"			getShadowness(vec2(u_shadowPCFOffset, u_shadowPCFOffset)) +\r\n" +
+		"			getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)) +\r\n" +
+		"			getShadowness(vec2(u_shadowPCFOffset, -u_shadowPCFOffset)) +\r\n" +
+		"			getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;\r\n" +
+		"}\r\n" +
+		"#endif //shadowMapFlag\r\n" +
+		"\r\n" +
+		"#if defined(ambientFlag) && defined(separateAmbientFlag)\r\n" +
+		"varying vec3 v_ambientLight;\r\n" +
+		"#endif //separateAmbientFlag\r\n" +
+		"\r\n" +
+		"#endif //lightingFlag\r\n" +
+		"\r\n" +
+		"#ifdef fogFlag\r\n" +
+		"uniform vec4 u_fogColor;\r\n" +
+		"varying float v_fog;\r\n" +
+		"#endif // fogFlag\r\n" +
+		"\r\n" +
+		"void main() {\r\n" +
+		"	#if defined(normalFlag)\r\n" +
+		"		vec3 normal = v_normal;\r\n" +
+		"	#endif // normalFlag\r\n" +
+		"\r\n" +
+		"	#if defined(diffuseTextureFlag) && defined(diffuseColorFlag) && defined(colorFlag)\r\n" +
+		"		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * u_diffuseColor * v_color;\r\n" +
+		"	#elif defined(diffuseTextureFlag) && defined(diffuseColorFlag)\r\n" +
+		"		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * u_diffuseColor;\r\n" +
+		"	#elif defined(diffuseTextureFlag) && defined(colorFlag)\r\n" +
+		"		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * v_color;\r\n" +
+		"	#elif defined(diffuseTextureFlag)\r\n" +
+		"		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV);\r\n" +
+		"	#elif defined(diffuseColorFlag) && defined(colorFlag)\r\n" +
+		"		vec4 diffuse = u_diffuseColor * v_color;\r\n" +
+		"	#elif defined(diffuseColorFlag)\r\n" +
+		"		vec4 diffuse = u_diffuseColor;\r\n" +
+		"	#elif defined(colorFlag)\r\n" +
+		"		vec4 diffuse = v_color;\r\n" +
+		"	#else\r\n" +
+		"		vec4 diffuse = vec4(1.0);\r\n" +
+		"	#endif\r\n" +
+		"\r\n" +
+		"	#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)\r\n" +
+		"		vec4 emissive = texture2D(u_emissiveTexture, v_emissiveUV) * u_emissiveColor;\r\n" +
+		"	#elif defined(emissiveTextureFlag)\r\n" +
+		"		vec4 emissive = texture2D(u_emissiveTexture, v_emissiveUV);\r\n" +
+		"	#elif defined(emissiveColorFlag)\r\n" +
+		"		vec4 emissive = u_emissiveColor;\r\n" +
+		"	#else\r\n" +
+		"		vec4 emissive = vec4(0.0);\r\n" +
+		"	#endif\r\n" +
+		"\r\n" +
+		"	#if (!defined(lightingFlag))\r\n" +
+		"		gl_FragColor.rgb = diffuse.rgb + emissive.rgb;\r\n" +
+		"	#elif (!defined(specularFlag))\r\n" +
+		"		#if defined(ambientFlag) && defined(separateAmbientFlag)\r\n" +
+		"			#ifdef shadowMapFlag\r\n" +
+		"				gl_FragColor.rgb = (diffuse.rgb * (v_ambientLight + getShadow() * v_lightDiffuse)) + emissive.rgb;\r\n" +
+		"				//gl_FragColor.rgb = texture2D(u_shadowTexture, v_shadowMapUv.xy);\r\n" +
+		"			#else\r\n" +
+		"				gl_FragColor.rgb = (diffuse.rgb * (v_ambientLight + v_lightDiffuse)) + emissive.rgb;\r\n" +
+		"			#endif //shadowMapFlag\r\n" +
+		"		#else\r\n" +
+		"			#ifdef shadowMapFlag\r\n" +
+		"				gl_FragColor.rgb = getShadow() * (diffuse.rgb * v_lightDiffuse) + emissive.rgb;\r\n" +
+		"			#else\r\n" +
+		"				gl_FragColor.rgb = (diffuse.rgb * v_lightDiffuse) + emissive.rgb;\r\n" +
+		"			#endif //shadowMapFlag\r\n" +
+		"		#endif\r\n" +
+		"	#else\r\n" +
+		"		#if defined(specularTextureFlag) && defined(specularColorFlag)\r\n" +
+		"			vec3 specular = texture2D(u_specularTexture, v_specularUV).rgb * u_specularColor.rgb * v_lightSpecular;\r\n" +
+		"		#elif defined(specularTextureFlag)\r\n" +
+		"			vec3 specular = texture2D(u_specularTexture, v_specularUV).rgb * v_lightSpecular;\r\n" +
+		"		#elif defined(specularColorFlag)\r\n" +
+		"			vec3 specular = u_specularColor.rgb * v_lightSpecular;\r\n" +
+		"		#else\r\n" +
+		"			vec3 specular = v_lightSpecular;\r\n" +
+		"		#endif\r\n" +
+		"\r\n" +
+		"		#if defined(ambientFlag) && defined(separateAmbientFlag)\r\n" +
+		"			#ifdef shadowMapFlag\r\n" +
+		"			gl_FragColor.rgb = (diffuse.rgb * (getShadow() * v_lightDiffuse + v_ambientLight)) + specular + emissive.rgb;\r\n" +
+		"				//gl_FragColor.rgb = texture2D(u_shadowTexture, v_shadowMapUv.xy);\r\n" +
+		"			#else\r\n" +
+		"				gl_FragColor.rgb = (diffuse.rgb * (v_lightDiffuse + v_ambientLight)) + specular + emissive.rgb;\r\n" +
+		"			#endif //shadowMapFlag\r\n" +
+		"		#else\r\n" +
+		"			#ifdef shadowMapFlag\r\n" +
+		"				gl_FragColor.rgb = getShadow() * ((diffuse.rgb * v_lightDiffuse) + specular) + emissive.rgb;\r\n" +
+		"			#else\r\n" +
+		"				gl_FragColor.rgb = (diffuse.rgb * v_lightDiffuse) + specular + emissive.rgb;\r\n" +
+		"			#endif //shadowMapFlag\r\n" +
+		"		#endif\r\n" +
+		"	#endif //lightingFlag\r\n" +
+		"\r\n" +
+		"	#ifdef fogFlag\r\n" +
+		"		gl_FragColor.rgb = mix(gl_FragColor.rgb, u_fogColor.rgb, v_fog);\r\n" +
+		"	#endif // end fogFlag\r\n" +
+		"\r\n" +
+		"	#ifdef blendedFlag\r\n" +
+		"		gl_FragColor.a = diffuse.a * v_opacity;\r\n" +
+		"		#ifdef alphaTestFlag\r\n" +
+		"			if (gl_FragColor.a <= v_alphaTest)\r\n" +
+		"				discard;\r\n" +
+		"		#endif\r\n" +
+		"	#else\r\n" +
+		"		gl_FragColor.a = 1.0;\r\n" +
+		"	#endif\r\n" +
+		"\r\n" +
+		"}\r\n" +
+		"";
+
+	public static String defaultVertex = "#if defined(diffuseTextureFlag) || defined(specularTextureFlag) || defined(emissiveTextureFlag)\r\n" +
+		"#define textureFlag\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#if defined(specularTextureFlag) || defined(specularColorFlag)\r\n" +
+		"#define specularFlag\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#if defined(specularFlag) || defined(fogFlag)\r\n" +
+		"#define cameraPositionFlag\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"attribute vec3 a_position;\r\n" +
+		"uniform mat4 u_projViewTrans;\r\n" +
+		"\r\n" +
+		"#if defined(colorFlag)\r\n" +
+		"varying vec4 v_color;\r\n" +
+		"attribute vec4 a_color;\r\n" +
+		"#endif // colorFlag\r\n" +
+		"\r\n" +
+		"#ifdef normalFlag\r\n" +
+		"attribute vec3 a_normal;\r\n" +
+		"uniform mat3 u_normalMatrix;\r\n" +
+		"varying vec3 v_normal;\r\n" +
+		"#endif // normalFlag\r\n" +
+		"\r\n" +
+		"#ifdef textureFlag\r\n" +
+		"attribute vec2 a_texCoord0;\r\n" +
+		"#endif // textureFlag\r\n" +
+		"\r\n" +
+		"#ifdef diffuseTextureFlag\r\n" +
+		"uniform vec4 u_diffuseUVTransform;\r\n" +
+		"varying vec2 v_diffuseUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef emissiveTextureFlag\r\n" +
+		"uniform vec4 u_emissiveUVTransform;\r\n" +
+		"varying vec2 v_emissiveUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef specularTextureFlag\r\n" +
+		"uniform vec4 u_specularUVTransform;\r\n" +
+		"varying vec2 v_specularUV;\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight0Flag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"attribute vec2 a_boneWeight0;\r\n" +
+		"#endif //boneWeight0Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight1Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight1;\r\n" +
+		"#endif //boneWeight1Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight2Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight2;\r\n" +
+		"#endif //boneWeight2Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight3Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight3;\r\n" +
+		"#endif //boneWeight3Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight4Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight4;\r\n" +
+		"#endif //boneWeight4Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight5Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight5;\r\n" +
+		"#endif //boneWeight5Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight6Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight6;\r\n" +
+		"#endif //boneWeight6Flag\r\n" +
+		"\r\n" +
+		"#ifdef boneWeight7Flag\r\n" +
+		"#ifndef boneWeightsFlag\r\n" +
+		"#define boneWeightsFlag\r\n" +
+		"#endif\r\n" +
+		"attribute vec2 a_boneWeight7;\r\n" +
+		"#endif //boneWeight7Flag\r\n" +
+		"\r\n" +
+		"#if defined(numBones) && defined(boneWeightsFlag)\r\n" +
+		"#if (numBones > 0) \r\n" +
+		"#define skinningFlag\r\n" +
+		"#endif\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"uniform mat4 u_worldTrans;\r\n" +
+		"\r\n" +
+		"#if defined(numBones)\r\n" +
+		"#if numBones > 0\r\n" +
+		"uniform mat4 u_bones[numBones];\r\n" +
+		"#endif //numBones\r\n" +
+		"#endif\r\n" +
+		"\r\n" +
+		"#ifdef shininessFlag\r\n" +
+		"uniform float u_shininess;\r\n" +
+		"#else\r\n" +
+		"const float u_shininess = 20.0;\r\n" +
+		"#endif // shininessFlag\r\n" +
+		"\r\n" +
+		"#ifdef blendedFlag\r\n" +
+		"uniform float u_opacity;\r\n" +
+		"varying float v_opacity;\r\n" +
+		"\r\n" +
+		"#ifdef alphaTestFlag\r\n" +
+		"uniform float u_alphaTest;\r\n" +
+		"varying float v_alphaTest;\r\n" +
+		"#endif //alphaTestFlag\r\n" +
+		"#endif // blendedFlag\r\n" +
+		"\r\n" +
+		"#ifdef lightingFlag\r\n" +
+		"varying vec3 v_lightDiffuse;\r\n" +
+		"\r\n" +
+		"#ifdef ambientLightFlag\r\n" +
+		"uniform vec3 u_ambientLight;\r\n" +
+		"#endif // ambientLightFlag\r\n" +
+		"\r\n" +
+		"#ifdef ambientCubemapFlag\r\n" +
+		"uniform vec3 u_ambientCubemap[6];\r\n" +
+		"#endif // ambientCubemapFlag \r\n" +
+		"\r\n" +
+		"#ifdef sphericalHarmonicsFlag\r\n" +
+		"uniform vec3 u_sphericalHarmonics[9];\r\n" +
+		"#endif //sphericalHarmonicsFlag\r\n" +
+		"\r\n" +
+		"#ifdef specularFlag\r\n" +
+		"varying vec3 v_lightSpecular;\r\n" +
+		"#endif // specularFlag\r\n" +
+		"\r\n" +
+		"#ifdef cameraPositionFlag\r\n" +
+		"uniform vec4 u_cameraPosition;\r\n" +
+		"#endif // cameraPositionFlag\r\n" +
+		"\r\n" +
+		"#ifdef fogFlag\r\n" +
+		"varying float v_fog;\r\n" +
+		"#endif // fogFlag\r\n" +
+		"\r\n" +
+		"\r\n" +
+		"#if numDirectionalLights > 0\r\n" +
+		"struct DirectionalLight\r\n" +
+		"{\r\n" +
+		"	vec3 color;\r\n" +
+		"	vec3 direction;\r\n" +
+		"};\r\n" +
+		"uniform DirectionalLight u_dirLights[numDirectionalLights];\r\n" +
+		"#endif // numDirectionalLights\r\n" +
+		"\r\n" +
+		"#if numPointLights > 0\r\n" +
+		"struct PointLight\r\n" +
+		"{\r\n" +
+		"	vec3 color;\r\n" +
+		"	vec3 position;\r\n" +
+		"};\r\n" +
+		"uniform PointLight u_pointLights[numPointLights];\r\n" +
+		"#endif // numPointLights\r\n" +
+		"\r\n" +
+		"#if	defined(ambientLightFlag) || defined(ambientCubemapFlag) || defined(sphericalHarmonicsFlag)\r\n" +
+		"#define ambientFlag\r\n" +
+		"#endif //ambientFlag\r\n" +
+		"\r\n" +
+		"#ifdef shadowMapFlag\r\n" +
+		"uniform mat4 u_shadowMapProjViewTrans;\r\n" +
+		"varying vec3 v_shadowMapUv;\r\n" +
+		"#define separateAmbientFlag\r\n" +
+		"#endif //shadowMapFlag\r\n" +
+		"\r\n" +
+		"#if defined(ambientFlag) && defined(separateAmbientFlag)\r\n" +
+		"varying vec3 v_ambientLight;\r\n" +
+		"#endif //separateAmbientFlag\r\n" +
+		"\r\n" +
+		"#endif // lightingFlag\r\n" +
+		"\r\n" +
+		"void main() {\r\n" +
+		"	#ifdef diffuseTextureFlag\r\n" +
+		"		v_diffuseUV = u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;\r\n" +
+		"	#endif //diffuseTextureFlag\r\n" +
+		"	\r\n" +
+		"	#ifdef emissiveTextureFlag\r\n" +
+		"		v_emissiveUV = u_emissiveUVTransform.xy + a_texCoord0 * u_emissiveUVTransform.zw;\r\n" +
+		"	#endif //emissiveTextureFlag\r\n" +
+		"\r\n" +
+		"	#ifdef specularTextureFlag\r\n" +
+		"		v_specularUV = u_specularUVTransform.xy + a_texCoord0 * u_specularUVTransform.zw;\r\n" +
+		"	#endif //specularTextureFlag\r\n" +
+		"	\r\n" +
+		"	#if defined(colorFlag)\r\n" +
+		"		v_color = a_color;\r\n" +
+		"	#endif // colorFlag\r\n" +
+		"		\r\n" +
+		"	#ifdef blendedFlag\r\n" +
+		"		v_opacity = u_opacity;\r\n" +
+		"		#ifdef alphaTestFlag\r\n" +
+		"			v_alphaTest = u_alphaTest;\r\n" +
+		"		#endif //alphaTestFlag\r\n" +
+		"	#endif // blendedFlag\r\n" +
+		"	\r\n" +
+		"	#ifdef skinningFlag\r\n" +
+		"		mat4 skinning = mat4(0.0);\r\n" +
+		"		#ifdef boneWeight0Flag\r\n" +
+		"			skinning += (a_boneWeight0.y) * u_bones[int(a_boneWeight0.x)];\r\n" +
+		"		#endif //boneWeight0Flag\r\n" +
+		"		#ifdef boneWeight1Flag				\r\n" +
+		"			skinning += (a_boneWeight1.y) * u_bones[int(a_boneWeight1.x)];\r\n" +
+		"		#endif //boneWeight1Flag\r\n" +
+		"		#ifdef boneWeight2Flag		\r\n" +
+		"			skinning += (a_boneWeight2.y) * u_bones[int(a_boneWeight2.x)];\r\n" +
+		"		#endif //boneWeight2Flag\r\n" +
+		"		#ifdef boneWeight3Flag\r\n" +
+		"			skinning += (a_boneWeight3.y) * u_bones[int(a_boneWeight3.x)];\r\n" +
+		"		#endif //boneWeight3Flag\r\n" +
+		"		#ifdef boneWeight4Flag\r\n" +
+		"			skinning += (a_boneWeight4.y) * u_bones[int(a_boneWeight4.x)];\r\n" +
+		"		#endif //boneWeight4Flag\r\n" +
+		"		#ifdef boneWeight5Flag\r\n" +
+		"			skinning += (a_boneWeight5.y) * u_bones[int(a_boneWeight5.x)];\r\n" +
+		"		#endif //boneWeight5Flag\r\n" +
+		"		#ifdef boneWeight6Flag\r\n" +
+		"			skinning += (a_boneWeight6.y) * u_bones[int(a_boneWeight6.x)];\r\n" +
+		"		#endif //boneWeight6Flag\r\n" +
+		"		#ifdef boneWeight7Flag\r\n" +
+		"			skinning += (a_boneWeight7.y) * u_bones[int(a_boneWeight7.x)];\r\n" +
+		"		#endif //boneWeight7Flag\r\n" +
+		"	#endif //skinningFlag\r\n" +
+		"\r\n" +
+		"	#ifdef skinningFlag\r\n" +
+		"		vec4 pos = u_worldTrans * skinning * vec4(a_position, 1.0);\r\n" +
+		"	#else\r\n" +
+		"		vec4 pos = u_worldTrans * vec4(a_position, 1.0);\r\n" +
+		"	#endif\r\n" +
+		"		\r\n" +
+		"	gl_Position = u_projViewTrans * pos;\r\n" +
+		"		\r\n" +
+		"	#ifdef shadowMapFlag\r\n" +
+		"		vec4 spos = u_shadowMapProjViewTrans * pos;\r\n" +
+		"		v_shadowMapUv.xyz = (spos.xyz / spos.w) * 0.5 + 0.5;\r\n" +
+		"		v_shadowMapUv.z = min(v_shadowMapUv.z, 0.998);\r\n" +
+		"	#endif //shadowMapFlag\r\n" +
+		"	\r\n" +
+		"	#if defined(normalFlag)\r\n" +
+		"		#if defined(skinningFlag)\r\n" +
+		"			vec3 normal = normalize((u_worldTrans * skinning * vec4(a_normal, 0.0)).xyz);\r\n" +
+		"		#else\r\n" +
+		"			vec3 normal = normalize(u_normalMatrix * a_normal);\r\n" +
+		"		#endif\r\n" +
+		"		v_normal = normal;\r\n" +
+		"	#endif // normalFlag\r\n" +
+		"\r\n" +
+		"    #ifdef fogFlag\r\n" +
+		"        vec3 flen = u_cameraPosition.xyz - pos.xyz;\r\n" +
+		"        float fog = dot(flen, flen) * u_cameraPosition.w;\r\n" +
+		"        v_fog = min(fog, 1.0);\r\n" +
+		"    #endif\r\n" +
+		"\r\n" +
+		"	#ifdef lightingFlag\r\n" +
+		"		#if	defined(ambientLightFlag)\r\n" +
+		"        	vec3 ambientLight = u_ambientLight;\r\n" +
+		"		#elif defined(ambientFlag)\r\n" +
+		"        	vec3 ambientLight = vec3(0.0);\r\n" +
+		"		#endif\r\n" +
+		"			\r\n" +
+		"		#ifdef ambientCubemapFlag 		\r\n" +
+		"			vec3 squaredNormal = normal * normal;\r\n" +
+		"			vec3 isPositive  = step(0.0, normal);\r\n" +
+		"			ambientLight += squaredNormal.x * mix(u_ambientCubemap[0], u_ambientCubemap[1], isPositive.x) +\r\n" +
+		"					squaredNormal.y * mix(u_ambientCubemap[2], u_ambientCubemap[3], isPositive.y) +\r\n" +
+		"					squaredNormal.z * mix(u_ambientCubemap[4], u_ambientCubemap[5], isPositive.z);\r\n" +
+		"		#endif // ambientCubemapFlag\r\n" +
+		"\r\n" +
+		"		#ifdef sphericalHarmonicsFlag\r\n" +
+		"			ambientLight += u_sphericalHarmonics[0];\r\n" +
+		"			ambientLight += u_sphericalHarmonics[1] * normal.x;\r\n" +
+		"			ambientLight += u_sphericalHarmonics[2] * normal.y;\r\n" +
+		"			ambientLight += u_sphericalHarmonics[3] * normal.z;\r\n" +
+		"			ambientLight += u_sphericalHarmonics[4] * (normal.x * normal.z);\r\n" +
+		"			ambientLight += u_sphericalHarmonics[5] * (normal.z * normal.y);\r\n" +
+		"			ambientLight += u_sphericalHarmonics[6] * (normal.y * normal.x);\r\n" +
+		"			ambientLight += u_sphericalHarmonics[7] * (3.0 * normal.z * normal.z - 1.0);\r\n" +
+		"			ambientLight += u_sphericalHarmonics[8] * (normal.x * normal.x - normal.y * normal.y);			\r\n" +
+		"		#endif // sphericalHarmonicsFlag\r\n" +
+		"\r\n" +
+		"		#ifdef ambientFlag\r\n" +
+		"			#ifdef separateAmbientFlag\r\n" +
+		"				v_ambientLight = ambientLight;\r\n" +
+		"				v_lightDiffuse = vec3(0.0);\r\n" +
+		"			#else\r\n" +
+		"				v_lightDiffuse = ambientLight;\r\n" +
+		"			#endif //separateAmbientFlag\r\n" +
+		"		#else\r\n" +
+		"	        v_lightDiffuse = vec3(0.0);\r\n" +
+		"		#endif //ambientFlag\r\n" +
+		"\r\n" +
+		"			\r\n" +
+		"		#ifdef specularFlag\r\n" +
+		"			v_lightSpecular = vec3(0.0);\r\n" +
+		"			vec3 viewVec = normalize(u_cameraPosition.xyz - pos.xyz);\r\n" +
+		"		#endif // specularFlag\r\n" +
+		"			\r\n" +
+		"		#if (numDirectionalLights > 0) && defined(normalFlag)\r\n" +
+		"			for (int i = 0; i < numDirectionalLights; i++) {\r\n" +
+		"				vec3 lightDir = -u_dirLights[i].direction;\r\n" +
+		"				float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);\r\n" +
+		"				vec3 value = u_dirLights[i].color * NdotL;\r\n" +
+		"				v_lightDiffuse += value;\r\n" +
+		"				#ifdef specularFlag\r\n" +
+		"					float halfDotView = max(0.0, dot(normal, normalize(lightDir + viewVec)));\r\n" +
+		"					v_lightSpecular += value * pow(halfDotView, u_shininess);\r\n" +
+		"				#endif // specularFlag\r\n" +
+		"			}\r\n" +
+		"		#endif // numDirectionalLights\r\n" +
+		"\r\n" +
+		"		#if (numPointLights > 0) && defined(normalFlag)\r\n" +
+		"			for (int i = 0; i < numPointLights; i++) {\r\n" +
+		"				vec3 lightDir = u_pointLights[i].position - pos.xyz;\r\n" +
+		"				float dist2 = dot(lightDir, lightDir);\r\n" +
+		"				lightDir *= inversesqrt(dist2);\r\n" +
+		"				float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);\r\n" +
+		"				vec3 value = u_pointLights[i].color * (NdotL / (1.0 + dist2));\r\n" +
+		"				v_lightDiffuse += value;\r\n" +
+		"				#ifdef specularFlag\r\n" +
+		"					float halfDotView = max(0.0, dot(normal, normalize(lightDir + viewVec)));\r\n" +
+		"					v_lightSpecular += value * pow(halfDotView, u_shininess);\r\n" +
+		"				#endif // specularFlag\r\n" +
+		"			}\r\n" +
+		"		#endif // numPointLights\r\n" +
+		"	#endif // lightingFlag\r\n" +
+		"}\r\n" +
+		"";
 }
