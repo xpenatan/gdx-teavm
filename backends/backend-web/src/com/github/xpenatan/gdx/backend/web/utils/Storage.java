@@ -1,8 +1,10 @@
 
 package com.github.xpenatan.gdx.backend.web.utils;
 
-/** https://www.w3.org/TR/webstorage/#storage-0
- * @author xpenatan */
+/**
+ * https://www.w3.org/TR/webstorage/#storage-0
+ * @author xpenatan
+ */
 public abstract class Storage {
 	public final boolean localStorageSupported = checkStorageSupport("localStorage");
 	public final boolean sessionStorageSupported = checkStorageSupport("sessionStorage");

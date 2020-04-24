@@ -16,6 +16,9 @@ import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
 
+/**
+ * @author xpenatan
+ */
 public class WebApplication implements Application, Runnable {
 
 	private WebGraphics graphics;
@@ -34,7 +37,7 @@ public class WebApplication implements Application, Runnable {
 		this.window = config.window;
 		this.appListener = appListener;
 		this.config = config;
-		this.canvas = config.canvas;
+		this.canvas = config.canvasHelper.getCanvas();
 		init();
 	}
 

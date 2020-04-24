@@ -3,9 +3,11 @@ package com.github.xpenatan.gdx.backend.web;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.InputStream;
-
 import com.badlogic.gdx.files.FileHandle;
 
+/**
+ * @author xpenatan
+ */
 public interface WebPreLoader {
 
 	public InputStream read (String url);

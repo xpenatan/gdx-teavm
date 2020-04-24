@@ -8,7 +8,6 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
@@ -27,6 +26,9 @@ import com.github.xpenatan.gdx.backend.web.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLUniformLocationWrapper;
 
+/**
+ * @author xpenatan
+ */
 public class WebGL20 implements GL20 {
 
 	private WebGLRenderingContextWrapper gl;
@@ -554,11 +556,12 @@ public class WebGL20 implements GL20 {
 	public void glBufferSubData(int target, int offset, int size, Buffer data) {
 		if (data instanceof FloatBuffer) {
 			gl.bufferSubData(target, offset, copy((FloatBuffer) data));
-		} else if (data instanceof ShortBuffer) {
-			gl.bufferSubData(target, offset, copy((ShortBuffer) data));
-		} else {
-			throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
 		}
+//		else if (data instanceof ShortBuffer) {
+//			gl.bufferSubData(target, offset, copy((ShortBuffer) data));
+//		} else {
+//			throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
+//		}
 	}
 
 	@Override

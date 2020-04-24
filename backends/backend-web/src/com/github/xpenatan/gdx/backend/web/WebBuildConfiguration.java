@@ -4,6 +4,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * @author xpenatan
+ */
 public abstract class WebBuildConfiguration {
 
 	public boolean acceptClasspath(URL url) {

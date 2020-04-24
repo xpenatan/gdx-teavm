@@ -45,6 +45,7 @@ import com.github.xpenatan.gdx.backend.web.dom.DocumentElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
@@ -68,6 +69,9 @@ import com.github.xpenatan.gdx.backend.web.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLUniformLocationWrapper;
 
+/**
+ * @author xpenatan
+ */
 @DragomeConfiguratorImplementor(priority= 10)
 public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator
 {
@@ -84,7 +88,7 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 			WebGLActiveInfoWrapper.class, WebGLBufferWrapper.class, WebGLContextAttributesWrapper.class, WebGLFramebufferWrapper.class, WebGLProgramWrapper.class,
 			WebGLRenderbufferWrapper.class, WebGLRenderingContextWrapper.class, WebGLShaderWrapper.class, WebGLTextureWrapper.class, WebGLUniformLocationWrapper.class,
 			CanvasPixelArrayWrapper.class, DocumentElementWrapper.class, ElementWrapper.class, HTMLCanvasElementWrapper.class, HTMLDocumentWrapper.class,
-			HTMLVideoElementWrapper.class, ImageDataWrapper.class, WindowWrapper.class,
+			HTMLVideoElementWrapper.class, ImageDataWrapper.class, HTMLImageElementWrapper.class, WindowWrapper.class,
 			ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, Float32ArrayWrapper.class, FloatArrayWrapper.class, Int32ArrayWrapper.class,
 			Int8ArrayWrapper.class, LongArrayWrapper.class, ObjectArrayWrapper.class, Int16ArrayWrapper.class,
 			Element.class, Document.class, HTMLCanvasElement.class,

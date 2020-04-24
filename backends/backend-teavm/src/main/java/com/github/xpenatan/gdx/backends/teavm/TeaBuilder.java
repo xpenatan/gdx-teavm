@@ -6,8 +6,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
@@ -16,10 +14,10 @@ import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 
 
+/**
+ * @author xpenatan
+ */
 public class TeaBuilder {
-
-	private static Logger LOGGER= Logger.getLogger(TeaBuilder.class.getName());
-
 	private static final StringBuilder sb = new StringBuilder();
 
 	public static void build(TeaBuildConfiguration configuration) {
@@ -46,6 +44,16 @@ public class TeaBuilder {
 				notAcceptedURL.add(url);
 		}
 
+		for(int i = 0; i < acceptedURL.size(); i++) {
+			URL url = acceptedURL.get(i);
+			String string = url.toString();
+			if(string.contains("backend-web")) {
+				acceptedURL.remove(i);
+				acceptedURL.add(0, url);
+				break;
+			}
+		}
+
 		logHeader("Accepted Libs ClassPath Order");
 
 		for (int i = 0; i < acceptedURL.size(); i++) {
@@ -69,7 +77,7 @@ public class TeaBuilder {
 
 		URL[] classPaths = new URL[size];
 		acceptedURL.toArray(classPaths);
-		ClassLoader classLoader = new URLClassLoader(classPaths, TeaBuilder.class.getClassLoader());
+		ClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
 		TeaVMTool tool = new TeaVMTool();
 
@@ -94,7 +102,7 @@ public class TeaBuilder {
 		tool.setSourceFilesCopied(setSourceFilesCopied);
 		tool.setTargetDirectory(setTargetDirectory);
 		tool.setTargetFileName(setTargetFileName);
-		tool.setMinifying(setMinifying);
+		tool.setObfuscated(setMinifying);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
 		tool.setMainClass(mainClass);
 		//		tool.getProperties().putAll(profile.getProperties());
@@ -113,6 +121,8 @@ public class TeaBuilder {
 		assetsDefaultClasspath(classPathFiles);
 		configuration.assetsPath(paths);
 //		AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, false);
+//		List<String> transformers = tool.getTransformers();
+//		transformers.add(OverlayTransformer.class.getName());
 
 
 		try {
@@ -129,12 +139,14 @@ public class TeaBuilder {
 					Problem problem = problems.get(i);
 					String text = problem.getText();
 					CallLocation location = problem.getLocation();
-					MethodReference method = location.getMethod();
+					MethodReference method = location != null ? location.getMethod() : null;
 					if(i > 0)
 						sb.append("----\n");
 					sb.append(i + " " + problem.getSeverity().toString() + "\n");
-					sb.append("Class: " + method.getClassName() + "\n");
-					sb.append("Method: " + method.getName() + "\n");
+					if(method != null) {
+						sb.append("Class: " + method.getClassName() + "\n");
+						sb.append("Method: " + method.getName() + "\n");
+					}
 					sb.append("Text: " + text + "\n");
 				}
 			}
@@ -166,9 +178,6 @@ public class TeaBuilder {
 
 	private static ACCEPT_STATE acceptPath(String path) {
 		ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
-
-//		System.out.println("path 1: " + path);
-
 		if(path.contains("teavm-") && path.contains(".jar"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("junit"))
@@ -180,10 +189,6 @@ public class TeaBuilder {
 		if(path.contains("gdx-jnigen"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("Java/jdk"))
-			isValid = ACCEPT_STATE.NOT_ACCEPT;
-		if(path.contains("/XpeTeaVM"))
-			isValid = ACCEPT_STATE.NOT_ACCEPT;
-		if(path.contains("test-"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("commons-io"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
@@ -199,27 +204,10 @@ public class TeaBuilder {
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("mozilla"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
-//		if(path.contains("gdx-"))
-//			isValid = false;
-
-//		isValid = true;
-
 		return isValid;
 	}
 
 	enum ACCEPT_STATE {
 		ACCEPT, NOT_ACCEPT, NO_MATCH
 	}
-
-//	private static RuntimeCopyOperation mapRuntime(TeaVMRunTime runtimeMode) {
-//		switch (runtimeMode) {
-//		case MERGE:
-//			return RuntimeCopyOperation.MERGED;
-//		case SEPARATE:
-//			return RuntimeCopyOperation.SEPARATE;
-//		default:
-//			return RuntimeCopyOperation.NONE;
-//		}
-//	}
-
 }

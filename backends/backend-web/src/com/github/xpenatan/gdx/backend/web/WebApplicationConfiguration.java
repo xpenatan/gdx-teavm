@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backend.web;
 
-import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
 /**
@@ -8,7 +7,7 @@ import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
  */
 public class WebApplicationConfiguration {
 	public WindowWrapper window;
-	public HTMLCanvasElementWrapper canvas;
+	public WebGLCanvasHelper canvasHelper;
 	/** whether to use a stencil buffer **/
 	public boolean stencil = false;
 	/** whether to enable antialiasing **/

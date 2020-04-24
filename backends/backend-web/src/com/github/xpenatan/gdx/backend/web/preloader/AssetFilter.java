@@ -1,25 +1,8 @@
-/*******************************************************************************
- * Copyright 2016 Natan Guilherme.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-
 package com.github.xpenatan.gdx.backend.web.preloader;
 
-/** Interface used by the PreloaderBundleGenerator to decide whether an asset found in the gdx.assetpath should be included in the
- * war/ folder or not. Also used to determine the type of an asset. Default implementation can be found in DefaultAssetFilter, and
- * is used if user doesn't specify a custom filter in the module gwt.xml file.
- * @author mzechner */
+/**
+ * @author xpenatan
+ */
 public interface AssetFilter {
 	/** @param file the file to filter
 	 * @param isDirectory whether the file is a directory

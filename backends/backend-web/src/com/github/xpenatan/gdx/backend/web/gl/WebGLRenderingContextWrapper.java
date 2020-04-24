@@ -1,8 +1,7 @@
 package com.github.xpenatan.gdx.backend.web.gl;
 
-import org.w3c.dom.html.HTMLImageElement;
-
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
@@ -13,6 +12,9 @@ import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ObjectArrayWrapper;
 
+/**
+ * @author xpenatan
+ */
 public interface WebGLRenderingContextWrapper {
 
 	public static final int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
@@ -55,15 +57,15 @@ public interface WebGLRenderingContextWrapper {
 
 	public void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha);
 
-	public void bufferData(int target, long size, int usage);
+	public void bufferData(int target, int size, int usage);
 
 	public void bufferData(int target, ArrayBufferViewWrapper data, int usage);
 
 	public void bufferData(int target, ArrayBufferWrapper data, int usage);
 
-	public void bufferSubData(int target, long offset, ArrayBufferViewWrapper data);
+	public void bufferSubData(int target, int offset, ArrayBufferViewWrapper data);
 
-	public void bufferSubData(int target, long offset, ArrayBufferWrapper data);
+	public void bufferSubData(int target, int offset, ArrayBufferWrapper data);
 
 	public int checkFramebufferStatus(int target);
 
@@ -123,7 +125,7 @@ public interface WebGLRenderingContextWrapper {
 
 	public void drawArrays(int mode, int first, int count);
 
-	public void drawElements(int mode, int count, int type, long offset);
+	public void drawElements(int mode, int count, int type, int offset);
 
 	public void enable(int cap);
 
@@ -191,7 +193,7 @@ public interface WebGLRenderingContextWrapper {
 
 	public Object getVertexAttrib(int index, int pname);
 
-	public long getVertexAttribOffset(int index, int pname);
+	public int getVertexAttribOffset(int index, int pname);
 
 	public void hint(int target, int mode);
 
@@ -243,7 +245,7 @@ public interface WebGLRenderingContextWrapper {
 
 	public void texImage2D(int target, int level, int internalformat, int format, int type, ImageDataWrapper pixels);
 
-	public void texImage2D(int target, int level, int internalformat, int format, int type, HTMLImageElement image);
+	public void texImage2D(int target, int level, int internalformat, int format, int type, HTMLImageElementWrapper image);
 
 	public void texImage2D(int target, int level, int internalformat, int format, int type, HTMLCanvasElementWrapper canvas);
 
@@ -257,7 +259,7 @@ public interface WebGLRenderingContextWrapper {
 
 	public void texSubImage2D(int target, int level, int xoffset, int yoffset, int format, int type, ImageDataWrapper pixels);
 
-	public void texSubImage2D(int target, int level, int xoffset, int yoffset, int format, int type, HTMLImageElement image);
+	public void texSubImage2D(int target, int level, int xoffset, int yoffset, int format, int type, HTMLImageElementWrapper image);
 
 	public void texSubImage2D(int target, int level, int xoffset, int yoffset, int format, int type, HTMLCanvasElementWrapper canvas);
 
@@ -351,7 +353,7 @@ public interface WebGLRenderingContextWrapper {
 
 	public void vertexAttrib4fv(int indx, FloatArrayWrapper values);
 
-	public void vertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, long offset);
+	public void vertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int offset);
 
 	public void viewport(int x, int y, int width, int height);
 

@@ -1,5 +1,8 @@
 package com.github.xpenatan.gdx.backend.web;
 
+/**
+ * @author xpenatan
+ */
 public class AssetLoaderListener<T>
 {
 	public void onProgress(double amount){}

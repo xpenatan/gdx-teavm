@@ -9,6 +9,9 @@ import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ArrayWrapper;
 
+/**
+ * @author xpenatan
+ */
 public class DragomeTypedArrays extends TypedArrays {
 
 	public DragomeTypedArrays() {

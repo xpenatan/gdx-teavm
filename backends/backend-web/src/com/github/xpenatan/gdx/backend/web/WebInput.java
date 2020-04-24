@@ -3,6 +3,9 @@ package com.github.xpenatan.gdx.backend.web;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
+/**
+ * @author xpenatan
+ */
 public class WebInput implements Input {
 
 	public void reset() {

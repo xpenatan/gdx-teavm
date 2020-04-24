@@ -5,6 +5,9 @@ import com.dragome.services.ReflectionServiceImpl;
 import com.dragome.services.ServiceLocator;
 import com.dragome.web.helpers.serverside.StandaloneDragomeAppGenerator;
 
+/**
+ * @author xpenatan
+ */
 public class DragomeBuilder {
 
 	public static void build(DragomeBuildConfigurator configurator) {

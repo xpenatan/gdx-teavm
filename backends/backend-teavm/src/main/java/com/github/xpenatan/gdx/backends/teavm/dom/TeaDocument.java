@@ -1,11 +1,13 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
 
+/**
+ * @author xpenatan
+ */
 public class TeaDocument implements HTMLDocumentWrapper {
 
 	private HTMLDocument document;
@@ -21,8 +23,8 @@ public class TeaDocument implements HTMLDocumentWrapper {
 
 	@Override
 	public HTMLCanvasElementWrapper getCanvas(String id) {
-		HTMLCanvasElement canvas = (HTMLCanvasElement)document.getElementById(id);
-		return new TeaCanvas(canvas);
+		HTMLCanvasElementWrapper canvas = (HTMLCanvasElementWrapper)document.getElementById(id);
+		return canvas;
 	}
 
 }

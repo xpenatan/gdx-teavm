@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backend.web.dom.typedarray;
 
-
+/**
+ * @author xpenatan
+ */
 public interface Int16ArrayWrapper extends ArrayBufferViewWrapper {
 	// Int16Array
 	public static final int BYTES_PER_ELEMENT = 2;

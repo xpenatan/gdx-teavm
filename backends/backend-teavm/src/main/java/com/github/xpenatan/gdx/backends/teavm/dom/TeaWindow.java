@@ -3,10 +3,12 @@ package com.github.xpenatan.gdx.backends.teavm.dom;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
-
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
+/**
+ * @author xpenatan
+ */
 public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
 	private Window window;
@@ -34,5 +36,4 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 		runnable = null;
 		toRun.run();
 	}
-
 }

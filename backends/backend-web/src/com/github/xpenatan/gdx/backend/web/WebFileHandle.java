@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -20,8 +19,9 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
 
 
-/** Ported from GWT backend
- * @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class WebFileHandle extends FileHandle {
 	public final Preloader preloader;
 	private final String file;

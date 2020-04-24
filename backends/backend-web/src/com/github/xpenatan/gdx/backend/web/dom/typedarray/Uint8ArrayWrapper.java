@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backend.web.dom.typedarray;
 
-
+/**
+ * @author xpenatan
+ */
 public interface Uint8ArrayWrapper extends ArrayBufferViewWrapper {
 	// Uint8Array
 	public static final int BYTES_PER_ELEMENT = 1;

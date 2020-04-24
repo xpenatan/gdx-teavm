@@ -1,12 +1,14 @@
 package com.github.xpenatan.gdx.backends.dragome.dom;
 
 import org.w3c.dom.Document;
-
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.Window;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
+/**
+ * @author xpenatan
+ */
 public class DragomeWindow implements WindowWrapper {
 
 	Window window;
