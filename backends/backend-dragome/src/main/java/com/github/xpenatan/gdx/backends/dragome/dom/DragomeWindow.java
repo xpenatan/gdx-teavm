@@ -30,7 +30,7 @@ public class DragomeWindow implements WindowWrapper {
 
 	@Override
 	public int setTimeout(Runnable run, int delay) {
-		// TODO Auto-generated method stub
+		//TODO needs to impl
 		return 0;
 	}
 }
