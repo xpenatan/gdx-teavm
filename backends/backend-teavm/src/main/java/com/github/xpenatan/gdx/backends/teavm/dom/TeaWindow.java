@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
 import org.teavm.jso.browser.AnimationFrameCallback;
+import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
-import org.teavm.jso.dom.html.HTMLDocument;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
@@ -20,8 +20,8 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
 	@Override
 	public HTMLDocumentWrapper getDocument() {
-		HTMLDocument document = window.getDocument();
-		return new TeaDocument(document);
+		HTMLDocumentWrapper document = (HTMLDocumentWrapper)window.getDocument();
+		return document;
 	}
 
 	@Override
@@ -35,5 +35,16 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 		Runnable toRun = runnable;
 		runnable = null;
 		toRun.run();
+	}
+
+	@Override
+	public int setTimeout(Runnable run, int delay) {
+		TimerHandler handler = new TimerHandler() {
+			@Override
+			public void onTimer() {
+				run.run();
+			}
+		};
+		return Window.setTimeout(handler, delay);
 	}
 }

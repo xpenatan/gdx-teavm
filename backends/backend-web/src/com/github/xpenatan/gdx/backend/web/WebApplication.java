@@ -21,6 +21,8 @@ import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
  */
 public class WebApplication implements Application, Runnable {
 
+	private static WebAgentInfo agentInfo;
+
 	private WebGraphics graphics;
 	private WebInput input;
 	private HTMLCanvasElementWrapper canvas;
@@ -33,18 +35,26 @@ public class WebApplication implements Application, Runnable {
 	private int lastWidth = -1;
 	private int lastHeight = 1;
 
+	private WebApplicationLogger logger;
+
+	public static WebAgentInfo getAgentInfo () {
+		return agentInfo;
+	}
+
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
-		this.window = config.window;
+		WebJSHelper jSHelper = WebApplicationConfiguration.JSHelper;
+		this.window = jSHelper.getCurrentWindow();
 		this.appListener = appListener;
 		this.config = config;
-		this.canvas = config.canvasHelper.getCanvas();
+		this.canvas = config.JSHelper.getCanvas();
+		WebApplication.agentInfo = WebApplicationConfiguration.JSHelper.getAgentInfo();
 		init();
 	}
 
 	private void init() {
-
 		graphics = new WebGraphics(config);
-		input = new WebInput();
+		input = new WebInput(this.canvas);
+		logger = new WebApplicationLogger();
 
 
 		Gdx.app = this;
@@ -52,6 +62,7 @@ public class WebApplication implements Application, Runnable {
 		Gdx.gl = graphics.getGL20();
 		Gdx.gl20 = graphics.getGL20();
 		Gdx.input = input;
+
 
 		window.requestAnimationFrame(this);
 	}
@@ -111,8 +122,7 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public Graphics getGraphics() {
-		// TODO Auto-generated method stub
-		return null;
+		return graphics;
 	}
 
 	@Override
@@ -123,8 +133,7 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public Input getInput() {
-		// TODO Auto-generated method stub
-		return null;
+		return input;
 	}
 
 	@Override
@@ -141,50 +150,42 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public void log(String tag, String message) {
-		// TODO Auto-generated method stub
-
+		logger.log(tag, message);
 	}
 
 	@Override
 	public void log(String tag, String message, Throwable exception) {
-		// TODO Auto-generated method stub
-
+		logger.log(tag, message, exception);
 	}
 
 	@Override
 	public void error(String tag, String message) {
-		// TODO Auto-generated method stub
-
+		logger.error(tag, message);
 	}
 
 	@Override
 	public void error(String tag, String message, Throwable exception) {
-		// TODO Auto-generated method stub
-
+		logger.error(tag, message, exception);
 	}
 
 	@Override
 	public void debug(String tag, String message) {
-		// TODO Auto-generated method stub
-
+		logger.debug(tag, message);
 	}
 
 	@Override
 	public void debug(String tag, String message, Throwable exception) {
-		// TODO Auto-generated method stub
-
+		logger.debug(tag, message, exception);
 	}
 
 	@Override
 	public void setLogLevel(int logLevel) {
-		// TODO Auto-generated method stub
-
+		logger.setLogLevel(logLevel);
 	}
 
 	@Override
 	public int getLogLevel() {
-		// TODO Auto-generated method stub
-		return 0;
+		return logger.getLogLevel();
 	}
 
 	@Override
@@ -258,6 +259,49 @@ public class WebApplication implements Application, Runnable {
 		// TODO Auto-generated method stub
 
 	}
+
+//	applicationLogger =  new ApplicationLogger() {
+//		@Override
+//		public void log (String tag, String message) {
+//			System.out.println(tag + ": " + message);
+//		}
+//
+//		@Override
+//		public void log (String tag, String message, Throwable exception) {
+//			System.out.println(tag + ": " + message);
+//			exception.printStackTrace(System.out);
+//		}
+//
+//		@Override
+//		public void error (String tag, String message) {
+//			ScriptHelper.put("tag", tag, this);
+//			ScriptHelper.put("message", message, this);
+//			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+//		}
+//
+//		@Override
+//		public void error (String tag, String message, Throwable exception) {
+//			ScriptHelper.put("tag", tag, this);
+//			ScriptHelper.put("message", message, this);
+//			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
+//			exception.printStackTrace(System.err);
+//		}
+//
+//		@Override
+//		public void debug (String tag, String message) {
+//			ScriptHelper.put("tag", tag, this);
+//			ScriptHelper.put("message", message, this);
+//			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+//		}
+//
+//		@Override
+//		public void debug (String tag, String message, Throwable exception) {
+//			ScriptHelper.put("tag", tag, this);
+//			ScriptHelper.put("message", message, this);
+//			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
+//			exception.printStackTrace(System.out);
+//		}
+//	};
 
 	public enum AppState {
 		IDLE,

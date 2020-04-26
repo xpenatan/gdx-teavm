@@ -8,4 +8,6 @@ public interface WindowWrapper {
 	public HTMLDocumentWrapper getDocument();
 
 	public void requestAnimationFrame(Runnable runnable);
+
+	public int setTimeout(Runnable run, int delay);
 }

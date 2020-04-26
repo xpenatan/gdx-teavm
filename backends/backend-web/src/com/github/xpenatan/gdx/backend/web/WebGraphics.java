@@ -31,8 +31,8 @@ public class WebGraphics implements Graphics {
 
 	public WebGraphics(WebApplicationConfiguration config) {
 		this.config = config;
-		this.canvas = config.canvasHelper.getCanvas();
-		this.context = config.canvasHelper.getGLContext(config);
+		this.canvas = config.JSHelper.getCanvas();
+		this.context = config.JSHelper.getGLContext(config);
 		gl20 = new WebGL20(context);
 
 		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());

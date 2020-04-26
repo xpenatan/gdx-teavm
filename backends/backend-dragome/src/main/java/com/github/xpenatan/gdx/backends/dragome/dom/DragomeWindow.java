@@ -27,4 +27,10 @@ public class DragomeWindow implements WindowWrapper {
 	public void requestAnimationFrame(Runnable runnable) {
 		window.requestAnimationFrame(runnable);
 	}
+
+	@Override
+	public int setTimeout(Runnable run, int delay) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

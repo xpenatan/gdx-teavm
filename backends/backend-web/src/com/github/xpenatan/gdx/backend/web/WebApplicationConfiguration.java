@@ -1,13 +1,10 @@
 package com.github.xpenatan.gdx.backend.web;
 
-import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
-
 /**
  * @author xpenatan
  */
 public class WebApplicationConfiguration {
-	public WindowWrapper window;
-	public WebGLCanvasHelper canvasHelper;
+	public static WebJSHelper JSHelper;
 	/** whether to use a stencil buffer **/
 	public boolean stencil = false;
 	/** whether to enable antialiasing **/

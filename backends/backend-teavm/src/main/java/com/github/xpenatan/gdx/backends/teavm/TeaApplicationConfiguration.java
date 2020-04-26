@@ -1,8 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaCanvas;
+import com.github.xpenatan.gdx.backends.teavm.dom.TeaJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaWindow;
 
@@ -12,9 +14,10 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TeaWindow;
 public class TeaApplicationConfiguration extends WebApplicationConfiguration {
 
 	public TeaApplicationConfiguration(String canvasID) {
-		window = new TeaWindow();
+		TeaWindow window = new TeaWindow();
 		HTMLDocumentWrapper document = window.getDocument();
-		canvasHelper = new TeaCanvas(document.getCanvas(canvasID));
+		WebAgentInfo agentInfo = TeaWebAgent.computeAgentInfo();
+		JSHelper = new TeaJSHelper(agentInfo, (HTMLCanvasElementWrapper)document.getElementById(canvasID));
 		new TeaTypedArrays();
 	}
 }

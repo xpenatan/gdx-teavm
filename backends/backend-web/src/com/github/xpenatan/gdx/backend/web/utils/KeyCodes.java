@@ -1,9 +1,19 @@
 package com.github.xpenatan.gdx.backend.web.utils;
 
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
+
 /**
  * @author xpenatan
  */
 public class KeyCodes {
+
+	/** The left JS mouse button. */
+	private static final int BUTTON_LEFT = 1;
+	/** The middle JS mouse button. */
+	private static final int BUTTON_MIDDLE = 4;
+	/** The right JS mouse button. */
+	private static final int BUTTON_RIGHT = 2;
 
 	/**
 	 * Key code for A
@@ -411,6 +421,47 @@ public class KeyCodes {
 	 */
 	public static final int KEY_WIN_IME = 229;
 
+	private static final int KEY_0 = 48;
+	private static final int KEY_1 = 49;
+	private static final int KEY_2 = 50;
+	private static final int KEY_3 = 51;
+	private static final int KEY_4 = 52;
+	private static final int KEY_5 = 53;
+	private static final int KEY_6 = 54;
+	private static final int KEY_7 = 55;
+	private static final int KEY_8 = 56;
+	private static final int KEY_9 = 57;
+	private static final int KEY_LEFT_WINDOW_KEY = 91;
+	private static final int KEY_RIGHT_WINDOW_KEY = 92;
+	private static final int KEY_SELECT_KEY = 93;
+	private static final int KEY_NUMPAD0 = 96;
+	private static final int KEY_NUMPAD1 = 97;
+	private static final int KEY_NUMPAD2 = 98;
+	private static final int KEY_NUMPAD3 = 99;
+	private static final int KEY_NUMPAD4 = 100;
+	private static final int KEY_NUMPAD5 = 101;
+	private static final int KEY_NUMPAD6 = 102;
+	private static final int KEY_NUMPAD7 = 103;
+	private static final int KEY_NUMPAD8 = 104;
+	private static final int KEY_NUMPAD9 = 105;
+	private static final int KEY_MULTIPLY = 106;
+	private static final int KEY_ADD = 107;
+	private static final int KEY_SUBTRACT = 109;
+	private static final int KEY_DECIMAL_POINT_KEY = 110;
+	private static final int KEY_DIVIDE = 111;
+	private static final int KEY_NUM_LOCK = 144;
+	private static final int KEY_SEMICOLON = 186;
+	private static final int KEY_EQUALS = 187;
+	private static final int KEY_COMMA = 188;
+	private static final int KEY_DASH = 189;
+	private static final int KEY_PERIOD = 190;
+	private static final int KEY_FORWARD_SLASH = 191;
+	private static final int KEY_GRAVE_ACCENT = 192;
+	private static final int KEY_OPEN_BRACKET = 219;
+	private static final int KEY_BACKSLASH = 220;
+	private static final int KEY_CLOSE_BRACKET = 221;
+	private static final int KEY_SINGLE_QUOTE = 222;
+
 	/**
 	 * Determines if a key code is an arrow key.
 	 */
@@ -461,4 +512,216 @@ public class KeyCodes {
 	// This class should never be instantiated
 	private KeyCodes() {
 	}
+
+	public static int keyForCode (int keyCode) {
+		switch (keyCode) {
+		case KeyCodes.KEY_ALT:
+			return Keys.ALT_LEFT;
+		case KeyCodes.KEY_BACKSPACE:
+			return Keys.BACKSPACE;
+		case KeyCodes.KEY_CTRL:
+			return Keys.CONTROL_LEFT;
+		case KeyCodes.KEY_DELETE:
+			return Keys.FORWARD_DEL;
+		case KeyCodes.KEY_DOWN:
+			return Keys.DOWN;
+		case KeyCodes.KEY_END:
+			return Keys.END;
+		case KeyCodes.KEY_ENTER:
+			return Keys.ENTER;
+		case KeyCodes.KEY_ESCAPE:
+			return Keys.ESCAPE;
+		case KeyCodes.KEY_HOME:
+			return Keys.HOME;
+		case KeyCodes.KEY_LEFT:
+			return Keys.LEFT;
+		case KeyCodes.KEY_PAGEDOWN:
+			return Keys.PAGE_DOWN;
+		case KeyCodes.KEY_PAGEUP:
+			return Keys.PAGE_UP;
+		case KeyCodes.KEY_RIGHT:
+			return Keys.RIGHT;
+		case KeyCodes.KEY_SHIFT:
+			return Keys.SHIFT_LEFT;
+		case KeyCodes.KEY_TAB:
+			return Keys.TAB;
+		case KeyCodes.KEY_UP:
+			return Keys.UP;
+		case KeyCodes.KEY_PAUSE:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_CAPS_LOCK:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_SPACE:
+			return Keys.SPACE;
+		case KeyCodes.KEY_INSERT:
+			return Keys.INSERT;
+		case KeyCodes.KEY_0:
+			return Keys.NUM_0;
+		case KeyCodes.KEY_1:
+			return Keys.NUM_1;
+		case KeyCodes.KEY_2:
+			return Keys.NUM_2;
+		case KeyCodes.KEY_3:
+			return Keys.NUM_3;
+		case KeyCodes.KEY_4:
+			return Keys.NUM_4;
+		case KeyCodes.KEY_5:
+			return Keys.NUM_5;
+		case KeyCodes.KEY_6:
+			return Keys.NUM_6;
+		case KeyCodes.KEY_7:
+			return Keys.NUM_7;
+		case KeyCodes.KEY_8:
+			return Keys.NUM_8;
+		case KeyCodes.KEY_9:
+			return Keys.NUM_9;
+		case KeyCodes.KEY_A:
+			return Keys.A;
+		case KeyCodes.KEY_B:
+			return Keys.B;
+		case KeyCodes.KEY_C:
+			return Keys.C;
+		case KeyCodes.KEY_D:
+			return Keys.D;
+		case KeyCodes.KEY_E:
+			return Keys.E;
+		case KeyCodes.KEY_F:
+			return Keys.F;
+		case KeyCodes.KEY_G:
+			return Keys.G;
+		case KeyCodes.KEY_H:
+			return Keys.H;
+		case KeyCodes.KEY_I:
+			return Keys.I;
+		case KeyCodes.KEY_J:
+			return Keys.J;
+		case KeyCodes.KEY_K:
+			return Keys.K;
+		case KeyCodes.KEY_L:
+			return Keys.L;
+		case KeyCodes.KEY_M:
+			return Keys.M;
+		case KeyCodes.KEY_N:
+			return Keys.N;
+		case KeyCodes.KEY_O:
+			return Keys.O;
+		case KeyCodes.KEY_P:
+			return Keys.P;
+		case KeyCodes.KEY_Q:
+			return Keys.Q;
+		case KeyCodes.KEY_R:
+			return Keys.R;
+		case KeyCodes.KEY_S:
+			return Keys.S;
+		case KeyCodes.KEY_T:
+			return Keys.T;
+		case KeyCodes.KEY_U:
+			return Keys.U;
+		case KeyCodes.KEY_V:
+			return Keys.V;
+		case KeyCodes.KEY_W:
+			return Keys.W;
+		case KeyCodes.KEY_X:
+			return Keys.X;
+		case KeyCodes.KEY_Y:
+			return Keys.Y;
+		case KeyCodes.KEY_Z:
+			return Keys.Z;
+		case KeyCodes.KEY_LEFT_WINDOW_KEY:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_RIGHT_WINDOW_KEY:
+			return Keys.UNKNOWN; // FIXME
+			// case KEY_SELECT_KEY: return Keys.SELECT_KEY;
+		case KeyCodes.KEY_NUMPAD0:
+			return Keys.NUMPAD_0;
+		case KeyCodes.KEY_NUMPAD1:
+			return Keys.NUMPAD_1;
+		case KeyCodes.KEY_NUMPAD2:
+			return Keys.NUMPAD_2;
+		case KeyCodes.KEY_NUMPAD3:
+			return Keys.NUMPAD_3;
+		case KeyCodes.KEY_NUMPAD4:
+			return Keys.NUMPAD_4;
+		case KeyCodes.KEY_NUMPAD5:
+			return Keys.NUMPAD_5;
+		case KeyCodes.KEY_NUMPAD6:
+			return Keys.NUMPAD_6;
+		case KeyCodes.KEY_NUMPAD7:
+			return Keys.NUMPAD_7;
+		case KeyCodes.KEY_NUMPAD8:
+			return Keys.NUMPAD_8;
+		case KeyCodes.KEY_NUMPAD9:
+			return Keys.NUMPAD_9;
+		case KeyCodes.KEY_MULTIPLY:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_ADD:
+			return Keys.PLUS;
+		case KeyCodes.KEY_SUBTRACT:
+			return Keys.MINUS;
+		case KeyCodes.KEY_DECIMAL_POINT_KEY:
+			return Keys.PERIOD;
+		case KeyCodes.KEY_DIVIDE:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_F1:
+			return Keys.F1;
+		case KeyCodes.KEY_F2:
+			return Keys.F2;
+		case KeyCodes.KEY_F3:
+			return Keys.F3;
+		case KeyCodes.KEY_F4:
+			return Keys.F4;
+		case KeyCodes.KEY_F5:
+			return Keys.F5;
+		case KeyCodes.KEY_F6:
+			return Keys.F6;
+		case KeyCodes.KEY_F7:
+			return Keys.F7;
+		case KeyCodes.KEY_F8:
+			return Keys.F8;
+		case KeyCodes.KEY_F9:
+			return Keys.F9;
+		case KeyCodes.KEY_F10:
+			return Keys.F10;
+		case KeyCodes.KEY_F11:
+			return Keys.F11;
+		case KeyCodes.KEY_F12:
+			return Keys.F12;
+		case KeyCodes.KEY_NUM_LOCK:
+			return Keys.NUM;
+		case KeyCodes.KEY_SCROLL_LOCK:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_SEMICOLON:
+			return Keys.SEMICOLON;
+		case KeyCodes.KEY_EQUALS:
+			return Keys.EQUALS;
+		case KeyCodes.KEY_COMMA:
+			return Keys.COMMA;
+		case KeyCodes.KEY_DASH:
+			return Keys.MINUS;
+		case KeyCodes.KEY_PERIOD:
+			return Keys.PERIOD;
+		case KeyCodes.KEY_FORWARD_SLASH:
+			return Keys.SLASH;
+		case KeyCodes.KEY_GRAVE_ACCENT:
+			return Keys.UNKNOWN; // FIXME
+		case KeyCodes.KEY_OPEN_BRACKET:
+			return Keys.LEFT_BRACKET;
+		case KeyCodes.KEY_BACKSLASH:
+			return Keys.BACKSLASH;
+		case KeyCodes.KEY_CLOSE_BRACKET:
+			return Keys.RIGHT_BRACKET;
+		case KeyCodes.KEY_SINGLE_QUOTE:
+			return Keys.APOSTROPHE;
+		default:
+			return Keys.UNKNOWN;
+		}
+	}
+
+	public static int getButton(int button) {
+		if (button == BUTTON_LEFT) return Buttons.LEFT;
+		if (button == BUTTON_RIGHT) return Buttons.RIGHT;
+		if (button == BUTTON_MIDDLE) return Buttons.MIDDLE;
+		return Buttons.LEFT;
+	}
+
 }

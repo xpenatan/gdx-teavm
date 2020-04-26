@@ -1,20 +1,24 @@
 package com.github.xpenatan.gdx.backends.dragome.dom;
 
 import com.dragome.commons.javascript.ScriptHelper;
+import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebGLCanvasHelper;
+import com.github.xpenatan.gdx.backend.web.WebJSHelper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
 
 /**
  * @author xpenatan
  */
-public class DragomeCanvasHelper implements WebGLCanvasHelper {
+public class DragomeJSHelper implements WebJSHelper {
 
-	private DragomeCanvas canvasWrapper;
+	private WebAgentInfo agentInfo;
+	private HTMLCanvasElementWrapper canvasWrapper;
 
-	public DragomeCanvasHelper(DragomeCanvas canvasWrapper) {
+	public DragomeJSHelper(WebAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
+		this.agentInfo = agentInfo;
 		this.canvasWrapper = canvasWrapper;
 	}
 
@@ -29,7 +33,7 @@ public class DragomeCanvasHelper implements WebGLCanvasHelper {
 		attributes.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
 
 		ScriptHelper.put("contextName", "webgl", this);
-		ScriptHelper.put("canvas", canvasWrapper.canvas, this);
+		ScriptHelper.put("canvas", canvasWrapper, this);
 		ScriptHelper.put("attr", attributes, this);
 		Object con = ScriptHelper.eval("canvas.node.getContext(contextName, attr.node)", this);
 		ScriptHelper.put("con", con, null);
@@ -40,5 +44,15 @@ public class DragomeCanvasHelper implements WebGLCanvasHelper {
 	@Override
 	public HTMLCanvasElementWrapper getCanvas() {
 		return canvasWrapper;
+	}
+
+	@Override
+	public WindowWrapper getCurrentWindow() {
+		return new DragomeWindow();
+	}
+
+	@Override
+	public WebAgentInfo getAgentInfo() {
+		return agentInfo;
 	}
 }
