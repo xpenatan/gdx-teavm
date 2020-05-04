@@ -12,9 +12,15 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Clipboard;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloadImpl;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
 import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownload;
 
 /**
  * @author xpenatan
@@ -25,6 +31,7 @@ public class WebApplication implements Application, Runnable {
 
 	private WebGraphics graphics;
 	private WebInput input;
+	private WebFiles files;
 	private HTMLCanvasElementWrapper canvas;
 	private WebApplicationConfiguration config;
 	private ApplicationListener appListener;
@@ -37,6 +44,8 @@ public class WebApplication implements Application, Runnable {
 
 	private WebApplicationLogger logger;
 
+	private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
+
 	public static WebAgentInfo getAgentInfo () {
 		return agentInfo;
 	}
@@ -46,23 +55,38 @@ public class WebApplication implements Application, Runnable {
 		this.window = jSHelper.getCurrentWindow();
 		this.appListener = appListener;
 		this.config = config;
-		this.canvas = config.JSHelper.getCanvas();
+		this.canvas = WebApplicationConfiguration.JSHelper.getCanvas();
 		WebApplication.agentInfo = WebApplicationConfiguration.JSHelper.getAgentInfo();
 		init();
 	}
 
 	private void init() {
+		AssetDownloader.setInstance(new AssetDownloadImpl(WebApplicationConfiguration.JSHelper));
+
+		AssetDownload instance = AssetDownloader.getInstance();
+		String hostPageBaseURL = instance.getHostPageBaseURL();
+		Preloader preloader = new Preloader(hostPageBaseURL + "assets/");
+		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
+		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
+
 		graphics = new WebGraphics(config);
 		input = new WebInput(this.canvas);
+		files = new WebFiles(preloader);
 		logger = new WebApplicationLogger();
-
 
 		Gdx.app = this;
 		Gdx.graphics = graphics;
 		Gdx.gl = graphics.getGL20();
 		Gdx.gl20 = graphics.getGL20();
 		Gdx.input = input;
-
+		Gdx.files = files;
 
 		window.requestAnimationFrame(this);
 	}
@@ -138,8 +162,7 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public Files getFiles() {
-		// TODO Auto-generated method stub
-		return null;
+		return files;
 	}
 
 	@Override
@@ -225,9 +248,14 @@ public class WebApplication implements Application, Runnable {
 	}
 
 	@Override
-	public Preferences getPreferences(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public Preferences getPreferences (String name) {
+		Preferences pref = prefs.get(name);
+		if (pref == null) {
+			StorageWrapper storage = WebApplicationConfiguration.JSHelper.getStorage();
+			pref = new WebPreferences(storage, name);
+			prefs.put(name, pref);
+		}
+		return pref;
 	}
 
 	@Override
@@ -259,49 +287,6 @@ public class WebApplication implements Application, Runnable {
 		// TODO Auto-generated method stub
 
 	}
-
-//	applicationLogger =  new ApplicationLogger() {
-//		@Override
-//		public void log (String tag, String message) {
-//			System.out.println(tag + ": " + message);
-//		}
-//
-//		@Override
-//		public void log (String tag, String message, Throwable exception) {
-//			System.out.println(tag + ": " + message);
-//			exception.printStackTrace(System.out);
-//		}
-//
-//		@Override
-//		public void error (String tag, String message) {
-//			ScriptHelper.put("tag", tag, this);
-//			ScriptHelper.put("message", message, this);
-//			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
-//		}
-//
-//		@Override
-//		public void error (String tag, String message, Throwable exception) {
-//			ScriptHelper.put("tag", tag, this);
-//			ScriptHelper.put("message", message, this);
-//			ScriptHelper.evalNoResult("console.error(tag + ': ' + message)", this);
-//			exception.printStackTrace(System.err);
-//		}
-//
-//		@Override
-//		public void debug (String tag, String message) {
-//			ScriptHelper.put("tag", tag, this);
-//			ScriptHelper.put("message", message, this);
-//			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
-//		}
-//
-//		@Override
-//		public void debug (String tag, String message, Throwable exception) {
-//			ScriptHelper.put("tag", tag, this);
-//			ScriptHelper.put("message", message, this);
-//			ScriptHelper.evalNoResult("console.warn(tag + ': ' + message)", this);
-//			exception.printStackTrace(System.out);
-//		}
-//	};
 
 	public enum AppState {
 		IDLE,

@@ -13,12 +13,16 @@ import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 
+import com.badlogic.gdx.utils.Array;
+import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backend.web.WebClassLoader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
+
 
 /**
  * @author xpenatan
  */
 public class TeaBuilder {
-	private static final StringBuilder sb = new StringBuilder();
 
 	public static void build(TeaBuildConfiguration configuration) {
 
@@ -26,9 +30,6 @@ public class TeaBuilder {
 
 		ArrayList<URL> acceptedURL = new ArrayList<>();
 		ArrayList<URL> notAcceptedURL = new ArrayList<>();
-
-
-		System.out.println("---------------Initializing---------------");
 
 		for (int i = 0; i < urLs.length; i++) {
 			URL url = urLs[i];
@@ -54,18 +55,16 @@ public class TeaBuilder {
 			}
 		}
 
-		logHeader("Accepted Libs ClassPath Order");
+		WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
 
 		for (int i = 0; i < acceptedURL.size(); i++) {
-			sb.append(i + " true: " + acceptedURL.get(i).getPath());
-			sb.append("\n");
+			WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
 		}
 
-		logHeader("Not Accepted Libs ClassPath");
+		WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
 
 		for (int i = 0; i < notAcceptedURL.size(); i++) {
-			sb.append(i + " false: " + notAcceptedURL.get(i).getPath());
-			sb.append("\n");
+			WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
 		}
 
 		int size = acceptedURL.size();
@@ -77,7 +76,7 @@ public class TeaBuilder {
 
 		URL[] classPaths = new URL[size];
 		acceptedURL.toArray(classPaths);
-		ClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
+		WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
 		TeaVMTool tool = new TeaVMTool();
 
@@ -115,15 +114,14 @@ public class TeaBuilder {
 		properties.put("teavm.libgdx.warAssetsDirectory", targetDirectory + "\\" + "assets");
 
 
+		WebBuildConfiguration.logHeader("Copying Assets");
+		
 		String assetsOutputPath = targetDirectory + "\\assets";
-		ArrayList<File> paths = new ArrayList<>();
-		ArrayList<String> classPathFiles = new ArrayList<>();
+		Array<File> paths = new Array<>();
+		Array<String> classPathFiles = new Array<>();
 		assetsDefaultClasspath(classPathFiles);
-		configuration.assetsPath(paths);
-//		AssetsCopy.copy(paths, classPathFiles, assetsOutputPath, false);
-//		List<String> transformers = tool.getTransformers();
-//		transformers.add(OverlayTransformer.class.getName());
-
+		boolean generateAssetPaths = configuration.assetsPath(paths);
+		AssetsCopy.copy(classLoader, paths, classPathFiles, assetsOutputPath, generateAssetPaths);
 
 		try {
 			tool.generate();
@@ -133,7 +131,7 @@ public class TeaBuilder {
 
 			if(problems.size() > 0) {
 
-				logHeader("Compiler problems");
+				WebBuildConfiguration.logHeader("Compiler problems");
 
 				for(int i = 0; i < problems.size(); i++) {
 					Problem problem = problems.get(i);
@@ -141,39 +139,33 @@ public class TeaBuilder {
 					CallLocation location = problem.getLocation();
 					MethodReference method = location != null ? location.getMethod() : null;
 					if(i > 0)
-						sb.append("----\n");
-					sb.append(i + " " + problem.getSeverity().toString() + "\n");
+						WebBuildConfiguration.log("----\n");
+					WebBuildConfiguration.log(i + " " + problem.getSeverity().toString() + "\n");
 					if(method != null) {
-						sb.append("Class: " + method.getClassName() + "\n");
-						sb.append("Method: " + method.getName() + "\n");
+						WebBuildConfiguration.log("Class: " + method.getClassName() + "\n");
+						WebBuildConfiguration.log("Method: " + method.getName() + "\n");
 					}
-					sb.append("Text: " + text + "\n");
+					WebBuildConfiguration.log("Text: " + text + "\n");
 				}
-			}
-			if (!tool.wasCancelled()) {
-
+				WebBuildConfiguration.logEnd();
 			}
 			else {
-
+				WebBuildConfiguration.logHeader("Build Complete");
 			}
 
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 
-		sb.append("\n#################################################################");
-
-		System.err.println(sb);
+		WebBuildConfiguration.flush();
 	}
 
-	private static void logHeader(String text) {
-		sb.append("\n" + "#################################################################\n");
-		sb.append("#\n# " + text + "\n#");
-		sb.append("\n" + "#################################################################\n\n");
-	}
-
-	private static void assetsDefaultClasspath (ArrayList<String> filePath) {
-
+	private static void assetsDefaultClasspath (Array<String> filePath) {
+		filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
+		filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
+		filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
+		filePath.add("com/badlogic/gdx/utils/arial-15.png");
+//		filePath.add("soundmanager2-jsmin.js");
 	}
 
 	private static ACCEPT_STATE acceptPath(String path) {

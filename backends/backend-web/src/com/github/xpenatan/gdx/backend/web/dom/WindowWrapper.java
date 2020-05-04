@@ -10,4 +10,6 @@ public interface WindowWrapper {
 	public void requestAnimationFrame(Runnable runnable);
 
 	public int setTimeout(Runnable run, int delay);
+
+	public LocationWrapper getLocation();
 }

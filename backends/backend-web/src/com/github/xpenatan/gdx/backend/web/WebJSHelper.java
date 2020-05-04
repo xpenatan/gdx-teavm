@@ -1,7 +1,10 @@
 package com.github.xpenatan.gdx.backend.web;
 
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
 
 /**
@@ -16,4 +19,10 @@ public interface WebJSHelper {
 	public WindowWrapper getCurrentWindow();
 
 	public WebAgentInfo getAgentInfo();
+
+	public HTMLImageElementWrapper createImageElement();
+
+	public XMLHttpRequestWrapper creatHttpRequest();
+
+	public StorageWrapper getStorage();
 }

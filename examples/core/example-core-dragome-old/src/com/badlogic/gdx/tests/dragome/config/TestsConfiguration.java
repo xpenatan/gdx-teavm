@@ -26,7 +26,7 @@ public class TestsConfiguration extends DragomeGdxConfiguration{
 
 	@Override
 	public void assetsPath(Array<File> paths) {
-		paths.add(new File("../tests-desktop/assets"));
+		paths.add(new File("../example-core-desktop/assets"));
 	}
 
 	@Override

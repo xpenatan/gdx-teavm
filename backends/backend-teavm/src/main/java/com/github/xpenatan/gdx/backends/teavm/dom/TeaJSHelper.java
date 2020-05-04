@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.ajax.XMLHttpRequest;
+import org.teavm.jso.browser.Storage;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
@@ -7,7 +9,11 @@ import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backend.web.WebJSHelper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
 
 /**
@@ -15,7 +21,6 @@ import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
  */
 public class TeaJSHelper implements WebJSHelper {
 
-	private WindowWrapper window;
 	private WebAgentInfo agentInfo;
 	private HTMLCanvasElementWrapper canvasWrapper;
 
@@ -50,5 +55,22 @@ public class TeaJSHelper implements WebJSHelper {
 	@Override
 	public WebAgentInfo getAgentInfo() {
 		return agentInfo;
+	}
+
+	@Override
+	public HTMLImageElementWrapper createImageElement() {
+		HTMLDocumentWrapper document = getCurrentWindow().getDocument();
+		return (HTMLImageElementWrapper) document.createElement("img");
+	}
+
+	@Override
+	public XMLHttpRequestWrapper creatHttpRequest() {
+		return (XMLHttpRequestWrapper) XMLHttpRequest.create();
+	}
+
+	@Override
+	public StorageWrapper getStorage() {
+		StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
+		return storage;
 	}
 }

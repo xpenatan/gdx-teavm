@@ -102,7 +102,11 @@ public class GearsDemo implements ApplicationListener {
 		viewport = new ScreenViewport(cam);
 		guiViewport = new ScreenViewport();
 
-		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider(defaultVertex, defaultFragment);
+
+		boolean hasFilesWorking = true;
+
+//		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider(defaultVertex, defaultFragment);
+		DefaultShaderProvider defaultShaderProvider = new DefaultShaderProvider();
 		modelBatch = new ModelBatch(defaultShaderProvider);
 
 		ModelBuilder modelBuilder = new ModelBuilder();
@@ -190,9 +194,11 @@ public class GearsDemo implements ApplicationListener {
 		return true;
 	}
 
+	@Override
 	public void resume () {
 	}
 
+	@Override
 	public void resize (int width, int height) {
 		viewport.update(width, height, false);
 		guiViewport.update(width, height, true);
@@ -201,6 +207,7 @@ public class GearsDemo implements ApplicationListener {
 		batch.setProjectionMatrix(guiCam.combined);
 	}
 
+	@Override
 	public void pause () {
 	}
 

@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import java.util.Set;
+
+import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSIndexer;
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
@@ -16,6 +18,7 @@ import org.teavm.model.MethodHolder;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventTargetWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventWrapper;
@@ -26,12 +29,18 @@ import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.KeyboardEventWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.MouseEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.NodeWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.ProgressEventWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.TouchEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.TouchListWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.TouchWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.WebJSObject;
 import com.github.xpenatan.gdx.backend.web.dom.WheelEventWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestEventTargetWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
@@ -67,54 +76,61 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
 			ClassHolder classHolder = null;
 			classHolder = findClassHolder(context, Float32ArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(context, Int32ArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(context, Int16ArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(context, Uint8ArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(context, Float64ArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 
 			classHolder = findClassHolder(context, WebGLTextureWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, WebGLUniformLocationWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLShaderWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLRenderbufferWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLProgramWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLFramebufferWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLContextAttributesWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLBufferWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, WebGLActiveInfoWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getSize", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getType", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getName", null);
 
 			classHolder = findClassHolder(context, WebGLRenderingContextWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSMethod.class, "getParameterInt", "getParameter");
 			setMethodAnnotation(classHolder,  JSMethod.class, "getParameterFloat", "getParameter");
 			setMethodAnnotation(classHolder,  JSMethod.class, "getParameterString", "getParameter");
@@ -124,21 +140,29 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSMethod.class, "getShaderParameterInt", "getShaderParameter");
 
 			classHolder = findClassHolder(context, ArrayBufferViewWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, ArrayBufferWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, ObjectArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, LongArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, ImageDataWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, HTMLImageElementWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setSrc", null);
+
 			classHolder = findClassHolder(context, HTMLVideoElementWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
 			classHolder = findClassHolder(context, HTMLCanvasElementWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getWidth", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "setWidth", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getHeight", null);
@@ -146,29 +170,30 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSProperty.class, "getOwnerDocument", null);
 
 			classHolder = findClassHolder(context, FloatArrayWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, EventTargetWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, EventListenerWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+			setClassAnnotation(classHolder, JSFunctor.class);
 
 			classHolder = findClassHolder(context, EventWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getTarget", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getType", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDetail", null);
 
 			classHolder = findClassHolder(context, WheelEventWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDeltaX", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDeltaY", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDeltaZ", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getWheelDelta", null);
 
 			classHolder = findClassHolder(context, MouseEventWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientX", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientY", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getMovementX", null);
@@ -176,26 +201,26 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSProperty.class, "getButton", null);
 
 			classHolder = findClassHolder(context, KeyboardEventWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getCharCode", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getKeyCode", null);
 
 			classHolder = findClassHolder(context, TouchEventWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getChangedTouches", null);
 
 			classHolder = findClassHolder(context, TouchListWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(context, TouchWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getIdentifier", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientX", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientY", null);
 
 			classHolder = findClassHolder(context, WebAgentInfo.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "isFirefox", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "isChrome", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "isSafari", null);
@@ -206,30 +231,62 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSProperty.class, "isWindows", null);
 
 			classHolder = findClassHolder(context, DocumentWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getCompatMode", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDocumentElement", null);
 
 			classHolder = findClassHolder(context, ElementWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getScrollTop", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getScrollLeft", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientWidth", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getClientHeight", null);
 
 			classHolder = findClassHolder(context, HTMLElementWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getOffsetParent", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getOffsetTop", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getOffsetLeft", null);
 
 			classHolder = findClassHolder(context, NodeWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getParentNode", null);
 
 			classHolder = findClassHolder(context, HTMLDocumentWrapper.class);
-			setClassAnnotation(classHolder, JSObject.class);
+			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getParentNode", null);
+
+			classHolder = findClassHolder(context, EventHandlerWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setClassAnnotation(classHolder, JSFunctor.class);
+
+			classHolder = findClassHolder(context, XMLHttpRequestEventTargetWrapper.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setOnprogress", null);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, XMLHttpRequestWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setOnreadystatechange", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getReadyState", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getStatus", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getResponse", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setResponseType", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getResponseText", null);
+
+			classHolder = findClassHolder(context, ProgressEventWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLoaded", null);
+
+			classHolder = findClassHolder(context, LocationWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getHref", null);
+
+			classHolder = findClassHolder(context, WebJSObject.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, StorageWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 		}
 	}
 
@@ -254,9 +311,15 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 		}
 	}
 
-	private void setClassAnnotation(ClassHolder classHolder, Class annotationClass) {
+	private void setClassInterface(ClassHolder classHolder, Class annotationClass) {
 		Set<String> interfaces = classHolder.getInterfaces();
 		interfaces.add(JSObject.class.getName());
+	}
+
+	private void setClassAnnotation(ClassHolder classHolder, Class annotationClass) {
+		AnnotationContainer annotations = classHolder.getAnnotations();
+		AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
+		annotations.add(annotation);
 	}
 
 }

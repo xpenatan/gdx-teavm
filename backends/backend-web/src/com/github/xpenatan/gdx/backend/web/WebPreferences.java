@@ -5,6 +5,7 @@ import java.util.Map;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 
 /**
  * @author xpenatan
@@ -13,14 +14,17 @@ public class WebPreferences implements Preferences{
 	final String prefix;
 	ObjectMap<String, Object> values = new ObjectMap<String, Object>();
 
-	public WebPreferences (String prefix) {
+	private StorageWrapper storage;
+
+	public WebPreferences (StorageWrapper storage , String prefix) {
+		this.storage = storage;
 		this.prefix = prefix + ":";
 		int prefixLength = this.prefix.length();
 		try {
-			for (int i = 0; i < WebFiles.LocalStorage.getLength(); i++) {
-				String key = WebFiles.LocalStorage.key(i);
+			for (int i = 0; i < storage.getLength(); i++) {
+				String key = storage.key(i);
 				if (key.startsWith(prefix)) {
-					String value = WebFiles.LocalStorage.getItem(key);
+					String value = storage.getItem(key);
 					values.put(key.substring(prefixLength, key.length() - 1), toObject(key, value));
 				}
 			}
@@ -49,16 +53,16 @@ public class WebPreferences implements Preferences{
 	public void flush () {
 		try {
 			// remove all old values
-			for (int i = 0; i < WebFiles.LocalStorage.getLength(); i++) {
-				String key = WebFiles.LocalStorage.key(i);
-				if (key.startsWith(prefix)) WebFiles.LocalStorage.removeItem(key);
+			for (int i = 0; i < storage.getLength(); i++) {
+				String key = storage.key(i);
+				if (key.startsWith(prefix)) storage.removeItem(key);
 			}
 
 			// push new values to LocalStorage
 			for (String key : values.keys()) {
 				String storageKey = toStorageKey(key, values.get(key));
 				String storageValue = "" + values.get(key).toString();
-				WebFiles.LocalStorage.setItem(storageKey, storageValue);
+				storage.setItem(storageKey, storageValue);
 			}
 
 		} catch (Exception e) {

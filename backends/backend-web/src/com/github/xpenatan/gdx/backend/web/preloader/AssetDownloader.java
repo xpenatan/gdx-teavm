@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backend.web.preloader;
 
 import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
 
 /**
  * @author xpenatan

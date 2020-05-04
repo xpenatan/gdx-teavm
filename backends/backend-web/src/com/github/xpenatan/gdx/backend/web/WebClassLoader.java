@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backend.web;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import java.net.URLClassLoader;
 /**
  * @author xpenatan
  */
-public class TeaClassLoader extends URLClassLoader {
+public class WebClassLoader extends URLClassLoader {
 
 	private URL[] classPaths;
 
-	public TeaClassLoader(URL[] classPaths, ClassLoader parent) {
+	public WebClassLoader(URL[] classPaths, ClassLoader parent) {
 		super(classPaths, parent);
 		this.classPaths = classPaths;
 	}

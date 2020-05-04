@@ -1,9 +1,11 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
 import org.teavm.jso.browser.AnimationFrameCallback;
+import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
 /**
@@ -46,5 +48,11 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 			}
 		};
 		return Window.setTimeout(handler, delay);
+	}
+
+	@Override
+	public LocationWrapper getLocation() {
+		Location location = window.getLocation();
+		return (LocationWrapper)location;
 	}
 }

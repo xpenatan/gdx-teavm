@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.backends.dragome.example;
 
 import java.io.File;
-import java.util.ArrayList;
 import com.github.xpenatan.gdx.backends.dragome.DragomeBuilder;
+import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.dragome.DragomeBuildConfigurator;
 
 public class Build {
@@ -22,11 +22,12 @@ public class Build {
 			}
 
 			@Override
-			public void assetsClasspath(ArrayList<String> classPaths) {
+			public void assetsClasspath(Array<String> classPaths) {
 			}
 
 			@Override
-			public void assetsPath(ArrayList<File> paths) {
+			public boolean assetsPath(Array<File> paths) {
+				return true;
 			}
 
 			@Override

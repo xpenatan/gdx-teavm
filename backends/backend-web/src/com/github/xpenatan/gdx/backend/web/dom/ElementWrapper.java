@@ -12,4 +12,6 @@ public interface ElementWrapper extends NodeWrapper {
 	public int getClientWidth();
 
 	public int getClientHeight();
+
+	public void setAttribute(String qualifiedName, String value);
 }

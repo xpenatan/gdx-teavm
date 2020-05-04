@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backend.web.WebClassLoader;
 
 /**
  * @author xpenatan
@@ -35,31 +37,29 @@ public class AssetsCopy {
 		}
 	}
 
-	public static void copy (Array<File> paths, Array<String> classPathFiles, String assetsOutputPath, boolean generateTextFile) {
+	public static void copy (WebClassLoader classloader, Array<File> paths, Array<String> classPathFiles, String assetsOutputPath, boolean generateTextFile) {
 		assetsOutputPath = assetsOutputPath.replace("\\", "/");
 		FileWrapper target = new FileWrapper(assetsOutputPath);
 		ArrayList<Asset> assets = new ArrayList<Asset>();
 		DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
+		WebBuildConfiguration.log("Copying assets from:");
 		for (int i = 0; i < paths.size; i++) {
 			String path = paths.get(i).getAbsolutePath();
 			FileWrapper source = new FileWrapper(path);
-			System.out.println("Copying Assets from:");
-			System.out.println(path);
-			System.out.println("to:");
-			System.out.println(assetsOutputPath);
+			WebBuildConfiguration.log(path);
 			copyDirectory(source, target, defaultAssetFilter, assets);
 		}
 
 		addDirectoryClassPathFiles(classPathFiles);
-
+		WebBuildConfiguration.log("");
+		WebBuildConfiguration.log("Copying classpath asset from:");
 		for (String classpathFile : classPathFiles) {
 			if(classpathFile.startsWith("/") == false)
 				classpathFile = "/" + classpathFile;
 			if (defaultAssetFilter.accept(classpathFile, false)) {
 				try {
-					System.out.println("Copying classpath asset:");
-					System.out.println(classpathFile);
-					InputStream is = AssetsCopy.class.getClassLoader().getResourceAsStream(classpathFile);
+					WebBuildConfiguration.log(classpathFile);
+					InputStream is = classloader.getResourceAsStream(classpathFile);
 					FileWrapper dest = target.child(classpathFile);
 					dest.write(is, false);
 					assets.add(new Asset(dest, defaultAssetFilter.getType(dest.path())));
@@ -69,6 +69,10 @@ public class AssetsCopy {
 				}
 			}
 		}
+		
+		WebBuildConfiguration.log("");
+		WebBuildConfiguration.log("to:");
+		WebBuildConfiguration.log(assetsOutputPath);
 		if (generateTextFile == false) return;
 
 		HashMap<String, ArrayList<Asset>> bundles = new HashMap<String, ArrayList<Asset>>();

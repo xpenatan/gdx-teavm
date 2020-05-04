@@ -11,8 +11,6 @@ import com.github.xpenatan.gdx.backend.web.utils.Storage;
  */
 public class WebFiles implements Files {
 
-	public static final Storage LocalStorage = Storage.getInstance().getLocalStorageIfSupported();
-
 	final Preloader preloader;
 
 	public WebFiles (Preloader preloader) {

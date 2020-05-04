@@ -1,9 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.example;
 
 import java.io.File;
-import java.util.ArrayList;
-
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
+import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 
 public class Build {
@@ -28,12 +27,14 @@ public class Build {
 
 
 			@Override
-			public void assetsPath(ArrayList<File> paths) {
-
+			public boolean assetsPath(Array<File> paths) {
+				File assetPath = new File("../example-core-desktop/assets");
+				paths.add(assetPath);
+				return true;
 			}
 
 			@Override
-			public void assetsClasspath(ArrayList<String> classPaths) {
+			public void assetsClasspath(Array<String> classPaths) {
 
 			}
 		});
