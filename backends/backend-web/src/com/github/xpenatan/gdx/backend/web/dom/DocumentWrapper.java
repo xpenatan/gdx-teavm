@@ -10,4 +10,8 @@ public interface DocumentWrapper extends ElementWrapper {
 	public String getCompatMode();
 
 	HTMLElementWrapper getElementById(String id);
+
+	public NodeWrapper createTextNode(NodeWrapper text);
+
+	public ElementWrapper createElement(String value);
 }

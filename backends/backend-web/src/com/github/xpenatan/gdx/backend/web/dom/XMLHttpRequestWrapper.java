@@ -25,7 +25,7 @@ public interface XMLHttpRequestWrapper extends XMLHttpRequestEventTargetWrapper 
 
 	public short getStatus();
 
-	public WebJSObject getResponse();
+	public NodeWrapper getResponse();
 
 	public String getResponseText();
 }

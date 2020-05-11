@@ -44,6 +44,8 @@ public class WebApplication implements Application, Runnable {
 
 	private WebApplicationLogger logger;
 
+	private Preloader preloader;
+
 	private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
 	public static WebAgentInfo getAgentInfo () {
@@ -65,8 +67,9 @@ public class WebApplication implements Application, Runnable {
 
 		AssetDownload instance = AssetDownloader.getInstance();
 		String hostPageBaseURL = instance.getHostPageBaseURL();
-		Preloader preloader = new Preloader(hostPageBaseURL + "assets/");
+		preloader = new Preloader(hostPageBaseURL + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
+		preloader.loadScript("scripts/soundmanager2-jsmin.js", assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
@@ -75,6 +78,15 @@ public class WebApplication implements Application, Runnable {
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
+
+		getPreloader().loadAsset("data/uiskin.atlas", AssetType.Text, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/uiskin.json", AssetType.Text, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/uiskin.png", AssetType.Image, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/default.fnt", AssetType.Text, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/default.png", AssetType.Image, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/badlogicsmall.jpg", AssetType.Image, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/jsonTest.json", AssetType.Text, null, new AssetLoaderListener<>());
 
 		graphics = new WebGraphics(config);
 		input = new WebInput(this.canvas);
@@ -134,8 +146,7 @@ public class WebApplication implements Application, Runnable {
 	}
 
 	public Preloader getPreloader() {
-
-		return null;
+		return preloader;
 	}
 
 	@Override
@@ -286,6 +297,10 @@ public class WebApplication implements Application, Runnable {
 	public void removeLifecycleListener(LifecycleListener listener) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public String getAssetUrl () {
+		return preloader.baseUrl;
 	}
 
 	public enum AppState {

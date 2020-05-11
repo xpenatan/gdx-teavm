@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
@@ -15,11 +17,12 @@ import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan
  */
-public class TeaJSHelper implements WebJSHelper {
+public class TeaJSHelper implements WebJSHelper, JSObject {
 
 	private WebAgentInfo agentInfo;
 	private HTMLCanvasElementWrapper canvasWrapper;
@@ -73,4 +76,12 @@ public class TeaJSHelper implements WebJSHelper {
 		StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
 		return storage;
 	}
+
+	@Override
+	public SoundManagerWrapper createSoundManager() {
+		return TeaJSHelper.createSM();
+	}
+
+	@JSBody(script = "return new SoundManager();")
+	private static native SoundManagerWrapper createSM();
 }

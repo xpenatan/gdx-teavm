@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,12 @@ public class AsyncExecutor implements Disposable {
 	/** Creates a new AsynchExecutor that allows maxConcurrent {@link Runnable} instances to run in parallel.
 	 * @param maxConcurrent */
 	public AsyncExecutor (int maxConcurrent) {
+	}
+
+	/** Creates a new AsynchExecutor that allows maxConcurrent {@link Runnable} instances to run in parallel.
+	 * @param maxConcurrent
+	 * @param name The name of the threads. */
+	public AsyncExecutor (int maxConcurrent, String name) {
 	}
 
 	/** Submits a {@link Runnable} to be executed asynchronously. If maxConcurrent runnables are already running, the runnable will

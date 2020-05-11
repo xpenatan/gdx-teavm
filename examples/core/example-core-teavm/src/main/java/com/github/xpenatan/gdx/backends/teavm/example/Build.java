@@ -2,12 +2,17 @@ package com.github.xpenatan.gdx.backends.teavm.example;
 
 import java.io.File;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.TeaReflectionSupplierImpl;
+import com.badlogic.gdx.tests.dragome.examples.JsonModel;
 import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 
 public class Build {
 
 	public static void main(String[] args) {
+
+		TeaReflectionSupplierImpl.clazzList.add(JsonModel.class);
+
 		TeaBuilder.build(new TeaBuildConfiguration() {
 
 			@Override

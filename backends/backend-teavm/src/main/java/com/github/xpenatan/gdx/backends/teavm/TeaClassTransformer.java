@@ -16,6 +16,8 @@ import org.teavm.model.ClassHolderTransformerContext;
 import org.teavm.model.ClassReaderSource;
 import org.teavm.model.MethodHolder;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
+import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventHandlerWrapper;
@@ -61,6 +63,10 @@ import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLUniformLocationWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SMSoundCallbackWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SMSoundWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerCallbackWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan
@@ -152,11 +158,14 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, ImageDataWrapper.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getData", null);
 			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, HTMLImageElementWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "setSrc", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getWidth", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getHeight", null);
 
 			classHolder = findClassHolder(context, HTMLVideoElementWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
@@ -287,6 +296,39 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			classHolder = findClassHolder(context, StorageWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
+
+			classHolder = findClassHolder(context, SoundManagerCallbackWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, SMSoundCallbackWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, SMSoundWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, SoundManagerWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, CanvasPixelArrayWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+
+			classHolder = findClassHolder(context, CanvasRenderingContext2DWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getGlobalAlpha", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setGlobalAlpha", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setFillStyle", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setStrokeStyle", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getStrokeStyle", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getGlobalCompositeOperation", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setGlobalCompositeOperation", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLineWidth", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setLineWidth", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLineCap", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setLineCap", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLineJoin", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setLineJoin", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getMiterLimit", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "setMiterLimit", null);
 		}
 	}
 

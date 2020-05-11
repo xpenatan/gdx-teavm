@@ -6,8 +6,11 @@ import com.github.xpenatan.gdx.backend.web.WebJSHelper;
 import com.github.xpenatan.gdx.backend.web.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ProgressEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
@@ -53,7 +56,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
 	@Override
 	public void loadText(String url, AssetLoaderListener<String> listener) {
-		XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
+		final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
 
 		request.setOnreadystatechange(new EventHandlerWrapper() {
 			@Override
@@ -77,6 +80,48 @@ public class AssetDownloadImpl implements AssetDownload {
 
 	@Override
 	public void loadScript(String url, AssetLoaderListener<Object> listener) {
+		final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
+
+		request.setOnreadystatechange(new EventHandlerWrapper()
+		{
+			@Override
+			public void handleEvent(EventWrapper evt)
+			{
+				if (request.getReadyState() == XMLHttpRequestWrapper.DONE)
+				{
+					if (request.getStatus() != 200)
+					{
+						listener.onFailure(url);
+					}
+					else
+					{
+						NodeWrapper response = request.getResponse();
+						WindowWrapper currentWindow = jsHelper.getCurrentWindow();
+						HTMLDocumentWrapper document = currentWindow.getDocument();
+						HTMLElementWrapper scriptElement = document.createElement("script");
+
+						scriptElement.appendChild(document.createTextNode(response));
+//						document.appendChild(scriptElement);
+
+
+//						ScriptHelper.put("code", request.getResponse(), this);
+//						ScriptHelper.evalNoResult(""
+//						+ "var newScriptTag = document.createElement('script');"
+//						+ "newScriptTag.appendChild(document.createTextNode(code.node));"
+//						+ "document.body.appendChild(newScriptTag);", this);
+
+
+						listener.onSuccess(url, request.getResponseText());
+					}
+					queue--;
+				}
+			}
+		});
+		queue++;
+		setOnProgress(request, listener);
+		request.open("GET", url);
+		request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
+		request.send();
 	}
 
 	@Override
