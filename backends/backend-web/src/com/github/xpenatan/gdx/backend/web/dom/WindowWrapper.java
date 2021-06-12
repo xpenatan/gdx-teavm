@@ -5,11 +5,11 @@ package com.github.xpenatan.gdx.backend.web.dom;
  */
 public interface WindowWrapper {
 
-	public HTMLDocumentWrapper getDocument();
+	public DocumentWrapper getDocument();
 
 	public void requestAnimationFrame(Runnable runnable);
 
-	public int setTimeout(Runnable run, int delay);
+	public TimerWrapper getTimer();
 
 	public LocationWrapper getLocation();
 }

@@ -132,8 +132,10 @@ public class WebInput implements Input, EventListenerWrapper {
 				this.touchX[0] += getMovementXJS(mouseEvent);
 				this.touchY[0] += getMovementYJS(mouseEvent);
 			} else {
-				this.touchX[0] = getRelativeX(mouseEvent, canvas);
-				this.touchY[0] = getRelativeY(mouseEvent, canvas);
+				int relativeX = getRelativeX(mouseEvent, canvas);
+				int relativeY = getRelativeY(mouseEvent, canvas);
+				this.touchX[0] = relativeX;
+				this.touchY[0] = relativeY;
 			}
 			this.currentEventTimeStamp = TimeUtils.nanoTime();
 			if (processor != null)
@@ -185,7 +187,7 @@ public class WebInput implements Input, EventListenerWrapper {
 			WheelEventWrapper wheel = (WheelEventWrapper) e;
 			if (processor != null) {
 				float wheelDelta = getMouseWheelVelocity(wheel);
-				processor.scrolled((int)wheelDelta);
+				processor.scrolled(0, (int)wheelDelta);
 			}
 			this.currentEventTimeStamp = TimeUtils.nanoTime();
 		}
@@ -444,7 +446,7 @@ public class WebInput implements Input, EventListenerWrapper {
 
 		while(elem != null) {
 			top += elem.getOffsetTop();
-			elem = (HTMLElementWrapper)curr.getOffsetParent();
+			elem = curr.getOffsetParent();
 		}
 
 		return top;
@@ -464,7 +466,7 @@ public class WebInput implements Input, EventListenerWrapper {
 
 		while(elem != null) {
 			left += elem.getOffsetLeft();
-			elem = (HTMLElementWrapper)curr.getOffsetParent();
+			elem = curr.getOffsetParent();
 		}
 		return left;
 	}
@@ -768,6 +770,18 @@ public class WebInput implements Input, EventListenerWrapper {
 
 	@Override
 	public void setCursorPosition(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void getTextInput (TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type) {
 		// TODO Auto-generated method stub
 
 	}

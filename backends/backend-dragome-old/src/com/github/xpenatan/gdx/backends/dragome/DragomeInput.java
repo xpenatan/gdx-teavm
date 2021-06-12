@@ -225,7 +225,7 @@ public class DragomeInput implements Input {
 		if (type.equals(getMouseWheelEvent())) {
 			MouseEvent e = JsCast.castTo(evt, MouseEvent.class);
 			if (processor != null) {
-				processor.scrolled((int)getMouseWheelVelocity(e));
+				processor.scrolled(0, (int)getMouseWheelVelocity(e));
 			}
 			this.currentEventTimeStamp = TimeUtils.nanoTime();
 			e.preventDefault();
@@ -1049,34 +1049,52 @@ public class DragomeInput implements Input {
 	private static final int KEY_CLOSE_BRACKET = 221;
 	private static final int KEY_SINGLE_QUOTE = 222;
 
+	@Override
 	public int getMaxPointers () {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public float getPressure () {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public float getPressure (int pointer) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public boolean isButtonJustPressed (int button) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public void setCatchKey (int keycode, boolean catchKey) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public boolean isCatchKey (int keycode) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void getTextInput (TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

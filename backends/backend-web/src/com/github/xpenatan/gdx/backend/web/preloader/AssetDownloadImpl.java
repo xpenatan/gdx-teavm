@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backend.web.preloader;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backend.web.WebJSHelper;
+import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventWrapper;
@@ -62,6 +63,9 @@ public class AssetDownloadImpl implements AssetDownload {
 			@Override
 			public void handleEvent(EventWrapper evt) {
 				if (request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+
+					int test = 804213;
+
 					if (request.getStatus() != 200) {
 						listener.onFailure(url);
 					} else {
@@ -97,7 +101,7 @@ public class AssetDownloadImpl implements AssetDownload {
 					{
 						NodeWrapper response = request.getResponse();
 						WindowWrapper currentWindow = jsHelper.getCurrentWindow();
-						HTMLDocumentWrapper document = currentWindow.getDocument();
+						DocumentWrapper document = currentWindow.getDocument();
 						HTMLElementWrapper scriptElement = document.createElement("script");
 
 						scriptElement.appendChild(document.createTextNode(response));
@@ -111,6 +115,7 @@ public class AssetDownloadImpl implements AssetDownload {
 //						+ "document.body.appendChild(newScriptTag);", this);
 
 
+						int test = 204213;
 						listener.onSuccess(url, request.getResponseText());
 					}
 					queue--;
@@ -154,6 +159,8 @@ public class AssetDownloadImpl implements AssetDownload {
 					} else {
 						ArrayBufferWrapper response = (ArrayBufferWrapper) request.getResponse();
 						Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
+
+						int test = 43131;
 						listener.onSuccess(url, new Blob(data));
 					}
 					queue--;

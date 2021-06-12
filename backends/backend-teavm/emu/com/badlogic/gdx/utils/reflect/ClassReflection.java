@@ -97,11 +97,26 @@ public final class ClassReflection {
 		return result;
 	}
 
+	static private Constructor getNoArgPublicConstructor(Class c) {
+		java.lang.reflect.Constructor[] constructors = c.getConstructors();
+		if(constructors.length > 0)
+			return new Constructor(constructors[0]);
+		return null;
+	}
+
 	/** Returns a {@link Constructor} that represents the public constructor for the supplied class which takes the supplied
 	 * parameter types. */
 	static public Constructor getConstructor (Class c, Class... parameterTypes) throws ReflectionException {
+
+		if(parameterTypes == null || parameterTypes.length == 0)
+		{
+			//Teavm does not accept null parameter to get public no args constructor. Need to do it manually
+			return getNoArgPublicConstructor(c);
+		}
+
 		try {
-			return new Constructor(c.getConstructor(parameterTypes));
+			java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
+			return new Constructor(constructor);
 		} catch (SecurityException e) {
 			throw new ReflectionException("Security violation occurred while getting constructor for class: '" + c.getName() + "'.",
 				e);
@@ -113,8 +128,14 @@ public final class ClassReflection {
 	/** Returns a {@link Constructor} that represents the constructor for the supplied class which takes the supplied parameter
 	 * types. */
 	static public Constructor getDeclaredConstructor (Class c, Class... parameterTypes) throws ReflectionException {
-		//TODO ERROR
-		return null;
+		try {
+			java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes);
+			return new Constructor(declaredConstructor);
+		} catch (SecurityException e) {
+			throw new ReflectionException("Security violation while getting constructor for class: " + c.getName(), e);
+		} catch (NoSuchMethodException e) {
+			throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
+		}
 	}
 
 	/** Returns the elements of this enum class or null if this Class object does not represent an enum type. */
@@ -167,30 +188,33 @@ public final class ClassReflection {
 
 	/** Returns an array of {@link Field} containing the public fields of the class represented by the supplied Class. */
 	static public Field[] getFields (Class c) {
-		java.lang.reflect.Field[] fields = c.getFields();
-		Field[] result = new Field[fields.length];
-		for (int i = 0, j = fields.length; i < j; i++) {
-			result[i] = new Field(fields[i]);
-		}
-		return result;
+//		java.lang.reflect.Field[] fields = c.getFields();
+//		Field[] result = new Field[fields.length];
+//		for (int i = 0, j = fields.length; i < j; i++) {
+//			result[i] = new Field(fields[i]);
+//		}
+//		return result;
+
+		return null;
 	}
 
 	/** Returns a {@link Field} that represents the specified public member field for the supplied class. */
 	static public Field getField (Class c, String name) throws ReflectionException {
-		try {
-			return new Field(c.getField(name));
-		} catch (SecurityException e) {
-			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
-		} catch (NoSuchFieldException e) {
-			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
-		}
+//		try {
+//			return new Field(c.getField(name));
+//		} catch (SecurityException e) {
+//			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
+//		} catch (NoSuchFieldException e) {
+//			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+//		}
+		return null;
 	}
 
+
 	/** Returns an array of {@link Field} objects reflecting all the fields declared by the supplied class. */
+
 	static public Field[] getDeclaredFields (Class c) {
-		// TODO error
-//		return null;
-		
+
 		java.lang.reflect.Field[] fields = c.getDeclaredFields();
 		Field[] result = new Field[fields.length];
 		for (int i = 0, j = fields.length; i < j; i++) {
@@ -201,13 +225,16 @@ public final class ClassReflection {
 
 	/** Returns a {@link Field} that represents the specified declared field for the supplied class. */
 	static public Field getDeclaredField (Class c, String name) throws ReflectionException {
-		try {
-			return new Field(c.getDeclaredField(name));
-		} catch (SecurityException e) {
-			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
-		} catch (NoSuchFieldException e) {
-			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
-		}
+//		try {
+//			return new Field(c.getDeclaredField(name));
+//		} catch (SecurityException e) {
+//			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
+//		} catch (NoSuchFieldException e) {
+//			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+//		}
+
+
+		return null;
 	}
 
 	/** Returns true if the supplied class has an annotation of the given type. */

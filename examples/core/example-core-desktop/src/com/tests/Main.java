@@ -19,7 +19,7 @@ public class Main {
 	public static void main(String[] args)
 	{
 		ApplicationListener appTest = null;
-		int i = GEARS_TEST;
+		int i = UI_TEST;
 		if(i == GEARS_TEST)
 			appTest = new GearsDemo();
 //		else if(i == BULLET_TEST)

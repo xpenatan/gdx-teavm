@@ -124,6 +124,7 @@ public class Preloader {
 	}
 
 	public void loadAsset (final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
+		System.out.println("Loading Asset : " + url);
 		AssetDownloader.getInstance().load(baseUrl + url, type, mimeType, new AssetLoaderListener<Object>() {
 			@Override
 			public void onProgress (double amount) {
@@ -137,6 +138,7 @@ public class Preloader {
 
 			@Override
 			public void onSuccess (String urll, Object result) {
+				System.out.println("Asset loaded: " + urll);
 				switch (type) {
 				case Text:
 					texts.put(url, (String)result);

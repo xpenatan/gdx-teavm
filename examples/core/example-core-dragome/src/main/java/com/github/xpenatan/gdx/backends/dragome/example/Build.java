@@ -3,14 +3,13 @@ package com.github.xpenatan.gdx.backends.dragome.example;
 import java.io.File;
 import com.github.xpenatan.gdx.backends.dragome.DragomeBuilder;
 import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backends.dragome.DragomeBuildConfigurator;
+import com.github.xpenatan.gdx.backends.dragome.DragomeBuildConfiguration;
 
 public class Build {
 
 	public static void main(String[] args) {
 
-		DragomeBuilder.build(new DragomeBuildConfigurator() {
-
+		DragomeBuilder.build(new DragomeBuildConfiguration() {
 			@Override
 			public Class getMainClass() {
 				return Launcher.class;
@@ -22,19 +21,20 @@ public class Build {
 			}
 
 			@Override
-			public void assetsClasspath(Array<String> classPaths) {
-			}
-
-			@Override
-			public boolean assetsPath(Array<File> paths) {
-				return true;
-			}
-
-			@Override
 			public boolean minifying() {
 				return false;
 			}
 
+			@Override
+			public boolean assetsPath(Array<File> paths) {
+				File assetPath = new File("../example-core-desktop/assets");
+				paths.add(assetPath);
+				return true;
+			}
+
+			@Override
+			public void assetsClasspath(Array<String> classPaths) {
+			}
 		});
 	}
 }

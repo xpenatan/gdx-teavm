@@ -11,6 +11,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entries;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backend.web.WebFileHandle;
 
@@ -48,7 +50,6 @@ public class Preloader {
 	}
 
 	public void preload (final String assetFileUrl) {
-
 		AssetDownloader.getInstance().loadText(baseUrl + assetFileUrl, new AssetLoaderListener<String>() {
 			@Override
 			public void onProgress (double amount) {
@@ -109,6 +110,7 @@ public class Preloader {
 	}
 
 	public void loadAsset (final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
+		System.out.println("Loading Asset : " + url);
 		AssetDownloader.getInstance().load(baseUrl + url, type, mimeType, new AssetLoaderListener<Object>() {
 			@Override
 			public void onProgress (double amount) {
@@ -122,6 +124,7 @@ public class Preloader {
 
 			@Override
 			public void onSuccess (String urll, Object result) {
+				System.out.println("Asset loaded: " + urll);
 				switch (type) {
 				case Text:
 					texts.put(url, (String)result);
@@ -263,6 +266,27 @@ public class Preloader {
 			return 1; // FIXME sensible?
 		}
 		return 0;
+	}
+
+	public void printLoadedAssets() {
+		Entries<String,Object> iterator = images.iterator();
+		System.out.println("### Text Assets: ");
+		printKeys(texts);
+		System.out.println("##########");
+		System.out.println("### Image Assets: ");
+		printKeys(images);
+		System.out.println("##########");
+	}
+
+
+	private void printKeys(ObjectMap<String, ?> map) {
+		Entries<String, ?> iterator = map.iterator();
+
+		while(iterator.hasNext) {
+			Entry<String, ?> next = iterator.next();
+			String key = next.key;
+			System.out.println("Key: " + key);
+		}
 	}
 
 }

@@ -12,7 +12,7 @@ import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
-
+import org.teavm.vm.TeaVMOptimizationLevel;
 import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backend.web.WebClassLoader;
@@ -49,6 +49,16 @@ public class TeaBuilder {
 			URL url = acceptedURL.get(i);
 			String string = url.toString();
 			if(string.contains("backend-web")) {
+				acceptedURL.remove(i);
+				acceptedURL.add(0, url);
+				break;
+			}
+		}
+
+		for(int i = 0; i < acceptedURL.size(); i++) {
+			URL url = acceptedURL.get(i);
+			String string = url.toString();
+			if(string.contains("backend-teavm")) {
 				acceptedURL.remove(i);
 				acceptedURL.add(0, url);
 				break;
@@ -102,11 +112,13 @@ public class TeaBuilder {
 		tool.setTargetDirectory(setTargetDirectory);
 		tool.setTargetFileName(setTargetFileName);
 		tool.setObfuscated(setMinifying);
+		tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
 		tool.setMainClass(mainClass);
 		//		tool.getProperties().putAll(profile.getProperties());
 		tool.setIncremental(setIncremental);
 		tool.setCacheDirectory(setCacheDirectory);
+		tool.setStrict(false);
 		tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
 		Properties properties = tool.getProperties();
 

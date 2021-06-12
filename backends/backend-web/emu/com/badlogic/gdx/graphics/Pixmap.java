@@ -34,6 +34,7 @@ import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
@@ -89,7 +90,7 @@ public class Pixmap implements Disposable {
 	HTMLCanvasElementWrapper canvas;
 	CanvasRenderingContext2DWrapper context;
 	int id;
-	Buffer buffer;
+	ByteBuffer buffer;
 	int r = 255, g = 255, b = 255;
 	float a;
 	String color = make(r, g, b, a);
@@ -98,11 +99,53 @@ public class Pixmap implements Disposable {
 	CanvasPixelArrayWrapper pixels;
 
 	private HTMLImageElementWrapper imageElement;
+	private HTMLVideoElementWrapper videoElement;
 
 	public Pixmap (FileHandle file) {
-		this((HTMLImageElementWrapper)((WebFileHandle)file).preloader.images.get(file.path()));
+		WebFileHandle webFileHandler = (WebFileHandle)file;
+		String path = webFileHandler.path();
+		Object object = webFileHandler.preloader.images.get(path);
+		HTMLImageElementWrapper htmlImageElement = (HTMLImageElementWrapper)object;
+		init(-1, -1, htmlImageElement);
 		if (imageElement == null) throw new GdxRuntimeException("Couldn't load image '" + file.path() + "', file does not exist");
 	}
+
+	public Pixmap (HTMLImageElementWrapper img) {
+		init(-1, 01, img);
+	}
+
+	public Pixmap (int width, int height, Format format) {
+		init(width, height, (HTMLImageElementWrapper)null);
+	}
+
+	private Pixmap (int width, int height, HTMLImageElementWrapper imageElement) {
+		init(width, height, imageElement);
+	}
+
+	private void init(int width, int height, HTMLImageElementWrapper imageElement) {
+		this.imageElement = imageElement;
+		this.width = imageElement != null ? imageElement.getWidth() : width;
+		this.height = imageElement != null ? imageElement.getHeight() : height;
+		this.format = Format.RGBA8888;
+		buffer = BufferUtils.newByteBuffer(4);
+		id = nextId++;
+		buffer.putInt(0, id);
+		pixmaps.put(id, this);
+	}
+
+	private void create () {
+		//TODO
+//		DocumentWrapper document = WebServiceLocator.getInstance().getDomHandler().getDocument();
+		WindowWrapper window = WebApplicationConfiguration.JSHelper.getCurrentWindow();
+		DocumentWrapper document = window.getDocument();
+		ElementWrapper createElement = document.createElement("canvas");
+		canvas = (HTMLCanvasElementWrapper)createElement;
+		canvas.setWidth(width);
+		canvas.setHeight(height);
+		context = (CanvasRenderingContext2DWrapper)canvas.getContext("2d");
+		context.setGlobalCompositeOperation(getComposite());
+	}
+
 
 	public CanvasRenderingContext2DWrapper getContext () {
 		ensureCanvasExists();
@@ -113,38 +156,6 @@ public class Pixmap implements Disposable {
 		return Composite.SOURCE_OVER;
 	}
 
-	public Pixmap (HTMLImageElementWrapper img) {
-		this(-1, -1, img);
-	}
-
-	public Pixmap (int width, int height, Format format) {
-		this(width, height, (HTMLImageElementWrapper)null);
-	}
-
-	private Pixmap (int width, int height, HTMLImageElementWrapper imageElement) {
-		this.imageElement = imageElement;
-		this.width = imageElement != null ? imageElement.getWidth() : width;
-		this.height = imageElement != null ? imageElement.getHeight() : height;
-		this.format = Format.RGBA8888;
-		IntBuffer intBuffer = BufferUtils.newIntBuffer(1);
-		id = nextId++;
-		intBuffer.put(0, id);
-		buffer = intBuffer;
-		pixmaps.put(id, this);
-	}
-
-	private void create () {
-		//TODO
-//		DocumentWrapper document = WebServiceLocator.getInstance().getDomHandler().getDocument();
-		WindowWrapper window = WebApplicationConfiguration.JSHelper.getCurrentWindow();
-		HTMLDocumentWrapper document = window.getDocument();
-		ElementWrapper createElement = document.createElement("canvas");
-		canvas = (HTMLCanvasElementWrapper)createElement;
-		canvas.setWidth(width);
-		canvas.setHeight(height);
-		context = (CanvasRenderingContext2DWrapper)canvas.getContext("2d");
-		context.setGlobalCompositeOperation(getComposite());
-	}
 
 	public static String make (int r2, int g2, int b2, float a2) {
 		return "rgba(" + r2 + "," + g2 + "," + b2 + "," + a2 + ")";
@@ -194,9 +205,11 @@ public class Pixmap implements Disposable {
 	}
 
 	public ByteBuffer getPixels () {
-//		ScriptHelper.put("buffer", this.buffer, this);
+//		IntBuffer pixelBuffer = this.buffer;
+//		ByteBuffer byteByffer = this.buffer;
+////		ScriptHelper.put("buffer", this.buffer, this);
 		// TODO check
-		return (ByteBuffer)this.buffer;
+		return buffer;
 	}
 
 	@Override
@@ -207,6 +220,18 @@ public class Pixmap implements Disposable {
 	public HTMLCanvasElementWrapper getCanvasElement () {
 		ensureCanvasExists();
 		return canvas;
+	}
+
+	public HTMLVideoElementWrapper getVideoElement () {
+		return videoElement;
+	}
+
+	public HTMLImageElementWrapper getImageElement () {
+		return imageElement;
+	}
+
+	public boolean canUseVideoElement () {
+		return canvas == null && videoElement != null;
 	}
 
 	private void ensureCanvasExists () {
@@ -222,10 +247,6 @@ public class Pixmap implements Disposable {
 
 	public boolean canUseImageElement () {
 		return canvas == null && imageElement != null;
-	}
-
-	public HTMLImageElementWrapper getImageElement () {
-		return imageElement;
 	}
 
 	/** Sets the color for the following drawing operations

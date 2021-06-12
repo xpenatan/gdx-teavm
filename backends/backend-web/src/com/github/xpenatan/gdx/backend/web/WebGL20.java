@@ -9,7 +9,9 @@ import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float64ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
@@ -52,12 +54,14 @@ public class WebGL20 implements GL20 {
 	Float32ArrayWrapper floatBuffer;
 	Int32ArrayWrapper intBuffer;
 	Int16ArrayWrapper shortBuffer;
+	Uint8ArrayWrapper byteBuffer;
 
 	public WebGL20(WebGLRenderingContextWrapper gl) {
 		this.gl = gl;
 		floatBuffer = TypedArrays.getInstance().createFloat32Array(2000 * 20);
 		shortBuffer = TypedArrays.getInstance().createInt16Array(2000 * 6);
 		intBuffer = TypedArrays.getInstance().createInt32Array(2000 * 6);
+		byteBuffer = TypedArrays.getInstance().createUint8Array(2000 * 6 * 20);
 		this.gl.pixelStorei(WebGLRenderingContextWrapper.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 	}
 
@@ -76,6 +80,12 @@ public class WebGL20 implements GL20 {
 	private void ensureCapacity(IntBuffer buffer) {
 		if (buffer.remaining() > intBuffer.getLength()) {
 			intBuffer = TypedArrays.getInstance().createInt32Array(buffer.remaining());
+		}
+	}
+
+	private void ensureCapacity(ByteBuffer buffer) {
+		if (buffer.remaining() > byteBuffer.getLength()) {
+			byteBuffer = TypedArrays.getInstance().createUint8Array(buffer.remaining());
 		}
 	}
 
@@ -103,36 +113,12 @@ public class WebGL20 implements GL20 {
 		return intBuffer.subarray(0, buffer.remaining());
 	}
 
-	public Uint8ArrayWrapper copyU(ByteBuffer buffer) {
-		buffer = buffer.duplicate();
-		Uint8ArrayWrapper result = TypedArrays.getInstance().createUint8Array(buffer.remaining());
-		byte[] tmp;
-		if (buffer.hasArray()) {
-			tmp = buffer.array();
-		} else {
-			tmp = new byte[buffer.remaining()];
-			buffer.get(tmp);
+	public Uint8ArrayWrapper copy(ByteBuffer buffer) {
+		ensureCapacity(buffer);
+		for (int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+			byteBuffer.set(j, buffer.get(i));
 		}
-		for (int i = 0; i < tmp.length; ++i) {
-			result.set(i, tmp[i]);
-		}
-		return result;
-	}
-
-	public Float64ArrayWrapper copy(DoubleBuffer buffer) {
-		buffer = buffer.duplicate();
-		Float64ArrayWrapper result = TypedArrays.getInstance().createFloat64Array(buffer.remaining());
-		double[] tmp;
-		if (buffer.hasArray()) {
-			tmp = buffer.array();
-		} else {
-			tmp = new double[buffer.remaining()];
-			buffer.get(tmp);
-		}
-		for (int i = 0; i < tmp.length; ++i) {
-			result.set(i, tmp[i]);
-		}
-		return result;
+		return byteBuffer.subarray(0, buffer.remaining());
 	}
 
 	private int allocateUniformLocationId(int program, WebGLUniformLocationWrapper location) {
@@ -444,23 +430,53 @@ public class WebGL20 implements GL20 {
 		gl.stencilOp(fail, zfail, zpass);
 	}
 
+
+//	public Uint8ArrayWrapper copyU(ByteBuffer buffer) {
+//		buffer = buffer.duplicate();
+//		Uint8ArrayWrapper result = TypedArrays.getInstance().createUint8Array(buffer.remaining());
+//		byte[] tmp;
+//		if (buffer.hasArray()) {
+//			tmp = buffer.array();
+//		} else {
+//			tmp = new byte[buffer.remaining()];
+//			buffer.get(tmp);
+//		}
+//		for (int i = 0; i < tmp.length; ++i) {
+//			result.set(i, tmp[i]);
+//		}
+//		return result;
+//	}
+//
 	@Override
 	public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels) {
-
 		if (pixels == null) {
 			gl.texImage2D(target, level, internalformat, width, height, border, format, type, null);
-		} else if (pixels instanceof ByteBuffer) {
-			gl.texImage2D(target, level, internalformat, width, height, border, format, type, copyU((ByteBuffer) pixels));
-		} else if (pixels instanceof ShortBuffer) {
-			gl.texImage2D(target, level, internalformat, width, height, border, format, type, copy((ShortBuffer) pixels));
-		} else if (pixels instanceof IntBuffer) {
-			gl.texImage2D(target, level, internalformat, width, height, border, format, type, copy((IntBuffer) pixels));
-		} else if (pixels instanceof FloatBuffer) {
-			gl.texImage2D(target, level, internalformat, width, height, border, format, type, copy((FloatBuffer) pixels));
-		} else if (pixels instanceof DoubleBuffer) {
-			gl.texImage2D(target, level, internalformat, width, height, border, format, type, copy((DoubleBuffer) pixels));
 		} else {
-			throw new GdxRuntimeException("Can't copy pixels to texture");
+			if (pixels.limit() > 4) {
+				ArrayBufferViewWrapper buffer;
+				if (pixels instanceof FloatBuffer) {
+					Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+					ArrayBufferViewWrapper webGLArray = arr;
+					buffer = webGLArray;
+				} else {
+					Uint8ArrayWrapper copyU = copy((ByteBuffer)pixels);
+					buffer = copyU;
+				}
+				gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
+			} else {
+				int index = ((ByteBuffer)pixels).getInt(0);
+				Pixmap pixmap = Pixmap.pixmaps.get(index);
+				// Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
+				if (pixmap.canUseImageElement()) {
+					gl.texImage2D(target, level, internalformat, format, type, pixmap.getImageElement());
+				}
+				else if (pixmap.canUseVideoElement()) {
+					gl.texImage2D(target, level, internalformat, format, type, pixmap.getVideoElement());
+				}
+				else {
+					gl.texImage2D(target, level, internalformat, format, type, pixmap.getCanvasElement());
+				}
+			}
 		}
 	}
 
@@ -471,18 +487,20 @@ public class WebGL20 implements GL20 {
 
 	@Override
 	public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-		if (pixels instanceof ByteBuffer) {
-			gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, copyU((ByteBuffer) pixels));
-		} else if (pixels instanceof ShortBuffer) {
-			gl.texImage2D(target, level, xoffset, yoffset, width, height, format, type, copy((ShortBuffer) pixels));
-		} else if (pixels instanceof IntBuffer) {
-			gl.texImage2D(target, level, xoffset, yoffset, width, height, format, type, copy((IntBuffer) pixels));
-		} else if (pixels instanceof FloatBuffer) {
-			gl.texImage2D(target, level, xoffset, yoffset, width, height, format, type, copy((FloatBuffer) pixels));
-		} else if (pixels instanceof DoubleBuffer) {
-			gl.texImage2D(target, level, xoffset, yoffset, width, height, format, type, copy((DoubleBuffer) pixels));
+		if (pixels.limit() > 4) {
+			ArrayBufferViewWrapper buffer;
+			if (pixels instanceof FloatBuffer) {
+				Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+				ArrayBufferViewWrapper webGLArray = arr;
+				buffer = webGLArray;
+			} else {
+				buffer = copy((ByteBuffer)pixels);
+			}
+			gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
 		} else {
-			throw new GdxRuntimeException("Can't copy pixels to texture");
+			int index = ((ByteBuffer)pixels).getInt(0);
+			Pixmap pixmap = Pixmap.pixmaps.get(index);
+			gl.texSubImage2D(target, level, xoffset, yoffset, format, type, pixmap.getCanvasElement());
 		}
 	}
 
@@ -733,18 +751,18 @@ public class WebGL20 implements GL20 {
 	}
 
 	@Override
-	public String glGetActiveAttrib(int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
 		WebGLActiveInfoWrapper activeAttrib = gl.getActiveAttrib(programs.get(program), index);
 		size.put(activeAttrib.getSize());
-		((IntBuffer) type).put(activeAttrib.getType());
+		type.put(activeAttrib.getType());
 		return activeAttrib.getName();
 	}
 
 	@Override
-	public String glGetActiveUniform(int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
 		WebGLActiveInfoWrapper activeUniform = gl.getActiveUniform(programs.get(program), index);
 		size.put(activeUniform.getSize());
-		((IntBuffer) type).put(activeUniform.getType());
+		type.put(activeUniform.getType());
 		return activeUniform.getName();
 	}
 

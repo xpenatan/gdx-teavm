@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
@@ -10,8 +9,8 @@ import org.teavm.jso.webgl.WebGLContextAttributes;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backend.web.WebJSHelper;
+import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
@@ -62,7 +61,7 @@ public class TeaJSHelper implements WebJSHelper, JSObject {
 
 	@Override
 	public HTMLImageElementWrapper createImageElement() {
-		HTMLDocumentWrapper document = getCurrentWindow().getDocument();
+		DocumentWrapper document = getCurrentWindow().getDocument();
 		return (HTMLImageElementWrapper) document.createElement("img");
 	}
 
@@ -79,9 +78,12 @@ public class TeaJSHelper implements WebJSHelper, JSObject {
 
 	@Override
 	public SoundManagerWrapper createSoundManager() {
-		return TeaJSHelper.createSM();
+//		return TeaJSHelper.createSM();
+		return null;
 	}
 
-	@JSBody(script = "return new SoundManager();")
-	private static native SoundManagerWrapper createSM();
+	//TODO
+
+//	@JSBody(script = "return new SoundManager();")
+//	private static native SoundManagerWrapper createSM();
 }

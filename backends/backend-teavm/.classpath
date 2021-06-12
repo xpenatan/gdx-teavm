@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="emu"/>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/backend-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-classlib-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-core-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-interop-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-apis-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-jso-impl-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-platform-0.7.0-dev-1087.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/teavm-tooling-0.7.0-dev-1087.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/corecore"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/tools_core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/jso-impl"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/jso_core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/apis"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/classlib"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/metaprogramming_api"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/platform"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

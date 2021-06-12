@@ -89,7 +89,7 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public int getHeight() {
-		return canvas.getWidth();
+		return canvas.getHeight();
 	}
 
 	@Override
@@ -314,6 +314,18 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public void setSystemCursor(SystemCursor systemCursor) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public float getBackBufferScale () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setForegroundFPS (int fps) {
 		// TODO Auto-generated method stub
 
 	}

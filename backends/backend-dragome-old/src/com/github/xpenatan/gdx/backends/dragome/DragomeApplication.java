@@ -95,6 +95,13 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		PlatformInitializer.init();
 		AssetDownload instance = AssetDownloader.getInstance();
 		String hostPageBaseURL = instance.getHostPageBaseURL();
+
+		if(hostPageBaseURL.contains(".html")) {
+			// TODO use regex
+			hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
+			hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
+		}
+
 		preloader = new Preloader(hostPageBaseURL + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 		preloader.loadScript("soundmanager2-jsmin.js", assetListener);
@@ -464,6 +471,7 @@ public abstract class DragomeApplication extends DefaultVisualActivity implement
 		return preloader.baseUrl;
 	}
 
+	@Override
 	public Preloader getPreloader () {
 		return preloader;
 	}

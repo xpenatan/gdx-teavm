@@ -5,5 +5,5 @@ import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
 /**
  * @author xpenatan
  */
-public abstract class DragomeBuildConfigurator extends WebBuildConfiguration {
+public abstract class DragomeBuildConfiguration extends WebBuildConfiguration {
 }

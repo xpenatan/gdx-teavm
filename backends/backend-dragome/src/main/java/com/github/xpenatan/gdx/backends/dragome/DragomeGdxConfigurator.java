@@ -47,6 +47,7 @@ import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
 import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventTargetWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.EventWrapper;
@@ -57,6 +58,7 @@ import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.KeyboardEventWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.MouseEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.TouchEventWrapper;
@@ -64,15 +66,18 @@ import com.github.xpenatan.gdx.backend.web.dom.TouchListWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.TouchWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float64ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.FloatArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.ObjectArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
@@ -96,7 +101,7 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 
 	String projName;
 
-	DragomeBuildConfigurator configurator;
+	DragomeBuildConfiguration configurator;
 
 	protected JsDelegateGenerator jsDelegateGenerator;
 	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(
@@ -104,17 +109,20 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 			WebGLRenderbufferWrapper.class, WebGLRenderingContextWrapper.class, WebGLShaderWrapper.class, WebGLTextureWrapper.class, WebGLUniformLocationWrapper.class,
 			CanvasPixelArrayWrapper.class, DocumentWrapper.class, ElementWrapper.class, HTMLCanvasElementWrapper.class, HTMLDocumentWrapper.class, HTMLElementWrapper.class,
 			HTMLVideoElementWrapper.class, ImageDataWrapper.class, HTMLImageElementWrapper.class, WindowWrapper.class,
-			ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, Float32ArrayWrapper.class, FloatArrayWrapper.class, Int32ArrayWrapper.class,
-			Int8ArrayWrapper.class, LongArrayWrapper.class, ObjectArrayWrapper.class, Int16ArrayWrapper.class,
+			ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, FloatArrayWrapper.class,
+
+			Float32ArrayWrapper.class, Int32ArrayWrapper.class, Int16ArrayWrapper.class, Uint8ArrayWrapper.class, Float64ArrayWrapper.class, Int8ArrayWrapper.class,
+
+			LongArrayWrapper.class, ObjectArrayWrapper.class,
 			Element.class, Document.class, HTMLCanvasElement.class, EventTargetWrapper.class, EventWrapper.class, EventListenerWrapper.class,
 			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
 			Int32Array.class, Int8Array.class, Uint8ClampedArray.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
 			ArrayBufferFactory.class, TypedArraysFactory.class, EventTarget.class, EventListener.class, Event.class,
 			WheelEventWrapper.class, TouchWrapper.class, TouchListWrapper.class, TouchEventWrapper.class, NodeWrapper.class, KeyboardEventWrapper.class, MouseEventWrapper.class,
-			XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class
+			XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class, LocationWrapper.class, XMLHttpRequestWrapper.class, EventHandlerWrapper.class
 			));
 
-	public DragomeGdxConfigurator(DragomeBuildConfigurator configurator)
+	public DragomeGdxConfigurator(DragomeBuildConfiguration configurator)
 	{
 		super();
 		this.configurator = configurator;
@@ -126,6 +134,7 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 
 		setClasspathFilter(new DefaultClasspathFileFilter()
 		{
+			@Override
 			public boolean accept(ClasspathFile classpathFile)
 			{
 				if(!super.accept(classpathFile))
@@ -136,9 +145,23 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 				path = path.replace("\\", "/");
 
 				{
-					// All classes will compile except
 					flag = true;
+
+					// All classes will compile except
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiConsumer", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiFunction", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BinaryOperator", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiPredicate", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Consumer", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Function", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Predicate", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/PrimitiveIterator", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/stream/Collectors", flag);
+//					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/StreamImpl", flag);
+
+
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeGdxConfigurator.class.getSimpleName(), flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeStandaloneAppGenerator.class.getSimpleName(), flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
@@ -220,6 +243,7 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 
 	}
 
+	@Override
 	public boolean isRemoveUnusedCode()
 	{
 		return false;
@@ -231,18 +255,21 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 		return false;
 	}
 
+	@Override
 	public List<URL> getAdditionalCodeKeepConfigFile()
 	{
 		URL resource = getClass().getResource("/dragome/proguard-extra.conf");
 		return Arrays.asList(resource);
 	}
 
+	@Override
 	public List<URL> getAdditionalObfuscateCodeKeepConfigFile()
 	{
 		URL resource = getClass().getResource("/proguard-extra.conf");
 		return Arrays.asList(resource);
 	}
 
+	@Override
 	public boolean filterClassPath(String classpathEntry)
 	{
 		boolean include= super.filterClassPath(classpathEntry);
@@ -344,6 +371,11 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 				String name = method.getName();
 				Class<?> declaringClass = method.getDeclaringClass();
 
+				if(declaringClass == HTMLDocumentWrapper.class && name.startsWith("createElement"))
+				{
+					System.out.println("");
+				}
+
 				String result = super.createMethodCall(method, params);
 
 				if(name.startsWith("get")) {
@@ -365,7 +397,8 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 						}
 					}
 				}
-				else if(declaringClass == EventTargetWrapper.class && name.startsWith("addEventListener")) {
+
+				if(declaringClass == EventTargetWrapper.class && name.startsWith("addEventListener")) {
 					if(method.getParameterTypes().length >= 2) {
 						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
 						String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
@@ -374,6 +407,27 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 						if(method.getParameterTypes().length == 3)
 							param += ",$3";
 						result = paramListener + " this.node.addEventListener(" + param + ");";
+					}
+				}
+
+				if(declaringClass == HTMLImageElementWrapper.class && name.startsWith("addEventListener")) {
+					if(method.getParameterTypes().length >= 2) {
+						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
+						String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
+						String paramListener = "var listener = function myFunction(event) {"+ castEventToDelegate + callMethod  +"};";
+						String param = "$1, listener";
+						if(method.getParameterTypes().length == 3)
+							param += ",$3";
+						result = paramListener + " this.node.addEventListener(" + param + ");";
+					}
+				}
+				if(declaringClass == XMLHttpRequestWrapper.class && name.startsWith("setOnreadystatechange")) {
+					if(method.getParameterTypes().length == 1) {
+						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
+						String callMethod = "$1.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
+						String paramListener = "var listener = function myFunction(event) {"+ castEventToDelegate + callMethod  +"};";
+						String param = "listener";
+						result = paramListener + " this.node.onreadystatechange = " + param + ";";
 					}
 				}
 
@@ -422,10 +476,10 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 	}
 
 
-	@Override
-	public String mainClassName() {
-		return configurator.getMainClass().getName();
-	}
+//	@Override
+//	public String mainClassName() {
+//		return configurator.getMainClass().getName();
+//	}
 
 	@Override
 	public CompilerType getDefaultCompilerType() {

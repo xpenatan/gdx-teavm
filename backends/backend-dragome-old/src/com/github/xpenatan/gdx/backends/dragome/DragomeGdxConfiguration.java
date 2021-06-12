@@ -137,6 +137,18 @@ public abstract class DragomeGdxConfiguration extends ChainedInstrumentationDrag
 				{
 					// All classes will compile except
 					flag = true;
+
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiConsumer", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiFunction", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BinaryOperator", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiPredicate", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Consumer", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Function", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/Predicate", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/PrimitiveIterator", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/stream/Collectors", flag);
+					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/StreamImpl", flag);
+
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/DragomeGdxConfiguration", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
 					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);

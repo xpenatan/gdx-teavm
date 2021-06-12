@@ -14,6 +14,7 @@ import org.teavm.model.ClassHolder;
 import org.teavm.model.ClassHolderTransformer;
 import org.teavm.model.ClassHolderTransformerContext;
 import org.teavm.model.ClassReaderSource;
+import org.teavm.model.FieldHolder;
 import org.teavm.model.MethodHolder;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
@@ -333,9 +334,28 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 	}
 
 	private ClassHolder findClassHolder(ClassHolderTransformerContext context, Class clazz) {
+		return findClassHolder(context, clazz.getName());
+	}
+
+	private ClassHolder findClassHolder(ClassHolderTransformerContext context, String clazz) {
 		ClassReaderSource innerSource = context.getHierarchy().getClassSource();
-		ClassHolder classHolder = (ClassHolder)innerSource.get(clazz.getName());
+		ClassHolder classHolder = (ClassHolder)innerSource.get(clazz);
 		return classHolder;
+	}
+
+	private void setFieldAnnotation(ClassHolder classHolder, Class annotationClass, String fieldStr, String value) {
+		for (FieldHolder field : classHolder.getFields().toArray(new FieldHolder[0])) {
+			String name = field.getName();
+			if (name.equals(fieldStr)) {
+				AnnotationContainer annotations = field.getAnnotations();
+				AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
+				if(value != null) {
+					annotation.getValues().put("value", new AnnotationValue(value));
+				}
+				annotations.add(annotation);
+			}
+
+		}
 	}
 
 	private void setMethodAnnotation(ClassHolder classHolder, Class annotationClass, String methodStr, String value) {

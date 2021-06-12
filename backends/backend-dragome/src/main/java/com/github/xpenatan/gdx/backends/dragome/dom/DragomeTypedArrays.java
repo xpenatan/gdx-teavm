@@ -2,10 +2,12 @@ package com.github.xpenatan.gdx.backends.dragome.dom;
 
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float64ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ArrayWrapper;
 
@@ -51,6 +53,18 @@ public class DragomeTypedArrays extends TypedArrays {
 		ScriptHelper.put("length", length, this);
 		Object eval = ScriptHelper.eval("new Float64Array(length)", this);
 		return JsCast.castTo(eval, Float64ArrayWrapper.class);
+	}
+
+	@Override
+	public Int8ArrayWrapper createInt8Array (int length) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Int8ArrayWrapper createInt8Array (ArrayBufferWrapper buffer) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

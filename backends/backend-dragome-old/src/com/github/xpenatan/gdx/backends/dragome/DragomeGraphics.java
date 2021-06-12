@@ -312,39 +312,59 @@ public class DragomeGraphics implements Graphics {
 		return glVersion;
 	}
 
+	@Override
 	public void setUndecorated (boolean undecorated) {
 	}
 
+	@Override
 	public void setResizable (boolean resizable) {
 	}
 
+	@Override
 	public void setGL20 (GL20 gl20) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setGL30 (GL30 gl30) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public int getSafeInsetLeft () {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int getSafeInsetTop () {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int getSafeInsetBottom () {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int getSafeInsetRight () {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public float getBackBufferScale () {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setForegroundFPS (int fps) {
+		// TODO Auto-generated method stub
+
 	}
 }

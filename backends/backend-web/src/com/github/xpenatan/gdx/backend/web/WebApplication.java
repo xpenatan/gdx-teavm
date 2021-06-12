@@ -11,6 +11,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
@@ -28,6 +29,10 @@ import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownlo
 public class WebApplication implements Application, Runnable {
 
 	private static WebAgentInfo agentInfo;
+
+	public static WebAgentInfo getAgentInfo () {
+		return agentInfo;
+	}
 
 	private WebGraphics graphics;
 	private WebInput input;
@@ -48,9 +53,8 @@ public class WebApplication implements Application, Runnable {
 
 	private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
-	public static WebAgentInfo getAgentInfo () {
-		return agentInfo;
-	}
+	private Array<Runnable> runnables = new Array<Runnable>();
+	private Array<Runnable> runnablesHelper = new Array<Runnable>();
 
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
 		WebJSHelper jSHelper = WebApplicationConfiguration.JSHelper;
@@ -58,15 +62,31 @@ public class WebApplication implements Application, Runnable {
 		this.appListener = appListener;
 		this.config = config;
 		this.canvas = WebApplicationConfiguration.JSHelper.getCanvas();
-		WebApplication.agentInfo = WebApplicationConfiguration.JSHelper.getAgentInfo();
 		init();
 	}
 
 	private void init() {
+		WebApplication.agentInfo = WebApplicationConfiguration.JSHelper.getAgentInfo();
+		System.setProperty("java.runtime.name", "");
+		if(agentInfo.isWindows() == true)
+			System.setProperty("os.name", "Windows");
+		else if(agentInfo.isMacOS() == true)
+			System.setProperty("os.name", "OS X");
+		else if(agentInfo.isLinux() == true)
+			System.setProperty("os.name", "Linux");
+		else
+			System.setProperty("os.name", "no OS");
+
 		AssetDownloader.setInstance(new AssetDownloadImpl(WebApplicationConfiguration.JSHelper));
 
 		AssetDownload instance = AssetDownloader.getInstance();
 		String hostPageBaseURL = instance.getHostPageBaseURL();
+
+		if(hostPageBaseURL.contains(".html")) {
+			// TODO use regex
+			hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
+			hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
+		}
 		preloader = new Preloader(hostPageBaseURL + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 		preloader.loadScript("scripts/soundmanager2-jsmin.js", assetListener);
@@ -79,6 +99,7 @@ public class WebApplication implements Application, Runnable {
 		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
 
+		//TODO implement manual and automatic asset loading
 		getPreloader().loadAsset("data/uiskin.atlas", AssetType.Text, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/uiskin.json", AssetType.Text, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/uiskin.png", AssetType.Image, null, new AssetLoaderListener<>());
@@ -87,6 +108,7 @@ public class WebApplication implements Application, Runnable {
 		getPreloader().loadAsset("data/badlogicsmall.jpg", AssetType.Image, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/jsonTest.json", AssetType.Text, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<>());
 
 		graphics = new WebGraphics(config);
 		input = new WebInput(this.canvas);
@@ -106,20 +128,28 @@ public class WebApplication implements Application, Runnable {
 	@Override
 	public void run() {
 		AppState state = initState;
-		switch (state) {
-			case IDLE:
-				initState = AppState.QUEUE_ASSETS_LOADED;
-				break;
-			case APP_CREATE:
-			case APP_READY:
-				step(appListener);
-				break;
-			case QUEUE_ASSETS_LOADED:
-//				initState = AppState.INIT_SOUND;
-				initState = AppState.APP_CREATE;
-				break;
-			default:
-				break;
+		try {
+
+			switch (state) {
+				case IDLE:
+					if(AssetDownloader.getInstance().getQueue() == 0)
+						initState = AppState.QUEUE_ASSETS_LOADED;
+					break;
+				case APP_CREATE:
+				case APP_READY:
+					step(appListener);
+					break;
+				case QUEUE_ASSETS_LOADED:
+	//				initState = AppState.INIT_SOUND;
+					initState = AppState.APP_CREATE;
+					break;
+				default:
+					break;
+			}
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 
 		window.requestAnimationFrame(this);
@@ -140,6 +170,14 @@ public class WebApplication implements Application, Runnable {
 			}
 			appListener.resize(width, height);
 		}
+
+		runnablesHelper.addAll(runnables);
+		runnables.clear();
+		for (int i = 0; i < runnablesHelper.size; i++) {
+			runnablesHelper.get(i).run();
+		}
+		runnablesHelper.clear();
+
 		graphics.frameId++;
 		appListener.render();
 		input.reset();
@@ -224,37 +262,30 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public void setApplicationLogger(ApplicationLogger applicationLogger) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public ApplicationLogger getApplicationLogger() {
-		// TODO Auto-generated method stub
-		return null;
+		return logger;
 	}
 
 	@Override
 	public ApplicationType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return ApplicationType.WebGL;
 	}
 
 	@Override
 	public int getVersion() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public long getJavaHeap() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public long getNativeHeap() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -277,14 +308,11 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public void postRunnable(Runnable runnable) {
-		// TODO Auto-generated method stub
-
+		runnables.add(runnable);
 	}
 
 	@Override
 	public void exit() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

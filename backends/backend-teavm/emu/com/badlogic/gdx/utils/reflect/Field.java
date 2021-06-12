@@ -1,12 +1,9 @@
 package com.badlogic.gdx.utils.reflect;
 
 import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-/** Provides information about, and access to, a single field of a class or interface.
- * @author nexsoftware */
 public final class Field {
 
 	private final java.lang.reflect.Field field;
@@ -31,11 +28,10 @@ public final class Field {
 	}
 
 	public boolean isAccessible () {
-		return field.isAccessible();
+		return true;
 	}
 
 	public void setAccessible (boolean accessible) {
-		field.setAccessible(accessible);
 	}
 
 	/** Return true if the field does not include any of the {@code private}, {@code protected}, or {@code public} modifiers. */
@@ -45,37 +41,51 @@ public final class Field {
 
 	/** Return true if the field includes the {@code final} modifier. */
 	public boolean isFinal () {
-		return Modifier.isFinal(field.getModifiers());
+		// TODO
+//		return Modifier.isFinal(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code private} modifier. */
 	public boolean isPrivate () {
-		return Modifier.isPrivate(field.getModifiers());
+		// TODO
+//		return Modifier.isPrivate(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code protected} modifier. */
 	public boolean isProtected () {
-		return Modifier.isProtected(field.getModifiers());
+		// TODO
+//		return Modifier.isProtected(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code public} modifier. */
 	public boolean isPublic () {
-		return Modifier.isPublic(field.getModifiers());
+		// TODO
+//		return Modifier.isPublic(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code static} modifier. */
 	public boolean isStatic () {
-		return Modifier.isStatic(field.getModifiers());
+		// TODO
+//		return Modifier.isStatic(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code transient} modifier. */
 	public boolean isTransient () {
-		return Modifier.isTransient(field.getModifiers());
+		// TODO
+//		return Modifier.isTransient(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field includes the {@code volatile} modifier. */
 	public boolean isVolatile () {
-		return Modifier.isVolatile(field.getModifiers());
+		// TODO
+//		return Modifier.isVolatile(field.getModifiers());
+		return false;
 	}
 
 	/** Return true if the field is a synthetic field. */
@@ -87,21 +97,20 @@ public final class Field {
 	 * null otherwise. */
 	public Class getElementType (int index) {
 //		Type genericType = field.getGenericType();
-		Type genericType = field.getType();
-		if (genericType instanceof ParameterizedType) {
-			Type[] actualTypes = ((ParameterizedType)genericType).getActualTypeArguments();
-			if (actualTypes.length - 1 >= index) {
-				Type actualType = actualTypes[index];
-				if (actualType instanceof Class)
-					return (Class)actualType;
-				else if (actualType instanceof ParameterizedType)
-					return (Class)((ParameterizedType)actualType).getRawType();
-				else if (actualType instanceof GenericArrayType) {
-					Type componentType = ((GenericArrayType)actualType).getGenericComponentType();
-					if (componentType instanceof Class) return ArrayReflection.newInstance((Class)componentType, 0).getClass();
-				}
-			}
-		}
+//		if (genericType instanceof ParameterizedType) {
+//			Type[] actualTypes = ((ParameterizedType)genericType).getActualTypeArguments();
+//			if (actualTypes.length - 1 >= index) {
+//				Type actualType = actualTypes[index];
+//				if (actualType instanceof Class)
+//					return (Class)actualType;
+//				else if (actualType instanceof ParameterizedType)
+//					return (Class)((ParameterizedType)actualType).getRawType();
+//				else if (actualType instanceof GenericArrayType) {
+//					Type componentType = ((GenericArrayType)actualType).getGenericComponentType();
+//					if (componentType instanceof Class) return ArrayReflection.newInstance((Class)componentType, 0).getClass();
+//				}
+//			}
+//		}
 		return null;
 	}
 
@@ -137,26 +146,18 @@ public final class Field {
 		return null;
 	}
 
-	/** Returns the value of the field on the supplied object. */
-	public Object get (Object obj) throws ReflectionException {
-		try {
-			return field.get(obj);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Object is not an instance of " + getDeclaringClass(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException("Illegal access to field: " + getName(), e);
-		}
+	/** Returns the value of the field on the supplied object.
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException */
+	public Object get (Object obj) throws IllegalArgumentException, IllegalAccessException {
+		return field.get(obj);
 	}
 
-	/** Sets the value of the field on the supplied object. */
-	public void set (Object obj, Object value) throws ReflectionException {
-		try {
-			field.set(obj, value);
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException("Argument not valid for field: " + getName(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException("Illegal access to field: " + getName(), e);
-		}
+	/** Sets the value of the field on the supplied object.
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException */
+	public void set (Object obj, Object value) throws IllegalArgumentException, IllegalAccessException{
+		field.set(obj, value);
 	}
 
 }

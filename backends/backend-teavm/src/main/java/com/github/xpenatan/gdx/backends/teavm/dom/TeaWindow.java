@@ -4,8 +4,9 @@ import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
+import com.github.xpenatan.gdx.backend.web.dom.TimerWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 
 /**
@@ -15,14 +16,16 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
 	private Window window;
 	private Runnable runnable;
+	private TeaTimer timer;
 
 	public TeaWindow() {
 		this.window = Window.current();
+		timer = new TeaTimer();
 	}
 
 	@Override
-	public HTMLDocumentWrapper getDocument() {
-		HTMLDocumentWrapper document = (HTMLDocumentWrapper)window.getDocument();
+	public DocumentWrapper getDocument() {
+		DocumentWrapper document = (DocumentWrapper)window.getDocument();
 		return document;
 	}
 
@@ -40,14 +43,8 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 	}
 
 	@Override
-	public int setTimeout(Runnable run, int delay) {
-		TimerHandler handler = new TimerHandler() {
-			@Override
-			public void onTimer() {
-				run.run();
-			}
-		};
-		return Window.setTimeout(handler, delay);
+	public TimerWrapper getTimer() {
+		return timer;
 	}
 
 	@Override
