@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+apply from: '../../../dependencies.gradle'
+
+project.ext.mainClassName = "com.tests.Main"
+sourceSets.main.java.srcDirs = [ "src/" ]
+project.ext.assetsDir = new File("/assets");
+
+dependencies {
+	implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
+	implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+	implementation project(":examples:core:example-core")
+}
+
+task run(dependsOn: classes, type: JavaExec) {
+	group = 'other'
+	description = 'Run core example'
+
+	main = project.mainClassName
+	classpath = sourceSets.main.runtimeClasspath
+	workingDir = project.assetsDir
+}
+

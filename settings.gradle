@@ -1,1 +1,6 @@
-include ":backends:web-backend", ":backends:dragome-backend", ":examples:dragome:tests", ":examples:dragome:tests-desktop", ":examples:dragome:tests-html"
+include ":backends:backend-web"
+include ":backends:backend-teavm"
+include ":backends:backend-dragome"
+include ":examples:core:example-core"
+include ":examples:core:example-core-desktop"
+include ":examples:core:example-core-teavm"

@@ -1,10 +1,12 @@
+apply from: '../../../dependencies.gradle'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 sourceSets.main.java.srcDirs = ["src"]
 
 dependencies {
-	implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-	implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+	implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+//	implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 }
 

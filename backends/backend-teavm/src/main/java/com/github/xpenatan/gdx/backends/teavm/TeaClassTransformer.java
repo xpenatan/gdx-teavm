@@ -1,5 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import java.nio.channels.FileChannel;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.teavm.jso.JSFunctor;
@@ -15,7 +18,9 @@ import org.teavm.model.ClassHolderTransformer;
 import org.teavm.model.ClassHolderTransformerContext;
 import org.teavm.model.ClassReaderSource;
 import org.teavm.model.FieldHolder;
+import org.teavm.model.MethodDescriptor;
 import org.teavm.model.MethodHolder;
+import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.CanvasRenderingContext2DWrapper;
@@ -330,7 +335,32 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSProperty.class, "setLineJoin", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getMiterLimit", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "setMiterLimit", null);
+
+			// Hack to make it compile. For some reason teavm add MapNode reference class but it does not even exist in js file
+			fixHack(context);
 		}
+	}
+
+	private void fixHack(ClassHolderTransformerContext context) {
+		ClassHolder classHolder = findClassHolder(context, FileHandle.class);
+		MethodHolder methodHolder = getMethodHolder(classHolder, "FileChannel$MapMode");
+		if(methodHolder != null) {
+			classHolder.removeMethod(methodHolder);
+		}
+	}
+
+	private MethodHolder getMethodHolder(ClassHolder classHolder, String matchText) {
+		Collection<MethodHolder> methods = classHolder.getMethods();
+		Iterator<MethodHolder> iterator = methods.iterator();
+		while(iterator.hasNext()) {
+			MethodHolder methodHolder = iterator.next();
+			MethodDescriptor descriptor = methodHolder.getDescriptor();
+			String string = descriptor.toString();
+			if(string.contains(matchText)) {
+				return methodHolder;
+			}
+		}
+		return null;
 	}
 
 	private ClassHolder findClassHolder(ClassHolderTransformerContext context, Class clazz) {

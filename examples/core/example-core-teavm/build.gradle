@@ -1,0 +1,27 @@
+apply plugin: 'org.gretty'
+apply plugin: 'java-library'
+
+sourceCompatibility = 1.8
+
+gretty {
+  servletContainer = 'jetty9'
+  extraResourceBase 'webapp'
+}
+
+sourceSets.main.java.srcDirs = ["src/main/java/"]
+project.ext.mainClassName = "com.github.xpenatan.gdx.backends.teavm.example.Build"
+
+dependencies {
+  api project(":backends:backend-teavm")
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  implementation project(":examples:core:example-core")
+}
+
+task buildJavaScript(dependsOn: classes, type: JavaExec) {
+  group = 'teavm'
+  description = 'Run core example'
+
+  main = project.mainClassName
+  classpath = sourceSets.main.runtimeClasspath
+}
+

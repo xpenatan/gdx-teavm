@@ -54,9 +54,14 @@ public class AssetsCopy {
 		WebBuildConfiguration.log("");
 		WebBuildConfiguration.log("Copying classpath asset from:");
 		for (String classpathFile : classPathFiles) {
-			if(classpathFile.startsWith("/") == false)
-				classpathFile = "/" + classpathFile;
-			if (defaultAssetFilter.accept(classpathFile, false)) {
+			String path = classpathFile;
+			if(path.startsWith("/") == false) {
+				path = "/" + path;
+			}
+			else {
+				classpathFile = classpathFile.replaceFirst("/", "");
+			}
+			if (defaultAssetFilter.accept(path, false)) {
 				try {
 					WebBuildConfiguration.log(classpathFile);
 					InputStream is = classloader.getResourceAsStream(classpathFile);
