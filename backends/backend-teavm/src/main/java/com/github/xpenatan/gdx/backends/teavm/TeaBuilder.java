@@ -6,6 +6,16 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
@@ -25,6 +35,7 @@ import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
 public class TeaBuilder {
 
 	public static void build(TeaBuildConfiguration configuration) {
+		addDefaultReflectionClasses();
 
 		URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 
@@ -170,6 +181,65 @@ public class TeaBuilder {
 		}
 
 		WebBuildConfiguration.flush();
+	}
+
+	private static void addDefaultReflectionClasses() {
+		TeaReflectionSupplier.addReflectionClass(Button.ButtonStyle.class);
+		TeaReflectionSupplier.addReflectionClass(TextButton.TextButtonStyle.class);
+		TeaReflectionSupplier.addReflectionClass(ScrollPane.ScrollPaneStyle.class);
+		TeaReflectionSupplier.addReflectionClass(SelectBox.SelectBoxStyle.class);
+		TeaReflectionSupplier.addReflectionClass(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle.class);
+		TeaReflectionSupplier.addReflectionClass(SplitPane.SplitPaneStyle.class);
+		TeaReflectionSupplier.addReflectionClass(Window.WindowStyle.class);
+		TeaReflectionSupplier.addReflectionClass(ProgressBar.ProgressBarStyle.class);
+		TeaReflectionSupplier.addReflectionClass(Label.LabelStyle.class);
+		TeaReflectionSupplier.addReflectionClass(TextField.TextFieldStyle.class);
+		TeaReflectionSupplier.addReflectionClass(CheckBox.CheckBoxStyle.class);
+		TeaReflectionSupplier.addReflectionClass(Touchpad.TouchpadStyle.class);
+		TeaReflectionSupplier.addReflectionClass(Tree.TreeStyle.class);
+		TeaReflectionSupplier.addReflectionClass(TextTooltip.TextTooltipStyle.class);
+		TeaReflectionSupplier.addReflectionClass(InputEvent.class);
+		TeaReflectionSupplier.addReflectionClass(GlyphLayout.GlyphRun.class);
+		TeaReflectionSupplier.addReflectionClass(Color.class);
+		TeaReflectionSupplier.addReflectionClass(Array.class);
+		TeaReflectionSupplier.addReflectionClass(ChangeListener.ChangeEvent.class);
+		TeaReflectionSupplier.addReflectionClass(GlyphLayout.class);
+		TeaReflectionSupplier.addReflectionClass(FocusListener.FocusEvent.class);
+		TeaReflectionSupplier.addReflectionClass(Rectangle.class);
+		TeaReflectionSupplier.addReflectionClass(Stage.TouchFocus.class);
+
+		TeaReflectionSupplier.addReflectionClass(VisibleAction.class);
+		TeaReflectionSupplier.addReflectionClass(TouchableAction.class);
+		TeaReflectionSupplier.addReflectionClass(TimeScaleAction.class);
+		TeaReflectionSupplier.addReflectionClass(TemporalAction.class);
+		TeaReflectionSupplier.addReflectionClass(SizeToAction.class);
+		TeaReflectionSupplier.addReflectionClass(SizeByAction.class);
+		TeaReflectionSupplier.addReflectionClass(SequenceAction.class);
+		TeaReflectionSupplier.addReflectionClass(ScaleToAction.class);
+		TeaReflectionSupplier.addReflectionClass(ScaleByAction.class);
+		TeaReflectionSupplier.addReflectionClass(RunnableAction.class);
+		TeaReflectionSupplier.addReflectionClass(RotateToAction.class);
+		TeaReflectionSupplier.addReflectionClass(RotateByAction.class);
+		TeaReflectionSupplier.addReflectionClass(RepeatAction.class);
+		TeaReflectionSupplier.addReflectionClass(RemoveListenerAction.class);
+		TeaReflectionSupplier.addReflectionClass(RemoveActorAction.class);
+		TeaReflectionSupplier.addReflectionClass(RemoveAction.class);
+		TeaReflectionSupplier.addReflectionClass(RelativeTemporalAction.class);
+		TeaReflectionSupplier.addReflectionClass(ParallelAction.class);
+		TeaReflectionSupplier.addReflectionClass(MoveToAction.class);
+		TeaReflectionSupplier.addReflectionClass(MoveByAction.class);
+		TeaReflectionSupplier.addReflectionClass(LayoutAction.class);
+		TeaReflectionSupplier.addReflectionClass(IntAction.class);
+		TeaReflectionSupplier.addReflectionClass(FloatAction.class);
+		TeaReflectionSupplier.addReflectionClass(EventAction.class);
+		TeaReflectionSupplier.addReflectionClass(DelegateAction.class);
+		TeaReflectionSupplier.addReflectionClass(DelayAction.class);
+		TeaReflectionSupplier.addReflectionClass(CountdownEventAction.class);
+		TeaReflectionSupplier.addReflectionClass(ColorAction.class);
+		TeaReflectionSupplier.addReflectionClass(AlphaAction.class);
+		TeaReflectionSupplier.addReflectionClass(AfterAction.class);
+		TeaReflectionSupplier.addReflectionClass(AddListenerAction.class);
+		TeaReflectionSupplier.addReflectionClass(AddAction.class);
 	}
 
 	private static void assetsDefaultClasspath (Array<String> filePath) {
