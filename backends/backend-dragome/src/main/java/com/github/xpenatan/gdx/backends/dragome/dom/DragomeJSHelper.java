@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.dragome.dom;
 
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerCallbackWrapper;
 import org.w3c.dom.XMLHttpRequest;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
@@ -90,8 +91,7 @@ public class DragomeJSHelper implements WebJSHelper {
 	}
 
 	@Override
-	public SoundManagerWrapper createSoundManager () {
-		// TODO Auto-generated method stub
+	public SoundManagerWrapper createSoundManager() {
 		return null;
 	}
 }

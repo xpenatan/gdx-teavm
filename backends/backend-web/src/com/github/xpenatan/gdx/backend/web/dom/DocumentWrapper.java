@@ -14,4 +14,6 @@ public interface DocumentWrapper extends ElementWrapper {
 	public NodeWrapper createTextNode(NodeWrapper text);
 
 	public HTMLElementWrapper createElement(String value);
+
+	public NodeWrapper getBody();
 }

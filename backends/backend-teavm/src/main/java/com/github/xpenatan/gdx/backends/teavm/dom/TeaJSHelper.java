@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
@@ -78,12 +80,8 @@ public class TeaJSHelper implements WebJSHelper, JSObject {
 
 	@Override
 	public SoundManagerWrapper createSoundManager() {
-//		return TeaJSHelper.createSM();
-		return null;
+		return new TeaSoundManager();
 	}
 
-	//TODO
 
-//	@JSBody(script = "return new SoundManager();")
-//	private static native SoundManagerWrapper createSM();
 }

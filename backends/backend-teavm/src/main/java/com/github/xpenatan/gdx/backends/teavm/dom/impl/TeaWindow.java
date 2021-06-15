@@ -1,8 +1,7 @@
-package com.github.xpenatan.gdx.backends.teavm.dom;
+package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
-import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
 import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;

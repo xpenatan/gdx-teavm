@@ -61,7 +61,7 @@ public class Preloader {
 			}
 
 			@Override
-			public void onSuccess (String url, String result) {
+			public boolean onSuccess (String url, String result) {
 				String[] lines = result.split("\n");
 				Array<Asset> assets = new Array<Asset>(lines.length);
 				for (String line : lines) {
@@ -101,16 +101,17 @@ public class Preloader {
 						}
 
 						@Override
-						public void onSuccess (String url, Object result) {
+						public boolean onSuccess (String url, Object result) {
+							return false;
 						}
 					});
 				}
+				return false;
 			}
 		});
 	}
 
 	public void loadAsset (final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
-		System.out.println("Loading Asset : " + url);
 		AssetDownloader.getInstance().load(baseUrl + url, type, mimeType, new AssetLoaderListener<Object>() {
 			@Override
 			public void onProgress (double amount) {
@@ -123,8 +124,7 @@ public class Preloader {
 			}
 
 			@Override
-			public void onSuccess (String urll, Object result) {
-				System.out.println("Asset loaded: " + urll);
+			public boolean onSuccess (String urll, Object result) {
 				switch (type) {
 				case Text:
 					texts.put(url, (String)result);
@@ -143,6 +143,7 @@ public class Preloader {
 					break;
 				}
 				listener.onSuccess(urll, result);
+				return false;
 			}
 		});
 	}

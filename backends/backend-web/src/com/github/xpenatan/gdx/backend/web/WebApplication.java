@@ -22,6 +22,8 @@ import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
 import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerCallbackWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan
@@ -37,6 +39,7 @@ public class WebApplication implements Application, Runnable {
 	private WebGraphics graphics;
 	private WebInput input;
 	private WebFiles files;
+	private WebAudio audio;
 	private HTMLCanvasElementWrapper canvas;
 	private WebApplicationConfiguration config;
 	private ApplicationListener appListener;
@@ -55,6 +58,8 @@ public class WebApplication implements Application, Runnable {
 
 	private Array<Runnable> runnables = new Array<Runnable>();
 	private Array<Runnable> runnablesHelper = new Array<Runnable>();
+
+	private String hostPageBaseURL;
 
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
 		WebJSHelper jSHelper = WebApplicationConfiguration.JSHelper;
@@ -80,7 +85,7 @@ public class WebApplication implements Application, Runnable {
 		AssetDownloader.setInstance(new AssetDownloadImpl(WebApplicationConfiguration.JSHelper));
 
 		AssetDownload instance = AssetDownloader.getInstance();
-		String hostPageBaseURL = instance.getHostPageBaseURL();
+		hostPageBaseURL = instance.getHostPageBaseURL();
 
 		if(hostPageBaseURL.contains(".html")) {
 			// TODO use regex
@@ -89,7 +94,6 @@ public class WebApplication implements Application, Runnable {
 		}
 		preloader = new Preloader(hostPageBaseURL + "assets/");
 		AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
-		preloader.loadScript("scripts/soundmanager2-jsmin.js", assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
 		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
@@ -109,11 +113,13 @@ public class WebApplication implements Application, Runnable {
 		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/jsonTest.json", AssetType.Text, null, new AssetLoaderListener<>());
 		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<>());
+		getPreloader().loadAsset("data/shotgun.ogg", AssetType.Audio, null, new AssetLoaderListener<>());
 
 		graphics = new WebGraphics(config);
 		input = new WebInput(this.canvas);
 		files = new WebFiles(preloader);
 		logger = new WebApplicationLogger();
+		initSound();
 
 		Gdx.app = this;
 		Gdx.graphics = graphics;
@@ -183,6 +189,31 @@ public class WebApplication implements Application, Runnable {
 		input.reset();
 	}
 
+	private void initSound() {
+		preloader.loadScript("scripts/soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+			@Override
+			public boolean onSuccess(String url, Object result) {
+				WebJSHelper jsHelper = WebApplicationConfiguration.JSHelper;
+				SoundManagerWrapper soundManager = jsHelper.createSoundManager();
+				soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
+					@Override
+					public void onready() {
+						audio = new WebAudio(soundManager);
+						Gdx.audio = audio;
+						AssetDownloader.getInstance().subtractQueue();
+					}
+
+					@Override
+					public void ontimeout() {
+						AssetDownloader.getInstance().subtractQueue();
+					}
+				});
+				jsHelper.createSoundManager();
+				return true;
+			}
+		});
+	}
+
 	public Preloader getPreloader() {
 		return preloader;
 	}
@@ -200,8 +231,7 @@ public class WebApplication implements Application, Runnable {
 
 	@Override
 	public Audio getAudio() {
-		// TODO Auto-generated method stub
-		return null;
+		return audio;
 	}
 
 	@Override

@@ -27,6 +27,7 @@ public class AssetDownloader
 		public boolean isUseBrowserCache();
 		public String getHostPageBaseURL();
 		public int getQueue();
+		public void subtractQueue();
 	}
 
 }

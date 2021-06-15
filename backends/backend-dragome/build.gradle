@@ -6,7 +6,7 @@ apply from: '../../dependencies.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets.main.java.srcDirs = [ "emu", "src" ]
+sourceSets.main.java.srcDirs = [ "emu", "src/main/java" ]
 sourceSets.main.resources.srcDirs = [ "resources/" ]
 
 task javadocJar(type: Jar) {

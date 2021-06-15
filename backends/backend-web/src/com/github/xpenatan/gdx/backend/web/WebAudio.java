@@ -13,8 +13,8 @@ public class WebAudio implements Audio {
 
 	private SoundManagerWrapper soundManager;
 
-	public WebAudio(WebJSHelper jsHelper) {
-		soundManager = jsHelper.createSoundManager();
+	public WebAudio(SoundManagerWrapper soundManager) {
+		this.soundManager = soundManager;
 	}
 
 	@Override

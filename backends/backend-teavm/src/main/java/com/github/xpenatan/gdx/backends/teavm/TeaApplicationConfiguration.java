@@ -7,7 +7,7 @@ import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaWindow;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 
 /**
  * @author xpenatan

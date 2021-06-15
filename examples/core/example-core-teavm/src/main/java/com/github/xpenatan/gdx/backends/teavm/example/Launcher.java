@@ -14,7 +14,8 @@ public class Launcher {
 	public static void main(String[] args) {
 		WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
 //		new WebApplication(new GearsDemo(), config);
-		new WebApplication(new UITest(), config);
+//		new WebApplication(new UITest(), config);
 //		new WebApplication(new AnimationTest(), config);
+		new WebApplication(new SoundTest(), config);
 	}
 }

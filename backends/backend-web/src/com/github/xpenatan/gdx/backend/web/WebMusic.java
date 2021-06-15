@@ -23,7 +23,6 @@ public class WebMusic implements Music, SMSoundCallbackWrapper  {
 
 	public WebMusic (SoundManagerWrapper soundManager, FileHandle file) {
 		String url = ((WebApplication)Gdx.app).getAssetUrl() + file.path();
-		System.out.println("URL: " + url);
 		sound = soundManager.createSound(url);
 		soundOptions = new SMSoundOptions();
 		soundOptions.callback = this;

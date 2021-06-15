@@ -249,6 +249,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getCompatMode", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getDocumentElement", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getBody", null);
 
 			classHolder = findClassHolder(context, ElementWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
@@ -307,12 +308,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, SMSoundCallbackWrapper.class);
-			setClassInterface(classHolder, JSObject.class);
-
-			classHolder = findClassHolder(context, SMSoundWrapper.class);
-			setClassInterface(classHolder, JSObject.class);
-
-			classHolder = findClassHolder(context, SoundManagerWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(context, CanvasPixelArrayWrapper.class);

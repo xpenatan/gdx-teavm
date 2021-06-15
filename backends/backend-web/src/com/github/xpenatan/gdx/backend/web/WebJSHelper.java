@@ -6,6 +6,7 @@ import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
+import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerCallbackWrapper;
 import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
 
 /**
