@@ -1,10 +1,11 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSIndexer;
 import org.teavm.jso.JSMethod;

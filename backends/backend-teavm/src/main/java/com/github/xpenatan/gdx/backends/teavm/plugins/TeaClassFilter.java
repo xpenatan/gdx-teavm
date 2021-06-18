@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import org.teavm.model.FieldReference;
 import org.teavm.model.MethodReference;

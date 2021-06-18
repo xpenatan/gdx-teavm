@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;

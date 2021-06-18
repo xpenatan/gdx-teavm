@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import java.util.ArrayList;
 import java.util.Collection;
