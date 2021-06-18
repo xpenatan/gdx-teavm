@@ -11,8 +11,14 @@ public class Build {
 
 		DragomeBuilder.build(new DragomeBuildConfiguration() {
 			@Override
-			public Class getMainClass() {
-				return Launcher.class;
+			public String getMainClass() {
+				return Launcher.class.getName();
+			}
+
+			@Override
+			public String getApplicationListenerClass() {
+				// TODO
+				return null;
 			}
 
 			@Override

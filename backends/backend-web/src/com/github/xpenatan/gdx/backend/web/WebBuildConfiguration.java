@@ -39,7 +39,9 @@ public abstract class WebBuildConfiguration {
 		return true;
 	}
 
-	public abstract Class getMainClass();
+	public abstract String getMainClass();
+
+	public abstract String getApplicationListenerClass();
 
 	public abstract String getWebAppPath();
 

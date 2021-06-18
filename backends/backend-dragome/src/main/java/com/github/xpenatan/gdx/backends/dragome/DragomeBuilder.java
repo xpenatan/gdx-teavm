@@ -3,11 +3,10 @@ package com.github.xpenatan.gdx.backends.dragome;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+
 import com.badlogic.gdx.utils.Array;
 import com.dragome.services.ReflectionServiceImpl;
 import com.dragome.services.ServiceLocator;
-import com.dragome.web.helpers.serverside.StandaloneDragomeAppGenerator;
 import com.github.xpenatan.gdx.backend.web.WebClassLoader;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
 
@@ -62,7 +61,6 @@ public class DragomeBuilder {
 
 		String targetDirectory = configuration.getWebAppPath();
 		boolean setMinifying = configuration.minifying();
-		String mainClass = configuration.getMainClass().getName();
 
 		URL[] classPaths = new URL[0];
 //		acceptedURL.toArray(classPaths);

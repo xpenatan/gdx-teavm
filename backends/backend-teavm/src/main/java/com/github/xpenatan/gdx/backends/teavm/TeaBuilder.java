@@ -112,7 +112,9 @@ public class TeaBuilder {
 		File setTargetDirectory = new File(targetDirectory + "\\" + "teavm");
 		String setTargetFileName = "app.js";
 		boolean setMinifying = configuration.minifying();
-		String mainClass = configuration.getMainClass().getName();
+		String mainClass = configuration.getMainClass();
+		TeaClassTransformer.applicationListener = configuration.getApplicationListenerClass();
+
 		File setCacheDirectory = new File("C:\\TeaVMCache");;
 		boolean setIncremental = false;
 

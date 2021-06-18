@@ -13,12 +13,17 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public Array<File> assetsPath = new Array<>();
 
     public boolean obfuscate = false;
-    public Class<?> mainClass;
+    public String mainApplicationClass;
     public String webappPath;
 
     @Override
-    public Class getMainClass() {
-        return mainClass;
+    public String getMainClass() {
+        return TeaLauncher.class.getName();
+    }
+
+    @Override
+    public String getApplicationListenerClass() {
+        return mainApplicationClass;
     }
 
     @Override

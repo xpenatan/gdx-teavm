@@ -48,7 +48,7 @@ public class DragomeStandaloneAppGenerator
 {
 	private static Logger LOGGER= Logger.getLogger(DragomeStandaloneAppGenerator.class.getName());
 
-	public static void compileWithMainClass(Classpath classPath, String target, Class mainClass)
+	public static void compileWithMainClass(Classpath classPath, String target, String mainClass)
 	{
 		Log logger2 = Log.getLogger();
 //		logger2.setState(Log.DEBUG);
@@ -56,7 +56,7 @@ public class DragomeStandaloneAppGenerator
 		ServiceLocator serviceLocator= ServiceLocator.getInstance();
 		DragomeConfigurator configurator= serviceLocator.getConfigurator();
 
-		String mainClassName= mainClass.getName();
+		String mainClassName= mainClass;
 		CompilerType defaultCompilerType= configurator.getDefaultCompilerType();
 		BytecodeTransformer bytecodeTransformer= configurator.getBytecodeTransformer();
 
@@ -268,7 +268,7 @@ public class DragomeStandaloneAppGenerator
 		}
 	}
 
-	private void compile(Class mainClass) throws Exception
+	private void compile(String mainClass) throws Exception
 	{
 		System.setProperty("dragome-compile-mode", "release");
 
@@ -346,7 +346,7 @@ public class DragomeStandaloneAppGenerator
 		}
 	}
 
-	public void execute(Class mainClass)
+	public void execute(String mainClass)
 	{
 		try
 		{
