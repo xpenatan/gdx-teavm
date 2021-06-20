@@ -1,14 +1,10 @@
 package com.github.xpenatan.gdx.html5.generator.view;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.github.xpenatan.gdx.html5.generator.viewmodel.GeneratorViewModel;
 import com.github.xpenatan.imgui.ImGui;
-import com.github.xpenatan.imgui.ImGuiBoolean;
-import com.github.xpenatan.imgui.ImGuiString;
 import com.github.xpenatan.imgui.enums.ImGuiItemFlags;
 import com.github.xpenatan.imgui.enums.ImGuiStyleVar;
-import com.github.xpenatan.imgui.jnicode.ImGuiInternalNative;
 
 public class GeneratorView {
     private static final String PREF_JAR_PATH = "jarPath";
@@ -17,118 +13,101 @@ public class GeneratorView {
     private static final String PREF_WEBAPP_PATH = "webAppPath";
     private static final String PREF_OBFUSCATE = "obfuscate";
 
-    public static final String SERVER_START = "Start Server";
-    public static final String SERVER_STOP = "Stop Server";
+    private static final String STR_SERVER_START = "Start Server";
+    private static final String STR_SERVER_STOP = "Stop Server";
+    private static final String STR_BTN_COMPILE = "Compile";
+    private static final String STR_CKB_OBFUSCATE = "Obfuscate:";
+    private static final String STR_TXT_APP_CLASS = "Application Class:";
+    private static final String STR_TXT_ASSET_PATH = "Asset Path:";
+    private static final String STR_TXT_WEBAPP_PATH = "WebApp Path:";
+    private static final String STR_TXT_GAME_PATH = "Game Jar Path:";
+    private static final String STR_WINDOW_TITLE = "Generator";
 
     private Preferences preferences;
-    private final ImGuiString imGuiJarPathString;
-    private final ImGuiString imGuiClassPathString;
-    private final ImGuiString imGuiAssetPathString;
-    private final ImGuiString imGuiWebappPathString;
-    private final ImGuiBoolean obfuscateFlag;
 
     private final GeneratorViewModel viewModel;
 
     public GeneratorView() {
-        //TODO remove emulated class from Classloader
+        // TODO remove emulated class from Classloader
 //        preferences = Gdx.app.getPreferences("gdx-html5-generator");
+
         viewModel = new GeneratorViewModel();
-        imGuiJarPathString = new ImGuiString("");
-        imGuiClassPathString = new ImGuiString("");
-        imGuiAssetPathString = new ImGuiString("");
-        imGuiWebappPathString = new ImGuiString("");
-        obfuscateFlag = new ImGuiBoolean();
+
 
         loadPreference();
     }
 
     private void loadPreference() {
-        if(preferences == null)
+        if (preferences == null)
             return;
-        imGuiJarPathString.setValue(preferences.getString(PREF_JAR_PATH, ""));
-        imGuiClassPathString.setValue(preferences.getString(PREF_APP_CLASS_NAME, ""));
-        imGuiAssetPathString.setValue(preferences.getString(PREF_ASSET_PATH, ""));
-        imGuiWebappPathString.setValue(preferences.getString(PREF_WEBAPP_PATH, ""));
-        obfuscateFlag.setValue(preferences.getBoolean(PREF_OBFUSCATE, false));
     }
 
     private void savePreference() {
-        if(preferences == null)
+        if (preferences == null)
             return;
-
-        preferences.putString(PREF_JAR_PATH, imGuiJarPathString.getValue());
-        preferences.putString(PREF_APP_CLASS_NAME, imGuiClassPathString.getValue());
-        preferences.putString(PREF_ASSET_PATH, imGuiAssetPathString.getValue());
-        preferences.putString(PREF_WEBAPP_PATH, imGuiWebappPathString.getValue());
-        preferences.putBoolean(PREF_OBFUSCATE, obfuscateFlag.getValue());
+        preferences.putString(PREF_JAR_PATH, viewModel.gameJarPath.getValue());
+        preferences.putString(PREF_APP_CLASS_NAME, viewModel.appClassName.getValue());
+        preferences.putString(PREF_ASSET_PATH, viewModel.assetsDirectory.getValue());
+        preferences.putString(PREF_WEBAPP_PATH, viewModel.webappDirectory.getValue());
+        preferences.putBoolean(PREF_OBFUSCATE, viewModel.obfuscateFlag.getValue());
     }
 
     public void render() {
-        ImGui.Begin("Generator");
+        ImGui.Begin(STR_WINDOW_TITLE);
 
-        ImGui.Text("Game Jar Path:");
+        ImGui.Text(STR_TXT_GAME_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        if(ImGui.InputText("##Path: ", imGuiJarPathString)) {
-            String gameJarPath = imGuiJarPathString.getValue();
-            viewModel.setJarPath(gameJarPath);
-        }
+        ImGui.InputText("##Path", viewModel.gameJarPath);
 
-        ImGui.Text("Application Class:");
+        ImGui.Text(STR_TXT_APP_CLASS);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        if(ImGui.InputText("##ClassPath: ", imGuiClassPathString)) {
-            String applicationClass = imGuiClassPathString.getValue();
-            viewModel.setApplicationClass(applicationClass);
-        }
+        ImGui.InputText("##ClassPath", viewModel.appClassName);
 
-        ImGui.Text("Asset Path:");
+        ImGui.Text(STR_TXT_ASSET_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        if(ImGui.InputText("##AssetPath: ", imGuiAssetPathString)) {
-            String assetPath = imGuiAssetPathString.getValue();
-            viewModel.setAssetPath(assetPath);
-        }
+        ImGui.InputText("##AssetPath", viewModel.assetsDirectory);
 
-        ImGui.Text("WebApp Path:");
+        ImGui.Text(STR_TXT_WEBAPP_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        if(ImGui.InputText("##WebAppPath: ", imGuiWebappPathString)) {
-            String webappPath = imGuiWebappPathString.getValue();
-            viewModel.setWebAppDirectory(webappPath);
-        }
+        ImGui.InputText("##WebAppPath", viewModel.webappDirectory);
 
-        ImGui.Text("Obfuscate:");
+        ImGui.Text(STR_CKB_OBFUSCATE);
         ImGui.SameLine();
-        if(ImGui.Checkbox("##obfuscate", obfuscateFlag)) {
-            viewModel.setObfuscate(obfuscateFlag.getValue());
-        }
+        ImGui.Checkbox("##obfuscate", viewModel.obfuscateFlag);
 
         boolean compiling = viewModel.isCompiling();
-        if(compiling) {
+        if (compiling) {
             ImGui.PushItemFlag(ImGuiItemFlags.Disabled, true);
-            ImGui.PushStyleVar(ImGuiStyleVar.Alpha,0.5f);
+            ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
         }
-        if(ImGui.Button("Compile")) {
+
+        if (ImGui.Button(STR_BTN_COMPILE)) {
             viewModel.compile();
         }
 
-        boolean serverRunning = viewModel.isServerRunning();
+        renderServerView();
 
-        String buttonText = serverRunning ? SERVER_STOP : SERVER_START;
-
-        if(ImGui.Button(buttonText)) {
-            if(serverRunning)
-                viewModel.stopLocalServer();
-            else
-                viewModel.startLocalServer();
-        }
-        if(compiling) {
+        if (compiling) {
             ImGui.PopItemFlag();
             ImGui.PopStyleVar();
         }
 
         ImGui.End();
+    }
+
+    private void renderServerView() {
+        boolean serverRunning = viewModel.isServerRunning();
+        String buttonText = serverRunning ? STR_SERVER_STOP : STR_SERVER_START;
+        if (ImGui.Button(buttonText)) {
+            if (serverRunning)
+                viewModel.stopLocalServer();
+            else
+                viewModel.startLocalServer();
+        }
     }
 
     public void dispose() {

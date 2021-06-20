@@ -37,8 +37,9 @@ public class JettyServer {
         }
     }
 
-    public void startServer() {
-        if(!serverStarted && webAppDirectory != null) {
+    public void startServer(String path) {
+        if(!serverStarted && path != null && !path.isEmpty()) {
+            this.webAppDirectory = path + "\\webapp";
             File file = new File(webAppDirectory);
             if(!file.exists()) {
                 //webapp don't exist
@@ -75,10 +76,6 @@ public class JettyServer {
             server.destroy();
             serverStarted = false;
         }
-    }
-
-    public void setWebAppDirectory(String path) {
-        this.webAppDirectory = path + "\\webapp";
     }
 
     public boolean isServerRunning() {

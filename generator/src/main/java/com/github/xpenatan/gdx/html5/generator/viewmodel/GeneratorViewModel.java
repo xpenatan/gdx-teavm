@@ -3,42 +3,31 @@ package com.github.xpenatan.gdx.html5.generator.viewmodel;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.html5.generator.utils.server.JettyServer;
+import com.github.xpenatan.imgui.ImGuiBoolean;
+import com.github.xpenatan.imgui.ImGuiString;
 
 import java.io.File;
 import java.net.URL;
 
 public class GeneratorViewModel {
     private JettyServer server;
-    private String jarPath;
-    private String className;
-    private String assetPath;
-    private String webappDestination;
-    private boolean obfuscate;
+
+    public final ImGuiString gameJarPath;
+    public final ImGuiString appClassName;
+    public final ImGuiString assetsDirectory;
+    public final ImGuiString webappDirectory;
+    public final ImGuiBoolean obfuscateFlag;
 
     private boolean isCompiling;
 
     public GeneratorViewModel() {
         server = new JettyServer();
-    }
 
-    public void setObfuscate(boolean flag) {
-        obfuscate = flag;
-    }
-
-    public void setJarPath(String jarPath) {
-        this.jarPath = jarPath;
-    }
-
-    public void setApplicationClass(String className) {
-        this.className = className;
-    }
-
-    public void setAssetPath(String assetPath) {
-        this.assetPath = assetPath;
-    }
-
-    public void setWebAppDirectory(String webappDestination) {
-        this.webappDestination = webappDestination;
+        gameJarPath = new ImGuiString("");
+        appClassName = new ImGuiString("");
+        assetsDirectory = new ImGuiString("");
+        webappDirectory = new ImGuiString("");
+        obfuscateFlag = new ImGuiBoolean();
     }
 
     public boolean isCompiling() {
@@ -48,27 +37,33 @@ public class GeneratorViewModel {
     private boolean validateInputs() {
         boolean flag;
         // TODO Improve
-        flag = jarPath != null && className != null;
-        flag = flag && !jarPath.isEmpty() && !className.isEmpty() && validateWebappDirectory();
+        flag = !gameJarPath.getValue().isEmpty();
+        flag = flag && !appClassName.getValue().isEmpty() && validateWebappDirectory();
         return flag;
     }
 
     private boolean validateWebappDirectory() {
-        return webappDestination != null && !webappDestination.isEmpty();
+        return !webappDirectory.getValue().isEmpty();
     }
 
     public void compile() {
         if(validateInputs()) {
             isCompiling = true;
             try {
+                String appClassName = this.appClassName.getValue();
+                String jarPath = gameJarPath.getValue();
+                String assetPath = assetsDirectory.getValue();
+                String webappDestination = webappDirectory.getValue();
+                boolean obfuscate = obfuscateFlag.getValue();
+
                 URL appJarAppUrl = new File(jarPath).toURI().toURL();
                 TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-                if(assetPath != null && !assetPath.trim().isEmpty())
+                if(!assetPath.isEmpty())
                     teaBuildConfiguration.assetsPath.add(new File(assetPath));
                 teaBuildConfiguration.webappPath = webappDestination;
                 teaBuildConfiguration.obfuscate = obfuscate;
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
-                teaBuildConfiguration.mainApplicationClass = className;
+                teaBuildConfiguration.mainApplicationClass = appClassName;
 
                 new Thread() {
                     @Override
@@ -90,8 +85,8 @@ public class GeneratorViewModel {
 
     public boolean startLocalServer() {
         if(validateWebappDirectory()) {
-            server.setWebAppDirectory(webappDestination);
-            server.startServer();
+            String webappDirectory = this.webappDirectory.getValue();
+            server.startServer(webappDirectory);
             return true;
         }
         return false;
