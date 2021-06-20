@@ -1,12 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.utils.Array;
+import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backend.web.WebClassLoader;
+import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import org.teavm.diagnostics.Problem;
@@ -25,10 +22,12 @@ import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
-import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebClassLoader;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -36,13 +35,13 @@ import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
  */
 public class TeaBuilder {
 
-	public static void build(TeaBuildConfiguration configuration) {
+	public static void build(WebBuildConfiguration configuration) {
 		addDefaultReflectionClasses();
 
 		URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 
-		ArrayList<URL> acceptedURL = new ArrayList<>();
-		ArrayList<URL> notAcceptedURL = new ArrayList<>();
+		Array<URL> acceptedURL = new Array<>();
+		Array<URL> notAcceptedURL = new Array<>();
 
 		for (int i = 0; i < urLs.length; i++) {
 			URL url = urLs[i];
@@ -58,47 +57,49 @@ public class TeaBuilder {
 				notAcceptedURL.add(url);
 		}
 
-		for(int i = 0; i < acceptedURL.size(); i++) {
+		for(int i = 0; i < acceptedURL.size; i++) {
 			URL url = acceptedURL.get(i);
 			String string = url.toString();
 			if(string.contains("backend-web")) {
-				acceptedURL.remove(i);
-				acceptedURL.add(0, url);
+				acceptedURL.removeIndex(i);
+				acceptedURL.insert(0, url);
 				break;
 			}
 		}
 
-		for(int i = 0; i < acceptedURL.size(); i++) {
+		// Make backend-teavm first so some classes are replaced by emulated classes
+		for(int i = 0; i < acceptedURL.size; i++) {
 			URL url = acceptedURL.get(i);
 			String string = url.toString();
 			if(string.contains("backend-teavm")) {
-				acceptedURL.remove(i);
-				acceptedURL.add(0, url);
+				acceptedURL.removeIndex(i);
+				acceptedURL.insert(0, url);
 				break;
 			}
 		}
 
+		acceptedURL.addAll(configuration.getAdditionalClasspath());
+
 		WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
 
-		for (int i = 0; i < acceptedURL.size(); i++) {
+		for (int i = 0; i < acceptedURL.size; i++) {
 			WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
 		}
 
 		WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
 
-		for (int i = 0; i < notAcceptedURL.size(); i++) {
+		for (int i = 0; i < notAcceptedURL.size; i++) {
 			WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
 		}
 
-		int size = acceptedURL.size();
+		int size = acceptedURL.size;
 
 		if(size <= 0) {
 			System.out.println("No urls found");
 			return;
 		}
 
-		URL[] classPaths = new URL[size];
-		acceptedURL.toArray(classPaths);
+		URL[] classPaths = acceptedURL.toArray(URL.class);
 		WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
 		TeaVMTool tool = new TeaVMTool();
@@ -107,11 +108,13 @@ public class TeaBuilder {
 		boolean setSourceMapsFileGenerated = false;
 		boolean setSourceFilesCopied = false;
 
-		String targetDirectory = configuration.getWebAppPath();
+		String webappDirectory = configuration.getWebAppPath();
 
-		System.out.println("targetDirectory: " + targetDirectory);
+		String webappName = "webapp";
 
-		File setTargetDirectory = new File(targetDirectory + "\\" + "teavm");
+		System.out.println("targetDirectory: " + webappDirectory);
+
+		File setTargetDirectory = new File(webappDirectory + "\\" + webappName + "\\" + "teavm");
 		String setTargetFileName = "app.js";
 		boolean setMinifying = configuration.minifying();
 		String mainClass = configuration.getMainClass();
@@ -137,24 +140,26 @@ public class TeaBuilder {
 		tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
 		Properties properties = tool.getProperties();
 
-		properties.put("teavm.libgdx.fsJsonPath", targetDirectory + "\\" + "filesystem.json");
-		properties.put("teavm.libgdx.warAssetsDirectory", targetDirectory + "\\" + "assets");
+		properties.put("teavm.libgdx.fsJsonPath", webappDirectory + "\\" + webappName + "\\" + "filesystem.json");
+		properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + "\\" + webappName + "\\" + "assets");
 
+		Array<String> webappAssetsFiles = new Array<>();
+		webappAssetsFiles.add(webappName);
+		AssetsCopy.copy(classLoader, webappAssetsFiles, new Array<>(), webappDirectory, false);
 
 		WebBuildConfiguration.logHeader("Copying Assets");
 
-		String assetsOutputPath = targetDirectory + "\\assets";
-		Array<File> paths = new Array<>();
-		Array<String> classPathFiles = new Array<>();
-		assetsDefaultClasspath(classPathFiles);
-		boolean generateAssetPaths = configuration.assetsPath(paths);
-		AssetsCopy.copy(classLoader, paths, classPathFiles, assetsOutputPath, generateAssetPaths);
+		String assetsOutputPath = webappDirectory + "\\" + webappName + "\\assets";
+		Array<File> assetsPaths = new Array<>();
+		Array<String> classPathAssetsFiles = new Array<>();
+		assetsDefaultClasspath(classPathAssetsFiles);
+		boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
+		AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
 
 		try {
 			tool.generate();
 			ProblemProvider problemProvider = tool.getProblemProvider();
 			List<Problem> problems = problemProvider.getProblems();
-
 
 			if(problems.size() > 0) {
 
@@ -282,6 +287,32 @@ public class TeaBuilder {
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("mozilla"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("jutils"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("jutils"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("jinput-"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("lwjgl"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("jlayer-"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("gdx-platform"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("imgui-"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("imgui-gdx"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("/classes"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("/resources"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("javax"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+
+		if(path.contains("backend-teavm-"))
+			isValid = ACCEPT_STATE.ACCEPT;
+
 		return isValid;
 	}
 

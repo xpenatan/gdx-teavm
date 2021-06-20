@@ -43,6 +43,8 @@ public abstract class WebBuildConfiguration {
 
 	public abstract String getApplicationListenerClass();
 
+	public abstract Array<URL> getAdditionalClasspath();
+
 	public abstract String getWebAppPath();
 
 	public abstract void assetsClasspath (Array<String> classPaths);
@@ -55,4 +57,5 @@ public abstract class WebBuildConfiguration {
 	public abstract boolean assetsPath (Array<File> paths);
 
 	public abstract boolean minifying ();
+
 }

@@ -67,12 +67,11 @@ public class DragomeBuilder {
 		WebClassLoader classLoader = new WebClassLoader(urLs, DragomeBuilder.class.getClassLoader());
 
 		String assetsOutputPath = targetDirectory + "\\assets";
-		Array<File> paths = new Array<>();
-		Array<String> classPathFiles = new Array<>();
-		assetsDefaultClasspath(classPathFiles);
-		boolean generateAssetPaths = configuration.assetsPath(paths);
-		AssetsCopy.copy(classLoader, paths, classPathFiles, assetsOutputPath, generateAssetPaths);
-
+		Array<File> assetsPaths = new Array<>();
+		Array<String> classPathAssetsFiles = new Array<>();
+		assetsDefaultClasspath(classPathAssetsFiles);
+		boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
+		AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
 
 		ServiceLocator serviceLocator = ServiceLocator.getInstance();
 		serviceLocator.setReflectionService(new ReflectionServiceImpl());

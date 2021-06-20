@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  * @author xpenatan
@@ -15,6 +16,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public boolean obfuscate = false;
     public String mainApplicationClass;
     public String webappPath;
+    public final Array<URL> additionalClasspath = new Array<>();
 
     @Override
     public String getMainClass() {
@@ -24,6 +26,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public String getApplicationListenerClass() {
         return mainApplicationClass;
+    }
+
+    @Override
+    public Array<URL> getAdditionalClasspath() {
+        return additionalClasspath;
     }
 
     @Override

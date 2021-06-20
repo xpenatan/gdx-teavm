@@ -37,44 +37,52 @@ public class AssetsCopy {
 		}
 	}
 
-	public static void copy (WebClassLoader classloader, Array<File> paths, Array<String> classPathFiles, String assetsOutputPath, boolean generateTextFile) {
+	public static void copy (Array<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
+		copy(null, null, assetsPaths, assetsOutputPath, generateTextFile);
+	}
+
+	public static void copy (WebClassLoader classloader, Array<String> classPathAssetsFiles, Array<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
 		assetsOutputPath = assetsOutputPath.replace("\\", "/");
 		FileWrapper target = new FileWrapper(assetsOutputPath);
 		ArrayList<Asset> assets = new ArrayList<Asset>();
 		DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
 		WebBuildConfiguration.log("Copying assets from:");
-		for (int i = 0; i < paths.size; i++) {
-			String path = paths.get(i).getAbsolutePath();
+		for (int i = 0; i < assetsPaths.size; i++) {
+			String path = assetsPaths.get(i).getAbsolutePath();
 			FileWrapper source = new FileWrapper(path);
 			WebBuildConfiguration.log(path);
 			copyDirectory(source, target, defaultAssetFilter, assets);
 		}
 
-		addDirectoryClassPathFiles(classPathFiles);
-		WebBuildConfiguration.log("");
-		WebBuildConfiguration.log("Copying classpath asset from:");
-		for (String classpathFile : classPathFiles) {
-			String path = classpathFile;
-			if(path.startsWith("/") == false) {
-				path = "/" + path;
-			}
-			else {
-				classpathFile = classpathFile.replaceFirst("/", "");
-			}
-			if (defaultAssetFilter.accept(path, false)) {
-				try {
-					WebBuildConfiguration.log(classpathFile);
-					InputStream is = classloader.getResourceAsStream(classpathFile);
-					FileWrapper dest = target.child(classpathFile);
-					dest.write(is, false);
-					assets.add(new Asset(dest, defaultAssetFilter.getType(dest.path())));
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+		if(classloader != null && classPathAssetsFiles != null) {
+			// Copy assets from class package directory
+
+			addDirectoryClassPathFiles(classPathAssetsFiles);
+			WebBuildConfiguration.log("");
+			WebBuildConfiguration.log("Copying classpath asset from:");
+			for (String classpathFile : classPathAssetsFiles) {
+				String path = classpathFile;
+				if(path.startsWith("/") == false) {
+					path = "/" + path;
+				}
+				else {
+					classpathFile = classpathFile.replaceFirst("/", "");
+				}
+				if (defaultAssetFilter.accept(path, false)) {
+					try {
+						WebBuildConfiguration.log(classpathFile);
+						InputStream is = classloader.getResourceAsStream(classpathFile);
+						FileWrapper dest = target.child(classpathFile);
+						dest.write(is, false);
+						assets.add(new Asset(dest, defaultAssetFilter.getType(dest.path())));
+						is.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-		
+
 		WebBuildConfiguration.log("");
 		WebBuildConfiguration.log("to:");
 		WebBuildConfiguration.log(assetsOutputPath);
@@ -170,15 +178,19 @@ public class AssetsCopy {
 							first = false;
 							classPathFiles.removeIndex(k);
 							k--;
+							continue;
 						}
-						continue;
+						else {
+							classPathFiles.add(path);
+							continue;
+						}
 					}
 					folderFilePaths.add(path);
 				}
 				walk.close();
 				if(fileSystem != null) {
 					try {
-							fileSystem.close();
+						fileSystem.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -196,7 +208,9 @@ public class AssetsCopy {
 		if (!filter.accept(dest.path(), false)) return;
 		try {
 			assets.add(new Asset(dest, filter.getType(dest.path())));
-			dest.write(source.read(), false);
+			InputStream read = source.read();
+			dest.write(read, false);
+			read.close();
 		} catch (Exception ex) {
 			throw new GdxRuntimeException("Error copying source file: " + source + "\n" //
 				+ "To destination: " + dest, ex);

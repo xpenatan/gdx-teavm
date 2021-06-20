@@ -308,6 +308,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
 			classHolder = findClassHolder(cls, context, CanvasPixelArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
 
 			classHolder = findClassHolder(cls, context, CanvasRenderingContext2DWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
@@ -382,7 +383,8 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 		if(cur.getName().equals(clazz))
 			return cur;
 		ClassReaderSource innerSource = context.getHierarchy().getClassSource();
-		ClassHolder classHolder = (ClassHolder)innerSource.get(clazz);
+		ClassReader classReader = innerSource.get(clazz);
+		ClassHolder classHolder = (ClassHolder)classReader;
 		return classHolder;
 	}
 

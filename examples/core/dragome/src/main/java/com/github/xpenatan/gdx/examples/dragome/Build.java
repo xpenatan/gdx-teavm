@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.examples.dragome;
 
 import java.io.File;
+import java.net.URL;
+
 import com.github.xpenatan.gdx.backends.dragome.DragomeBuilder;
 import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.dragome.DragomeBuildConfiguration;
@@ -17,6 +19,12 @@ public class Build {
 
 			@Override
 			public String getApplicationListenerClass() {
+				// TODO
+				return null;
+			}
+
+			@Override
+			public Array<URL> getAdditionalClasspath() {
 				// TODO
 				return null;
 			}

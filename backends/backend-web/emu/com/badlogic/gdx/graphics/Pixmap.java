@@ -134,8 +134,6 @@ public class Pixmap implements Disposable {
 	}
 
 	private void create () {
-		//TODO
-//		DocumentWrapper document = WebServiceLocator.getInstance().getDomHandler().getDocument();
 		WindowWrapper window = WebApplicationConfiguration.JSHelper.getCurrentWindow();
 		DocumentWrapper document = window.getDocument();
 		ElementWrapper createElement = document.createElement("canvas");
@@ -205,10 +203,6 @@ public class Pixmap implements Disposable {
 	}
 
 	public ByteBuffer getPixels () {
-//		IntBuffer pixelBuffer = this.buffer;
-//		ByteBuffer byteByffer = this.buffer;
-////		ScriptHelper.put("buffer", this.buffer, this);
-		// TODO check
 		return buffer;
 	}
 
@@ -414,17 +408,12 @@ public class Pixmap implements Disposable {
 			ImageDataWrapper imageData = context.getImageData(0, 0, width, height);
 			pixels = imageData.getData();
 		}
+		//TODO Fix dragome pixels.get
 		int i = x * 4 + y * width * 4;
-//		ScriptHelper.put("pixels", pixels, this);
-//		ScriptHelper.put("i", i, this);
-		int r = pixels.getElement(i + 0) & 0xff; // getElement dont exist.
-		int g = pixels.getElement(i + 1) & 0xff;
-		int b = pixels.getElement(i + 2) & 0xff;
-		int a = pixels.getElement(i + 3) & 0xff;
-//		int r = ScriptHelper.evalInt("pixels.node[i+0]", this) & 0xff;
-//		int g = ScriptHelper.evalInt("pixels.node[i+1]", this) & 0xff;
-//		int b = ScriptHelper.evalInt("pixels.node[i+2]", this) & 0xff;
-//		int a = ScriptHelper.evalInt("pixels.node[i+3]", this) & 0xff;
+		int r = pixels.get(i + 0) & 0xff;
+		int g = pixels.get(i + 1) & 0xff;
+		int b = pixels.get(i + 2) & 0xff;
+		int a = pixels.get(i + 3) & 0xff;
 		return (r << 24) | (g << 16) | (b << 8) | (a);
 	}
 

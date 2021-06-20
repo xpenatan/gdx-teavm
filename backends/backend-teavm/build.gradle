@@ -67,14 +67,14 @@ task platformAll (type: Jar, dependsOn: [':backends:dragome-backend:build']) {
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxDragomeVersion + project.gdxDragomeType
-            project.version = project.gdxDragomeVersion + project.gdxDragomeType
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
             artifactId "dragome-backend"
             artifact fromClasses
         }
         allBuild(MavenPublication) {
-            version project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
-            project.version = project.gdxDragomeVersion + "-ALL" + project.gdxDragomeType
+            version project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
             artifactId "dragome-backend"
             artifact platformAll
         }
