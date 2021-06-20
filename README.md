@@ -13,7 +13,7 @@ For each SDK, there is a backend project that contains specific code for the gen
 ## Setup:
 - TODO
 
-## gdx-html5-generator:
+## Gdx-Html5-Generator:
 A standalone tool to convert your libgdx game in .jar format to javascript. There is no need to create a html gradle module.
 <br>
 <br>
@@ -34,6 +34,8 @@ Open http://localhost:8080/ in your browser and your game will start if the gene
 ¹: For now its required to know where are the assets. In later versions the generator will search inside the jar file.
 <br>
 ²: The destination of the generated files. This is the files where you add to your website.
+
+Generator example: https://youtu.be/BIL_5eaxg9w
 
 ## Examples:
 TeaVM: https://youtu.be/mYQel_-zJRM
