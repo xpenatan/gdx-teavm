@@ -17,15 +17,22 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class TeaReflectionSupplier implements ReflectionSupplier {
 
-	private static ArrayList<Class> clazzList = new ArrayList();
+	private static ArrayList<String> clazzList = new ArrayList();
 
 	public static void addReflectionClass(Class<?> type) {
-		clazzList.add(type);
+		addReflectionClass(type.getName());
+	}
+
+	/**
+	 * Full path name including package
+	 */
+	public static void addReflectionClass(String className) {
+		clazzList.add(className);
 	}
 
 	public TeaReflectionSupplier() {
 
-		clazzList.add(AssetManager.class);
+		clazzList.add(AssetManager.class.getName());
 	}
 
 	@Override
@@ -37,12 +44,10 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 		Set<String> fields = new HashSet<>();
 
 		if (cls != null) {
-			String name = cls.getName();
 			boolean flag = false;
 			for (int i = 0; i < clazzList.size(); i++) {
-				Class clazz = clazzList.get(i);
-				String name2 = clazz.getName();
-				if (name.equals(name2)) {
+				String name = clazzList.get(i);
+				if (className.contains(name)) {
 					flag = true;
 					break;
 				}
@@ -65,12 +70,10 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 		}
 		Set<MethodDescriptor> methods = new HashSet<>();
 		if (cls != null) {
-			String name = cls.getName();
 			boolean flag = false;
 			for (int i = 0; i < clazzList.size(); i++) {
-				Class clazz = clazzList.get(i);
-				String name2 = clazz.getName();
-				if (name.equals(name2)) {
+				String name = clazzList.get(i);
+				if (className.contains(name)) {
 					flag = true;
 					break;
 				}

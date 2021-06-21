@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.*;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSIndexer;
@@ -41,16 +42,6 @@ import com.github.xpenatan.gdx.backend.web.dom.WebJSObject;
 import com.github.xpenatan.gdx.backend.web.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestEventTargetWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float64ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.FloatArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.LongArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ObjectArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
@@ -76,6 +67,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
 	@Override
 	public void transformClass(ClassHolder cls, ClassHolderTransformerContext context) {
+		String className = cls.getName();
 		if(!init) {
 			init = true;
 			ClassHolder classHolder = null;
@@ -86,21 +78,31 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(cls, context, Int32ArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(cls, context, Int16ArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(cls, context, Uint8ArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
+
+			classHolder = findClassHolder(cls, context, Int8ArrayWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(cls, context, Float64ArrayWrapper.class);
