@@ -37,9 +37,10 @@ Open http://localhost:8080/ in your browser and your game will start if the gene
 
 Generator example: https://youtu.be/BIL_5eaxg9w
 
-## Examples:
-TeaVM: https://youtu.be/mYQel_-zJRM
-
+## TeaVM Examples:
+* [gdx-tests](https://xpenatan.github.io/gdx-html5-tools/teavm/gdx-tests/)
+* [demo-cubocy](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-cubocy/)
+* [demo-superjumper](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-superjumper/)
 
 <br><br><br>
 ## Deprecated dragome backend
