@@ -15,6 +15,7 @@ import com.github.xpenatan.gdx.backend.web.WebClassLoader;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
+import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
@@ -165,19 +166,31 @@ public class TeaBuilder {
 
 				WebBuildConfiguration.logHeader("Compiler problems");
 
+				DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
+
 				for(int i = 0; i < problems.size(); i++) {
 					Problem problem = problems.get(i);
-					String text = problem.getText();
 					CallLocation location = problem.getLocation();
 					MethodReference method = location != null ? location.getMethod() : null;
+					String classSource = "-";
+					String methodName = "-";
+
+					if(location != null) {
+						classSource = location.getSourceLocation().toString();
+						if(method != null) {
+							methodName = method.getName();
+						}
+					}
+
 					if(i > 0)
 						WebBuildConfiguration.log("----\n");
-					WebBuildConfiguration.log(i + " " + problem.getSeverity().toString() + "\n");
-					if(method != null) {
-						WebBuildConfiguration.log("Class: " + method.getClassName() + "\n");
-						WebBuildConfiguration.log("Method: " + method.getName() + "\n");
-					}
-					WebBuildConfiguration.log("Text: " + text + "\n");
+					WebBuildConfiguration.log(problem.getSeverity().toString() + "[" + i + "]");
+					WebBuildConfiguration.log("Class: " + classSource);
+					WebBuildConfiguration.log("Method: " + methodName);
+					p.clear();
+					problem.render(p);
+					String text = p.getText();
+					WebBuildConfiguration.log("Text: " + text);
 				}
 				WebBuildConfiguration.logEnd();
 			}
@@ -189,7 +202,6 @@ public class TeaBuilder {
 			e.printStackTrace();
 		}
 
-		WebBuildConfiguration.flush();
 	}
 
 	private static void addDefaultReflectionClasses() {

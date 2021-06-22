@@ -9,30 +9,27 @@ import com.badlogic.gdx.utils.Array;
  */
 public abstract class WebBuildConfiguration {
 	
-	private static final StringBuilder sb = new StringBuilder();
-	
-	
+
 	public static void log(String msg) {
-		sb.append("| " + msg + "\n");
+		String text = "| " + msg;
+		logInternal(text);
 	}
-	
-	public static void flush() {
-		System.err.println(sb);
-		sb.setLength(0);
+
+	private static void logInternal(String msg) {
+		System.err.println(msg);
 	}
-	
 	public static void logHeader(String text) {
 		String msg = "";
 		msg +="\n" + "#################################################################\n";
 		msg += "|\n| " + text + "\n|";
 		msg += "\n" + "#################################################################\n";
 
-		sb.append(msg + "\n");
+		logInternal(msg);
 	}
 	
 	public static void logEnd() {
 		String msg = "\n#################################################################";
-		sb.append(msg + "\n");
+		logInternal(msg + "\n");
 	}
 
 	public boolean acceptClasspath(URL url) {
