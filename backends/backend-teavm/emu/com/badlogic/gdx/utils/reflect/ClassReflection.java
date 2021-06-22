@@ -188,33 +188,30 @@ public final class ClassReflection {
 
 	/** Returns an array of {@link Field} containing the public fields of the class represented by the supplied Class. */
 	static public Field[] getFields (Class c) {
-//		java.lang.reflect.Field[] fields = c.getFields();
-//		Field[] result = new Field[fields.length];
-//		for (int i = 0, j = fields.length; i < j; i++) {
-//			result[i] = new Field(fields[i]);
-//		}
-//		return result;
+		// there is a bug in teavm that using just getFields the fields are not generated.
+		c.getDeclaredFields();
 
-		return null;
+		java.lang.reflect.Field[] fields = c.getFields();
+		Field[] result = new Field[fields.length];
+		for (int i = 0, j = fields.length; i < j; i++) {
+			result[i] = new Field(fields[i]);
+		}
+		return result;
 	}
 
 	/** Returns a {@link Field} that represents the specified public member field for the supplied class. */
 	static public Field getField (Class c, String name) throws ReflectionException {
-//		try {
-//			return new Field(c.getField(name));
-//		} catch (SecurityException e) {
-//			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
-//		} catch (NoSuchFieldException e) {
-//			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
-//		}
+		try {
+			java.lang.reflect.Field field = c.getField(name);
+			return new Field(field);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
-
 	/** Returns an array of {@link Field} objects reflecting all the fields declared by the supplied class. */
-
 	static public Field[] getDeclaredFields (Class c) {
-
 		java.lang.reflect.Field[] fields = c.getDeclaredFields();
 		Field[] result = new Field[fields.length];
 		for (int i = 0, j = fields.length; i < j; i++) {
@@ -225,15 +222,12 @@ public final class ClassReflection {
 
 	/** Returns a {@link Field} that represents the specified declared field for the supplied class. */
 	static public Field getDeclaredField (Class c, String name) throws ReflectionException {
-//		try {
-//			return new Field(c.getDeclaredField(name));
-//		} catch (SecurityException e) {
-//			throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
-//		} catch (NoSuchFieldException e) {
-//			throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
-//		}
-
-
+		try {
+			java.lang.reflect.Field declaredField = c.getDeclaredField(name);
+			return new Field(declaredField);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

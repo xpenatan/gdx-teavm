@@ -44,18 +44,10 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 		Set<String> fields = new HashSet<>();
 
 		if (cls != null) {
-			boolean flag = false;
-			for (int i = 0; i < clazzList.size(); i++) {
-				String name = clazzList.get(i);
-				if (className.contains(name)) {
-					flag = true;
-					break;
-				}
-			}
-
-			if(flag) {
+			if(canHaveReflection(className)) {
 				for (FieldReader field : cls.getFields()) {
-					fields.add(field.getName());
+					String name = field.getName();
+					fields.add(name);
 				}
 			}
 		}
@@ -70,22 +62,24 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 		}
 		Set<MethodDescriptor> methods = new HashSet<>();
 		if (cls != null) {
-			boolean flag = false;
-			for (int i = 0; i < clazzList.size(); i++) {
-				String name = clazzList.get(i);
-				if (className.contains(name)) {
-					flag = true;
-					break;
-				}
-			}
-
-			if(flag) {
+			if(canHaveReflection(className)) {
 				Collection<? extends MethodReader> methods2 = cls.getMethods();
 				for (MethodReader method : methods2) {
-					methods.add(method.getDescriptor());
+					MethodDescriptor descriptor = method.getDescriptor();
+					methods.add(descriptor);
 				}
 			}
 		}
 		return methods;
+	}
+
+	private boolean canHaveReflection(String className) {
+		for (int i = 0; i < clazzList.size(); i++) {
+			String name = clazzList.get(i);
+			if (className.contains(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

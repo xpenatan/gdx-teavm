@@ -20,6 +20,7 @@ import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
+import org.teavm.model.TextLocation;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -176,14 +177,22 @@ public class TeaBuilder {
 					String methodName = "-";
 
 					if(location != null) {
-						classSource = location.getSourceLocation().toString();
+						TextLocation sourceLocation = location.getSourceLocation();
+						if(sourceLocation != null)
+							classSource = sourceLocation.toString();
+						else {
+							//TODO
+						}
 						if(method != null) {
-							methodName = method.getName();
+							methodName = method.toString();
 						}
 					}
 
-					if(i > 0)
-						WebBuildConfiguration.log("----\n");
+					if(i > 0) {
+						WebBuildConfiguration.log("");
+						WebBuildConfiguration.log("----");
+						WebBuildConfiguration.log("");
+					}
 					WebBuildConfiguration.log(problem.getSeverity().toString() + "[" + i + "]");
 					WebBuildConfiguration.log("Class: " + classSource);
 					WebBuildConfiguration.log("Method: " + methodName);
@@ -238,6 +247,7 @@ public class TeaBuilder {
 		TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.emitters");
 		TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.influencers");
 		TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.renderers");
+		TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math.Interpolation");
 	}
 
 	private static void assetsDefaultClasspath (Array<String> filePath) {
