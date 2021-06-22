@@ -37,6 +37,7 @@ import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import jdk.nashorn.internal.objects.ArrayBufferView;
 
 public class Pixmap implements Disposable {
 	public static Map<Integer, Pixmap> pixmaps = new HashMap<Integer, Pixmap>();
@@ -415,6 +416,18 @@ public class Pixmap implements Disposable {
 		int b = pixels.get(i + 2) & 0xff;
 		int a = pixels.get(i + 3) & 0xff;
 		return (r << 24) | (g << 16) | (b << 8) | (a);
+	}
+
+	public void setPixels (ByteBuffer pixelsBuffer) {
+		if (width == 0 || height == 0) return;
+		CanvasRenderingContext2DWrapper context = getContext();
+		ImageDataWrapper imgData = context.createImageData(width, height);
+		CanvasPixelArrayWrapper data = imgData.getData();
+		byte[] pixels = pixelsBuffer.array();
+		for (int i = 0, len = width * height * 4; i < len; i++) {
+			data.set(i, (byte)(pixels[i] & 0xff));
+		}
+		context.putImageData(imgData, 0, 0);
 	}
 
 	/** Draws a pixel at the given location with the current color.

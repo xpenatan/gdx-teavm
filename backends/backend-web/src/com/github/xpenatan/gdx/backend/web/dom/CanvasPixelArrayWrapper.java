@@ -8,4 +8,6 @@ public interface CanvasPixelArrayWrapper {
 	public int getLength();
 
 	public byte get(int index);
+
+	public void set(int index, byte value);
 }
