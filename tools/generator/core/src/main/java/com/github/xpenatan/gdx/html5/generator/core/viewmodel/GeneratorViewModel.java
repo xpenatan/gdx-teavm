@@ -1,8 +1,8 @@
-package com.github.xpenatan.gdx.html5.generator.viewmodel;
+package com.github.xpenatan.gdx.html5.generator.core.viewmodel;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.html5.generator.utils.server.JettyServer;
+import com.github.xpenatan.gdx.html5.generator.core.utils.server.JettyServer;
 import com.github.xpenatan.imgui.ImGuiBoolean;
 import com.github.xpenatan.imgui.ImGuiString;
 

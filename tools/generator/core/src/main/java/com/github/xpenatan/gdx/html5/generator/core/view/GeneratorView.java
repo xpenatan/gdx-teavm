@@ -1,7 +1,7 @@
-package com.github.xpenatan.gdx.html5.generator.view;
+package com.github.xpenatan.gdx.html5.generator.core.view;
 
 import com.badlogic.gdx.Preferences;
-import com.github.xpenatan.gdx.html5.generator.viewmodel.GeneratorViewModel;
+import com.github.xpenatan.gdx.html5.generator.core.viewmodel.GeneratorViewModel;
 import com.github.xpenatan.imgui.ImGui;
 import com.github.xpenatan.imgui.enums.ImGuiItemFlags;
 import com.github.xpenatan.imgui.enums.ImGuiStyleVar;
@@ -32,7 +32,6 @@ public class GeneratorView {
 //        preferences = Gdx.app.getPreferences("gdx-html5-generator");
 
         viewModel = new GeneratorViewModel();
-
 
         loadPreference();
     }

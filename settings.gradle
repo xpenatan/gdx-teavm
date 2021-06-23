@@ -5,4 +5,6 @@ include ":examples:core:core"
 include ":examples:core:desktop"
 include ":examples:core:teavm"
 include ":examples:core:dragome"
-include 'generator'
+include ":tools:generator:core"
+include "tools:generator:desktop"
+
