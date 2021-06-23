@@ -12,7 +12,7 @@ project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
 
 dependencies {
   implementation project(":backends:backend-teavm")
-  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
   implementation project(":examples:core:core")
 }
 

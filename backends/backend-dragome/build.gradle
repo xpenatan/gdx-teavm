@@ -36,13 +36,13 @@ configurations {
 
 dependencies {
     api project(":backends:backend-web")
-    api "com.github.xpenatan.dragome-sdk:dragome-js-jre:$dragomeVersion"
-    provided "com.badlogicgames.gdx:gdx:$gdxVersion"
-    api "com.github.xpenatan.dragome-sdk:dragome-bytecode-js-compiler:$dragomeVersion"
-    api "com.github.xpenatan.dragome-sdk:dragome-core:$dragomeVersion"
-    api "com.github.xpenatan.dragome-sdk:dragome-js-commons:$dragomeVersion"
-    api "com.github.xpenatan.dragome-sdk:dragome-w3c-standards:$dragomeVersion"
-    api "com.github.xpenatan.dragome-sdk:dragome-web:$dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-js-jre:$project.dragomeVersion"
+    provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-bytecode-js-compiler:$project.dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-core:$project.dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-js-commons:$project.dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-w3c-standards:$project.dragomeVersion"
+    api "com.github.xpenatan.dragome-sdk:dragome-web:$project.dragomeVersion"
 }
 
 task fromClasses (type: Jar) {

@@ -308,8 +308,18 @@ public class TeaBuilder {
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
 		if(path.contains("javax"))
 			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("jsinterop-annotations"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("gwt-user-"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("sac-"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
+		if(path.contains("gdx-box2d"))
+			isValid = ACCEPT_STATE.NOT_ACCEPT;
 
 		if(path.contains("backend-teavm-"))
+			isValid = ACCEPT_STATE.ACCEPT;
+		if(path.contains("gdx-box2d-gwt"))
 			isValid = ACCEPT_STATE.ACCEPT;
 
 		return isValid;

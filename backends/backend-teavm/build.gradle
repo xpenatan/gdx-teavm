@@ -37,7 +37,7 @@ configurations {
 dependencies {
     api project(":backends:backend-web")
     api fileTree(dir: 'libs', include: ['*.jar'])
-    provided "com.badlogicgames.gdx:gdx:$gdxVersion"
+    provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
 task fromClasses (type: Jar) {

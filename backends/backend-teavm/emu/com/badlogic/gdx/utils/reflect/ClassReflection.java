@@ -38,6 +38,8 @@ public final class ClassReflection {
 
 	/** Returns true if the class or interface represented by the supplied Class is a static class. */
 	static public boolean isStaticClass (Class c) {
+		if(c.isInterface())
+			return true;
 		return Modifier.isStatic(c.getModifiers());
 	}
 
@@ -58,7 +60,9 @@ public final class ClassReflection {
 
 	/** Determines if the supplied Class object represents an annotation type. */
 	static public boolean isAnnotation (Class c) {
-		return c.isAnnotation();
+		// TODO TeaVM does not have isAnnotation implemented
+		return false;
+//		return c.isAnnotation();
 	}
 
 	/** Determines if the supplied Class object represents an interface type. */
@@ -68,6 +72,8 @@ public final class ClassReflection {
 
 	/** Determines if the supplied Class object represents an abstract type. */
 	static public boolean isAbstract (Class c) {
+		if(c.isPrimitive() || c.isArray() || c.isInterface())
+			return true;
 		return Modifier.isAbstract(c.getModifiers());
 	}
 
