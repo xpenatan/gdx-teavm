@@ -2,57 +2,62 @@ package com.github.xpenatan.gdx.backend.web;
 
 import java.io.File;
 import java.net.URL;
+
 import com.badlogic.gdx.utils.Array;
 
 /**
  * @author xpenatan
  */
 public abstract class WebBuildConfiguration {
-	
 
-	public static void log(String msg) {
-		String text = "| " + msg;
-		logInternal(text);
-	}
 
-	private static void logInternal(String msg) {
-		System.err.println(msg);
-	}
-	public static void logHeader(String text) {
-		String msg = "";
-		msg +="\n" + "#################################################################\n";
-		msg += "|\n| " + text + "\n|";
-		msg += "\n" + "#################################################################\n";
+    public static void log(String msg) {
+        String text = "| " + msg;
+        logInternalNewLine(text);
+    }
 
-		logInternal(msg);
-	}
-	
-	public static void logEnd() {
-		String msg = "\n#################################################################";
-		logInternal(msg + "\n");
-	}
+    public static void logInternal(String msg) {
+        System.err.print(msg);
+    }
 
-	public boolean acceptClasspath(URL url) {
-		return true;
-	}
+    public static void logInternalNewLine(String msg) {
+        logInternal(msg + "\n");
+    }
 
-	public abstract String getMainClass();
+    public static void logHeader(String text) {
+        String msg = "";
+        msg += "#################################################################\n";
+        msg += "|\n| " + text + "\n|";
+        msg += "\n" + "#################################################################";
 
-	public abstract String getApplicationListenerClass();
+        logInternalNewLine(msg);
+    }
 
-	public abstract Array<URL> getAdditionalClasspath();
+    public static void logEnd() {
+        String msg = "\n#################################################################";
+        logInternalNewLine(msg);
+    }
 
-	public abstract String getWebAppPath();
+    public boolean acceptClasspath(URL url) {
+        return true;
+    }
 
-	public abstract void assetsClasspath (Array<String> classPaths);
+    public abstract String getMainClass();
 
-	/**
-	 * 
-	 * @param paths
-	 * @return true to generate a file which contains all assets patch
-	 */
-	public abstract boolean assetsPath (Array<File> paths);
+    public abstract String getApplicationListenerClass();
 
-	public abstract boolean minifying ();
+    public abstract Array<URL> getAdditionalClasspath();
+
+    public abstract String getWebAppPath();
+
+    public abstract void assetsClasspath(Array<String> classPaths);
+
+    /**
+     * @param paths
+     * @return true to generate a file which contains all assets patch
+     */
+    public abstract boolean assetsPath(Array<File> paths);
+
+    public abstract boolean minifying();
 
 }

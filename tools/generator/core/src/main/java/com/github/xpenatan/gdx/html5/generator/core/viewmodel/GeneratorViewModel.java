@@ -20,6 +20,8 @@ public class GeneratorViewModel {
 
     private boolean isCompiling;
 
+    private float progress;
+
     public GeneratorViewModel() {
         server = new JettyServer();
 
@@ -68,13 +70,24 @@ public class GeneratorViewModel {
                 new Thread() {
                     @Override
                     public void run() {
-                        TeaBuilder.build(teaBuildConfiguration);
+                        boolean serverRunning = server.isServerRunning();
+                        stopLocalServer();
+                        TeaBuilder.build(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
+                            @Override
+                            public void onProgress(float progress) {
+                                GeneratorViewModel.this.progress = progress;
+                            }
+                        });
                         isCompiling = false;
+                        progress = 0;
+                        if(serverRunning)
+                            startLocalServer();
                     }
                 }.start();
             } catch (Exception e) {
                 e.printStackTrace();
                 isCompiling = false;
+                progress = 0;
             }
         }
     }
@@ -99,6 +112,11 @@ public class GeneratorViewModel {
     public void dispose() {
         server.stopServer();
     }
+
+    public float getProgress() {
+        return progress;
+    }
+
 
 //    private ArrayList<String> getClassNamesFromJar(File file) {
 //        ArrayList<String> classNames = new ArrayList<>();
