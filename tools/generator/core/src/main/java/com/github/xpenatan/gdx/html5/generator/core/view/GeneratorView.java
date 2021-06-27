@@ -2,15 +2,12 @@ package com.github.xpenatan.gdx.html5.generator.core.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.math.MathUtils;
 import com.github.xpenatan.gdx.html5.generator.core.viewmodel.GeneratorViewModel;
-import com.github.xpenatan.imgui.ImDrawList;
 import com.github.xpenatan.imgui.ImGui;
-import com.github.xpenatan.imgui.ImGuiStyle;
-import com.github.xpenatan.imgui.ImVec2;
 import com.github.xpenatan.imgui.enums.ImGuiCol;
 import com.github.xpenatan.imgui.enums.ImGuiItemFlags;
 import com.github.xpenatan.imgui.enums.ImGuiStyleVar;
+import com.github.xpenatan.imgui.enums.ImGuiWindowFlags;
 
 public class GeneratorView {
     private static final String PREF_JAR_PATH = "jarPath";
@@ -70,7 +67,10 @@ public class GeneratorView {
     }
 
     public void render() {
-        ImGui.Begin(STR_WINDOW_TITLE);
+        ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration.or(ImGuiWindowFlags.NoMove).or(ImGuiWindowFlags.NoResize);
+        ImGui.SetNextWindowPos(0, 0);
+        ImGui.SetNextWindowSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        ImGui.Begin(STR_WINDOW_TITLE, flags);
         renderContent();
         ImGui.End();
     }

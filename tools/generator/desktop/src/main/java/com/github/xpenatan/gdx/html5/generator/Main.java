@@ -7,6 +7,9 @@ import com.github.xpenatan.gdx.html5.generator.core.view.MainApplication;
 public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.width = 640;
+        config.height = 174;
+        config.resizable = false;
         config.title = "Gdx-Html5-Generator";
         new LwjglApplication(new MainApplication(), config);
     }
