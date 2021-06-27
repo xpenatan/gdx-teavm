@@ -19,6 +19,7 @@ public class GeneratorViewModel {
     public final ImGuiBoolean obfuscateFlag;
 
     private boolean isCompiling;
+    private boolean isError;
 
     private float progress;
 
@@ -51,6 +52,8 @@ public class GeneratorViewModel {
     public void compile() {
         if(validateInputs()) {
             isCompiling = true;
+            isError = false;
+            progress = 0;
             try {
                 String appClassName = this.appClassName.getValue();
                 String jarPath = gameJarPath.getValue();
@@ -74,12 +77,19 @@ public class GeneratorViewModel {
                         stopLocalServer();
                         TeaBuilder.build(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
                             @Override
+                            public void onSuccess(boolean success) {
+                                isError = !success;
+                                if(success) {
+                                    progress = 0;
+                                }
+                            }
+
+                            @Override
                             public void onProgress(float progress) {
                                 GeneratorViewModel.this.progress = progress;
                             }
                         });
                         isCompiling = false;
-                        progress = 0;
                         if(serverRunning)
                             startLocalServer();
                     }
@@ -87,7 +97,7 @@ public class GeneratorViewModel {
             } catch (Exception e) {
                 e.printStackTrace();
                 isCompiling = false;
-                progress = 0;
+                isError = true;
             }
         }
     }
@@ -117,6 +127,9 @@ public class GeneratorViewModel {
         return progress;
     }
 
+    public boolean getError() {
+        return isError;
+    }
 
 //    private ArrayList<String> getClassNamesFromJar(File file) {
 //        ArrayList<String> classNames = new ArrayList<>();

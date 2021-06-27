@@ -186,7 +186,7 @@ public class TeaBuilder {
             List<Problem> problems = problemProvider.getProblems();
 
             if (problems.size() > 0) {
-
+                progressListener.onSuccess(false);
                 WebBuildConfiguration.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
@@ -225,6 +225,7 @@ public class TeaBuilder {
                 }
                 WebBuildConfiguration.logEnd();
             } else {
+                progressListener.onSuccess(true);
                 WebBuildConfiguration.logHeader("Build Complete");
             }
 
@@ -349,6 +350,7 @@ public class TeaBuilder {
     }
 
     public interface TeaProgressListener {
+        public void onSuccess(boolean success);
         public void onProgress(float progress);
     }
 }

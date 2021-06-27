@@ -34,6 +34,7 @@ public class GeneratorView {
 
     private float progress;
     private int loadingColor;
+    private int errorColor;
 
     public GeneratorView() {
         // TODO remove emulated class from Classloader
@@ -44,6 +45,7 @@ public class GeneratorView {
         loadPreference();
 
         loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
+        errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
     }
 
     private void loadPreference() {
@@ -128,7 +130,12 @@ public class GeneratorView {
             ImGui.SameLine();
         }
 
-        ImGui.PushStyleColor(ImGuiCol.PlotHistogram, loadingColor);
+        int progressColor = loadingColor;
+        if(viewModel.getError()) {
+            progressColor = errorColor;
+        }
+
+        ImGui.PushStyleColor(ImGuiCol.PlotHistogram, progressColor);
 
         ImGui.ProgressBar(viewModel.getProgress());
 
