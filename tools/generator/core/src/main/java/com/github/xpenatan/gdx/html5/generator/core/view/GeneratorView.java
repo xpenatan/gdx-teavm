@@ -41,11 +41,6 @@ public class GeneratorView {
 
         viewModel = new GeneratorViewModel();
 
-        viewModel.gameJarPath.setValue("E:\\Dev\\Projects\\Eclipse\\Libgdx\\tests\\gdx-tests-lwjgl\\build\\libs\\gdx-tests-lwjgl-1.10.0-SNAPSHOT.jar");
-        viewModel.appClassName.setValue("com.badlogic.gdx.tests.lwjgl.GwtTestWrapper");
-        viewModel.assetsDirectory.setValue("E:\\Dev\\Projects\\Eclipse\\Libgdx\\tests\\gdx-tests-android\\assets");
-        viewModel.webappDirectory.setValue("C:\\Users\\Natan\\Desktop\\libgdx examples\\tests");
-
         loadPreference();
 
         loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
