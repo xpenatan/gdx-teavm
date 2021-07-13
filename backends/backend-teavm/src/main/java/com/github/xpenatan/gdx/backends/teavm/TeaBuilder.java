@@ -186,7 +186,9 @@ public class TeaBuilder {
             List<Problem> problems = problemProvider.getProblems();
 
             if (problems.size() > 0) {
-                progressListener.onSuccess(false);
+                if(progressListener != null) {
+                    progressListener.onSuccess(false);
+                }
                 WebBuildConfiguration.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
@@ -225,7 +227,9 @@ public class TeaBuilder {
                 }
                 WebBuildConfiguration.logEnd();
             } else {
-                progressListener.onSuccess(true);
+                if(progressListener != null) {
+                    progressListener.onSuccess(true);
+                }
                 WebBuildConfiguration.logHeader("Build Complete");
             }
 
@@ -270,6 +274,7 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.influencers");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.renderers");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math.Interpolation");
+        TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
     }
 
     private static void assetsDefaultClasspath(Array<String> filePath) {
@@ -336,6 +341,9 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if (path.contains("imgui-gdx"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if (path.contains("generator/core/"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
+
 
         if (path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;

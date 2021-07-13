@@ -13,14 +13,21 @@ import org.teavm.model.FieldReader;
 import org.teavm.model.MethodDescriptor;
 import org.teavm.model.MethodReader;
 
-import com.badlogic.gdx.assets.AssetManager;
-
 public class TeaReflectionSupplier implements ReflectionSupplier {
 
 	private static ArrayList<String> clazzList = new ArrayList();
 
 	public static void addReflectionClass(Class<?> type) {
 		addReflectionClass(type.getName());
+	}
+
+	public static boolean containsReflection(String className) {
+		for(int i = 0; i < clazzList.size(); i++) {
+			String reflectionClass = clazzList.get(i);
+			if(className.contains(reflectionClass))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -31,8 +38,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 	}
 
 	public TeaReflectionSupplier() {
-
-		clazzList.add(AssetManager.class.getName());
 	}
 
 	@Override

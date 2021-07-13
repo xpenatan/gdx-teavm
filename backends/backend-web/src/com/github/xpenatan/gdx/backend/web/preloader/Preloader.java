@@ -15,14 +15,15 @@ import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backend.web.WebFileHandle;
+import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
 
 /**
  * @author xpenatan
  */
 public class Preloader {
 	public ObjectMap<String, Void> directories = new ObjectMap<String, Void>();
-	public ObjectMap<String, Object> images = new ObjectMap<String, Object>();
-	public ObjectMap<String, Void> audio = new ObjectMap<String, Void>();
+	public ObjectMap<String, HTMLImageElementWrapper> images = new ObjectMap<String, HTMLImageElementWrapper>();
+	public ObjectMap<String, Blob> audio = new ObjectMap<String, Blob>();
 	public ObjectMap<String, String> texts = new ObjectMap<String, String>();
 	public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
 
@@ -125,23 +126,7 @@ public class Preloader {
 
 			@Override
 			public boolean onSuccess (String urll, Object result) {
-				switch (type) {
-				case Text:
-					texts.put(url, (String)result);
-					break;
-				case Image:
-					images.put(url, result);
-					break;
-				case Binary:
-					binaries.put(url, (Blob)result);
-					break;
-				case Audio:
-					audio.put(url, null);
-					break;
-				case Directory:
-					directories.put(url, null);
-					break;
-				}
+				putAssetInMap(type, url, result);
 				listener.onSuccess(urll, result);
 				return false;
 			}
@@ -150,6 +135,26 @@ public class Preloader {
 
 	public void loadScript(final String url,  final AssetLoaderListener<Object> listener) {
 		AssetDownloader.getInstance().loadScript(baseUrl + url, listener);
+	}
+
+	protected void putAssetInMap(AssetType type, String url, Object result) {
+		switch (type) {
+			case Text:
+				texts.put(url, (String) result);
+				break;
+			case Image:
+				images.put(url, (HTMLImageElementWrapper) result);
+				break;
+			case Binary:
+				binaries.put(url, (Blob) result);
+				break;
+			case Audio:
+				audio.put(url, (Blob) result);
+				break;
+			case Directory:
+				directories.put(url, null);
+				break;
+		}
 	}
 
 	public InputStream read (String url) {
@@ -270,7 +275,7 @@ public class Preloader {
 	}
 
 	public void printLoadedAssets() {
-		Entries<String,Object> iterator = images.iterator();
+		Entries<String,HTMLImageElementWrapper> iterator = images.iterator();
 		System.out.println("### Text Assets: ");
 		printKeys(texts);
 		System.out.println("##########");
