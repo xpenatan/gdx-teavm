@@ -1,10 +1,9 @@
 include ":backends:backend-web"
 include ":backends:backend-teavm"
-include ":backends:backend-dragome"
+//include ":backends:backend-dragome"
 include ":examples:core:core"
 include ":examples:core:desktop"
 include ":examples:core:teavm"
-include ":examples:core:dragome"
+//include ":examples:core:dragome"
 include ":tools:generator:core"
 include "tools:generator:desktop"
-

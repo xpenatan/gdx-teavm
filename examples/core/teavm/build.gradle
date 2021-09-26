@@ -1,4 +1,6 @@
-apply plugin: 'org.gretty'
+plugins {
+  id "org.gretty" version "3.0.6"
+}
 
 sourceCompatibility = 1.8
 

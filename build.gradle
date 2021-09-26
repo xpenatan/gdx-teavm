@@ -6,7 +6,6 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'org.gretty:gretty:+'
 	}
 }
 
