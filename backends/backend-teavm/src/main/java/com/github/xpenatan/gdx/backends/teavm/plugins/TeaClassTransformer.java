@@ -150,6 +150,9 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSMethod.class, "getShaderParameterInt", "getShaderParameter");
 
 			classHolder = findClassHolder(cls, context, ArrayBufferViewWrapper.class);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getBuffer", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getByteOffset", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getByteLength", null);
 			setClassInterface(classHolder, JSObject.class);
 
 			classHolder = findClassHolder(cls, context, ArrayBufferWrapper.class);

@@ -52,26 +52,7 @@ public class TeaBuilder {
                 notAcceptedURL.add(url);
         }
 
-        for (int i = 0; i < acceptedURL.size; i++) {
-            URL url = acceptedURL.get(i);
-            String string = url.toString();
-            if (string.contains("backend-web")) {
-                acceptedURL.removeIndex(i);
-                acceptedURL.insert(0, url);
-                break;
-            }
-        }
-
-        // Make backend-teavm first so some classes are replaced by emulated classes
-        for (int i = 0; i < acceptedURL.size; i++) {
-            URL url = acceptedURL.get(i);
-            String string = url.toString();
-            if (string.contains("backend-teavm")) {
-                acceptedURL.removeIndex(i);
-                acceptedURL.insert(0, url);
-                break;
-            }
-        }
+        sortAcceptedClassPath(acceptedURL);
 
         acceptedURL.addAll(configuration.getAdditionalClasspath());
 
@@ -239,6 +220,33 @@ public class TeaBuilder {
 
     }
 
+    private static void sortAcceptedClassPath(Array<URL> acceptedURL) {
+        // The idea here is to replace native java classes with the emulated java class.
+        // 0 - TeaVM backend - Contains all teavm api stuff to make it work.
+        // 1 - Backend-web - Emulate generic java classes. Some classes may be implemented by the teavm backend.
+        // 2 - Extensions - Emulate native extension classes
+
+        // TODO make a better sort. Lazy to do it now
+        // Move extensions to be first so native classes are replaced by the emulated classes
+        makeClassPathFirst(acceptedURL, "gdx-freetype-teavm");
+        // Move generic web backend to be first
+        makeClassPathFirst(acceptedURL, "backend-web");
+        // Make backend-teavm first so some classes are replaced by emulated classes
+        makeClassPathFirst(acceptedURL, "backend-teavm");
+    }
+
+    private static void makeClassPathFirst(Array<URL> acceptedURL, String module) {
+        for (int i = 0; i < acceptedURL.size; i++) {
+            URL url = acceptedURL.get(i);
+            String string = url.toString();
+            if (string.contains(module)) {
+                acceptedURL.removeIndex(i);
+                acceptedURL.insert(0, url);
+                break;
+            }
+        }
+    }
+
     private static void addDefaultReflectionClasses() {
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.scenes.scene2d");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math");
@@ -348,6 +356,8 @@ public class TeaBuilder {
         if (path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;
         else if (path.contains("gdx-box2d-gwt"))
+            isValid = ACCEPT_STATE.ACCEPT;
+        else if (path.contains("gdx-freetype-teavm"))
             isValid = ACCEPT_STATE.ACCEPT;
 
         return isValid;

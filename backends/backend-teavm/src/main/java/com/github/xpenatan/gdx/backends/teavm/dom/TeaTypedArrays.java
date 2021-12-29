@@ -58,6 +58,20 @@ public class TeaTypedArrays extends TypedArrays {
 	}
 
 	@Override
+	public Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer, int offset) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int8Array create = Int8Array.create(arrayBuffer, offset);
+		return (Int8ArrayWrapper)create;
+	}
+
+	@Override
+	public Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer, int offset, int length) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int8Array create = Int8Array.create(arrayBuffer, offset, length);
+		return (Int8ArrayWrapper)create;
+	}
+
+	@Override
 	public Uint8ArrayWrapper createUint8Array(int length) {
 		Uint8Array create = Uint8Array.create(length);
 		return (Uint8ArrayWrapper)create;
