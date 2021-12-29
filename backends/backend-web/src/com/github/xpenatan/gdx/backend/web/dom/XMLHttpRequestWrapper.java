@@ -15,6 +15,8 @@ public interface XMLHttpRequestWrapper extends XMLHttpRequestEventTargetWrapper 
 
 	public void open(String method, String url);
 
+	public void open(String method, String url, boolean async);
+
 	public void setRequestHeader(String header, String value);
 
 	public void setResponseType(String type);

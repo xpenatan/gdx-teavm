@@ -140,7 +140,7 @@ public class AssetDownloadImpl implements AssetDownload {
         });
         addQueue();
         setOnProgress(request, listener);
-        request.open("GET", url);
+        request.open("GET", url, false);
         request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
         request.send();
     }
