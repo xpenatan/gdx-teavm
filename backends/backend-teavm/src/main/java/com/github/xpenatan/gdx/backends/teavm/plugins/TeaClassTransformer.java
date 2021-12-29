@@ -15,7 +15,6 @@ import org.teavm.jso.JSProperty;
 import org.teavm.model.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backend.web.dom.CanvasPixelArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backend.web.dom.ElementWrapper;
@@ -94,6 +93,12 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
 
 			classHolder = findClassHolder(cls, context, Uint8ArrayWrapper.class);
+			setClassInterface(classHolder, JSObject.class);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
+			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
+			setMethodAnnotation(classHolder,  JSProperty.class, "getLength", null);
+
+			classHolder = findClassHolder(cls, context, Uint8ClampedArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
@@ -310,11 +315,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
 			classHolder = findClassHolder(cls, context, SMSoundCallbackWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
-
-			classHolder = findClassHolder(cls, context, CanvasPixelArrayWrapper.class);
-			setClassInterface(classHolder, JSObject.class);
-			setMethodAnnotation(classHolder,  JSIndexer.class, "get", null);
-			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
 
 			classHolder = findClassHolder(cls, context, CanvasRenderingContext2DWrapper.class);
 			setClassInterface(classHolder, JSObject.class);

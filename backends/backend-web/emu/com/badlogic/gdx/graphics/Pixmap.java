@@ -25,6 +25,7 @@ import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backend.web.WebFileHandle;
 import com.github.xpenatan.gdx.backend.web.dom.*;
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
 import jdk.nashorn.internal.objects.ArrayBufferView;
@@ -110,7 +111,7 @@ public class Pixmap implements Disposable {
 	static String clearColor = make(255, 255, 255, 1.0f);
 	Blending blending = Blending.SourceOver;
 	Filter filter = Filter.BiLinear;
-	CanvasPixelArrayWrapper pixels;
+	Uint8ClampedArrayWrapper pixels;
 	private HTMLImageElementWrapper imageElement;
 	private HTMLVideoElementWrapper videoElement;
 
@@ -264,7 +265,7 @@ public class Pixmap implements Disposable {
 		if (width == 0 || height == 0) return;
 		CanvasRenderingContext2DWrapper context = getContext();
 		ImageDataWrapper imgData = context.createImageData(width, height);
-		CanvasPixelArrayWrapper data = imgData.getData();
+		Uint8ClampedArrayWrapper data = imgData.getData();
 		byte[] pixelsArray = pixels.array();
 		for (int i = 0, len = width * height * 4; i < len; i++) {
 			data.set(i, (byte)(pixelsArray[i] & 0xff));

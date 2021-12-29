@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backend.web.dom;
 
+import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ClampedArrayWrapper;
+
 /**
  * @author xpenatan
  */
@@ -9,5 +11,5 @@ public interface ImageDataWrapper {
 
 	public int getHeight();
 
-	public CanvasPixelArrayWrapper getData();
+	public Uint8ClampedArrayWrapper getData();
 }
