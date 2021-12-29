@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.xpenatan.gdx-web-tools'
+version 'unspecified'
+
+sourceSets.main.resources.srcDirs = [ "resources/" ]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":backends:backend-teavm")
+    implementation project(":backends:backend-web")
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

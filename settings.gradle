@@ -7,3 +7,4 @@ include ":examples:core:teavm"
 //include ":examples:core:dragome"
 include ":tools:generator:core"
 include "tools:generator:desktop"
+include 'extensions:gdx-freetype-teavm'
