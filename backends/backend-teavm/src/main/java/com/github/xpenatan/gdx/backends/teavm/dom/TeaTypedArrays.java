@@ -33,8 +33,50 @@ public class TeaTypedArrays extends TypedArrays {
 	}
 
 	@Override
+	public Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Float32Array create = Float32Array.create(arrayBuffer);
+		return (Float32ArrayWrapper)create;
+	}
+
+	@Override
+	public Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Float32Array create = Float32Array.create(arrayBuffer, offset);
+		return (Float32ArrayWrapper)create;
+	}
+
+	@Override
+	public Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset, int length) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Float32Array create = Float32Array.create(arrayBuffer, offset, length);
+		return (Float32ArrayWrapper)create;
+	}
+
+	@Override
 	public Int32ArrayWrapper createInt32Array(int length) {
 		Int32Array create = Int32Array.create(length);
+		return (Int32ArrayWrapper)create;
+	}
+
+	@Override
+	public Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int32Array create = Int32Array.create(arrayBuffer);
+		return (Int32ArrayWrapper)create;
+	}
+
+	@Override
+	public Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int32Array create = Int32Array.create(arrayBuffer, offset);
+		return (Int32ArrayWrapper)create;
+	}
+
+	@Override
+	public Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset, int length) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int32Array create = Int32Array.create(arrayBuffer, offset, length);
 		return (Int32ArrayWrapper)create;
 	}
 

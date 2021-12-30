@@ -17,7 +17,19 @@ public abstract class TypedArrays {
 
 	public abstract Float32ArrayWrapper createFloat32Array(int length);
 
+	public abstract Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer);
+
+	public abstract Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset);
+
+	public abstract Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset, int length);
+
 	public abstract Int32ArrayWrapper createInt32Array(int length);
+
+	public abstract Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer);
+
+	public abstract Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset);
+
+	public abstract Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset, int length);
 
 	public abstract Int16ArrayWrapper createInt16Array(int length);
 
