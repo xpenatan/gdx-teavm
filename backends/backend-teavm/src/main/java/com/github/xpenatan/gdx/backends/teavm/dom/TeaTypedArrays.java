@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Float64Array;
@@ -87,6 +88,27 @@ public class TeaTypedArrays extends TypedArrays {
 	}
 
 	@Override
+	public Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int16Array create = Int16Array.create(arrayBuffer);
+		return (Int16ArrayWrapper)create;
+	}
+
+	@Override
+	public Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int16Array create = Int16Array.create(arrayBuffer, offset);
+		return (Int16ArrayWrapper)create;
+	}
+
+	@Override
+	public Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset, int length) {
+		ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+		Int16Array create = Int16Array.create(arrayBuffer, offset, length);
+		return (Int16ArrayWrapper)create;
+	}
+
+	@Override
 	public Int8ArrayWrapper createInt8Array(int length) {
 		Int8Array create = Int8Array.create(length);
 		return (Int8ArrayWrapper)create;
@@ -124,5 +146,13 @@ public class TeaTypedArrays extends TypedArrays {
 		Float64Array create = Float64Array.create(length);
 		return (Float64ArrayWrapper)create;
 	}
+
+	@Override
+	public ArrayBufferWrapper createArrayBuffer(int length) {
+		return createArrayBufferJS(length);
+	}
+
+	@JSBody(params = { "length" }, script = "new ArrayBuffer(length);")
+	private static native ArrayBufferWrapper createArrayBufferJS(int length);
 
 }

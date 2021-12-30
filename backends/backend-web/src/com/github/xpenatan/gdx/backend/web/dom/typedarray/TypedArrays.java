@@ -33,6 +33,12 @@ public abstract class TypedArrays {
 
 	public abstract Int16ArrayWrapper createInt16Array(int length);
 
+	public abstract Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer);
+
+	public abstract Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset);
+
+	public abstract Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset, int length);
+
 	public abstract Int8ArrayWrapper createInt8Array(int length);
 
 	public abstract Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer);
@@ -44,4 +50,6 @@ public abstract class TypedArrays {
 	public abstract Uint8ArrayWrapper createUint8Array(int length);
 
 	public abstract Float64ArrayWrapper createFloat64Array(int length);
+
+	public abstract ArrayBufferWrapper createArrayBuffer(int length);
 }
