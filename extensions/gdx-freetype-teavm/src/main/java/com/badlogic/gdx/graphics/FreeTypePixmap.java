@@ -29,10 +29,7 @@ public class FreeTypePixmap extends Pixmap {
 			return FreeTypeUtil.newDirectReadWriteByteBuffer();
 		}
 		if (pixels == null) {
-			CanvasRenderingContext2DWrapper context = getContext();
-			ImageDataWrapper imageData = context.getImageData(0, 0, getWidth(), getHeight());
-			pixels = imageData.getData();
-			ArrayBufferWrapper buff = pixels.getBuffer();
+			pixels = getContext().getImageData(0, 0, getWidth(), getHeight()).getData();
 			this.buffer = FreeTypeUtil.newDirectReadWriteByteBuffer(pixels);
 			return this.buffer;
 		}

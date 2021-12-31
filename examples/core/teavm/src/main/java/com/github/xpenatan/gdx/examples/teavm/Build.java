@@ -5,6 +5,9 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.examples.tests.AnimationTest;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeAtlasTest;
+import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeMetricsTest;
+import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypePackTest;
+import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeTest;
 import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
 
 import java.io.File;
@@ -17,6 +20,9 @@ public class Build {
 		teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
 		teaBuildConfiguration.obfuscate = false;
 		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = FreeTypePackTest.class.getName();
 		TeaBuilder.build(teaBuildConfiguration);
 	}
 }

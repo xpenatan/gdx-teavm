@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.github.xpenatan.gdx.examples.tests.AnimationTest;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
-import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeAtlasTest;
+import com.github.xpenatan.gdx.examples.tests.freetype.*;
 import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 
@@ -32,8 +32,12 @@ public class Main {
 			appTest = new AnimationTest();
 		else if(i == UI_TEST)
 			appTest = new UITest();
-		else if(i == FREETYPE_TEST)
+		else if(i == FREETYPE_TEST) {
 			appTest = new FreeTypeAtlasTest();
+//			appTest = new FreeTypeMetricsTest();
+//			appTest = new FreeTypePackTest();
+//			appTest = new FreeTypeTest();
+		}
 		else if(i == REFLECTION_TEST)
 			appTest = new ReflectionTest();
 

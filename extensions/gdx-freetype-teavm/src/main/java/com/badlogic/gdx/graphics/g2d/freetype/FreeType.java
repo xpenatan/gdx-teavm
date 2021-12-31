@@ -86,7 +86,7 @@ public class FreeType {
 			}
 		}
 
-		@JSBody(params = { "library" }, script = "return Module._c_Library_doneFreeType(library);")
+		@JSBody(params = { "library" }, script = "Module._c_Library_doneFreeType(library);")
 		private static native void doneFreeType (int library);
 
 		public Face newFace(FileHandle fontFile, int faceIndex) {
@@ -495,7 +495,7 @@ public class FreeType {
 			done(address);
 		}
 
-		@JSBody(params = { "glyph" }, script = "return Module._c_Glyph_done(glyph);")
+		@JSBody(params = { "glyph" }, script = "Module._c_Glyph_done(glyph);")
 		private static native void done (int glyph);
 
 		private int bTI (boolean bool) {
@@ -588,7 +588,7 @@ public class FreeType {
 			int offset = getBufferAddress(address);
 			int length = getBufferSize(address);
 			Int8ArrayWrapper int8ArrayWrapper = getBuffer(address, offset, length);
-			ByteBuffer buf = FreeTypeUtil.newDirectReadWriteByteBuffer(int8ArrayWrapper, length, offset);
+			ByteBuffer buf = FreeTypeUtil.newDirectReadWriteByteBuffer(int8ArrayWrapper, length, 0);
 			return buf;
 		}
 
