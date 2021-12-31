@@ -8,17 +8,17 @@ import org.teavm.jso.browser.Storage;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
-import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebJSHelper;
-import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
-import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
+import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebJSHelper;
+import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.XMLHttpRequestWrapper;
+import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
+import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan

@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web.preloader;
+package com.github.xpenatan.gdx.backends.web.preloader;
 
 public enum AssetType {
 	Image("i"), Audio("a"), Text("t"), Binary("b"), Directory("d");

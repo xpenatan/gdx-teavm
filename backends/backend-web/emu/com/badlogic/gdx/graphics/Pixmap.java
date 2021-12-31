@@ -21,18 +21,15 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebFileHandle;
-import com.github.xpenatan.gdx.backend.web.dom.*;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ClampedArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
-import jdk.nashorn.internal.objects.ArrayBufferView;
+import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebFileHandle;
+import com.github.xpenatan.gdx.backends.web.dom.*;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetDownloader;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetType;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 

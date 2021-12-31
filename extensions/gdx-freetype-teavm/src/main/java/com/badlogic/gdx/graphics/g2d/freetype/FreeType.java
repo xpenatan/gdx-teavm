@@ -33,15 +33,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backend.web.WebApplication;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.web.WebApplication;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSObject;
 
 public class FreeType {
 	// @off

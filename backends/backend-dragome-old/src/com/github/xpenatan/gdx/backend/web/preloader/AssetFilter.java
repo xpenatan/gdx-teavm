@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web.preloader;
+package com.github.xpenatan.gdx.backends.web.preloader;
 
 /** Interface used by the PreloaderBundleGenerator to decide whether an asset found in the gdx.assetpath should be included in the
  * war/ folder or not. Also used to determine the type of an asset. Default implementation can be found in DefaultAssetFilter, and

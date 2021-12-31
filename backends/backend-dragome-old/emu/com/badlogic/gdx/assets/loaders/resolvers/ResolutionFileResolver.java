@@ -19,7 +19,7 @@ package com.badlogic.gdx.assets.loaders.resolvers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backend.web.WebFileHandle;
+import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 
 public class ResolutionFileResolver implements FileHandleResolver {
 	public static class Resolution {

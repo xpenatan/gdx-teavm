@@ -7,8 +7,8 @@ import java.net.URLClassLoader;
 import com.badlogic.gdx.utils.Array;
 import com.dragome.services.ReflectionServiceImpl;
 import com.dragome.services.ServiceLocator;
-import com.github.xpenatan.gdx.backend.web.WebClassLoader;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
+import com.github.xpenatan.gdx.backends.web.WebClassLoader;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
 
 /**
  * @author xpenatan

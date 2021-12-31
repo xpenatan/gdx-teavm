@@ -38,7 +38,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLCanvasElementExtension;
-import com.github.xpenatan.gdx.backend.web.utils.KeyCodes;
+import com.github.xpenatan.gdx.backends.web.utils.KeyCodes;
 import com.github.xpenatan.gdx.backends.dragome.utils.AgentInfo;
 
 /** Ported from GWT backend.

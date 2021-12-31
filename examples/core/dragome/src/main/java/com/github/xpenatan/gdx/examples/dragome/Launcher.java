@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.examples.dragome;
 
-import com.github.xpenatan.gdx.backend.web.WebApplication;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebApplication;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 

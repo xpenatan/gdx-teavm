@@ -12,7 +12,7 @@ import java.nio.ShortBuffer;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.github.xpenatan.gdx.backend.web.WebTool;
+import com.github.xpenatan.gdx.backends.web.WebTool;
 
 /** Class with static helper methods to increase the speed of array/direct buffer and direct buffer/direct buffer transfers
  *

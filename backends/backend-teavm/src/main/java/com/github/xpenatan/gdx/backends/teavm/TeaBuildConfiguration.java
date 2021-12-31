@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 
 import java.io.File;
 import java.net.URL;

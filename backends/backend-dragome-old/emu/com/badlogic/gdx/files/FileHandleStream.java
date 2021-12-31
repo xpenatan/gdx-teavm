@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.badlogic.gdx.Files.FileType;
-import com.github.xpenatan.gdx.backend.web.WebFileHandle;
+import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 import com.github.xpenatan.gdx.backends.dragome.DragomeApplication;
 import com.badlogic.gdx.Gdx;
 

@@ -3,7 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm.dom;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
-import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
 
 /**
  * @author xpenatan

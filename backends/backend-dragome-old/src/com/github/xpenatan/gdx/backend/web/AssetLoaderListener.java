@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backend.web;
+package com.github.xpenatan.gdx.backends.web;
 
 public class AssetLoaderListener<T>
 {

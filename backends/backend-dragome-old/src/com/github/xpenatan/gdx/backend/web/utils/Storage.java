@@ -1,5 +1,5 @@
 
-package com.github.xpenatan.gdx.backend.web.utils;
+package com.github.xpenatan.gdx.backends.web.utils;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
  * @author xpenatan */

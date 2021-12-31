@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web.preloader;
+package com.github.xpenatan.gdx.backends.web.preloader;
 
 import java.io.IOException;
 import java.io.InputStream;

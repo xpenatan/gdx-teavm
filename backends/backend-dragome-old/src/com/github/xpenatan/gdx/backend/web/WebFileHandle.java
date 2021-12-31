@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web;
+package com.github.xpenatan.gdx.backends.web;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -33,7 +33,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backend.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 
 
 /** Ported from GWT backend

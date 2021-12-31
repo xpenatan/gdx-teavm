@@ -31,10 +31,10 @@ import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
 import com.dragome.web.html.dom.w3c.TypedArraysFactory;
-import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
-import com.github.xpenatan.gdx.backend.web.preloader.Blob;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetType;
+import com.github.xpenatan.gdx.backends.web.preloader.Blob;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetDownloader.AssetDownload;
 
 /** Adapted from gwt backend
  * @author xpenatan */

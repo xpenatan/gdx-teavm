@@ -2,9 +2,9 @@ package com.github.xpenatan.gdx.backends.dragome;
 
 import org.w3c.dom.Element;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
-import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.dragome.dom.DragomeJSHelper;
 import com.github.xpenatan.gdx.backends.dragome.dom.DragomeTypedArrays;
 

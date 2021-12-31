@@ -2,14 +2,14 @@ package com.github.xpenatan.gdx.backends.dragome.dom;
 
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float64ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int16ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float64ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int16ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
 
 /**
  * @author xpenatan

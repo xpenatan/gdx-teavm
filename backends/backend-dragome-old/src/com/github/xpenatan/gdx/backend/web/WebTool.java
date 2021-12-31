@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web;
+package com.github.xpenatan.gdx.backends.web;
 
 /** @author xpenatan */
 public class WebTool {

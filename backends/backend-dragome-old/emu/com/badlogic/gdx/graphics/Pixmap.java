@@ -36,7 +36,7 @@ import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.services.WebServiceLocator;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
-import com.github.xpenatan.gdx.backend.web.WebFileHandle;
+import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 
 public class Pixmap implements Disposable {
 	public static Map<Integer, Pixmap> pixmaps = new HashMap<Integer, Pixmap>();

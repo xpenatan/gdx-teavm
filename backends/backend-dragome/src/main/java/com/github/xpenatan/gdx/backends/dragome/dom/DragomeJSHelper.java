@@ -1,24 +1,24 @@
 package com.github.xpenatan.gdx.backends.dragome.dom;
 
-import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerCallbackWrapper;
+import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerCallbackWrapper;
 import org.w3c.dom.XMLHttpRequest;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.Window;
 import com.dragome.web.html.dom.w3c.HTMLImageElementExtension;
-import com.github.xpenatan.gdx.backend.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebJSHelper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.HTMLImageElementWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.StorageWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backend.web.gl.WebGLContextAttributesWrapper;
-import com.github.xpenatan.gdx.backend.web.gl.WebGLRenderingContextWrapper;
-import com.github.xpenatan.gdx.backend.web.soundmanager.SoundManagerWrapper;
+import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebJSHelper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLDocumentWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.XMLHttpRequestWrapper;
+import com.github.xpenatan.gdx.backends.web.gl.WebGLContextAttributesWrapper;
+import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
+import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan

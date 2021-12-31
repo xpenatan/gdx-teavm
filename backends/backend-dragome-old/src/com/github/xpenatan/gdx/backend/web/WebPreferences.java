@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web;
+package com.github.xpenatan.gdx.backends.web;
 
 import java.util.HashMap;
 import java.util.Map;

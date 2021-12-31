@@ -3,9 +3,9 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
-import com.github.xpenatan.gdx.backend.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backend.web.dom.TimerWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 
 /** Executes tasks in the future on the main loop thread.
  * @author Nathan Sweet */

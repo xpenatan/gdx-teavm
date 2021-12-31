@@ -90,7 +90,7 @@ import com.dragome.web.html.dom.w3c.MessageEventExtension;
 import com.dragome.web.html.dom.w3c.TypedArraysFactory;
 import com.dragome.web.html.dom.w3c.WebGLRenderingContextExtension;
 import com.dragome.web.services.RequestExecutorImpl.XMLHttpRequestExtension;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
 
 /** @author xpenatan */
 @DragomeConfiguratorImplementor(priority= 10)

@@ -14,11 +14,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.xpenatan.gdx.backend.web.preloader;
+package com.github.xpenatan.gdx.backends.web.preloader;
 
 
-import com.github.xpenatan.gdx.backend.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetType;
+import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetType;
 
 /** Adapted from gwt backend
  * @author xpenatan */

@@ -4,10 +4,10 @@ import org.w3c.dom.Document;
 import com.dragome.commons.javascript.ScriptHelper;
 import com.dragome.web.enhancers.jsdelegate.JsCast;
 import com.dragome.web.html.dom.Window;
-import com.github.xpenatan.gdx.backend.web.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.LocationWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.TimerWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.LocationWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 
 /**
  * @author xpenatan

@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
 import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
-import com.github.xpenatan.gdx.backend.web.dom.TimerWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
 
 public class TeaTimer extends TimerWrapper {
 

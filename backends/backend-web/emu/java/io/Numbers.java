@@ -1,9 +1,9 @@
 package java.io;
 
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backend.web.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
 
 public class Numbers {
 

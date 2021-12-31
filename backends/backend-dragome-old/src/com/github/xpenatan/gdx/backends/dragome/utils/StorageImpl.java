@@ -2,7 +2,7 @@
 package com.github.xpenatan.gdx.backends.dragome.utils;
 
 import com.dragome.commons.javascript.ScriptHelper;
-import com.github.xpenatan.gdx.backend.web.utils.Storage;
+import com.github.xpenatan.gdx.backends.web.utils.Storage;
 
 /** https://www.w3.org/TR/webstorage/#storage-0
  * @author xpenatan */

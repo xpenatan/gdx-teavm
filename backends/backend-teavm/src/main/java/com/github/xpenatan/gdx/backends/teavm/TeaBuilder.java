@@ -1,9 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backend.web.WebBuildConfiguration;
-import com.github.xpenatan.gdx.backend.web.WebClassLoader;
-import com.github.xpenatan.gdx.backend.web.preloader.AssetsCopy;
+import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebClassLoader;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;

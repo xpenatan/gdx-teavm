@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.dragome;
 
-import com.github.xpenatan.gdx.backend.web.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backend.web.utils.Storage;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetDownloader;
+import com.github.xpenatan.gdx.backends.web.utils.Storage;
 import com.github.xpenatan.gdx.backends.dragome.preloader.AssetDownloaderImpl;
 import com.github.xpenatan.gdx.backends.dragome.utils.StorageImpl;
 
