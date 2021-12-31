@@ -47,7 +47,6 @@ libgdx-*.zip.MD5
 /.idea/
 
 natives/
-libs/
 **/jni/*
 !**/jni/src
 !**/jni/emscripten
