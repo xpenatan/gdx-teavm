@@ -56,3 +56,5 @@ local.properties
 **/dragome-resources
 **/webapp/**/*.js
 *.ini
+examples/**/*.xml
+examples/**/*.html
