@@ -3,6 +3,8 @@ apply plugin: 'java-library'
 
 apply from: '../../dependencies.gradle'
 
+def module_name = "backend-teavm"
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -23,7 +25,6 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-
 javadoc {
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
@@ -35,7 +36,7 @@ configurations {
 }
 
 dependencies {
-    api project(":backends:backend-web")
+    provided project(":backends:backend-web")
     api fileTree(dir: 'libs', include: ['*.jar'])
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
@@ -45,7 +46,7 @@ task fromClasses (type: Jar) {
     }
 }
 
-task platformAll (type: Jar, dependsOn: [':backends:dragome-backend:build']) {
+task platformAll (type: Jar, dependsOn: [':backends:backend-teavm:build']) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from
     {
@@ -69,13 +70,13 @@ publishing {
         maven(MavenPublication) {
             version project.gdxHtmlVersion + project.gdxHtmlType
             project.version = project.gdxHtmlVersion + project.gdxHtmlType
-            artifactId "dragome-backend"
+            artifactId module_name
             artifact fromClasses
         }
         allBuild(MavenPublication) {
             version project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
             project.version = project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
-            artifactId "dragome-backend"
+            artifactId module_name
             artifact platformAll
         }
     }

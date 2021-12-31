@@ -3,6 +3,8 @@ apply plugin: 'java-library'
 
 apply from: '../../dependencies.gradle'
 
+def module_name = "backend-web"
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -19,10 +21,10 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+task fromClasses (type: Jar) {
+    from (sourceSets.main.output){
+    }
 }
-
 
 javadoc {
     options.encoding = 'UTF-8'
@@ -37,4 +39,19 @@ configurations {
 dependencies {
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        imguiClasses(MavenPublication) {
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            artifactId module_name
+            artifact fromClasses
+        }
+    }
 }

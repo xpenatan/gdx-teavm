@@ -13,6 +13,7 @@ sourceSets.main.java.srcDirs = ["src/main/java/"]
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
 
 dependencies {
+  implementation project(":backends:backend-web")
   implementation project(":backends:backend-teavm")
   implementation project(":extensions:gdx-freetype-teavm")
   implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
