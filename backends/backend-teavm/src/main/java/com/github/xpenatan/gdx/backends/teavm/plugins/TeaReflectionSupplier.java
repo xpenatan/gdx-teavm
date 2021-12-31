@@ -31,7 +31,7 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 	}
 
 	/**
-	 * Full path name including package
+	 * package path or package path with class name
 	 */
 	public static void addReflectionClass(String className) {
 		clazzList.add(className);

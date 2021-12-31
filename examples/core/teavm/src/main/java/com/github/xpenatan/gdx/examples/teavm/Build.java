@@ -16,7 +16,8 @@ import java.io.File;
 public class Build {
 
 	public static void main(String[] args) {
-		TeaReflectionSupplier.addReflectionClass("com.github.xpenatan.gdx.examples.tests.reflection");
+		String reflectionPackage = "com.github.xpenatan.gdx.examples.tests.reflection.models";
+		TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
 		TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
 		teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));;

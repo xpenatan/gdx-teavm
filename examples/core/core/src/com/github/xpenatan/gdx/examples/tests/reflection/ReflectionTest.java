@@ -8,6 +8,8 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.SerializationException;
+import com.github.xpenatan.gdx.examples.tests.reflection.models.ReflectionModel;
+import com.github.xpenatan.gdx.examples.tests.reflection.models.ReflectionModelItem;
 
 public class ReflectionTest implements ApplicationListener {
     // TODO convert to junittest
@@ -19,8 +21,8 @@ public class ReflectionTest implements ApplicationListener {
         try {
             JsonReader jsonReader = new JsonReader();
             JsonValue parse = jsonReader.parse(file);
-            ReflectionClass data = json.readValue(ReflectionClass.class, null, parse);
-            TestModel testModel = data.buffers.get(0);
+            ReflectionModel data = json.readValue(ReflectionModel.class, null, parse);
+            ReflectionModelItem testModel = data.buffers.get(0);
             System.out.println("byteLength: " + testModel.byteLength);
             System.out.println("uri: " + testModel.uri);
         } catch (Exception ex) {
