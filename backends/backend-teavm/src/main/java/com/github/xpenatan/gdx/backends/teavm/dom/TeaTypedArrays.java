@@ -146,13 +146,4 @@ public class TeaTypedArrays extends TypedArrays {
 		Float64Array create = Float64Array.create(length);
 		return (Float64ArrayWrapper)create;
 	}
-
-	@Override
-	public ArrayBufferWrapper createArrayBuffer(int length) {
-		return createArrayBufferJS(length);
-	}
-
-	@JSBody(params = { "length" }, script = "new ArrayBuffer(length);")
-	private static native ArrayBufferWrapper createArrayBufferJS(int length);
-
 }

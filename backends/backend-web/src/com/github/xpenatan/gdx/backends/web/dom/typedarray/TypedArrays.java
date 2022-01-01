@@ -50,6 +50,4 @@ public abstract class TypedArrays {
 	public abstract Uint8ArrayWrapper createUint8Array(int length);
 
 	public abstract Float64ArrayWrapper createFloat64Array(int length);
-
-	public abstract ArrayBufferWrapper createArrayBuffer(int length);
 }
