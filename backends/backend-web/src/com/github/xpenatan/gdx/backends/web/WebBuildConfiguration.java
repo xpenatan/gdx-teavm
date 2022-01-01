@@ -2,8 +2,7 @@ package com.github.xpenatan.gdx.backends.web;
 
 import java.io.File;
 import java.net.URL;
-
-import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 
 /**
  * @author xpenatan
@@ -46,20 +45,20 @@ public abstract class WebBuildConfiguration {
 
     public abstract String getApplicationListenerClass();
 
-    public abstract Array<URL> getAdditionalClasspath();
+    public abstract ArrayList<URL> getAdditionalClasspath();
 
     public abstract String getWebAppPath();
 
-    public abstract void assetsClasspath(Array<String> classPaths);
+    public abstract void assetsClasspath(ArrayList<String> classPaths);
 
     /**
      * @param paths
      * @return true to generate a file which contains all assets patch
      */
-    public abstract boolean assetsPath(Array<File> paths);
+    public abstract boolean assetsPath(ArrayList<File> paths);
 
     public abstract boolean minifying();
 
-    public abstract Array<String> getReflectionInclude();
-    public abstract Array<String> getReflectionExclude();
+    public abstract ArrayList<String> getReflectionInclude();
+    public abstract ArrayList<String> getReflectionExclude();
 }

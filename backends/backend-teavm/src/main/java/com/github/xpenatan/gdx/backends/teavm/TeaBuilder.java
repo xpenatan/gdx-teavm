@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebClassLoader;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -65,8 +65,8 @@ public class TeaBuilder {
 
         URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 
-        Array<URL> acceptedURL = new Array<>();
-        Array<URL> notAcceptedURL = new Array<>();
+        ArrayList<URL> acceptedURL = new ArrayList<>();
+        ArrayList<URL> notAcceptedURL = new ArrayList<>();
 
         for (int i = 0; i < urLs.length; i++) {
             URL url = urLs[i];
@@ -88,24 +88,24 @@ public class TeaBuilder {
 
         WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
 
-        for (int i = 0; i < acceptedURL.size; i++) {
+        for (int i = 0; i < acceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
         }
 
         WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
 
-        for (int i = 0; i < notAcceptedURL.size; i++) {
+        for (int i = 0; i < notAcceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
         }
 
-        int size = acceptedURL.size;
+        int size = acceptedURL.size();
 
         if (size <= 0) {
             System.out.println("No urls found");
             return;
         }
 
-        URL[] classPaths = acceptedURL.toArray(URL.class);
+        URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
         CustomTeaVMTool tool = new CustomTeaVMTool();
@@ -150,15 +150,15 @@ public class TeaBuilder {
         properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
         properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
 
-        Array<String> webappAssetsFiles = new Array<>();
+        ArrayList<String> webappAssetsFiles = new ArrayList<>();
         webappAssetsFiles.add(webappName);
-        AssetsCopy.copy(classLoader, webappAssetsFiles, new Array<>(), webappDirectory, false);
+        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
 
         WebBuildConfiguration.logHeader("Copying Assets");
 
         String assetsOutputPath = webappDirectory + File.separator + webappName + File.separator + "assets";
-        Array<File> assetsPaths = new Array<>();
-        Array<String> classPathAssetsFiles = new Array<>();
+        ArrayList<File> assetsPaths = new ArrayList<>();
+        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
         AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
@@ -251,7 +251,7 @@ public class TeaBuilder {
 
     }
 
-    private static void sortAcceptedClassPath(Array<URL> acceptedURL) {
+    private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
         // The idea here is to replace native java classes with the emulated java class.
         // 0 - TeaVM backend - Contains all teavm api stuff to make it work.
         // 1 - Backend-web - Emulate generic java classes. Some classes may be implemented by the teavm backend.
@@ -266,13 +266,13 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, "backend-teavm");
     }
 
-    private static void makeClassPathFirst(Array<URL> acceptedURL, String module) {
-        for (int i = 0; i < acceptedURL.size; i++) {
+    private static void makeClassPathFirst(ArrayList<URL> acceptedURL, String module) {
+        for (int i = 0; i < acceptedURL.size(); i++) {
             URL url = acceptedURL.get(i);
             String string = url.toString();
             if (string.contains(module)) {
-                acceptedURL.removeIndex(i);
-                acceptedURL.insert(0, url);
+                acceptedURL.remove(i);
+                acceptedURL.add(0, url);
                 break;
             }
         }
@@ -316,7 +316,7 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
     }
 
-    private static void assetsDefaultClasspath(Array<String> filePath) {
+    private static void assetsDefaultClasspath(ArrayList<String> filePath) {
         filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
         filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
         filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath

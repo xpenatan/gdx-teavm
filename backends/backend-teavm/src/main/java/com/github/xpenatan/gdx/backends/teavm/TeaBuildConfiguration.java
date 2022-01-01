@@ -1,24 +1,24 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * @author xpenatan
  */
 public class TeaBuildConfiguration extends WebBuildConfiguration {
 
-    public Array<File> assetsPath = new Array<>();
+    public ArrayList<File> assetsPath = new ArrayList<>();
 
     public boolean obfuscate = false;
     public String mainApplicationClass;
     public String webappPath;
-    public final Array<URL> additionalClasspath = new Array<>();
-    public final Array<String> reflectionInclude = new Array<>();
-    public final Array<String> reflectionExclude = new Array<>();
+    public final ArrayList<URL> additionalClasspath = new ArrayList<>();
+    public final ArrayList<String> reflectionInclude = new ArrayList<>();
+    public final ArrayList<String> reflectionExclude = new ArrayList<>();
 
     @Override
     public String getMainClass() {
@@ -31,7 +31,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     }
 
     @Override
-    public Array<URL> getAdditionalClasspath() {
+    public ArrayList<URL> getAdditionalClasspath() {
         return additionalClasspath;
     }
 
@@ -41,7 +41,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     }
 
     @Override
-    public boolean assetsPath(Array<File> paths) {
+    public boolean assetsPath(ArrayList<File> paths) {
         paths.addAll(assetsPath);
         return true;
     }
@@ -52,16 +52,16 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     }
 
     @Override
-    public Array<String> getReflectionInclude() {
+    public ArrayList<String> getReflectionInclude() {
         return reflectionInclude;
     }
 
     @Override
-    public Array<String> getReflectionExclude() {
+    public ArrayList<String> getReflectionExclude() {
         return reflectionExclude;
     }
 
     @Override
-    public void assetsClasspath(Array<String> classPaths) {
+    public void assetsClasspath(ArrayList<String> classPaths) {
     }
 }

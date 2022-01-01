@@ -1,6 +1,6 @@
 project.ext {
     groupId = "com.github.xpenatan.gdx-web-tools"
-    gdxHtmlVersion = "0.2"
+    gdxHtmlVersion = "1.0.0"
     gdxHtmlType = "-SNAPSHOT"
 
     dragomeVersion = "0.97-SNAPSHOT"

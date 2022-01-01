@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebClassLoader;
@@ -37,18 +36,18 @@ public class AssetsCopy {
 		}
 	}
 
-	public static void copy (Array<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
+	public static void copy (ArrayList<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
 		copy(null, null, assetsPaths, assetsOutputPath, generateTextFile);
 	}
 
-	public static void copy (WebClassLoader classloader, Array<String> classPathAssetsFiles, Array<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
+	public static void copy (WebClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
 		assetsOutputPath = assetsOutputPath.replace("\\", "/");
 		FileWrapper target = new FileWrapper(assetsOutputPath);
 		ArrayList<Asset> assets = new ArrayList<Asset>();
 		DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
 		WebBuildConfiguration.log("");
 		WebBuildConfiguration.log("Copying assets from:");
-		for (int i = 0; i < assetsPaths.size; i++) {
+		for (int i = 0; i < assetsPaths.size(); i++) {
 			String path = assetsPaths.get(i).getAbsolutePath();
 			FileWrapper source = new FileWrapper(path);
 			WebBuildConfiguration.log(path);
@@ -122,9 +121,9 @@ public class AssetsCopy {
 		}
 	}
 
-	private static void addDirectoryClassPathFiles(Array<String> classPathFiles) {
-		Array<String> folderFilePaths = new Array<>();
-		for (int k = 0; k < classPathFiles.size; k++) {
+	private static void addDirectoryClassPathFiles(ArrayList<String> classPathFiles) {
+		ArrayList<String> folderFilePaths = new ArrayList<>();
+		for (int k = 0; k < classPathFiles.size(); k++) {
 			String classpathFile = classPathFiles.get(k);
 			classpathFile = classpathFile.replace("\\", "/");
 			if(classpathFile.startsWith("/") == false)
@@ -177,7 +176,7 @@ public class AssetsCopy {
 					if(directory) {
 						if(first) {
 							first = false;
-							classPathFiles.removeIndex(k);
+							classPathFiles.remove(k);
 							k--;
 							continue;
 						}
@@ -198,7 +197,7 @@ public class AssetsCopy {
 				}
 			}
 			else {// remove if it dont exist
-				classPathFiles.removeIndex(k);
+				classPathFiles.remove(k);
 				k--;
 			}
 		}
