@@ -3,6 +3,12 @@
 .*.swp
 .DS_STORE
 
+#Ignore Eclipse files
+.classpath
+.project
+*.prefs
+##
+
 .gradle/
 bin/
 obj/
