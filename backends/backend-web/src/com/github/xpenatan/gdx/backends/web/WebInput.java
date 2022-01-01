@@ -73,6 +73,7 @@ public class WebInput implements Input, EventListenerWrapper {
 	boolean[] pressedKeys = new boolean[256];
 	boolean keyJustPressed = false;
 	boolean[] justPressedKeys = new boolean[256];
+	boolean[] justPressedButtons = new boolean[5];
 	InputProcessor processor;
 	char lastKeyCharPressed;
 	float keyRepeatTimer;
@@ -125,7 +126,9 @@ public class WebInput implements Input, EventListenerWrapper {
 			hasFocus = true;
 			this.justTouched = true;
 			this.touched[0] = true;
-			this.pressedButtons.add(KeyCodes.getButton(mouseEvent.getButton()));
+			int button = KeyCodes.getButton(mouseEvent.getButton());
+			this.pressedButtons.add(button);
+			justPressedButtons[button] = true;
 			this.deltaX[0] = 0;
 			this.deltaY[0] = 0;
 			if (isCursorCatched()) {
@@ -337,7 +340,13 @@ public class WebInput implements Input, EventListenerWrapper {
 	}
 
 	public void reset () {
-		justTouched = false;
+		if (justTouched) {
+			justTouched = false;
+			for (int i = 0; i < justPressedButtons.length; i++) {
+				justPressedButtons[i] = false;
+			}
+		}
+
 		if (keyJustPressed) {
 			keyJustPressed = false;
 			for (int i = 0; i < justPressedKeys.length; i++) {
@@ -597,8 +606,8 @@ public class WebInput implements Input, EventListenerWrapper {
 
 	@Override
 	public boolean isButtonJustPressed(int button) {
-		// TODO Auto-generated method stub
-		return false;
+		if (button < 0 || button >= justPressedButtons.length) return false;
+		return justPressedButtons[button];
 	}
 
 	@Override
