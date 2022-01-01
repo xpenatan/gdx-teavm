@@ -38,6 +38,7 @@ public class TeaBuilder {
         for (URL classPath : configuration.getAdditionalClasspath()) {
             try {
                 ZipInputStream zip = new ZipInputStream(classPath.openStream());
+                WebBuildConfiguration.logHeader("Automatic Reflection Include");
                 for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
                     if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
                         // This ZipEntry represents a class. Now, what class does it represent?
@@ -51,7 +52,10 @@ public class TeaBuilder {
                             if (name.startsWith(toExclude)) add = false;
                         }
 
-                        if (add) TeaReflectionSupplier.addReflectionClass(name);
+                        if (add) {
+                            WebBuildConfiguration.log("Include class: " + name);
+                            TeaReflectionSupplier.addReflectionClass(name);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -122,7 +126,8 @@ public class TeaBuilder {
         String mainClass = configuration.getMainClass();
         TeaClassTransformer.applicationListener = configuration.getApplicationListenerClass();
 
-        File setCacheDirectory = new File("C:\\TeaVMCache");
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
         boolean setIncremental = false;
 
         tool.setClassLoader(classLoader);
@@ -142,8 +147,8 @@ public class TeaBuilder {
         tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
         Properties properties = tool.getProperties();
 
-        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + "\\" + webappName + "\\" + "filesystem.json");
-        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + "\\" + webappName + "\\" + "assets");
+        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
+        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
 
         Array<String> webappAssetsFiles = new Array<>();
         webappAssetsFiles.add(webappName);
