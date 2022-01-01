@@ -17,6 +17,8 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public String mainApplicationClass;
     public String webappPath;
     public final Array<URL> additionalClasspath = new Array<>();
+    public final Array<String> reflectionInclude = new Array<>();
+    public final Array<String> reflectionExclude = new Array<>();
 
     @Override
     public String getMainClass() {
@@ -47,6 +49,16 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public boolean minifying() {
         return obfuscate;
+    }
+
+    @Override
+    public Array<String> getReflectionInclude() {
+        return reflectionInclude;
+    }
+
+    @Override
+    public Array<String> getReflectionExclude() {
+        return reflectionExclude;
     }
 
     @Override

@@ -16,10 +16,13 @@ import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.vm.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 /**
@@ -32,6 +35,29 @@ public class TeaBuilder {
 
     public static void build(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
         addDefaultReflectionClasses();
+        for (URL classPath : configuration.getAdditionalClasspath()) {
+            try {
+                ZipInputStream zip = new ZipInputStream(classPath.openStream());
+                for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                    if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                        // This ZipEntry represents a class. Now, what class does it represent?
+                        String className = entry.getName().replace('/', '.'); // including ".class"
+                        String name = className.substring(0, className.length() - ".class".length());
+                        boolean add = false;
+                        for (String toInclude : configuration.getReflectionInclude()) {
+                            if (name.startsWith(toInclude)) add = true;
+                        }
+                        for (String toExclude : configuration.getReflectionExclude()) {
+                            if (name.startsWith(toExclude)) add = false;
+                        }
+
+                        if (add) TeaReflectionSupplier.addReflectionClass(name);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
 
@@ -90,7 +116,7 @@ public class TeaBuilder {
 
         System.out.println("targetDirectory: " + webappDirectory);
 
-        File setTargetDirectory = new File(webappDirectory + "\\" + webappName + "\\" + "teavm");
+        File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";
         boolean setMinifying = configuration.minifying();
         String mainClass = configuration.getMainClass();
@@ -125,7 +151,7 @@ public class TeaBuilder {
 
         WebBuildConfiguration.logHeader("Copying Assets");
 
-        String assetsOutputPath = webappDirectory + "\\" + webappName + "\\assets";
+        String assetsOutputPath = webappDirectory + File.separator + webappName + File.separator + "assets";
         Array<File> assetsPaths = new Array<>();
         Array<String> classPathAssetsFiles = new Array<>();
         assetsDefaultClasspath(classPathAssetsFiles);
@@ -370,7 +396,7 @@ public class TeaBuilder {
     }
 
     public interface TeaProgressListener {
-        public void onSuccess(boolean success);
-        public void onProgress(float progress);
+        void onSuccess(boolean success);
+        void onProgress(float progress);
     }
 }
