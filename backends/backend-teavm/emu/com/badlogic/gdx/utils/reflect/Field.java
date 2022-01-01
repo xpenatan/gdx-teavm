@@ -208,10 +208,15 @@ public final class Field {
 	}
 
 	/** Sets the value of the field on the supplied object.
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException */
-	public void set (Object obj, Object value) throws IllegalArgumentException, IllegalAccessException{
-		field.set(obj, value);
+	 * @throws ReflectionException */
+	public void set (Object obj, Object value) throws ReflectionException {
+		try {
+			field.set(obj, value);
+		} catch (IllegalArgumentException e) {
+			throw new ReflectionException("Argument not valid for field: " + getName(), e);
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException("Illegal access to field: " + getName(), e);
+		}
 	}
 
 }
