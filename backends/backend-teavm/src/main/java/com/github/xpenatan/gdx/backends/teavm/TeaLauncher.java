@@ -7,11 +7,17 @@ import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
 public class TeaLauncher {
 
 	public static void main(String[] args) {
-		WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
-		Object appListener = getApplicationListener();
-		if(appListener != null) {
-			ApplicationListener listener = (ApplicationListener) appListener;
-			new WebApplication(listener, config);
+		try {
+			WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
+			Object appListener = getApplicationListener();
+			if(appListener != null) {
+				ApplicationListener listener = (ApplicationListener) appListener;
+				new WebApplication(listener, config);
+			}
+		}
+		catch(Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 	}
 
