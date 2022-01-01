@@ -18,9 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -242,13 +241,24 @@ public class TeaBuilder {
                 if(progressListener != null) {
                     progressListener.onSuccess(true);
                 }
-                WebBuildConfiguration.logHeader("Build Complete");
+                Collection<String> classes = tool.getClasses();
+                WebBuildConfiguration.logHeader("Build Complete. Total Classes: " + classes.size());
+
+                boolean classLog = configuration.logClasses();
+
+                if(classLog) {
+                    Stream<String> sorted = classes.stream().sorted();
+                    Iterator<String> iterator = sorted.iterator();
+                    while(iterator.hasNext()) {
+                        String clazz = iterator.next();
+                        WebBuildConfiguration.log(clazz);
+                    }
+                }
             }
 
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {

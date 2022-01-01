@@ -13,6 +13,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     public ArrayList<File> assetsPath = new ArrayList<>();
 
+    public boolean logClasses = false;
     public boolean obfuscate = false;
     public String mainApplicationClass;
     public String webappPath;
@@ -59,6 +60,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public ArrayList<String> getReflectionExclude() {
         return reflectionExclude;
+    }
+
+    @Override
+    public boolean logClasses() {
+        return logClasses;
     }
 
     @Override
