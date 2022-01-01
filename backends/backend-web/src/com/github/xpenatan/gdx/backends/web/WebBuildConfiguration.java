@@ -60,4 +60,6 @@ public abstract class WebBuildConfiguration {
 
     public abstract boolean minifying();
 
+    public abstract Array<String> getReflectionInclude();
+    public abstract Array<String> getReflectionExclude();
 }
