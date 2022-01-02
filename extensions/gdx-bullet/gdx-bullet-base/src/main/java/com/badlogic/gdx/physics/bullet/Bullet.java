@@ -3,6 +3,7 @@ package com.badlogic.gdx.physics.bullet;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.physics.bullet.linearmath.LinearMathConstants;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
@@ -11,8 +12,7 @@ import java.util.Arrays;
 /** @author xpenatan */
 public class Bullet {
 
-//	public final static int VERSION = LinearMathConstants.BT_BULLET_VERSION;
-	public final static int VERSION = 1;
+	public final static int VERSION = LinearMathConstants.BT_BULLET_VERSION;
 
 	protected static boolean enableLogging = true;
 
