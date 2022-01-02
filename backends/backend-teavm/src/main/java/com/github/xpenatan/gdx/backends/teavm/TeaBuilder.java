@@ -109,7 +109,7 @@ public class TeaBuilder {
 
         CustomTeaVMTool tool = new CustomTeaVMTool();
 
-        boolean setDebugInformationGenerated = false;
+        boolean setDebugInformationGenerated = true;
         boolean setSourceMapsFileGenerated = false;
         boolean setSourceFilesCopied = false;
 
@@ -136,7 +136,8 @@ public class TeaBuilder {
         tool.setTargetDirectory(setTargetDirectory);
         tool.setTargetFileName(setTargetFileName);
         tool.setObfuscated(setMinifying);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
+        tool.setFastDependencyAnalysis(true);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.FULL);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
         tool.setMainClass(mainClass);
         //		tool.getProperties().putAll(profile.getProperties());

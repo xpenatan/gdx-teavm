@@ -29,9 +29,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.xpenatan.gdx.examples.tests.reflection.models.ReflectionModel;
 
 /** @author xpenatan */
 public class GearsDemo implements ApplicationListener {
+
+	ReflectionModel model;
 
 	public PerspectiveCamera cam;
 	public ModelBatch modelBatch;
@@ -59,6 +62,7 @@ public class GearsDemo implements ApplicationListener {
 	int fps;
 
 	CameraInputController cameraController;
+	boolean flag = false;
 
 	@Override
 	public void create () {
@@ -123,6 +127,12 @@ public class GearsDemo implements ApplicationListener {
 
 		lightModel = modelBuilder.createSphere(1, 1, 1, 10, 10, new Material(ColorAttribute.createDiffuse(1, 1, 1, 1)), Usage.Position);
 		lightModel.nodes.get(0).parts.get(0).setRenderable(pLight = new Renderable());
+
+		if(flag) {
+			int test = 1312313;
+			System.out.println(test);
+			model = new ReflectionModel();
+		}
 	}
 
 	@Override
