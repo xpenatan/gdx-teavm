@@ -61,6 +61,11 @@ public class TeaVMCodeParser implements CodeGenParser {
         int size = parameters.size();
 
         String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+
+        // Don't do nothing if its not a command
+        if(!headerCommands.contains(CMD_NATIVE))
+            return;
+
         String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
 
         String param = "";
