@@ -1,0 +1,8 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.xpenatan.gdx-web-tools'
+
+dependencies {
+}

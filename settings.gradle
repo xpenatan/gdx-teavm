@@ -1,10 +1,12 @@
 include ":backends:backend-web"
 include ":backends:backend-teavm"
-//include ":backends:backend-dragome"
+include ":extensions:gdx-freetype-teavm"
+include ":extensions:gdx-bullet:gdx-bullet-base"
+include ":extensions:gdx-bullet:gdx-bullet-teavm"
+
 include ":examples:core:core"
 include ":examples:core:desktop"
 include ":examples:core:teavm"
-//include ":examples:core:dragome"
+
 include ":tools:generator:core"
-include "tools:generator:desktop"
-include 'extensions:gdx-freetype-teavm'
+include ":tools:generator:desktop"
