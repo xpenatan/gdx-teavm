@@ -136,8 +136,8 @@ public class TeaBuilder {
         tool.setTargetDirectory(setTargetDirectory);
         tool.setTargetFileName(setTargetFileName);
         tool.setObfuscated(setMinifying);
-        tool.setFastDependencyAnalysis(true);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.FULL);
+        tool.setFastDependencyAnalysis(false);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
         tool.setMainClass(mainClass);
         //		tool.getProperties().putAll(profile.getProperties());
