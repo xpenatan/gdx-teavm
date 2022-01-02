@@ -1,6 +1,7 @@
-package com.github.xpenatan.gdx.html5.bullet.web;
+package com.github.xpenatan.gdx.html5.bullet.codegen;
 
-public class TeaVMCodeWrapper implements JSCodeWrapper {
+/** @author xpenatan */
+public class TeaVMCodeWrapper implements CodeGenWrapper {
     @Override
     public String wrap(boolean isStatic, String className, String methodName, String returnType, String params, String content, String indentLevel) {
         return null;

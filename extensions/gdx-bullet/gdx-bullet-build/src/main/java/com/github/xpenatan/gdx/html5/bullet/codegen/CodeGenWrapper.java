@@ -1,5 +1,6 @@
-package com.github.xpenatan.gdx.html5.bullet.web;
+package com.github.xpenatan.gdx.html5.bullet.codegen;
 
-public interface JSCodeWrapper {
+/** @author xpenatan */
+public interface CodeGenWrapper {
     String wrap(boolean isStatic, String className, String methodName, String returnType, String params, String content, String indentLevel);
 }

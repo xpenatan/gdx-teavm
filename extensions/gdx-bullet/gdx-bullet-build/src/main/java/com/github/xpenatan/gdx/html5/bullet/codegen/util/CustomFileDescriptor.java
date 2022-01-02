@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.bullet.web;
+package com.github.xpenatan.gdx.html5.bullet.codegen.util;
 
 import java.io.BufferedReader;
 import java.io.File;

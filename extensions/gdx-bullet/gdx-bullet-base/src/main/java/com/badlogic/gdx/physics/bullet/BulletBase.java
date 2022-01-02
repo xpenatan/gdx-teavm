@@ -8,6 +8,15 @@ public class BulletBase implements Disposable {
 
 	/** Low level usage. Don't change the pointer. */
 	public long cPointer;
+
+	/*
+	  [-Javascript][Delete]
+	  MyCode test
+	*/
+	/*
+      [Javascript][Delete]
+      MyCode test
+   */
 	private boolean cMemOwn;
 	private boolean disposed;
 
@@ -25,6 +34,9 @@ public class BulletBase implements Disposable {
 
 	/**
 	 * Internal use. Can cause memory leak if not used correctly.
+	 */
+	/*
+		TEST ME
 	 */
 	public final void resetObj(long cPtr, boolean cMemoryOwn) {
 		cMemOwn = cMemoryOwn;
@@ -145,4 +157,18 @@ public class BulletBase implements Disposable {
 		if(cPointer == 0)
 			throw new NullPointerException("Tried to access native object with null pointer " + getClass().getSimpleName());
 	}
+
+	/*
+	  [-Javascript][Delete]
+	  MyCode test4
+	*/
+	// Test 1
+	// Test 2
+	public void test() {
+	}
+
+		/*
+	  [-Javascript][Delete]
+	  MyCode test7
+	*/
 }
