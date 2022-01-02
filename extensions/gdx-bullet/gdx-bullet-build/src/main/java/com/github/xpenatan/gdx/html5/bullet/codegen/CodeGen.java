@@ -227,7 +227,7 @@ public class CodeGen {
             FieldDeclaration fieldDeclaration = item.fieldDeclaration;
         }
         else if(item.isMethodBlock()) {
-            FieldDeclaration fieldDeclaration = item.fieldDeclaration;
+            MethodDeclaration methodDeclaration = item.methodDeclaration;
         }
         else {
             // Block comments without field or method
