@@ -5,6 +5,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /** @author xpenatan */
 public class CodeGenParserItem {
@@ -47,5 +48,47 @@ public class CodeGenParserItem {
             }
         }
         return ret;
+    }
+
+    public void removeAll() {
+        removeCodeBlocks();
+        removeFieldOrMethod();
+    }
+
+    public void removeFieldOrMethod() {
+        if(fieldDeclaration != null) {
+            fieldDeclaration.remove();
+        }
+        if(methodDeclaration != null) {
+            methodDeclaration.remove();
+        }
+    }
+
+    public void removeCodeBlocks() {
+        for(int i = 0; i < rawComments.size(); i++) {
+            BlockComment blockComment = rawComments.get(i);
+            blockComment.remove();
+        }
+    }
+
+    public static String obtainHeaderCommands(BlockComment blockComment) {
+        String content = blockComment.getContent();
+        Scanner scanner = new Scanner(content);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if(line.startsWith("[-") && line.endsWith("]")) {
+                scanner.close();
+                return line;
+            }
+        }
+        scanner.close();
+        return null;
+    }
+
+    public static String obtainContent(String header, BlockComment blockComment) {
+        if(header == null)
+            return null;
+        String content = blockComment.getContent();
+        return content.replace(header, "");
     }
 }

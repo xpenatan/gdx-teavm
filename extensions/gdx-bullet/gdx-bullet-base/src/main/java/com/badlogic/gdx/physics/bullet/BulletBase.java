@@ -8,15 +8,6 @@ public class BulletBase implements Disposable {
 
 	/** Low level usage. Don't change the pointer. */
 	public long cPointer;
-
-	/*
-	  [-Javascript][Delete]
-	  MyCode test
-	*/
-	/*
-      [Javascript][Delete]
-      MyCode test
-   */
 	private boolean cMemOwn;
 	private boolean disposed;
 
@@ -24,20 +15,13 @@ public class BulletBase implements Disposable {
 		public Object jsObj; // cached obj
 	*/
 
-	/** Do not call directly. Called when object is owned and dispose is called. */
-	protected void delete() {
-	}
-	/*[0;X;L]
-		jsObj, this.jsObj #P
-		Bullet.destroy(jsObj);
-	*/
-
 	/**
 	 * Internal use. Can cause memory leak if not used correctly.
 	 */
 	/*
-		TEST ME
-	 */
+	  [-Javascript][Delete]
+	  MyCode test4
+	*/
 	public final void resetObj(long cPtr, boolean cMemoryOwn) {
 		cMemOwn = cMemoryOwn;
 		cPointer = cPtr;
@@ -90,22 +74,22 @@ public class BulletBase implements Disposable {
 
 	@Override
 	final public void dispose () {
-//		if(cPointer != 0 && cMemOwn) {
-//			if (disposed) {
-//				if(Bullet.enableLogging && Gdx.app != null)
-//					Gdx.app.error("Bullet", "Already disposed "+toString());
-//			}
-//			else {
-//				if (Bullet.enableLogging && Gdx.app != null)
-//					Gdx.app.debug("Bullet", "Disposing " +toString());
-//				destroy();
-//			}
-//		}
+		if(cPointer != 0 && cMemOwn) {
+			if (disposed) {
+				if(Bullet.enableLogging && Gdx.app != null)
+					Gdx.app.error("Bullet", "Already disposed "+toString());
+			}
+			else {
+				if (Bullet.enableLogging && Gdx.app != null)
+					Gdx.app.debug("Bullet", "Disposing " +toString());
+				destroy();
+			}
+		}
 	}
 
 	private void destroy() {
 		try {
-			delete();
+			destroyNative();
 			disposed = true;
 			cPointer = 0;
 		}
@@ -114,18 +98,13 @@ public class BulletBase implements Disposable {
 				Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
 		}
 	}
-	/*[0;X;L]
-		try { #J
-			delete(); #J
-			disposed = true; #J
-			cPointer = 0; #J
-			jsObj = null; #J
-		} #J
-		catch (Throwable e) { #J
-			if(Gdx.app != null) #J
-				Gdx.app.error("Bullet", "Exception while destroying " + toString(), e); #J
-		} #J
-	*/
+
+	/*
+		[-teaVM;Native]
+		Bullet.destroy(jsObj);
+		jsObj = null;
+	 */
+	public native void destroyNative();
 
 	public boolean isDisposed() {
 		return disposed;
@@ -140,13 +119,13 @@ public class BulletBase implements Disposable {
 	protected void finalize() throws Throwable {
 		if(cPointer != 0 && cMemOwn && disposed == false) {
 
-//			if (Bullet.enableLogging) {
-//				String debugText = "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.";
-//				if(Gdx.app != null)
-//					Gdx.app.error("Bullet", debugText);
-//				else
-//					System.out.println("Bullet - " + debugText);
-//			}
+			if (Bullet.enableLogging) {
+				String debugText = "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.";
+				if(Gdx.app != null)
+					Gdx.app.error("Bullet", debugText);
+				else
+					System.out.println("Bullet - " + debugText);
+			}
 			destroy();
 		}
 		super.finalize();
@@ -157,18 +136,4 @@ public class BulletBase implements Disposable {
 		if(cPointer == 0)
 			throw new NullPointerException("Tried to access native object with null pointer " + getClass().getSimpleName());
 	}
-
-	/*
-	  [-Javascript][Delete]
-	  MyCode test4
-	*/
-	// Test 1
-	// Test 2
-	public void test() {
-	}
-
-		/*
-	  [-Javascript][Delete]
-	  MyCode test7
-	*/
 }
