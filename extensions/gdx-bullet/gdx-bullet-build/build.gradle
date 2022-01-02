@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.xpenatan.gdx-web-tools'
+
+project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
+
+dependencies {
+    implementation "com.github.javaparser:javaparser-symbol-solver-core:$project.javaparserVersion"
+    implementation "com.github.javaparser:javaparser-core:$project.javaparserVersion"
+}
+
+task run(dependsOn: classes, type: JavaExec) {
+    group = 'other'
+    description = 'Generate native project'
+
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+}

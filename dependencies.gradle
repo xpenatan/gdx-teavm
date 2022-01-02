@@ -3,6 +3,8 @@ project.ext {
     gdxHtmlVersion = "1.0.0"
     gdxHtmlType = "-SNAPSHOT"
 
+    javaparserVersion = "3.23.1"
+
     dragomeVersion = "0.97-SNAPSHOT"
 
     gdxVersion = "1.10.0"

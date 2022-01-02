@@ -4,5 +4,7 @@ plugins {
 
 group 'com.github.xpenatan.gdx-web-tools'
 
+
 dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
