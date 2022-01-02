@@ -169,12 +169,12 @@ public class CodeGen {
                 FieldDeclaration field = (FieldDeclaration) node;
                 Optional<Comment> optionalComment = field.getComment();
                 if(optionalComment.isPresent() && optionalComment.get() instanceof BlockComment) {
-                    BlockComment blockComment = (BlockComment)  optionalComment.get();
+                    BlockComment blockComment = (BlockComment) optionalComment.get();
                     blockComments.add(blockComment);
                 }
                 if(blockComments.size() > 0) {
                     CodeGenParserItem parserItem = new CodeGenParserItem();
-                    parserItem.blockComments.addAll(blockComments);
+                    parserItem.rawComments.addAll(blockComments);
                     parserItem.fieldDeclaration = field;
                     blockComments.clear();
                     blockCommentItems.add(parserItem);
@@ -184,12 +184,12 @@ public class CodeGen {
                 MethodDeclaration method = (MethodDeclaration) node;
                 Optional<Comment> optionalComment = method.getComment();
                 if(optionalComment.isPresent() && optionalComment.get() instanceof BlockComment) {
-                    BlockComment blockComment = (BlockComment)  optionalComment.get();
+                    BlockComment blockComment = (BlockComment) optionalComment.get();
                     blockComments.add(blockComment);
                 }
                 if(blockComments.size() > 0) {
                     CodeGenParserItem parserItem = new CodeGenParserItem();
-                    parserItem.blockComments.addAll(blockComments);
+                    parserItem.rawComments.addAll(blockComments);
                     parserItem.methodDeclaration = method;
                     blockComments.clear();
                     blockCommentItems.add(parserItem);
@@ -198,7 +198,7 @@ public class CodeGen {
             else {
                 if(blockComments.size() > 0) {
                     CodeGenParserItem parserItem = new CodeGenParserItem();
-                    parserItem.blockComments.addAll(blockComments);
+                    parserItem.rawComments.addAll(blockComments);
                     blockComments.clear();
                     blockCommentItems.add(parserItem);
                 }
@@ -210,7 +210,7 @@ public class CodeGen {
 
         if(classLevel == 0 && blockComments.size() > 0) {
             CodeGenParserItem parserItem = new CodeGenParserItem();
-            parserItem.blockComments.addAll(blockComments);
+            parserItem.rawComments.addAll(blockComments);
             blockComments.clear();
             blockCommentItems.add(parserItem);
         }
@@ -218,9 +218,9 @@ public class CodeGen {
 
     private void parseItem(CodeGenParserItem item) {
 
-        for(int i = 0; i < item.blockComments.size(); i++) {
-            BlockComment blockComment = item.blockComments.get(i);
-            blockComment.remove();
+        for(int i = 0; i < item.rawComments.size(); i++) {
+            BlockComment rawBlockComment = item.rawComments.get(i);
+            rawBlockComment.remove();
         }
 
         if(item.isFieldBlock()) {

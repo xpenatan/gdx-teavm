@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /** @author xpenatan */
 public class CodeGenParserItem {
-    public final ArrayList<BlockComment> blockComments = new ArrayList<>();
+    public final ArrayList<BlockComment> rawComments = new ArrayList<>();
 
     public FieldDeclaration fieldDeclaration;
 
@@ -23,7 +23,7 @@ public class CodeGenParserItem {
     }
 
     public void reset() {
-        blockComments.clear();
+        rawComments.clear();
         fieldDeclaration = null;
         methodDeclaration = null;
     }
@@ -38,10 +38,10 @@ public class CodeGenParserItem {
             ret = methodDeclaration.getTokenRange().get().toString();
         }
         else {
-            for(int i = 0; i < blockComments.size(); i++) {
-                BlockComment blockComment = blockComments.get(i);
+            for(int i = 0; i < rawComments.size(); i++) {
+                BlockComment blockComment = rawComments.get(i);
                 ret += blockComment.getContent();
-                if(i < blockComments.size() -1) {
+                if(i < rawComments.size() -1) {
                     ret += "\n";
                 }
             }
