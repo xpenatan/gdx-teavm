@@ -1,4 +1,4 @@
-package com.github.xpenatan.tools.jparser;
+package com.github.xpenatan.tools.jparser.codeparser;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -6,27 +6,31 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
-import com.github.xpenatan.tools.jparser.codegen.CodeGenParser;
-import com.github.xpenatan.tools.jparser.codegen.CodeGenParserItem;
-import com.github.xpenatan.tools.jparser.codegen.util.RawCodeBlock;
+import com.github.xpenatan.tools.jparser.util.RawCodeBlock;
 
 import java.util.Optional;
 
 /** @author xpenatan */
-public abstract class DefaultCodeParser implements CodeGenParser {
+public abstract class DefaultCodeParser implements CodeParser {
 
-    public static final String CMD_HEADER = "[-teaVM";
+    public static final String CMD_HEADER = "[-";
     public static final String CMD_ADD = "-ADD";
     public static final String CMD_REMOVE = "-REMOVE";
     public static final String CMD_REPLACE = "-REPLACE";
     public static final String CMD_NATIVE = "-NATIVE";
 
-    private void updateBlock(CodeGenParserItem parserItem) {
+    private final String headerCMD;
+
+    public DefaultCodeParser(String headerCMD) {
+        this.headerCMD = headerCMD;
+    }
+
+    private void updateBlock(CodeParserItem parserItem) {
         for(int i = 0; i < parserItem.rawComments.size(); i++) {
             BlockComment rawBlockComment = parserItem.rawComments.get(i);
-            String headerCommands = CodeGenParserItem.obtainHeaderCommands(rawBlockComment);
+            String headerCommands = CodeParserItem.obtainHeaderCommands(rawBlockComment);
             // Remove comment block if its not part of this parser
-            if(headerCommands == null || !headerCommands.startsWith(CMD_HEADER)) {
+            if(headerCommands == null || !headerCommands.startsWith(CMD_HEADER + headerCMD)) {
                 rawBlockComment.remove();
                 parserItem.rawComments.remove(i);
                 i--;
@@ -35,7 +39,7 @@ public abstract class DefaultCodeParser implements CodeGenParser {
     }
 
     @Override
-    public void parseCodeBlock(CodeGenParserItem parserItem) {
+    public void parseCodeBlock(CodeParserItem parserItem) {
         updateBlock(parserItem);
 
         if(parserItem.rawComments.size() == 0) {
@@ -47,7 +51,7 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         // Remove raw block comment from source
         blockComment.remove();
 
-        String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+        String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
         if(headerCommands == null)
             return;
 
@@ -79,7 +83,7 @@ public abstract class DefaultCodeParser implements CodeGenParser {
     }
 
     @Override
-    public void parseHeaderBlock(CodeGenParserItem parserItem) {
+    public void parseHeaderBlock(CodeParserItem parserItem) {
         updateBlock(parserItem);
 
         if(parserItem.rawComments.size() == 0) {
@@ -90,7 +94,7 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         // Remove raw block comment from source
         blockComment.remove();
 
-        String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+        String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
 
         if(parserItem.isImportBlock()) {
             if(headerCommands.contains(CMD_REPLACE)) {
@@ -106,9 +110,9 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         }
     }
 
-    private void setJavaHeaderReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, ImportDeclaration importDeclaration) {
+    private void setJavaHeaderReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, ImportDeclaration importDeclaration) {
         importDeclaration.remove();
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         newblockComment.setContent(content);
         Optional<TokenRange> tokenRange = importDeclaration.getTokenRange();
@@ -117,8 +121,8 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         parserItem.unit.addType(newblockComment);
     }
 
-    private void setJavaHeaderAddCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+    private void setJavaHeaderAddCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment) {
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         newblockComment.setContent(content);
         Optional<TokenRange> tokenRange = blockComment.getTokenRange();
@@ -127,8 +131,8 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         parserItem.unit.addType(newblockComment);
     }
 
-    private void setJavaBodyAddCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+    private void setJavaBodyAddCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment) {
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
         newblockComment.setContent(content);
@@ -138,16 +142,16 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         classInterface.getMembers().add(newblockComment);
     }
 
-    private void setJavaHeaderRemoveCMD(CodeGenParserItem parserItem) {
+    private void setJavaHeaderRemoveCMD(CodeParserItem parserItem) {
         setJavaBodyRemoveCMD(parserItem);
     }
 
     protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
 
-    private void setJavaBodyReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    private void setJavaBodyReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         methodDeclaration.remove();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         newblockComment.setContent(content);
         Optional<TokenRange> tokenRange = methodDeclaration.getTokenRange();
@@ -156,10 +160,10 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         classInterface.getMembers().add(newblockComment);
     }
 
-    private void setJavaBodyReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, FieldDeclaration fieldDeclaration) {
+    private void setJavaBodyReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, FieldDeclaration fieldDeclaration) {
         fieldDeclaration.remove();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         newblockComment.setContent(content);
         Optional<TokenRange> tokenRange = fieldDeclaration.getTokenRange();
@@ -168,7 +172,7 @@ public abstract class DefaultCodeParser implements CodeGenParser {
         classInterface.getMembers().add(newblockComment);
     }
 
-    private void setJavaBodyRemoveCMD(CodeGenParserItem parserItem) {
+    private void setJavaBodyRemoveCMD(CodeParserItem parserItem) {
         parserItem.removeAll();
     }
 }

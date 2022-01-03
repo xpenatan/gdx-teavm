@@ -1,4 +1,4 @@
-package com.github.xpenatan.tools.jparser.codegen;
+package com.github.xpenatan.tools.jparser.codeparser;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /** @author xpenatan */
-public class CodeGenParserItem {
+public class CodeParserItem {
     public final ArrayList<BlockComment> rawComments = new ArrayList<>();
 
     public CompilationUnit unit;

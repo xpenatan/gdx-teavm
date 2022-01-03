@@ -1,4 +1,4 @@
-package com.github.xpenatan.tools.jparser.codegen.util;
+package com.github.xpenatan.tools.jparser.util;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.VoidVisitor;

@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.html5.bullet;
 
 
 
-import com.github.xpenatan.tools.jparser.codegen.JParser;
+import com.github.xpenatan.tools.jparser.JParser;
 
 import java.io.File;
 

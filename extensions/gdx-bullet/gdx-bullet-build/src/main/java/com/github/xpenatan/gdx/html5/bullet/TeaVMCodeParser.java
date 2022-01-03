@@ -6,16 +6,23 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
-import com.github.xpenatan.tools.jparser.DefaultCodeParser;
-import com.github.xpenatan.tools.jparser.codegen.CodeGenParserItem;
+import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
+import com.github.xpenatan.tools.jparser.codeparser.DefaultCodeParser;
 
 public class TeaVMCodeParser extends DefaultCodeParser {
+
+    private static final String HEADER_CMD = "teaVM";
+
+    public TeaVMCodeParser() {
+        super(HEADER_CMD);
+    }
+
     @Override
     protected void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         NodeList<Parameter> parameters = methodDeclaration.getParameters();
         int size = parameters.size();
 
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
 
         String param = "";
 
