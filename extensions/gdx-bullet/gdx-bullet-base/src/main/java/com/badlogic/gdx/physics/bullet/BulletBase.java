@@ -99,8 +99,7 @@ public class BulletBase implements Disposable {
 		}
 	}
 
-	/*
-		[-teaVM;Native]
+	/* [-teaVM;-NATIVE]
 		Bullet.destroy(jsObj);
 		jsObj = null;
 	 */

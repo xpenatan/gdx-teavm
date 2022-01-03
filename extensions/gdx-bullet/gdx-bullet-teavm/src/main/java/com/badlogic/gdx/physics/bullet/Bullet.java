@@ -13,6 +13,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import java.util.Arrays;
 
+import com.badlogic.gdx.Gdx;
+import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.web.WebApplication;
+import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
+
 /**
  * @author xpenatan
  */
@@ -41,8 +46,7 @@ public class Bullet {
         // + ")");
     }
 
-     
-	private static void initNative() {
+    private static void initNative() {
 		WebApplication app = (WebApplication) Gdx.app;
 		Preloader preloader = app.getPreloader();
 		preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
@@ -56,7 +60,6 @@ public class Bullet {
 			}
 		});
 	}
-	 
 
     /**
      * Dispose static temporary objects. Use when ending app.

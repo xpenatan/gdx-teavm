@@ -7,6 +7,7 @@ group 'com.github.xpenatan.gdx-web-tools'
 sourceSets.main.resources.srcDirs = [ "resources/" ]
 
 dependencies {
+    implementation project(":backends:backend-web")
     implementation project(":backends:backend-teavm")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }

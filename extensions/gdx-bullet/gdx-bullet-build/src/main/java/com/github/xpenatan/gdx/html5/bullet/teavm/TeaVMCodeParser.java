@@ -15,12 +15,12 @@ import java.util.Optional;
 public class TeaVMCodeParser implements CodeGenParser {
 
     public static final String CMD_HEADER = "[-teaVM";
-    public static final String CMD_DELETE = "Delete";
-    public static final String CMD_NATIVE = "Native";
-    public static final String CMD_REPLACE = "Replace";
+    public static final String CMD_DELETE = "-DELETE";
+    public static final String CMD_NATIVE = "-NATIVE";
+    public static final String CMD_ADD = "-ADD";
+    public static final String CMD_REPLACE = "-REPLACE";
 
-    @Override
-    public String parseCodeBlock(CodeGenParserItem parserItem) {
+    private void updateBlock(CodeGenParserItem parserItem) {
         for(int i = 0; i < parserItem.rawComments.size(); i++) {
             BlockComment rawBlockComment = parserItem.rawComments.get(i);
             String headerCommands = CodeGenParserItem.obtainHeaderCommands(rawBlockComment);
@@ -31,9 +31,14 @@ public class TeaVMCodeParser implements CodeGenParser {
                 i--;
             }
         }
+    }
+
+    @Override
+    public void parseCodeBlock(CodeGenParserItem parserItem) {
+        updateBlock(parserItem);
 
         if(parserItem.rawComments.size() == 0) {
-            return null;
+            return;
         }
         // should only work with 1 block comment
         BlockComment blockComment = parserItem.rawComments.get(0);
@@ -55,14 +60,43 @@ public class TeaVMCodeParser implements CodeGenParser {
                 else if(headerCommands.contains(CMD_REPLACE)) {
                     replaceJavaBody(parserItem, headerCommands, blockComment, methodDeclaration);
                 }
+                else if(headerCommands.contains(CMD_DELETE)) {
+                    removeJavaBody(parserItem);
+                }
             }
         }
         else {
             // Block comments without field or method
 
         }
+    }
 
-        return null;
+    @Override
+    public void parseHeaderBlock(CodeGenParserItem parserItem) {
+        updateBlock(parserItem);
+//
+        if(parserItem.rawComments.size() == 0) {
+            return;
+        }
+        // should only work with 1 block comment
+        BlockComment blockComment = parserItem.rawComments.get(0);
+        // Remove raw block comment from source
+        blockComment.remove();
+
+        String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+        if(headerCommands.contains(CMD_ADD)) {
+            addJavaHeaderAddCmd(parserItem, headerCommands, blockComment);
+        }
+    }
+
+    private void addJavaHeaderAddCmd(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
+        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        RawCodeBlock newblockComment = new RawCodeBlock();
+        newblockComment.setContent(content);
+        Optional<TokenRange> tokenRange = blockComment.getTokenRange();
+        TokenRange javaTokens = tokenRange.get();
+        newblockComment.setTokenRange(javaTokens);
+        parserItem.unit.addType(newblockComment);
     }
 
     private void addJSBody(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
@@ -106,5 +140,9 @@ public class TeaVMCodeParser implements CodeGenParser {
         TokenRange javaTokens = tokenRange.get();
         newblockComment.setTokenRange(javaTokens);
         classInterface.getMembers().add(newblockComment);
+    }
+
+    private void removeJavaBody(CodeGenParserItem parserItem) {
+        parserItem.removeAll();
     }
 }
