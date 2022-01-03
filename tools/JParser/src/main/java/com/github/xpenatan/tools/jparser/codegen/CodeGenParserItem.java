@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.bullet.codegen;
+package com.github.xpenatan.tools.jparser.codegen;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;

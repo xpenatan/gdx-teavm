@@ -1,9 +1,8 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
 
-import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGen;
-import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGenParser;
-import com.github.xpenatan.gdx.html5.bullet.teavm.TeaVMCodeParser;
+
+import com.github.xpenatan.tools.jparser.codegen.JParser;
 
 import java.io.File;
 
@@ -13,7 +12,7 @@ public class Main {
         generate(basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", new TeaVMCodeParser());
     }
 
-    public static void generate(String sourceDir, String genDir, CodeGenParser wrapper)  throws Exception {
-        new CodeGen().generate(sourceDir, genDir, wrapper, null);
+    public static void generate(String sourceDir, String genDir, TeaVMCodeParser wrapper)  throws Exception {
+        new JParser().generate(sourceDir, genDir, wrapper, null);
     }
 }

@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.bullet.codegen.util;
+package com.github.xpenatan.tools.jparser.codegen.util;
 
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.visitor.GenericVisitor;

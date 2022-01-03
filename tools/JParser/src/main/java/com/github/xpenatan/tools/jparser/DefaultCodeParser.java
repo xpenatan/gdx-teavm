@@ -1,19 +1,19 @@
-package com.github.xpenatan.gdx.html5.bullet.teavm;
+package com.github.xpenatan.tools.jparser;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.expr.NormalAnnotationExpr;
-import com.github.javaparser.ast.expr.SimpleName;
-import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGenParser;
-import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGenParserItem;
-import com.github.xpenatan.gdx.html5.bullet.codegen.util.RawCodeBlock;
+import com.github.xpenatan.tools.jparser.codegen.CodeGenParser;
+import com.github.xpenatan.tools.jparser.codegen.CodeGenParserItem;
+import com.github.xpenatan.tools.jparser.codegen.util.RawCodeBlock;
+
 import java.util.Optional;
 
 /** @author xpenatan */
-public class TeaVMCodeParser implements CodeGenParser {
+public abstract class DefaultCodeParser implements CodeGenParser {
 
     public static final String CMD_HEADER = "[-teaVM";
     public static final String CMD_ADD = "-ADD";
@@ -142,36 +142,7 @@ public class TeaVMCodeParser implements CodeGenParser {
         setJavaBodyRemoveCMD(parserItem);
     }
 
-    private void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
-        NodeList<Parameter> parameters = methodDeclaration.getParameters();
-        int size = parameters.size();
-
-        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
-
-        String param = "";
-
-        for(int i = 0; i < size; i++) {
-            Parameter parameter = parameters.get(i);
-            SimpleName name = parameter.getName();
-            param += name;
-            if(i < size - 1) {
-                param += "\", \"";
-            }
-        }
-
-        if(content != null) {
-            content = content.replace("\n", "");
-            content = content.trim();
-
-            if(!content.isEmpty()) {
-                NormalAnnotationExpr normalAnnotationExpr = methodDeclaration.addAndGetAnnotation("org.teavm.jso.JSBody");
-                if(!param.isEmpty()) {
-                    normalAnnotationExpr.addPair("params", "{\"" + param + "\"}");
-                }
-                normalAnnotationExpr.addPair("script", "\"" + content + "\"");
-            }
-        }
-    }
+    protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
 
     private void setJavaBodyReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         methodDeclaration.remove();

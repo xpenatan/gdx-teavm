@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.bullet.codegen;
+package com.github.xpenatan.tools.jparser.codegen;
 
 /** @author xpenatan */
 public interface CodeGenParser {
