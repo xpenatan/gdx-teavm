@@ -10,8 +10,11 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import com.github.javaparser.utils.PositionUtils;
 import com.github.xpenatan.gdx.html5.bullet.codegen.util.CustomFileDescriptor;
+import com.github.xpenatan.gdx.html5.bullet.codegen.util.CustomPrettyPrinter;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -122,6 +125,10 @@ public class CodeGen {
     private String parseClass(String javaContent) throws Exception {
         CompilationUnit unit = StaticJavaParser.parse(new ByteArrayInputStream(javaContent.getBytes()));
 
+
+        LexicalPreservingPrinter.setup(unit);
+        new DefaultPrinterConfiguration();
+        unit.printer(new CustomPrettyPrinter());
         List<Node> childrenNodes = unit.getChildNodes();
         Iterator<Node> iterator = childrenNodes.iterator();
         ArrayList<CodeGenParserItem> blockCommentItems = new ArrayList<>();

@@ -33,12 +33,15 @@ public class Bullet {
             return;
         Bullet.bulletInit = true;
         Bullet.enableLogging = logging;
+        initNative();
         // new SharedLibraryLoader().load("gdx-bullet");
         // final int version = btScalar.btGetVersion();
         // if (version != VERSION)
         // throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
         // + ")");
     }
+
+    private static native void initNative();
 
     /**
      * Dispose static temporary objects. Use when ending app.

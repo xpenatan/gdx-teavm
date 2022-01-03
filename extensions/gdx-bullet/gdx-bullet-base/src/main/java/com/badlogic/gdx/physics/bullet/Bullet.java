@@ -27,12 +27,33 @@ public class Bullet {
 			return;
 		Bullet.bulletInit = true;
 		Bullet.enableLogging = logging;
+
+		initNative();
 //		new SharedLibraryLoader().load("gdx-bullet");
 //		final int version = btScalar.btGetVersion();
 //		if (version != VERSION)
 //			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
 //				+ ")");
 	}
+
+
+	/* [-teaVM;Replace]
+		WebApplication app = (WebApplication) Gdx.app;
+		Preloader preloader = app.getPreloader();
+		preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
+			@Override
+			public boolean onSuccess(String url, Object result) {
+				return true;
+			}
+
+			@Override
+			public void onFailure(String url) {
+			}
+		});
+	 */
+	private static native void initNative();
+
+
 	/*[0;X]
 		if(Bullet.bulletInit)
 			return;
