@@ -131,7 +131,6 @@ public class CodeGen {
         unit.printer(new CustomPrettyPrinter());
         List<Node> childrenNodes = unit.getChildNodes();
         Iterator<Node> iterator = childrenNodes.iterator();
-        ArrayList<CodeGenParserItem> blockCommentItems = new ArrayList<>();
 
         while(iterator.hasNext()) {
             Node node = iterator.next();
@@ -143,22 +142,17 @@ public class CodeGen {
             else if(node instanceof ImportDeclaration) {
             }
             else if(node instanceof ClassOrInterfaceDeclaration) {
-                parseClassInterface((ClassOrInterfaceDeclaration) node, 0, blockCommentItems);
+                parseClassInterface(wrapper, (ClassOrInterfaceDeclaration) node, 0);
             }
             else if(node instanceof BlockComment) {
                 BlockComment blockComment = (BlockComment) node;
             }
         }
 
-        for(int i = 0; i < blockCommentItems.size(); i++) {
-            CodeGenParserItem parserItem = blockCommentItems.get(i);
-            wrapper.parseCodeBlock(parserItem);
-        }
-
         return unit.toString();
     }
 
-    private static void parseClassInterface(ClassOrInterfaceDeclaration clazzInterface, int classLevel, ArrayList<CodeGenParserItem> blockCommentItems) {
+    private static void parseClassInterface(CodeGenParser wrapper, ClassOrInterfaceDeclaration clazzInterface, int classLevel) {
         ArrayList<Node> array = new ArrayList<>();
         ArrayList<BlockComment> blockComments = new ArrayList<>();
         array.addAll(clazzInterface.getChildNodes());
@@ -185,7 +179,7 @@ public class CodeGen {
                         addField = true;
                     }
                 }
-                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, addField ? field : null, null);
+                addBlockCommentItem(wrapper, clazzInterface, blockComments, addField ? field : null, null);
             }
             else if(node instanceof MethodDeclaration) {
                 MethodDeclaration method = (MethodDeclaration) node;
@@ -199,25 +193,24 @@ public class CodeGen {
                         addMethod = true;
                     }
                 }
-                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, null, addMethod ? method : null);
+                addBlockCommentItem(wrapper, clazzInterface, blockComments, null, addMethod ? method : null);
             }
             else {
-                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, null, null);
+                addBlockCommentItem(wrapper, clazzInterface, blockComments, null, null);
                 if(node instanceof ClassOrInterfaceDeclaration) {
-                    parseClassInterface((ClassOrInterfaceDeclaration) node, ++classLevel, blockCommentItems);
+                    parseClassInterface(wrapper, (ClassOrInterfaceDeclaration) node, ++classLevel);
                 }
             }
         }
 
-        if(classLevel == 0 && blockComments.size() > 0) {
-            CodeGenParserItem parserItem = new CodeGenParserItem();
-            parserItem.rawComments.addAll(blockComments);
-            blockComments.clear();
-            blockCommentItems.add(parserItem);
+        if(classLevel == 0) {
+            addBlockCommentItem(wrapper, clazzInterface, blockComments, null, null);
         }
+
+        PositionUtils.sortByBeginPosition(clazzInterface.getMembers(), false);
     }
 
-    private static void addBlockCommentItem(ClassOrInterfaceDeclaration classInterface, ArrayList<CodeGenParserItem> blockCommentItems, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method) {
+    private static void addBlockCommentItem(CodeGenParser wrapper, ClassOrInterfaceDeclaration classInterface, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method) {
         if(blockComments.size() > 0) {
             CodeGenParserItem parserItem = new CodeGenParserItem();
             parserItem.rawComments.addAll(blockComments);
@@ -225,7 +218,7 @@ public class CodeGen {
             parserItem.methodDeclaration = method;
             parserItem.classInterface = classInterface;
             blockComments.clear();
-            blockCommentItems.add(parserItem);
+            wrapper.parseCodeBlock(parserItem);
         }
     }
 }
