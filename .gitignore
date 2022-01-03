@@ -63,3 +63,4 @@ local.properties
 *.ini
 examples/**/*.xml
 examples/**/*.html
+**/gdx-bullet-teavm/src/**
