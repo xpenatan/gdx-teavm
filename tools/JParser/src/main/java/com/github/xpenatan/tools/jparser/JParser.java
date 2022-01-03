@@ -28,8 +28,8 @@ import java.util.Optional;
  *  The DefaultCodeParser searches for a header tag staring with '[-HEADER' and ending with ']'.
  *  Then it will call the code parser listener, so it can modify the original source code.
  *
- *  DefaultCodeParser is an abstract class that does most of the work to ADD, REPLACE or REMOVE the code block with your own custom code.
- *  The NATIVE tag needs to be implemented, and it only works with native methods.
+ *  DefaultCodeParser is an abstract class that does most of the work to -ADD, -REPLACE or -REMOVE the code block with your own custom code.
+ *  The -NATIVE tag needs to be implemented, and it only works with native methods.
  *  DefaultCodeParser will remove the code block automatically if the HEADER tag does not match.
  *
  *  @author xpenatan */
