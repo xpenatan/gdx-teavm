@@ -28,6 +28,11 @@ import java.util.zip.ZipInputStream;
  * @author xpenatan
  */
 public class TeaBuilder {
+
+    private static final String EXTENSION_FREETYPE = "gdx-freetype-teavm";
+    private static final String EXTENSION_BULLET = "gdx-bullet-teavm";
+    private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
+
     public static void build(WebBuildConfiguration configuration) {
         build(configuration, null);
     }
@@ -270,7 +275,9 @@ public class TeaBuilder {
 
         // TODO make a better sort. Lazy to do it now
         // Move extensions to be first so native classes are replaced by the emulated classes
-        makeClassPathFirst(acceptedURL, "gdx-freetype-teavm");
+        makeClassPathFirst(acceptedURL, EXTENSION_FREETYPE);
+        // Move extensions to be first so native classes are replaced by the emulated classes
+        makeClassPathFirst(acceptedURL, EXTENSION_BULLET);
         // Move generic web backend to be first
         makeClassPathFirst(acceptedURL, "backend-web");
         // Make backend-teavm first so some classes are replaced by emulated classes
@@ -395,13 +402,17 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if (path.contains("generator/core/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if (path.contains("gdx-bullet/"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
 
         if (path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains("gdx-box2d-gwt"))
+        else if (path.contains(EXTENSION_BOX2D_GWT))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains("gdx-freetype-teavm"))
+        else if (path.contains(EXTENSION_FREETYPE))
+            isValid = ACCEPT_STATE.ACCEPT;
+        else if (path.contains(EXTENSION_BULLET))
             isValid = ACCEPT_STATE.ACCEPT;
 
         return isValid;
