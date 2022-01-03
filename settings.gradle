@@ -5,9 +5,12 @@ include ":extensions:gdx-bullet:gdx-bullet-base"
 include ":extensions:gdx-bullet:gdx-bullet-build"
 include ":extensions:gdx-bullet:gdx-bullet-teavm"
 
+include ":tools:generator:core"
+include ":tools:generator:desktop"
+
 include ":examples:core:core"
 include ":examples:core:desktop"
 include ":examples:core:teavm"
-
-include ":tools:generator:core"
-include ":tools:generator:desktop"
+include ":examples:bullet:core"
+include ":examples:bullet:desktop"
+include ":examples:bullet:teavm"
