@@ -82,7 +82,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public void create() {
-//        Bullet.init();
+        Bullet.init();
 
 //        btVersion = Bullet.VERSION;
 

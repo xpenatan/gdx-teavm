@@ -178,7 +178,7 @@ public class CodeGen {
                         addField = true;
                     }
                 }
-                addBlockCommentItem(blockCommentItems, blockComments, addField ? field : null, null);
+                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, addField ? field : null, null);
             }
             else if(node instanceof MethodDeclaration) {
                 MethodDeclaration method = (MethodDeclaration) node;
@@ -192,10 +192,10 @@ public class CodeGen {
                         addMethod = true;
                     }
                 }
-                addBlockCommentItem(blockCommentItems, blockComments, null, addMethod ? method : null);
+                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, null, addMethod ? method : null);
             }
             else {
-                addBlockCommentItem(blockCommentItems, blockComments, null, null);
+                addBlockCommentItem(clazzInterface, blockCommentItems, blockComments, null, null);
                 if(node instanceof ClassOrInterfaceDeclaration) {
                     parseClassInterface((ClassOrInterfaceDeclaration) node, ++classLevel, blockCommentItems);
                 }
@@ -210,12 +210,13 @@ public class CodeGen {
         }
     }
 
-    private static void addBlockCommentItem(ArrayList<CodeGenParserItem> blockCommentItems, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method) {
+    private static void addBlockCommentItem(ClassOrInterfaceDeclaration classInterface, ArrayList<CodeGenParserItem> blockCommentItems, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method) {
         if(blockComments.size() > 0) {
             CodeGenParserItem parserItem = new CodeGenParserItem();
             parserItem.rawComments.addAll(blockComments);
             parserItem.fieldDeclaration = field;
             parserItem.methodDeclaration = method;
+            parserItem.classInterface = classInterface;
             blockComments.clear();
             blockCommentItems.add(parserItem);
         }

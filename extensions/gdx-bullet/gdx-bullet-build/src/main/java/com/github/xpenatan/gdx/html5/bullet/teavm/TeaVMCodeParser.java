@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.html5.bullet.teavm;
 
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -16,6 +17,7 @@ public class TeaVMCodeParser implements CodeGenParser {
     public static final String CMD_HEADER = "[-teaVM";
     public static final String CMD_DELETE = "Delete";
     public static final String CMD_NATIVE = "Native";
+    public static final String CMD_REPLACE = "Replace";
 
     @Override
     public String parseCodeBlock(CodeGenParserItem parserItem) {
@@ -44,9 +46,16 @@ public class TeaVMCodeParser implements CodeGenParser {
         }
         else if(parserItem.isMethodBlock()) {
             MethodDeclaration methodDeclaration = parserItem.methodDeclaration;
+            String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
 
-            if(methodDeclaration.isNative())
-                addJSBody(blockComment, methodDeclaration);
+            if(methodDeclaration.isNative()) {
+                if(headerCommands.contains(CMD_NATIVE)) {
+                    addJSBody(headerCommands, blockComment, methodDeclaration);
+                }
+                else if(headerCommands.contains(CMD_REPLACE)) {
+                    replaceJSBody(parserItem, headerCommands, blockComment, methodDeclaration);
+                }
+            }
         }
         else {
             // Block comments without field or method
@@ -56,15 +65,9 @@ public class TeaVMCodeParser implements CodeGenParser {
         return null;
     }
 
-    private void addJSBody(BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    private void addJSBody(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         NodeList<Parameter> parameters = methodDeclaration.getParameters();
         int size = parameters.size();
-
-        String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
-
-        // Don't do nothing if its not a command
-        if(!headerCommands.contains(CMD_NATIVE))
-            return;
 
         String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
 
@@ -91,5 +94,10 @@ public class TeaVMCodeParser implements CodeGenParser {
                 normalAnnotationExpr.addPair("script", "\"" + content + "\"");
             }
         }
+    }
+
+    private void replaceJSBody(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+        ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
+
     }
 }

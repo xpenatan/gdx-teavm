@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.html5.bullet.codegen;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -10,6 +11,8 @@ import java.util.Scanner;
 /** @author xpenatan */
 public class CodeGenParserItem {
     public final ArrayList<BlockComment> rawComments = new ArrayList<>();
+
+    public ClassOrInterfaceDeclaration classInterface;
 
     public FieldDeclaration fieldDeclaration;
 
