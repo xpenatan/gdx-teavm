@@ -45,7 +45,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     ScreenViewport guiViewport;
 
     Array<ModelInstance> boxes = new Array<>();
-    Array<btRigidBody> colObjs = new Array<>();
+//    Array<btRigidBody> colObjs = new Array<>();
 
     ModelInstance ground;
 
@@ -55,13 +55,13 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     Environment environment;
 
-    btDiscreteDynamicsWorld world;
-
-    DebugDrawer debugDrawer;
-    btDefaultCollisionConfiguration collisionConfiguration;
-    btCollisionDispatcher dispatcher;
-    btDbvtBroadphase broadphase;
-    btSequentialImpulseConstraintSolver solver;
+//    btDiscreteDynamicsWorld world;
+//    DebugDrawer debugDrawer;
+//    btDefaultCollisionConfiguration collisionConfiguration;
+//    btCollisionDispatcher dispatcher;
+//    btDbvtBroadphase broadphase;
+//    btSequentialImpulseConstraintSolver solver;
+//    ClosestRayResultCallback raycast;
 
     BitmapFont font;
 
@@ -78,25 +78,25 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     static Vector3 rayFrom = new Vector3();
     static Vector3 rayTo = new Vector3();
 
-    ClosestRayResultCallback raycast;
     CameraInputController cameraController;
 
     @Override
     public void create() {
-        Bullet.init();
+//        Bullet.init();
 
-        btVersion = Bullet.VERSION;
+//        btVersion = Bullet.VERSION;
 
-        collisionConfiguration = new btDefaultCollisionConfiguration();
-        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        broadphase = new btDbvtBroadphase();
-        solver = new btSequentialImpulseConstraintSolver();
-        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        Vector3 gravity = new Vector3(0, -10, 0);
-        world.setGravity(gravity);
-        debugDrawer = new DebugDrawer();
-        world.setDebugDrawer(debugDrawer);
-        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
+//        collisionConfiguration = new btDefaultCollisionConfiguration();
+//        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+//        broadphase = new btDbvtBroadphase();
+//        solver = new btSequentialImpulseConstraintSolver();
+//        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+//        Vector3 gravity = new Vector3(0, -10, 0);
+//        world.setGravity(gravity);
+//        debugDrawer = new DebugDrawer();
+//        world.setDebugDrawer(debugDrawer);
+//        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
+//        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
         camera = new PerspectiveCamera();
         viewport = new ScreenViewport(camera);
@@ -140,8 +140,6 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         font.setColor(1, 0, 0, 1);
         time = System.currentTimeMillis();
 
-        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
-
         cameraController = new CameraInputController(camera);
         cameraController.autoUpdate = false;
         cameraController.forwardTarget = false;
@@ -166,27 +164,27 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         modelInstance.transform.rotate(Vector3.Y, axiY);
         modelInstance.transform.rotate(Vector3.Z, axiZ);
 
-        TestMotionState motionState = new TestMotionState(modelInstance.transform);
-        btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
-        shape.calculateLocalInertia(mass, tmp.setZero());
-        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
-        body.userData = userData;
-        if(add)
-            colObjs.add(body);
-        body.setRestitution(0.7f);
-
-        world.addRigidBody(body);
+//        TestMotionState motionState = new TestMotionState(modelInstance.transform);
+//        btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
+//        shape.calculateLocalInertia(mass, tmp.setZero());
+//        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
+//        body.userData = userData;
+//        if(add)
+//            colObjs.add(body);
+//        body.setRestitution(0.7f);
+//
+//        world.addRigidBody(body);
         return modelInstance;
     }
 
     public void resetBoxes() {
-        for(int i = 0; i < colObjs.size; i++) {
-            btRigidBody btCollisionObject = colObjs.get(i);
-            world.removeRigidBody(btCollisionObject);
-            btCollisionObject.dispose();
-        }
-
-        colObjs.clear();
+//        for(int i = 0; i < colObjs.size; i++) {
+//            btRigidBody btCollisionObject = colObjs.get(i);
+//            world.removeRigidBody(btCollisionObject);
+//            btCollisionObject.dispose();
+//        }
+//
+//        colObjs.clear();
         boxes.clear();
         int count = 0;
 
@@ -227,7 +225,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
                 time = System.currentTimeMillis();
             }
 
-            world.stepSimulation(Gdx.graphics.getDeltaTime());
+//            world.stepSimulation(Gdx.graphics.getDeltaTime());
         }
 
         modelBatch.begin(camera);
@@ -240,9 +238,9 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         modelBatch.end();
 
         if(debug) {
-            debugDrawer.begin(camera);
-            world.debugDrawWorld();
-            debugDrawer.end();
+//            debugDrawer.begin(camera);
+//            world.debugDrawWorld();
+//            debugDrawer.end();
         }
 
         batch.begin();
@@ -272,11 +270,11 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public void dispose() {
-        world.dispose();
-        solver.dispose();
-        broadphase.dispose();
-        dispatcher.dispose();
-        collisionConfiguration.dispose();
+//        world.dispose();
+//        solver.dispose();
+//        broadphase.dispose();
+//        dispatcher.dispose();
+//        collisionConfiguration.dispose();
     }
 
     @Override
@@ -303,20 +301,20 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(button == Buttons.LEFT) {
-            Ray ray = camera.getPickRay(screenX, screenY);
-            float ScaleToMeter = 1;
-            rayFrom.set(ray.origin.scl(ScaleToMeter));
-            rayTo.set(ray.direction).scl(200).add(rayFrom);
-            raycast.setCollisionObject(null);
-            raycast.setClosestHitFraction(1f);
-            world.rayTest(rayFrom, rayTo, raycast);
-
-            if(raycast.hasHit()) {
-                btCollisionObject collisionObject = raycast.getCollisionObject();
-                System.out.println("HIT Body:" + collisionObject.userData);
-            }
-        }
+//        if(button == Buttons.LEFT) {
+//            Ray ray = camera.getPickRay(screenX, screenY);
+//            float ScaleToMeter = 1;
+//            rayFrom.set(ray.origin.scl(ScaleToMeter));
+//            rayTo.set(ray.direction).scl(200).add(rayFrom);
+//            raycast.setCollisionObject(null);
+//            raycast.setClosestHitFraction(1f);
+//            world.rayTest(rayFrom, rayTo, raycast);
+//
+//            if(raycast.hasHit()) {
+//                btCollisionObject collisionObject = raycast.getCollisionObject();
+//                System.out.println("HIT Body:" + collisionObject.userData);
+//            }
+//        }
         return false;
     }
 
