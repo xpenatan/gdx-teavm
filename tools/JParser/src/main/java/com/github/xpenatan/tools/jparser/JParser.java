@@ -40,45 +40,38 @@ public class JParser {
             + " *\n * Do not make changes to this file\n"
             + " *-------------------------------------------------------";
 
-    CustomFileDescriptor sourceDir;
-    CustomFileDescriptor genDir;
-    String[] excludes;
-    CodeParser wrapper;
-
-    public void generate(String sourceDir, String genDir, CodeParser wrapper, String[] excludes) throws Exception {
-        this.excludes = excludes;
-        this.wrapper = wrapper;
-        this.sourceDir = new CustomFileDescriptor(sourceDir);
-        this.genDir = new CustomFileDescriptor(genDir);
+    public void generate(CodeParser wrapper, String sourceDir, String genDir, String[] excludes) throws Exception {
+        CustomFileDescriptor fileSourceDir = new CustomFileDescriptor(sourceDir);
+        CustomFileDescriptor fileGenDir = new CustomFileDescriptor(genDir);
 
         // check if source directory exists
-        if(!this.sourceDir.exists()) {
+        if(!fileSourceDir.exists()) {
             throw new Exception("Java source directory '" + sourceDir + "' does not exist");
         }
 
-        if(!this.genDir.exists()) {
-            if(!this.genDir.mkdirs()) {
+        if(!fileGenDir.exists()) {
+            if(!fileGenDir.mkdirs()) {
                 throw new Exception("Couldn't create directory '" + genDir + "'");
             }
         }
         else {
-            this.genDir.deleteDirectory();
-            if(!this.genDir.mkdirs()) {
+            fileGenDir.deleteDirectory();
+            if(!fileGenDir.mkdirs()) {
                 throw new Exception("Couldn't create directory '" + genDir + "'");
             }
         }
         System.out.println("***** GENERATING CODE *****");
-        processDirectory(this.sourceDir);
+        processDirectory(wrapper, fileSourceDir, fileGenDir, excludes, fileSourceDir);
         System.out.println("********** DONE ***********");
     }
 
-    private void processDirectory(CustomFileDescriptor dir) throws Exception {
+    private void processDirectory(CodeParser wrapper, CustomFileDescriptor fileSourceDir, CustomFileDescriptor fileGenDir, String[] excludes, CustomFileDescriptor dir) throws Exception {
         CustomFileDescriptor[] files = dir.list();
         for(CustomFileDescriptor file : files) {
             if(file.isDirectory()) {
                 if(file.path().contains(".svn")) continue;
                 if(file.path().contains(".git")) continue;
-                processDirectory(file);
+                processDirectory(wrapper, fileSourceDir, fileGenDir, excludes, file);
             }
             else {
                 if(file.extension().equals("java")) {
@@ -104,35 +97,35 @@ public class JParser {
                     if(stop)
                         continue;
 
-                    String className = getFullyQualifiedClassName(file);
-                    CustomFileDescriptor codeFile = new CustomFileDescriptor(genDir + "/" + className + ".cpp");
+                    String className = getFullyQualifiedClassName(fileSourceDir, file);
+                    CustomFileDescriptor codeFile = new CustomFileDescriptor(fileGenDir + "/" + className + ".cpp");
                     if(file.lastModified() < codeFile.lastModified()) {
                         System.out.println("Code for '" + file.path() + "' up to date");
                         continue;
                     }
                     String javaContent = file.readString();
                     System.out.println("Parsing: " + file);
-                    String codeParsed = parseClass(javaContent);
-                    generateFile(file, codeParsed);
+                    String codeParsed = parseClass(wrapper, javaContent);
+                    generateFile(fileSourceDir, fileGenDir, file, codeParsed);
                 }
             }
         }
     }
 
-    private void generateFile(CustomFileDescriptor fileName, String javaContent) {
-        String packageFilePath = fileName.file().getAbsolutePath().replace(sourceDir.file().getAbsolutePath(), "");
-        String fullPath = genDir.file().getAbsolutePath() + packageFilePath;
+    private void generateFile(CustomFileDescriptor fileSourceDir, CustomFileDescriptor fileGenDir, CustomFileDescriptor fileName, String javaContent) {
+        String packageFilePath = fileName.file().getAbsolutePath().replace(fileSourceDir.file().getAbsolutePath(), "");
+        String fullPath = fileGenDir.file().getAbsolutePath() + packageFilePath;
         CustomFileDescriptor fileDescriptor = new CustomFileDescriptor(fullPath);
         fileDescriptor.writeString(javaContent, false);
     }
 
-    private String getFullyQualifiedClassName(CustomFileDescriptor file) {
-        String className = file.path().replace(sourceDir.path(), "").replace('\\', '.').replace('/', '.').replace(".java", "");
+    private String getFullyQualifiedClassName(CustomFileDescriptor fileSourceDir, CustomFileDescriptor file) {
+        String className = file.path().replace(fileSourceDir.path(), "").replace('\\', '.').replace('/', '.').replace(".java", "");
         if(className.startsWith(".")) className = className.substring(1);
         return className;
     }
 
-    private String parseClass(String javaContent) throws Exception {
+    private String parseClass(CodeParser wrapper, String javaContent) throws Exception {
         CompilationUnit unit = StaticJavaParser.parse(new ByteArrayInputStream(javaContent.getBytes()));
         unit.printer(new CustomPrettyPrinter());
 

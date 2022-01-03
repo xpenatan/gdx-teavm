@@ -9,10 +9,10 @@ import java.io.File;
 public class Main {
     public static void main(String[] args) throws Exception {
         String basePath = new File(".").getAbsolutePath();
-        generate(basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", new TeaVMCodeParser());
+        generate(new TeaVMCodeParser(), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src");
     }
 
-    public static void generate(String sourceDir, String genDir, TeaVMCodeParser wrapper)  throws Exception {
-        new JParser().generate(sourceDir, genDir, wrapper, null);
+    public static void generate(TeaVMCodeParser wrapper, String sourceDir, String genDir)  throws Exception {
+        new JParser().generate(wrapper, sourceDir, genDir, null);
     }
 }
