@@ -98,7 +98,7 @@ public class CodeParserItem {
         Scanner scanner = new Scanner(content);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
-            if(line.startsWith("[-") && line.endsWith("]")) {
+            if(line.startsWith(DefaultCodeParser.CMD_HEADER_START) && line.endsWith(DefaultCodeParser.CMD_HEADER_END)) {
                 scanner.close();
                 return line;
             }

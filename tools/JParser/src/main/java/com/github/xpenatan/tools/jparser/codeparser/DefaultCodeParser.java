@@ -13,7 +13,8 @@ import java.util.Optional;
 /** @author xpenatan */
 public abstract class DefaultCodeParser implements CodeParser {
 
-    public static final String CMD_HEADER = "[-";
+    static final String CMD_HEADER_START = "[-";
+    static final String CMD_HEADER_END = "]";
     public static final String CMD_ADD = "-ADD";
     public static final String CMD_REMOVE = "-REMOVE";
     public static final String CMD_REPLACE = "-REPLACE";
@@ -30,7 +31,7 @@ public abstract class DefaultCodeParser implements CodeParser {
             BlockComment rawBlockComment = parserItem.rawComments.get(i);
             String headerCommands = CodeParserItem.obtainHeaderCommands(rawBlockComment);
             // Remove comment block if its not part of this parser
-            if(headerCommands == null || !headerCommands.startsWith(CMD_HEADER + headerCMD)) {
+            if(headerCommands == null || !(headerCommands.startsWith(CMD_HEADER_START + headerCMD) && headerCommands.endsWith(CMD_HEADER_END))) {
                 rawBlockComment.remove();
                 parserItem.rawComments.remove(i);
                 i--;
