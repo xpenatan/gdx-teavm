@@ -6,6 +6,8 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.DefaultCodeParser;
 
@@ -45,6 +47,15 @@ public class TeaVMCodeParser extends DefaultCodeParser {
                     normalAnnotationExpr.addPair("params", "{\"" + param + "\"}");
                 }
                 normalAnnotationExpr.addPair("script", "\"" + content + "\"");
+                Type type = methodDeclaration.getType();
+                methodDeclaration.getType().isPrimitiveType();
+                if(type.isPrimitiveType()) {
+                    // teaVM does not support Long so we convert the return type to int
+                    PrimitiveType primitiveType = type.asPrimitiveType();
+                    if(primitiveType.getType().name().equals("LONG")) {
+                        methodDeclaration.setType(int.class);
+                    }
+                }
             }
         }
     }
