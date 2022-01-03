@@ -6,6 +6,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -202,6 +203,11 @@ public class JParser {
                     }
                 }
                 addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, addField ? field : null, null, null);
+                wrapper.onParseField(field);
+            }
+            else if(node instanceof ConstructorDeclaration) {
+                ConstructorDeclaration constructor = (ConstructorDeclaration) node;
+                wrapper.onParseConstructor(constructor);
             }
             else if(node instanceof MethodDeclaration) {
                 MethodDeclaration method = (MethodDeclaration) node;
@@ -216,6 +222,7 @@ public class JParser {
                     }
                 }
                 addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, addMethod ? method : null, null);
+                wrapper.onParseMethod(method);
             }
             else {
                 addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);

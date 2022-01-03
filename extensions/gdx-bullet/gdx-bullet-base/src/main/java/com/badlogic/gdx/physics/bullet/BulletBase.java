@@ -5,8 +5,11 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** @author xpenatan */
 public class BulletBase implements Disposable {
-	private long cPointer;
-	protected boolean swigCMemOwn;
+	/*[-teaVM;-REPLACE]
+	protected int cPointer;
+	 */
+	protected long cPointer;
+	protected boolean cMemOwn;
 	private boolean disposed;
 	protected boolean destroyed;
 	public final String className;
@@ -14,7 +17,7 @@ public class BulletBase implements Disposable {
 
 	protected BulletBase (final String className, long cPtr, boolean cMemoryOwn) {
 		this.className = className;
-		swigCMemOwn = cMemoryOwn;
+		cMemOwn = cMemoryOwn;
 		cPointer = cPtr;
 	}
 
@@ -39,7 +42,7 @@ public class BulletBase implements Disposable {
 
 	protected void reset (long cPtr, boolean cMemoryOwn) {
 		if (!destroyed) destroy();
-		swigCMemOwn = cMemoryOwn;
+		cMemOwn = cMemoryOwn;
 		cPointer = cPtr;
 		construct();
 	}
@@ -61,18 +64,18 @@ public class BulletBase implements Disposable {
 
 	/** Take ownership of the native instance, causing the native object to be deleted when this object gets out of scope. */
 	public void takeOwnership () {
-		swigCMemOwn = true;
+		cMemOwn = true;
 	}
 
 	/** Release ownership of the native instance, causing the native object NOT to be deleted when this object gets out of
 	 * scope. */
 	public void releaseOwnership () {
-		swigCMemOwn = false;
+		cMemOwn = false;
 	}
 
 	/** @return True if the native is destroyed when this object gets out of scope, false otherwise. */
 	public boolean hasOwnership () {
-		return swigCMemOwn;
+		return cMemOwn;
 	}
 
 	/** Deletes the bullet object this class encapsulates. Do not call directly, instead use the {@link #dispose()} method. */
@@ -95,7 +98,7 @@ public class BulletBase implements Disposable {
 
 	@Override
 	public String toString () {
-		return className + "(" + cPointer + "," + swigCMemOwn + ")";
+		return className + "(" + cPointer + "," + cMemOwn + ")";
 	}
 
 	protected void destroy () {
@@ -103,7 +106,7 @@ public class BulletBase implements Disposable {
 			if (destroyed && Bullet.enableLogging) Gdx.app.error("Bullet", "Already destroyed " + toString());
 			destroyed = true;
 
-			if (swigCMemOwn && !disposed) {
+			if (cMemOwn && !disposed) {
 				if (Bullet.enableLogging) Gdx.app.error("Bullet", "Disposing " + toString() + " due to garbage collection.");
 				dispose();
 			}

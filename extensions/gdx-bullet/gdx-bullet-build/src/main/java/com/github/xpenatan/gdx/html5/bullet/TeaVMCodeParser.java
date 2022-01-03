@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -8,6 +10,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.DefaultCodeParser;
 
@@ -47,16 +50,42 @@ public class TeaVMCodeParser extends DefaultCodeParser {
                     normalAnnotationExpr.addPair("params", "{\"" + param + "\"}");
                 }
                 normalAnnotationExpr.addPair("script", "\"" + content + "\"");
-                Type type = methodDeclaration.getType();
-                methodDeclaration.getType().isPrimitiveType();
-                if(type.isPrimitiveType()) {
-                    // teaVM does not support Long so we convert the return type to int
-                    PrimitiveType primitiveType = type.asPrimitiveType();
-                    if(primitiveType.getType().name().equals("LONG")) {
-                        methodDeclaration.setType(int.class);
-                    }
-                }
             }
         }
+    }
+
+    @Override
+    public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {
+        convertLongToIntParameters(constructorDeclaration.getParameters());
+    }
+
+    @Override
+    public void onParseMethod(MethodDeclaration methodDeclaration) {
+        {
+            // teaVM does not support Long so we convert the return type to int
+            if(isTypeLong(methodDeclaration.getType())) {
+                methodDeclaration.setType(int.class);
+            }
+            convertLongToIntParameters(methodDeclaration.getParameters());
+        }
+    }
+
+    private void convertLongToIntParameters(NodeList<Parameter> parameters) {
+        int size = parameters.size();
+        for(int i = 0; i < size; i++) {
+            Parameter parameter = parameters.get(i);
+            if(isTypeLong(parameter.getType())){
+                Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+                parameter.setType(intType);
+            }
+        }
+    }
+
+    private boolean isTypeLong(Type type) {
+        if(type.isPrimitiveType()) {
+            PrimitiveType primitiveType = type.asPrimitiveType();
+            return primitiveType.getType().name().equals("LONG");
+        }
+        return false;
     }
 }

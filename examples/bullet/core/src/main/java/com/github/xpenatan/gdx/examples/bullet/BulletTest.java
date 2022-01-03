@@ -35,6 +35,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -86,6 +87,17 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         Bullet.init();
 
         btVersion = LinearMath.btGetVersion();
+
+
+        btVector3 vector3 = new btVector3(10, 5, 40);
+        float x = vector3.x();
+        float y = vector3.y();
+        float z = vector3.z();
+
+        System.out.println("X: " + x);
+        System.out.println("Y: " + y);
+        System.out.println("Z: " + z);
+
 
 //        collisionConfiguration = new btDefaultCollisionConfiguration();
 //        dispatcher = new btCollisionDispatcher(collisionConfiguration);
