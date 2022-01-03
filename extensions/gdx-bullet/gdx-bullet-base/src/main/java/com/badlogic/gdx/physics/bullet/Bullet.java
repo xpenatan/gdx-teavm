@@ -3,8 +3,10 @@ package com.badlogic.gdx.physics.bullet;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMathConstants;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 import java.util.Arrays;
 /* [-teaVM;-ADD]
@@ -34,11 +36,10 @@ public class Bullet {
 		Bullet.enableLogging = logging;
 
 		initNative();
-//		new SharedLibraryLoader().load("gdx-bullet");
-//		final int version = btScalar.btGetVersion();
-//		if (version != VERSION)
-//			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
-//				+ ")");
+		final int version = LinearMath.btGetVersion();
+		if (version != VERSION)
+			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
+				+ ")");
 	}
 
 
@@ -59,6 +60,8 @@ public class Bullet {
 	}
 	 */
 	private static native void initNative();
+
+
 
 
 	/*[0;X]

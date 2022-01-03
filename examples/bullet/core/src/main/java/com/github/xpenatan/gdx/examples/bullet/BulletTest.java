@@ -32,6 +32,7 @@ import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
@@ -84,7 +85,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     public void create() {
         Bullet.init();
 
-//        btVersion = Bullet.VERSION;
+        btVersion = LinearMath.btGetVersion();
 
 //        collisionConfiguration = new btDefaultCollisionConfiguration();
 //        dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -247,7 +248,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         font.draw(batch, "\nFPS: " + Gdx.graphics.getFramesPerSecond() +
                 "\nBullet Version: " + btVersion +
                 "\nInputs: Space to un/freeze simulation\nHold Left/Right mouse to manipulate camera", 30, Gdx.graphics.getHeight() - 14);
-        font.draw(batch, "Libgdx Dragome Backend + Dragome Bullet Extension by xpenatan", 20, 30);
+        font.draw(batch, "Libgdx teaVM Backend + teaVM Bullet Extension by xpenatan", 20, 30);
         batch.end();
     }
 

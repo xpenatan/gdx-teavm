@@ -76,12 +76,12 @@ public class BulletBase implements Disposable {
 	final public void dispose () {
 		if(cPointer != 0 && cMemOwn) {
 			if (disposed) {
-				if(Bullet.enableLogging && Gdx.app != null)
-					Gdx.app.error("Bullet", "Already disposed "+toString());
+//				if(Bullet.enableLogging && Gdx.app != null)
+//					Gdx.app.error("Bullet", "Already disposed "+toString());
 			}
 			else {
-				if (Bullet.enableLogging && Gdx.app != null)
-					Gdx.app.debug("Bullet", "Disposing " +toString());
+//				if (Bullet.enableLogging && Gdx.app != null)
+//					Gdx.app.debug("Bullet", "Disposing " +toString());
 				destroy();
 			}
 		}
@@ -118,13 +118,13 @@ public class BulletBase implements Disposable {
 	protected void finalize() throws Throwable {
 		if(cPointer != 0 && cMemOwn && disposed == false) {
 
-			if (Bullet.enableLogging) {
-				String debugText = "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.";
-				if(Gdx.app != null)
-					Gdx.app.error("Bullet", debugText);
-				else
-					System.out.println("Bullet - " + debugText);
-			}
+//			if (Bullet.enableLogging) {
+//				String debugText = "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.";
+//				if(Gdx.app != null)
+//					Gdx.app.error("Bullet", debugText);
+//				else
+//					System.out.println("Bullet - " + debugText);
+//			}
 			destroy();
 		}
 		super.finalize();

@@ -10,7 +10,7 @@ dependencies {
     implementation project(":tools:JParser")
 }
 
-task run(dependsOn: classes, type: JavaExec) {
+task generateNativeProject(dependsOn: classes, type: JavaExec) {
     group = 'other'
     description = 'Generate native project'
 
