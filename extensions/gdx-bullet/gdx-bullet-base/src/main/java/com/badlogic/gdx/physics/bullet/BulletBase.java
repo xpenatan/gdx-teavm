@@ -5,134 +5,117 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** @author xpenatan */
 public class BulletBase implements Disposable {
-
-	/** Low level usage. Don't change the pointer. */
-	public long cPointer;
-	private boolean cMemOwn;
+	private long cPointer;
+	protected boolean swigCMemOwn;
 	private boolean disposed;
+	protected boolean destroyed;
+	public final String className;
+	private int refCount;
 
-	/*[0;X;F]
-		public Object jsObj; // cached obj
-	*/
-
-	/**
-	 * Internal use. Can cause memory leak if not used correctly.
-	 */
-	/*
-	  [-Javascript][Delete]
-	  MyCode test4
-	*/
-	public final void resetObj(long cPtr, boolean cMemoryOwn) {
-		cMemOwn = cMemoryOwn;
+	protected BulletBase (final String className, long cPtr, boolean cMemoryOwn) {
+		this.className = className;
+		swigCMemOwn = cMemoryOwn;
 		cPointer = cPtr;
-		disposed = false;
 	}
-	/*[0;X;L]
-		cMemOwn = cMemoryOwn; #J
-		cPointer = cPtr; #J
-		disposed = false; #J
-		if(cPtr == 0) { #J
-			this.jsObj = null; #J
-		} #J
-		else { #J
-			cacheObj(); #J
-		} #J
-	*/
 
-	/*[0;X;F;L]
-		protected void cacheObj() {
-			jsObj, this.jsObj #P
+	/** Obtains a reference to this object, call release to free the reference. */
+	public void obtain () {
+		refCount++;
+	}
 
-		}
-	*/
+	/** Release a previously obtained reference, causing the object to be disposed when this was the last reference. */
+	public void release () {
+		if (--refCount <= 0 && Bullet.useRefCounting) dispose();
+	}
+
+	/** @return Whether this instance is obtained using the {@link #obtain()} method. */
+	public boolean isObtained () {
+		return refCount > 0;
+	}
+
+	protected void construct () {
+		destroyed = false;
+	}
+
+	protected void reset (long cPtr, boolean cMemoryOwn) {
+		if (!destroyed) destroy();
+		swigCMemOwn = cMemoryOwn;
+		cPointer = cPtr;
+		construct();
+	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals (Object obj) {
 		return (obj instanceof BulletBase) && (((BulletBase)obj).cPointer == this.cPointer);
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode () {
 		return (int)cPointer;
 	}
 
-	/** Take ownership of the native instance, causing the native object to be deleted when this object gets out of scope or calling dispose.
-	 *  Only call it if you know what your doing. */
-	public void takeOwnership() {
-		cMemOwn = true;
+	/** @return The memory location (pointer) of this instance. */
+	public long getCPointer () {
+		return cPointer;
 	}
 
-	/** Release ownership of the native instance, causing the native object NOT to be deleted when this object gets out of scope or calling dispose.
-	 *  Only call it if you know what your doing. */
-	public void releaseOwnership() {
-		cMemOwn = false;
+	/** Take ownership of the native instance, causing the native object to be deleted when this object gets out of scope. */
+	public void takeOwnership () {
+		swigCMemOwn = true;
 	}
 
-	public boolean hasOwnership() {
-		return cMemOwn;
+	/** Release ownership of the native instance, causing the native object NOT to be deleted when this object gets out of
+	 * scope. */
+	public void releaseOwnership () {
+		swigCMemOwn = false;
+	}
+
+	/** @return True if the native is destroyed when this object gets out of scope, false otherwise. */
+	public boolean hasOwnership () {
+		return swigCMemOwn;
+	}
+
+	/** Deletes the bullet object this class encapsulates. Do not call directly, instead use the {@link #dispose()} method. */
+	protected void delete () {
+		cPointer = 0;
 	}
 
 	@Override
-	final public void dispose () {
-		if(cPointer != 0 && cMemOwn) {
-			if (disposed) {
-//				if(Bullet.enableLogging && Gdx.app != null)
-//					Gdx.app.error("Bullet", "Already disposed "+toString());
-			}
-			else {
-//				if (Bullet.enableLogging && Gdx.app != null)
-//					Gdx.app.debug("Bullet", "Disposing " +toString());
-				destroy();
-			}
-		}
+	public void dispose () {
+		if (refCount > 0 && Bullet.useRefCounting && Bullet.enableLogging)
+			Gdx.app.error("Bullet", "Disposing " + toString() + " while it still has " + refCount + " references.");
+		disposed = true;
+		delete();
 	}
 
-	private void destroy() {
-		try {
-			destroyNative();
-			disposed = true;
-			cPointer = 0;
-		}
-		catch (Throwable e) {
-			if(Gdx.app != null)
-				Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
-		}
-	}
-
-	/* [-teaVM;-NATIVE]
-		Bullet.destroy(jsObj);
-		jsObj = null;
-	 */
-	public native void destroyNative();
-
-	public boolean isDisposed() {
+	/** @return Whether the {@link #dispose()} method of this instance is called. */
+	public boolean isDisposed () {
 		return disposed;
 	}
 
 	@Override
 	public String toString () {
-		return getClass().getSimpleName() + "(" + cPointer + "," + cMemOwn + ")";
+		return className + "(" + cPointer + "," + swigCMemOwn + ")";
+	}
+
+	protected void destroy () {
+		try {
+			if (destroyed && Bullet.enableLogging) Gdx.app.error("Bullet", "Already destroyed " + toString());
+			destroyed = true;
+
+			if (swigCMemOwn && !disposed) {
+				if (Bullet.enableLogging) Gdx.app.error("Bullet", "Disposing " + toString() + " due to garbage collection.");
+				dispose();
+			}
+		} catch (Throwable e) {
+			Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
+		}
 	}
 
 	@Override
-	protected void finalize() throws Throwable {
-		if(cPointer != 0 && cMemOwn && disposed == false) {
-
-//			if (Bullet.enableLogging) {
-//				String debugText = "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.";
-//				if(Gdx.app != null)
-//					Gdx.app.error("Bullet", debugText);
-//				else
-//					System.out.println("Bullet - " + debugText);
-//			}
-			destroy();
-		}
+	protected void finalize () throws Throwable {
+		if (!destroyed && Bullet.enableLogging)
+			Gdx.app.error("Bullet", "The " + className + " class does not override the finalize method.");
 		super.finalize();
-	}
-
-	/** Internal use */
-	public void checkPointer() {
-		if(cPointer == 0)
-			throw new NullPointerException("Tried to access native object with null pointer " + getClass().getSimpleName());
 	}
 }

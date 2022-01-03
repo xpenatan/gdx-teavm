@@ -21,18 +21,24 @@ public class Bullet {
 
 	public final static int VERSION = LinearMathConstants.BT_BULLET_VERSION;
 
+	protected static boolean useRefCounting = false;
 	protected static boolean enableLogging = true;
 
 	private static boolean bulletInit = false;
 
 	public static void init () {
-		init(true);
+		init(false);
 	}
 
-	public static void init (boolean logging) {
+	public static void init (boolean useRefCounting) {
+		init(useRefCounting, true);
+	}
+
+	public static void init (boolean useRefCounting, boolean logging)  {
 		if(Bullet.bulletInit)
 			return;
 		Bullet.bulletInit = true;
+		Bullet.useRefCounting = useRefCounting;
 		Bullet.enableLogging = logging;
 
 		initNative();
@@ -41,7 +47,6 @@ public class Bullet {
 			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
 				+ ")");
 	}
-
 
 	/* [-teaVM;-REPLACE]
 	private static void initNative() {
@@ -60,32 +65,6 @@ public class Bullet {
 	}
 	 */
 	private static native void initNative();
-
-
-
-
-	/*[0;X]
-		if(Bullet.bulletInit)
-			return;
-		Bullet.bulletInit = true;
-		Bullet.enableLogging = logging;
-		final int version = btScalar.btGetVersion();
-		if (version != VERSION)
-			throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
-				+ ")");
-	*/
-
-	/**
-	 * Dispose static temporary objects. Use when ending app.
-	 */
-	public static void dispose() {
-
-	}
-	/*[0;X]
-		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.dispose();
-		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_2.dispose();
-	*/
-
 
 	protected static class ShapePart {
 		public Array<MeshPart> parts = new Array<>();
@@ -143,5 +122,4 @@ public class Bullet {
 		for (T node : nodes)
 			getShapeParts(node, true, out, offset, pool);
 	}
-
 }
