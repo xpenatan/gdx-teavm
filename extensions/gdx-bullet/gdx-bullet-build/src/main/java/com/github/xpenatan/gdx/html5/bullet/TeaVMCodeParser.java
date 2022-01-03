@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.html5.bullet;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -57,6 +58,15 @@ public class TeaVMCodeParser extends DefaultCodeParser {
     @Override
     public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {
         convertLongToIntParameters(constructorDeclaration.getParameters());
+    }
+
+    @Override
+    public void onParseField(FieldDeclaration fieldDeclaration) {
+        Type elementType = fieldDeclaration.getElementType();
+        if(isTypeLong(elementType)) {
+            Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+            fieldDeclaration.setAllTypes(intType);
+        }
     }
 
     @Override

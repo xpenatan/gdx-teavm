@@ -5,9 +5,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** @author xpenatan */
 public class BulletBase implements Disposable {
-	/*[-teaVM;-REPLACE]
-	protected int cPointer;
-	 */
 	protected long cPointer;
 	protected boolean cMemOwn;
 	private boolean disposed;
