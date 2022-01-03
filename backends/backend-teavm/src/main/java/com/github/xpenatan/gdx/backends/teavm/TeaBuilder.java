@@ -109,7 +109,7 @@ public class TeaBuilder {
 
         CustomTeaVMTool tool = new CustomTeaVMTool();
 
-        boolean setDebugInformationGenerated = true;
+        boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
         boolean setSourceFilesCopied = false;
 
