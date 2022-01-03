@@ -38,6 +38,7 @@ public class Bullet {
 
 
 	/* [-teaVM;Replace]
+	private static void initNative() {
 		WebApplication app = (WebApplication) Gdx.app;
 		Preloader preloader = app.getPreloader();
 		preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
@@ -50,6 +51,7 @@ public class Bullet {
 			public void onFailure(String url) {
 			}
 		});
+	}
 	 */
 	private static native void initNative();
 

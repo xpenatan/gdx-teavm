@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.html5.bullet.teavm;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -7,6 +8,8 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGenParser;
 import com.github.xpenatan.gdx.html5.bullet.codegen.CodeGenParserItem;
+import com.github.xpenatan.gdx.html5.bullet.codegen.util.RawCodeBlock;
+import java.util.Optional;
 
 /** @author xpenatan */
 public class TeaVMCodeParser implements CodeGenParser {
@@ -50,7 +53,7 @@ public class TeaVMCodeParser implements CodeGenParser {
                     addJSBody(headerCommands, blockComment, methodDeclaration);
                 }
                 else if(headerCommands.contains(CMD_REPLACE)) {
-                    replaceJSBody(parserItem, headerCommands, blockComment, methodDeclaration);
+                    replaceJavaBody(parserItem, headerCommands, blockComment, methodDeclaration);
                 }
             }
         }
@@ -93,8 +96,15 @@ public class TeaVMCodeParser implements CodeGenParser {
         }
     }
 
-    private void replaceJSBody(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    private void replaceJavaBody(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+        methodDeclaration.remove();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
-
+        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        RawCodeBlock newblockComment = new RawCodeBlock();
+        newblockComment.setContent(content);
+        Optional<TokenRange> tokenRange = methodDeclaration.getTokenRange();
+        TokenRange javaTokens = tokenRange.get();
+        newblockComment.setTokenRange(javaTokens);
+        classInterface.getMembers().add(newblockComment);
     }
 }

@@ -41,7 +41,22 @@ public class Bullet {
         // + ")");
     }
 
-    private static native void initNative();
+     
+	private static void initNative() {
+		WebApplication app = (WebApplication) Gdx.app;
+		Preloader preloader = app.getPreloader();
+		preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
+			@Override
+			public boolean onSuccess(String url, Object result) {
+				return true;
+			}
+
+			@Override
+			public void onFailure(String url) {
+			}
+		});
+	}
+	 
 
     /**
      * Dispose static temporary objects. Use when ending app.
