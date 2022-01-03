@@ -126,27 +126,42 @@ public class CodeGen {
         CompilationUnit unit = StaticJavaParser.parse(new ByteArrayInputStream(javaContent.getBytes()));
         unit.printer(new CustomPrettyPrinter());
 
+        ArrayList<BlockComment> blockComments = new ArrayList<>();
+
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(unit.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
 
-            if(node instanceof PackageDeclaration) {
-                PackageDeclaration packageD = (PackageDeclaration) node;
-                packageD.setComment(new BlockComment(gen));
+            if(node instanceof BlockComment) {
+                BlockComment blockComment = (BlockComment) node;
+                blockComments.add(blockComment);
             }
             else if(node instanceof ImportDeclaration) {
+                ImportDeclaration importDeclaration = (ImportDeclaration) node;
+                Optional<Comment> optionalComment = importDeclaration.getComment();
+                boolean addImport = false;
+                if(optionalComment.isPresent()) {
+                    Comment comment = optionalComment.get();
+                    if(comment instanceof BlockComment) {
+                        BlockComment blockComment = (BlockComment) optionalComment.get();
+                        blockComments.add(blockComment);
+                        addImport = true;
+                    }
+                    addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, addImport ? importDeclaration : null);
+                }
             }
-            else if(node instanceof ClassOrInterfaceDeclaration) {
-                parseClassInterface(unit, wrapper, (ClassOrInterfaceDeclaration) node, 0);
-            }
-            else if(node instanceof BlockComment) {
-                BlockComment blockComment = (BlockComment) node;
-                CodeGenParserItem parserItem = new CodeGenParserItem();
-                parserItem.unit = unit;
-                parserItem.rawComments.add(blockComment);
-                wrapper.parseHeaderBlock(parserItem);
+            else {
+                addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, null);
+
+                if(node instanceof PackageDeclaration) {
+                    PackageDeclaration packageD = (PackageDeclaration) node;
+                    packageD.setComment(new BlockComment(gen));
+                }
+                else if(node instanceof ClassOrInterfaceDeclaration) {
+                    parseClassInterface(unit, wrapper, (ClassOrInterfaceDeclaration) node, 0);
+                }
             }
         }
         PositionUtils.sortByBeginPosition(unit.getTypes(), false);
@@ -181,7 +196,7 @@ public class CodeGen {
                         addField = true;
                     }
                 }
-                addBlockCommentItem(unit, wrapper, clazzInterface, blockComments, addField ? field : null, null);
+                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, addField ? field : null, null, null);
             }
             else if(node instanceof MethodDeclaration) {
                 MethodDeclaration method = (MethodDeclaration) node;
@@ -195,10 +210,10 @@ public class CodeGen {
                         addMethod = true;
                     }
                 }
-                addBlockCommentItem(unit, wrapper, clazzInterface, blockComments, null, addMethod ? method : null);
+                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, addMethod ? method : null, null);
             }
             else {
-                addBlockCommentItem(unit, wrapper, clazzInterface, blockComments, null, null);
+                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);
                 if(node instanceof ClassOrInterfaceDeclaration) {
                     parseClassInterface(unit, wrapper, (ClassOrInterfaceDeclaration) node, ++classLevel);
                 }
@@ -206,22 +221,30 @@ public class CodeGen {
         }
 
         if(classLevel == 0) {
-            addBlockCommentItem(unit, wrapper, clazzInterface, blockComments, null, null);
+            addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);
         }
 
         PositionUtils.sortByBeginPosition(clazzInterface.getMembers(), false);
     }
 
-    private static void addBlockCommentItem(CompilationUnit unit, CodeGenParser wrapper, ClassOrInterfaceDeclaration classInterface, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method) {
+    private static boolean addBlockCommentItem(CompilationUnit unit, boolean isHeader, CodeGenParser wrapper, ClassOrInterfaceDeclaration classInterface, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method, ImportDeclaration importDeclaration) {
         if(blockComments.size() > 0) {
             CodeGenParserItem parserItem = new CodeGenParserItem();
             parserItem.unit = unit;
             parserItem.rawComments.addAll(blockComments);
+            parserItem.classInterface = classInterface;
             parserItem.fieldDeclaration = field;
             parserItem.methodDeclaration = method;
-            parserItem.classInterface = classInterface;
+            parserItem.importDeclaration = importDeclaration;
             blockComments.clear();
-            wrapper.parseCodeBlock(parserItem);
+            if(isHeader) {
+                wrapper.parseHeaderBlock(parserItem);
+            }
+            else {
+                wrapper.parseCodeBlock(parserItem);
+            }
+            return true;
         }
+        return false;
     }
 }

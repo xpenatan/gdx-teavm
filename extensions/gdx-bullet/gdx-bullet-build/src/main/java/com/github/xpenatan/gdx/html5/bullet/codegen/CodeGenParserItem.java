@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.html5.bullet.codegen;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -14,6 +15,8 @@ public class CodeGenParserItem {
     public final ArrayList<BlockComment> rawComments = new ArrayList<>();
 
     public CompilationUnit unit;
+
+    public ImportDeclaration importDeclaration;
 
     public ClassOrInterfaceDeclaration classInterface;
 
@@ -29,10 +32,17 @@ public class CodeGenParserItem {
         return methodDeclaration != null;
     }
 
+    public boolean isImportBlock() {
+        return importDeclaration != null;
+    }
+
     public void reset() {
         rawComments.clear();
+        unit = null;
+        classInterface = null;
         fieldDeclaration = null;
         methodDeclaration = null;
+        importDeclaration = null;
     }
 
     @Override
@@ -43,6 +53,9 @@ public class CodeGenParserItem {
         }
         else if(methodDeclaration != null) {
             ret = methodDeclaration.getTokenRange().get().toString();
+        }
+        else if(importDeclaration != null) {
+            ret = importDeclaration.getTokenRange().get().toString();
         }
         else {
             for(int i = 0; i < rawComments.size(); i++) {
@@ -58,15 +71,18 @@ public class CodeGenParserItem {
 
     public void removeAll() {
         removeCodeBlocks();
-        removeFieldOrMethod();
+        removeDeclaration();
     }
 
-    public void removeFieldOrMethod() {
+    public void removeDeclaration() {
         if(fieldDeclaration != null) {
             fieldDeclaration.remove();
         }
         if(methodDeclaration != null) {
             methodDeclaration.remove();
+        }
+        if(importDeclaration != null) {
+            importDeclaration.remove();
         }
     }
 

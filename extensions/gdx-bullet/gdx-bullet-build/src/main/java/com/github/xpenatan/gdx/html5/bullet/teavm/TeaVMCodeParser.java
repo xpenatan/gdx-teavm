@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.html5.bullet.teavm;
 
 import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -15,10 +16,10 @@ import java.util.Optional;
 public class TeaVMCodeParser implements CodeGenParser {
 
     public static final String CMD_HEADER = "[-teaVM";
-    public static final String CMD_DELETE = "-DELETE";
-    public static final String CMD_NATIVE = "-NATIVE";
     public static final String CMD_ADD = "-ADD";
+    public static final String CMD_REMOVE = "-REMOVE";
     public static final String CMD_REPLACE = "-REPLACE";
+    public static final String CMD_NATIVE = "-NATIVE";
 
     private void updateBlock(CodeGenParserItem parserItem) {
         for(int i = 0; i < parserItem.rawComments.size(); i++) {
@@ -46,35 +47,41 @@ public class TeaVMCodeParser implements CodeGenParser {
         // Remove raw block comment from source
         blockComment.remove();
 
+        String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+        if(headerCommands == null)
+            return;
+
         if(parserItem.isFieldBlock()) {
             FieldDeclaration fieldDeclaration = parserItem.fieldDeclaration;
+            if(headerCommands.contains(CMD_REPLACE)) {
+                setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, fieldDeclaration);
+            }
         }
         else if(parserItem.isMethodBlock()) {
             MethodDeclaration methodDeclaration = parserItem.methodDeclaration;
-            String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
 
             if(methodDeclaration.isNative()) {
                 if(headerCommands.contains(CMD_NATIVE)) {
-                    addJSBody(headerCommands, blockComment, methodDeclaration);
-                }
-                else if(headerCommands.contains(CMD_REPLACE)) {
-                    replaceJavaBody(parserItem, headerCommands, blockComment, methodDeclaration);
-                }
-                else if(headerCommands.contains(CMD_DELETE)) {
-                    removeJavaBody(parserItem);
+                    setJavaBodyNativeCMD(headerCommands, blockComment, methodDeclaration);
                 }
             }
+            if(headerCommands.contains(CMD_REPLACE)) {
+                setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, methodDeclaration);
+            }
         }
-        else {
-            // Block comments without field or method
-
+        // Block comments without field or method
+        if(headerCommands.contains(CMD_ADD)) {
+            setJavaBodyAddCMD(parserItem, headerCommands, blockComment);
+        }
+        else if(headerCommands.contains(CMD_REMOVE)) {
+            setJavaBodyRemoveCMD(parserItem);
         }
     }
 
     @Override
     public void parseHeaderBlock(CodeGenParserItem parserItem) {
         updateBlock(parserItem);
-//
+
         if(parserItem.rawComments.size() == 0) {
             return;
         }
@@ -84,12 +91,33 @@ public class TeaVMCodeParser implements CodeGenParser {
         blockComment.remove();
 
         String headerCommands = CodeGenParserItem.obtainHeaderCommands(blockComment);
+
+        if(parserItem.isImportBlock()) {
+            if(headerCommands.contains(CMD_REPLACE)) {
+                setJavaHeaderReplaceCMD(parserItem, headerCommands, blockComment, parserItem.importDeclaration);
+            }
+        }
+
         if(headerCommands.contains(CMD_ADD)) {
-            addJavaHeaderAddCmd(parserItem, headerCommands, blockComment);
+            setJavaHeaderAddCMD(parserItem, headerCommands, blockComment);
+        }
+        else if(headerCommands.contains(CMD_REMOVE)) {
+            setJavaHeaderRemoveCMD(parserItem);
         }
     }
 
-    private void addJavaHeaderAddCmd(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
+    private void setJavaHeaderReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, ImportDeclaration importDeclaration) {
+        importDeclaration.remove();
+        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        RawCodeBlock newblockComment = new RawCodeBlock();
+        newblockComment.setContent(content);
+        Optional<TokenRange> tokenRange = importDeclaration.getTokenRange();
+        TokenRange javaTokens = tokenRange.get();
+        newblockComment.setTokenRange(javaTokens);
+        parserItem.unit.addType(newblockComment);
+    }
+
+    private void setJavaHeaderAddCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
         String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
         RawCodeBlock newblockComment = new RawCodeBlock();
         newblockComment.setContent(content);
@@ -99,7 +127,22 @@ public class TeaVMCodeParser implements CodeGenParser {
         parserItem.unit.addType(newblockComment);
     }
 
-    private void addJSBody(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    private void setJavaBodyAddCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment) {
+        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        RawCodeBlock newblockComment = new RawCodeBlock();
+        ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
+        newblockComment.setContent(content);
+        Optional<TokenRange> tokenRange = blockComment.getTokenRange();
+        TokenRange javaTokens = tokenRange.get();
+        newblockComment.setTokenRange(javaTokens);
+        classInterface.getMembers().add(newblockComment);
+    }
+
+    private void setJavaHeaderRemoveCMD(CodeGenParserItem parserItem) {
+        setJavaBodyRemoveCMD(parserItem);
+    }
+
+    private void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         NodeList<Parameter> parameters = methodDeclaration.getParameters();
         int size = parameters.size();
 
@@ -130,7 +173,7 @@ public class TeaVMCodeParser implements CodeGenParser {
         }
     }
 
-    private void replaceJavaBody(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    private void setJavaBodyReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         methodDeclaration.remove();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
         String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
@@ -142,7 +185,19 @@ public class TeaVMCodeParser implements CodeGenParser {
         classInterface.getMembers().add(newblockComment);
     }
 
-    private void removeJavaBody(CodeGenParserItem parserItem) {
+    private void setJavaBodyReplaceCMD(CodeGenParserItem parserItem, String headerCommands, BlockComment blockComment, FieldDeclaration fieldDeclaration) {
+        fieldDeclaration.remove();
+        ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
+        String content = CodeGenParserItem.obtainContent(headerCommands, blockComment);
+        RawCodeBlock newblockComment = new RawCodeBlock();
+        newblockComment.setContent(content);
+        Optional<TokenRange> tokenRange = fieldDeclaration.getTokenRange();
+        TokenRange javaTokens = tokenRange.get();
+        newblockComment.setTokenRange(javaTokens);
+        classInterface.getMembers().add(newblockComment);
+    }
+
+    private void setJavaBodyRemoveCMD(CodeGenParserItem parserItem) {
         parserItem.removeAll();
     }
 }
