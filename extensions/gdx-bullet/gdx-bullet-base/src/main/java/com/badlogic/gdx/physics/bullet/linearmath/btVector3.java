@@ -2,14 +2,20 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
+/** @author xpenatan */
 public class btVector3 extends BulletBase {
 
     public btVector3() {
-        this(createNative(0, 0, 0), true);
+        this(true);
     }
 
     public btVector3(float x, float y, float z) {
         this(createNative(x, y, z), true);
+    }
+
+    /** Useful on creating temp objects */
+    public btVector3(boolean cMemoryOwn) {
+        this(cMemoryOwn ? createNative(0, 0, 0) : 0, cMemoryOwn);
     }
 
     protected btVector3(long cPtr, boolean cMemoryOwn) {

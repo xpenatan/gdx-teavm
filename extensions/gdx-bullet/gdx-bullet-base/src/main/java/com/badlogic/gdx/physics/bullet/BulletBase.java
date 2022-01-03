@@ -18,6 +18,13 @@ public class BulletBase implements Disposable {
 		cPointer = cPtr;
 	}
 
+	/** Set pointer if it's not owned by this object. Useful for setting temp objets */
+	public void setPointer(long cPtr) {
+		if(!cMemOwn) {
+			cPointer = cPtr;
+		}
+	}
+
 	/** Obtains a reference to this object, call release to free the reference. */
 	public void obtain () {
 		refCount++;
