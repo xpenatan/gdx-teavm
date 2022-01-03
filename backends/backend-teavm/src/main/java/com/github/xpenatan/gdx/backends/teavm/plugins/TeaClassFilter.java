@@ -57,7 +57,6 @@ public class TeaClassFilter implements ElementFilter {
 				accceptClass = false;
 			}
 		}
-		System.out.println("Accept Class: " + accceptClass + " " + fullClassName);
 		return accceptClass;
 	}
 
