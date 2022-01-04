@@ -9,6 +9,7 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
@@ -40,6 +41,8 @@ public class TeaVMCodeParser extends DefaultCodeParser {
             }
         }
 
+        convertJavaPrimitiveArrayToJavaScriptReferenceArray(parameters);
+
         if(content != null) {
             content = content.replace("\n", "");
             content = content.trim();
@@ -50,6 +53,20 @@ public class TeaVMCodeParser extends DefaultCodeParser {
                     normalAnnotationExpr.addPair("params", "{\"" + param + "\"}");
                 }
                 normalAnnotationExpr.addPair("script", "\"" + content + "\"");
+            }
+        }
+    }
+
+    private void convertJavaPrimitiveArrayToJavaScriptReferenceArray(NodeList<Parameter> parameters) {
+        int size = parameters.size();
+        for(int i = 0; i < size; i++) {
+            Parameter parameter = parameters.get(i);
+            Type type = parameter.getType();
+            if(type.isArrayType()) {
+                ArrayType arrayType = (ArrayType) type;
+                if(arrayType.getComponentType().isPrimitiveType()) {
+                    parameter.addAndGetAnnotation("org.teavm.jso.JSByRef");
+                }
             }
         }
     }
