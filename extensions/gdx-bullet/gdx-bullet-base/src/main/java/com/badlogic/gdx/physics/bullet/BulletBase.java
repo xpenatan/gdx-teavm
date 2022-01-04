@@ -6,10 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 /**
  * @author xpenatan
  */
-public class BulletBase implements Disposable {
-    /*[-teaVM;-ADD]
-    protected org.teavm.jso.JSObject jsObj;
-     */
+public abstract class BulletBase implements Disposable {
     protected long cPointer;
     protected boolean cMemOwn;
     private boolean disposed;
@@ -109,27 +106,7 @@ public class BulletBase implements Disposable {
     /**
      * Deletes the bullet object this class encapsulates. Do not call directly, instead use the {@link #dispose()} method.
      */
-    /*[-teaVM;-REPLACE]
-    protected void delete () {
-        if(cPointer != 0) {
-            deleteNative(jsObj);
-            jsObj = null;
-        }
-        cPointer = 0;
-    }
-    */
-    protected void delete() {
-        if(cPointer != 0) {
-            deleteNative(cPointer);
-        }
-        cPointer = 0;
-    }
-
-    /*[-teaVM;-REPLACE]
-    @org.teavm.jso.JSBody(params = {"addr"}, script = "Bullet.destroy(addr);")
-    private static native void deleteNative(org.teavm.jso.JSObject addr);
-     */
-    private static native void deleteNative(long addr);
+    protected abstract void deleteNative();
 
     @Override
     public void dispose() {
@@ -138,7 +115,8 @@ public class BulletBase implements Disposable {
         if(cMemOwn) {
             // Don't try to delete if this object did not create the pointer
             disposed = true;
-            delete();
+            deleteNative();
+            cPointer = 0;
         }
     }
 

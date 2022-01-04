@@ -13,7 +13,7 @@ public class btVector3 extends BulletBase {
 
     public btVector3(float x, float y, float z) {
         super("btVector3");
-        initObject(createObj(x, y, z), true);
+        initObject(createNative(x, y, z), true);
     }
 
     /**
@@ -21,24 +21,8 @@ public class btVector3 extends BulletBase {
      */
     public btVector3(boolean cMemoryOwn) {
         super("btVector3");
-        initObject(cMemoryOwn ? createObj(0, 0, 0) : 0, cMemoryOwn);
+        initObject(cMemoryOwn ? createNative(0, 0, 0) : 0, cMemoryOwn);
     }
-
-    /*[-teaVM;-REPLACE]
-    private int createObj(float x, float y, float z) {
-        int pointer = createNative(x, y, z);
-        jsObj = getNativeObject(pointer);
-        return pointer;
-    }
-     */
-    private long createObj(float x, float y, float z) {
-        return createNative(x, y, z);
-    }
-
-    /*[-teaVM;-ADD]
-    @org.teavm.jso.JSBody(params = {"addr"}, script = "return Bullet.wrapPointer(addr, Bullet.btVector3);")
-    private static native org.teavm.jso.JSObject getNativeObject(int addr);
-     */
 
     /*[-C++;-NATIVE]
         return (jlong)new btVector3(x,y,z);
@@ -102,4 +86,16 @@ public class btVector3 extends BulletBase {
     public float z() {
         return getZ(cPointer);
     }
+
+    @Override
+    protected void deleteNative() {
+        deleteNative(cPointer);
+    }
+
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        Bullet.destroy(jsObj);
+     */
+    private static native void deleteNative(long addr);
+
 }
