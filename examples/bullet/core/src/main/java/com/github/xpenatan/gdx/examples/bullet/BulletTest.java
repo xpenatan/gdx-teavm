@@ -98,6 +98,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         System.out.println("Y: " + y);
         System.out.println("Z: " + z);
 
+        vector3.dispose();
 
 //        collisionConfiguration = new btDefaultCollisionConfiguration();
 //        dispatcher = new btCollisionDispatcher(collisionConfiguration);

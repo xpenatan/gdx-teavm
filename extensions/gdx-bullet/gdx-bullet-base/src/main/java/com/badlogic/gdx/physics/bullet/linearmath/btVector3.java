@@ -10,17 +10,31 @@ public class btVector3 extends BulletBase {
     }
 
     public btVector3(float x, float y, float z) {
-        this(createNative(x, y, z), true);
+        super("btVector3");
+        initObject(createObj(x, y, z), true);
     }
 
     /** Useful on creating temp objects */
     public btVector3(boolean cMemoryOwn) {
-        this(cMemoryOwn ? createNative(0, 0, 0) : 0, cMemoryOwn);
+        super("btVector3");
+        initObject(cMemoryOwn ? createObj(0, 0, 0) : 0, cMemoryOwn);
     }
 
-    protected btVector3(long cPtr, boolean cMemoryOwn) {
-        super("btVector3", cPtr, cMemoryOwn);
+    /*[-teaVM;-REPLACE]
+    private int createObj(float x, float y, float z) {
+        int pointer = createNative(x, y, z);
+        jsObj = getNativeObject(pointer);
+        return pointer;
     }
+     */
+    private long createObj(float x, float y, float z) {
+        return createNative(x, y, z);
+    }
+
+    /*[-teaVM;-ADD]
+    @org.teavm.jso.JSBody(params = {"addr"}, script = "return Bullet.wrapPointer(addr, Bullet.btVector3);")
+    private static native org.teavm.jso.JSObject getNativeObject(int addr);
+     */
 
     /*[-C++;-NATIVE]
         return (jlong)new btVector3(x,y,z);

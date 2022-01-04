@@ -5,6 +5,9 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** @author xpenatan */
 public class BulletBase implements Disposable {
+	/*[-teaVM;-ADD]
+	protected org.teavm.jso.JSObject jsObj;
+	 */
 	protected long cPointer;
 	protected boolean cMemOwn;
 	private boolean disposed;
@@ -12,8 +15,11 @@ public class BulletBase implements Disposable {
 	public final String className;
 	private int refCount;
 
-	protected BulletBase (final String className, long cPtr, boolean cMemoryOwn) {
+	protected BulletBase (String className) {
 		this.className = className;
+	}
+
+	protected void initObject (long cPtr, boolean cMemoryOwn) {
 		cMemOwn = cMemoryOwn;
 		cPointer = cPtr;
 	}
@@ -83,16 +89,37 @@ public class BulletBase implements Disposable {
 	}
 
 	/** Deletes the bullet object this class encapsulates. Do not call directly, instead use the {@link #dispose()} method. */
+	/*[-teaVM;-REPLACE]
 	protected void delete () {
+		if(cPointer != 0) {
+			deleteNative(jsObj);
+			jsObj = null;
+		}
 		cPointer = 0;
 	}
+	 */
+	protected void delete () {
+		if(cPointer != 0) {
+			deleteNative(cPointer);
+		}
+		cPointer = 0;
+	}
+
+	/*[-teaVM;-REPLACE]
+    @org.teavm.jso.JSBody(params = {"addr"}, script = "Bullet.destroy(addr);")
+    private static native void deleteNative(org.teavm.jso.JSObject addr);
+	 */
+	private static native void deleteNative(long addr);
 
 	@Override
 	public void dispose () {
 		if (refCount > 0 && Bullet.useRefCounting && Bullet.enableLogging)
 			Gdx.app.error("Bullet", "Disposing " + toString() + " while it still has " + refCount + " references.");
-		disposed = true;
-		delete();
+		if(cMemOwn) {
+			// Don't try to delete if this object did not create the pointer
+			disposed = true;
+			delete();
+		}
 	}
 
 	/** @return Whether the {@link #dispose()} method of this instance is called. */
