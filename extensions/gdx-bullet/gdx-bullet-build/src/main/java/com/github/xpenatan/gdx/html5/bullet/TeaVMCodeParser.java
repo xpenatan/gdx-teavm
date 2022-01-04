@@ -11,7 +11,6 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.TypeParameter;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.DefaultCodeParser;
 

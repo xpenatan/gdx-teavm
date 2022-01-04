@@ -47,40 +47,47 @@ public abstract class DefaultCodeParser implements CodeParser {
         if(parserItem.rawComments.size() == 0) {
             return;
         }
-        // should only work with 1 block comment
-        BlockComment blockComment = parserItem.rawComments.get(0);
+        // REPLACE, DELETE and NATIVE is action taken. ADD is not.
+        boolean actionTaken = false;
 
-        // Remove raw block comment from source
-        blockComment.remove();
+        for(int i = 0; i < parserItem.rawComments.size(); i++) {
+            BlockComment blockComment = parserItem.rawComments.get(i);
+            // Remove raw block comment from source
+            blockComment.remove();
+            String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
 
-        String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
-        if(headerCommands == null)
-            return;
+            if(headerCommands == null)
+                continue;
 
-        if(parserItem.isFieldBlock()) {
-            FieldDeclaration fieldDeclaration = parserItem.fieldDeclaration;
-            if(headerCommands.contains(CMD_REPLACE)) {
-                setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, fieldDeclaration);
-            }
-        }
-        else if(parserItem.isMethodBlock()) {
-            MethodDeclaration methodDeclaration = parserItem.methodDeclaration;
-
-            if(methodDeclaration.isNative()) {
-                if(headerCommands.contains(CMD_NATIVE)) {
-                    setJavaBodyNativeCMD(headerCommands, blockComment, methodDeclaration);
+            if(parserItem.isFieldBlock()) {
+                FieldDeclaration fieldDeclaration = parserItem.fieldDeclaration;
+                if(headerCommands.contains(CMD_REPLACE) && !actionTaken) {
+                    actionTaken = true;
+                    setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, fieldDeclaration);
                 }
             }
-            if(headerCommands.contains(CMD_REPLACE)) {
-                setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, methodDeclaration);
+            else if(parserItem.isMethodBlock()) {
+                MethodDeclaration methodDeclaration = parserItem.methodDeclaration;
+
+                if(methodDeclaration.isNative()) {
+                    if(headerCommands.contains(CMD_NATIVE) && !actionTaken) {
+                        actionTaken = true;
+                        setJavaBodyNativeCMD(headerCommands, blockComment, methodDeclaration);
+                    }
+                }
+                if(headerCommands.contains(CMD_REPLACE) && !actionTaken) {
+                    actionTaken = true;
+                    setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, methodDeclaration);
+                }
             }
-        }
-        // Block comments without field or method
-        if(headerCommands.contains(CMD_ADD)) {
-            setJavaBodyAddCMD(parserItem, headerCommands, blockComment);
-        }
-        else if(headerCommands.contains(CMD_REMOVE)) {
-            setJavaBodyRemoveCMD(parserItem);
+            // Block comments without field or method
+            if(headerCommands.contains(CMD_ADD)) {
+                setJavaBodyAddCMD(parserItem, headerCommands, blockComment);
+            }
+            else if(headerCommands.contains(CMD_REMOVE) && !actionTaken) {
+                actionTaken = true;
+                setJavaBodyRemoveCMD(parserItem);
+            }
         }
     }
 
