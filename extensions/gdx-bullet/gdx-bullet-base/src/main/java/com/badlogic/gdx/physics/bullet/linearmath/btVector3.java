@@ -2,7 +2,9 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btVector3 extends BulletBase {
 
     public btVector3() {
@@ -14,7 +16,9 @@ public class btVector3 extends BulletBase {
         initObject(createObj(x, y, z), true);
     }
 
-    /** Useful on creating temp objects */
+    /**
+     * Useful on creating temp objects
+     */
     public btVector3(boolean cMemoryOwn) {
         super("btVector3");
         initObject(cMemoryOwn ? createObj(0, 0, 0) : 0, cMemoryOwn);
