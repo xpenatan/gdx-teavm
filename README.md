@@ -42,6 +42,7 @@ Generator example: https://youtu.be/BIL_5eaxg9w
 * [demo-cubocy](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-cubocy/)
 * [demo-superjumper](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-superjumper/)
 * [test-freetype](https://xpenatan.github.io/gdx-html5-tools/teavm/test-freetype-packtest/)
+* [test-bullet](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet/)
 
 <br><br><br>
 ## Deprecated dragome backend
