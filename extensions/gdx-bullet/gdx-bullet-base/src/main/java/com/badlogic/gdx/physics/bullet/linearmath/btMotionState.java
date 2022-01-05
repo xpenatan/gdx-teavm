@@ -64,7 +64,7 @@ public abstract class btMotionState extends BulletBase {
     }
 
     /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.MyMotionState);
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);
