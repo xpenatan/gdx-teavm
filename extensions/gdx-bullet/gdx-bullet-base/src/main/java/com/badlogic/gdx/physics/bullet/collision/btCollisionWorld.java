@@ -1,13 +1,19 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
+import com.badlogic.gdx.physics.bullet.BulletBase;
+
 /**
  * @author xpenatan
  */
-public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
+public class btCollisionWorld extends BulletBase {
 
-    public btDefaultCollisionConfiguration() {
-        super("btDefaultCollisionConfiguration");
+    public btCollisionWorld() {
+        super("btCollisionWorld");
         initObject(createNative(), true);
+    }
+
+    protected btCollisionWorld(String className) {
+        super(className);
     }
 
     @Override
@@ -15,17 +21,14 @@ public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
         deleteNative(cPointer);
     }
 
-    /*[-C++;-NATIVE]
-        return (jlong)new btDefaultCollisionConfiguration();
-     */
     /*[-teaVM;-NATIVE]
-        var jsObj = new Bullet.btDefaultCollisionConfiguration();
+        var jsObj = new Bullet.btCollisionWorld();
         return Bullet.getPointer(jsObj);
      */
     private static native long createNative();
 
     /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btDefaultCollisionConfiguration);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionWorld);
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);

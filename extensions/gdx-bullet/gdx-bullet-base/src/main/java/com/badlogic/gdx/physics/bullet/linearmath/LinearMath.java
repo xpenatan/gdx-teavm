@@ -9,4 +9,7 @@ public class LinearMath {
         return Bullet.MyClassHelper.prototype.getBTVersion();
      */
     public static native int btGetVersion();
+
+
+
 }

@@ -3,10 +3,10 @@ package com.badlogic.gdx.physics.bullet.collision;
 /**
  * @author xpenatan
  */
-public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
+public class btDbvtBroadphase extends btBroadphaseInterface {
 
-    public btDefaultCollisionConfiguration() {
-        super("btDefaultCollisionConfiguration");
+    public btDbvtBroadphase() {
+        super("btDbvtBroadphase");
         initObject(createNative(), true);
     }
 
@@ -16,16 +16,16 @@ public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
     }
 
     /*[-C++;-NATIVE]
-        return (jlong)new btDefaultCollisionConfiguration();
+        return (jlong)new btDbvtBroadphase();
      */
     /*[-teaVM;-NATIVE]
-        var jsObj = new Bullet.btDefaultCollisionConfiguration();
+        var jsObj = new Bullet.btDbvtBroadphase();
         return Bullet.getPointer(jsObj);
      */
     private static native long createNative();
 
     /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btDefaultCollisionConfiguration);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btDbvtBroadphase);
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);

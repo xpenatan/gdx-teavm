@@ -1,9 +1,9 @@
 package com.github.xpenatan.gdx.examples.bullet;
 
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 
-public class TestMotionState extends btMotionState {
+public class TestMotionState extends btDefaultMotionState {
     private Matrix4 transform;
     public TestMotionState(Matrix4 transform) {
         this.transform = transform;

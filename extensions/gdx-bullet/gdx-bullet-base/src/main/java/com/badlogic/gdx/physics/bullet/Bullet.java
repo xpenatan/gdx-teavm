@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMathConstants;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
@@ -68,6 +69,15 @@ public class Bullet {
     }
      */
     private static native void initNative();
+
+    /**
+     * Dispose temp objects
+     */
+    public static void dispose() {
+        btVector3.tempWrapper01.dispose();
+        btVector3.tempWrapper02.dispose();
+        btVector3.tempWrapper03.dispose();
+    }
 
     protected static class ShapePart {
         public Array<MeshPart> parts = new Array<>();

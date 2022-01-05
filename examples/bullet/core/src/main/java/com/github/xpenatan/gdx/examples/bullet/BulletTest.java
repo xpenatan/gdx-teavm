@@ -32,10 +32,7 @@ import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
-import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
-import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import com.badlogic.gdx.physics.bullet.linearmath.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -47,7 +44,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     ScreenViewport guiViewport;
 
     Array<ModelInstance> boxes = new Array<>();
-//    Array<btRigidBody> colObjs = new Array<>();
+    Array<btRigidBody> colObjs = new Array<>();
 
     ModelInstance ground;
 
@@ -57,12 +54,12 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     Environment environment;
 
-//    btDiscreteDynamicsWorld world;
+    btDiscreteDynamicsWorld world;
 //    DebugDrawer debugDrawer;
-//    btDefaultCollisionConfiguration collisionConfiguration;
-//    btCollisionDispatcher dispatcher;
-//    btDbvtBroadphase broadphase;
-//    btSequentialImpulseConstraintSolver solver;
+    btDefaultCollisionConfiguration collisionConfiguration;
+    btCollisionDispatcher dispatcher;
+    btDbvtBroadphase broadphase;
+    btSequentialImpulseConstraintSolver solver;
 //    ClosestRayResultCallback raycast;
 
     BitmapFont font;
@@ -88,25 +85,14 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
         btVersion = LinearMath.btGetVersion();
 
+        collisionConfiguration = new btDefaultCollisionConfiguration();
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        broadphase = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver();
+        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+        Vector3 gravity = new Vector3(0, -10, 0);
+        world.setGravity(gravity);
 
-        btVector3 vector3 = new btVector3(10, 5, 40);
-        float x = vector3.x();
-        float y = vector3.y();
-        float z = vector3.z();
-
-        System.out.println("X: " + x);
-        System.out.println("Y: " + y);
-        System.out.println("Z: " + z);
-
-        vector3.dispose();
-
-//        collisionConfiguration = new btDefaultCollisionConfiguration();
-//        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-//        broadphase = new btDbvtBroadphase();
-//        solver = new btSequentialImpulseConstraintSolver();
-//        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-//        Vector3 gravity = new Vector3(0, -10, 0);
-//        world.setGravity(gravity);
 //        debugDrawer = new DebugDrawer();
 //        world.setDebugDrawer(debugDrawer);
 //        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
@@ -135,17 +121,11 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         float g = 1;
         float b = 1;
         float a = 1;
-//		r = 0; g = 1; b = 0;
-
 
         Material material = new Material(ColorAttribute.createDiffuse(r, g, b, a));
         boxModel = builder.createBox(1, 1, 1, material, Usage.Position | Usage.Normal);
 
-//		r = 0; g = 0; b = 1;
-
         Model groundBox = builder.createBox(14, 0.3f, 14, new Material(ColorAttribute.createDiffuse(r, g, b, a), ColorAttribute.createSpecular(r, g, b, a), FloatAttribute.createShininess(16f)), Usage.Position | Usage.Normal);
-
-
         ground = createBox("ground", false, 0, 0, -2, 0, 0, 0, 0, groundBox, 14, 0.3f, 14, 0, 0, 1);
 
         resetBoxes();
@@ -178,27 +158,27 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         modelInstance.transform.rotate(Vector3.Y, axiY);
         modelInstance.transform.rotate(Vector3.Z, axiZ);
 
-//        TestMotionState motionState = new TestMotionState(modelInstance.transform);
-//        btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
-//        shape.calculateLocalInertia(mass, tmp.setZero());
-//        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
+        TestMotionState motionState = new TestMotionState(modelInstance.transform);
+        btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
+        shape.calculateLocalInertia(mass, tmp.setZero());
+        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
 //        body.userData = userData;
-//        if(add)
-//            colObjs.add(body);
-//        body.setRestitution(0.7f);
-//
-//        world.addRigidBody(body);
+        if(add)
+            colObjs.add(body);
+        body.setRestitution(0.7f);
+
+        world.addRigidBody(body);
         return modelInstance;
     }
 
     public void resetBoxes() {
-//        for(int i = 0; i < colObjs.size; i++) {
-//            btRigidBody btCollisionObject = colObjs.get(i);
-//            world.removeRigidBody(btCollisionObject);
-//            btCollisionObject.dispose();
-//        }
-//
-//        colObjs.clear();
+        for(int i = 0; i < colObjs.size; i++) {
+            btRigidBody btCollisionObject = colObjs.get(i);
+            world.removeRigidBody(btCollisionObject);
+            btCollisionObject.dispose();
+        }
+
+        colObjs.clear();
         boxes.clear();
         int count = 0;
 
@@ -239,7 +219,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
                 time = System.currentTimeMillis();
             }
 
-//            world.stepSimulation(Gdx.graphics.getDeltaTime());
+            world.stepSimulation(Gdx.graphics.getDeltaTime());
         }
 
         modelBatch.begin(camera);
@@ -284,11 +264,11 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public void dispose() {
-//        world.dispose();
-//        solver.dispose();
-//        broadphase.dispose();
-//        dispatcher.dispose();
-//        collisionConfiguration.dispose();
+        world.dispose();
+        solver.dispose();
+        broadphase.dispose();
+        dispatcher.dispose();
+        collisionConfiguration.dispose();
     }
 
     @Override
