@@ -118,6 +118,7 @@ interface btQuaternion {
 	void btQuaternion(float x, float y, float z, float w);
 	void setValue(float x, float y, float z, float w);
 	void setEulerZYX(float z, float y, float x);
+	void setRotation([Const, Ref] btVector3 axis, float angle);
 	void normalize();
 };
 btQuaternion implements btQuadWord;
