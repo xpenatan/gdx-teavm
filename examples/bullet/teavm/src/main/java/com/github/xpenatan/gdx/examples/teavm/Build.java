@@ -12,7 +12,7 @@ public class Build {
 		TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
 		teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));;
 		teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
-		teaBuildConfiguration.obfuscate = true;
+		teaBuildConfiguration.obfuscate = false;
 		teaBuildConfiguration.logClasses = false;
 		teaBuildConfiguration.mainApplicationClass = BulletTest.class.getName();
 		TeaBuilder.build(teaBuildConfiguration);

@@ -12,4 +12,8 @@ public interface WindowWrapper {
 	public TimerWrapper getTimer();
 
 	public LocationWrapper getLocation();
+
+	public int getClientWidth();
+
+	public int getClientHeight();
 }

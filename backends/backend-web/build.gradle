@@ -38,7 +38,6 @@ configurations {
 
 dependencies {
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
 }
 
 artifacts {

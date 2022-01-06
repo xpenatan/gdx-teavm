@@ -82,6 +82,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     @Override
     public void create() {
         Bullet.init();
+        Gdx.graphics.setWindowedMode(0, 0);
 
         btVersion = LinearMath.btGetVersion();
 
@@ -278,6 +279,14 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
             if(!freeze) {
                 time = System.currentTimeMillis() + (time - timeNow);
+            }
+        }
+        else if(keycode == Keys.ENTER) {
+            if(Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(0,0);
+            }
+            else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             }
         }
         return false;

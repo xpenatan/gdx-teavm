@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
 import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.web.WebJSHelper;
 import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 
@@ -72,7 +73,7 @@ public class Timer {
 			if (instances.contains(this, true)) return;
 			instances.add(this);
 			if (thread == null) {
-				WindowWrapper window = WebApplicationConfiguration.JSHelper.getCurrentWindow();
+				WindowWrapper window = WebJSHelper.get().getCurrentWindow();
 				thread = new TimerThread(window.getTimer());
 			}
 			wake();

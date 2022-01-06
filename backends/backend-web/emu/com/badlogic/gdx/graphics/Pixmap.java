@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
+import com.github.xpenatan.gdx.backends.web.WebJSHelper;
 import com.github.xpenatan.gdx.backends.web.dom.*;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetDownloader;
@@ -180,7 +181,7 @@ public class Pixmap implements Disposable {
 	}
 
 	private void create () {
-		WindowWrapper window = WebApplicationConfiguration.JSHelper.getCurrentWindow();
+		WindowWrapper window = WebJSHelper.get().getCurrentWindow();
 		DocumentWrapper document = window.getDocument();
 		ElementWrapper createElement = document.createElement("canvas");
 		canvas = (HTMLCanvasElementWrapper)createElement;

@@ -3,8 +3,11 @@ package com.github.xpenatan.gdx.backends.web;
 /**
  * @author xpenatan
  */
-public class WebApplicationConfiguration {
-	public static WebJSHelper JSHelper;
+public abstract class WebApplicationConfiguration {
+	/** the width of the drawing area in pixels, or 0 for using the available space **/
+	public int width = -1;
+	/** the height of the drawing area in pixels, or 0 for using the available space **/
+	public int height = -1;
 	/** whether to use a stencil buffer **/
 	public boolean stencil = false;
 	/** whether to enable antialiasing **/
@@ -20,4 +23,11 @@ public class WebApplicationConfiguration {
 	public boolean useDebugGL = false;
 	/** whether SoundManager2 should prefer to use flash instead of html5 audio (it should fall back if not available) */
 	public boolean preferFlash = false;
+	public boolean usePhysicalPixels;
+
+	public abstract WebJSHelper getJSHelper();
+
+	public boolean isFixedSizeApplication () {
+		return width != 0 && height != 0;
+	}
 }

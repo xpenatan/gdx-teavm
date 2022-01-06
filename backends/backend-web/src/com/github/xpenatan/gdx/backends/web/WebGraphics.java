@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
+
+import static com.github.xpenatan.gdx.backends.web.WebJSHelper.JSHelper;
 
 /**
  * @author xpenatan
@@ -29,15 +32,24 @@ public class WebGraphics implements Graphics {
 	float time = 0;
 	int frames;
 
+	private WebJSGraphics jsGraphics;
+
 	public WebGraphics(WebApplicationConfiguration config) {
+		WebJSHelper webJSHelper = WebJSHelper.get();
 		this.config = config;
-		this.canvas = config.JSHelper.getCanvas();
-		this.context = config.JSHelper.getGLContext(config);
+		this.canvas = webJSHelper.getCanvas();
+		this.context = webJSHelper.getGLContext(config);
+		this.jsGraphics = webJSHelper.getGraphics();
 		gl20 = new WebGL20(context);
 
 		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
 		gl20.glClearColor(0, 0, 0f, 1f);
 		gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		if(config.width >= 0 || config.height >= 0) {
+			// update canvas size
+			setWindowedMode(config.width, config.height);
+		}
 	}
 
 	public void update () {
@@ -207,38 +219,51 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public DisplayMode[] getDisplayModes() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DisplayMode[] { getDisplayMode() };
 	}
 
 	@Override
 	public DisplayMode[] getDisplayModes(Monitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
+		return getDisplayModes();
 	}
 
 	@Override
 	public DisplayMode getDisplayMode() {
-		// TODO Auto-generated method stub
-		return null;
+		double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
+		return new DisplayMode((int)(jsGraphics.getScreenWidthJSNI() * density), (int)(jsGraphics.getScreenHeightJSNI() * density), 60, 8) {};
 	}
 
 	@Override
 	public DisplayMode getDisplayMode(Monitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
+		return getDisplayMode();
 	}
 
 	@Override
 	public boolean setFullscreenMode(DisplayMode displayMode) {
-		// TODO Auto-generated method stub
-		return false;
+		DisplayMode supportedMode = getDisplayMode();
+		if (displayMode.width != supportedMode.width && displayMode.height != supportedMode.height) return false;
+		return jsGraphics.setFullscreenJSNI(this, canvas, displayMode.width, displayMode.height);
 	}
 
 	@Override
 	public boolean setWindowedMode(int width, int height) {
-		// TODO Auto-generated method stub
-		return false;
+		if (isFullscreen()) jsGraphics.exitFullscreen();
+
+		if (width > 0 && height > 0) {
+			setCanvasSize(width, height);
+		} else {
+			WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
+			int newWidth = currentWindow.getClientWidth();
+			int newHeight = currentWindow.getClientHeight();
+			setCanvasSize(newWidth, newHeight);
+		}
+		return true;
+	}
+
+	void setCanvasSize (int width, int height) {
+		double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
+		canvas.setWidth((int) (width * density));
+		canvas.setHeight((int) (height * density));
 	}
 
 	@Override
@@ -296,8 +321,7 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public boolean isFullscreen() {
-		// TODO Auto-generated method stub
-		return false;
+		return jsGraphics.isFullscreenJSNI();
 	}
 
 	@Override

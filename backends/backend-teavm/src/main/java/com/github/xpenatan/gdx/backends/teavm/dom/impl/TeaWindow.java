@@ -51,4 +51,14 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 		Location location = window.getLocation();
 		return (LocationWrapper)location;
 	}
+
+	@Override
+	public int getClientWidth() {
+		return window.getDocument().getDocumentElement().getClientWidth();
+	}
+
+	@Override
+	public int getClientHeight() {
+		return window.getDocument().getDocumentElement().getClientHeight();
+	}
 }

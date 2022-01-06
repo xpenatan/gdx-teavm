@@ -11,21 +11,28 @@ import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 /**
  * @author xpenatan
  */
-public interface WebJSHelper {
+public abstract class WebJSHelper {
+	static WebJSHelper JSHelper;
 
-	public HTMLCanvasElementWrapper getCanvas();
+	public static WebJSHelper get() {
+		return JSHelper;
+	}
 
-	public WebGLRenderingContextWrapper getGLContext(WebApplicationConfiguration config);
+	public abstract HTMLCanvasElementWrapper getCanvas();
 
-	public WindowWrapper getCurrentWindow();
+	public abstract WebGLRenderingContextWrapper getGLContext(WebApplicationConfiguration config);
 
-	public WebAgentInfo getAgentInfo();
+	public abstract WindowWrapper getCurrentWindow();
 
-	public HTMLImageElementWrapper createImageElement();
+	public abstract WebAgentInfo getAgentInfo();
 
-	public XMLHttpRequestWrapper creatHttpRequest();
+	public abstract HTMLImageElementWrapper createImageElement();
 
-	public StorageWrapper getStorage();
+	public abstract XMLHttpRequestWrapper creatHttpRequest();
 
-	public SoundManagerWrapper createSoundManager();
+	public abstract StorageWrapper getStorage();
+
+	public abstract SoundManagerWrapper createSoundManager();
+
+	public abstract WebJSGraphics getGraphics();
 }

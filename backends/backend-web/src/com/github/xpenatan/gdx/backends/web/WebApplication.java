@@ -61,16 +61,18 @@ public class WebApplication implements Application, Runnable {
 	private String hostPageBaseURL;
 
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
-		WebJSHelper jSHelper = WebApplicationConfiguration.JSHelper;
-		this.window = jSHelper.getCurrentWindow();
+		WebJSHelper jsHelper = config.getJSHelper();
+		WebJSHelper.JSHelper = jsHelper;
+		this.window = jsHelper.getCurrentWindow();
 		this.appListener = appListener;
 		this.config = config;
-		this.canvas = WebApplicationConfiguration.JSHelper.getCanvas();
+		this.canvas = jsHelper.getCanvas();
+
 		init();
 	}
 
 	private void init() {
-		WebApplication.agentInfo = WebApplicationConfiguration.JSHelper.getAgentInfo();
+		WebApplication.agentInfo = WebJSHelper.get().getAgentInfo();
 		System.setProperty("java.runtime.name", "");
 		if(agentInfo.isWindows() == true)
 			System.setProperty("os.name", "Windows");
@@ -81,7 +83,7 @@ public class WebApplication implements Application, Runnable {
 		else
 			System.setProperty("os.name", "no OS");
 
-		AssetDownloader.setInstance(new AssetDownloadImpl(WebApplicationConfiguration.JSHelper));
+		AssetDownloader.setInstance(new AssetDownloadImpl(WebJSHelper.get()));
 
 		AssetDownload instance = AssetDownloader.getInstance();
 		hostPageBaseURL = instance.getHostPageBaseURL();
@@ -193,7 +195,7 @@ public class WebApplication implements Application, Runnable {
 		preloader.loadScript("scripts/soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
 			@Override
 			public boolean onSuccess(String url, Object result) {
-				WebJSHelper jsHelper = WebApplicationConfiguration.JSHelper;
+				WebJSHelper jsHelper = WebJSHelper.get();
 				SoundManagerWrapper soundManager = jsHelper.createSoundManager();
 				soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
 					@Override
@@ -323,7 +325,7 @@ public class WebApplication implements Application, Runnable {
 	public Preferences getPreferences (String name) {
 		Preferences pref = prefs.get(name);
 		if (pref == null) {
-			StorageWrapper storage = WebApplicationConfiguration.JSHelper.getStorage();
+			StorageWrapper storage = WebJSHelper.get().getStorage();
 			pref = new WebPreferences(storage, name);
 			prefs.put(name, pref);
 		}

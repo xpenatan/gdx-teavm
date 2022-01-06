@@ -1,7 +1,8 @@
-package com.github.xpenatan.gdx.backends.teavm.dom;
+package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
+import com.github.xpenatan.gdx.backends.web.WebJSGraphics;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
@@ -23,14 +24,16 @@ import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 /**
  * @author xpenatan
  */
-public class TeaJSHelper implements WebJSHelper, JSObject {
+public class TeaJSHelper extends WebJSHelper implements JSObject {
 
 	private WebAgentInfo agentInfo;
 	private HTMLCanvasElementWrapper canvasWrapper;
+	private TeaJSGraphics graphics;
 
 	public TeaJSHelper(WebAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
 		this.agentInfo = agentInfo;
 		this.canvasWrapper = canvasWrapper;
+		this.graphics = new TeaJSGraphics();
 	}
 
 	@Override
@@ -83,5 +86,8 @@ public class TeaJSHelper implements WebJSHelper, JSObject {
 		return new TeaSoundManager();
 	}
 
-
+	@Override
+	public WebJSGraphics getGraphics() {
+		return graphics;
+	}
 }
