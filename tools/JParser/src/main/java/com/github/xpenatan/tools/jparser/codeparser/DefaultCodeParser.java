@@ -1,6 +1,7 @@
 package com.github.xpenatan.tools.jparser.codeparser;
 
 import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -156,6 +157,9 @@ public abstract class DefaultCodeParser implements CodeParser {
     }
 
     protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
+
+    @Override
+    public void onParseClass(CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
 
     @Override
     public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {}

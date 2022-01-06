@@ -181,6 +181,8 @@ public class JParser {
         PositionUtils.sortByBeginPosition(array, false);
         ArrayList<BlockComment> blockComments = new ArrayList<>();
 
+        wrapper.onParseClass(unit, clazzInterface);
+
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
 
