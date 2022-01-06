@@ -5,10 +5,11 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.xpenatan.tools.jparser.JParserUnit;
 
 /** @author xpenatan */
 public interface CodeParser {
-    void onParseClass(CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration);
+    void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration);
     void parseCodeBlock(CodeParserItem parserItem);
     void parseHeaderBlock(CodeParserItem parserItem);
     void onParseConstructor(ConstructorDeclaration constructorDeclaration);

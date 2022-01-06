@@ -8,6 +8,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
+import com.github.xpenatan.tools.jparser.JParserUnit;
 import com.github.xpenatan.tools.jparser.util.RawCodeBlock;
 
 import java.util.Optional;
@@ -159,7 +160,7 @@ public abstract class DefaultCodeParser implements CodeParser {
     protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
 
     @Override
-    public void onParseClass(CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
+    public void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
 
     @Override
     public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {}

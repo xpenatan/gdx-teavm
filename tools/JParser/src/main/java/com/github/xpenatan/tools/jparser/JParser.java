@@ -18,6 +18,7 @@ import com.github.xpenatan.tools.jparser.util.CustomFileDescriptor;
 import com.github.xpenatan.tools.jparser.util.CustomPrettyPrinter;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -64,17 +65,29 @@ public class JParser {
             }
         }
         System.out.println("***** GENERATING CODE *****");
-        processDirectory(wrapper, fileSourceDir, fileGenDir, excludes, fileSourceDir);
+        JParserUnit jParserUnit = new JParserUnit();
+        processDirectory(jParserUnit, wrapper, fileSourceDir, fileGenDir, excludes, fileSourceDir);
+        for(int i = 0; i < jParserUnit.unitArray.size(); i++) {
+            JParserUnitItem jParserUnitItem = jParserUnit.unitArray.get(i);
+            CompilationUnit unit = jParserUnitItem.unit;
+            String inputPath = jParserUnitItem.inputPath;
+            String destinationPath = jParserUnitItem.destinationPath;
+
+            System.out.println(i + " Parsing: " + inputPath);
+
+            String codeParsed = parseClass(jParserUnit, wrapper, unit);
+            generateFile(destinationPath, codeParsed);
+        }
         System.out.println("********** DONE ***********");
     }
 
-    private static void processDirectory(CodeParser wrapper, CustomFileDescriptor fileSourceDir, CustomFileDescriptor fileGenDir, String[] excludes, CustomFileDescriptor dir) throws Exception {
+    private static void processDirectory(JParserUnit jParserUnit, CodeParser wrapper, CustomFileDescriptor fileSourceDir, CustomFileDescriptor fileGenDir, String[] excludes, CustomFileDescriptor dir) throws Exception {
         CustomFileDescriptor[] files = dir.list();
         for(CustomFileDescriptor file : files) {
             if(file.isDirectory()) {
                 if(file.path().contains(".svn")) continue;
                 if(file.path().contains(".git")) continue;
-                processDirectory(wrapper, fileSourceDir, fileGenDir, excludes, file);
+                processDirectory(jParserUnit, wrapper, fileSourceDir, fileGenDir, excludes, file);
             }
             else {
                 if(file.extension().equals("java")) {
@@ -107,18 +120,23 @@ public class JParser {
                         continue;
                     }
                     String javaContent = file.readString();
-                    System.out.println("Parsing: " + file);
-                    String codeParsed = parseClass(wrapper, javaContent);
-                    generateFile(fileSourceDir, fileGenDir, file, codeParsed);
+                    File file1 = file.file();
+                    CompilationUnit unit = StaticJavaParser.parse(new ByteArrayInputStream(javaContent.getBytes()));
+                    unit.printer(new CustomPrettyPrinter());
+                    String absolutePath = file1.getAbsolutePath();
+
+                    String packageFilePath = absolutePath.replace(fileSourceDir.file().getAbsolutePath(), "");
+                    String fullPath = fileGenDir.file().getAbsolutePath();
+                    fullPath = fullPath + packageFilePath;
+
+                    jParserUnit.unitArray.add(new JParserUnitItem(unit, absolutePath, fullPath));
                 }
             }
         }
     }
 
-    private static void generateFile(CustomFileDescriptor fileSourceDir, CustomFileDescriptor fileGenDir, CustomFileDescriptor fileName, String javaContent) {
-        String packageFilePath = fileName.file().getAbsolutePath().replace(fileSourceDir.file().getAbsolutePath(), "");
-        String fullPath = fileGenDir.file().getAbsolutePath() + packageFilePath;
-        CustomFileDescriptor fileDescriptor = new CustomFileDescriptor(fullPath);
+    private static void generateFile(String destinationPath, String javaContent) {
+        CustomFileDescriptor fileDescriptor = new CustomFileDescriptor(destinationPath);
         fileDescriptor.writeString(javaContent, false);
     }
 
@@ -128,10 +146,7 @@ public class JParser {
         return className;
     }
 
-    private static String parseClass(CodeParser wrapper, String javaContent) throws Exception {
-        CompilationUnit unit = StaticJavaParser.parse(new ByteArrayInputStream(javaContent.getBytes()));
-        unit.printer(new CustomPrettyPrinter());
-
+    private static String parseClass(JParserUnit jParserUnit, CodeParser wrapper, CompilationUnit unit) throws Exception {
         ArrayList<BlockComment> blockComments = new ArrayList<>();
 
         ArrayList<Node> array = new ArrayList<>();
@@ -166,7 +181,7 @@ public class JParser {
                     packageD.setComment(new BlockComment(gen));
                 }
                 else if(node instanceof ClassOrInterfaceDeclaration) {
-                    parseClassInterface(unit, wrapper, (ClassOrInterfaceDeclaration) node, 0);
+                    parseClassInterface(jParserUnit, unit, wrapper, (ClassOrInterfaceDeclaration) node, 0);
                 }
             }
         }
@@ -175,13 +190,13 @@ public class JParser {
         return unit.toString();
     }
 
-    private static void parseClassInterface(CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface, int classLevel) {
+    private static void parseClassInterface(JParserUnit jParserUnit, CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface, int classLevel) {
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(clazzInterface.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
         ArrayList<BlockComment> blockComments = new ArrayList<>();
 
-        wrapper.onParseClass(unit, clazzInterface);
+        wrapper.onParseClass(jParserUnit, unit, clazzInterface);
 
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
@@ -229,7 +244,7 @@ public class JParser {
             else {
                 addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);
                 if(node instanceof ClassOrInterfaceDeclaration) {
-                    parseClassInterface(unit, wrapper, (ClassOrInterfaceDeclaration) node, ++classLevel);
+                    parseClassInterface(jParserUnit, unit, wrapper, (ClassOrInterfaceDeclaration) node, ++classLevel);
                 }
             }
         }
