@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.TeaJSGraphics.FullscreenChanged;
 import com.github.xpenatan.gdx.backends.web.WebGraphics;
 import com.github.xpenatan.gdx.backends.web.WebJSGraphics;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
@@ -38,7 +37,6 @@ public class TeaJSGraphics implements WebJSGraphics {
         FullscreenChanged fullscreenChanged = new FullscreenChanged() {
             @Override
             public void fullscreenChanged() {
-                System.out.println("aaa");
             }
         };
         return setFullscreen(fullscreenChanged, canvas, screenWidth, screenHeight);
