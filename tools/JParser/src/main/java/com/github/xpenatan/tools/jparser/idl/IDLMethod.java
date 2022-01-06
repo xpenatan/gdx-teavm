@@ -15,12 +15,12 @@ public class IDLMethod {
         this.line = line;
         paramsLine = IDLMethod.setParameters(line, parameters);
         int index = line.indexOf("(");
-        String leftSide = line.substring(0, index);
+        String leftSide = line.substring(0, index).trim();
         int startIndex = leftSide.indexOf("[");
         int endIndex = leftSide.indexOf("]");
         if(startIndex != -1 && endIndex != -1) {
             String tags = line.substring(startIndex, endIndex + 1);
-            leftSide = leftSide.replace(tags, "");
+            leftSide = leftSide.replace(tags, "").trim();
         }
 
         String[] s = leftSide.split(" ");
