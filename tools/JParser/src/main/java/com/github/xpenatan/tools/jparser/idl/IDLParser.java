@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class IDLParser {
 
     public static IDLFile parseFile(String path) {
+        IDLFile idlFile = new IDLFile();
         File file = new File(path);    //creates a new file instance
         if(file.exists()) {
             try {
@@ -25,14 +26,12 @@ public class IDLParser {
 
                 ArrayList<IDLClass> classList = new ArrayList<>();
                 parseFile(lines, classList);
-                IDLFile idlFile = new IDLFile();
                 idlFile.classArray.addAll(classList);
-                return idlFile;
             } catch(Throwable t) {
                 t.printStackTrace();
             }
         }
-        return null;
+        return idlFile;
     }
 
     private static void parseFile(ArrayList<String> lines, ArrayList<IDLClass> classList) {
