@@ -10,7 +10,7 @@ public class TeaJSGraphics implements WebJSGraphics {
 
     @Override
     public double getNativeScreenDensity() {
-        return 0;
+        return getNativeScreenDensityJS();
     }
 
     @JSBody(script = "return devicePixelRatio || 1;")
