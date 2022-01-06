@@ -2,6 +2,7 @@ package com.github.xpenatan.tools.jparser.idl;
 
 import java.util.ArrayList;
 
+/** @author xpenatan */
 public class IDLParameter {
     public String line;
     public String type;
@@ -32,6 +33,4 @@ public class IDLParameter {
         type = s1[s1.length-2];
         name = s1[s1.length-1];
     }
-
-
 }

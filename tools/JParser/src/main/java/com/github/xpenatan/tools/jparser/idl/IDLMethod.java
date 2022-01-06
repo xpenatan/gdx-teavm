@@ -2,6 +2,7 @@ package com.github.xpenatan.tools.jparser.idl;
 
 import java.util.ArrayList;
 
+/** @author xpenatan */
 public class IDLMethod {
     public String line;
     public String paramsLine;
@@ -62,6 +63,4 @@ public class IDLMethod {
             return null;
         }
     }
-
-
 }

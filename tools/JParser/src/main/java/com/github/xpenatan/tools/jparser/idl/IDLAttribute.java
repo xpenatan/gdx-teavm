@@ -1,5 +1,6 @@
 package com.github.xpenatan.tools.jparser.idl;
 
+/** @author xpenatan */
 public class IDLAttribute {
     public String line;
 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/** @author xpenatan */
 public class IDLParser {
 
     public static IDLFile parseFile(String path) {

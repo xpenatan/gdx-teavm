@@ -2,6 +2,7 @@ package com.github.xpenatan.tools.jparser.idl;
 
 import java.util.ArrayList;
 
+/** @author xpenatan */
 public class IDLClass {
     public String interfaceName;
     public String prefixName;
