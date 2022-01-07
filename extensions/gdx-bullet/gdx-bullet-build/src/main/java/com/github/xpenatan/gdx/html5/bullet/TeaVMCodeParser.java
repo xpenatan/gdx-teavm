@@ -12,16 +12,13 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
-import com.github.xpenatan.tools.jparser.codeparser.DefaultCodeParser;
+import com.github.xpenatan.tools.jparser.codeparser.IBLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 
-public class TeaVMCodeParser extends DefaultCodeParser {
+/** @author xpenatan */
+public class TeaVMCodeParser extends IBLDefaultCodeParser {
 
     private static final String HEADER_CMD = "teaVM";
-
-    public TeaVMCodeParser() {
-        super(HEADER_CMD);
-    }
 
     public TeaVMCodeParser(IDLFile idlFile) {
         super(HEADER_CMD, idlFile);
