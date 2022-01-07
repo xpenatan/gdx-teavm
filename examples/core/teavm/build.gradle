@@ -16,6 +16,7 @@ dependencies {
   implementation project(":backends:backend-web")
   implementation project(":backends:backend-teavm")
   implementation project(":extensions:gdx-freetype-teavm")
+  implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
   implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
   implementation project(":examples:core:core")
 }

@@ -41,6 +41,6 @@ public class Timer {
     return (float) (now() - resetMillis);
   }
 
-  @JSBody(script = "Date.now()")
+  @JSBody(script = "return Date.now()")
   private static native double now();
 }

@@ -1,43 +1,38 @@
 package com.github.xpenatan.gdx.backends.web;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * @author xpenatan
  */
 public class WebClassLoader extends URLClassLoader {
 
-	private URL[] classPaths;
+	private URL[] jarFiles;
 
 	public WebClassLoader(URL[] classPaths, ClassLoader parent) {
 		super(classPaths, parent);
-		this.classPaths = classPaths;
+		this.jarFiles = classPaths;
 	}
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
-		for (int i = 0; i < classPaths.length; i++) {
-			URL url = classPaths[i];
+		for (int i = 0; i < jarFiles.length; i++) {
+			URL url = jarFiles[i];
 			String path = url.getPath();
-
-			String newPath = path + name;
-			File file = new File(newPath);
-
-			if (file.exists()) {
-				URI uri = file.toURI();
-				try {
-					return uri.toURL().openStream();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+			File file = new File(path);
+			try {
+				JarFile jarFile = new JarFile(file);
+				ZipEntry entry = jarFile.getEntry(name);
+				if(entry != null) {
+					InputStream inputStream = jarFile.getInputStream(entry);
+					return inputStream;
 				}
+			} catch(Exception e) {
 			}
 		}
 		return super.getResourceAsStream(name);

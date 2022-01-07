@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** @author xpenatan */
-public class IBLDefaultCodeParser extends DefaultCodeParser {
+public abstract class IBLDefaultCodeParser extends DefaultCodeParser {
 
     private IDLFile idlFile;
 
@@ -97,7 +97,10 @@ public class IBLDefaultCodeParser extends DefaultCodeParser {
             }
             blockStmt.addStatement(returnStmt);
         }
+        onMethodGenerated(jParserUnit, classOrInterfaceDeclaration, methodDeclaration, idlMethod);
     }
+
+    protected abstract void onMethodGenerated(JParserUnit jParserUni, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration methodDeclaration, IDLMethod idlMethod);
 
     private boolean containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         ArrayList<IDLParameter> parameters = idlMethod.parameters;

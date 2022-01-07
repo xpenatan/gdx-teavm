@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.examples.desktop;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.github.xpenatan.gdx.examples.tests.AnimationTest;
+import com.github.xpenatan.gdx.examples.tests.Box2DTest;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import com.github.xpenatan.gdx.examples.tests.freetype.*;
 import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
@@ -17,11 +18,12 @@ public class Main {
 	static int UI_TEST = 5;
 	static int FREETYPE_TEST = 6;
 	static int REFLECTION_TEST = 7;
+	static int BOX2d_TEST = 8;
 
 	public static void main(String[] args)
 	{
 		ApplicationListener appTest = null;
-		int i = FREETYPE_TEST;
+		int i = BOX2d_TEST;
 		if(i == GEARS_TEST)
 			appTest = new GearsDemo();
 //		else if(i == BULLET_TEST)
@@ -40,6 +42,8 @@ public class Main {
 		}
 		else if(i == REFLECTION_TEST)
 			appTest = new ReflectionTest();
+		else if(i == BOX2d_TEST)
+			appTest = new Box2DTest();
 
 		if(appTest != null)
 			new LwjglApplication(appTest);

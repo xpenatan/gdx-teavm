@@ -5,6 +5,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassFilter;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.examples.tests.AnimationTest;
+import com.github.xpenatan.gdx.examples.tests.Box2DTest;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeAtlasTest;
@@ -21,9 +22,6 @@ public class Build {
 		String reflectionPackage = "com.github.xpenatan.gdx.examples.tests.reflection.models";
 		TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
-		TeaClassFilter.addClassToExclude("com.github.xpenatan.gdx.examples.tests.reflection.models.ReflectionModel", true, false, false);
-//		TeaClassFilter.addClassToExclude("com.badlogic.gdx.Preferences", true, false, false);
-//		TeaClassFilter.addClassToExclude("java.util.BitSet", true, false, false);
 
 		TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
 		teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));;
@@ -32,8 +30,9 @@ public class Build {
 		teaBuildConfiguration.logClasses = true;
 //		teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
-//		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
-		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
+		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = Box2DTest.class.getName();
 		TeaBuilder.build(teaBuildConfiguration);
 	}
 }

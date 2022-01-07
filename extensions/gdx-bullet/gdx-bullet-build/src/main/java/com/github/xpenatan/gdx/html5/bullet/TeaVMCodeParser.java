@@ -1,19 +1,19 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
 import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
+import com.github.xpenatan.tools.jparser.JParserUnit;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.IBLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
+import com.github.xpenatan.tools.jparser.idl.IDLMethod;
 
 /** @author xpenatan */
 public class TeaVMCodeParser extends IBLDefaultCodeParser {
@@ -56,6 +56,23 @@ public class TeaVMCodeParser extends IBLDefaultCodeParser {
                 normalAnnotationExpr.addPair("script", "\"" + content + "\"");
             }
         }
+    }
+
+    @Override
+    protected void onMethodGenerated(JParserUnit jParserUni, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration methodDeclaration, IDLMethod idlMethod) {
+
+//        if(methodDeclaration.getType().isVoidType()) {
+            MethodDeclaration clonedMethod = methodDeclaration.clone();
+            Parameter parameter = clonedMethod.addAndGetParameter("int", "addr");
+            NodeList<Parameter> parameters = clonedMethod.getParameters();
+            parameters.remove(parameter);
+            parameters.add(0, parameter);
+            clonedMethod.setNative(true);
+            clonedMethod.removeBody();
+            clonedMethod.removeModifier(Keyword.PUBLIC);
+            clonedMethod.setPrivate(true);
+            classDeclaration.getMembers().add(clonedMethod);
+//        }
     }
 
     private void convertJavaPrimitiveArrayToJavaScriptReferenceArray(NodeList<Parameter> parameters) {
