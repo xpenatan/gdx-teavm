@@ -19,8 +19,12 @@ public class TeaVMCodeParser extends DefaultCodeParser {
 
     private static final String HEADER_CMD = "teaVM";
 
-    public TeaVMCodeParser(IDLFile idlFile) {
+    public TeaVMCodeParser() {
         super(HEADER_CMD);
+    }
+
+    public TeaVMCodeParser(IDLFile idlFile) {
+        super(HEADER_CMD, idlFile);
     }
 
     @Override
