@@ -67,5 +67,5 @@ TextTooltipStyle: {
 		label: { font: default-font, fontColor: white },
 		background: default-pane, wrapWidth: 150
 	}
-}
+},
 }
