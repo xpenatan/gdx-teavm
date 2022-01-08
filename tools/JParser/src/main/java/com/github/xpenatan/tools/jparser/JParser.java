@@ -191,12 +191,12 @@ public class JParser {
     }
 
     private static void parseClassInterface(JParserUnit jParserUnit, CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface, int classLevel) {
+        wrapper.onParseClass(jParserUnit, unit, clazzInterface);
+
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(clazzInterface.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
         ArrayList<BlockComment> blockComments = new ArrayList<>();
-
-        wrapper.onParseClass(jParserUnit, unit, clazzInterface);
 
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
@@ -266,12 +266,7 @@ public class JParser {
             parserItem.methodDeclaration = method;
             parserItem.importDeclaration = importDeclaration;
             blockComments.clear();
-            if(isHeader) {
-                wrapper.parseHeaderBlock(parserItem);
-            }
-            else {
-                wrapper.parseCodeBlock(parserItem);
-            }
+            wrapper.parseCodeBlock(isHeader, parserItem);
             return true;
         }
         return false;

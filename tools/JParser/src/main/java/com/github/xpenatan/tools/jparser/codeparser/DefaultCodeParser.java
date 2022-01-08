@@ -3,16 +3,15 @@ package com.github.xpenatan.tools.jparser.codeparser;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.JParserUnit;
 import com.github.xpenatan.tools.jparser.util.RawCodeBlock;
 
+import java.util.List;
 import java.util.Optional;
 
 /** @author xpenatan */
@@ -31,11 +30,34 @@ public abstract class DefaultCodeParser implements CodeParser {
         this.headerCMD = headerCMD;
     }
 
-    private void updateBlock(CodeParserItem parserItem) {
+    @Override
+    public void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
+
+    @Override
+    public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {}
+
+    @Override
+    public void onParseField(FieldDeclaration fieldDeclaration) {}
+
+    @Override
+    public void onParseMethod(MethodDeclaration methodDeclaration) {}
+
+    @Override
+    public void parseCodeBlock(boolean isHeader, CodeParserItem parserItem) {
+        removeCodeBlock(parserItem);
+        if(isHeader) {
+            parseHeaderBlock(parserItem);
+        }
+        else {
+            parseCodeBlock(parserItem);
+        }
+    }
+
+    private void removeCodeBlock(CodeParserItem parserItem) {
+        // Remove comment block if it's not part of this parser
         for(int i = 0; i < parserItem.rawComments.size(); i++) {
             BlockComment rawBlockComment = parserItem.rawComments.get(i);
             String headerCommands = CodeParserItem.obtainHeaderCommands(rawBlockComment);
-            // Remove comment block if its not part of this parser
             if(headerCommands == null || !(headerCommands.startsWith(CMD_HEADER_START + headerCMD) && headerCommands.endsWith(CMD_HEADER_END))) {
                 rawBlockComment.remove();
                 parserItem.rawComments.remove(i);
@@ -44,10 +66,7 @@ public abstract class DefaultCodeParser implements CodeParser {
         }
     }
 
-    @Override
     public void parseCodeBlock(CodeParserItem parserItem) {
-        updateBlock(parserItem);
-
         if(parserItem.rawComments.size() == 0) {
             return;
         }
@@ -95,10 +114,7 @@ public abstract class DefaultCodeParser implements CodeParser {
         }
     }
 
-    @Override
     public void parseHeaderBlock(CodeParserItem parserItem) {
-        updateBlock(parserItem);
-
         if(parserItem.rawComments.size() == 0) {
             return;
         }
@@ -159,28 +175,9 @@ public abstract class DefaultCodeParser implements CodeParser {
         setJavaBodyRemoveCMD(parserItem);
     }
 
-    protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
-
-    public boolean isType(Type type, String typeStr) {
-        if(type.isPrimitiveType()) {
-            PrimitiveType primitiveType = type.asPrimitiveType();
-            String name = primitiveType.getType().name();
-            return name.contains(typeStr.toUpperCase());
-        }
-        return false;
+    private void setJavaBodyRemoveCMD(CodeParserItem parserItem) {
+        parserItem.removeAll();
     }
-
-    @Override
-    public void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
-
-    @Override
-    public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {}
-
-    @Override
-    public void onParseField(FieldDeclaration fieldDeclaration) {}
-
-    @Override
-    public void onParseMethod(MethodDeclaration methodDeclaration) {}
 
     private void setJavaBodyReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         methodDeclaration.remove();
@@ -206,7 +203,6 @@ public abstract class DefaultCodeParser implements CodeParser {
         classInterface.getMembers().add(newblockComment);
     }
 
-    private void setJavaBodyRemoveCMD(CodeParserItem parserItem) {
-        parserItem.removeAll();
-    }
+    protected abstract void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration);
+
 }

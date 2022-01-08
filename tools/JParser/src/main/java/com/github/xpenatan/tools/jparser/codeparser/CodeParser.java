@@ -10,9 +10,8 @@ import com.github.xpenatan.tools.jparser.JParserUnit;
 /** @author xpenatan */
 public interface CodeParser {
     void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration);
-    void parseCodeBlock(CodeParserItem parserItem);
-    void parseHeaderBlock(CodeParserItem parserItem);
     void onParseConstructor(ConstructorDeclaration constructorDeclaration);
     void onParseMethod(MethodDeclaration methodDeclaration);
     void onParseField(FieldDeclaration fieldDeclaration);
+    void parseCodeBlock(boolean isHeader, CodeParserItem parserItem);
 }

@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** @author xpenatan */
-public abstract class IBLDefaultCodeParser extends DefaultCodeParser {
+public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
-    private IDLFile idlFile;
+    private final IDLFile idlFile;
 
-    public IBLDefaultCodeParser(String headerCMD, IDLFile idlFile) {
+    public IDLDefaultCodeParser(String headerCMD, IDLFile idlFile) {
         super(headerCMD);
         this.idlFile = idlFile;
     }
@@ -53,16 +53,13 @@ public abstract class IBLDefaultCodeParser extends DefaultCodeParser {
     }
 
     private void generateMethods(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
+        String methodName = idlMethod.name;
         if(containsMethod(classOrInterfaceDeclaration, idlMethod)) {
             return;
         }
-        String methodName = idlMethod.name;
 
         ArrayList<IDLParameter> parameters = idlMethod.parameters;
-
         MethodDeclaration methodDeclaration = classOrInterfaceDeclaration.addMethod(methodName, Keyword.PUBLIC);
-        BlockStmt blockStmt = methodDeclaration.getBody().get();
-
         for(int i = 0; i < parameters.size(); i++) {
             IDLParameter idlParameter = parameters.get(i);
             String paramType = idlParameter.type;
@@ -74,15 +71,21 @@ public abstract class IBLDefaultCodeParser extends DefaultCodeParser {
 
         Type returnType = StaticJavaParser.parseType(idlMethod.returnType);
         methodDeclaration.setType(returnType);
+        setDefaultReturnValues(jParserUnit, unit, returnType, methodDeclaration);
+        onIDLMethodGenerated(jParserUnit, classOrInterfaceDeclaration, methodDeclaration);
+    }
+
+    private void setDefaultReturnValues(JParserUnit jParserUnit, CompilationUnit unit, Type returnType, MethodDeclaration idlMethodDeclaration) {
         if(!returnType.isVoidType()) {
+            BlockStmt blockStmt = idlMethodDeclaration.getBody().get();
             ReturnStmt returnStmt = new ReturnStmt();
             if(returnType.isPrimitiveType()) {
-                if(isType(returnType, "long") || isType(returnType, "int") || isType(returnType, "float") || isType(returnType, "double")) {
+                if(CodeParserHelper.isLong(returnType) || CodeParserHelper.isInt(returnType) || CodeParserHelper.isFloat(returnType) || CodeParserHelper.isDouble(returnType)) {
                     NameExpr returnNameExpr = new NameExpr();
                     returnNameExpr.setName("0");
                     returnStmt.setExpression(returnNameExpr);
                 }
-                else if(isType(returnType, "boolean")) {
+                else if(CodeParserHelper.isBoolean(returnType)) {
                     NameExpr returnNameExpr = new NameExpr();
                     returnNameExpr.setName("false");
                     returnStmt.setExpression(returnNameExpr);
@@ -90,17 +93,15 @@ public abstract class IBLDefaultCodeParser extends DefaultCodeParser {
             }
             else {
                 JParserUnitItem.addMissingImportType(jParserUnit, unit, returnType);
-
                 NameExpr returnNameExpr = new NameExpr();
                 returnNameExpr.setName("null");
                 returnStmt.setExpression(returnNameExpr);
             }
             blockStmt.addStatement(returnStmt);
         }
-        onMethodGenerated(jParserUnit, classOrInterfaceDeclaration, methodDeclaration, idlMethod);
     }
 
-    protected abstract void onMethodGenerated(JParserUnit jParserUni, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration methodDeclaration, IDLMethod idlMethod);
+    protected abstract void onIDLMethodGenerated(JParserUnit jParserUni, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration);
 
     private boolean containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         ArrayList<IDLParameter> parameters = idlMethod.parameters;
