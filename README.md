@@ -1,12 +1,14 @@
 # Gdx Html5 tools
 
-Gdx-Html5-tools¹ is a solution to run libgdx games in a browser using [TeaVM](https://github.com/konsoletyper/teavm) with some reflection support. It also contains some extensions like Bullet Physics(WIP) and ImGui(TODO).
-<br><br>
-
-¹: Gdx-Html5-tools is WIP. It's slowly being developed by a single dev. If you want to help, make a PR =D. I'm always at gdx discord.
+Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](https://github.com/konsoletyper/teavm) with some reflection support.
 
 ## Setup:
 - TODO
+
+## Supported Extensions:
+- Box2D
+- Bullet Physics (WIP)
+- FreeType
 
 ## Gdx-Html5-Generator:
 A standalone tool to convert your libgdx game in .jar format to javascript. There is no need to create a html gradle module.
