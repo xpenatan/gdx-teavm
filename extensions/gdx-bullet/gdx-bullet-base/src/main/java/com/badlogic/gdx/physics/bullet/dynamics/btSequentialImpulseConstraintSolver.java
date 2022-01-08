@@ -6,10 +6,8 @@ package com.badlogic.gdx.physics.bullet.dynamics;
 public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 
     public btSequentialImpulseConstraintSolver() {
-        super("btSequentialImpulseConstraintSolver");
         initObject(createNative(), true);
     }
-
 
     @Override
     protected void deleteNative() {

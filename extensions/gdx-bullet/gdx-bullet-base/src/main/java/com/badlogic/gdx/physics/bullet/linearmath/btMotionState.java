@@ -7,13 +7,11 @@ import netscape.javascript.JSObject;
 /**
  * @author xpenatan
  */
-public abstract class btMotionState extends BulletBase {
+public class btMotionState extends BulletBase {
     Matrix4 tempMat = new Matrix4();
 
-    protected btMotionState(String className) {
-        super(className);
+    public btMotionState() {
         initJavaObject();
-
     }
 
     /*[-teaVM;-ADD]

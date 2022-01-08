@@ -6,7 +6,6 @@ package com.badlogic.gdx.physics.bullet.collision;
 public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 
     public btDefaultCollisionConfiguration() {
-        super("btDefaultCollisionConfiguration");
         initObject(createNative(), true);
     }
 

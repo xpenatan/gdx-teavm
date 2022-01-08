@@ -5,8 +5,5 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 /**
  * @author xpenatan
  */
-public abstract class btDispatcher extends BulletBase {
-    protected btDispatcher(String className) {
-        super(className);
-    }
+public class btDispatcher extends BulletBase {
 }

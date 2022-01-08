@@ -6,12 +6,4 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  * @author xpenatan
  */
 public class btDispatcherInfo extends BulletBase {
-
-    protected btDispatcherInfo(String className) {
-        super(className);
-    }
-
-    @Override
-    protected void deleteNative() {
-    }
 }

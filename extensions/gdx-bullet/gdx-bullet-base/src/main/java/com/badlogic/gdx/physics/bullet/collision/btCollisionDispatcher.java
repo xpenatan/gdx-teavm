@@ -6,7 +6,6 @@ package com.badlogic.gdx.physics.bullet.collision;
 public class btCollisionDispatcher extends btDispatcher {
 
     public btCollisionDispatcher(btCollisionConfiguration config) {
-        super("btCollisionDispatcher");
         initObject(createNative(config.getCPointer()), true);
     }
 

@@ -23,6 +23,9 @@ public class IDLMethod {
 
         String[] s = leftSide.split(" ");
         returnType = s[0];
+        if(returnType.equals("long")) {
+            returnType = "int";
+        }
         name = s[1];
     }
 

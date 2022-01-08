@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.bullet.collision.btDispatcher;
 public class btDiscreteDynamicsWorld extends btDynamicsWorld {
 
     public btDiscreteDynamicsWorld(btDispatcher dispatcher, btBroadphaseInterface pairCache, btConstraintSolver constraintSolver, btCollisionConfiguration collisionConfiguration) {
-        super("btDiscreteDynamicsWorld");
         initObject(createNative(dispatcher.getCPointer(), pairCache.getCPointer(), constraintSolver.getCPointer(), collisionConfiguration.getCPointer()), true);
     }
 

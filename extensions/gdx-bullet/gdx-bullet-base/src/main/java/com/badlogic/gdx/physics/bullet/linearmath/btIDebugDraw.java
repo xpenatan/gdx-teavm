@@ -6,10 +6,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 /**
  * @author xpenatan
  */
-public abstract class btIDebugDraw extends BulletBase {
-    protected btIDebugDraw() {
-        super("btIDebugDraw");
-    }
+public class btIDebugDraw extends BulletBase {
 //
 //    public btIDebugDraw() {
 //        resetObj(createNative(), true);

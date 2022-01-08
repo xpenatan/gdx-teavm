@@ -14,7 +14,6 @@ public class btDefaultMotionState extends btMotionState {
     }
 
     public btDefaultMotionState(Matrix4 renderTrans) {
-        super("btDefaultMotionState");
         worldTrans = renderTrans;
     }
 

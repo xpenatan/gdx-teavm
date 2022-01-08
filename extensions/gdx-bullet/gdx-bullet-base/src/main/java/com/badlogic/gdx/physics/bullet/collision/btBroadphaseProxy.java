@@ -7,11 +7,4 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btBroadphaseProxy extends BulletBase {
 
-    protected btBroadphaseProxy(String className) {
-        super(className);
-    }
-
-    @Override
-    protected void deleteNative() {
-    }
 }

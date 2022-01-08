@@ -74,9 +74,9 @@ public class Bullet {
      * Dispose temp objects
      */
     public static void dispose() {
-        btVector3.tempWrapper01.dispose();
-        btVector3.tempWrapper02.dispose();
-        btVector3.tempWrapper03.dispose();
+        btVector3.TEMP_01.dispose();
+        btVector3.TEMP_02.dispose();
+        btVector3.TEMP_03.dispose();
     }
 
     protected static class ShapePart {

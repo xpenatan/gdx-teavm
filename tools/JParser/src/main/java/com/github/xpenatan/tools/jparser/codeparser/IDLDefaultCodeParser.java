@@ -12,8 +12,8 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.JParserUnit;
-import com.github.xpenatan.tools.jparser.JParserUnitItem;
+import com.github.xpenatan.tools.jparser.JParser;
+import com.github.xpenatan.tools.jparser.JParserItem;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLMethod;
@@ -25,7 +25,7 @@ import java.util.List;
 /** @author xpenatan */
 public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
-    private final IDLFile idlFile;
+    protected final IDLFile idlFile;
 
     public IDLDefaultCodeParser(String headerCMD, IDLFile idlFile) {
         super(headerCMD);
@@ -37,7 +37,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
     }
 
     @Override
-    public void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+    public void onParseClassStart(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
         if(idlFile != null) {
             SimpleName name = classOrInterfaceDeclaration.getName();
             String nameStr = name.asString();
@@ -46,13 +46,13 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                 ArrayList<IDLMethod> methods = idlClass.methods;
                 for(int i = 0; i < methods.size(); i++) {
                     IDLMethod idlMethod = methods.get(i);
-                    generateMethods(jParserUnit, unit, classOrInterfaceDeclaration, idlMethod);
+                    generateMethods(jParser, unit, classOrInterfaceDeclaration, idlMethod);
                 }
             }
         }
     }
 
-    private void generateMethods(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
+    private void generateMethods(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         String methodName = idlMethod.name;
         if(containsMethod(classOrInterfaceDeclaration, idlMethod)) {
             return;
@@ -66,16 +66,16 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             String paramName = idlParameter.name;
             Parameter parameter = methodDeclaration.addAndGetParameter(paramType, paramName);
             Type type = parameter.getType();
-            JParserUnitItem.addMissingImportType(jParserUnit, unit, type);
+            CodeParserHelper.addMissingImportType(jParser, unit, type);
         }
 
         Type returnType = StaticJavaParser.parseType(idlMethod.returnType);
         methodDeclaration.setType(returnType);
-        setDefaultReturnValues(jParserUnit, unit, returnType, methodDeclaration);
-        onIDLMethodGenerated(jParserUnit, classOrInterfaceDeclaration, methodDeclaration);
+        setDefaultReturnValues(jParser, unit, returnType, methodDeclaration);
+        onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, methodDeclaration);
     }
 
-    private void setDefaultReturnValues(JParserUnit jParserUnit, CompilationUnit unit, Type returnType, MethodDeclaration idlMethodDeclaration) {
+    private void setDefaultReturnValues(JParser jParser, CompilationUnit unit, Type returnType, MethodDeclaration idlMethodDeclaration) {
         if(!returnType.isVoidType()) {
             BlockStmt blockStmt = idlMethodDeclaration.getBody().get();
             ReturnStmt returnStmt = new ReturnStmt();
@@ -92,7 +92,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                 }
             }
             else {
-                JParserUnitItem.addMissingImportType(jParserUnit, unit, returnType);
+                CodeParserHelper.addMissingImportType(jParser, unit, returnType);
                 NameExpr returnNameExpr = new NameExpr();
                 returnNameExpr.setName("null");
                 returnStmt.setExpression(returnNameExpr);
@@ -101,7 +101,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         }
     }
 
-    protected abstract void onIDLMethodGenerated(JParserUnit jParserUni, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration);
+    protected abstract void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration);
 
     private boolean containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         ArrayList<IDLParameter> parameters = idlMethod.parameters;

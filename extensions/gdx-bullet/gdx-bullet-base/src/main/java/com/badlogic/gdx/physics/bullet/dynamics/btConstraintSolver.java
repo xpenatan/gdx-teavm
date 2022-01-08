@@ -5,8 +5,5 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 /**
  * @author xpenatan
  */
-public abstract class btConstraintSolver extends BulletBase {
-    protected btConstraintSolver(String className) {
-        super(className);
-    }
+public class btConstraintSolver extends BulletBase {
 }

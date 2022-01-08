@@ -7,11 +7,4 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btCollisionObjectWrapper extends BulletBase {
 
-    protected btCollisionObjectWrapper(String className) {
-        super(className);
-    }
-
-    @Override
-    protected void deleteNative() {
-    }
 }

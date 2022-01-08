@@ -1,6 +1,7 @@
 package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
 /**
@@ -10,7 +11,9 @@ public class btTransform extends BulletBase {
 
     public static btTransform emptyTransform = new btTransform(false);
 
-    protected btTransform() {
+    public static Matrix4 TEMP_GDX_01 = new Matrix4();
+
+    public btTransform() {
         this(true);
     }
 
@@ -18,7 +21,6 @@ public class btTransform extends BulletBase {
      * Useful on creating temp objects
      */
     public btTransform(boolean cMemoryOwn) {
-        super("btVector3");
         initObject(cMemoryOwn ? createNative() : 0, cMemoryOwn);
     }
 

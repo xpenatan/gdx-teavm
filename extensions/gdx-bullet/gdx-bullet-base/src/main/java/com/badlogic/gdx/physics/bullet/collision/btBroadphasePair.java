@@ -7,12 +7,4 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btBroadphasePair extends BulletBase {
 
-    protected btBroadphasePair(String className) {
-        super(className);
-    }
-
-    @Override
-    protected void deleteNative() {
-
-    }
 }

@@ -11,11 +11,10 @@ public abstract class BulletBase implements Disposable {
     protected boolean cMemOwn;
     private boolean disposed;
     protected boolean destroyed;
-    public final String className;
+    public String className;
     private int refCount;
 
-    protected BulletBase(String className) {
-        this.className = className;
+    public BulletBase() {
     }
 
     protected void initObject(long cPtr, boolean cMemoryOwn) {
@@ -106,7 +105,9 @@ public abstract class BulletBase implements Disposable {
     /**
      * Deletes the bullet object this class encapsulates. Do not call directly, instead use the {@link #dispose()} method.
      */
-    protected abstract void deleteNative();
+    protected void deleteNative() {
+
+    }
 
     @Override
     public void dispose() {

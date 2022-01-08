@@ -3,12 +3,9 @@ package com.github.xpenatan.tools.jparser.codeparser;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.type.PrimitiveType;
-import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.JParserUnit;
+import com.github.xpenatan.tools.jparser.JParser;
 import com.github.xpenatan.tools.jparser.util.RawCodeBlock;
 
 import java.util.List;
@@ -31,7 +28,10 @@ public abstract class DefaultCodeParser implements CodeParser {
     }
 
     @Override
-    public void onParseClass(JParserUnit jParserUnit, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
+    public void onParseClassStart(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
+
+    @Override
+    public void onParseClassEnd(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {}
 
     @Override
     public void onParseConstructor(ConstructorDeclaration constructorDeclaration) {}

@@ -31,6 +31,11 @@ public class IDLParameter {
         }
         String[] s1 = tmpLine.split(" ");
         type = s1[s1.length-2];
+
+        if(type.equals("long")) {
+            type = "int";
+        }
+
         name = s1[s1.length-1];
     }
 }

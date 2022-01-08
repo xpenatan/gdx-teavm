@@ -5,8 +5,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 /**
  * @author xpenatan
  */
-public abstract class btCollisionShape extends BulletBase {
-    protected btCollisionShape(String className) {
-        super(className);
+public class btCollisionShape extends BulletBase {
+    public btCollisionShape() {
     }
 }

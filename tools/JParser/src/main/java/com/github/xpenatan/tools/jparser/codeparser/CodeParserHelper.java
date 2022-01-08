@@ -1,13 +1,19 @@
 package com.github.xpenatan.tools.jparser.codeparser;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
+import com.github.xpenatan.tools.jparser.JParser;
+import com.github.xpenatan.tools.jparser.JParserItem;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CodeParserHelper {
 
@@ -70,5 +76,53 @@ public class CodeParserHelper {
             return isValid;
         }
         return false;
+    }
+
+    public static boolean containsImport(CompilationUnit unit, String fullyQualifiedName) {
+        NodeList<ImportDeclaration> imports = unit.getImports();
+        for(int i = 0; i < imports.size(); i++) {
+            ImportDeclaration importDeclaration = imports.get(i);
+            String importName = importDeclaration.getName().asString();
+            if(fullyQualifiedName.equals(importName))
+                return true;
+        }
+        return false;
+    }
+
+    public static void addMissingImportType(JParser jParser, CompilationUnit unit, Type type) {
+        String s = type.asString();
+        JParserItem parserUnitItem = jParser.getParserUnitItem(s);
+        if(parserUnitItem != null) {
+            ClassOrInterfaceDeclaration classDeclaration = parserUnitItem.getClassDeclaration();
+            Optional<String> optionalFullyQualifiedName = classDeclaration.getFullyQualifiedName();
+            if(optionalFullyQualifiedName.isPresent()) {
+                String fullyQualifiedName = optionalFullyQualifiedName.get();
+                if(!CodeParserHelper.containsImport(unit, fullyQualifiedName)) {
+                    unit.addImport(fullyQualifiedName);
+                }
+            }
+        }
+    }
+
+    public static ClassOrInterfaceDeclaration getClassDeclaration(CompilationUnit unit) {
+        Optional<ClassOrInterfaceDeclaration> first = unit.findFirst(ClassOrInterfaceDeclaration.class);
+        return first.orElse(null);
+    }
+
+    public static void addMissingImportType(CompilationUnit unit, String importName) {
+        boolean found = false;
+        NodeList<ImportDeclaration> imports = unit.getImports();
+        for(int i = 0; i < imports.size(); i++) {
+            ImportDeclaration importDeclaration = imports.get(i);
+            Name name = importDeclaration.getName();
+            String s = name.asString();
+            if(importName.equals(s)) {
+                found = true;
+                break;
+            }
+        }
+        if(!found) {
+            unit.addImport(importName);
+        }
     }
 }

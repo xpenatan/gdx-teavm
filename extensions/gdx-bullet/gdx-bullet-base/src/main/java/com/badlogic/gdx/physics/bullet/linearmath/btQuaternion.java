@@ -15,7 +15,6 @@ public class btQuaternion extends BulletBase {
      * Useful on creating temp objects
      */
     public btQuaternion(boolean cMemoryOwn) {
-        super("btVector3");
         initObject(cMemoryOwn ? createNative() : 0, cMemoryOwn);
     }
 

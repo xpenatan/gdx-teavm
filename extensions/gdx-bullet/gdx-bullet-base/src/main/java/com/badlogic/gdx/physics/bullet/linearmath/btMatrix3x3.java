@@ -15,7 +15,6 @@ public class btMatrix3x3 extends BulletBase {
      * Useful on creating temp objects
      */
     public btMatrix3x3(boolean cMemoryOwn) {
-        super("btMatrix3x3");
         initObject(cMemoryOwn ? createNative() : 0, cMemoryOwn);
     }
 

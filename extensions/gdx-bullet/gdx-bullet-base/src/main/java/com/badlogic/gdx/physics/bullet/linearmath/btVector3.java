@@ -8,16 +8,22 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btVector3 extends BulletBase {
 
-    public static btVector3 tempWrapper01 = new btVector3(true);
-    public static btVector3 tempWrapper02 = new btVector3(true);
-    public static btVector3 tempWrapper03 = new btVector3(true);
+    public static btVector3 TEMP_01 = new btVector3(true);
+    public static btVector3 TEMP_02 = new btVector3(true);
+    public static btVector3 TEMP_03 = new btVector3(true);
+    public static btVector3 WRAPPER_TEMP_01 = new btVector3(false);
+    public static btVector3 WRAPPER_TEMP_02 = new btVector3(false);
+    public static btVector3 WRAPPER_TEMP_03 = new btVector3(false);
+
+    public static Vector3 TEMP_GDX_01 = new Vector3();
+    public static Vector3 TEMP_GDX_02 = new Vector3();
+    public static Vector3 TEMP_GDX_03 = new Vector3();
 
     public btVector3() {
         this(true);
     }
 
     public btVector3(float x, float y, float z) {
-        super("btVector3");
         initObject(createNative(x, y, z), true);
     }
 
@@ -25,7 +31,6 @@ public class btVector3 extends BulletBase {
      * Useful on creating temp objects
      */
     public btVector3(boolean cMemoryOwn) {
-        super("btVector3");
         initObject(cMemoryOwn ? createNative(0, 0, 0) : 0, cMemoryOwn);
     }
 

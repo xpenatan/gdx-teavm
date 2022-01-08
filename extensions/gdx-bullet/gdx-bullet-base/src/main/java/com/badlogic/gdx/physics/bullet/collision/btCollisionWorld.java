@@ -8,12 +8,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 public class btCollisionWorld extends BulletBase {
 
     public btCollisionWorld() {
-        super("btCollisionWorld");
         initObject(createNative(), true);
-    }
-
-    protected btCollisionWorld(String className) {
-        super(className);
     }
 
     @Override

@@ -6,7 +6,6 @@ package com.badlogic.gdx.physics.bullet.collision;
 public class btDbvtBroadphase extends btBroadphaseInterface {
 
     public btDbvtBroadphase() {
-        super("btDbvtBroadphase");
         initObject(createNative(), true);
     }
 
