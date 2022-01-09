@@ -21,13 +21,21 @@ import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import java.util.List;
 import java.util.Optional;
 
-/** @author xpenatan */
+/**
+ * A Bullet parser which attempt to use the generated idl java methods and bind it to teaVM api.
+ *
+ * It also adds additional methods to use Matrix4 and Vector3
+ *
+ * @author xpenatan */
 public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
     private static final String HEADER_CMD = "teaVM";
 
     private static final String TEMPLATE_TAG_TYPE = "[TYPE]";
     private static final String TEMPLATE_TAG_METHOD = "[METHOD]";
+    private static final String TEMPLATE_TAG_WRAPPER = "[WRAPPER]";
+    private static final String TEMPLATE_TAG_PARAM = "[PARAM]";
+    private static final String TEMPLATE_TAG_NAME = "[NAME]";
 
     private static final String CONVERT_TO_GDX_TEMPLATE = "" +
             "{\n" +
@@ -47,10 +55,17 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             "    return [TYPE].WRAPPER_GEN_01;\n" +
             "}";
 
-    private static final String GET_JS_POINTER_TEMPLATE = "" +
+    /** When a js method returns a js object, we need get its pointer.  */
+    private static final String GET_JS_METHOD_OBJ_POINTER_TEMPLATE = "" +
             "var jsObj = Bullet.wrapPointer(addr, Bullet.[TYPE]);\n" +
-            "var otherJSObj = jsObj.[METHOD];\n" +
-            "return Bullet.getPointer(otherJSObj);";
+            "var returnedJSObj = jsObj.[METHOD];\n" +
+            "return Bullet.getPointer(returnedJSObj);";
+
+    private static final String GDX_OBJECT_TEMPLATE = "" +
+            "{" +
+            "[TYPE].convert([PARAM], [TYPE].[WRAPPER]);\n" +
+            "[TYPE] [NAME] = [TYPE].[WRAPPER];" +
+            "}";
 
     public TeaVMCodeParser(IDLFile idlFile) {
         super(HEADER_CMD, idlFile);
@@ -198,21 +213,21 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     nativeMethod.addParameter("long", pointerMethod);
                 }
             }
+            // If the return type is an object we need to return a pointer.
+            if(idlMethodReturnType.isClassOrInterfaceType()) {
+                // Class Object needs to return a pointer
+                Type type = StaticJavaParser.parseType(long.class.getSimpleName());
+                nativeMethod.setType(type);
+            }
+            else {
+                nativeMethod.setType(idlMethodReturnType);
+            }
+            //Generate teaVM Annotation
+            generateNativeMethodAnnotation(classDeclaration, nativeMethod);
         }
 
         // Check if the generated method does not exist in the original class
         if(!JParserHelper.containsMethod(classDeclaration, nativeMethod)) {
-            {
-                // If the return type is an object we need to return a pointer.
-                if(idlMethodReturnType.isClassOrInterfaceType()) {
-                    // Class Object needs to return a pointer
-                    Type type = StaticJavaParser.parseType(long.class.getSimpleName());
-                    nativeMethod.setType(type);
-                }
-                else {
-                    nativeMethod.setType(idlMethodReturnType);
-                }
-            }
             MethodCallExpr caller = null;
             {
                 // Generate the method caller
@@ -238,15 +253,104 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             }
             else if(idlMethodReturnType.isClassOrInterfaceType()) {
                 // Class object needs to generate some code.
-                generateObjectPointerReturnType(unit, idlMethodDeclaration, caller);
+                BlockStmt blockStmt = generateObjectPointerReturnType(unit, idlMethodDeclaration, caller);
+                idlMethodDeclaration.setBody(blockStmt);
             }
             else {
                 // Should be a primitive return type.
                 ReturnStmt returnStmt = getReturnStmt(idlMethodDeclaration);
                 returnStmt.setExpression(caller);
             }
-            generateNativeMethodAnnotation(classDeclaration, idlMethodDeclaration, nativeMethod);
             classDeclaration.getMembers().add(nativeMethod);
+            generateGdxMethod(unit, classDeclaration, idlMethodDeclaration, nativeMethod, caller);
+        }
+    }
+
+    private void generateGdxMethod(CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, MethodDeclaration nativeMethod, MethodCallExpr caller) {
+        // Generate a new method if the parameters contains btVector3 or btTransform
+        boolean containsVector3 = idlMethodDeclaration.getParameterByType("btVector3").isPresent();
+        boolean containsTransform = idlMethodDeclaration.getParameterByType("btTransform").isPresent();
+
+        if(containsVector3 || containsTransform) {
+            MethodDeclaration gdxMethod = new MethodDeclaration();
+            gdxMethod.setName(idlMethodDeclaration.getNameAsString());
+            gdxMethod.setModifiers(Modifier.createModifierList(Keyword.PUBLIC));
+            Type returnType = idlMethodDeclaration.getType().clone();
+            gdxMethod.setType(returnType);
+            BlockStmt body = gdxMethod.createBody();
+            NodeList<Parameter> idlParameters = idlMethodDeclaration.getParameters();
+
+            int btVec3Used = 0;
+            int btTransformUsed = 0;
+            for(int i = 0; i < idlParameters.size(); i++) {
+                Parameter parameter = idlParameters.get(i);
+                String paramName = parameter.getNameAsString();
+                Type paramType = parameter.getType().clone();
+                String paramTypeStr = paramType.toString();
+                if(paramTypeStr.equals("btVector3")) {
+                    String newParam = paramName + "GDX";
+                    gdxMethod.addParameter("Vector3", newParam);
+                    convertGdxToNative(body, btVec3Used, paramName, paramTypeStr, newParam);
+                    btVec3Used++;
+                }
+                else if(paramTypeStr.equals("btTransform")) {
+                    String newParam = paramName + "GDX";
+                    gdxMethod.addParameter("Matrix4", newParam);
+                    convertGdxToNative(body, btTransformUsed, paramName, paramTypeStr, newParam);
+                    btTransformUsed++;
+                }
+                else {
+                    gdxMethod.addParameter(paramType, paramName);
+                }
+            }
+
+            if(returnType.isVoidType()) {
+                body.addStatement(caller);
+            }
+            else if(returnType.isClassOrInterfaceType()) {
+                BlockStmt blockStmt = generateObjectPointerReturnType(unit, idlMethodDeclaration, caller);
+                NodeList<Statement> statements = blockStmt.getStatements();
+                for(int i = 0; i < statements.size(); i++) {
+                    Statement statement = statements.get(i);
+                    body.addStatement(statement);
+                }
+
+//                ReturnStmt returnStmt = new ReturnStmt();
+//                returnStmt.setExpression(caller);
+//                body.addStatement(returnStmt);
+            }
+            else {
+                ReturnStmt returnStmt = new ReturnStmt();
+                returnStmt.setExpression(caller);
+                body.addStatement(returnStmt);
+            }
+
+            if(!JParserHelper.containsMethod(classDeclaration, gdxMethod)) {
+                if(containsVector3) {
+                    JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Vector3");
+                }
+                if(containsTransform) {
+                    JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
+                }
+                classDeclaration.getMembers().add(gdxMethod);
+            }
+        }
+    }
+
+    private void convertGdxToNative(BlockStmt body, int btTransformUsed, String paramName, String paramTypeStr, String newParam) {
+        String wrapperName = "TEMP_" + btTransformUsed;
+        String gdxCode = GDX_OBJECT_TEMPLATE.replace(TEMPLATE_TAG_TYPE, paramTypeStr)
+                .replace(TEMPLATE_TAG_NAME, paramName)
+                .replace(TEMPLATE_TAG_PARAM, newParam)
+                .replace(TEMPLATE_TAG_WRAPPER, wrapperName);
+        btTransformUsed++;
+
+        BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(gdxCode);
+        InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
+        NodeList<Statement> statements = initializerDeclaration.getBody().getStatements();
+        for(int j = 0; j < statements.size(); j++) {
+            Statement statement = statements.get(j);
+            body.addStatement(statement);
         }
     }
 
@@ -264,34 +368,30 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, MethodDeclaration nativeMethod) {
-        String idlMethodName = idlMethodDeclaration.getNameAsString();
-        NodeList<Parameter> idlMethodParameters = idlMethodDeclaration.getParameters();
+    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration nativeMethod) {
+        NodeList<Parameter> nativeParameters = nativeMethod.getParameters();
+        String methodName = nativeMethod.getNameAsString();
         MethodCallExpr caller = new MethodCallExpr();
-        caller.setName(idlMethodName);
-        for(int i = 0; i < idlMethodParameters.size(); i++) {
-            Parameter parameter = idlMethodParameters.get(i);
-            String paramName = parameter.getNameAsString();
-            caller.addArgument(paramName);
-        }
-
-        NodeList<Parameter> parameters = nativeMethod.getParameters();
-        int size = parameters.size();
-        Type type = nativeMethod.getType();
-        String returnTypeName = classDeclaration.getNameAsString();
-        String methodCaller = caller.toString();
-        String content = GET_JS_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+        caller.setName(methodName);
 
         String param = "";
-
+        int size = nativeParameters.size();
         for(int i = 0; i < size; i++) {
-            Parameter parameter = parameters.get(i);
-            SimpleName name = parameter.getName();
-            param += name;
+            Parameter parameter = nativeParameters.get(i);
+            String paramName = parameter.getNameAsString();
+            if(i > 0) {
+                caller.addArgument(paramName);
+            }
+
+            param += paramName;
             if(i < size - 1) {
                 param += "\", \"";
             }
         }
+
+        String returnTypeName = classDeclaration.getNameAsString();
+        String methodCaller = caller.toString();
+        String content = GET_JS_METHOD_OBJ_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
 
         if(content != null) {
             content = content.replace("\n", "");
@@ -307,10 +407,8 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private void generateObjectPointerReturnType(CompilationUnit unit, MethodDeclaration idlMethodDeclaration, MethodCallExpr caller) {
+    private BlockStmt generateObjectPointerReturnType(CompilationUnit unit, MethodDeclaration idlMethodDeclaration, MethodCallExpr caller) {
         //  if return type is an object we need to get the method pointer, add it do a temp object and return this object
-        BlockStmt blockStmt = idlMethodDeclaration.getBody().get();
-
         Type type = idlMethodDeclaration.getType();
 
         String returnTypeName = type.toString();
@@ -319,13 +417,13 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
         {
             // Convert native return object to Gdx object
-            if(returnTypeName.equals("btVector3")) {
-                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+            if(returnTypeName.equals("btVector3") || returnTypeName.equals("Vector3")) {
+                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, "btVector3");
                 idlMethodDeclaration.setType("Vector3");
                 JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Vector3");
             }
-            else if(returnTypeName.equals("btTransform")) {
-                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+            else if(returnTypeName.equals("btTransform") || returnTypeName.equals("Matrix4")) {
+                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, "btTransform");
                 idlMethodDeclaration.setType("Matrix4");
                 JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
             }
@@ -334,7 +432,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(newBody);
         InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
         BlockStmt body = initializerDeclaration.getBody();
-        idlMethodDeclaration.setBody(body);
+        return body;
     }
 
     private static void convertFieldsToInt(FieldDeclaration fieldDeclaration) {
@@ -390,5 +488,4 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             }
         }
     }
-
 }

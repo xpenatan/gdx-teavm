@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 public class btDynamicsWorld  extends btCollisionWorld {
 
     public void setGravity(Vector3 gravity) {
-        btVector3 out = btVector3.TEMP_01;
+        btVector3 out = btVector3.TEMP_0;
         btVector3.convert(gravity, out);
     }
 

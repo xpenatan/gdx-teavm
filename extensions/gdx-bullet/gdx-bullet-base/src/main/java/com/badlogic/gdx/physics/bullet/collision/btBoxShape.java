@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 public class btBoxShape extends btPolyhedralConvexShape {
 
     public btBoxShape(Vector3 boxHalfExtents) {
-        btVector3 out = btVector3.TEMP_01;
+        btVector3 out = btVector3.TEMP_0;
         btVector3.convert(boxHalfExtents, out);
         initObject(createNative(out.getCPointer()), true);
     }
@@ -33,7 +33,7 @@ public class btBoxShape extends btPolyhedralConvexShape {
     private static native void deleteNative(long addr);
 
     public void calculateLocalInertia(float mass, Vector3 inertia) {
-        btVector3 out = btVector3.TEMP_01;
+        btVector3 out = btVector3.TEMP_0;
         btVector3.convert(inertia, out);
         calculateLocalInertia(cPointer, mass, out.getCPointer());
         btVector3.convert(out, inertia);

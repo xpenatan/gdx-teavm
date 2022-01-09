@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 public class btRigidBody extends btCollisionObject {
 
     public btRigidBody(float mass, btMotionState motionState, btCollisionShape collisionShape, Vector3 localInertia) {
-        btVector3 out = btVector3.TEMP_01;
+        btVector3 out = btVector3.TEMP_0;
         btVector3.convert(localInertia, out);
         initObject(createNative(mass, motionState.getCPointer(), collisionShape.getCPointer(), out.getCPointer()), true);
     }

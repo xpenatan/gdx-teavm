@@ -1,13 +1,18 @@
 package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
 /**
  * @author xpenatan
  */
 public class btTransform extends BulletBase {
+
+    public static btTransform TEMP_0 = new btTransform(true);
+    public static btTransform TEMP_1 = new btTransform(true);
+    public static btTransform TEMP_2 = new btTransform(true);
+    public static btTransform TEMP_3 = new btTransform(true);
+    public static btTransform TEMP_4 = new btTransform(true);
 
     public static btTransform emptyTransform = new btTransform(false);
 
@@ -99,6 +104,4 @@ public class btTransform extends BulletBase {
         emptyTransform.setPointer(inAddr);
         convert(emptyTransform, out);
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.badlogic.gdx.physics.bullet.linearmath;
 
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
@@ -8,16 +9,15 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btVector3 extends BulletBase {
 
-    public static btVector3 TEMP_01 = new btVector3(true);
-    public static btVector3 TEMP_02 = new btVector3(true);
-    public static btVector3 TEMP_03 = new btVector3(true);
-    public static btVector3 WRAPPER_TEMP_01 = new btVector3(false);
-    public static btVector3 WRAPPER_TEMP_02 = new btVector3(false);
-    public static btVector3 WRAPPER_TEMP_03 = new btVector3(false);
+    public static btVector3 TEMP_0 = new btVector3(true);
+    public static btVector3 TEMP_1 = new btVector3(true);
+    public static btVector3 TEMP_2 = new btVector3(true);
+    public static btVector3 TEMP_3 = new btVector3(true);
+    public static btVector3 TEMP_4 = new btVector3(true);
+
+    public static btVector3 emptyTransform = new btVector3(false);
 
     public static Vector3 TEMP_GDX_01 = new Vector3();
-    public static Vector3 TEMP_GDX_02 = new Vector3();
-    public static Vector3 TEMP_GDX_03 = new Vector3();
 
     public btVector3() {
         this(true);
@@ -159,4 +159,13 @@ public class btVector3 extends BulletBase {
         out.set(x, y, z);
     }
 
+    public static void convert(Vector3 in, long outAddr) {
+        emptyTransform.setPointer(outAddr);
+        convert(in, emptyTransform);
+    }
+
+    public static void convert(long inAddr, Vector3 out) {
+        emptyTransform.setPointer(inAddr);
+        convert(emptyTransform, out);
+    }
 }
