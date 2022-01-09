@@ -314,10 +314,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     Statement statement = statements.get(i);
                     body.addStatement(statement);
                 }
-
-//                ReturnStmt returnStmt = new ReturnStmt();
-//                returnStmt.setExpression(caller);
-//                body.addStatement(returnStmt);
             }
             else {
                 ReturnStmt returnStmt = new ReturnStmt();
