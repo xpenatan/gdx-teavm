@@ -84,7 +84,6 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     @Override
     public void create() {
         Bullet.init();
-        Gdx.graphics.setWindowedMode(0, 0);
 
         btVersion = LinearMath.btGetVersion();
 
