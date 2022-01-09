@@ -12,8 +12,8 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.Type;
+import com.github.xpenatan.tools.jparser.JParserHelper;
 import com.github.xpenatan.tools.jparser.JParser;
-import com.github.xpenatan.tools.jparser.JParserItem;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLMethod;
@@ -66,7 +66,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             String paramName = idlParameter.name;
             Parameter parameter = methodDeclaration.addAndGetParameter(paramType, paramName);
             Type type = parameter.getType();
-            CodeParserHelper.addMissingImportType(jParser, unit, type);
+            JParserHelper.addMissingImportType(jParser, unit, type);
         }
 
         Type returnType = StaticJavaParser.parseType(idlMethod.returnType);
@@ -80,19 +80,19 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             BlockStmt blockStmt = idlMethodDeclaration.getBody().get();
             ReturnStmt returnStmt = new ReturnStmt();
             if(returnType.isPrimitiveType()) {
-                if(CodeParserHelper.isLong(returnType) || CodeParserHelper.isInt(returnType) || CodeParserHelper.isFloat(returnType) || CodeParserHelper.isDouble(returnType)) {
+                if(JParserHelper.isLong(returnType) || JParserHelper.isInt(returnType) || JParserHelper.isFloat(returnType) || JParserHelper.isDouble(returnType)) {
                     NameExpr returnNameExpr = new NameExpr();
                     returnNameExpr.setName("0");
                     returnStmt.setExpression(returnNameExpr);
                 }
-                else if(CodeParserHelper.isBoolean(returnType)) {
+                else if(JParserHelper.isBoolean(returnType)) {
                     NameExpr returnNameExpr = new NameExpr();
                     returnNameExpr.setName("false");
                     returnStmt.setExpression(returnNameExpr);
                 }
             }
             else {
-                CodeParserHelper.addMissingImportType(jParser, unit, returnType);
+                JParserHelper.addMissingImportType(jParser, unit, returnType);
                 NameExpr returnNameExpr = new NameExpr();
                 returnNameExpr.setName("null");
                 returnStmt.setExpression(returnNameExpr);

@@ -8,7 +8,6 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.xpenatan.tools.jparser.JParser;
 import com.github.xpenatan.tools.jparser.util.RawCodeBlock;
 
-import java.util.List;
 import java.util.Optional;
 
 /** @author xpenatan */

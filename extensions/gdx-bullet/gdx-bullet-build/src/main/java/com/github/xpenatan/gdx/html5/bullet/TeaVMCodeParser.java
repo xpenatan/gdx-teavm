@@ -12,7 +12,7 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.JParser;
-import com.github.xpenatan.tools.jparser.codeparser.CodeParserHelper;
+import com.github.xpenatan.tools.jparser.JParserHelper;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.IDLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
@@ -74,7 +74,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             for(int i = 0; i < constructors.size(); i++) {
                 ConstructorDeclaration constructorDeclaration = constructors.get(i);
                 NodeList<Parameter> parameters = constructorDeclaration.getParameters();
-                if(parameters.size() == 1 && CodeParserHelper.isBoolean(parameters.get(0).getType())) {
+                if(parameters.size() == 1 && JParserHelper.isBoolean(parameters.get(0).getType())) {
                     containsConstructor = true;
                 }
                 else if(parameters.size() == 0) {
@@ -201,7 +201,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
 
         // Check if the generated method does not exist in the original class
-        if(!CodeParserHelper.containsMethod(classDeclaration, nativeMethod)) {
+        if(!JParserHelper.containsMethod(classDeclaration, nativeMethod)) {
             {
                 // If the return type is an object we need to return a pointer.
                 if(idlMethodReturnType.isClassOrInterfaceType()) {
@@ -322,12 +322,12 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             if(returnTypeName.equals("btVector3")) {
                 newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
                 idlMethodDeclaration.setType("Vector3");
-                CodeParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Vector3");
+                JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Vector3");
             }
             else if(returnTypeName.equals("btTransform")) {
                 newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
                 idlMethodDeclaration.setType("Matrix4");
-                CodeParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
+                JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
             }
         }
 
@@ -339,14 +339,14 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
     private static void convertFieldsToInt(FieldDeclaration fieldDeclaration) {
         Type elementType = fieldDeclaration.getElementType();
-        if(CodeParserHelper.isLong(elementType)) {
+        if(JParserHelper.isLong(elementType)) {
             Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
             fieldDeclaration.setAllTypes(intType);
         }
     }
 
     private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration) {
-        if(CodeParserHelper.isLong(methodDeclaration.getType())) {
+        if(JParserHelper.isLong(methodDeclaration.getType())) {
             methodDeclaration.setType(int.class);
         }
         Optional<BlockStmt> body = methodDeclaration.getBody();
@@ -369,7 +369,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     NodeList<VariableDeclarator> variables = variableDeclarationExpr.getVariables();
                     for(int j = 0; j < variables.size(); j++) {
                         VariableDeclarator variableDeclarator = variables.get(j);
-                        if(CodeParserHelper.isLong(variableDeclarator.getType())) {
+                        if(JParserHelper.isLong(variableDeclarator.getType())) {
                             Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
                             variableDeclarator.setType(intType);
                         }
@@ -384,7 +384,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         int size = parameters.size();
         for(int i = 0; i < size; i++) {
             Parameter parameter = parameters.get(i);
-            if(CodeParserHelper.isLong(parameter.getType())) {
+            if(JParserHelper.isLong(parameter.getType())) {
                 Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
                 parameter.setType(intType);
             }

@@ -3,11 +3,10 @@ package com.github.xpenatan.tools.jparser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.codeparser.CodeParserHelper;
 
 import java.util.Optional;
 
+/** @author xpenatan */
 public class JParserItem {
     public CompilationUnit unit;
     public String destinationPath;
@@ -25,6 +24,6 @@ public class JParserItem {
     }
 
     public ClassOrInterfaceDeclaration getClassDeclaration() {
-        return CodeParserHelper.getClassDeclaration(unit);
+        return JParserHelper.getClassDeclaration(unit);
     }
 }

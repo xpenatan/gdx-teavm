@@ -1,4 +1,4 @@
-package com.github.xpenatan.tools.jparser.codeparser;
+package com.github.xpenatan.tools.jparser;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -9,13 +9,12 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.JParser;
-import com.github.xpenatan.tools.jparser.JParserItem;
 
 import java.util.List;
 import java.util.Optional;
 
-public class CodeParserHelper {
+/** @author xpenatan */
+public class JParserHelper {
 
     public static boolean isType(Type type, String typeStr) {
         if(type.isPrimitiveType()) {
@@ -27,23 +26,23 @@ public class CodeParserHelper {
     }
 
     public static boolean isLong(Type type) {
-        return CodeParserHelper.isType(type, "long");
+        return JParserHelper.isType(type, "long");
     }
 
     public static boolean isInt(Type type) {
-        return CodeParserHelper.isType(type, "int");
+        return JParserHelper.isType(type, "int");
     }
 
     public static boolean isFloat(Type type) {
-        return CodeParserHelper.isType(type, "float");
+        return JParserHelper.isType(type, "float");
     }
 
     public static boolean isDouble(Type type) {
-        return CodeParserHelper.isType(type, "double");
+        return JParserHelper.isType(type, "double");
     }
 
     public static boolean isBoolean(Type type) {
-        return CodeParserHelper.isType(type, "boolean");
+        return JParserHelper.isType(type, "boolean");
     }
 
     public static boolean containsMethod(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration methodDeclaration) {
@@ -97,7 +96,7 @@ public class CodeParserHelper {
             Optional<String> optionalFullyQualifiedName = classDeclaration.getFullyQualifiedName();
             if(optionalFullyQualifiedName.isPresent()) {
                 String fullyQualifiedName = optionalFullyQualifiedName.get();
-                if(!CodeParserHelper.containsImport(unit, fullyQualifiedName)) {
+                if(!JParserHelper.containsImport(unit, fullyQualifiedName)) {
                     unit.addImport(fullyQualifiedName);
                 }
             }
