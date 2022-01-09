@@ -96,36 +96,6 @@ public class btVector3 extends BulletBase {
      */
     private static native float getZ(long addr);
 
-    public void setX(float x) {
-        setX(cPointer, x);
-    }
-
-    /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        vec3.setX(x);
-     */
-    private static native void setX(long addr, float x);
-
-    public void setY(float y) {
-        setY(cPointer, y);
-    }
-
-    /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        vec3.setY(y);
-     */
-    private static native void setY(long addr, float y);
-
-    public void setZ(float z) {
-        setZ(cPointer, z);
-    }
-
-    /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        vec3.setZ(z);
-     */
-    private static native void setZ(long addr, float z);
-
     public void setValue(float x, float y, float z) {
         setValue(cPointer, x, y, z);
     }
@@ -135,18 +105,6 @@ public class btVector3 extends BulletBase {
         vec3.setValue(x, y, z);
      */
     private static native void setValue(long addr, float x, float y, float z);
-
-    public float x() {
-        return getX(cPointer);
-    }
-
-    public float y() {
-        return getY(cPointer);
-    }
-
-    public float z() {
-        return getZ(cPointer);
-    }
 
     public static void convert(Vector3 in, btVector3 out) {
         out.setValue(in.x, in.y, in.z);

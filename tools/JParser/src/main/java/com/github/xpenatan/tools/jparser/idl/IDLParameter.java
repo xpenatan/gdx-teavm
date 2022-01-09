@@ -38,4 +38,13 @@ public class IDLParameter {
 
         name = s1[s1.length-1];
     }
+
+    public IDLParameter clone() {
+        IDLParameter clonedParam = new IDLParameter();
+        clonedParam.line = line;
+        clonedParam.type = type;
+        clonedParam.name = name;
+        clonedParam.tags.addAll(tags);
+        return clonedParam;
+    }
 }

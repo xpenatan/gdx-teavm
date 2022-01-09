@@ -61,6 +61,15 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             "var returnedJSObj = jsObj.[METHOD];\n" +
             "return Bullet.getPointer(returnedJSObj);";
 
+    private static final String GET_JS_METHOD_PRIMITIVE_TEMPLATE = "" +
+            "var jsObj = Bullet.wrapPointer(addr, Bullet.[TYPE]);\n" +
+            "var returnedJSObj = jsObj.[METHOD];\n" +
+            "return returnedJSObj;";
+
+    private static final String GET_JS_METHOD_VOID_TEMPLATE = "" +
+            "var jsObj = Bullet.wrapPointer(addr, Bullet.[TYPE]);\n" +
+            "jsObj.[METHOD];";
+
     private static final String GDX_OBJECT_TEMPLATE = "" +
             "{" +
             "[TYPE].convert([PARAM], [TYPE].[WRAPPER]);\n" +
@@ -196,7 +205,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         {
             // Clone some generated idl method settings
             nativeMethod = new MethodDeclaration();
-            nativeMethod.setName(idlMethodName);
+            nativeMethod.setName(idlMethodName + "NATIVE");
             nativeMethod.setModifiers(Modifier.createModifierList(Keyword.PRIVATE, Keyword.STATIC, Keyword.NATIVE));
             nativeMethod.removeBody();
             nativeMethod.addAndGetParameter("long", "addr");
@@ -223,7 +232,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 nativeMethod.setType(idlMethodReturnType);
             }
             //Generate teaVM Annotation
-            generateNativeMethodAnnotation(classDeclaration, nativeMethod);
+            generateNativeMethodAnnotation(classDeclaration, idlMethodDeclaration, nativeMethod);
         }
 
         // Check if the generated method does not exist in the original class
@@ -232,7 +241,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             {
                 // Generate the method caller
                 caller = new MethodCallExpr();
-                caller.setName(idlMethodName);
+                caller.setName(nativeMethod.getNameAsString());
                 caller.addArgument("cPointer");
                 for(int i = 0; i < idlMethodParameters.size(); i++) {
                     Parameter parameter = idlMethodParameters.get(i);
@@ -364,9 +373,10 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration nativeMethod) {
+    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration,  MethodDeclaration nativeMethod) {
         NodeList<Parameter> nativeParameters = nativeMethod.getParameters();
-        String methodName = nativeMethod.getNameAsString();
+        Type returnType = idlMethodDeclaration.getType();
+        String methodName = idlMethodDeclaration.getNameAsString();
         MethodCallExpr caller = new MethodCallExpr();
         caller.setName(methodName);
 
@@ -387,7 +397,17 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
         String returnTypeName = classDeclaration.getNameAsString();
         String methodCaller = caller.toString();
-        String content = GET_JS_METHOD_OBJ_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+
+        String content = null;
+        if(returnType.isVoidType()) {
+            content = GET_JS_METHOD_VOID_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+        }
+        else if(returnType.isClassOrInterfaceType()) {
+            content = GET_JS_METHOD_OBJ_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+        }
+        else {
+            content = GET_JS_METHOD_PRIMITIVE_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
+        }
 
         if(content != null) {
             content = content.replace("\n", "");

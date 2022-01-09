@@ -29,6 +29,38 @@ public class IDLMethod {
         name = s[1];
     }
 
+    public int getTotalOptionalParams() {
+        int count = 0;
+        for(int i = 0; i < parameters.size(); i++) {
+            IDLParameter parameter = parameters.get(i);
+            if(parameter.line.contains("optional")) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void removeLastParam(int count) {
+        for(int i = 0; i < count; i++) {
+            parameters.remove(parameters.size()-1);
+        }
+    }
+
+    public IDLMethod clone() {
+        IDLMethod clonedMethod = new IDLMethod();
+        clonedMethod.line = line;
+        clonedMethod.paramsLine = paramsLine;
+        clonedMethod.returnType = returnType;
+        clonedMethod.name = name;
+
+        for(int i = 0; i < parameters.size(); i++) {
+            IDLParameter parameter = parameters.get(i);
+            IDLParameter clonedParam = parameter.clone();
+            clonedMethod.parameters.add(clonedParam);
+        }
+        return clonedMethod;
+    }
+
     private int getLastIndex(String leftSide) {
         int startIndex = leftSide.indexOf("[");
         if(startIndex != -1) {

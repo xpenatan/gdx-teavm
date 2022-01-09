@@ -40,6 +40,15 @@ public class IDLClass {
                         IDLMethod method = new IDLMethod();
                         method.initMethod(line);
                         methods.add(method);
+
+                        int totalOptionalParams = method.getTotalOptionalParams();
+                        if(totalOptionalParams > 0) {
+                            for(int j = 0; j < totalOptionalParams; j++) {
+                                IDLMethod clone = method.clone();
+                                clone.removeLastParam(j+1);
+                                methods.add(clone);
+                            }
+                        }
                     }
                 }
             }

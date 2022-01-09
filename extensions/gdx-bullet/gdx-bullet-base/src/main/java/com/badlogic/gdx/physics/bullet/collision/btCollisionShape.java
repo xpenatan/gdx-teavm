@@ -6,6 +6,4 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  * @author xpenatan
  */
 public class btCollisionShape extends BulletBase {
-    public btCollisionShape() {
-    }
 }
