@@ -6,6 +6,7 @@ apply from: '../../../dependencies.gradle'
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.desktop.MainBullet"
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = ["../desktop/assets"]
 
 dependencies {
 	implementation project(":examples:bullet:core")

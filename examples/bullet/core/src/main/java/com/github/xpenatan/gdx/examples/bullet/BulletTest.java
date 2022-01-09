@@ -2,13 +2,14 @@ package com.github.xpenatan.gdx.examples.bullet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,15 +20,14 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.Bullet;
-import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
@@ -79,6 +79,8 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     CameraInputController cameraController;
 
+    int totalBoxes = 500;
+
     @Override
     public void create() {
         Bullet.init();
@@ -106,12 +108,13 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         modelBatch = new ModelBatch();
 
         environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.6f, 0.6f, 0.6f, 1.f));
         DirectionalLight set = new DirectionalLight().set(1.0f, 1.0f, 1.0f, -1f, -1f, -0.4f);
         environment.add(set);
 
         batch = new SpriteBatch();
 
-        camera.position.z = 13;
+        camera.position.z = 43;
         camera.position.y = 2;
 
         camera.lookAt(0, 0, 0);
@@ -123,11 +126,18 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         float b = 1;
         float a = 1;
 
-        Material material = new Material(ColorAttribute.createDiffuse(r, g, b, a));
-        boxModel = builder.createBox(1, 1, 1, material, Usage.Position | Usage.Normal);
+        final Texture texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
+        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        final Material material = new Material(TextureAttribute.createDiffuse(texture),
+                FloatAttribute.createShininess(4f));
 
-        Model groundBox = builder.createBox(14, 0.3f, 14, new Material(ColorAttribute.createDiffuse(r, g, b, a), ColorAttribute.createSpecular(r, g, b, a), FloatAttribute.createShininess(16f)), Usage.Position | Usage.Normal);
-        ground = createBox("ground", false, 0, 0, -2, 0, 0, 0, 0, groundBox, 14, 0.3f, 14, 0, 0, 1);
+        boxModel = builder.createBox(1, 1, 1, material, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+
+        float groundWidth = 60f;
+        float groundHeight = 0.3f;
+        float groundDepth = 60f;
+        Model groundBox = builder.createBox(groundWidth, groundHeight, groundDepth, new Material(ColorAttribute.createDiffuse(r, g, b, a), ColorAttribute.createSpecular(r, g, b, a), FloatAttribute.createShininess(16f)), Usage.Position | Usage.Normal);
+        ground = createBox("ground", false, 0, 0, -2, 0, 0, 0, 0, groundBox, groundWidth, groundHeight, groundDepth, 0, 0, 1);
 
         resetBoxes();
 
@@ -183,24 +193,23 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         boxes.clear();
         int count = 0;
 
-        for(int i = 0; i < 7; i++) {
+        int offsetY = 15;
 
-            for(int j = 0; j < 7; j++) {
-                ModelInstance createBox = null;
-                float x = MathUtils.random(-5.0f, 5.0f);
-                float y = MathUtils.random(4f, 9f);
-                float z = MathUtils.random(-5.0f, 5.0f);
-                float axisX = MathUtils.random(0, 360);
-                float axisY = MathUtils.random(0, 360);
-                float axisZ = MathUtils.random(0, 360);
-                float r = MathUtils.random(0.3f, 1f);
-                float g = MathUtils.random(0.3f, 1f);
-                float b = MathUtils.random(0.3f, 1f);
+        for(int i = 0; i < totalBoxes; i++) {
+            ModelInstance createBox = null;
+            float x = MathUtils.random(-5.0f, 5.0f);
+            float y = MathUtils.random(offsetY + 4f, offsetY + 9f);
+            float z = MathUtils.random(-5.0f, 5.0f);
+            float axisX = MathUtils.random(0, 360);
+            float axisY = MathUtils.random(0, 360);
+            float axisZ = MathUtils.random(0, 360);
+            float r = 1f;
+            float g = 1f;
+            float b = 1f;
 
-                createBox = createBox("ID: " + count, true, 0.4f, x, y, z, axisX, axisY, axisZ, boxModel, 1, 1, 1, r, g, b);
-                count++;
-                boxes.add(createBox);
-            }
+            createBox = createBox("ID: " + count, true, 0.4f, x, y, z, axisX, axisY, axisZ, boxModel, 1, 1, 1, r, g, b);
+            count++;
+            boxes.add(createBox);
         }
     }
 
@@ -214,7 +223,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         if(freeze == false) {
             timeNow = System.currentTimeMillis();
 
-            if(timeNow - time > 6000) {
+            if(timeNow - time > 8000) {
                 debug = !debug;
                 resetBoxes();
                 time = System.currentTimeMillis();
@@ -240,8 +249,9 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
         batch.begin();
         font.draw(batch, "\nFPS: " + Gdx.graphics.getFramesPerSecond() +
+                "\nTotal Boxes: " + totalBoxes +
                 "\nBullet Version: " + btVersion +
-                "\nInputs: Space to un/freeze simulation\nHold Left/Right mouse to manipulate camera", 30, Gdx.graphics.getHeight() - 14);
+                "\nInputs: Enter for fullscreen, Space to un/freeze simulation\nHold Left/Right mouse to manipulate camera", 30, Gdx.graphics.getHeight() - 14);
         font.draw(batch, "Libgdx teaVM Backend + teaVM Bullet Extension by xpenatan", 20, 30);
         batch.end();
     }
