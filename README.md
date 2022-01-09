@@ -2,6 +2,15 @@
 
 Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](https://github.com/konsoletyper/teavm) with some reflection support.
 
+## How it works:
+The backend-web was created with the idea of code reuse in mind so that each compiler-backend doesn't have to start from scratch.
+The backend-web contains some interface required for specific javascript communication and that's where the compiler backend comes in.
+It started with a very simple test case using Dragome and teaVM, but when some breaking bugs in the Dragome compiler began to appear I decided to stop.
+Some codes are ported from GWT backend.
+
+Like GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript.
+backend-web contains an emu folder that emulate some classes that work for any compiler solution while teaVM contains specific emulation code that it's only for teaVM compiler. 
+
 ## Setup:
 - TODO
 
