@@ -26,19 +26,46 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
     private static final String HEADER_CMD = "teaVM";
 
+    private static final String TEMPLATE_TAG_TYPE = "[TYPE]";
+    private static final String TEMPLATE_TAG_METHOD = "[METHOD]";
+
+    private static final String CONVERT_TO_GDX_TEMPLATE = "" +
+            "{\n" +
+            "    int pointer = [METHOD];\n" +
+            "    [TYPE].WRAPPER_GEN_01.setPointer(pointer);\n" +
+            "    [TYPE].convert([TYPE].WRAPPER_GEN_01, [TYPE].TEMP_GDX_01);\n" +
+            "    return [TYPE].TEMP_GDX_01;\n" +
+            "}";
+
+    private static final String OBJECT_CREATION_TEMPLATE = "" +
+            "public static [TYPE] WRAPPER_GEN_01 = new [TYPE](false);";
+
+    private static final String GET_OBJECT_TEMPLATE = "" +
+            "{\n" +
+            "    int pointer = [METHOD];\n" +
+            "    [TYPE].WRAPPER_GEN_01.setPointer(pointer);\n" +
+            "    return [TYPE].WRAPPER_GEN_01;\n" +
+            "}";
+
+    private static final String GET_JS_POINTER_TEMPLATE = "" +
+            "var jsObj = Bullet.wrapPointer(addr, Bullet.[TYPE]);\n" +
+            "var otherJSObj = jsObj.[METHOD];\n" +
+            "return Bullet.getPointer(otherJSObj);";
+
     public TeaVMCodeParser(IDLFile idlFile) {
         super(HEADER_CMD, idlFile);
     }
 
     @Override
     public void onParseClassStart(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
-        // First convert everything in this class from long to int. teaVM does not support long
         String nameAsString = classOrInterfaceDeclaration.getNameAsString();
         IDLClass idlClass = idlFile.getClass(nameAsString);
+
         if(idlClass != null) {
+            // Create a static temp object for every bullet class so any generated method can use to store a pointer.
+            // Also generate a boolean constructor if it's not in the original source code.
             List<ConstructorDeclaration> constructors = classOrInterfaceDeclaration.getConstructors();
-            // Generate temp objects
-            String replace = OBJECT_WRAPPER_CREATION.replace("[TYPE]", nameAsString);
+            String replace = OBJECT_CREATION_TEMPLATE.replace(TEMPLATE_TAG_TYPE, nameAsString);
             FieldDeclaration bodyDeclaration = (FieldDeclaration)StaticJavaParser.parseBodyDeclaration(replace);
             classOrInterfaceDeclaration.getMembers().add(0, bodyDeclaration);
 
@@ -54,6 +81,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     containsZeroParamConstructor = true;
                 }
             }
+
             if(!containsConstructor) {
                 ConstructorDeclaration constructorDeclaration = classOrInterfaceDeclaration.addConstructor(Keyword.PUBLIC);
                 constructorDeclaration.addParameter("boolean", "cMemoryOwn");
@@ -76,6 +104,11 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             MethodDeclaration methodDeclaration = methods.get(i);
             convertMethodParamsAndReturn(methodDeclaration);
         }
+        List<FieldDeclaration> fields = classOrInterfaceDeclaration.getFields();
+        for(int i = 0; i < fields.size(); i++) {
+            FieldDeclaration fieldDeclaration = fields.get(i);
+            convertFieldsToInt(fieldDeclaration);
+        }
         List<ConstructorDeclaration> constructors = classOrInterfaceDeclaration.getConstructors();
         for(int i = 0; i < constructors.size(); i++) {
             ConstructorDeclaration constructorDeclaration = constructors.get(i);
@@ -86,12 +119,8 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     @Override
-    public void onParseField(FieldDeclaration fieldDeclaration) {
-        convertFieldsToInt(fieldDeclaration);
-    }
-
-    @Override
     protected void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+        // Generate teaVM binding when using comment blocks
         NodeList<Parameter> parameters = methodDeclaration.getParameters();
         int size = parameters.size();
 
@@ -125,7 +154,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     private void convertJavaPrimitiveArrayToJavaScriptReferenceArray(NodeList<Parameter> parameters) {
-        // primitive arrays need to have JSbyRef annotation
+        // If you send an array to bullet and it writes to it, the JSbyRef annotation is required.
         int size = parameters.size();
         for(int i = 0; i < size; i++) {
             Parameter parameter = parameters.get(i);
@@ -251,7 +280,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         Type type = nativeMethod.getType();
         String returnTypeName = classDeclaration.getNameAsString();
         String methodCaller = caller.toString();
-        String content = OBJECT_JS_WRAPPER.replace("[METHOD_NAME]", methodCaller).replace("[TYPE]", returnTypeName);
+        String content = GET_JS_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
 
         String param = "";
 
@@ -286,17 +315,17 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
         String returnTypeName = type.toString();
         String methodCaller = caller.toString();
-        String newBody = OBJECT_WRAPPER.replace("[METHOD_NAME]", methodCaller).replace("[TYPE]", returnTypeName);
+        String newBody = GET_OBJECT_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
 
         {
-            // Convert native object to Gdx object
+            // Convert native return object to Gdx object
             if(returnTypeName.equals("btVector3")) {
-                newBody = CUSTOM_CONVERTER.replace("[METHOD_NAME]", methodCaller).replace("[TYPE]", returnTypeName);
+                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
                 idlMethodDeclaration.setType("Vector3");
                 CodeParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Vector3");
             }
             else if(returnTypeName.equals("btTransform")) {
-                newBody = CUSTOM_CONVERTER.replace("[METHOD_NAME]", methodCaller).replace("[TYPE]", returnTypeName);
+                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName);
                 idlMethodDeclaration.setType("Matrix4");
                 CodeParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
             }
@@ -307,29 +336,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         BlockStmt body = initializerDeclaration.getBody();
         idlMethodDeclaration.setBody(body);
     }
-
-    private static String CUSTOM_CONVERTER = "" +
-            "{\n" +
-            "    int pointer = [METHOD_NAME];\n" +
-            "    [TYPE].WRAPPER_GEN_01.setPointer(pointer);\n" +
-            "    [TYPE].convert([TYPE].WRAPPER_GEN_01, [TYPE].TEMP_GDX_01);\n" +
-            "    return [TYPE].TEMP_GDX_01;\n" +
-            "}";
-
-    public static String OBJECT_WRAPPER_CREATION = "" +
-            "public static [TYPE] WRAPPER_GEN_01 = new [TYPE](false);";
-
-    private static String OBJECT_WRAPPER = "" +
-            "{\n" +
-            "    int pointer = [METHOD_NAME];\n" +
-            "    [TYPE].WRAPPER_GEN_01.setPointer(pointer);\n" +
-            "    return [TYPE].WRAPPER_GEN_01;\n" +
-            "}";
-
-    private static String OBJECT_JS_WRAPPER = "" +
-            "var jsObj = Bullet.wrapPointer(addr, Bullet.[TYPE]);\n" +
-            "var otherJSObj = jsObj.[METHOD_NAME];\n" +
-            "return Bullet.getPointer(otherJSObj);";
 
     private static void convertFieldsToInt(FieldDeclaration fieldDeclaration) {
         Type elementType = fieldDeclaration.getElementType();
