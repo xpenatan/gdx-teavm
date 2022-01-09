@@ -2,6 +2,13 @@
 
 Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](https://github.com/konsoletyper/teavm) with some reflection support.
 
+## TeaVM Examples:
+* [gdx-tests](https://xpenatan.github.io/gdx-html5-tools/teavm/gdx-tests/)
+* [demo-cubocy](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-cubocy/)
+* [demo-superjumper](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-superjumper/)
+* [test-freetype](https://xpenatan.github.io/gdx-html5-tools/teavm/test-freetype-packtest/)
+* [test-bullet](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet/)
+
 ## How it works:
 The backend-web was created with the idea of code reuse in mind so that each compiler-backend doesn't have to start from scratch.
 The backend-web contains some interface required for specific javascript communication and that's where the compiler backend comes in.
@@ -43,9 +50,7 @@ Open http://localhost:8080/ in your browser and your game will start if the gene
 
 Generator example: https://youtu.be/BIL_5eaxg9w
 
-## TeaVM Examples:
-* [gdx-tests](https://xpenatan.github.io/gdx-html5-tools/teavm/gdx-tests/)
-* [demo-cubocy](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-cubocy/)
-* [demo-superjumper](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-superjumper/)
-* [test-freetype](https://xpenatan.github.io/gdx-html5-tools/teavm/test-freetype-packtest/)
-* [test-bullet](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet/)
+## JParser
+It's a solution using [javaparser](https://github.com/javaparser/javaparser) to read and generate java sources.
+The main goal is make it easy to add, modify or remove part of the original source code and generate it with something else.
+It's being used in Bullet extension to read bullet emscripten WebIDL file, generate java code and bind it with teaVM code.
