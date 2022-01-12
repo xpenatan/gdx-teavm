@@ -864,7 +864,7 @@ public class FreeType {
 		if(!freeTypeInit) {
 			WebApplication app = (WebApplication) Gdx.app;
 			Preloader preloader = app.getPreloader();
-			preloader.loadScript("scripts/freetype.js", new AssetLoaderListener<Object>() {
+			preloader.loadScript(true, "scripts/freetype.js", new AssetLoaderListener<Object>() {
 				@Override
 				public boolean onSuccess(String url, Object result) {
 					freeTypeInit = true;

@@ -111,7 +111,7 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public void loadScript(String url, AssetLoaderListener<Object> listener) {
+    public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
         if (showLog)
             System.out.println("Loading script : " + url);
         final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
@@ -140,7 +140,7 @@ public class AssetDownloadImpl implements AssetDownload {
         });
         addQueue();
         setOnProgress(request, listener);
-        request.open("GET", url, false);
+        request.open("GET", url, async);
         request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
         request.send();
     }

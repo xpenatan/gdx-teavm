@@ -196,7 +196,7 @@ public class WebApplication implements Application, Runnable {
 	}
 
 	private void initSound() {
-		preloader.loadScript("scripts/soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+		preloader.loadScript(true, "scripts/soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
 			@Override
 			public boolean onSuccess(String url, Object result) {
 				WebJSHelper jsHelper = WebJSHelper.get();

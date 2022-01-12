@@ -23,7 +23,7 @@ public class AssetDownloader
 	static public interface AssetDownload {
 		public void load(boolean async, final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener);
 		public void loadText(boolean async, final String url, final AssetLoaderListener<String> listener);
-		public void loadScript(final String url, final AssetLoaderListener<Object> listener);
+		public void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener);
 		public boolean isUseBrowserCache();
 		public String getHostPageBaseURL();
 		public int getQueue();

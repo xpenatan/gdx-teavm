@@ -154,8 +154,8 @@ public class Preloader {
 		});
 	}
 
-	public void loadScript(final String url,  final AssetLoaderListener<Object> listener) {
-		AssetDownloader.getInstance().loadScript(baseUrl + url, listener);
+	public void loadScript(boolean async, final String url,  final AssetLoaderListener<Object> listener) {
+		AssetDownloader.getInstance().loadScript(async, baseUrl + url, listener);
 	}
 
 	protected void putAssetInMap(AssetType type, String url, Object result) {

@@ -18,7 +18,7 @@ public class TeaJSApplication implements WebJSApplication {
     }
 
     private void initBulletPhysics(Preloader preloader) {
-        preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "scripts/bullet.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 initBullet(new BulletPhysicsLoadFunction() {
@@ -39,7 +39,7 @@ public class TeaJSApplication implements WebJSApplication {
     }
 
     private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript("scripts/bullet.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "scripts/bullet.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 scriptLoaded = true;
