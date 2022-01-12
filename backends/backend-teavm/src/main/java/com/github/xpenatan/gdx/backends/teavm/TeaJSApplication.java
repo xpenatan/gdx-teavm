@@ -14,7 +14,7 @@ public class TeaJSApplication implements WebJSApplication {
     @Override
     public void initBulletPhysics(WebApplication application) {
         Preloader preloader = application.getPreloader();
-        initBulletPhysicsWasm(preloader);
+//        initBulletPhysicsWasm(preloader);
     }
 
     private void initBulletPhysics(Preloader preloader) {
