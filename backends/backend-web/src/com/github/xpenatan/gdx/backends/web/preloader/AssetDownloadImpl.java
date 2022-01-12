@@ -61,19 +61,19 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public void load(String url, AssetType type, String mimeType, AssetLoaderListener<?> listener) {
+    public void load(boolean async, String url, AssetType type, String mimeType, AssetLoaderListener<?> listener) {
         switch (type) {
             case Text:
-                loadText(url, (AssetLoaderListener<String>) listener);
+                loadText(async, url, (AssetLoaderListener<String>) listener);
                 break;
             case Image:
-                loadImage(url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>) listener);
+                loadImage(async, url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>) listener);
                 break;
             case Binary:
-                loadBinary(url, (AssetLoaderListener<Blob>) listener);
+                loadBinary(async, url, (AssetLoaderListener<Blob>) listener);
                 break;
             case Audio:
-                loadAudio(url, (AssetLoaderListener<Void>) listener);
+                loadAudio(async, url, (AssetLoaderListener<Void>) listener);
                 break;
             case Directory:
                 listener.onSuccess(url, null);
@@ -84,7 +84,7 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public void loadText(String url, AssetLoaderListener<String> listener) {
+    public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
         if (showLog)
             System.out.println("Loading asset : " + url);
         final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
@@ -105,7 +105,7 @@ public class AssetDownloadImpl implements AssetDownload {
         });
         addQueue();
         setOnProgress(request, listener);
-        request.open("GET", url);
+        request.open("GET", url, async);
         request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
         request.send();
     }
@@ -145,8 +145,8 @@ public class AssetDownloadImpl implements AssetDownload {
         request.send();
     }
 
-    public void loadAudio(final String url, final AssetLoaderListener<Void> listener) {
-        loadBinary(url, new AssetLoaderListener<Blob>() {
+    public void loadAudio(boolean async, final String url, final AssetLoaderListener<Void> listener) {
+        loadBinary(async, url, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);
@@ -164,7 +164,7 @@ public class AssetDownloadImpl implements AssetDownload {
         });
     }
 
-    public void loadBinary(final String url, final AssetLoaderListener<Blob> listener) {
+    public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
         if (showLog)
             System.out.println("Loading asset : " + url);
         XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
@@ -180,7 +180,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
                         ArrayBufferWrapper response = (ArrayBufferWrapper) request.getResponse();
                         Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
-                        listener.onSuccess(url, new Blob(data));
+                        listener.onSuccess(url, new Blob(response, data));
                     }
                     subtractQueue();
                 }
@@ -189,20 +189,22 @@ public class AssetDownloadImpl implements AssetDownload {
 
         addQueue();
         setOnProgress(request, listener);
-        request.open("GET", url);
-        request.setResponseType("arraybuffer");
+        request.open("GET", url, async);
+        if(async) {
+            request.setResponseType("arraybuffer");
+        }
         request.send();
     }
 
-    public void loadImage(final String url, final String mimeType,
+    public void loadImage(boolean async, final String url, final String mimeType,
                           final AssetLoaderListener<HTMLImageElementWrapper> listener) {
-        loadImage(url, mimeType, null, listener);
+        loadImage(async, url, mimeType, null, listener);
     }
 
-    public void loadImage(final String url, final String mimeType, final String crossOrigin,
+    public void loadImage(boolean async, final String url, final String mimeType, final String crossOrigin,
                           final AssetLoaderListener<HTMLImageElementWrapper> listener) {
         boolean isUseInlineBase64 = false;
-        loadBinary(url, new AssetLoaderListener<Blob>() {
+        loadBinary(async, url, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);
@@ -238,7 +240,6 @@ public class AssetDownloadImpl implements AssetDownload {
                 }
                 return false;
             }
-
         });
     }
 

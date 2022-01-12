@@ -114,7 +114,7 @@ public class Pixmap implements Disposable {
 	private HTMLVideoElementWrapper videoElement;
 
 	public static void downloadFromUrl(String url, final DownloadPixmapResponseListener responseListener) {
-		AssetDownloader.getInstance().load(url, AssetType.Image, null, new AssetLoaderListener<HTMLImageElementWrapper>() {
+		AssetDownloader.getInstance().load(true, url, AssetType.Image, null, new AssetLoaderListener<HTMLImageElementWrapper>() {
 			@Override
 			public void onFailure(String url) {
 				responseListener.downloadFailed(new Exception("Failed to download image"));

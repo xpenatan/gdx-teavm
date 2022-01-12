@@ -342,6 +342,8 @@ public class TeaBuilder {
         filePath.add("scripts/soundmanager2-jsmin.js");
         filePath.add("scripts/freetype.js");
         filePath.add("scripts/bullet.js");
+        filePath.add("scripts/bullet.wasm.js");
+        filePath.add("scripts/bullet.wasm.wasm");
     }
 
     private static ACCEPT_STATE acceptPath(String path) {

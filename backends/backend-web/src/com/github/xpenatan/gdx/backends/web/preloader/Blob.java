@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backends.web.preloader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
 
 /**
@@ -10,8 +11,20 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
  */
 public final class Blob {
 
-	public Blob (Int8ArrayWrapper data) {
+	private ArrayBufferWrapper response;
+	private final Int8ArrayWrapper data;
+
+	public Blob (ArrayBufferWrapper response, Int8ArrayWrapper data) {
 		this.data = data;
+		this.response = response;
+	}
+
+	public Int8ArrayWrapper getData() {
+		return data;
+	}
+
+	public ArrayBufferWrapper getResponse() {
+		return response;
 	}
 
 	public int length () {
@@ -66,7 +79,4 @@ public final class Blob {
 		}
 		return encoded.toString();
 	}
-
-	private final Int8ArrayWrapper data;
-
 }

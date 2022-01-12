@@ -10,14 +10,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
-
 import java.util.Arrays;
-/* [-teaVM;-ADD]
-import com.badlogic.gdx.Gdx;
-import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
- */
 
 /**
  * @author xpenatan
@@ -45,31 +38,11 @@ public class Bullet {
         Bullet.bulletInit = true;
         Bullet.useRefCounting = useRefCounting;
         Bullet.enableLogging = logging;
-
-        initNative();
         final int version = LinearMath.btGetVersion();
         if(version != VERSION)
             throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
                     + ")");
     }
-
-    /* [-teaVM;-REPLACE]
-    private static void initNative() {
-        WebApplication app = (WebApplication) Gdx.app;
-        Preloader preloader = app.getPreloader();
-        preloader.loadScript("scripts/bullet.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
-            }
-        });
-    }
-     */
-    private static native void initNative();
 
     /**
      * Dispose temp objects

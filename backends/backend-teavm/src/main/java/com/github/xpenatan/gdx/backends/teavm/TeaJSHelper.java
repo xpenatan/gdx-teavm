@@ -2,16 +2,13 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
-import com.github.xpenatan.gdx.backends.web.WebJSGraphics;
+import com.github.xpenatan.gdx.backends.web.*;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
-import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.web.WebJSHelper;
 import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
@@ -29,11 +26,13 @@ public class TeaJSHelper extends WebJSHelper implements JSObject {
 	private WebAgentInfo agentInfo;
 	private HTMLCanvasElementWrapper canvasWrapper;
 	private TeaJSGraphics graphics;
+	private TeaJSApplication application;
 
 	public TeaJSHelper(WebAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
 		this.agentInfo = agentInfo;
 		this.canvasWrapper = canvasWrapper;
 		this.graphics = new TeaJSGraphics();
+		this.application = new TeaJSApplication();
 	}
 
 	@Override
@@ -89,5 +88,10 @@ public class TeaJSHelper extends WebJSHelper implements JSObject {
 	@Override
 	public WebJSGraphics getGraphics() {
 		return graphics;
+	}
+
+	@Override
+	public WebJSApplication getApplication() {
+		return application;
 	}
 }

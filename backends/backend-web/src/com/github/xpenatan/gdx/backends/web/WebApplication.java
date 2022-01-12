@@ -60,6 +60,8 @@ public class WebApplication implements Application, Runnable {
 
 	private String hostPageBaseURL;
 
+	private WebJSApplication webJSApplication;
+
 	public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
 		WebJSHelper jsHelper = config.getJSHelper();
 		WebJSHelper.JSHelper = jsHelper;
@@ -67,6 +69,7 @@ public class WebApplication implements Application, Runnable {
 		this.appListener = appListener;
 		this.config = config;
 		this.canvas = jsHelper.getCanvas();
+		this.webJSApplication = jsHelper.getApplication();
 
 		init();
 	}
@@ -122,6 +125,7 @@ public class WebApplication implements Application, Runnable {
 		files = new WebFiles(preloader);
 		logger = new WebApplicationLogger();
 		initSound();
+		initBulletPhysics();
 
 		Gdx.app = this;
 		Gdx.graphics = graphics;
@@ -214,6 +218,10 @@ public class WebApplication implements Application, Runnable {
 				return true;
 			}
 		});
+	}
+
+	private void initBulletPhysics() {
+		webJSApplication.initBulletPhysics(this);
 	}
 
 	public Preloader getPreloader() {

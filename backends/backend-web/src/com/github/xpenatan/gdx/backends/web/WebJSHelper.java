@@ -33,6 +33,7 @@ public abstract class WebJSHelper {
 	public abstract StorageWrapper getStorage();
 
 	public abstract SoundManagerWrapper createSoundManager();
-
 	public abstract WebJSGraphics getGraphics();
+
+	public abstract WebJSApplication getApplication();
 }
