@@ -53,9 +53,7 @@ libgdx-*.zip.MD5
 /.idea/
 
 natives/
-**/jni/*
-!**/jni/src
-!**/jni/emscripten
+**/jni/build
 ProguardMapping.txt
 local.properties
 **/dragome-resources
