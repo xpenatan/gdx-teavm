@@ -74,8 +74,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 			classHolder = findClassHolder(cls, context, TeaLauncher.class);
 			setGdxApplicationClass(classHolder, context);
 
-			classHolder = findClassHolder(cls, context, "org.jbox2d.common.Timer");
-
 			classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
 			setClassInterface(classHolder, JSObject.class);
 			setMethodAnnotation(classHolder,  JSIndexer.class, "set", null);
