@@ -9,11 +9,22 @@ version '1.0.0'
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.generator.Main"
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
+configurations {
+    provided
+    implementation.extendsFrom provided
+}
+
+task fromClasses (type: Jar) {
+    from (sourceSets.main.output){
+    }
+}
+
 dependencies {
-    api project(":tools:generator:core")
+    implementation project(":tools:generator:core")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+    implementation "com.github.xpenatan.jDear-Imgui:imgui-core-platform:$project.jDearImguiVersion:natives-desktop"
 }
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -24,13 +35,38 @@ task run(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-task dist(type: Jar) {
-    manifest {
-        attributes 'Main-Class': project.mainClassName
+task copyDependencies(type: Copy) {
+    from {configurations.default }
+    {
+        exclude "core*.jar"
+        exclude "jorbis-*.jar"
+        exclude "sac-*.jar"
+        exclude "validation-api-*.jar"
+        exclude "jutils-*.jar"
+        exclude "jsinterop-*.jar"
+        exclude "jlayer-*.jar"
+        exclude "jinput-*.jar"
+        exclude "javax.*.jar"
+        exclude "gwt-user*.jar"
     }
-    dependsOn configurations.runtimeClasspath
+    into 'build/libs/dependencies'
+}
+
+def projectsToCollect = [':tools:generator:desktop',':tools:generator:core']
+
+task dist (type: Jar, dependsOn: [copyDependencies, projectsToCollect.collect{ it+":compileJava"}])  {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes (
+           'Main-Class': project.mainClassName
+        )
+    }
+    from files(projectsToCollect.collect{ project(it).sourceSets.main.output })
     from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        (configurations.provided).collect
+            {
+                it.isDirectory() ? it : zipTree(it)
+            }
     }
     with jar
 }

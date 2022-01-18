@@ -426,7 +426,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
 	private void setClassInterface(ClassHolder classHolder, Class annotationClass) {
 		Set<String> interfaces = classHolder.getInterfaces();
-		interfaces.add(JSObject.class.getName());
+		interfaces.add(annotationClass.getName());
 	}
 
 	private void setClassAnnotation(ClassHolder classHolder, Class annotationClass) {

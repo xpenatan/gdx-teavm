@@ -11,21 +11,13 @@ sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
 dependencies {
     implementation "com.github.xpenatan.jDear-Imgui:imgui-core:$project.jDearImguiVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:imgui-core-platform:$project.jDearImguiVersion:natives-desktop"
     implementation "com.github.xpenatan.jDear-Imgui:imgui-gdx:$project.jDearImguiGdxVersion"
 
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
     implementation project(":backends:backend-web")
     implementation project(":backends:backend-teavm")
     implementation project(":extensions:gdx-freetype-teavm")
 //    implementation project(":backends:backend-dragome")
-}
-
-task dist(type: Jar) {
-    dependsOn configurations.runtimeClasspath
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
 }

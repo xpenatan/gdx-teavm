@@ -73,11 +73,5 @@ publishing {
             artifactId module_name
             artifact fromClasses
         }
-        allBuild(MavenPublication) {
-            version project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
-            project.version = project.gdxHtmlVersion + "-ALL" + project.gdxHtmlType
-            artifactId module_name
-            artifact platformAll
-        }
     }
 }
