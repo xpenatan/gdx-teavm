@@ -14,13 +14,14 @@ public class TeaJSApplication implements WebJSApplication {
     @Override
     public void initBulletPhysics(WebApplication application) {
         Preloader preloader = application.getPreloader();
-//        initBulletPhysicsWasm(preloader);
+        initBulletPhysicsWasm(preloader);
     }
 
     private void initBulletPhysics(Preloader preloader) {
-        preloader.loadScript(true, "scripts/bullet.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(false, "scripts/bullet.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
+                AssetDownloader.getInstance().addQueue();
                 initBullet(new BulletPhysicsLoadFunction() {
                     @Override
                     public void onBulletPhysicsLoaded() {
@@ -32,14 +33,12 @@ public class TeaJSApplication implements WebJSApplication {
 
             @Override
             public void onFailure(String url) {
-                // Fall back to normal bullet physics
-                AssetDownloader.getInstance().subtractQueue();
             }
         });
     }
 
     private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(true, "scripts/bullet.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(false, "scripts/bullet.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 scriptLoaded = true;
@@ -49,7 +48,6 @@ public class TeaJSApplication implements WebJSApplication {
             @Override
             public void onFailure(String url) {
                 // Fall back and try to load normal bullet physics
-                AssetDownloader.getInstance().subtractQueue();
                 initBulletPhysics(preloader);
             }
         });
@@ -59,6 +57,7 @@ public class TeaJSApplication implements WebJSApplication {
                 @Override
                 public boolean onSuccess(String url, Blob result) {
                     ArrayBufferWrapper response = result.getResponse();
+                    AssetDownloader.getInstance().addQueue();
                     initBulletWasm(response, new BulletPhysicsLoadFunction() {
                         @Override
                         public void onBulletPhysicsLoaded() {
@@ -70,7 +69,6 @@ public class TeaJSApplication implements WebJSApplication {
 
                 @Override
                 public void onFailure(String url) {
-                    AssetDownloader.getInstance().subtractQueue();
                 }
             });
         }

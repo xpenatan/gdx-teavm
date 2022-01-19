@@ -141,10 +141,10 @@ public class WebApplication implements Application, Runnable {
 	public void run() {
 		AppState state = initState;
 		try {
-
 			switch (state) {
 				case IDLE:
-					if(AssetDownloader.getInstance().getQueue() == 0)
+					int queue = AssetDownloader.getInstance().getQueue();
+					if(queue == 0)
 						initState = AppState.QUEUE_ASSETS_LOADED;
 					break;
 				case APP_CREATE:
@@ -206,12 +206,10 @@ public class WebApplication implements Application, Runnable {
 					public void onready() {
 						audio = new WebAudio(soundManager);
 						Gdx.audio = audio;
-						AssetDownloader.getInstance().subtractQueue();
 					}
 
 					@Override
 					public void ontimeout() {
-						AssetDownloader.getInstance().subtractQueue();
 					}
 				});
 				jsHelper.createSoundManager();

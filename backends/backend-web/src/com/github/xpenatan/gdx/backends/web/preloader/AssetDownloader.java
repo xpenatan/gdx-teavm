@@ -28,6 +28,7 @@ public class AssetDownloader
 		public String getHostPageBaseURL();
 		public int getQueue();
 		public void subtractQueue();
+		public void addQueue();
 	}
 
 }

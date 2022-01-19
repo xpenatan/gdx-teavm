@@ -56,6 +56,7 @@ public class AssetDownloadImpl implements AssetDownload {
         queue--;
     }
 
+    @Override
     public void addQueue() {
         queue++;
     }
@@ -131,10 +132,9 @@ public class AssetDownloadImpl implements AssetDownload {
                         HTMLElementWrapper scriptElement = document.createElement("script");
                         scriptElement.appendChild(document.createTextNode(response));
 						document.getBody().appendChild(scriptElement);
-                        subtractQueue = !listener.onSuccess(url, request.getResponseText());
+                        listener.onSuccess(url, request.getResponseText());
                     }
-                    if(subtractQueue)
-                        subtractQueue();
+                    subtractQueue();
                 }
             }
         });

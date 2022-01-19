@@ -10,7 +10,7 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String path = "..\\..\\gdx-bullet-old\\gdx-bullet-build\\jni\\emscripten\\bullet.idl";
+        String path = "..\\..\\gdx-bullet\\gdx-bullet-build\\jni\\bullet.idl";
         IDLFile idlFile = IDLParser.parseFile(path);
 
         String basePath = new File(".").getAbsolutePath();
