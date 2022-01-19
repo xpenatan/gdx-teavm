@@ -37,6 +37,9 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     private static final String TEMPLATE_TAG_PARAM = "[PARAM]";
     private static final String TEMPLATE_TAG_NAME = "[NAME]";
 
+    private static final String CAST_TO_INT_METHOD = "getCPointer";
+    private static final String CPOINTER = "cPointer";
+
     private static final String CONVERT_TO_GDX_TEMPLATE = "" +
             "{\n" +
             "    int pointer = [METHOD];\n" +
@@ -128,11 +131,11 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             MethodDeclaration methodDeclaration = methods.get(i);
             convertMethodParamsAndReturn(methodDeclaration);
         }
-        List<FieldDeclaration> fields = classOrInterfaceDeclaration.getFields();
-        for(int i = 0; i < fields.size(); i++) {
-            FieldDeclaration fieldDeclaration = fields.get(i);
-            convertFieldsToInt(fieldDeclaration);
-        }
+//        List<FieldDeclaration> fields = classOrInterfaceDeclaration.getFields();
+//        for(int i = 0; i < fields.size(); i++) {
+//            FieldDeclaration fieldDeclaration = fields.get(i);
+//            convertFieldsToInt(fieldDeclaration);
+//        }
         List<ConstructorDeclaration> constructors = classOrInterfaceDeclaration.getConstructors();
         for(int i = 0; i < constructors.size(); i++) {
             ConstructorDeclaration constructorDeclaration = constructors.get(i);
@@ -242,14 +245,14 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 // Generate the method caller
                 caller = new MethodCallExpr();
                 caller.setName(nativeMethod.getNameAsString());
-                caller.addArgument("cPointer");
+                caller.addArgument(CPOINTER);
                 for(int i = 0; i < idlMethodParameters.size(); i++) {
                     Parameter parameter = idlMethodParameters.get(i);
                     Type type = parameter.getType();
                     String paramName = parameter.getNameAsString();
                     if(type.isClassOrInterfaceType()) {
                         String typeName = parameter.getType().toString();
-                        paramName = paramName + ".getCPointer()";
+                        paramName = "(int)" + paramName + ".getCPointer()";
                     }
                     caller.addArgument(paramName);
                 }
@@ -460,12 +463,19 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration) {
+        if(methodDeclaration.getNameAsString().contains("setCollisionShape")) {
+            System.out.println();
+        }
+        if(!methodDeclaration.isNative()) {
+            Optional<BlockStmt> body = methodDeclaration.getBody();
+            if(body.isPresent()) {
+                convertBodyLongToInt(body.get());
+            }
+            return;
+        }
+
         if(JParserHelper.isLong(methodDeclaration.getType())) {
             methodDeclaration.setType(int.class);
-        }
-        Optional<BlockStmt> body = methodDeclaration.getBody();
-        if(body.isPresent()) {
-            convertBodyLongToInt(body.get());
         }
         convertLongToIntParameters(methodDeclaration.getParameters());
     }
@@ -487,6 +497,67 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                             Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
                             variableDeclarator.setType(intType);
                         }
+                        Optional<Expression> expressionOptional = variableDeclarator.getInitializer();
+                        if(expressionOptional.isPresent()) {
+                            Expression expr = expressionOptional.get();
+                            if(expr.isMethodCallExpr()) {
+                                convertNativeMethodCall(expr.asMethodCallExpr());
+                            }
+                        }
+                    }
+                }
+                else if(expression.isMethodCallExpr()) {
+                    convertNativeMethodCall(expression.asMethodCallExpr());
+                }
+            }
+            else if(statement.isReturnStmt()) {
+                ReturnStmt returnStmt = statement.asReturnStmt();
+                Optional<Expression> expressionOptional = returnStmt.getExpression();
+                if(expressionOptional.isPresent()) {
+                    Expression expression = expressionOptional.get();
+                    if(expression.isMethodCallExpr()) {
+                        convertNativeMethodCall(expression.asMethodCallExpr());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void convertNativeMethodCall(MethodCallExpr methodCallExpr) {
+        NodeList<Expression> arguments = methodCallExpr.getArguments();
+        for(int i = 0; i < arguments.size(); i++) {
+            Expression expression = arguments.get(i);
+            if(expression.isMethodCallExpr()) {
+                MethodCallExpr methodCallExpr1 = expression.asMethodCallExpr();
+                String nameAsString = methodCallExpr1.getNameAsString();
+                if(nameAsString.equals(CAST_TO_INT_METHOD)) {
+                    Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+                    CastExpr intCast = new CastExpr(intType, expression);
+                    methodCallExpr.setArgument(i, intCast);
+                }
+                else {
+                    convertNativeMethodCall(methodCallExpr1);
+                }
+            }
+            else if(expression.isNameExpr()) {
+                NameExpr nameExpr = expression.asNameExpr();
+                String nameAsString = nameExpr.getNameAsString();
+                if(nameAsString.equals(CPOINTER)) {
+                    Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+                    CastExpr intCast = new CastExpr(intType, expression);
+                    methodCallExpr.setArgument(i, intCast);
+                }
+            }
+            else if(expression.isConditionalExpr()) {
+                ConditionalExpr conditionalExpr = expression.asConditionalExpr();
+                Expression thenExpr = conditionalExpr.getThenExpr();
+                if(thenExpr.isMethodCallExpr()) {
+                    MethodCallExpr methodCall = thenExpr.asMethodCallExpr();
+                    String nameAsString = methodCall.getNameAsString();
+                    if(nameAsString.equals(CAST_TO_INT_METHOD)) {
+                        Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+                        CastExpr intCast = new CastExpr(intType, thenExpr);
+                        conditionalExpr.setThenExpr(intCast);
                     }
                 }
             }
