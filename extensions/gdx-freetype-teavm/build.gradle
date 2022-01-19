@@ -3,7 +3,8 @@ plugins {
 }
 
 group 'com.github.xpenatan.gdx-web-tools'
-version 'unspecified'
+
+def module_name = "gdx-freetype-teavm"
 
 sourceSets.main.resources.srcDirs = [ "resources/" ]
 
@@ -20,6 +21,37 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
-test {
-    useJUnitPlatform()
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task fromClasses (type: Jar) {
+    from (sourceSets.main.output){
+    }
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        imguiClasses(MavenPublication) {
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            artifactId module_name
+            artifact fromClasses
+        }
+    }
 }
