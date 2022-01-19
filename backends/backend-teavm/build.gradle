@@ -46,27 +46,18 @@ task fromClasses (type: Jar) {
     }
 }
 
-task platformAll (type: Jar, dependsOn: [':backends:backend-teavm:build']) {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from
-    {
-        (configurations.runtimeClasspath + sourceSets.main.output - configurations.provided).collect
-        {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    {
-        exclude ("gdx-" + gdxVersion + ".jar")
-        exclude "*.template"
-        exclude "*.idl"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-        exclude "META-INF/maven/"
-    }
+task addNative (type: Jar) {
+    from zipTree("/libs/teavm-cli-0.7.0-dev-1200.jar")
 }
 
 publishing {
     publications {
+        teavmNatives(MavenPublication) {
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            artifactId module_name + "-native"
+            artifact addNative
+        }
         maven(MavenPublication) {
             version project.gdxHtmlVersion + project.gdxHtmlType
             project.version = project.gdxHtmlVersion + project.gdxHtmlType
