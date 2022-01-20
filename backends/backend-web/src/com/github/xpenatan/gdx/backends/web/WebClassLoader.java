@@ -21,6 +21,7 @@ public class WebClassLoader extends URLClassLoader {
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
+		InputStream inputStream = null;
 		for (int i = 0; i < jarFiles.length; i++) {
 			URL url = jarFiles[i];
 			String path = url.getPath();
@@ -29,12 +30,16 @@ public class WebClassLoader extends URLClassLoader {
 				JarFile jarFile = new JarFile(file);
 				ZipEntry entry = jarFile.getEntry(name);
 				if(entry != null) {
-					InputStream inputStream = jarFile.getInputStream(entry);
-					return inputStream;
+					inputStream = jarFile.getInputStream(entry);
+					break;
 				}
 			} catch(Exception e) {
 			}
 		}
-		return super.getResourceAsStream(name);
+		// Only accept TeaVM classes if it's not in jarFiles array
+		if(name.startsWith("org/teavm/")) {
+			inputStream = super.getResourceAsStream(name);
+		}
+		return inputStream;
 	}
 }
