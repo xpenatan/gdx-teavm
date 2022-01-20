@@ -157,7 +157,7 @@ interface btCollisionWorld {
 	void setBroadphase(btBroadphaseInterface pairCache);
 	//btBroadphaseInterface getBroadphase(); //Not needed
 	//btOverlappingPairCache getPairCache(); //Not needed
-	//btDispatcher getDispatcher();  //Not needed
+	btDispatcher getDispatcher();
 	void updateSingleAabb(btCollisionObject colObj);
 	void updateAabbs();
 	void computeOverlappingPairs();
@@ -436,10 +436,23 @@ interface btConvexShape {
 };
 btConvexShape implements btCollisionShape;
 
+interface btConvexInternalShape {
+	void setImplicitShapeDimensions([Ref]btVector3 dimensions);
+};
+btConvexInternalShape implements btConvexShape;
+
+interface btPolyhedralConvexShape {
+};
+btPolyhedralConvexShape implements btConvexInternalShape;
+
+interface btPolyhedralConvexAabbCachingShape {
+};
+btPolyhedralConvexAabbCachingShape implements btPolyhedralConvexShape;
+
 interface btConvexTriangleMeshShape {
 	void btConvexTriangleMeshShape(btStridingMeshInterface meshInterface, optional boolean calcAabb);
 };
-btConvexTriangleMeshShape implements btConvexShape;
+btConvexTriangleMeshShape implements btPolyhedralConvexAabbCachingShape;
 
 interface btBoxShape {
 	void btBoxShape([Ref]btVector3 boxHalfExtents);
@@ -447,14 +460,14 @@ interface btBoxShape {
 	[Ref,Const] btVector3 getHalfExtentsWithoutMargin();
 	float getMargin();
 };
-btBoxShape implements btCollisionShape;
+btBoxShape implements btPolyhedralConvexShape;
 
 interface btCapsuleShape {
 	void btCapsuleShape(float radius, float height);
 	void setMargin(float margin);
 	float getMargin();
 };
-btCapsuleShape implements btCollisionShape;
+btCapsuleShape implements btConvexInternalShape;
 
 interface btCapsuleShapeX {
 	void btCapsuleShapeX(float radius, float height);
@@ -475,7 +488,7 @@ interface btCylinderShape {
 	void setMargin(float margin);
 	float getMargin();
 };
-btCylinderShape implements btCollisionShape;
+btCylinderShape implements btConvexInternalShape;
 
 interface btCylinderShapeX {
 	void btCylinderShapeX([Ref]btVector3 halfExtents);
@@ -498,12 +511,12 @@ interface btSphereShape {
 	void setMargin(float margin);
 	float getMargin();
 };
-btSphereShape implements btCollisionShape;
+btSphereShape implements btConvexInternalShape;
 
 interface btConeShape {
 	void btConeShape(float radius, float height);
 };
-btConeShape implements btCollisionShape;
+btConeShape implements btConvexInternalShape;
 
 interface btConvexHullShape {
 	void btConvexHullShape();
@@ -511,7 +524,7 @@ interface btConvexHullShape {
 	void setMargin(float margin);
 	float getMargin();
 };
-btConvexHullShape implements btCollisionShape;
+btConvexHullShape implements btPolyhedralConvexAabbCachingShape;
 
 interface btConeShapeX {
 	void btConeShapeX(float radius, float height);
