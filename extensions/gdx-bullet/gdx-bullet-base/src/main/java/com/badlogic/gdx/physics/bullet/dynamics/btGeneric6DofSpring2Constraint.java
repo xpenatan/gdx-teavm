@@ -12,7 +12,6 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
         btTransform btframeInA = btTransform.TEMP_0;
         btTransform.convert(frameInB, btTransform.TEMP_1);
         btTransform btframeInB = btTransform.TEMP_1;
-
         initObject(createNative(rbA.getCPointer(), rbB.getCPointer(), btframeInA.getCPointer(), btframeInB.getCPointer()), true);
     }
 
