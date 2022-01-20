@@ -339,6 +339,10 @@ public class TeaBuilder {
         filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
         filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
         filePath.add("com/badlogic/gdx/utils/arial-15.png");
+
+        filePath.add("com/badlogic/gdx/utils/lsans-15.fnt");
+        filePath.add("com/badlogic/gdx/utils/lsans-15.png");
+
         filePath.add("scripts/soundmanager2-jsmin.js");
         filePath.add("scripts/freetype.js");
         filePath.add("scripts/bullet.js");
