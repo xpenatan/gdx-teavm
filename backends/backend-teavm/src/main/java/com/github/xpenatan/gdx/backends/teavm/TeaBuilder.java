@@ -165,6 +165,8 @@ public class TeaBuilder {
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
+        ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
+        classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
         AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
         tool.setProgressListener(new TeaVMProgressListener() {

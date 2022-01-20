@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     public ArrayList<File> assetsPath = new ArrayList<>();
+    public ArrayList<String> additionalClassPathAssetsFiles = new ArrayList<>();
 
     public boolean logClasses = false;
     public boolean obfuscate = false;
@@ -34,6 +35,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public ArrayList<URL> getAdditionalClasspath() {
         return additionalClasspath;
+    }
+
+    @Override
+    public ArrayList<String> getAdditionalAssetClasspath() {
+        return additionalClassPathAssetsFiles;
     }
 
     @Override

@@ -47,6 +47,8 @@ public abstract class WebBuildConfiguration {
 
     public abstract ArrayList<URL> getAdditionalClasspath();
 
+    public abstract ArrayList<String> getAdditionalAssetClasspath();
+
     public abstract String getWebAppPath();
 
     public abstract void assetsClasspath(ArrayList<String> classPaths);
