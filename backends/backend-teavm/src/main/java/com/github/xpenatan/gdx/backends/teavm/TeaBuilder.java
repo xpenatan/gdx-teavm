@@ -16,6 +16,7 @@ import org.teavm.vm.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -67,14 +68,21 @@ public class TeaBuilder {
             }
         }
 
-        URL[] urLs = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
-
+        String pathSeparator = System.getProperty("path.separator");
+        String[] classPathEntries = System.getProperty("java.class.path") .split(pathSeparator);
+        
         ArrayList<URL> acceptedURL = new ArrayList<>();
         ArrayList<URL> notAcceptedURL = new ArrayList<>();
 
-        for (int i = 0; i < urLs.length; i++) {
-            URL url = urLs[i];
-            String path = url.getPath();
+        for (int i = 0; i < classPathEntries.length; i++) {
+            String path = classPathEntries[i];
+            File file = new File(path);
+            URL url = null;
+            try {
+                url = file.toURI().toURL();
+            } catch(MalformedURLException e) {
+                e.printStackTrace();
+            }
             ACCEPT_STATE acceptState = acceptPath(path);
             boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
             if (acceptState == ACCEPT_STATE.NO_MATCH)
