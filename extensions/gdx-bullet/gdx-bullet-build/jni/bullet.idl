@@ -744,6 +744,8 @@ interface btGeneric6DofSpring2Constraint {
 	void setDbgDrawSize(float dbgDrawSize);
     void setLinearLowerLimit([Const, Ref]btVector3 linearLower);
     void setLinearUpperLimit([Const, Ref]btVector3 linearUpper);
+    void setAngularLowerLimit([Const, Ref]btVector3 linearLower);
+    void setAngularUpperLimit([Const, Ref]btVector3 linearUpper);
 };
 btGeneric6DofSpring2Constraint implements btTypedConstraint;
 
