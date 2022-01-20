@@ -10,7 +10,7 @@ public class btCompoundShape extends btCollisionShape {
     }
 
     /*[-teaVM;-NATIVE]
-        var jsObj = new Bullet.btCompoundShape(radius);
+        var jsObj = new Bullet.btCompoundShape();
         return Bullet.getPointer(jsObj);
      */
     private static native long createNative();
