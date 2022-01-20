@@ -14,15 +14,15 @@ project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
 
 dependencies {
   // Use snapshots
-  implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
-  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
-  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
-  implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:1.0.0-SNAPSHOT"
+//  implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
+//  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
+//  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
+//  implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 
   // Or source projects
-//  implementation project(":backends:backend-web")
-//  implementation project(":backends:backend-teavm")
-//  implementation project(":extensions:gdx-freetype-teavm")
+  implementation project(":backends:backend-web")
+  implementation project(":backends:backend-teavm")
+  implementation project(":extensions:gdx-freetype-teavm")
 
   implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
   implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
