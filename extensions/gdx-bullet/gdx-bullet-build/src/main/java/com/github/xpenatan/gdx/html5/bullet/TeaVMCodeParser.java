@@ -39,6 +39,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
     private static final String CAST_TO_INT_METHOD = "getCPointer";
     private static final String CPOINTER = "cPointer";
+    private static final String ENDS_WITH_POINTER = "Pointer";
 
     private static final String CONVERT_TO_GDX_TEMPLATE = "" +
             "{\n" +
@@ -463,9 +464,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration) {
-        if(methodDeclaration.getNameAsString().contains("setCollisionShape")) {
-            System.out.println();
-        }
         if(!methodDeclaration.isNative()) {
             Optional<BlockStmt> body = methodDeclaration.getBody();
             if(body.isPresent()) {
@@ -494,8 +492,9 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     for(int j = 0; j < variables.size(); j++) {
                         VariableDeclarator variableDeclarator = variables.get(j);
                         if(JParserHelper.isLong(variableDeclarator.getType())) {
-                            Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
-                            variableDeclarator.setType(intType);
+                            // Commented because its not needed anymore. Only needs to cast
+//                            Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+//                            variableDeclarator.setType(intType);
                         }
                         Optional<Expression> expressionOptional = variableDeclarator.getInitializer();
                         if(expressionOptional.isPresent()) {
@@ -542,7 +541,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             else if(expression.isNameExpr()) {
                 NameExpr nameExpr = expression.asNameExpr();
                 String nameAsString = nameExpr.getNameAsString();
-                if(nameAsString.equals(CPOINTER)) {
+                if(nameAsString.equals(CPOINTER) || nameAsString.endsWith(ENDS_WITH_POINTER)) {
                     Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
                     CastExpr intCast = new CastExpr(intType, expression);
                     methodCallExpr.setArgument(i, intCast);

@@ -14,7 +14,9 @@ public class btRigidBody extends btCollisionObject {
     public btRigidBody(float mass, btMotionState motionState, btCollisionShape collisionShape, Vector3 localInertia) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(localInertia, out);
-        initObject(createNative(mass, motionState.getCPointer(), collisionShape.getCPointer(), out.getCPointer()), true);
+        long motionStatePointer = motionState != null ? motionState.getCPointer() : 0;
+        long shapePointer = motionState != null ? collisionShape.getCPointer() : 0;
+        initObject(createNative(mass, motionStatePointer,shapePointer, out.getCPointer()), true);
     }
 
     @Override
