@@ -171,7 +171,7 @@ interface btCollisionWorld {
 	void contactTest(btCollisionObject colObj, [Ref]ContactResultCallback resultCallback);
 	void contactPairTest(btCollisionObject colObjA, btCollisionObject colObjB, [Ref]ContactResultCallback resultCallback);
 	void addCollisionObject(btCollisionObject collisionObject, optional short collisionFilterGroup, optional short collisionFilterMask);
-	//[Ref]btCollisionObjectArray getCollisionObjectArray(); //Not needed
+	[Ref]btCollisionObjectArray getCollisionObjectArray();
 	void removeCollisionObject(btCollisionObject collisionObject);
 	void performDiscreteCollisionDetection();
 	[Ref]btDispatcherInfo getDispatchInfo();
@@ -708,7 +708,7 @@ interface btRigidBody {
 	boolean wantsSleeping();
 	//btBroadphaseProxy getBroadphaseProxy(); // Not needed. btCollisionObject already have this call
 	//void setNewBroadphaseProxy(btBroadphaseProxy broadphaseProxy) // Not needed
-	//btMotionState getMotionState(); // Not needed
+	btMotionState getMotionState();
 	void setMotionState(btMotionState motionState);
 	void setAngularFactor([Const, Ref]btVector3 angFac);
 	[Const, Ref]btVector3 getAngularFactor();
@@ -738,6 +738,12 @@ interface btTypedConstraint {
 	[Const]float getBreakingImpulseThreshold();
 	void setBreakingImpulseThreshold([Const]float threshold);
 };
+
+interface btGeneric6DofSpring2Constraint {
+	void btGeneric6DofSpring2Constraint([Ref]btRigidBody rbA, [Ref]btRigidBody rbB, [Const, Ref]btTransform frameInA, [Const, Ref]btTransform frameInB);
+	void setDbgDrawSize(float dbgDrawSize);
+};
+btGeneric6DofSpring2Constraint implements btTypedConstraint;
 
 interface btFixedConstraint {
 	void btFixedConstraint([Ref]btRigidBody rbA, [Ref]btRigidBody rbB, [Const, Ref]btTransform frameInA, [Const, Ref]btTransform frameInB);

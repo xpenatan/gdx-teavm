@@ -1619,4 +1619,35 @@ public class Matrix4 implements Serializable {
 				&& MathUtils.isZero(val[M01]) && MathUtils.isZero(val[M02]) && MathUtils.isZero(val[M10]) && MathUtils.isZero(val[M12])
 				&& MathUtils.isZero(val[M20]) && MathUtils.isZero(val[M21]));
 	}
+
+	public Matrix4 rotateTowardDirection (final Vector3 direction, final Vector3 up) {
+		l_vez.set(direction).nor();
+		l_vex.set(direction).crs(up).nor();
+		l_vey.set(l_vex).crs(l_vez).nor();
+		float m00 = val[M00] * l_vex.x + val[M01] * l_vex.y + val[M02] * l_vex.z;
+		float m01 = val[M00] * l_vey.x + val[M01] * l_vey.y + val[M02] * l_vey.z;
+		float m02 = val[M00] * -l_vez.x + val[M01] * -l_vez.y + val[M02] * -l_vez.z;
+		float m10 = val[M10] * l_vex.x + val[M11] * l_vex.y + val[M12] * l_vex.z;
+		float m11 = val[M10] * l_vey.x + val[M11] * l_vey.y + val[M12] * l_vey.z;
+		float m12 = val[M10] * -l_vez.x + val[M11] * -l_vez.y + val[M12] * -l_vez.z;
+		float m20 = val[M20] * l_vex.x + val[M21] * l_vex.y + val[M22] * l_vex.z;
+		float m21 = val[M20] * l_vey.x + val[M21] * l_vey.y + val[M22] * l_vey.z;
+		float m22 = val[M20] * -l_vez.x + val[M21] * -l_vez.y + val[M22] * -l_vez.z;
+		float m30 = val[M30] * l_vex.x + val[M31] * l_vex.y + val[M32] * l_vex.z;
+		float m31 = val[M30] * l_vey.x + val[M31] * l_vey.y + val[M32] * l_vey.z;
+		float m32 = val[M30] * -l_vez.x + val[M31] * -l_vez.y + val[M32] * -l_vez.z;
+		val[M00] = m00;
+		val[M10] = m10;
+		val[M20] = m20;
+		val[M30] = m30;
+		val[M01] = m01;
+		val[M11] = m11;
+		val[M21] = m21;
+		val[M31] = m31;
+		val[M02] = m02;
+		val[M12] = m12;
+		val[M22] = m22;
+		val[M32] = m32;
+		return this;
+	}
 }
