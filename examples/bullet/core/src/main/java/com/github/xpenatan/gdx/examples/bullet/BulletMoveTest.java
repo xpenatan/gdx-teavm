@@ -170,13 +170,6 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
 
         TestMotionState motionState = new TestMotionState(modelInstance.transform);
         btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
-//        shape.calculateLocalInertia(mass, tmp.setZero());
-
-//        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
-//        if(add)
-//            colObjs.add(body);
-//        body.setRestitution(0.7f);
-//        body.setFriction(0);
 
         btRigidBody body = new btRigidBody(0, null, null, new Vector3(0,0,0));
         if(add)
@@ -184,21 +177,11 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
 
         btCompoundShape compoundShape = new btCompoundShape();
         compoundShape.addChildShape(new Matrix4(), shape);
-
         tmp.setZero();
-
-        int shapeType = compoundShape.getShapeType();
-        boolean isConcave = (shapeType > BroadphaseNativeTypes.CONCAVE_SHAPES_START_HERE &&
-                shapeType < BroadphaseNativeTypes.CONCAVE_SHAPES_END_HERE);
-        //moving concave objects not supported
-            compoundShape.calculateLocalInertia(mass, tmp);
-
-
+        compoundShape.calculateLocalInertia(mass, tmp);
         body.setCollisionShape(compoundShape);
-
         body.setRestitution(0.7f);
         body.setFriction(0);
-
         body.setMassProps(mass, tmp);
         body.setMotionState(motionState);
 

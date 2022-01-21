@@ -428,6 +428,7 @@ interface btCollisionShape {
 	void setMargin(float margin);
 	float getMargin();
 	long getShapeType();
+	void getAabb([Const, Ref]btTransform t, [Ref]btVector3 aabbMin, [Ref]btVector3 aabbMax);
 };
 
 interface btConvexShape {
@@ -545,7 +546,6 @@ interface btCompoundShape {
 	btCollisionShape getChildShape(long index);
 	void setMargin(float margin);
 	float getMargin();
-	void calculateLocalInertia(float mass, [Ref]btVector3 inertia);
 };
 btCompoundShape implements btCollisionShape;
 
