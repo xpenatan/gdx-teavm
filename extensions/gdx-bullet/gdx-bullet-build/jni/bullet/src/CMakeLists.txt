@@ -1,1 +1,1 @@
-SUBDIRS(  BulletSoftBody BulletCollision BulletDynamics LinearMath )
+SUBDIRS( BulletInverseDynamics BulletSoftBody BulletCollision BulletDynamics LinearMath)

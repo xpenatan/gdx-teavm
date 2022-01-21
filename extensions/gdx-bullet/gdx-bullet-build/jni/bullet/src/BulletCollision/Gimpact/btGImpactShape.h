@@ -1,5 +1,5 @@
 /*! \file btGImpactShape.h
-\author Francisco Len Nï¿½jera
+\author Francisco Len Nßjera
 */
 /*
 This source file is part of GIMPACT Library.
@@ -722,17 +722,8 @@ public:
 		m_box_set.setPrimitiveManager(&m_primitive_manager);
 	}
 
-
-	btGImpactMeshShapePart(btStridingMeshInterface * meshInterface,	int part)
-	{
-		m_primitive_manager.m_meshInterface = meshInterface;
-		m_primitive_manager.m_part = part;
-		m_box_set.setPrimitiveManager(&m_primitive_manager);
-	}
-
-	virtual ~btGImpactMeshShapePart()
-	{
-	}
+    btGImpactMeshShapePart( btStridingMeshInterface * meshInterface, int part );
+    virtual ~btGImpactMeshShapePart();
 
 	//! if true, then its children must get transforms.
 	virtual bool childrenHasTransform() const
@@ -742,19 +733,8 @@ public:
 
 
 	//! call when reading child shapes
-	virtual void lockChildShapes() const
-	{
-		void * dummy = (void*)(m_box_set.getPrimitiveManager());
-		TrimeshPrimitiveManager * dummymanager = static_cast<TrimeshPrimitiveManager *>(dummy);
-		dummymanager->lock();
-	}
-
-	virtual void unlockChildShapes()  const
-	{
-		void * dummy = (void*)(m_box_set.getPrimitiveManager());
-		TrimeshPrimitiveManager * dummymanager = static_cast<TrimeshPrimitiveManager *>(dummy);
-		dummymanager->unlock();
-	}
+    virtual void lockChildShapes() const;
+    virtual void unlockChildShapes()  const;
 
 	//! Gets the number of children
 	virtual int	getNumChildShapes() const
