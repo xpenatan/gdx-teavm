@@ -545,6 +545,7 @@ interface btCompoundShape {
 	btCollisionShape getChildShape(long index);
 	void setMargin(float margin);
 	float getMargin();
+	void calculateLocalInertia(float mass, [Ref]btVector3 inertia);
 };
 btCompoundShape implements btCollisionShape;
 
@@ -863,15 +864,15 @@ interface btDynamicsWorld {
 };
 btDynamicsWorld implements btCollisionWorld;
 
-interface btActionInterface {
-	void updateAction(btCollisionWorld collisionWorld, float deltaTimeStep);
-	void debugDraw(btIDebugDraw debugDrawer);
-};
-
 interface btDiscreteDynamicsWorld {
 	void btDiscreteDynamicsWorld(btDispatcher dispatcher, btBroadphaseInterface pairCache, btConstraintSolver constraintSolver, btCollisionConfiguration collisionConfiguration);
 };
 btDiscreteDynamicsWorld implements btDynamicsWorld;
+
+interface btActionInterface {
+	void updateAction(btCollisionWorld collisionWorld, float deltaTimeStep);
+	void debugDraw(btIDebugDraw debugDrawer);
+};
 
 //Vehicle
 
