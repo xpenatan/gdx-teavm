@@ -9,10 +9,6 @@ buildscript {
 	}
 }
 
-configurations {
-	childJars
-}
-
 allprojects {
 	apply plugin: "eclipse"
 	apply plugin: "idea"

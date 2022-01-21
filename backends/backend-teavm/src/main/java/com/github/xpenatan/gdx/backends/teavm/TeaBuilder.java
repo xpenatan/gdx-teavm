@@ -76,6 +76,7 @@ public class TeaBuilder {
         for (int i = 0; i < classPathEntries.length; i++) {
             String path = classPathEntries[i];
             File file = new File(path);
+            path = path.replace("\\", "/");
             URL url = null;
             try {
                 url = file.toURI().toURL();
