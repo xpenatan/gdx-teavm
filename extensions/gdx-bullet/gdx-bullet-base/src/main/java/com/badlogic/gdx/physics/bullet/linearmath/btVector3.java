@@ -63,8 +63,8 @@ public class btVector3 extends BulletBase {
         return vec->x();
      */
     /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return vec3.x();
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        return jsObj.x();
      */
     private static native float getX(long addr);
 
@@ -77,8 +77,8 @@ public class btVector3 extends BulletBase {
         return vec->y();
      */
     /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return vec3.y();
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        return jsObj.y();
      */
     private static native float getY(long addr);
 
@@ -91,8 +91,8 @@ public class btVector3 extends BulletBase {
         return vec->z();
     */
     /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return vec3.z();
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        return jsObj.z();
      */
     private static native float getZ(long addr);
 
@@ -101,8 +101,8 @@ public class btVector3 extends BulletBase {
     }
 
     /*[-teaVM;-NATIVE]
-        var vec3 = Bullet.wrapPointer(addr, Bullet.btVector3);
-        vec3.setValue(x, y, z);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
+        jsObj.setValue(x, y, z);
      */
     private static native void setValue(long addr, float x, float y, float z);
 
