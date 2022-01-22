@@ -1,5 +1,11 @@
 // Custom Glue
 
+interface MybtTriangleRaycastCallback {
+    void MybtTriangleRaycastCallback([Const, Ref]btVector3 from, [Const, Ref]btVector3 to, optional long flags);
+	float reportHit([Const, Ref]btVector3 hitNormalLocal, float hitFraction, long partId, long triangleIndex);
+};
+MybtTriangleRaycastCallback implements btTriangleRaycastCallback;
+
 interface MyDebugDraw {
 	void MyDebugDraw();
 	void drawLine([Const, Ref] btVector3 vecFrom, [Const, Ref] btVector3 vecTo, [Const, Ref] btVector3 color);
@@ -170,7 +176,7 @@ interface btCollisionWorld {
 	void convexSweepTest([Const]btConvexShape castShape, [Const, Ref]btTransform from, [Const, Ref]btTransform to, [Ref]ConvexResultCallback resultCallback, optional float allowedCcdPenetration);
 	void contactTest(btCollisionObject colObj, [Ref]ContactResultCallback resultCallback);
 	void contactPairTest(btCollisionObject colObjA, btCollisionObject colObjB, [Ref]ContactResultCallback resultCallback);
-	void addCollisionObject(btCollisionObject collisionObject, optional short collisionFilterGroup, optional short collisionFilterMask);
+	void addCollisionObject(btCollisionObject collisionObject, optional long collisionFilterGroup, optional long collisionFilterMask);
 	[Ref]btCollisionObjectArray getCollisionObjectArray();
 	void removeCollisionObject(btCollisionObject collisionObject);
 	void performDiscreteCollisionDetection();
@@ -242,9 +248,9 @@ interface btCollisionObject {
 	float getCcdMotionThreshold();
 	float getCcdSquareMotionThreshold();
 	void setCcdMotionThreshold(float ccdMotionThreshold);
-	//VoidPtr getUserPointer(); //Not needed
+	VoidPtr getUserPointer();
 	long getUserIndex();
-	//void setUserPointer(VoidPtr userPointer); //Not needed
+	void setUserPointer(VoidPtr userPointer);
 	void setUserIndex(long index);
 	long getUpdateRevisionInternal();
 	boolean checkCollideWith([Const] btCollisionObject co);
@@ -279,8 +285,8 @@ interface RayResultCallback {
 	// abstract base class, no constructor
 	boolean hasHit();
 	attribute float m_closestHitFraction;
-	attribute short m_collisionFilterGroup;
-	attribute short m_collisionFilterMask;
+	attribute long m_collisionFilterGroup;
+	attribute long m_collisionFilterMask;
 	[Const]attribute btCollisionObject m_collisionObject;
 	attribute unsigned long m_flags;
 	float addSingleResult([Ref]LocalRayResult rayResult, boolean normalInWorldSpace);
@@ -328,8 +334,8 @@ interface LocalConvexResult {
 interface ConvexResultCallback {
 	// abstract base class, no constructor
 	boolean hasHit();
-	attribute short m_collisionFilterGroup;
-	attribute short m_collisionFilterMask;
+	attribute long m_collisionFilterGroup;
+	attribute long m_collisionFilterMask;
 	attribute float m_closestHitFraction;
 };
 
@@ -584,8 +590,8 @@ interface btShapeHull {
 	long numVertices();
 	long numIndices();
 	boolean buildHull(float margin);
-	[Const]btVector3 [] getVertexPointer();
-	[Const]any[] getIndexPointer(); 
+//	[Const]btVector3 [] getVertexPointer(); // Parser don't support yet
+//	[Const]any[] getIndexPointer();  // Parser don't support yet
 };
 
 // Other stuff
@@ -622,6 +628,7 @@ interface btTriangleIndexVertexArray {
 	boolean hasPremadeAabb();
 	void addIndexedMesh([Const, Ref]btIndexedMesh mesh, optional PHY_ScalarType indexType);
 };
+btTriangleIndexVertexArray implements btStridingMeshInterface;
 
 interface btTriangleRaycastCallback {
 	[Value]attribute btVector3 m_from;
@@ -631,7 +638,6 @@ interface btTriangleRaycastCallback {
 	float reportHit([Const, Ref]btVector3 hitNormalLocal, float hitFraction, long partId, long triangleIndex);
 };
 btTriangleRaycastCallback implements btTriangleCallback;
-
 
 interface btTriangleCallback {
 	void processTriangle(btVector3 triangle, long partId, long triangleIndex);
@@ -854,7 +860,7 @@ interface btDynamicsWorld {
 	void removeAction(btActionInterface action);
 	[Value]btContactSolverInfo getSolverInfo();
 	void addRigidBody(btRigidBody body);
-	void addRigidBody(btRigidBody body, short group, short mask);
+	void addRigidBody(btRigidBody body, long group, long mask);
 	void removeRigidBody(btRigidBody body);
 	void setGravity([Ref]btVector3 gravity);
 	[Value]btVector3 getGravity();
@@ -1156,7 +1162,7 @@ interface btSoftBodyArray {
 
 interface btSoftRigidDynamicsWorld {
 	void btSoftRigidDynamicsWorld(btDispatcher dispatcher, btBroadphaseInterface pairCache, btConstraintSolver constraintSolver, btCollisionConfiguration collisionConfiguration, optional btSoftBodySolver softBodySolver);
-	void addSoftBody(btSoftBody body, optional short collisionFilterGroup, optional short collisionFilterMask);
+	void addSoftBody(btSoftBody body, optional long collisionFilterGroup, optional long collisionFilterMask);
 	void removeSoftBody(btSoftBody body);
 	[Ref]btSoftBodyWorldInfo getWorldInfo();
 	[Ref]btSoftBodyArray getSoftBodyArray();

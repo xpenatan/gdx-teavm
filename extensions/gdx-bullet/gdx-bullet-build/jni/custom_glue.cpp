@@ -182,3 +182,23 @@ class MyAllHitsRayResultCallback : public btCollisionWorld::AllHitsRayResultCall
 			return btCollisionWorld::AllHitsRayResultCallback::addSingleResult(arg0, arg1);
 		}
 };
+
+class MybtTriangleRaycastCallback : public btTriangleRaycastCallback {
+	public:
+		MybtTriangleRaycastCallback(const btVector3& from, const btVector3& to, unsigned int flags=0) : btTriangleRaycastCallback(from, to, flags){}
+
+		float reportHit(const btVector3& arg0, btScalar arg1, int arg2, int arg3) {
+			return EM_ASM_DOUBLE({
+			  var self = Module['getCache'](Module['MybtTriangleRaycastCallback'])[$0];
+			  if (!self.hasOwnProperty('reportHit')) throw 'a JSImplementation must implement all functions, you forgot MybtTriangleRaycastCallback::reportHit.';
+			  return self['reportHit']($1,$2,$3,$4);
+			}, (int)this, (int)&arg0, arg1, arg2, arg3);
+		}
+		void __destroy__() {
+			EM_ASM_INT({
+			  var self = Module['getCache'](Module['MybtTriangleRaycastCallback'])[$0];
+			  if (!self.hasOwnProperty('__destroy__')) throw 'a JSImplementation must implement all functions, you forgot MybtTriangleRaycastCallback::__destroy__.';
+			  self['__destroy__']();
+			}, (int)this);
+		}
+};
