@@ -19,11 +19,14 @@ public class btMotionState extends BulletBase {
     public interface SetWorldTransform extends org.teavm.jso.JSObject {
         void setWorldTransformJS(int worldTrans);
     }
+     */
+    /*[-teaVM;-ADD]
     @org.teavm.jso.JSFunctor
     public interface GetWorldTransform extends org.teavm.jso.JSObject {
         void getWorldTransformJS(int worldTrans);
     }
      */
+
     /*[-teaVM;-REPLACE]
     private void initJavaObject() {
        SetWorldTransform setWorldTransform = new SetWorldTransform() {
