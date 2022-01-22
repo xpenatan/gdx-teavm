@@ -248,9 +248,9 @@ interface btCollisionObject {
 	float getCcdMotionThreshold();
 	float getCcdSquareMotionThreshold();
 	void setCcdMotionThreshold(float ccdMotionThreshold);
-	VoidPtr getUserPointer();
+	any getUserPointer();
 	long getUserIndex();
-	void setUserPointer(VoidPtr userPointer);
+	void setUserPointer(any userPointer);
 	void setUserIndex(long index);
 	long getUpdateRevisionInternal();
 	boolean checkCollideWith([Const] btCollisionObject co);
