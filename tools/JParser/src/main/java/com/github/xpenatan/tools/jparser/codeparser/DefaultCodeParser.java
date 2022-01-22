@@ -1,5 +1,6 @@
 package com.github.xpenatan.tools.jparser.codeparser;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -19,6 +20,7 @@ public abstract class DefaultCodeParser implements CodeParser {
     public static final String CMD_REMOVE = "-REMOVE";
     public static final String CMD_REPLACE = "-REPLACE";
     public static final String CMD_NATIVE = "-NATIVE";
+    public static final String CMD_RAW = "-RAW";
 
     private final String headerCMD;
 
@@ -85,7 +87,7 @@ public abstract class DefaultCodeParser implements CodeParser {
                 FieldDeclaration fieldDeclaration = parserItem.fieldDeclaration;
                 if(headerCommands.contains(CMD_REPLACE) && !actionTaken) {
                     actionTaken = true;
-                    setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, fieldDeclaration);
+                    setJavaBodyFieldReplaceCMD(parserItem, headerCommands, blockComment, fieldDeclaration);
                 }
             }
             else if(parserItem.isMethodBlock()) {
@@ -99,7 +101,7 @@ public abstract class DefaultCodeParser implements CodeParser {
                 }
                 if(headerCommands.contains(CMD_REPLACE) && !actionTaken) {
                     actionTaken = true;
-                    setJavaBodyReplaceCMD(parserItem, headerCommands, blockComment, methodDeclaration);
+                    setJavaBodyMethodReplaceCMD(parserItem, headerCommands, blockComment, methodDeclaration);
                 }
             }
             // Block comments without field or method
@@ -161,13 +163,30 @@ public abstract class DefaultCodeParser implements CodeParser {
 
     private void setJavaBodyAddCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment) {
         String content = CodeParserItem.obtainContent(headerCommands, blockComment);
-        RawCodeBlock newblockComment = new RawCodeBlock();
+
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
-        newblockComment.setContent(content);
-        Optional<TokenRange> tokenRange = blockComment.getTokenRange();
-        TokenRange javaTokens = tokenRange.get();
-        newblockComment.setTokenRange(javaTokens);
-        classInterface.getMembers().add(newblockComment);
+
+        if(headerCommands.contains(CMD_RAW)) {
+            // Add code with the raw code block. Won't be possible to do post-processing
+            RawCodeBlock newblockComment = new RawCodeBlock();
+            newblockComment.setContent(content);
+            Optional<TokenRange> tokenRange = blockComment.getTokenRange();
+            TokenRange javaTokens = tokenRange.get();
+            newblockComment.setTokenRange(javaTokens);
+            classInterface.getMembers().add(newblockComment);
+        }
+        else {
+            // Will attempt to convert the content to code and post-processing will be possible
+            try {
+                BodyDeclaration<?> newCode = StaticJavaParser.parseBodyDeclaration(content);
+                classInterface.getMembers().add(newCode);
+            }
+            catch(Throwable t) {
+                String className = classInterface.getNameAsString();
+                System.err.println("Error Class: " + className + "\n" + content);
+                throw t;
+            }
+        }
     }
 
     private void setJavaHeaderRemoveCMD(CodeParserItem parserItem) {
@@ -178,19 +197,28 @@ public abstract class DefaultCodeParser implements CodeParser {
         parserItem.removeAll();
     }
 
-    private void setJavaBodyReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
-        methodDeclaration.remove();
+    private void setJavaBodyMethodReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
+        methodDeclaration.remove();
         String content = CodeParserItem.obtainContent(headerCommands, blockComment);
-        RawCodeBlock newblockComment = new RawCodeBlock();
-        newblockComment.setContent(content);
-        Optional<TokenRange> tokenRange = methodDeclaration.getTokenRange();
-        TokenRange javaTokens = tokenRange.get();
-        newblockComment.setTokenRange(javaTokens);
-        classInterface.getMembers().add(newblockComment);
+
+        if(headerCommands.contains(CMD_RAW)) {
+            // Just replace it with anything that its in the code block. Won't be possible to do post-processing
+            RawCodeBlock newblockComment = new RawCodeBlock();
+            newblockComment.setContent(content);
+            Optional<TokenRange> tokenRange = methodDeclaration.getTokenRange();
+            TokenRange javaTokens = tokenRange.get();
+            newblockComment.setTokenRange(javaTokens);
+            classInterface.getMembers().add(newblockComment);
+        }
+        else {
+            // Will replace it with a new parsed method and post-processing will be possible
+            BodyDeclaration<?> newCode = StaticJavaParser.parseBodyDeclaration(content);
+            classInterface.getMembers().add(newCode);
+        }
     }
 
-    private void setJavaBodyReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, FieldDeclaration fieldDeclaration) {
+    private void setJavaBodyFieldReplaceCMD(CodeParserItem parserItem, String headerCommands, BlockComment blockComment, FieldDeclaration fieldDeclaration) {
         fieldDeclaration.remove();
         ClassOrInterfaceDeclaration classInterface = parserItem.classInterface;
         String content = CodeParserItem.obtainContent(headerCommands, blockComment);

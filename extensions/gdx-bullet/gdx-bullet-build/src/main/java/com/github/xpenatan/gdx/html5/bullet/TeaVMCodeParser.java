@@ -266,7 +266,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             }
             else if(idlMethodReturnType.isClassOrInterfaceType()) {
                 // Class object needs to generate some code.
-                BlockStmt blockStmt = generateObjectPointerReturnType(unit, idlMethodDeclaration, caller);
+                BlockStmt blockStmt = generateObjectPointerReturnType(unit, classDeclaration, idlMethodDeclaration, caller);
                 idlMethodDeclaration.setBody(blockStmt);
             }
             else {
@@ -321,7 +321,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 body.addStatement(caller);
             }
             else if(returnType.isClassOrInterfaceType()) {
-                BlockStmt blockStmt = generateObjectPointerReturnType(unit, idlMethodDeclaration, caller);
+                BlockStmt blockStmt = generateObjectPointerReturnType(unit, classDeclaration, idlMethodDeclaration, caller);
                 NodeList<Statement> statements = blockStmt.getStatements();
                 for(int i = 0; i < statements.size(); i++) {
                     Statement statement = statements.get(i);
@@ -427,7 +427,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private BlockStmt generateObjectPointerReturnType(CompilationUnit unit, MethodDeclaration idlMethodDeclaration, MethodCallExpr caller) {
+    private BlockStmt generateObjectPointerReturnType(CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, MethodCallExpr caller) {
         //  if return type is an object we need to get the method pointer, add it do a temp object and return this object
         Type type = idlMethodDeclaration.getType();
 
@@ -449,9 +449,17 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             }
         }
 
-        BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(newBody);
-        InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
-        BlockStmt body = initializerDeclaration.getBody();
+        BlockStmt body = null;
+        try {
+            BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(newBody);
+            InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
+            body = initializerDeclaration.getBody();
+        }
+        catch(Throwable t) {
+            String className = classDeclaration.getNameAsString();
+            System.err.println("Error Class: " + className + "\n" + newBody);
+            throw t;
+        }
         return body;
     }
 
