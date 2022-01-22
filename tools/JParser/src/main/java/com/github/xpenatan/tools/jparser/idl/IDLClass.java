@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /** @author xpenatan */
 public class IDLClass {
-    public String interfaceName;
+    public String name;
     public String prefixName;
     public String jsImplementation;
 
@@ -30,7 +30,7 @@ public class IDLClass {
                 attributes.add(attribute);
             }
             else {
-                if(line.startsWith("void " + interfaceName)) {
+                if(line.startsWith("void " + name)) {
                     IDLConstructor constructor = new IDLConstructor();
                     constructor.initConstructor(line);
                     constructors.add(constructor);
@@ -58,7 +58,7 @@ public class IDLClass {
     private void setInterfaceName() {
         String line = searchLine("interface ", true, false);
         if(line != null) {
-            interfaceName = line.split(" ")[1];
+            name = line.split(" ")[1];
         }
     }
 

@@ -46,15 +46,26 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                 ArrayList<IDLMethod> methods = idlClass.methods;
                 for(int i = 0; i < methods.size(); i++) {
                     IDLMethod idlMethod = methods.get(i);
-                    generateMethods(jParser, unit, classOrInterfaceDeclaration, idlMethod);
+                    generateMethods(jParser, unit, classOrInterfaceDeclaration, idlClass, idlMethod);
                 }
             }
         }
     }
 
-    private void generateMethods(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
+    /**
+     * true to accept the idl method
+     */
+    public boolean filterIDLMethod(IDLClass idlClass, IDLMethod idlMethod) {
+        return true;
+    }
+
+    private void generateMethods(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLMethod idlMethod) {
         String methodName = idlMethod.name;
         if(containsMethod(classOrInterfaceDeclaration, idlMethod)) {
+            return;
+        }
+
+        if(!filterIDLMethod(idlClass, idlMethod)) {
             return;
         }
 

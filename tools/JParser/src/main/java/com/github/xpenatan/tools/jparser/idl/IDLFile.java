@@ -10,7 +10,7 @@ public class IDLFile {
         int size = classArray.size();
         for(int i = 0; i < size; i++) {
             IDLClass idlClass = classArray.get(i);
-            if(idlClass.interfaceName.equals(name)) {
+            if(idlClass.name.equals(name)) {
                 return idlClass;
             }
         }

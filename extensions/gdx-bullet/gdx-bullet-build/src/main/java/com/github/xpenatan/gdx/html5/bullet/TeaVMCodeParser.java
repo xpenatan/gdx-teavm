@@ -17,6 +17,7 @@ import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.IDLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
+import com.github.xpenatan.tools.jparser.idl.IDLMethod;
 
 import java.util.List;
 import java.util.Optional;
@@ -144,6 +145,15 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             BlockStmt body = constructorDeclaration.getBody();
             convertBodyLongToInt(body);
         }
+    }
+
+    @Override
+    public boolean filterIDLMethod(IDLClass idlClass, IDLMethod idlMethod) {
+        if(idlClass.name.equals("btCollisionObject"))
+            if(idlMethod.name.equals("getUserPointer") || idlMethod.name.equals("setUserPointer")) {
+                return false;
+            }
+        return true;
     }
 
     @Override
