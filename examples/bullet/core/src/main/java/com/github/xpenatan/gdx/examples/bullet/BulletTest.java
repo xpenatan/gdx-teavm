@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
+import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
@@ -55,7 +56,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     Environment environment;
 
     btDiscreteDynamicsWorld world;
-//    DebugDrawer debugDrawer;
+    DebugDrawer debugDrawer;
     btDefaultCollisionConfiguration collisionConfiguration;
     btCollisionDispatcher dispatcher;
     btDbvtBroadphase broadphase;
@@ -95,9 +96,9 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         Vector3 gravity = new Vector3(0, -10, 0);
         world.setGravity(gravity);
 
-//        debugDrawer = new DebugDrawer();
-//        world.setDebugDrawer(debugDrawer);
-//        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
+        debugDrawer = new DebugDrawer();
+        world.setDebugDrawer(debugDrawer);
+        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
 //        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
         camera = new PerspectiveCamera();
@@ -241,9 +242,9 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         modelBatch.end();
 
         if(debug) {
-//            debugDrawer.begin(camera);
-//            world.debugDrawWorld();
-//            debugDrawer.end();
+            debugDrawer.begin(camera);
+            world.debugDrawWorld();
+            debugDrawer.end();
         }
 
         batch.begin();
