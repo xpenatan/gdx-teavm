@@ -1,10 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.teavm.classlib.ReflectionContext;
 import org.teavm.classlib.ReflectionSupplier;
@@ -19,6 +15,10 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
 	public static void addReflectionClass(Class<?> type) {
 		addReflectionClass(type.getName());
+	}
+
+	public static List<String> getReflectionClasses() {
+		return clazzList;
 	}
 
 	public static boolean containsReflection(String className) {

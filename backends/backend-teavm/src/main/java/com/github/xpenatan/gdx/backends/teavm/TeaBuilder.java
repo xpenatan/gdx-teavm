@@ -158,6 +158,15 @@ public class TeaBuilder {
         tool.setCacheDirectory(setCacheDirectory);
         tool.setStrict(false);
         tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
+
+        List<String> classesToPreserve = tool.getClassesToPreserve();
+
+        ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
+        List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
+        configClassesToPreserve.addAll(reflectionClasses);
+        ArrayList<String> preserveClasses = classLoader.getPreserveClasses(configClassesToPreserve);
+        classesToPreserve.addAll(preserveClasses);
+
         Properties properties = tool.getProperties();
 
         properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");

@@ -63,5 +63,6 @@ public abstract class WebBuildConfiguration {
 
     public abstract ArrayList<String> getReflectionInclude();
     public abstract ArrayList<String> getReflectionExclude();
+    public abstract ArrayList<String> getClassesToPreserve();
     public abstract boolean logClasses();
 }

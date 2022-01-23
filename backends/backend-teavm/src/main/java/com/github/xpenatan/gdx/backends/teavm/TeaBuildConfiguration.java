@@ -21,6 +21,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
     public final ArrayList<String> reflectionInclude = new ArrayList<>();
     public final ArrayList<String> reflectionExclude = new ArrayList<>();
+    public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
     @Override
     public String getMainClass() {
@@ -66,6 +67,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public ArrayList<String> getReflectionExclude() {
         return reflectionExclude;
+    }
+
+    @Override
+    public ArrayList<String> getClassesToPreserve() {
+        return classesToPreserve;
     }
 
     @Override
