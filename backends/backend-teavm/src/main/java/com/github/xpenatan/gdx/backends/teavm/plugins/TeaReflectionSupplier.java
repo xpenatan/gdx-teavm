@@ -66,13 +66,11 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 			return Collections.emptyList();
 		}
 		Set<MethodDescriptor> methods = new HashSet<>();
-		if (cls != null) {
-			if(canHaveReflection(className)) {
-				Collection<? extends MethodReader> methods2 = cls.getMethods();
-				for (MethodReader method : methods2) {
-					MethodDescriptor descriptor = method.getDescriptor();
-					methods.add(descriptor);
-				}
+		if(canHaveReflection(className)) {
+			Collection<? extends MethodReader> methods2 = cls.getMethods();
+			for (MethodReader method : methods2) {
+				MethodDescriptor descriptor = method.getDescriptor();
+				methods.add(descriptor);
 			}
 		}
 		return methods;
