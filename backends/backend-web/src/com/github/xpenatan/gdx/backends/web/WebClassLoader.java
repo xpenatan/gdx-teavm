@@ -80,7 +80,7 @@ public class WebClassLoader extends URLClassLoader {
 				while(entries.hasMoreElements()) {
 					JarEntry jarEntry = entries.nextElement();
 					String name = jarEntry.getName();
-					if(name.startsWith(packagePath) && !name.contains("$")) {
+					if(name.startsWith(packagePath)) {
 						if(name.endsWith(".class")) {
 							String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
 							array.add(className);
