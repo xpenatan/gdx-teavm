@@ -75,6 +75,17 @@ public class btIDebugDraw extends BulletBase {
      */
     private static native long createNative();
 
+    @Override
+    protected void deleteNative() {
+        deleteNative(cPointer);
+    }
+
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.MyDebugDraw);
+        Bullet.destroy(jsObj);
+     */
+    private static native void deleteNative(long addr);
+
     public void drawLine(Vector3 from, Vector3 to, Vector3 color) {
     }
 
