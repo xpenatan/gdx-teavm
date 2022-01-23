@@ -9,6 +9,13 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  * @author xpenatan
  */
 public class btCollisionObject extends BulletBase {
+
+    public static btCollisionObject temp01 = new btCollisionObject(0);
+
+    protected btCollisionObject(long cPointer) {
+        initObject(cPointer, false);
+    }
+
     btCollisionShape collisionShape;
 
     public void setCollisionShape (btCollisionShape collisionShape) {
@@ -41,12 +48,7 @@ public class btCollisionObject extends BulletBase {
 
     /*[-teaVM;-REPLACE]
     public long getUserPointer () {
-
-        int test = 139213;
-        System.out.println(test);
-
         int userPointer = getUserPointer(cPointer);
-
         long longPointer = (long)userPointer;
         return longPointer;
     }

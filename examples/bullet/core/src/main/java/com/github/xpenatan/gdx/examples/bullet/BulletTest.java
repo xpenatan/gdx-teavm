@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.examples.bullet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -27,6 +28,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.collision.*;
@@ -61,7 +63,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     btCollisionDispatcher dispatcher;
     btDbvtBroadphase broadphase;
     btSequentialImpulseConstraintSolver solver;
-//    ClosestRayResultCallback raycast;
+    ClosestRayResultCallback raycast;
 
     BitmapFont font;
 
@@ -99,7 +101,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         debugDrawer = new DebugDrawer();
         world.setDebugDrawer(debugDrawer);
         debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
-//        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
+        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
         camera = new PerspectiveCamera();
         viewport = new ScreenViewport(camera);
@@ -173,7 +175,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
         shape.calculateLocalInertia(mass, tmp.setZero());
         btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
-//        body.userData = userData;
+        body.setUserPointer(colObjs.size);
         if(add)
             colObjs.add(body);
         body.setRestitution(0.7f);
@@ -314,20 +316,20 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-//        if(button == Buttons.LEFT) {
-//            Ray ray = camera.getPickRay(screenX, screenY);
-//            float ScaleToMeter = 1;
-//            rayFrom.set(ray.origin.scl(ScaleToMeter));
-//            rayTo.set(ray.direction).scl(200).add(rayFrom);
-//            raycast.setCollisionObject(null);
-//            raycast.setClosestHitFraction(1f);
-//            world.rayTest(rayFrom, rayTo, raycast);
-//
-//            if(raycast.hasHit()) {
-//                btCollisionObject collisionObject = raycast.getCollisionObject();
-//                System.out.println("HIT Body:" + collisionObject.userData);
-//            }
-//        }
+        if(button == Buttons.LEFT) {
+            Ray ray = camera.getPickRay(screenX, screenY);
+            float ScaleToMeter = 1;
+            rayFrom.set(ray.origin.scl(ScaleToMeter));
+            rayTo.set(ray.direction).scl(200).add(rayFrom);
+            raycast.setCollisionObject(null);
+            raycast.setClosestHitFraction(1f);
+            world.rayTest(rayFrom, rayTo, raycast);
+
+            if(raycast.hasHit()) {
+                btCollisionObject collisionObject = raycast.getCollisionObject();
+                System.out.println("HIT Body:" + collisionObject.getUserPointer());
+            }
+        }
         return false;
     }
 
