@@ -530,6 +530,9 @@ interface btConvexHullShape {
 	void addPoint([Const, Ref]btVector3 point, optional boolean recalculateLocalAABB);
 	void setMargin(float margin);
 	float getMargin();
+	long getNumPoints();
+	[Value]btVector3 getScaledPoint(long i);
+	void optimizeConvexHull();
 };
 btConvexHullShape implements btPolyhedralConvexAabbCachingShape;
 
@@ -590,8 +593,8 @@ interface btShapeHull {
 	long numVertices();
 	long numIndices();
 	boolean buildHull(float margin);
-//	[Const]btVector3 [] getVertexPointer(); // Parser don't support yet
-//	[Const]any[] getIndexPointer();  // Parser don't support yet
+	[Const]btVector3 [] getVertexPointer();
+	[Const]any [] getIndexPointer();
 };
 
 // Other stuff
