@@ -7,8 +7,12 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
 
     public btConvexHullShape (java.nio.FloatBuffer points, int numPoints, int stride) {
         // Custom constructor from GDX
-        float[] array = points.array();
-        initObject(createNative(array, numPoints, stride), true);
+        int remaining = points.remaining();
+        float[] array = new float[remaining];
+        for(int i = 0; i < remaining; i++) {
+            array[i] = points.get(i);
+        }
+        initObject(createNative(array, numPoints, stride, remaining), true);
     }
 
     public btConvexHullShape (btShapeHull hull) {
@@ -20,10 +24,11 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
         var jsObj = new Bullet.btConvexHullShape();
         var shapeHull = Bullet.wrapPointer(btShapeHullAddr, Bullet.btShapeHull);
         var numVertices = shapeHull.numVertices();
+        var vertexPointer = shapeHull.getVertexPointer();
         var i = 0;
         while(i < numVertices) {
-            var vectice = shapeHull.getVector(i);
-            jsObj.addPoint(vectice);
+            var btVector3 = vertexPointer[i];
+            jsObj.addPoint(btVector3);
             i++;
         }
         return Bullet.getPointer(jsObj);
@@ -34,7 +39,6 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
         var jsObj = new Bullet.btConvexHullShape();
         stride = stride/4;
         var tmpbtVector = new Bullet.btVector3(x,y,z);
-        var remaining = points.@java.nio.FloatBuffer::remaining()();
         var i = 0;
         while (i < remaining) {
             var x = points[i];
@@ -47,7 +51,7 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
         Bullet.destroy(tmpbtVector);
         return Bullet.getPointer(jsObj);
      */
-    private static native long createNative(float[] points, int numPoints, int stride);
+    private static native long createNative(float[] points, int numPoints, int stride, int remaining);
 
     @Override
     protected void deleteNative() {
