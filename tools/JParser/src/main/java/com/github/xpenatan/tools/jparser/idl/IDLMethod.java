@@ -8,6 +8,7 @@ public class IDLMethod {
     public String paramsLine;
     public String returnType;
     public String name;
+    public boolean returnIsArray;
 
     public final ArrayList<IDLParameter> parameters = new ArrayList<>();
 
@@ -21,6 +22,11 @@ public class IDLMethod {
             leftSide = line.substring(endIndex + 1, index).trim();
         }
 
+        if(leftSide.contains("[]")) {
+            leftSide = leftSide.replace("[]", "");
+            returnIsArray = true;
+        }
+        leftSide = leftSide.trim().replaceAll(" +", " ");
         String[] s = leftSide.split(" ");
         returnType = s[0];
         if(returnType.equals("long")) {

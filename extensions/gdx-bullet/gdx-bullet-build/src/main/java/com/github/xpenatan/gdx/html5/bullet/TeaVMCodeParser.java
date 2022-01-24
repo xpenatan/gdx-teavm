@@ -149,10 +149,16 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
 
     @Override
     public boolean filterIDLMethod(IDLClass idlClass, IDLMethod idlMethod) {
-        if(idlClass.name.equals("btCollisionObject"))
+        if(idlClass.name.equals("btCollisionObject")) {
             if(idlMethod.name.equals("getUserPointer") || idlMethod.name.equals("setUserPointer")) {
                 return false;
             }
+        }
+        else if(idlClass.name.equals("btShapeHull")) {
+            if(idlMethod.name.equals("getVertexPointer") || idlMethod.name.equals("getIndexPointer")) {
+                return false;
+            }
+        }
         return true;
     }
 
