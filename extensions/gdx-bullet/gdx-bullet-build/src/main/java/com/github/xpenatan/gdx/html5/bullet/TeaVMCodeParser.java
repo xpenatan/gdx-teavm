@@ -159,6 +159,11 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 return false;
             }
         }
+        else if(idlClass.name.equals("btTriangleIndexVertexArray")) {
+            if(idlMethod.name.equals("addIndexedMesh")) {
+                return false;
+            }
+        }
         return true;
     }
 
