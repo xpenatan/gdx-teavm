@@ -10,6 +10,7 @@
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
 #include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
+#include <BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h>
 
 
 typedef btAlignedObjectArray<btVector3>	MyVector3Array;
@@ -20,6 +21,21 @@ class MyClassHelper {
 	public: 
 		static int getBTVersion() {
 			return btGetVersion();
+		}
+		
+		static void setVertices(btIndexedMesh *mesh, float * vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes) {
+			unsigned char *data = (unsigned char *)vertices;
+			mesh->m_vertexBase = &(data[positionOffsetInBytes]);
+			mesh->m_vertexStride = sizeInBytesOfEachVertex;
+			mesh->m_numVertices = vertexCount;
+			mesh->m_vertexType = PHY_FLOAT;
+		}
+		
+		static void setIndices(btIndexedMesh *mesh, short *indices, int indexOffset, int indexCount) {
+			mesh->m_triangleIndexBase = (unsigned char*)&(indices[indexOffset]);
+			mesh->m_triangleIndexStride = 3 * sizeof(short);
+			mesh->m_numTriangles = indexCount / 3;
+			mesh->m_indexType = PHY_SHORT;
 		}
 };
 

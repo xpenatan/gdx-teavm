@@ -1,7 +1,7 @@
 // Custom Glue
 
 interface MybtTriangleRaycastCallback {
-    void MybtTriangleRaycastCallback([Const, Ref]btVector3 from, [Const, Ref]btVector3 to, optional long flags);
+	void MybtTriangleRaycastCallback([Const, Ref]btVector3 from, [Const, Ref]btVector3 to, optional long flags);
 	float reportHit([Const, Ref]btVector3 hitNormalLocal, float hitFraction, long partId, long triangleIndex);
 };
 MybtTriangleRaycastCallback implements btTriangleRaycastCallback;
@@ -22,6 +22,8 @@ MyMotionState implements btMotionState;
 
 interface MyClassHelper {
 	long getBTVersion();
+	void setVertices(btIndexedMesh mesh, float [] vertices, long sizeInBytesOfEachVertex, long vertexCount, long positionOffsetInBytes);
+	void setIndices(btIndexedMesh mesh, short [] indices, long indexOffset, long indexCount);
 };
 
 interface MyTemp {
@@ -57,16 +59,16 @@ interface MyScalarArray {
 };
 
 interface MyClosestRayResultCallback {
-  void MyClosestRayResultCallback([Const, Ref] btVector3 from, [Const, Ref] btVector3 to);
-  float addSingleResult([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
-  float addSingleResultSuper([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
+	void MyClosestRayResultCallback([Const, Ref] btVector3 from, [Const, Ref] btVector3 to);
+	float addSingleResult([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
+	float addSingleResultSuper([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
 };
 MyClosestRayResultCallback implements ClosestRayResultCallback;
 
 interface MyAllHitsRayResultCallback {
-  void MyAllHitsRayResultCallback([Const, Ref] btVector3 from, [Const, Ref] btVector3 to);
-  float addSingleResult([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
-  float addSingleResultSuper([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
+	void MyAllHitsRayResultCallback([Const, Ref] btVector3 from, [Const, Ref] btVector3 to);
+	float addSingleResult([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
+	float addSingleResultSuper([Ref] LocalRayResult rayResult, boolean normalInWorldSpace);
 };
 MyAllHitsRayResultCallback implements AllHitsRayResultCallback;
 
@@ -610,10 +612,6 @@ enum PHY_ScalarType {
 
 interface btIndexedMesh {
 	void btIndexedMesh();
-	//attribute octet?  m_triangleIndexBase;
-	//attribute PHY_ScalarType m_indexType;
-	//attribute long m_triangleIndexStride;
-	//attribute long m_numTriangles;
 };
 
 interface btTriangleMesh {
