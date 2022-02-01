@@ -1,5 +1,7 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+
 /**
  * @author xpenatan
  */
@@ -7,12 +9,18 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
 
     public btConvexHullShape (java.nio.FloatBuffer points, int numPoints, int stride) {
         // Custom constructor from GDX
-        int remaining = points.remaining();
-        float[] array = new float[remaining];
-        for(int i = 0; i < remaining; i++) {
-            array[i] = points.get(i);
+        initObject(createNative(), true);
+        int remaining = points.limit();
+        stride = stride/4;
+        int i = 0;
+        while (i < remaining) {
+            float x = points.get(i);
+            float y = points.get(i + 1);
+            float z = points.get(i + 2);
+            btVector3.TEMP_0.setValue(x, y, z);
+            addPoint(btVector3.TEMP_0);
+            i += stride;
         }
-        initObject(createNative(array, numPoints, stride, remaining), true);
     }
 
     public btConvexHullShape (btShapeHull hull) {
@@ -21,14 +29,13 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
     }
 
     /*[-teaVM;-NATIVE]
-        var jsObj = new Bullet.btConvexHullShape();
         var shapeHull = Bullet.wrapPointer(btShapeHullAddr, Bullet.btShapeHull);
+        var jsObj = new Bullet.btConvexHullShape();
         var numVertices = shapeHull.numVertices();
-        var vertexPointer = shapeHull.getVertexPointer();
         var i = 0;
         while(i < numVertices) {
-            var btVector3 = vertexPointer[i];
-            jsObj.addPoint(btVector3);
+            var vec3 = Bullet.MyClassHelper.prototype.getVertexPointer(shapeHull, i);
+            jsObj.addPoint(vec3);
             i++;
         }
         return Bullet.getPointer(jsObj);
@@ -37,21 +44,9 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
 
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btConvexHullShape();
-        stride = stride/4;
-        var tmpbtVector = new Bullet.btVector3(x,y,z);
-        var i = 0;
-        while (i < remaining) {
-            var x = points[i];
-            var y = points[i + 1];
-            var z = points[i + 2];
-            tmpbtVector.setValue(x, y, z);
-            jsObj.addPoint(tmpbtVector);
-            i += stride;
-        }
-        Bullet.destroy(tmpbtVector);
         return Bullet.getPointer(jsObj);
      */
-    private static native long createNative(float[] points, int numPoints, int stride, int remaining);
+    private static native long createNative();
 
     @Override
     protected void deleteNative() {
@@ -63,4 +58,14 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);
+
+    public void addPoint(btVector3 point) {
+        addPointNATIVE(cPointer, point.getCPointer());
+    }
+
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btConvexHullShape);
+        jsObj.addPoint(btVector3Addr);
+     */
+    private static native void addPointNATIVE(long addr, long btVector3Addr);
 }

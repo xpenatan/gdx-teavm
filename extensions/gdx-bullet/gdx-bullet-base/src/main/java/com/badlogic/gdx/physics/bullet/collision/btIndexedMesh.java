@@ -14,8 +14,6 @@ import java.nio.ShortBuffer;
  * @author xpenatan
  */
 public class btIndexedMesh extends BulletBase {
-    //TODO need to finish impl
-
     protected final static Array<btIndexedMesh> instances = new Array<btIndexedMesh>();
     protected static btIndexedMesh getInstance(final Object tag) {
         final int n = instances.size;
@@ -106,30 +104,47 @@ public class btIndexedMesh extends BulletBase {
     }
 
     public void setVertices(java.nio.FloatBuffer vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes) {
-        int remaining = vertices.remaining();
+        int remaining = vertices.limit();
         float[] array = new float[remaining];
-        for (int i = 0; i < remaining; i++) {
+        for(int i = 0; i < remaining; i++) {
             array[i] = vertices.get(i);
         }
-
+        //TODO find a better impl
         setVertices(cPointer, array, sizeInBytesOfEachVertex, vertexCount, positionOffsetInBytes);
     }
+
     /*[-teaVM;-NATIVE]
-         Bullet.MyClassHelper.prototype.setVertices(addr, vertices, sizeInBytesOfEachVertex, vertexCount, positionOffsetInBytes);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btIndexedMesh);
+
+        var nDataBytes1 = vertices.length * vertices.BYTES_PER_ELEMENT;
+        var dataPtr1 = Bullet._malloc(nDataBytes1);
+        var dataHeap1 = new Uint8Array(Bullet.HEAPU8.buffer, dataPtr1, nDataBytes1);
+        dataHeap1.set(new Uint8Array(vertices.buffer));
+
+        Bullet.MyClassHelper.prototype.setVertices(jsObj, dataHeap1.byteOffset, sizeInBytesOfEachVertex, vertexCount, positionOffsetInBytes);
      */
     private static native void setVertices(long addr, float [] vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes);
 
     public void setIndices(java.nio.ShortBuffer indices, int indexOffset, int indexCount) {
-        int remaining = indices.remaining();
+        int remaining = indices.limit();
         short[] array = new short[remaining];
-        for (int i = 0; i < remaining; i++) {
+        for(int i = 0; i < remaining; i++) {
             array[i] = indices.get(i);
         }
+        //TODO find a better impl
         setIndices(cPointer, array, indexOffset, indexCount);
     }
 
     /*[-teaVM;-NATIVE]
-         Bullet.MyClassHelper.prototype.setIndices(addr, indices, indexOffset, indexCount);
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btIndexedMesh);
+
+        var nDataBytes2 = indices.length * indices.BYTES_PER_ELEMENT;
+        var dataPtr2 = Bullet._malloc(nDataBytes2);
+        var dataHeap2 = new Uint8Array(Bullet.HEAPU8.buffer, dataPtr2, nDataBytes2);
+        dataHeap2.set(new Uint8Array(indices.buffer));
+
+        Bullet.MyClassHelper.prototype.setIndices(jsObj, dataHeap2.byteOffset, indexOffset, indexCount);
      */
     private static native void setIndices(long addr, short [] indices, int indexOffset, int indexCount);
+
 }

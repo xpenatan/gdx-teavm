@@ -83,7 +83,8 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
 
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTriangleIndexVertexArray);
-        jsObj.addIndexedMesh(meshAddr, indexType);
+        var meshJSObj = Bullet.wrapPointer(meshAddr, Bullet.btIndexedMesh);
+        jsObj.addIndexedMesh(meshJSObj, indexType);
      */
     private static native void addIndexedMeshNATIVE(long addr, long meshAddr, int indexType);
 
@@ -93,7 +94,8 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
 
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTriangleIndexVertexArray);
-        jsObj.addIndexedMesh(meshAddr, indexType);
+        var meshJSObj = Bullet.wrapPointer(meshAddr, Bullet.btIndexedMesh);
+        jsObj.addIndexedMesh(meshJSObj);
      */
     private static native void addIndexedMeshNATIVE(long addr, long meshAddr);
 

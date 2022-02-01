@@ -24,6 +24,7 @@ interface MyClassHelper {
 	long getBTVersion();
 	void setVertices(btIndexedMesh mesh, float [] vertices, long sizeInBytesOfEachVertex, long vertexCount, long positionOffsetInBytes);
 	void setIndices(btIndexedMesh mesh, short [] indices, long indexOffset, long indexCount);
+	[Const, Ref]btVector3 getVertexPointer(btShapeHull hull, long index);
 };
 
 interface MyTemp {
@@ -528,7 +529,7 @@ interface btConeShape {
 btConeShape implements btConvexInternalShape;
 
 interface btConvexHullShape {
-	void btConvexHullShape();
+	void btConvexHullShape([Const] optional float[] points, optional long numPoints, optional long stride);
 	void addPoint([Const, Ref]btVector3 point, optional boolean recalculateLocalAABB);
 	void setMargin(float margin);
 	float getMargin();
@@ -595,8 +596,6 @@ interface btShapeHull {
 	long numVertices();
 	long numIndices();
 	boolean buildHull(float margin);
-	[Const]btVector3 [] getVertexPointer();
-	[Const]any [] getIndexPointer();
 };
 
 // Other stuff

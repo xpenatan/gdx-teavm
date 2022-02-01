@@ -37,6 +37,11 @@ class MyClassHelper {
 			mesh->m_numTriangles = indexCount / 3;
 			mesh->m_indexType = PHY_SHORT;
 		}
+		
+		static const btVector3& getVertexPointer(btShapeHull *hull, int index) {
+			const btVector3* array = hull->getVertexPointer();
+			return array[index];
+		}
 };
 
 class MyTemp {
