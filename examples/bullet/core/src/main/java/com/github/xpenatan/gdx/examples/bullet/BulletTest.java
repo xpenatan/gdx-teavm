@@ -71,7 +71,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     long timeNow;
     long time;
-    boolean debug = true;
+    boolean debug = false;
 
     boolean freeze = false;
 
@@ -226,7 +226,6 @@ public class BulletTest implements ApplicationListener, InputProcessor {
             timeNow = System.currentTimeMillis();
 
             if(timeNow - time > 8000) {
-                debug = !debug;
                 resetBoxes();
                 time = System.currentTimeMillis();
             }
@@ -300,6 +299,9 @@ public class BulletTest implements ApplicationListener, InputProcessor {
             else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             }
+        }
+        else if(keycode == Keys.D) {
+            debug = !debug;
         }
         return false;
     }
