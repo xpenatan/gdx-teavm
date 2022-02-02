@@ -24,8 +24,10 @@ backend-web contains an emu folder that emulate some classes that work for any c
 
 ## Supported Extensions:
 - Box2D
-- Bullet Physics (WIP)
+- Bullet Physics (WIP)¹
 - FreeType
+
+¹: Don't support libgdx bullet physics. The goal is to be 1-1 to C++ classes with only small changes to support Vector3 and Matrix4.
 
 ## Gdx-Html5-Generator:
 A standalone tool to convert your libgdx game in .jar format to javascript. There is no need to create a html gradle module.
