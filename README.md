@@ -7,8 +7,7 @@ Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](htt
 * [demo-cubocy](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-cubocy/)
 * [demo-superjumper](https://xpenatan.github.io/gdx-html5-tools/teavm/demo-superjumper/)
 * [test-freetype](https://xpenatan.github.io/gdx-html5-tools/teavm/test-freetype-packtest/)
-* [test-bullet](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet/)
-* [test-bullet-wasm](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet-wasm/)
+* [test-bullet-wasm](https://xpenatan.github.io/gdx-html5-tools/teavm/test-bullet/)
 
 ## How it works:
 The backend-web was created with the idea of code reuse in mind so that each compiler-backend doesn't have to start from scratch.
