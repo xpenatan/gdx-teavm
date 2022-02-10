@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.web;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.Cursor;
@@ -50,6 +51,11 @@ public class WebGraphics implements Graphics {
 			// update canvas size
 			setWindowedMode(config.width, config.height);
 		}
+
+		String versionString = gl20.glGetString(GL20.GL_VERSION);
+		String vendorString = gl20.glGetString(GL20.GL_VENDOR);
+		String rendererString = gl20.glGetString(GL20.GL_RENDERER);
+		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 	}
 
 	public void update () {
