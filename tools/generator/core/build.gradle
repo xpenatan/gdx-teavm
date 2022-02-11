@@ -4,10 +4,16 @@ plugins {
 
 apply from: '../../../dependencies.gradle'
 
-group 'com.github.xpenatan.gdx-html5-tools'
-version '1.0.0'
+group 'com.github.xpenatan.gdx-web-tools'
+
+def module_name = "generator"
 
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
+
+configurations {
+    includeDep
+    implementation.extendsFrom includeDep
+}
 
 dependencies {
     implementation "com.github.xpenatan.jDear-Imgui:imgui-core:$project.jDearImguiVersion"
@@ -16,8 +22,54 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    implementation project(":backends:backend-web")
-    implementation project(":backends:backend-teavm")
-    implementation project(":extensions:gdx-freetype-teavm")
+    includeDep project(":backends:backend-web")
+    includeDep project(":backends:backend-teavm")
+    includeDep project(":extensions:gdx-freetype-teavm")
+    includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
 //    implementation project(":backends:backend-dragome")
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task fromClasses (type: Jar) {
+    from (sourceSets.main.output){
+    }
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        classes(MavenPublication) {
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            artifactId module_name
+            artifact fromClasses
+
+            pom.withXml {
+                def dependencies = asNode().appendNode('dependencies')
+                configurations.includeDep.allDependencies.each {
+                    def dependencyNode = dependencies.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.group)
+                    dependencyNode.appendNode('artifactId', it.name)
+                    dependencyNode.appendNode('version', it.version)
+                }
+            }
+        }
+    }
 }
