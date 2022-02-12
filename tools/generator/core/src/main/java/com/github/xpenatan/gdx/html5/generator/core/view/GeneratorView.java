@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.github.xpenatan.gdx.html5.generator.core.viewmodel.GeneratorViewModel;
 import com.github.xpenatan.imgui.ImGui;
+import com.github.xpenatan.imgui.ImGuiBoolean;
+import com.github.xpenatan.imgui.ImGuiString;
 import com.github.xpenatan.imgui.enums.ImGuiCol;
 import com.github.xpenatan.imgui.enums.ImGuiItemFlags;
 import com.github.xpenatan.imgui.enums.ImGuiStyleVar;
@@ -36,6 +38,12 @@ public class GeneratorView {
     private int loadingColor;
     private int errorColor;
 
+    private final ImGuiString gameJarPath;
+    private final ImGuiString appClassName;
+    private final ImGuiString assetsDirectory;
+    private final ImGuiString webappDirectory;
+    private final ImGuiBoolean obfuscateFlag;
+
     public GeneratorView() {
         // TODO remove emulated class from Classloader
 //        preferences = Gdx.app.getPreferences("gdx-html5-generator");
@@ -46,6 +54,12 @@ public class GeneratorView {
 
         loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
         errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
+
+        gameJarPath = new ImGuiString("");
+        appClassName = new ImGuiString("");
+        assetsDirectory = new ImGuiString("");
+        webappDirectory = new ImGuiString("");
+        obfuscateFlag = new ImGuiBoolean();
     }
 
     private void loadPreference() {
@@ -56,11 +70,11 @@ public class GeneratorView {
     private void savePreference() {
         if (preferences == null)
             return;
-        preferences.putString(PREF_JAR_PATH, viewModel.gameJarPath.getValue());
-        preferences.putString(PREF_APP_CLASS_NAME, viewModel.appClassName.getValue());
-        preferences.putString(PREF_ASSET_PATH, viewModel.assetsDirectory.getValue());
-        preferences.putString(PREF_WEBAPP_PATH, viewModel.webappDirectory.getValue());
-        preferences.putBoolean(PREF_OBFUSCATE, viewModel.obfuscateFlag.getValue());
+        preferences.putString(PREF_JAR_PATH, gameJarPath.getValue());
+        preferences.putString(PREF_APP_CLASS_NAME, appClassName.getValue());
+        preferences.putString(PREF_ASSET_PATH, assetsDirectory.getValue());
+        preferences.putString(PREF_WEBAPP_PATH, webappDirectory.getValue());
+        preferences.putBoolean(PREF_OBFUSCATE, obfuscateFlag.getValue());
     }
 
     public void render() {
@@ -76,26 +90,26 @@ public class GeneratorView {
         ImGui.Text(STR_TXT_GAME_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##Path", viewModel.gameJarPath);
+        ImGui.InputText("##Path", gameJarPath);
 
         ImGui.Text(STR_TXT_APP_CLASS);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##ClassPath", viewModel.appClassName);
+        ImGui.InputText("##ClassPath", appClassName);
 
         ImGui.Text(STR_TXT_ASSET_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##AssetPath", viewModel.assetsDirectory);
+        ImGui.InputText("##AssetPath", assetsDirectory);
 
         ImGui.Text(STR_TXT_WEBAPP_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##WebAppPath", viewModel.webappDirectory);
+        ImGui.InputText("##WebAppPath", webappDirectory);
 
         ImGui.Text(STR_CKB_OBFUSCATE);
         ImGui.SameLine();
-        ImGui.Checkbox("##obfuscate", viewModel.obfuscateFlag);
+        ImGui.Checkbox("##obfuscate", obfuscateFlag);
 
         boolean compiling = viewModel.isCompiling();
         if (compiling) {
@@ -111,7 +125,13 @@ public class GeneratorView {
         }
         else {
             if (ImGui.Button(STR_BTN_COMPILE, BTN_BUILD_WIDTH, 0)) {
-                viewModel.compile();
+                viewModel.compile(
+                        gameJarPath.getValue(),
+                        appClassName.getValue(),
+                        assetsDirectory.getValue(),
+                        webappDirectory.getValue(),
+                        obfuscateFlag.getValue()
+                );
             }
         }
 
@@ -157,7 +177,7 @@ public class GeneratorView {
             if (serverRunning)
                 viewModel.stopLocalServer();
             else
-                viewModel.startLocalServer();
+                viewModel.startLocalServer(webappDirectory.getValue());
         }
         if (compiling) {
             ImGui.PopItemFlag();

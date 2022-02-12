@@ -81,4 +81,8 @@ public class JettyServer {
     public boolean isServerRunning() {
         return serverStarted;
     }
+
+    public String getWebAppDirectory() {
+        return webAppDirectory;
+    }
 }

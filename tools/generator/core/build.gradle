@@ -21,10 +21,11 @@ dependencies {
 
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
-    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
+    includeDep "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
     includeDep project(":backends:backend-web")
     includeDep project(":backends:backend-teavm")
     includeDep project(":extensions:gdx-freetype-teavm")
+    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
     includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
 //    implementation project(":backends:backend-dragome")
 }
