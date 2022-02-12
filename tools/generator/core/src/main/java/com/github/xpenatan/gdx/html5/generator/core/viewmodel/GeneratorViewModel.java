@@ -5,6 +5,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.html5.generator.core.utils.server.JettyServer;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class GeneratorViewModel {
@@ -36,17 +37,14 @@ public class GeneratorViewModel {
     }
 
     public void compile(String gameJarPathStr, String appClassNameStr, String assetsDirectoryStr, String webappDirectoryStr, Boolean obfuscateFlagStr) {
-        if(validateInputs(gameJarPathStr, appClassNameStr, webappDirectoryStr)) {
-            isCompiling = true;
-            isError = false;
-            progress = 0;
-            try {
-                String appClassName = appClassNameStr;
-                String jarPath = gameJarPathStr;
-                String assetPath = assetsDirectoryStr;
-                String webappDestination = webappDirectoryStr;
-                boolean obfuscate = obfuscateFlagStr;
+        if(!isCompiling && validateInputs(gameJarPathStr, appClassNameStr, webappDirectoryStr)) {
+            String appClassName = appClassNameStr;
+            String jarPath = gameJarPathStr;
+            String assetPath = assetsDirectoryStr;
+            String webappDestination = webappDirectoryStr;
+            boolean obfuscate = obfuscateFlagStr;
 
+            try {
                 URL appJarAppUrl = new File(jarPath).toURI().toURL();
                 TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
                 if(!assetPath.isEmpty())
@@ -55,7 +53,19 @@ public class GeneratorViewModel {
                 teaBuildConfiguration.obfuscate = obfuscate;
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
                 teaBuildConfiguration.mainApplicationClass = appClassName;
+                compile(teaBuildConfiguration);
+            } catch(MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    public void compile(TeaBuildConfiguration teaBuildConfiguration) {
+        if(!isCompiling) {
+            isCompiling = true;
+            isError = false;
+            progress = 0;
+            try {
                 new Thread() {
                     @Override
                     public void run() {
@@ -77,7 +87,7 @@ public class GeneratorViewModel {
                         });
                         isCompiling = false;
                         if(serverRunning)
-                            startLocalServer(webappDirectoryStr);
+                            startLocalServer(teaBuildConfiguration.webappPath);
                     }
                 }.start();
             } catch (Exception e) {
