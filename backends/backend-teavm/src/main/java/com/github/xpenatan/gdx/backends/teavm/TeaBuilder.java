@@ -85,7 +85,7 @@ public class TeaBuilder {
             }
             ACCEPT_STATE acceptState = acceptPath(path);
             boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
-            if (acceptState == ACCEPT_STATE.NO_MATCH)
+            if (accept || acceptState == ACCEPT_STATE.NO_MATCH)
                 accept = configuration.acceptClasspath(url);
 
             if (accept)
@@ -94,9 +94,9 @@ public class TeaBuilder {
                 notAcceptedURL.add(url);
         }
 
-        sortAcceptedClassPath(acceptedURL);
-
         acceptedURL.addAll(configuration.getAdditionalClasspath());
+
+        sortAcceptedClassPath(acceptedURL);
 
         WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
 
@@ -113,7 +113,7 @@ public class TeaBuilder {
         int size = acceptedURL.size();
 
         if (size <= 0) {
-            System.out.println("No urls found");
+            System.err.println("No urls found");
             return;
         }
 
@@ -130,7 +130,7 @@ public class TeaBuilder {
 
         String webappName = "webapp";
 
-        System.out.println("targetDirectory: " + webappDirectory);
+        System.err.println("targetDirectory: " + webappDirectory);
 
         File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";

@@ -72,13 +72,15 @@ public class AssetsCopy {
 					try {
 						WebBuildConfiguration.log(classpathFile);
 						InputStream is = classloader.getResourceAsStream(classpathFile);
-						FileWrapper dest = target.child(classpathFile);
-						dest.write(is, false);
-						String destPath = dest.path();
-						if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
-							assets.add(new Asset(dest, defaultAssetFilter.getType(destPath)));
+						if(is != null) {
+							FileWrapper dest = target.child(classpathFile);
+							dest.write(is, false);
+							String destPath = dest.path();
+							if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
+								assets.add(new Asset(dest, defaultAssetFilter.getType(destPath)));
+							}
+							is.close();
 						}
-						is.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

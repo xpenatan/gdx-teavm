@@ -126,28 +126,30 @@ public final class Field {
 		Value<Class> result = Metaprogramming.lazy(() -> null);
 		for (ReflectField field : cls.getDeclaredFields()) {
 			java.lang.reflect.Field javaField  = genericTypeProvider.findField(field);
-			Type genericType = javaField.getGenericType();
-			if (genericType instanceof ParameterizedType) {
-				Type[] actualTypes = ((ParameterizedType) genericType).getActualTypeArguments();
+			if(javaField != null) {
+				Type genericType = javaField.getGenericType();
+				if (genericType instanceof ParameterizedType) {
+					Type[] actualTypes = ((ParameterizedType) genericType).getActualTypeArguments();
 
-				if(actualTypes!= null) {
-					for(int i = 0; i < actualTypes.length; i++) {
-						Class actualType = getActualType(actualTypes[i]);
-						if(actualType == null)
-							continue;
-						found = true;
-						final int index = i;
+					if(actualTypes!= null) {
+						for(int i = 0; i < actualTypes.length; i++) {
+							Class actualType = getActualType(actualTypes[i]);
+							if(actualType == null)
+								continue;
+							found = true;
+							final int index = i;
 
-						String fieldName = field.getName();
-						Value<Class> existing = result;
-						result = Metaprogramming.lazy(() -> {
-							if(index == indexValue.get()) {
-								if(fieldName.equals(fieldNameValue.get())) {
-									return actualType;
+							String fieldName = field.getName();
+							Value<Class> existing = result;
+							result = Metaprogramming.lazy(() -> {
+								if(index == indexValue.get()) {
+									if(fieldName.equals(fieldNameValue.get())) {
+										return actualType;
+									}
 								}
-							}
-							return existing.get();
-						});
+								return existing.get();
+							});
+						}
 					}
 				}
 			}
