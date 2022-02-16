@@ -62,8 +62,8 @@ public class WebClassLoader extends URLClassLoader {
 					for(int j = 0; j < allClasses.size(); j++) {
 						String className = allClasses.get(j);
 						if(className.contains(resName)) {
-							String filee = finalFile + className;
-							return new URL(filee);
+							String filee = path + className;
+							return new File(filee).toURI().toURL();
 						}
 					}
 				} catch (MalformedURLException e) {
@@ -115,23 +115,24 @@ public class WebClassLoader extends URLClassLoader {
 		if(paths == null) {
 			File rootFile = new File(path);
 			paths = new ArrayList<>();
-			getAllFiles(rootFile, paths);
+			getAllFiles(rootFile, paths, "");
 			fileMap.put(path, paths);
 		}
 		return paths;
 	}
 
-	private void getAllFiles(File rootFile, ArrayList<String> out) {
+	private void getAllFiles(File rootFile, ArrayList<String> out, String packageName) {
 		String[] list = rootFile.list();
 		if(list != null) {
 			for(int i = 0; i < list.length; i++) {
 				String subFileStr = list[i];
 				File subFile = new File(rootFile, subFileStr);
 				if(subFile.isDirectory()) {
-					getAllFiles(subFile, out);
+					String newPackage = packageName + subFileStr + "/";
+					getAllFiles(subFile, out, newPackage);
 				}
 				else {
-					String path = subFile.getPath();
+					String path = packageName + subFileStr;
 					path = path.replace("\\","/");
 					out.add(path);
 				}
