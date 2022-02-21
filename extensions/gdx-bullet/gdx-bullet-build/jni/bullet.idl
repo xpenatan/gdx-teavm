@@ -558,6 +558,7 @@ interface btCompoundShape {
 	btCollisionShape getChildShape(long index);
 	void setMargin(float margin);
 	float getMargin();
+	void recalculateLocalAabb();
 };
 btCompoundShape implements btCollisionShape;
 
