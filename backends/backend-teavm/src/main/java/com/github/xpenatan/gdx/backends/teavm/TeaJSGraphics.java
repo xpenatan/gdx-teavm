@@ -1,10 +1,14 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebGraphics;
 import com.github.xpenatan.gdx.backends.web.WebJSGraphics;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
+import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.webgl.WebGLContextAttributes;
 
 public class TeaJSGraphics implements WebJSGraphics {
 
@@ -140,5 +144,18 @@ public class TeaJSGraphics implements WebJSGraphics {
     @JSFunctor
     public interface FullscreenChanged extends org.teavm.jso.JSObject {
         void fullscreenChanged();
+    }
+
+    @Override
+    public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, WebApplicationConfiguration config) {
+        WebGLContextAttributes attr = WebGLContextAttributes.create();
+        attr.setAlpha(config.alpha);
+        attr.setAntialias(config.antialiasing);
+        attr.setStencil(config.stencil);
+        attr.setPremultipliedAlpha(config.premultipliedAlpha);
+        attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
+        HTMLCanvasElement canvas = (HTMLCanvasElement)canvasWrapper;
+        WebGLRenderingContextWrapper context = (WebGLRenderingContextWrapper)canvas.getContext("webgl", attr);
+        return context;
     }
 }

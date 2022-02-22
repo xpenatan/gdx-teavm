@@ -6,16 +6,12 @@ import com.github.xpenatan.gdx.backends.web.*;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
-import org.teavm.jso.dom.html.HTMLCanvasElement;
-import org.teavm.jso.webgl.WebGLContextAttributes;
-
 import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 
 /**
@@ -33,19 +29,6 @@ public class TeaJSHelper extends WebJSHelper implements JSObject {
 		this.canvasWrapper = canvasWrapper;
 		this.graphics = new TeaJSGraphics();
 		this.application = new TeaJSApplication();
-	}
-
-	@Override
-	public WebGLRenderingContextWrapper getGLContext(WebApplicationConfiguration config) {
-		WebGLContextAttributes attr = WebGLContextAttributes.create();
-		attr.setAlpha(config.alpha);
-		attr.setAntialias(config.antialiasing);
-		attr.setStencil(config.stencil);
-		attr.setPremultipliedAlpha(config.premultipliedAlpha);
-		attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
-		HTMLCanvasElement canvas = (HTMLCanvasElement)canvasWrapper;
-		WebGLRenderingContextWrapper context = (WebGLRenderingContextWrapper)canvas.getContext("webgl", attr);
-		return context;
 	}
 
 	@Override

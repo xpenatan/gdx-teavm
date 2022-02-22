@@ -13,8 +13,6 @@ import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
 
-import static com.github.xpenatan.gdx.backends.web.WebJSHelper.JSHelper;
-
 /**
  * @author xpenatan
  */
@@ -23,7 +21,7 @@ public class WebGraphics implements Graphics {
 	private WebGLRenderingContextWrapper context;
 	protected HTMLCanvasElementWrapper canvas;
 	protected WebApplicationConfiguration config;
-	protected GL20 gl20;
+	protected GL20 gl;
 	protected GLVersion glVersion;
 
 	float fps = 0;
@@ -39,23 +37,18 @@ public class WebGraphics implements Graphics {
 		WebJSHelper webJSHelper = WebJSHelper.get();
 		this.config = config;
 		this.canvas = webJSHelper.getCanvas();
-		this.context = webJSHelper.getGLContext(config);
 		this.jsGraphics = webJSHelper.getGraphics();
-		gl20 = new WebGL20(context);
-
-		gl20.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
-		gl20.glClearColor(0, 0, 0f, 1f);
-		gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		this.context = jsGraphics.getGLContext(webJSHelper.getCanvas(), config);
+		gl = new WebGL20(context);
+		String versionString = gl.glGetString(GL20.GL_VERSION);
+		String vendorString = gl.glGetString(GL20.GL_VENDOR);
+		String rendererString = gl.glGetString(GL20.GL_RENDERER);
+		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 
 		if(config.width >= 0 || config.height >= 0) {
 			// update canvas size
 			setWindowedMode(config.width, config.height);
 		}
-
-		String versionString = gl20.glGetString(GL20.GL_VERSION);
-		String vendorString = gl20.glGetString(GL20.GL_VENDOR);
-		String rendererString = gl20.glGetString(GL20.GL_RENDERER);
-		glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 	}
 
 	public void update () {
@@ -78,7 +71,7 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public GL20 getGL20() {
-		return gl20;
+		return gl;
 	}
 
 	@Override
@@ -89,7 +82,7 @@ public class WebGraphics implements Graphics {
 
 	@Override
 	public void setGL20(GL20 gl20) {
-		this.gl20 = gl20;
+		this.gl = gl20;
 		Gdx.gl = gl20;
 		Gdx.gl20 = gl20;
 	}
@@ -302,9 +295,12 @@ public class WebGraphics implements Graphics {
 	}
 
 	@Override
-	public boolean supportsExtension(String extension) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean supportsExtension(String extensionName) {
+		// Contrary to regular OpenGL, WebGL extensions need to be explicitly enabled before they can be used. See
+		// https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Using_Extensions
+		// Thus, it is not safe to use an extension just because context.getSupportedExtensions() tells you it is available.
+		// We need to call getExtension() to enable it.
+		return context.getExtension(extensionName) != null;
 	}
 
 	@Override

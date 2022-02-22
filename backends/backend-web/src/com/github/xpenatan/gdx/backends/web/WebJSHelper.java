@@ -20,8 +20,6 @@ public abstract class WebJSHelper {
 
 	public abstract HTMLCanvasElementWrapper getCanvas();
 
-	public abstract WebGLRenderingContextWrapper getGLContext(WebApplicationConfiguration config);
-
 	public abstract WindowWrapper getCurrentWindow();
 
 	public abstract WebAgentInfo getAgentInfo();
@@ -33,6 +31,7 @@ public abstract class WebJSHelper {
 	public abstract StorageWrapper getStorage();
 
 	public abstract SoundManagerWrapper createSoundManager();
+
 	public abstract WebJSGraphics getGraphics();
 
 	public abstract WebJSApplication getApplication();
