@@ -31,6 +31,10 @@ public class WebClassLoader extends URLClassLoader {
 	}
 
 	private URL getRes(String name) {
+		String fixName = name.replace(";.class", ".class");
+		fixName = fixName.replace("[L", "");
+		fixName = fixName.replace("[", "");
+
 		URL resource = super.getResource(name);
 		for (int i = 0; i < jarFiles.length; i++) {
 			URL url = jarFiles[i];
@@ -45,7 +49,7 @@ public class WebClassLoader extends URLClassLoader {
 						JarEntry jarEntry = entries.nextElement();
 						if(!jarEntry.isDirectory()) {
 							String jarEntryName = jarEntry.getName();
-							if(jarEntryName.equals(name)) {
+							if(jarEntryName.equals(fixName)) {
 								String filee = finalFile + jarEntryName;
 								return new URL(filee);
 							}
@@ -58,7 +62,7 @@ public class WebClassLoader extends URLClassLoader {
 			else {
 				try {
 					ArrayList<String> allClasses = getAllFiles(path);
-					String resName = name.replace("\\","/");
+					String resName = fixName.replace("\\","/");
 					for(int j = 0; j < allClasses.size(); j++) {
 						String className = allClasses.get(j);
 						if(className.contains(resName)) {
@@ -76,6 +80,9 @@ public class WebClassLoader extends URLClassLoader {
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
+		String fixName = name.replace(";.class", ".class");
+		fixName = fixName.replace("[L", "");
+		fixName = fixName.replace("[", "");
 		for (int i = 0; i < jarFiles.length; i++) {
 			URL url = jarFiles[i];
 			String path = url.getPath();
@@ -83,7 +90,7 @@ public class WebClassLoader extends URLClassLoader {
 			if(!file.isDirectory()) {
 				try {
 					JarFile jarFile = new JarFile(file);
-					ZipEntry entry = jarFile.getEntry(name);
+					ZipEntry entry = jarFile.getEntry(fixName);
 					if(entry != null) {
 						return jarFile.getInputStream(entry);
 					}
@@ -93,7 +100,7 @@ public class WebClassLoader extends URLClassLoader {
 			}
 			else {
 				ArrayList<String> allClasses = getAllFiles(path);
-				String resName = name.replace("\\","/");
+				String resName = fixName.replace("\\","/");
 				for(int j = 0; j < allClasses.size(); j++) {
 					String className = allClasses.get(j);
 					if(className.contains(resName)) {
@@ -103,7 +110,7 @@ public class WebClassLoader extends URLClassLoader {
 			}
 		}
 
-		if(name.startsWith("org/teavm/")) {
+		if(fixName.startsWith("org/teavm/")) {
 			return super.getResourceAsStream(name);
 		}
 
