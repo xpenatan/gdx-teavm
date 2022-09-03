@@ -14,6 +14,7 @@ public class TeaPlugin implements TeaVMPlugin {
 	@Override
 	public void install(TeaVMHost host) {
 		host.add(new TeaClassTransformer());
+		host.add(new JavaObjectExporterDependency());
 	}
 
 }
