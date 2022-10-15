@@ -20,4 +20,7 @@ include ":examples:core:teavm"
 include ":examples:bullet:core"
 include ":examples:bullet:desktop"
 include ":examples:bullet:teavm"
+include ":examples:box2d:core"
+include ":examples:box2d:desktop"
+include ":examples:box2d:teavm"
 
