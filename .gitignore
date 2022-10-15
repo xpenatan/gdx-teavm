@@ -62,3 +62,4 @@ local.properties
 examples/**/*.xml
 examples/**/*.html
 **/gdx-bullet-teavm/src/**
+**/gdx-box2d-teavm/src/**
