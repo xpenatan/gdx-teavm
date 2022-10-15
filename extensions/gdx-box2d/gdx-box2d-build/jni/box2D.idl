@@ -1,4 +1,10 @@
 
+interface b2World {
+    void b2World([Const, Ref]b2Vec2 gravity);
+    void Step(float timeStep, long velocityIterations, long positionIterations);
+    [Value]b2Vec2 GetGravity();
+};
+
 interface b2Vec2 {
     attribute float x;
     attribute float y;
