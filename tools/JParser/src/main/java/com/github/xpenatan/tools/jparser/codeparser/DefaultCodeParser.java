@@ -22,7 +22,7 @@ public abstract class DefaultCodeParser implements CodeParser {
     public static final String CMD_NATIVE = "-NATIVE";
     public static final String CMD_RAW = "-RAW";
 
-    private final String headerCMD;
+    public final String headerCMD;
 
     public DefaultCodeParser(String headerCMD) {
         this.headerCMD = headerCMD;

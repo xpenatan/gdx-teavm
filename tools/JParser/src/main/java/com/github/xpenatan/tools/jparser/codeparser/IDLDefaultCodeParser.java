@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -14,6 +15,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.JParserHelper;
 import com.github.xpenatan.tools.jparser.JParser;
+import com.github.xpenatan.tools.jparser.idl.IDLAttribute;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLMethod;
@@ -21,6 +23,7 @@ import com.github.xpenatan.tools.jparser.idl.IDLParameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /** @author xpenatan */
 public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
@@ -48,6 +51,11 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                     IDLMethod idlMethod = methods.get(i);
                     generateMethods(jParser, unit, classOrInterfaceDeclaration, idlClass, idlMethod);
                 }
+                ArrayList<IDLAttribute> attributes = idlClass.attributes;
+                for(int i = 0; i < attributes.size(); i++) {
+                    IDLAttribute idlAttribute = attributes.get(i);
+                    generateAttribute(jParser, unit, classOrInterfaceDeclaration, idlClass, idlAttribute);
+                }
             }
         }
     }
@@ -59,10 +67,85 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         return true;
     }
 
+    private void generateAttribute(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLAttribute idlAttribute) {
+        String attributeName = idlAttribute.name;
+        boolean addGet = true;
+        boolean addSet = true;
+
+        List<MethodDeclaration> getMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name);
+        if(getMethods.size() > 0) {
+            MethodDeclaration methodDeclaration = getMethods.get(0);
+            Optional<Comment> optionalComment = methodDeclaration.getComment();
+            if(optionalComment.isPresent()) {
+                Comment comment = optionalComment.get();
+                if(comment instanceof BlockComment) {
+                    BlockComment blockComment = (BlockComment)optionalComment.get();
+                    String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
+                    // Skip if method already exist with header code
+                    if(headerCommands != null && headerCommands.startsWith(CMD_HEADER_START + headerCMD)) {
+                        addGet = false;
+                    }
+                }
+            }
+            if(addGet) {
+                methodDeclaration.remove();
+            }
+        }
+
+        List<MethodDeclaration> setMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name, idlAttribute.type);
+        if(setMethods.size() > 0) {
+            MethodDeclaration methodDeclaration = setMethods.get(0);
+            Optional<Comment> optionalComment = methodDeclaration.getComment();
+            if(optionalComment.isPresent()) {
+                Comment comment = optionalComment.get();
+                if(comment instanceof BlockComment) {
+                    BlockComment blockComment = (BlockComment)optionalComment.get();
+                    String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
+                    // Skip if method already exist with header code
+                    if(headerCommands != null && headerCommands.startsWith(CMD_HEADER_START + headerCMD)) {
+                        addSet = false;
+                    }
+                }
+            }
+            if(addSet) {
+                methodDeclaration.remove();
+            }
+        }
+
+        if(addGet) {
+            MethodDeclaration getMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
+            Type returnType = StaticJavaParser.parseType(idlAttribute.type);
+            getMethodDeclaration.setType(returnType);
+            setDefaultReturnValues(jParser, unit, returnType, getMethodDeclaration);
+            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, getMethodDeclaration);
+        }
+        if(addSet) {
+            MethodDeclaration setMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
+            Parameter parameter = setMethodDeclaration.addAndGetParameter(idlAttribute.type, attributeName);
+            Type type = parameter.getType();
+            JParserHelper.addMissingImportType(jParser, unit, type);
+            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, setMethodDeclaration);
+        }
+    }
+
     private void generateMethods(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLMethod idlMethod) {
         String methodName = idlMethod.name;
-        if(containsMethod(classOrInterfaceDeclaration, idlMethod)) {
-            return;
+
+        MethodDeclaration containsMethod = containsMethod(classOrInterfaceDeclaration, idlMethod);
+        if(containsMethod != null) {
+            Optional<Comment> optionalComment = containsMethod.getComment();
+            if(optionalComment.isPresent()) {
+                Comment comment = optionalComment.get();
+                if(comment instanceof BlockComment) {
+                    BlockComment blockComment = (BlockComment)optionalComment.get();
+                    String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
+                    // Skip if method already exist with header code
+                    if(headerCommands != null && headerCommands.startsWith(CMD_HEADER_START + headerCMD)) {
+                        return;
+                    }
+                }
+            }
+            containsMethod.remove();
         }
 
         if(!filterIDLMethod(idlClass, idlMethod)) {
@@ -114,7 +197,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
     protected abstract void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration);
 
-    private boolean containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
+    private MethodDeclaration containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         ArrayList<IDLParameter> parameters = idlMethod.parameters;
         String [] paramTypes = new String[parameters.size()];
 
@@ -125,6 +208,9 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         }
         List<MethodDeclaration> methods = classOrInterfaceDeclaration.getMethodsBySignature(idlMethod.name, paramTypes);
 
-        return methods.size() > 0;
+        if(methods.size() > 0) {
+            return methods.get(0);
+        }
+        return null;
     }
 }
