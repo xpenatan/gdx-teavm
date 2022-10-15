@@ -8,7 +8,13 @@ public class IDLAttribute {
 
     public void initAttribute(String line) {
         this.line = line;
-        String[] s = line.replace("attribute", "").replace(";", "").trim().split(" ");
+        String text = line.replace("attribute", "")
+                .replace("unsigned", "")
+                .replace(";", "")
+                .replace("[Value]", "")
+                .replace("[Const]", "")
+                .trim();
+        String[] s = text.split(" ");
         type = s[0];
         name = s[1];
     }
