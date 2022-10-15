@@ -1,0 +1,4 @@
+
+interface b2Vec2 {
+    void b2Vec2();
+};

@@ -1,9 +1,13 @@
 include ":backends:backend-web"
 include ":backends:backend-teavm"
+
 include ":extensions:gdx-freetype-teavm"
 include ":extensions:gdx-bullet:gdx-bullet-base"
 include ":extensions:gdx-bullet:gdx-bullet-build"
 include ":extensions:gdx-bullet:gdx-bullet-teavm"
+include ":extensions:gdx-box2d:gdx-box2d-base"
+include ":extensions:gdx-box2d:gdx-box2d-build"
+include ":extensions:gdx-box2d:gdx-box2d-teavm"
 
 include ":tools:generator:core"
 include ":tools:generator:desktop"

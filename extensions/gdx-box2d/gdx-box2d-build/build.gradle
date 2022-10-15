@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.xpenatan.gdx-web-tools'
+
+project.ext.mainClassName = "com.github.xpenatan.gdx.html5.box2d.Main"
+
+dependencies {
+    implementation project(":tools:JParser")
+}
+
+task generateNativeProject(dependsOn: classes, type: JavaExec) {
+    group = 'other'
+    description = 'Generate native project'
+
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+}
