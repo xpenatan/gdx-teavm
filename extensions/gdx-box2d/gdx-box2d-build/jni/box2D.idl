@@ -1,4 +1,13 @@
 
 interface b2Vec2 {
+    attribute float x;
+    attribute float y;
     void b2Vec2();
+    void b2Vec2(float x, float y);
+    void SetZero();
+    void Set(float x, float y);
+    float Length();
+    float LengthSquared();
+    float Normalize();
+    boolean IsValid();
 };
