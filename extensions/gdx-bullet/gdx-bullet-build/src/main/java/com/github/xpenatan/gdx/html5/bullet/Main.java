@@ -14,7 +14,7 @@ public class Main {
         IDLFile idlFile = IDLParser.parseFile(path);
 
         String basePath = new File(".").getAbsolutePath();
-        JParser.generate(new TeaVMCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
+        JParser.generate(new BulletCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
     }
 
 

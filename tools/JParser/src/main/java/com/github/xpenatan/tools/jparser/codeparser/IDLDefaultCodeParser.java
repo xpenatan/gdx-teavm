@@ -71,11 +71,11 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         String attributeName = idlAttribute.name;
         boolean addGet = true;
         boolean addSet = true;
-
+        MethodDeclaration getMethodDeclaration = null;
         List<MethodDeclaration> getMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name);
         if(getMethods.size() > 0) {
-            MethodDeclaration methodDeclaration = getMethods.get(0);
-            Optional<Comment> optionalComment = methodDeclaration.getComment();
+            getMethodDeclaration = getMethods.get(0);
+            Optional<Comment> optionalComment = getMethodDeclaration.getComment();
             if(optionalComment.isPresent()) {
                 Comment comment = optionalComment.get();
                 if(comment instanceof BlockComment) {
@@ -87,15 +87,12 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                     }
                 }
             }
-            if(addGet) {
-                methodDeclaration.remove();
-            }
         }
-
+        MethodDeclaration setMethodDeclaration = null;
         List<MethodDeclaration> setMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name, idlAttribute.type);
         if(setMethods.size() > 0) {
-            MethodDeclaration methodDeclaration = setMethods.get(0);
-            Optional<Comment> optionalComment = methodDeclaration.getComment();
+            setMethodDeclaration = setMethods.get(0);
+            Optional<Comment> optionalComment = setMethodDeclaration.getComment();
             if(optionalComment.isPresent()) {
                 Comment comment = optionalComment.get();
                 if(comment instanceof BlockComment) {
@@ -107,21 +104,31 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                     }
                 }
             }
-            if(addSet) {
-                methodDeclaration.remove();
-            }
         }
-
+        Type attributeType = null;
+        try {
+            attributeType = StaticJavaParser.parseType(idlAttribute.type);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return;
+        }
         if(addGet) {
-            MethodDeclaration getMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
-            Type returnType = StaticJavaParser.parseType(idlAttribute.type);
-            getMethodDeclaration.setType(returnType);
-            setDefaultReturnValues(jParser, unit, returnType, getMethodDeclaration);
+            if(getMethodDeclaration != null) {
+                getMethodDeclaration.remove();
+            }
+            getMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
+            getMethodDeclaration.setType(attributeType);
+            JParserHelper.addMissingImportType(jParser, unit, attributeType);
+            setDefaultReturnValues(jParser, unit, attributeType, getMethodDeclaration);
             onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, getMethodDeclaration);
         }
         if(addSet) {
-            MethodDeclaration setMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
-            Parameter parameter = setMethodDeclaration.addAndGetParameter(idlAttribute.type, attributeName);
+            if(setMethodDeclaration != null) {
+                setMethodDeclaration.remove();
+            }
+            setMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
+            Parameter parameter = setMethodDeclaration.addAndGetParameter(attributeType, attributeName);
             Type type = parameter.getType();
             JParserHelper.addMissingImportType(jParser, unit, type);
             onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, setMethodDeclaration);

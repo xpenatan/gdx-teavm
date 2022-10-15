@@ -8,6 +8,7 @@ project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
 
 dependencies {
     implementation project(":tools:JParser")
+    implementation project(":tools:TeaVMJParser")
 }
 
 task generateNativeProject(dependsOn: classes, type: JavaExec) {
