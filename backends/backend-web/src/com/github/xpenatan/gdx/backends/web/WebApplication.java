@@ -126,6 +126,7 @@ public class WebApplication implements Application, Runnable {
 		logger = new WebApplicationLogger();
 		initSound();
 		initBulletPhysics();
+		initBox2DPhysics();
 
 		Gdx.app = this;
 		Gdx.graphics = graphics;
@@ -220,6 +221,10 @@ public class WebApplication implements Application, Runnable {
 
 	private void initBulletPhysics() {
 		webJSApplication.initBulletPhysics(this);
+	}
+
+	private void initBox2DPhysics() {
+		webJSApplication.initBox2dPhysics(this);
 	}
 
 	public Preloader getPreloader() {
