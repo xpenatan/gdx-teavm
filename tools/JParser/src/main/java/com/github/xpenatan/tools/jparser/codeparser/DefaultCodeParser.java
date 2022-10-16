@@ -190,7 +190,10 @@ public abstract class DefaultCodeParser implements CodeParser {
     }
 
     private void setJavaHeaderRemoveCMD(CodeParserItem parserItem) {
-        setJavaBodyRemoveCMD(parserItem);
+        parserItem.removeAll();
+        if(parserItem.classInterface != null) {
+            parserItem.classInterface.remove();
+        }
     }
 
     private void setJavaBodyRemoveCMD(CodeParserItem parserItem) {

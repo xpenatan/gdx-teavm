@@ -84,9 +84,6 @@ public class CodeParserItem {
         if(importDeclaration != null) {
             importDeclaration.remove();
         }
-        if(classInterface != null) {
-            classInterface.remove();
-        }
     }
 
     public void removeCodeBlocks() {
