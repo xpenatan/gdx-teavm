@@ -30,6 +30,7 @@ public class BulletCodeParser extends TeaVMCodeParser {
 
     public BulletCodeParser(IDLFile idlFile) {
         super("Bullet", idlFile);
+        enableAttributeParsing = false;
     }
 
     @Override
