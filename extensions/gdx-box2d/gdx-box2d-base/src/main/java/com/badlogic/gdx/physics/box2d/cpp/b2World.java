@@ -13,11 +13,13 @@ public class b2World extends Box2DBase {
     }
 
     /*[-teaVM;-NATIVE]
-        var vec2 = Bullet.wrapPointer(b2VecGravityAddr, Box2D.b2Vec2);
+        var vec2 = Box2D.wrapPointer(b2VecGravityAddr, Box2D.b2Vec2);
         var jsObj = new Box2D.b2World(vec2);
         return Box2D.getPointer(jsObj);
     */
     private static native long createNative(long b2VecGravityAddr);
 
     public native b2Vec2 GetGravity();
+
+    public native void Step(float timeStep, int velocityIterations, int positionIterations);
 }
