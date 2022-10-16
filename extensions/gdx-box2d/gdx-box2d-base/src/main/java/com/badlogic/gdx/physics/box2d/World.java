@@ -12,13 +12,22 @@ public class World {
     public World (Vector2 gravity, boolean doSleep) {
         this.gravity = new Vector2();
         b2Vec2 b2Gravity = new b2Vec2();
-        b2Gravity.Set(gravity.x, gravity.y);
+        b2Gravity.x(gravity.x);
+        b2Gravity.y(gravity.y);
         world = new b2World(b2Gravity);
+    }
+
+    public void dispose() {
+        world = null;
     }
 
     public Vector2 getGravity() {
         b2Vec2 b2Vec2 = world.GetGravity();
         gravity.set(b2Vec2.x(), b2Vec2.y());
         return gravity;
+    }
+
+    public void step (float timeStep, int velocityIterations, int positionIterations) {
+        world.Step(timeStep, velocityIterations, positionIterations);
     }
 }

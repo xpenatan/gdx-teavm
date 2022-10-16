@@ -23,4 +23,8 @@ public class b2Vec2 extends Box2DBase {
     public native float x();
 
     public native float y();
+
+    public native void x(float value);
+
+    public native void y(float value);
 }
