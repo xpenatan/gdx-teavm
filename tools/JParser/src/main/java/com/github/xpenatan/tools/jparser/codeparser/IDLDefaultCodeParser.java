@@ -30,6 +30,8 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
     protected final IDLFile idlFile;
 
+    protected boolean enableAttributeParsing = true;
+
     public IDLDefaultCodeParser(String headerCMD, IDLFile idlFile) {
         super(headerCMD);
         this.idlFile = idlFile;
@@ -51,10 +53,12 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                     IDLMethod idlMethod = methods.get(i);
                     generateMethods(jParser, unit, classOrInterfaceDeclaration, idlClass, idlMethod);
                 }
-                ArrayList<IDLAttribute> attributes = idlClass.attributes;
-                for(int i = 0; i < attributes.size(); i++) {
-                    IDLAttribute idlAttribute = attributes.get(i);
-                    generateAttribute(jParser, unit, classOrInterfaceDeclaration, idlClass, idlAttribute);
+                if(enableAttributeParsing) {
+                    ArrayList<IDLAttribute> attributes = idlClass.attributes;
+                    for(int i = 0; i < attributes.size(); i++) {
+                        IDLAttribute idlAttribute = attributes.get(i);
+                        generateAttribute(jParser, unit, classOrInterfaceDeclaration, idlClass, idlAttribute);
+                    }
                 }
             }
         }
