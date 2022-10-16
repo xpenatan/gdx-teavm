@@ -10,7 +10,7 @@ gretty {
 }
 
 sourceSets.main.java.srcDirs = ["src/main/java/"]
-project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
+project.ext.mainClassName = "com.github.xpenatan.gdx.examples.bullet.Build"
 
 dependencies {
   implementation project(":examples:bullet:core")

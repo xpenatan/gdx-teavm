@@ -1,8 +1,7 @@
-package com.github.xpenatan.gdx.examples.teavm;
+package com.github.xpenatan.gdx.examples.bullet;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.examples.bullet.BulletTest;
 
 import java.io.File;
 
