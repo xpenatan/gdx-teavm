@@ -98,7 +98,9 @@ public class JParser {
             System.out.println(i + " Parsing: " + inputPath);
 
             String codeParsed = parseClass(jParser, wrapper, unit);
-            generateFile(destinationPath, codeParsed);
+            if(codeParsed != null) {
+                generateFile(destinationPath, codeParsed);
+            }
         }
         System.out.println("********** DONE ***********");
     }
@@ -196,14 +198,28 @@ public class JParser {
                 }
             }
             else {
-                addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, null);
-
                 if(node instanceof PackageDeclaration) {
+                    addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, null);
                     PackageDeclaration packageD = (PackageDeclaration) node;
                     packageD.setComment(new BlockComment(gen));
                 }
                 else if(node instanceof ClassOrInterfaceDeclaration) {
-                    parseClassInterface(jParser, unit, wrapper, (ClassOrInterfaceDeclaration) node, 0);
+                    ClassOrInterfaceDeclaration classInterface = (ClassOrInterfaceDeclaration) node;
+
+                    Optional<Comment> optionalComment = classInterface.getComment();
+                    if(optionalComment.isPresent()) {
+                        Comment comment = optionalComment.get();
+                        if(comment instanceof BlockComment) {
+                            BlockComment blockComment = (BlockComment) optionalComment.get();
+                            blockComments.add(blockComment);
+                        }
+                    }
+                    addBlockCommentItem(unit, true, wrapper, classInterface, blockComments, null, null, null);
+                    if(!unit.getChildNodes().contains(classInterface)) {
+                        // Don't copy destroyed class
+                        return null;
+                    }
+                    parseClassInterface(jParser, unit, wrapper, classInterface, 0);
                 }
             }
         }
