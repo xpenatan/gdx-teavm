@@ -93,12 +93,17 @@ public class JParserHelper {
         JParserItem parserUnitItem = jParser.getParserUnitItem(s);
         if(parserUnitItem != null) {
             ClassOrInterfaceDeclaration classDeclaration = parserUnitItem.getClassDeclaration();
-            Optional<String> optionalFullyQualifiedName = classDeclaration.getFullyQualifiedName();
-            if(optionalFullyQualifiedName.isPresent()) {
-                String fullyQualifiedName = optionalFullyQualifiedName.get();
-                if(!JParserHelper.containsImport(unit, fullyQualifiedName)) {
-                    unit.addImport(fullyQualifiedName);
+            if(classDeclaration != null) {
+                Optional<String> optionalFullyQualifiedName = classDeclaration.getFullyQualifiedName();
+                if(optionalFullyQualifiedName.isPresent()) {
+                    String fullyQualifiedName = optionalFullyQualifiedName.get();
+                    if(!JParserHelper.containsImport(unit, fullyQualifiedName)) {
+                        unit.addImport(fullyQualifiedName);
+                    }
                 }
+            }
+            else {
+                // TODO enum classes come here
             }
         }
     }

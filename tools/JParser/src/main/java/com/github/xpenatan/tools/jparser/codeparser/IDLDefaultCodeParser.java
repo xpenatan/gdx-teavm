@@ -15,6 +15,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.JParserHelper;
 import com.github.xpenatan.tools.jparser.JParser;
+import com.github.xpenatan.tools.jparser.JParserItem;
 import com.github.xpenatan.tools.jparser.idl.IDLAttribute;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
@@ -73,10 +74,29 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
     private void generateAttribute(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLAttribute idlAttribute) {
         String attributeName = idlAttribute.name;
+        String attributeType = idlAttribute.type;
+
+        Type type = null;
+        try {
+            type = StaticJavaParser.parseType(attributeType);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JParserItem parserUnitItem = jParser.getParserUnitItem(type.toString());
+        if(parserUnitItem != null) {
+            if(parserUnitItem.notAllowed) {
+                // skip generating set/get for class that is not allowed to have get and set. Ex Enum
+                return;
+            }
+        }
+
         boolean addGet = true;
         boolean addSet = true;
         MethodDeclaration getMethodDeclaration = null;
-        List<MethodDeclaration> getMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name);
+        List<MethodDeclaration> getMethods = classOrInterfaceDeclaration.getMethodsBySignature(attributeName);
         if(getMethods.size() > 0) {
             getMethodDeclaration = getMethods.get(0);
             Optional<Comment> optionalComment = getMethodDeclaration.getComment();
@@ -93,7 +113,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             }
         }
         MethodDeclaration setMethodDeclaration = null;
-        List<MethodDeclaration> setMethods = classOrInterfaceDeclaration.getMethodsBySignature(idlAttribute.name, idlAttribute.type);
+        List<MethodDeclaration> setMethods = classOrInterfaceDeclaration.getMethodsBySignature(attributeName, attributeType);
         if(setMethods.size() > 0) {
             setMethodDeclaration = setMethods.get(0);
             Optional<Comment> optionalComment = setMethodDeclaration.getComment();
@@ -109,22 +129,14 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                 }
             }
         }
-        Type attributeType = null;
-        try {
-            attributeType = StaticJavaParser.parseType(idlAttribute.type);
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            return;
-        }
         if(addGet) {
             if(getMethodDeclaration != null) {
                 getMethodDeclaration.remove();
             }
             getMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
-            getMethodDeclaration.setType(attributeType);
-            JParserHelper.addMissingImportType(jParser, unit, attributeType);
-            setDefaultReturnValues(jParser, unit, attributeType, getMethodDeclaration);
+            getMethodDeclaration.setType(type);
+            JParserHelper.addMissingImportType(jParser, unit, type);
+            setDefaultReturnValues(jParser, unit, type, getMethodDeclaration);
             onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, getMethodDeclaration, true);
         }
         if(addSet) {
@@ -132,9 +144,9 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                 setMethodDeclaration.remove();
             }
             setMethodDeclaration = classOrInterfaceDeclaration.addMethod(attributeName, Keyword.PUBLIC);
-            Parameter parameter = setMethodDeclaration.addAndGetParameter(attributeType, attributeName);
-            Type type = parameter.getType();
-            JParserHelper.addMissingImportType(jParser, unit, type);
+            Parameter parameter = setMethodDeclaration.addAndGetParameter(type, attributeName);
+            Type paramType = parameter.getType();
+            JParserHelper.addMissingImportType(jParser, unit, paramType);
             onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, setMethodDeclaration, true);
         }
     }

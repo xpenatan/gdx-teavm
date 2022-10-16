@@ -44,17 +44,8 @@ public class JParser {
     public JParserItem getParserUnitItem(String className) {
         for(int i = 0; i < unitArray.size(); i++) {
             JParserItem jParserUnitItem = unitArray.get(i);
-            CompilationUnit unit = jParserUnitItem.unit;
-            Optional<PackageDeclaration> optionalPackageDeclaration = unit.getPackageDeclaration();
-            if(optionalPackageDeclaration.isPresent()) {
-                Optional<ClassOrInterfaceDeclaration> first = unit.findFirst(ClassOrInterfaceDeclaration.class);
-                if(first.isPresent()) {
-                    ClassOrInterfaceDeclaration classOrInterfaceDeclaration = first.get();
-                    String name = classOrInterfaceDeclaration.getName().asString();
-                    if(className.equals(name)) {
-                        return jParserUnitItem;
-                    }
-                }
+            if(jParserUnitItem.className.equals(className)) {
+                return jParserUnitItem;
             }
         }
         return null;
