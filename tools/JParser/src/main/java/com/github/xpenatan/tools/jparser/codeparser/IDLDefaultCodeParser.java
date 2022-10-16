@@ -125,7 +125,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             getMethodDeclaration.setType(attributeType);
             JParserHelper.addMissingImportType(jParser, unit, attributeType);
             setDefaultReturnValues(jParser, unit, attributeType, getMethodDeclaration);
-            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, getMethodDeclaration);
+            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, getMethodDeclaration, true);
         }
         if(addSet) {
             if(setMethodDeclaration != null) {
@@ -135,7 +135,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
             Parameter parameter = setMethodDeclaration.addAndGetParameter(attributeType, attributeName);
             Type type = parameter.getType();
             JParserHelper.addMissingImportType(jParser, unit, type);
-            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, setMethodDeclaration);
+            onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, setMethodDeclaration, true);
         }
     }
 
@@ -177,7 +177,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         Type returnType = StaticJavaParser.parseType(idlMethod.returnType);
         methodDeclaration.setType(returnType);
         setDefaultReturnValues(jParser, unit, returnType, methodDeclaration);
-        onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, methodDeclaration);
+        onIDLMethodGenerated(jParser, unit, classOrInterfaceDeclaration, methodDeclaration, false);
     }
 
     private void setDefaultReturnValues(JParser jParser, CompilationUnit unit, Type returnType, MethodDeclaration idlMethodDeclaration) {
@@ -206,7 +206,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         }
     }
 
-    protected abstract void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration);
+    protected abstract void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, boolean isAttribute);
 
     private MethodDeclaration containsMethod(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLMethod idlMethod) {
         ArrayList<IDLParameter> parameters = idlMethod.parameters;

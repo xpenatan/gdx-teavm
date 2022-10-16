@@ -196,7 +196,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     @Override
-    protected void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration) {
+    protected void onIDLMethodGenerated(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, boolean isAttribute) {
         // IDL parser generated our empty methods with default return values.
         // We now modify it to match teaVM api calls
 
@@ -235,7 +235,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 nativeMethod.setType(idlMethodReturnType);
             }
             //Generate teaVM Annotation
-            generateNativeMethodAnnotation(classDeclaration, idlMethodDeclaration, nativeMethod);
+            generateNativeMethodAnnotation(classDeclaration, idlMethodDeclaration, nativeMethod, isAttribute);
         }
 
         // Check if the generated method does not exist in the original class
@@ -295,7 +295,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration,  MethodDeclaration nativeMethod) {
+    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration,  MethodDeclaration nativeMethod, boolean isAttribute) {
         NodeList<Parameter> nativeParameters = nativeMethod.getParameters();
         Type returnType = idlMethodDeclaration.getType();
         String methodName = idlMethodDeclaration.getNameAsString();
@@ -320,14 +320,24 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         String returnTypeName = classDeclaration.getNameAsString();
         String methodCaller = caller.toString();
 
+        if(isAttribute) {
+            System.out.println();
+        }
         String content = null;
         if(returnType.isVoidType()) {
+            if(isAttribute) {
+                Expression expression = caller.getArguments().get(0);
+                methodCaller = methodName + " = " + expression.toString();
+            }
             content = GET_JS_METHOD_VOID_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
         else if(returnType.isClassOrInterfaceType()) {
             content = GET_JS_METHOD_OBJ_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
         else {
+            if(isAttribute) {
+                methodCaller =methodName;
+            }
             content = GET_JS_METHOD_PRIMITIVE_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
 
