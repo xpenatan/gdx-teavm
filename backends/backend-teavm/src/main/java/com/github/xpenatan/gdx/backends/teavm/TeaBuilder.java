@@ -367,6 +367,9 @@ public class TeaBuilder {
         filePath.add("scripts/bullet.js");
         filePath.add("scripts/bullet.wasm.js");
         filePath.add("scripts/bullet.wasm.wasm");
+        filePath.add("scripts/box2D.js");
+        filePath.add("scripts/box2D.wasm.js");
+        filePath.add("scripts/box2D.wasm.wasm");
     }
 
     private static ACCEPT_STATE acceptPath(String path) {
