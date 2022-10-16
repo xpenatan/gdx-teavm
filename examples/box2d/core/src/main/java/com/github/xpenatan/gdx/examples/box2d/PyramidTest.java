@@ -38,13 +38,13 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     protected World world;
 
 //    /** ground body to connect the mouse joint to **/
-//    protected Body groundBody;
+    protected Body groundBody;
 //
 //    /** our mouse joint **/
 //    protected MouseJoint mouseJoint = null;
 //
 //    /** a hit body **/
-//    protected Body hitBody = null;
+    protected Body hitBody = null;
 
     /** temp vector **/
     protected Vector2 tmp = new Vector2();
@@ -68,9 +68,6 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         batch.begin();
         font.draw(batch, "fps:" + Gdx.graphics.getFramesPerSecond() + ", update: " + updateTime + ", render: " + renderTime, 0, 20);
         batch.end();
-
-        Vector2 gravity = world.getGravity();
-        System.out.println(gravity);
     }
 
     @Override
@@ -95,8 +92,8 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 
         // we also need an invisible zero size ground body
         // to which we can connect the mouse joint
-//        BodyDef bodyDef = new BodyDef();
-//        groundBody = world.createBody(bodyDef);
+        BodyDef bodyDef = new BodyDef();
+        groundBody = world.createBody(bodyDef);
 
         // call abstract method to populate the world
         createWorld(world);
@@ -113,7 +110,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 //        renderer = null;
         world = null;
 //        mouseJoint = null;
-//        hitBody = null;
+        hitBody = null;
     }
 
     @Override
@@ -152,17 +149,17 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 //        camera.unproject(testPoint.set(x, y, 0));
 //        // ask the world which bodies are within the given
 //        // bounding box around the mouse pointer
-//        hitBody = null;
+        hitBody = null;
 //        world.QueryAABB(callback, testPoint.x - 0.0001f, testPoint.y - 0.0001f, testPoint.x + 0.0001f, testPoint.y + 0.0001f);
 //
-//        if (hitBody == groundBody) hitBody = null;
+        if (hitBody == groundBody) hitBody = null;
 //
 //        // ignore kinematic bodies, they don't work with the mouse joint
-//        if (hitBody != null && hitBody.getType() == BodyDef.BodyType.KinematicBody) return false;
+        if (hitBody != null && hitBody.getType() == BodyDef.BodyType.KinematicBody) return false;
 //
 //        // if we hit something we create a new mouse joint
 //        // and attach it to the hit body.
-//        if (hitBody != null) {
+        if (hitBody != null) {
 //            MouseJointDef def = new MouseJointDef();
 //            def.bodyA = groundBody;
 //            def.bodyB = hitBody;
@@ -172,7 +169,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 //
 //            mouseJoint = (MouseJoint)world.createJoint(def);
 //            hitBody.setAwake(true);
-//        }
+        }
 
         return false;
     }
@@ -225,42 +222,41 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     protected void createWorld (World world) {
-//        {
-//            BodyDef bd = new BodyDef();
-//            Body ground = world.createBody(bd);
+        {
+            BodyDef bd = new BodyDef();
+            Body ground = world.createBody(bd);
 //
 //            EdgeShape shape = new EdgeShape();
 //            shape.set(new Vector2(-40, 0), new Vector2(40, 0));
 //            ground.createFixture(shape, 0.0f);
 //            shape.dispose();
-//        }
+        }
 //
-//        {
+        {
 //            float a = 0.5f;
 //            PolygonShape shape = new PolygonShape();
 //            shape.setAsBox(a, a);
-//
-//            Vector2 x = new Vector2(-7.0f, 0.75f);
-//            Vector2 y = new Vector2();
-//            Vector2 deltaX = new Vector2(0.5625f, 1.25f);
-//            Vector2 deltaY = new Vector2(1.125f, 0.0f);
-//
-//            for (int i = 0; i < 20; i++) {
-//                y.set(x);
-//
-//                for (int j = i; j < 20; j++) {
-//                    BodyDef bd = new BodyDef();
-//                    bd.type = BodyDef.BodyType.DynamicBody;
-//                    bd.position.set(y);
-//                    Body body = world.createBody(bd);
+
+            Vector2 x = new Vector2(-7.0f, 0.75f);
+            Vector2 y = new Vector2();
+            Vector2 deltaX = new Vector2(0.5625f, 1.25f);
+            Vector2 deltaY = new Vector2(1.125f, 0.0f);
+
+            for (int i = 0; i < 20; i++) {
+                y.set(x);
+
+                for (int j = i; j < 20; j++) {
+                    BodyDef bd = new BodyDef();
+                    bd.type = BodyDef.BodyType.DynamicBody;
+                    bd.position.set(y);
+                    Body body = world.createBody(bd);
 //                    body.createFixture(shape, 5.0f);
-//
-//                    y.add(deltaY);
-//                }
-//
-//                x.add(deltaX);
-//            }
-//
-//        }
+
+                    y.add(deltaY);
+                }
+
+                x.add(deltaX);
+            }
+        }
     }
 }

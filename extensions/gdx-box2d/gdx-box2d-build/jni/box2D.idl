@@ -3,6 +3,8 @@ interface b2World {
     void b2World([Const, Ref]b2Vec2 gravity);
     void Step(float timeStep, long velocityIterations, long positionIterations);
     [Value]b2Vec2 GetGravity();
+    b2Body CreateBody([Const]b2BodyDef def);
+    void DestroyBody(b2Body body);
 };
 
 interface b2Vec2 {
@@ -16,4 +18,34 @@ interface b2Vec2 {
     float LengthSquared();
     float Normalize();
     boolean IsValid();
+};
+
+interface b2BodyDef {
+    void b2BodyDef();
+    attribute b2BodyType type;
+    [Value]attribute b2Vec2 position;
+    attribute float angle;
+    [Value]attribute b2Vec2 linearVelocity;
+    attribute float angularVelocity;
+    attribute float linearDamping;
+    attribute float angularDamping;
+    attribute boolean allowSleep;
+    attribute boolean awake;
+    attribute boolean fixedRotation;
+    attribute boolean bullet;
+    attribute boolean active;
+    attribute float gravityScale;
+};
+
+[NoDelete]
+interface b2Body {
+    float GetAngle();
+    void SetType(b2BodyType type);
+    b2BodyType GetType();
+};
+
+enum b2BodyType {
+    "b2_staticBody",
+    "b2_kinematicBody",
+    "b2_dynamicBody"
 };
