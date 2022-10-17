@@ -129,7 +129,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         List<MethodDeclaration> methods = classOrInterfaceDeclaration.getMethods();
         for(int i = 0; i < methods.size(); i++) {
             MethodDeclaration methodDeclaration = methods.get(i);
-            convertMethodParamsAndReturn(methodDeclaration);
+            convertMethodParamsAndReturn(methodDeclaration, classOrInterfaceDeclaration);
         }
 //        List<FieldDeclaration> fields = classOrInterfaceDeclaration.getFields();
 //        for(int i = 0; i < fields.size(); i++) {
@@ -141,7 +141,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             ConstructorDeclaration constructorDeclaration = constructors.get(i);
             convertLongToIntParameters(constructorDeclaration.getParameters());
             BlockStmt body = constructorDeclaration.getBody();
-            convertBodyLongToInt(body);
+            convertBodyLongToInt(body, classOrInterfaceDeclaration);
         }
     }
 
@@ -385,21 +385,26 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration) {
+    private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+        String nameAsString = methodDeclaration.getNameAsString();
+        if(nameAsString.equals("getWorldTransform")) {
+            System.out.println();
+        }
         if(!methodDeclaration.isNative()) {
             Optional<BlockStmt> body = methodDeclaration.getBody();
             if(body.isPresent()) {
-                convertBodyLongToInt(body.get());
+                convertBodyLongToInt(body.get(), classOrInterfaceDeclaration);
             }
         }
-
-        if(JParserHelper.isLong(methodDeclaration.getType())) {
-            methodDeclaration.setType(int.class);
+        else {
+            if(JParserHelper.isLong(methodDeclaration.getType())) {
+                methodDeclaration.setType(int.class);
+            }
+            convertLongToIntParameters(methodDeclaration.getParameters());
         }
-        convertLongToIntParameters(methodDeclaration.getParameters());
     }
 
-    private static void convertBodyLongToInt(BlockStmt blockStmt) {
+    private static void convertBodyLongToInt(BlockStmt blockStmt, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
         // Convert local variables
         NodeList<Statement> statements = blockStmt.getStatements();
         for(int i = 0; i < statements.size(); i++) {
@@ -421,20 +426,20 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                         if(expressionOptional.isPresent()) {
                             Expression expr = expressionOptional.get();
                             if(expr.isMethodCallExpr()) {
-                                convertNativeMethodCall(expr.asMethodCallExpr());
+                                convertNativeMethodCall(expr.asMethodCallExpr(), classOrInterfaceDeclaration);
                             }
                             else if(expr.isCastExpr()) {
                                 CastExpr castExpr = expr.asCastExpr();
                                 Expression expr2 = castExpr.getExpression();
                                 if(expr2.isMethodCallExpr()) {
-                                    convertNativeMethodCall(expr2.asMethodCallExpr());
+                                    convertNativeMethodCall(expr2.asMethodCallExpr(), classOrInterfaceDeclaration);
                                 }
                             }
                         }
                     }
                 }
                 else if(expression.isMethodCallExpr()) {
-                    convertNativeMethodCall(expression.asMethodCallExpr());
+                    convertNativeMethodCall(expression.asMethodCallExpr(), classOrInterfaceDeclaration);
                 }
             }
             else if(statement.isReturnStmt()) {
@@ -443,14 +448,38 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                 if(expressionOptional.isPresent()) {
                     Expression expression = expressionOptional.get();
                     if(expression.isMethodCallExpr()) {
-                        convertNativeMethodCall(expression.asMethodCallExpr());
+                        convertNativeMethodCall(expression.asMethodCallExpr(), classOrInterfaceDeclaration);
                     }
+                    //Testing code to cast to int inside code block body
+//                    else {
+//                        Optional<Node> parentNodeOptional = blockStmt.getParentNode();
+//                        if(parentNodeOptional.isPresent()) {
+//                            Node node = parentNodeOptional.get();
+//                            if(node instanceof MethodDeclaration) {
+//                                MethodDeclaration method = (MethodDeclaration)node;
+//                                Type type = method.getType();
+//                                if(JParserHelper.isLong(type)) {
+//                                    Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+//                                    CastExpr intCast = new CastExpr(intType, expression);
+//                                    returnStmt.setExpression(intCast);
+//                                }
+//                            }
+//                        }
+//                    }
                 }
             }
         }
     }
 
-    private static void convertNativeMethodCall(MethodCallExpr methodCallExpr) {
+    private static void convertNativeMethodCall(MethodCallExpr methodCallExpr, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+        String methodName = methodCallExpr.getNameAsString();
+        MethodDeclaration callerMethod = null;
+        List<MethodDeclaration> methodsByName = classOrInterfaceDeclaration.getMethodsByName(methodName);
+        if(methodsByName.size() > 0) {
+            // Testing
+            callerMethod = methodsByName.get(0);
+        }
+
         NodeList<Expression> arguments = methodCallExpr.getArguments();
         for(int i = 0; i < arguments.size(); i++) {
             Expression expression = arguments.get(i);
@@ -463,7 +492,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                     methodCallExpr.setArgument(i, intCast);
                 }
                 else {
-                    convertNativeMethodCall(methodCallExpr1);
+                    convertNativeMethodCall(methodCallExpr1, classOrInterfaceDeclaration);
                 }
             }
             else if(expression.isNameExpr()) {
