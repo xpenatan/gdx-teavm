@@ -391,7 +391,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             if(body.isPresent()) {
                 convertBodyLongToInt(body.get());
             }
-            return;
         }
 
         if(JParserHelper.isLong(methodDeclaration.getType())) {
@@ -423,6 +422,13 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
                             Expression expr = expressionOptional.get();
                             if(expr.isMethodCallExpr()) {
                                 convertNativeMethodCall(expr.asMethodCallExpr());
+                            }
+                            else if(expr.isCastExpr()) {
+                                CastExpr castExpr = expr.asCastExpr();
+                                Expression expr2 = castExpr.getExpression();
+                                if(expr2.isMethodCallExpr()) {
+                                    convertNativeMethodCall(expr2.asMethodCallExpr());
+                                }
                             }
                         }
                     }
