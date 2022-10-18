@@ -4,6 +4,9 @@ import com.badlogic.gdx.physics.box2d.Box2DBase;
 
 public class b2Vec2 extends Box2DBase {
 
+    public static final b2Vec2 TMP_01 = new b2Vec2();
+    public static final b2Vec2 TMP_02 = new b2Vec2();
+
     public b2Vec2() {
         initObject(createNative(), true);
     }

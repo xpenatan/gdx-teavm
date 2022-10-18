@@ -65,12 +65,12 @@ public abstract class Box2DBase implements Disposable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Box2DBase) && (((Box2DBase) obj).cPointer == this.cPointer);
+        return (obj instanceof Box2DBase) && (((Box2DBase)obj).cPointer == this.cPointer);
     }
 
     @Override
     public int hashCode() {
-        return (int) cPointer;
+        return (int)cPointer;
     }
 
     /**
@@ -139,10 +139,12 @@ public abstract class Box2DBase implements Disposable {
             destroyed = true;
 
             if(cMemOwn && !disposed) {
-                if(Box2D.enableLogging) Gdx.app.error("Box2D", "Disposing " + toString() + " due to garbage collection.");
+                if(Box2D.enableLogging)
+                    Gdx.app.error("Box2D", "Disposing " + toString() + " due to garbage collection.");
                 dispose();
             }
-        } catch(Throwable e) {
+        }
+        catch(Throwable e) {
             Gdx.app.error("Box2D", "Exception while destroying " + toString(), e);
         }
     }

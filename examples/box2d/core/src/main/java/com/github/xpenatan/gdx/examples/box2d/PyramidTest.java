@@ -29,7 +29,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     protected OrthographicCamera camera;
 
     /** the renderer **/
-//    protected Box2DDebugRenderer renderer;
+    protected Box2DDebugRenderer renderer;
 
     SpriteBatch batch;
     BitmapFont font;
@@ -62,7 +62,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         camera.update();
 
         // render the world using the debug renderer
-//        renderer.render(world, camera.combined);
+        renderer.render(world, camera.combined);
         float renderTime = (TimeUtils.nanoTime() - startTime) / 1000000000.0f;
 
         batch.begin();
@@ -85,7 +85,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         camera.position.set(0, 15, 0);
 
         // create the debug renderer
-//        renderer = new Box2DDebugRenderer();
+        renderer = new Box2DDebugRenderer();
 
         // create the world
         world = new World(new Vector2(0, -10), true);
@@ -104,10 +104,10 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 
     @Override
     public void dispose () {
-//        renderer.dispose();
+        renderer.dispose();
         world.dispose();
 
-//        renderer = null;
+        renderer = null;
         world = null;
 //        mouseJoint = null;
         hitBody = null;
@@ -225,17 +225,17 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         {
             BodyDef bd = new BodyDef();
             Body ground = world.createBody(bd);
-//
-//            EdgeShape shape = new EdgeShape();
-//            shape.set(new Vector2(-40, 0), new Vector2(40, 0));
-//            ground.createFixture(shape, 0.0f);
-//            shape.dispose();
+
+            EdgeShape shape = new EdgeShape();
+            shape.set(new Vector2(-40, 0), new Vector2(40, 0));
+            ground.createFixture(shape, 0.0f);
+            shape.dispose();
         }
-//
+
         {
-//            float a = 0.5f;
-//            PolygonShape shape = new PolygonShape();
-//            shape.setAsBox(a, a);
+            float a = 0.5f;
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(a, a);
 
             Vector2 x = new Vector2(-7.0f, 0.75f);
             Vector2 y = new Vector2();
@@ -250,7 +250,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
                     bd.type = BodyDef.BodyType.DynamicBody;
                     bd.position.set(y);
                     Body body = world.createBody(bd);
-//                    body.createFixture(shape, 5.0f);
+                    body.createFixture(shape, 5.0f);
 
                     y.add(deltaY);
                 }

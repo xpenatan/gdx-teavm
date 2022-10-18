@@ -1,5 +1,7 @@
 package com.badlogic.gdx.physics.box2d;
 
+import com.badlogic.gdx.physics.box2d.cpp.b2Vec2;
+
 /**
  * @author xpenatan
  */
@@ -32,5 +34,7 @@ public class Box2D {
      * Dispose temp objects
      */
     public static void dispose() {
+        b2Vec2.TMP_01.dispose();
+        b2Vec2.TMP_02.dispose();
     }
 }

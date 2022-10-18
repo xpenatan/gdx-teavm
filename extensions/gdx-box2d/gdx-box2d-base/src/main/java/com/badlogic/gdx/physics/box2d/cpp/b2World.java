@@ -58,5 +58,26 @@ public class b2World extends Box2DBase {
             float linearVelocityY, float angularVelocity, float linearDamping, float angularDamping, boolean allowSleep,
             boolean awake, boolean fixedRotation, boolean bullet, boolean active, float inertiaScale);
 
-    public native void DestroyBody(b2Body body);
+    public void DestroyBody(b2Body body) {
+        DestroBodyNATIVE(getCPointer(), body.getCPointer());
+    }
+
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+        var body = Box2D.wrapPointer(bodyAddr, Box2D.b2World);
+        world.DestroyBody(body);
+    */
+    private static native void DestroBodyNATIVE(long addr, long bodyAddr);
+
+    public void destroyFixture(b2Body body, b2Fixture fixture) {
+        DestroyFixtureNATIVE(getCPointer(), body.getCPointer(), fixture.getCPointer());
+    }
+
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+        var body = Box2D.wrapPointer(bodyAddr, Box2D.b2World);
+        var fixture = Box2D.wrapPointer(bodyAddr, Box2D.b2Fixture);
+        body.DestroyFixture(fixture);
+    */
+    private static native void DestroyFixtureNATIVE(long addr, long bodyAddr, long fixtureAddr);
 }

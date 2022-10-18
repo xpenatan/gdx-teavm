@@ -67,7 +67,7 @@ public class btCollisionObject extends BulletBase {
 
     public void getWorldTransform (Matrix4 out) {
         // Gdx method
-        long worldTransformAddr = getWorldTransformAddr(cPointer);
+        int worldTransformAddr = (int)getWorldTransformAddr(cPointer);
         btTransform.convert(worldTransformAddr, out);
     }
 
