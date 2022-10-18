@@ -389,10 +389,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     private static void convertMethodParamsAndReturn(MethodDeclaration methodDeclaration, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
-        String nameAsString = methodDeclaration.getNameAsString();
-        if(nameAsString.equals("getWorldTransform")) {
-            System.out.println();
-        }
         if(!methodDeclaration.isNative()) {
             Optional<BlockStmt> body = methodDeclaration.getBody();
             if(body.isPresent()) {
