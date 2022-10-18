@@ -57,3 +57,6 @@ Is a solution using [javaparser](https://github.com/javaparser/javaparser) to re
 The main goal is to make it easy to add, modify or remove part of the original source code and generate it with something else.
 It's being used in Bullet and Box2D extension to read WebIDL file and generate methods.
 The TeaVMCodeParser is an additional parser for teaVM to generate methods that binds java code to javascript code. 
+
+In Box2d, the generated code is used inside libgdx box2d custom classes 
+while Bullet use BulletCodeParser to make some minor changes to replace Bullet classes to libgdx classes (Ex: btVector3 -> Vector3)
