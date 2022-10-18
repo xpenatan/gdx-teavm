@@ -19,8 +19,8 @@ public class IDLAttribute {
         type = s[0];
         name = s[1];
 
-        if(name.equals("long")) {
-            name = "int";
+        if(type.equals("long")) {
+            type = "int";
         }
 
         if(type.equals("any")) {
