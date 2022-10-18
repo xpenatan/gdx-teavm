@@ -156,6 +156,10 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
     }
 
     private void generateMethods(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLMethod idlMethod) {
+        if(idlMethod.skip) {
+            return;
+        }
+
         String methodName = idlMethod.name;
 
         MethodDeclaration containsMethod = containsMethod(classOrInterfaceDeclaration, idlMethod);

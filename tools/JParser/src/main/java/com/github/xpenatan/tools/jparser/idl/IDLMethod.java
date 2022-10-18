@@ -9,6 +9,7 @@ public class IDLMethod {
     public String returnType;
     public String name;
     public boolean returnIsArray;
+    public boolean skip = false;
 
     public final ArrayList<IDLParameter> parameters = new ArrayList<>();
 
@@ -33,6 +34,13 @@ public class IDLMethod {
             returnType = "int";
         }
         name = s[1];
+
+        if(paramsLine != null && paramsLine.contains("any ")) {
+            skip = true;
+        }
+        if(returnType.contains("any")) {
+            skip = true;
+        }
     }
 
     public int getTotalOptionalParams() {
