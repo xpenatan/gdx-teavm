@@ -5,6 +5,7 @@ public class IDLAttribute {
     public String line;
     public String type;
     public String name;
+    public boolean skip = false;
 
     public void initAttribute(String line) {
         this.line = line;
@@ -20,6 +21,10 @@ public class IDLAttribute {
 
         if(name.equals("long")) {
             name = "int";
+        }
+
+        if(type.equals("any")) {
+            skip = true;
         }
     }
 }

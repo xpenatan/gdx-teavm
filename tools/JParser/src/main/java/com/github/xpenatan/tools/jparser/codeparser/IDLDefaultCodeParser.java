@@ -73,6 +73,10 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
     }
 
     private void generateAttribute(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration, IDLClass idlClass, IDLAttribute idlAttribute) {
+        if(idlAttribute.skip) {
+            return;
+        }
+
         String attributeName = idlAttribute.name;
         String attributeType = idlAttribute.type;
 
