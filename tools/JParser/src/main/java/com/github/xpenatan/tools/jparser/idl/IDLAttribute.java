@@ -17,5 +17,9 @@ public class IDLAttribute {
         String[] s = text.split(" ");
         type = s[0];
         name = s[1];
+
+        if(name.equals("long")) {
+            name = "int";
+        }
     }
 }

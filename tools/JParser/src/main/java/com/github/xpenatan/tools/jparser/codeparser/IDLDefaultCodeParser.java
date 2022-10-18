@@ -76,10 +76,6 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
         String attributeName = idlAttribute.name;
         String attributeType = idlAttribute.type;
 
-        if(attributeType.equals("long")) {
-            attributeType = "int";
-        }
-
         Type type = null;
         try {
             type = StaticJavaParser.parseType(attributeType);
