@@ -323,9 +323,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         String returnTypeName = classDeclaration.getNameAsString();
         String methodCaller = caller.toString();
 
-        if(isAttribute) {
-            System.out.println();
-        }
         String content = null;
         if(returnType.isVoidType()) {
             if(isAttribute) {
@@ -335,11 +332,14 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             content = GET_JS_METHOD_VOID_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
         else if(returnType.isClassOrInterfaceType()) {
+            if(isAttribute) {
+                methodCaller = methodName;
+            }
             content = GET_JS_METHOD_OBJ_POINTER_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
         else {
             if(isAttribute) {
-                methodCaller =methodName;
+                methodCaller = methodName;
             }
             content = GET_JS_METHOD_PRIMITIVE_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, returnTypeName).replace(TEMPLATE_TAG_MODULE, module);
         }
