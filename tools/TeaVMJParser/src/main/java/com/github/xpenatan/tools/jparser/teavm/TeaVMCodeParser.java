@@ -17,7 +17,6 @@ import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.IDLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
-import com.github.xpenatan.tools.jparser.idl.IDLMethod;
 
 import java.util.List;
 import java.util.Optional;

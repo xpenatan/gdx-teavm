@@ -53,6 +53,7 @@ Open http://localhost:8080/ in your browser and your game will start if the gene
 Generator example: https://youtu.be/BIL_5eaxg9w
 
 ## JParser
-It's a solution using [javaparser](https://github.com/javaparser/javaparser) to read and generate java sources.
-The main goal is make it easy to add, modify or remove part of the original source code and generate it with something else.
-It's being used in Bullet extension to read bullet emscripten WebIDL file, generate java code and bind it with teaVM code.
+Is a solution using [javaparser](https://github.com/javaparser/javaparser) to read a java source file and generate a new modified java source file.
+The main goal is to make it easy to add, modify or remove part of the original source code and generate it with something else.
+It's being used in Bullet and Box2D extension to read WebIDL file and generate methods.
+The TeaVMCodeParser is an additional parser for teaVM to generate methods that binds java code to javascript code. 
