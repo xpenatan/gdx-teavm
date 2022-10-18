@@ -92,9 +92,12 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             // Create a static temp object for every module class so any generated method can use to store a pointer.
             // Also generate a boolean constructor if it's not in the original source code.
             List<ConstructorDeclaration> constructors = classOrInterfaceDeclaration.getConstructors();
-            String replace = OBJECT_CREATION_TEMPLATE.replace(TEMPLATE_TAG_TYPE, nameAsString);
-            FieldDeclaration bodyDeclaration = (FieldDeclaration)StaticJavaParser.parseBodyDeclaration(replace);
-            classOrInterfaceDeclaration.getMembers().add(0, bodyDeclaration);
+
+            if(!classOrInterfaceDeclaration.isAbstract()) {
+                String replace = OBJECT_CREATION_TEMPLATE.replace(TEMPLATE_TAG_TYPE, nameAsString);
+                FieldDeclaration bodyDeclaration = (FieldDeclaration)StaticJavaParser.parseBodyDeclaration(replace);
+                classOrInterfaceDeclaration.getMembers().add(0, bodyDeclaration);
+            }
 
             boolean containsConstructor = false;
             boolean containsZeroParamConstructor = false;
