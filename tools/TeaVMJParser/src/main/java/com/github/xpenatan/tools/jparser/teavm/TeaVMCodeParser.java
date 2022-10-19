@@ -523,9 +523,16 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         int size = parameters.size();
         for(int i = 0; i < size; i++) {
             Parameter parameter = parameters.get(i);
-            if(JParserHelper.isLong(parameter.getType())) {
-                Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
-                parameter.setType(intType);
+            Type type = parameter.getType();
+            if(JParserHelper.isLong(type)) {
+                if(type.isArrayType()) {
+                    Type intType = StaticJavaParser.parseType(int[].class.getSimpleName());
+                    parameter.setType(intType);
+                }
+                else {
+                    Type intType = StaticJavaParser.parseType(int.class.getSimpleName());
+                    parameter.setType(intType);
+                }
             }
         }
     }
