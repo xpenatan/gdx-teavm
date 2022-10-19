@@ -12,6 +12,9 @@ public class b2World extends Box2DBase {
         initObject(0, false);
     }
 
+    /*[-teaVM;-REMOVE]*/
+    private native b2Contact GetContactList();
+
     /*[-teaVM;-NATIVE]
         var vec2 = Box2D.wrapPointer(b2VecGravityAddr, Box2D.b2Vec2);
         var jsObj = new Box2D.b2World(vec2);
@@ -64,7 +67,7 @@ public class b2World extends Box2DBase {
 
     /*[-teaVM;-NATIVE]
         var world = Box2D.wrapPointer(addr, Box2D.b2World);
-        var body = Box2D.wrapPointer(bodyAddr, Box2D.b2World);
+        var body = Box2D.wrapPointer(bodyAddr, Box2D.b2Body);
         world.DestroyBody(body);
     */
     private static native void DestroBodyNATIVE(long addr, long bodyAddr);
@@ -73,6 +76,7 @@ public class b2World extends Box2DBase {
         DestroyFixtureNATIVE(getCPointer(), body.getCPointer(), fixture.getCPointer());
     }
 
+    //TODO add missing methods
     /*[-teaVM;-NATIVE]
         var world = Box2D.wrapPointer(addr, Box2D.b2World);
         var body = Box2D.wrapPointer(bodyAddr, Box2D.b2World);
@@ -80,4 +84,42 @@ public class b2World extends Box2DBase {
         body.DestroyFixture(fixture);
     */
     private static native void DestroyFixtureNATIVE(long addr, long bodyAddr, long fixtureAddr);
+
+    public void destroyJoint(b2Joint joint) {
+        DestroyJointNATIVE(getCPointer(), joint.getCPointer());
+    }
+
+    //TODO add missing methods
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+        var joint = Box2D.wrapPointer(bodyAddr, Box2D.b2Joint);
+        body.DestroyJoint(joint);
+    */
+    private static native void DestroyJointNATIVE(long addr, long jointAddr);
+
+    public native int GetContactCount();
+
+    /*[-teaVM;-REPLACE]
+        public void GetContactList(int[] contacts) {
+            GetContactListNATIVE(getCPointer(), contacts);
+        }
+     */
+    public void GetContactList(long[] contacts) {
+        GetContactListNATIVE(getCPointer(), contacts);
+    }
+
+    //TODO need to test if this is working
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+        var contact = world.GetContactList();
+        var contactAddr = Box2D.getPointer(contact);
+        var i = 0;
+        while(contactAddr != 0) {
+            contacts[i] = contactAddr;
+            contact = contact.GetNext();
+            contactAddr = Box2D.getPointer(contact);
+            i++;
+        }
+    */
+    private static native void GetContactListNATIVE(long addr, long[] contacts);
 }

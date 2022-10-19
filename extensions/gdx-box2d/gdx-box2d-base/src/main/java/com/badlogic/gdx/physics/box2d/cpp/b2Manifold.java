@@ -9,4 +9,6 @@ public class b2Manifold extends Box2DBase {
 
     /*[-teaVM;-REMOVE]*/
     public native void type(b2ManifoldType type);
+
+    public native int pointCount();
 }

@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 
@@ -21,6 +22,11 @@ public class JParserHelper {
             PrimitiveType primitiveType = type.asPrimitiveType();
             String name = primitiveType.getType().name();
             return name.contains(typeStr.toUpperCase());
+        }
+        else if(type.isArrayType()) {
+            ArrayType arrayType = type.asArrayType();
+            String name = arrayType.getElementType().toString();
+            return name.contains(typeStr);
         }
         return false;
     }

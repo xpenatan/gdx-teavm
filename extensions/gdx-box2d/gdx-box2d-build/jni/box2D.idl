@@ -1,10 +1,44 @@
 
 interface b2World {
-    void b2World([Const, Ref]b2Vec2 gravity);
-    void Step(float timeStep, long velocityIterations, long positionIterations);
-    [Value]b2Vec2 GetGravity();
-    b2Body CreateBody([Const]b2BodyDef def);
+    void b2World([Const, Ref] b2Vec2 gravity);
+//    void SetDestructionListener(b2DestructionListener listener);
+//    void SetContactFilter(JSContactFilter filter);
+//    void SetContactListener(JSContactListener listener);
+//    void SetDebugDraw(b2Draw debugDraw);
+    b2Body CreateBody([Const] b2BodyDef def);
     void DestroyBody(b2Body body);
+//    b2Joint CreateJoint([Const] b2JointDef def);
+    void DestroyJoint(b2Joint joint);
+    void Step(float timeStep, long velocityIterations, long positionIterations);
+    void ClearForces();
+    void DrawDebugData();
+//    void QueryAABB(b2QueryCallback callback, [Ref] b2AABB aabb);
+//    void RayCast(b2RayCastCallback callback, [Ref] b2Vec2 point1, [Ref] b2Vec2 point2);
+    b2Body GetBodyList();
+    b2Joint GetJointList();
+    b2Contact GetContactList();
+    void SetAllowSleeping(boolean flag);
+    boolean GetAllowSleeping();
+    void SetWarmStarting(boolean flag);
+    boolean GetWarmStarting();
+    void SetContinuousPhysics(boolean flag);
+    boolean GetContinuousPhysics();
+    void SetSubStepping(boolean flag);
+    boolean GetSubStepping();
+    long GetProxyCount();
+    long GetBodyCount();
+    long GetJointCount();
+    long GetContactCount();
+    long GetTreeHeight();
+    long GetTreeBalance();
+    float GetTreeQuality();
+    void SetGravity([Ref] b2Vec2 gravity);
+    [Value] b2Vec2 GetGravity();
+    boolean IsLocked();
+    void SetAutoClearForces(boolean flag);
+    boolean GetAutoClearForces();
+//    [Const, Ref] b2Profile GetProfile();
+    void Dump();
 };
 
 interface b2MassData {
@@ -339,6 +373,17 @@ interface b2Joint {
     boolean GetCollideConnected();
     void Dump();
 };
+
+interface b2PulleyJoint {
+  [Value] b2Vec2 GetGroundAnchorA();
+  [Value] b2Vec2 GetGroundAnchorB();
+  float GetLengthA();
+  float GetLengthB();
+  float GetRatio();
+  float GetCurrentLengthA();
+  float GetCurrentLengthB();
+};
+b2PulleyJoint implements b2Joint;
 
 [NoDelete]
 interface b2Contact {

@@ -20,10 +20,9 @@ public class Body {
 
     private final Vector2 linearVelocity = new Vector2();
 
-    /**
-     * Fixtures of this body
-     **/
     private Array<Fixture> fixtures = new Array<Fixture>(2);
+
+    protected Array<JointEdge> joints = new Array<JointEdge>(2);
 
     protected Body(World world, long addr) {
         this.world = world;
@@ -34,6 +33,10 @@ public class Body {
     protected void reset(long addr) {
         b2Body.setPointer(addr);
         this.userData = null;
+        for (int i = 0; i < fixtures.size; i++)
+            this.world.freeFixtures.free(fixtures.get(i));
+        fixtures.clear();
+        joints.clear();
     }
 
     /**
@@ -116,5 +119,9 @@ public class Body {
         b2Vec2 b2Vec2 = b2Body.GetLinearVelocity();
         linearVelocity.set(b2Vec2.x(), b2Vec2.y());
         return linearVelocity;
+    }
+
+    public Array<JointEdge> getJointList() {
+        return joints;
     }
 }

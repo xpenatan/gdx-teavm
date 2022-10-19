@@ -78,4 +78,8 @@ public class Fixture {
 
         return shape;
     }
+
+    public Body getBody() {
+        return body;
+    }
 }

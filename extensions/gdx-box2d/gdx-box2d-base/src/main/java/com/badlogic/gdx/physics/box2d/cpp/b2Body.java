@@ -25,6 +25,9 @@ public class b2Body extends Box2DBase {
     /*[-teaVM;-REMOVE]*/
     public native void SetMassData(b2MassData data);
 
+    /*[-teaVM;-REMOVE]*/
+    public native b2ContactEdge GetContactList();
+
     public int getType() {
         return getTypeNATIVE(getCPointer());
     }
