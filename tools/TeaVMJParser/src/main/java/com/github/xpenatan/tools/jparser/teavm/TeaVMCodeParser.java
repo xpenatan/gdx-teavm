@@ -141,7 +141,6 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         List<ConstructorDeclaration> constructors = classOrInterfaceDeclaration.getConstructors();
         for(int i = 0; i < constructors.size(); i++) {
             ConstructorDeclaration constructorDeclaration = constructors.get(i);
-            convertLongToIntParameters(constructorDeclaration.getParameters());
             BlockStmt body = constructorDeclaration.getBody();
             convertBodyLongToInt(body, classOrInterfaceDeclaration);
         }
