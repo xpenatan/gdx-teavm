@@ -11,7 +11,7 @@ public class PulleyJoint extends Joint<b2PulleyJoint> {
     private final Vector2 groundAnchorA = new Vector2();
     private final Vector2 groundAnchorB = new Vector2();
 
-    protected PulleyJoint(World world, long addr) {
+    public PulleyJoint(World world, long addr) {
         super(world);
         b2Joint = new b2PulleyJoint();
         b2Joint.setPointer(addr);

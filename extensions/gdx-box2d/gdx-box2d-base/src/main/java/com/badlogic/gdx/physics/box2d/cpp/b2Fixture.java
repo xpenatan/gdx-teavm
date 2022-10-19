@@ -39,4 +39,17 @@ public class b2Fixture extends Box2DBase {
     private static native int getTypeNATIVE(long addr);
 
     public native b2Shape GetShape();
+
+    public native boolean TestPoint(b2Vec2 p);
+
+    public long getBody() {
+        return GetBodyNATIVE(getCPointer());
+    }
+
+    /*[-teaVM;-NATIVE]
+        var fixture = Box2D.wrapPointer(addr, Box2D.b2Fixture);
+        var body = fixture.GetBody();
+        return Box2D.getPointer(body);
+    */
+    private static native long GetBodyNATIVE(long addr);
 }

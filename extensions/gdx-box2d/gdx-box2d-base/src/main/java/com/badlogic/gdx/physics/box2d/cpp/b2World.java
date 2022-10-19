@@ -15,6 +15,9 @@ public class b2World extends Box2DBase {
     /*[-teaVM;-REMOVE]*/
     private native b2Contact GetContactList();
 
+    /*[-teaVM;-REMOVE]*/
+    public native void QueryAABB(b2QueryCallback callback, b2AABB aabb);
+
     /*[-teaVM;-NATIVE]
         var vec2 = Box2D.wrapPointer(b2VecGravityAddr, Box2D.b2Vec2);
         var jsObj = new Box2D.b2World(vec2);
@@ -122,4 +125,55 @@ public class b2World extends Box2DBase {
         }
     */
     private static native void GetContactListNATIVE(long addr, long[] contacts);
+
+    public long CreateMouseJoint(b2Body bodyA, b2Body bodyB, boolean collideConnected, float targetX, float targetY,
+                                 float maxForce, float frequencyHz, float dampingRatio) {
+        return jniCreateMouseJointNATIVE(getCPointer(), bodyA.getCPointer(), bodyB.getCPointer(), collideConnected, targetX, targetY, maxForce, frequencyHz, dampingRatio);
+    }
+
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+        var bodyA = Box2D.wrapPointer(bodyAAddr, Box2D.b2Body);
+        var bodyB = Box2D.wrapPointer(bodyBAddr, Box2D.b2Body);
+
+        var def = new Box2D.b2MouseJointDef();
+        def.bodyA = bodyA;
+        def.bodyB = bodyB;
+        def.collideConnected = collideConnected;
+        def.target = new Box2D.b2Vec2( targetX, targetY );
+        def.maxForce = maxForce;
+        def.frequencyHz = frequencyHz;
+        def.dampingRatio = dampingRatio;
+        var joint = world.CreateJoint(def);
+        return Box2D.getPointer(joint);
+    */
+    private static native long jniCreateMouseJointNATIVE(long addr, long bodyAAddr, long bodyBAddr, boolean collideConnected,
+                                                         float targetX, float targetY, float maxForce, float frequencyHz, float dampingRatio);
+
+    /*[-teaVM;-REPLACE]
+        @org.teavm.jso.JSFunctor
+        public interface AABBFunction extends org.teavm.jso.JSObject {
+            float ReportFixture(long b2FixtureAddr);
+        }
+    */
+    public interface AABBFunction {
+        boolean ReportFixture(long b2FixtureAddr);
+    }
+
+    public void QueryAABB(AABBFunction aabbFunction, float lowX, float lowY, float upX, float upY) {
+        QueryAABBNATIVE(getCPointer(), aabbFunction, lowX, lowY, upX, upY);
+    }
+
+    /*[-teaVM;-NATIVE]
+        var world = Box2D.wrapPointer(addr, Box2D.b2World);
+
+        var myQueryCallback = new Box2D.JSQueryCallback();
+
+        var aabb = new Box2D.b2AABB();
+        aabb.lowerBound = new Box2D.b2Vec2(lowX, lowY);
+        aabb.upperBound = new Box2D.b2Vec2(upX, upY);
+
+        world.QueryAABB(myQueryCallback, aabb);
+    */
+    private static native void QueryAABBNATIVE(long addr, AABBFunction function, float lowX, float lowY, float upX, float upY);
 }

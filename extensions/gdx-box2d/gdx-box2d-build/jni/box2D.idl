@@ -12,7 +12,7 @@ interface b2World {
     void Step(float timeStep, long velocityIterations, long positionIterations);
     void ClearForces();
     void DrawDebugData();
-//    void QueryAABB(b2QueryCallback callback, [Ref] b2AABB aabb);
+    void QueryAABB(b2QueryCallback callback, [Ref] b2AABB aabb);
 //    void RayCast(b2RayCastCallback callback, [Ref] b2Vec2 point1, [Ref] b2Vec2 point2);
     b2Body GetBodyList();
     b2Joint GetJointList();
@@ -375,15 +375,37 @@ interface b2Joint {
 };
 
 interface b2PulleyJoint {
-  [Value] b2Vec2 GetGroundAnchorA();
-  [Value] b2Vec2 GetGroundAnchorB();
-  float GetLengthA();
-  float GetLengthB();
-  float GetRatio();
-  float GetCurrentLengthA();
-  float GetCurrentLengthB();
+    [Value] b2Vec2 GetGroundAnchorA();
+    [Value] b2Vec2 GetGroundAnchorB();
+    float GetLengthA();
+    float GetLengthB();
+    float GetRatio();
+    float GetCurrentLengthA();
+    float GetCurrentLengthB();
 };
 b2PulleyJoint implements b2Joint;
+
+interface b2MouseJoint {
+  void SetTarget([Ref] b2Vec2 target);
+  [Const, Ref] b2Vec2 GetTarget();
+  void SetMaxForce(float force);
+  float GetMaxForce();
+  void SetFrequency(float hz);
+  float GetFrequency();
+  void SetDampingRatio(float ratio);
+  float GetDampingRatio();
+};
+b2MouseJoint implements b2Joint;
+
+interface b2MouseJointDef {
+  void b2MouseJointDef();
+  [Value] attribute b2Vec2 target;
+  attribute float maxForce;
+  attribute float frequencyHz;
+  attribute float dampingRatio;
+};
+b2MouseJointDef implements b2JointDef;
+
 
 [NoDelete]
 interface b2Contact {
@@ -429,4 +451,13 @@ interface b2WorldManifold {
     [Value] attribute b2Vec2 normal;
     [Value] attribute b2Vec2[] points;
     attribute float[] separations;
+};
+
+interface b2QueryCallback {
+};
+
+[JSImplementation="b2QueryCallback"]
+interface JSQueryCallback {
+      void JSQueryCallback();
+      boolean ReportFixture(b2Fixture fixture);
 };

@@ -72,7 +72,7 @@ public class Body {
         long fixtureAddr = b2Body.createFixture(def.shape.b2Shape, def.friction, def.restitution, def.density, def.isSensor,
                 def.filter.categoryBits, def.filter.maskBits, def.filter.groupIndex);
         Fixture fixture = this.world.freeFixtures.obtain();
-        fixture.reset(this, fixtureAddr);
+        fixture.reset(fixtureAddr);
         this.world.fixtures.put(fixture.b2Fixture.getCPointer(), fixture);
         this.fixtures.add(fixture);
         return fixture;
@@ -81,7 +81,7 @@ public class Body {
     public Fixture createFixture(Shape shape, float density) {
         long fixtureAddr = b2Body.createFixture(shape.b2Shape, density);
         Fixture fixture = this.world.freeFixtures.obtain();
-        fixture.reset(this, fixtureAddr);
+        fixture.reset(fixtureAddr);
         this.world.fixtures.put(fixture.b2Fixture.getCPointer(), fixture);
         this.fixtures.add(fixture);
         return fixture;
@@ -101,6 +101,10 @@ public class Body {
 
     public boolean isAwake() {
         return b2Body.IsAwake();
+    }
+
+    public void setAwake(boolean flag) {
+        b2Body.SetAwake(flag);
     }
 
     public Transform getTransform() {
@@ -124,4 +128,9 @@ public class Body {
     public Array<JointEdge> getJointList() {
         return joints;
     }
+
+    public float getMass () {
+        return b2Body.GetMass();
+    }
+
 }

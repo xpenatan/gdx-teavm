@@ -92,6 +92,8 @@ public class b2Body extends Box2DBase {
 
     public native boolean IsAwake();
 
+    public native void SetAwake(boolean flag);
+
     public native b2Transform GetTransform();
 
     public native b2Vec2 GetPosition();
@@ -99,4 +101,6 @@ public class b2Body extends Box2DBase {
     public native float GetAngle();
 
     public native b2Vec2 GetLinearVelocity();
+
+    public native float GetMass();
 }

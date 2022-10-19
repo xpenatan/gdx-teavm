@@ -37,13 +37,13 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     /** our box2D world **/
     protected World world;
 
-//    /** ground body to connect the mouse joint to **/
+    /** ground body to connect the mouse joint to **/
     protected Body groundBody;
-//
-//    /** our mouse joint **/
-//    protected MouseJoint mouseJoint = null;
-//
-//    /** a hit body **/
+
+    /** our mouse joint **/
+    protected MouseJoint mouseJoint = null;
+
+    /** a hit body **/
     protected Body hitBody = null;
 
     /** temp vector **/
@@ -109,7 +109,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 
         renderer = null;
         world = null;
-//        mouseJoint = null;
+        mouseJoint = null;
         hitBody = null;
     }
 
@@ -130,45 +130,45 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
 
     /** we instantiate this vector and the callback here so we don't irritate the GC **/
     Vector3 testPoint = new Vector3();
-//    QueryCallback callback = new QueryCallback() {
-//        @Override
-//        public boolean reportFixture (Fixture fixture) {
-//            // if the hit point is inside the fixture of the body
-//            // we report it
-//            if (fixture.testPoint(testPoint.x, testPoint.y)) {
-//                hitBody = fixture.getBody();
-//                return false;
-//            } else
-//                return true;
-//        }
-//    };
+    QueryCallback callback = new QueryCallback() {
+        @Override
+        public boolean reportFixture (Fixture fixture) {
+            // if the hit point is inside the fixture of the body
+            // we report it
+            if (fixture.testPoint(testPoint.x, testPoint.y)) {
+                hitBody = fixture.getBody();
+                return false;
+            } else
+                return true;
+        }
+    };
 
     @Override
     public boolean touchDown (int x, int y, int pointer, int button) {
-//        // translate the mouse coordinates to world coordinates
-//        camera.unproject(testPoint.set(x, y, 0));
-//        // ask the world which bodies are within the given
-//        // bounding box around the mouse pointer
+        // translate the mouse coordinates to world coordinates
+        camera.unproject(testPoint.set(x, y, 0));
+        // ask the world which bodies are within the given
+        // bounding box around the mouse pointer
         hitBody = null;
-//        world.QueryAABB(callback, testPoint.x - 0.0001f, testPoint.y - 0.0001f, testPoint.x + 0.0001f, testPoint.y + 0.0001f);
-//
+        world.QueryAABB(callback, testPoint.x - 0.0001f, testPoint.y - 0.0001f, testPoint.x + 0.0001f, testPoint.y + 0.0001f);
+
         if (hitBody == groundBody) hitBody = null;
-//
-//        // ignore kinematic bodies, they don't work with the mouse joint
+
+        // ignore kinematic bodies, they don't work with the mouse joint
         if (hitBody != null && hitBody.getType() == BodyDef.BodyType.KinematicBody) return false;
-//
-//        // if we hit something we create a new mouse joint
-//        // and attach it to the hit body.
+
+        // if we hit something we create a new mouse joint
+        // and attach it to the hit body.
         if (hitBody != null) {
-//            MouseJointDef def = new MouseJointDef();
-//            def.bodyA = groundBody;
-//            def.bodyB = hitBody;
-//            def.collideConnected = true;
-//            def.target.set(testPoint.x, testPoint.y);
-//            def.maxForce = 1000.0f * hitBody.getMass();
-//
-//            mouseJoint = (MouseJoint)world.createJoint(def);
-//            hitBody.setAwake(true);
+            MouseJointDef def = new MouseJointDef();
+            def.bodyA = groundBody;
+            def.bodyB = hitBody;
+            def.collideConnected = true;
+            def.target.set(testPoint.x, testPoint.y);
+            def.maxForce = 1000.0f * hitBody.getMass();
+
+            mouseJoint = (MouseJoint)world.createJoint(def);
+            hitBody.setAwake(true);
         }
 
         return false;
@@ -182,20 +182,20 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         // if a mouse joint exists we simply update
         // the target of the joint based on the new
         // mouse coordinates
-//        if (mouseJoint != null) {
-//            camera.unproject(testPoint.set(x, y, 0));
-//            mouseJoint.setTarget(target.set(testPoint.x, testPoint.y));
-//        }
+        if (mouseJoint != null) {
+            camera.unproject(testPoint.set(x, y, 0));
+            mouseJoint.setTarget(target.set(testPoint.x, testPoint.y));
+        }
         return false;
     }
 
     @Override
     public boolean touchUp (int x, int y, int pointer, int button) {
         // if a mouse joint exists we simply destroy it
-//        if (mouseJoint != null) {
-//            world.destroyJoint(mouseJoint);
-//            mouseJoint = null;
-//        }
+        if (mouseJoint != null) {
+            world.destroyJoint(mouseJoint);
+            mouseJoint = null;
+        }
         return false;
     }
 
