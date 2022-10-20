@@ -18,6 +18,21 @@ public class b2World extends Box2DBase {
     /*[-teaVM;-REMOVE]*/
     public native void QueryAABB(b2QueryCallback callback, b2AABB aabb);
 
+    /*[-teaVM;-REMOVE]*/
+    public native void SetDestructionListener(b2DestructionListener listener);
+
+    /*[-teaVM;-REMOVE]*/
+    public native void SetContactFilter(JSContactFilter filter);
+
+    /*[-teaVM;-REMOVE]*/
+    public native void SetContactListener(JSContactListener listener);
+
+    /*[-teaVM;-REMOVE]*/
+    public native void RayCast(b2RayCastCallback callback, b2Vec2 point1, b2Vec2 point2);
+
+    /*[-teaVM;-REMOVE]*/
+    public native void SetDebugDraw(b2Draw debugDraw);
+
     /*[-teaVM;-NATIVE]
         var vec2 = Box2D.wrapPointer(b2VecGravityAddr, Box2D.b2Vec2);
         var jsObj = new Box2D.b2World(vec2);
@@ -168,12 +183,12 @@ public class b2World extends Box2DBase {
         var world = Box2D.wrapPointer(addr, Box2D.b2World);
 
         var myQueryCallback = new Box2D.JSQueryCallback();
-
+        myQueryCallback.ReportFixture = myfunction;
         var aabb = new Box2D.b2AABB();
         aabb.lowerBound = new Box2D.b2Vec2(lowX, lowY);
         aabb.upperBound = new Box2D.b2Vec2(upX, upY);
 
         world.QueryAABB(myQueryCallback, aabb);
     */
-    private static native void QueryAABBNATIVE(long addr, AABBFunction function, float lowX, float lowY, float upX, float upY);
+    private static native void QueryAABBNATIVE(long addr, AABBFunction myfunction, float lowX, float lowY, float upX, float upY);
 }

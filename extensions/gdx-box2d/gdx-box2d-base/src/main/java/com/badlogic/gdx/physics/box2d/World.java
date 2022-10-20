@@ -263,6 +263,8 @@ public class World implements AABBFunction{
 
     public void QueryAABB(QueryCallback callback, float lowerX, float lowerY, float upperX, float upperY) {
         this.callback = callback;
+        int test =51321;
+        System.out.println(test);
         b2World.QueryAABB(this, lowerX, lowerY, upperX, upperY);
     }
 

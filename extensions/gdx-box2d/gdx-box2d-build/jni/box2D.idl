@@ -1,19 +1,19 @@
 
 interface b2World {
     void b2World([Const, Ref] b2Vec2 gravity);
-//    void SetDestructionListener(b2DestructionListener listener);
-//    void SetContactFilter(JSContactFilter filter);
-//    void SetContactListener(JSContactListener listener);
-//    void SetDebugDraw(b2Draw debugDraw);
+    void SetDestructionListener(b2DestructionListener listener);
+    void SetContactFilter(JSContactFilter filter);
+    void SetContactListener(JSContactListener listener);
+    void SetDebugDraw(b2Draw debugDraw);
     b2Body CreateBody([Const] b2BodyDef def);
     void DestroyBody(b2Body body);
-//    b2Joint CreateJoint([Const] b2JointDef def);
+    b2Joint CreateJoint([Const] b2JointDef def);
     void DestroyJoint(b2Joint joint);
     void Step(float timeStep, long velocityIterations, long positionIterations);
     void ClearForces();
     void DrawDebugData();
     void QueryAABB(b2QueryCallback callback, [Ref] b2AABB aabb);
-//    void RayCast(b2RayCastCallback callback, [Ref] b2Vec2 point1, [Ref] b2Vec2 point2);
+    void RayCast(b2RayCastCallback callback, [Ref] b2Vec2 point1, [Ref] b2Vec2 point2);
     b2Body GetBodyList();
     b2Joint GetJointList();
     b2Contact GetContactList();
@@ -458,6 +458,66 @@ interface b2QueryCallback {
 
 [JSImplementation="b2QueryCallback"]
 interface JSQueryCallback {
-      void JSQueryCallback();
-      boolean ReportFixture(b2Fixture fixture);
+    void JSQueryCallback();
+    boolean ReportFixture(b2Fixture fixture);
+};
+
+interface b2ContactFilter {
+};
+
+[JSImplementation="b2ContactFilter"]
+interface JSContactFilter {
+    void JSContactFilter();
+    boolean ShouldCollide(b2Fixture fixtureA, b2Fixture fixtureB);
+};
+
+interface b2ContactListener {
+};
+
+[JSImplementation="b2ContactListener"]
+interface JSContactListener {
+    void JSContactListener();
+
+    void BeginContact(b2Contact contact);
+    void EndContact(b2Contact contact);
+    // TODO: Declare another b2ContactListener implementation without PreSolve/PostSolve,
+    // for efficiency (otherwise the JS implementations of these functions must get called
+    // even if unused).
+    void PreSolve(b2Contact contact, [Const] b2Manifold oldManifold);
+    void PostSolve(b2Contact contact, [Const] b2ContactImpulse impulse);
+};
+
+enum b2DrawFlag {
+    "b2Draw::e_shapeBit",
+    "b2Draw::e_jointBit",
+    "b2Draw::e_aabbBit",
+    "b2Draw::e_pairBit",
+    "b2Draw::e_centerOfMassBit"
+};
+
+interface b2Draw {
+    void SetFlags(unsigned long flags);
+    unsigned long GetFlags();
+    void AppendFlags(unsigned long flags);
+    void ClearFlags(unsigned long flags);
+};
+
+interface b2DestructionListener {
+};
+
+interface b2RayCastCallback {
+};
+
+[JSImplementation="b2RayCastCallback"]
+interface JSRayCastCallback {
+    void JSRayCastCallback();
+    float ReportFixture(b2Fixture fixture, [Const, Ref] b2Vec2 point,
+                      [Const, Ref] b2Vec2 normal, float fraction);
+};
+
+interface b2ContactImpulse {
+    // TODO: webidl_binder support for array types.
+    // attribute float[] normalImpulses;
+    // attribute float[] tangentImpulses;
+    attribute long count;
 };
