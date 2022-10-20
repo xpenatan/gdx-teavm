@@ -192,7 +192,9 @@ public class WebApplication implements Application, Runnable {
 		runnablesHelper.clear();
 
 		graphics.frameId++;
-		appListener.render();
+		if(graphics.frameId > 60) { // A bit of delay before rendering;
+			appListener.render();
+		}
 		input.reset();
 	}
 
