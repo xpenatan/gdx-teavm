@@ -110,8 +110,8 @@ public class b2World extends Box2DBase {
     //TODO add missing methods
     /*[-teaVM;-NATIVE]
         var world = Box2D.wrapPointer(addr, Box2D.b2World);
-        var joint = Box2D.wrapPointer(bodyAddr, Box2D.b2Joint);
-        body.DestroyJoint(joint);
+        var joint = Box2D.wrapPointer(jointAddr, Box2D.b2Joint);
+        world.DestroyJoint(joint);
     */
     private static native void DestroyJointNATIVE(long addr, long jointAddr);
 
