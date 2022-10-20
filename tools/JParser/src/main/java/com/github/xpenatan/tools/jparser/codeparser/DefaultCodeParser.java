@@ -98,12 +98,13 @@ public abstract class DefaultCodeParser implements CodeParser {
                 }
             }
             else if(parentNode instanceof CompilationUnit) {
+                CompilationUnit unit = (CompilationUnit)parentNode;
                 RawCodeBlock newblockComment = new RawCodeBlock();
                 newblockComment.setContent(content);
                 Optional<TokenRange> tokenRange = node.getTokenRange();
                 TokenRange javaTokens = tokenRange.get();
                 newblockComment.setTokenRange(javaTokens);
-                parserItem.unit.addType(newblockComment);
+                unit.addType(newblockComment);
             }
         }
         if(replace) {
