@@ -153,7 +153,7 @@ public class b2World extends Box2DBase {
     /*[-teaVM;-REPLACE]
         @org.teavm.jso.JSFunctor
         public interface AABBFunction extends org.teavm.jso.JSObject {
-            boolean ReportFixture(long b2FixtureAddr);
+            boolean ReportFixture(int b2FixtureAddr);
         }
     */
     public interface AABBFunction {

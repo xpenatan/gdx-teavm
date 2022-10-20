@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.Pool;
 import java.util.Iterator;
 
-public class World {
+public class World implements AABBFunction{
 
     /**
      * pool for bodies
@@ -259,14 +259,27 @@ public class World {
         return 0;
     }
 
+    private QueryCallback callback;
+
     public void QueryAABB(QueryCallback callback, float lowerX, float lowerY, float upperX, float upperY) {
-        AABBFunction function = new AABBFunction() {
-            @Override
-            public boolean ReportFixture(long b2FixtureAddr) {
-                Fixture fixture = fixtures.get(b2FixtureAddr);
-                return callback.reportFixture(fixture);
-            }
-        };
-        b2World.QueryAABB(function, lowerX, lowerY, upperX, upperY);
+        this.callback = callback;
+        b2World.QueryAABB(this, lowerX, lowerY, upperX, upperY);
+    }
+
+    /*[-teaVM;-REPLACE]
+    @Override
+    public boolean ReportFixture(int b2FixtureAddr) {
+        Fixture fixture = fixtures.get(b2FixtureAddr);
+        boolean flag = callback.reportFixture(fixture);
+        callback = null;
+        return flag;
+    }
+    */
+    @Override
+    public boolean ReportFixture(long b2FixtureAddr) {
+        Fixture fixture = fixtures.get(b2FixtureAddr);
+        boolean flag = callback.reportFixture(fixture);
+        callback = null;
+        return flag;
     }
 }
