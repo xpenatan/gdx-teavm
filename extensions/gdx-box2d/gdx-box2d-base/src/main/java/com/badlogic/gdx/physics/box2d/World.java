@@ -270,16 +270,18 @@ public class World implements AABBFunction{
     @Override
     public boolean ReportFixture(int b2FixtureAddr) {
         Fixture fixture = fixtures.get(b2FixtureAddr);
-        boolean flag = callback.reportFixture(fixture);
-        callback = null;
-        return flag;
+        if(callback != null) {
+            return callback.reportFixture(fixture);
+        }
+        return false;
     }
     */
     @Override
     public boolean ReportFixture(long b2FixtureAddr) {
         Fixture fixture = fixtures.get(b2FixtureAddr);
-        boolean flag = callback.reportFixture(fixture);
-        callback = null;
-        return flag;
+        if(callback != null) {
+            return callback.reportFixture(fixture);
+        }
+        return false;
     }
 }
