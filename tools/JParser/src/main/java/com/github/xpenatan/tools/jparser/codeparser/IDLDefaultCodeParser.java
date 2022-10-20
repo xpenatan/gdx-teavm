@@ -21,7 +21,6 @@ import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLMethod;
 import com.github.xpenatan.tools.jparser.idl.IDLParameter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,7 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
     }
 
     @Override
-    protected void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    protected void setJavaBodyNativeCMD(String content, MethodDeclaration methodDeclaration) {
     }
 
     @Override

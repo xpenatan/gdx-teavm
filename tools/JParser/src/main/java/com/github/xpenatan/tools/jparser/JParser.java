@@ -2,15 +2,8 @@ package com.github.xpenatan.tools.jparser;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.utils.PositionUtils;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParser;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
@@ -20,7 +13,6 @@ import com.github.xpenatan.tools.jparser.util.CustomPrettyPrinter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  *  JParser is a simple solution to change the original java source with a custom code.
@@ -88,7 +80,7 @@ public class JParser {
 
             System.out.println(i + " Parsing: " + inputPath);
 
-            String codeParsed = parseClass(jParser, wrapper, unit);
+            String codeParsed = parseJava(jParser, wrapper, unit);
             if(codeParsed != null) {
                 generateFile(destinationPath, codeParsed);
             }
@@ -161,56 +153,22 @@ public class JParser {
         return className;
     }
 
-    private static String parseClass(JParser jParser, CodeParser wrapper, CompilationUnit unit) throws Exception {
-        ArrayList<BlockComment> blockComments = new ArrayList<>();
-
+    private static String parseJava(JParser jParser, CodeParser wrapper, CompilationUnit unit) throws Exception {
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(unit.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
-
-            if(node instanceof BlockComment) {
-                BlockComment blockComment = (BlockComment) node;
-                blockComments.add(blockComment);
-            }
-            else if(node instanceof ImportDeclaration) {
-                ImportDeclaration importDeclaration = (ImportDeclaration) node;
-                Optional<Comment> optionalComment = importDeclaration.getComment();
-                boolean addImport = false;
-                if(optionalComment.isPresent()) {
-                    Comment comment = optionalComment.get();
-                    if(comment instanceof BlockComment) {
-                        BlockComment blockComment = (BlockComment) optionalComment.get();
-                        blockComments.add(blockComment);
-                        addImport = true;
-                    }
-                    addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, addImport ? importDeclaration : null);
+            CodeParserItem parserItem = createParserItem(unit, node);
+            wrapper.parseCode(parserItem);
+            if(node instanceof ClassOrInterfaceDeclaration) {
+                if(node.getParentNode().isPresent()) {
+                    ClassOrInterfaceDeclaration nodeInterface = (ClassOrInterfaceDeclaration)node;
+                    parseClassInterface(jParser, unit, wrapper, nodeInterface);
                 }
-            }
-            else {
-                if(node instanceof PackageDeclaration) {
-                    addBlockCommentItem(unit, true, wrapper, null, blockComments, null, null, null);
-                    PackageDeclaration packageD = (PackageDeclaration) node;
-                    packageD.setComment(new BlockComment(gen));
-                }
-                else if(node instanceof ClassOrInterfaceDeclaration) {
-                    ClassOrInterfaceDeclaration classInterface = (ClassOrInterfaceDeclaration) node;
-
-                    Optional<Comment> optionalComment = classInterface.getComment();
-                    if(optionalComment.isPresent()) {
-                        Comment comment = optionalComment.get();
-                        if(comment instanceof BlockComment) {
-                            BlockComment blockComment = (BlockComment) optionalComment.get();
-                            blockComments.add(blockComment);
-                        }
-                    }
-                    addBlockCommentItem(unit, true, wrapper, classInterface, blockComments, null, null, null);
-                    if(!unit.getChildNodes().contains(classInterface)) {
-                        // Don't copy destroyed class
-                        return null;
-                    }
-                    parseClassInterface(jParser, unit, wrapper, classInterface, 0);
+                else {
+                    // Skip java file if there is no root class
+                    return null;
                 }
             }
         }
@@ -219,86 +177,30 @@ public class JParser {
         return unit.toString();
     }
 
-    private static void parseClassInterface(JParser jParser, CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface, int classLevel) {
+    private static void parseClassInterface(JParser jParser, CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface) {
         wrapper.onParseClassStart(jParser, unit, clazzInterface);
 
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(clazzInterface.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
-        ArrayList<BlockComment> blockComments = new ArrayList<>();
 
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
-
-            if(node instanceof BlockComment) {
-                BlockComment blockComment = (BlockComment) node;
-                blockComments.add(blockComment);
-            }
-            else if(node instanceof FieldDeclaration) {
-                FieldDeclaration field = (FieldDeclaration) node;
-                Optional<Comment> optionalComment = field.getComment();
-
-                boolean addField = false;
-
-                if(optionalComment.isPresent()) {
-                    Comment comment = optionalComment.get();
-                    if(comment instanceof BlockComment) {
-                        BlockComment blockComment = (BlockComment) optionalComment.get();
-                        blockComments.add(blockComment);
-                        addField = true;
-                    }
-                }
-                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, addField ? field : null, null, null);
-                wrapper.onParseField(field);
-            }
-            else if(node instanceof ConstructorDeclaration) {
-                ConstructorDeclaration constructor = (ConstructorDeclaration) node;
-                wrapper.onParseConstructor(constructor);
-            }
-            else if(node instanceof MethodDeclaration) {
-                MethodDeclaration method = (MethodDeclaration) node;
-                Optional<Comment> optionalComment = method.getComment();
-
-                boolean addMethod = false;
-                if(optionalComment.isPresent()) {
-                    if(optionalComment.get() instanceof BlockComment) {
-                        BlockComment blockComment = (BlockComment) optionalComment.get();
-                        blockComments.add(blockComment);
-                        addMethod = true;
-                    }
-                }
-                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, addMethod ? method : null, null);
-                wrapper.onParseMethod(method);
-            }
-            else {
-                addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);
-                if(node instanceof ClassOrInterfaceDeclaration) {
-                    parseClassInterface(jParser, unit, wrapper, (ClassOrInterfaceDeclaration) node, ++classLevel);
-                }
+            CodeParserItem parserItem = createParserItem(unit, node);
+            wrapper.parseCode(parserItem);
+            if(node instanceof ClassOrInterfaceDeclaration && node.getParentNode().isPresent()) {
+                ClassOrInterfaceDeclaration nodeInterface = (ClassOrInterfaceDeclaration)node;
+                parseClassInterface(jParser, unit, wrapper, nodeInterface);
             }
         }
-
-        if(classLevel == 0) {
-            addBlockCommentItem(unit, false, wrapper, clazzInterface, blockComments, null, null, null);
-        }
-
         PositionUtils.sortByBeginPosition(clazzInterface.getMembers(), false);
         wrapper.onParseClassEnd(jParser, unit, clazzInterface);
     }
 
-    private static boolean addBlockCommentItem(CompilationUnit unit, boolean isHeader, CodeParser wrapper, ClassOrInterfaceDeclaration classInterface, ArrayList<BlockComment> blockComments, FieldDeclaration field, MethodDeclaration method, ImportDeclaration importDeclaration) {
-        if(blockComments.size() > 0) {
-            CodeParserItem parserItem = new CodeParserItem();
-            parserItem.unit = unit;
-            parserItem.rawComments.addAll(blockComments);
-            parserItem.classInterface = classInterface;
-            parserItem.fieldDeclaration = field;
-            parserItem.methodDeclaration = method;
-            parserItem.importDeclaration = importDeclaration;
-            blockComments.clear();
-            wrapper.parseCodeBlock(isHeader, parserItem);
-            return true;
-        }
-        return false;
+    private static CodeParserItem createParserItem(CompilationUnit unit, Node node) {
+        CodeParserItem parserItem = new CodeParserItem();
+        parserItem.unit = unit;
+        parserItem.node = node;
+        return parserItem;
     }
 }

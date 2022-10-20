@@ -147,12 +147,10 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
     }
 
     @Override
-    protected void setJavaBodyNativeCMD(String headerCommands, BlockComment blockComment, MethodDeclaration methodDeclaration) {
+    protected void setJavaBodyNativeCMD(String content, MethodDeclaration methodDeclaration) {
         // Generate teaVM binding when using comment blocks
         NodeList<Parameter> parameters = methodDeclaration.getParameters();
         int size = parameters.size();
-
-        String content = CodeParserItem.obtainContent(headerCommands, blockComment);
 
         String param = "";
 
