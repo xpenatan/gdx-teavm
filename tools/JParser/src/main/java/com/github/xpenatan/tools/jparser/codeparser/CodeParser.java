@@ -9,4 +9,5 @@ public interface CodeParser {
     void onParseClassStart(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration);
     void onParseClassEnd(JParser jParser, CompilationUnit unit, ClassOrInterfaceDeclaration classOrInterfaceDeclaration);
     void parseCode(CodeParserItem parserItem);
+    default void onParseCodeEnd() {}
 }

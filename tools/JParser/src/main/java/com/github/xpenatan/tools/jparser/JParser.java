@@ -172,14 +172,15 @@ public class JParser {
                 }
             }
         }
+        wrapper.onParseCodeEnd();
         PositionUtils.sortByBeginPosition(unit.getTypes(), false);
 
         return unit.toString();
     }
 
     private static void parseClassInterface(JParser jParser, CompilationUnit unit, CodeParser wrapper, ClassOrInterfaceDeclaration clazzInterface) {
+        wrapper.onParseCodeEnd();
         wrapper.onParseClassStart(jParser, unit, clazzInterface);
-
         ArrayList<Node> array = new ArrayList<>();
         array.addAll(clazzInterface.getChildNodes());
         PositionUtils.sortByBeginPosition(array, false);
