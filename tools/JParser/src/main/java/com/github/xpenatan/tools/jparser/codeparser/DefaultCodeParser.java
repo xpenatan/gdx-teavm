@@ -63,14 +63,7 @@ public abstract class DefaultCodeParser implements CodeParser {
         }
         if(blockComment != null) {
             blockComment.remove();
-            boolean codeParsed = parserBlock(node, blockComment);
-            for(int i = 0; i < cache.size(); i++) {
-                BlockComment otherTopBlockComment = cache.get(i);
-                if(parserBlock(node, otherTopBlockComment)) {
-                    cache.remove(i);
-                    break;
-                }
-            }
+            parserBlock(node, blockComment);
             onParseCodeEnd();
         }
     }
