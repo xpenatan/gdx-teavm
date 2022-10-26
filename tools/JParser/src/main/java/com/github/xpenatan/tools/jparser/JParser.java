@@ -3,7 +3,9 @@ package com.github.xpenatan.tools.jparser;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.utils.PositionUtils;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParser;
 import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
@@ -159,6 +161,11 @@ public class JParser {
         PositionUtils.sortByBeginPosition(array, false);
         for(int i = 0; i < array.size(); i++) {
             Node node = array.get(i);
+            if(node instanceof PackageDeclaration) {
+                PackageDeclaration packageD = (PackageDeclaration) node;
+                packageD.setComment(new BlockComment(gen));
+            }
+
             CodeParserItem parserItem = createParserItem(unit, node);
             wrapper.parseCode(parserItem);
             if(node instanceof ClassOrInterfaceDeclaration) {

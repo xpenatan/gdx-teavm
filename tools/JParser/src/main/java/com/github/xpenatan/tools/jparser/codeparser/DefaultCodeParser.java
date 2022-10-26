@@ -40,8 +40,10 @@ public abstract class DefaultCodeParser implements CodeParser {
     public void onParseCodeEnd() {
         for(int i = 0; i < cache.size(); i++) {
             BlockComment otherTopBlockComment = cache.get(i);
-            parserBlock(otherTopBlockComment, otherTopBlockComment);
-            otherTopBlockComment.remove();
+            if(CodeParserItem.obtainHeaderCommands(otherTopBlockComment) != null) {
+                parserBlock(otherTopBlockComment, otherTopBlockComment);
+                otherTopBlockComment.remove();
+            }
         }
         cache.clear();
     }
@@ -62,8 +64,10 @@ public abstract class DefaultCodeParser implements CodeParser {
             cache.add(standAloneBlockComment);
         }
         if(blockComment != null) {
-            blockComment.remove();
-            parserBlock(node, blockComment);
+            if(CodeParserItem.obtainHeaderCommands(blockComment) != null) {
+                blockComment.remove();
+                parserBlock(node, blockComment);
+            }
             onParseCodeEnd();
         }
     }
