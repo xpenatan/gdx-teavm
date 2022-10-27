@@ -163,6 +163,8 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
 
         MethodDeclaration containsMethod = containsMethod(classOrInterfaceDeclaration, idlMethod);
         if(containsMethod != null) {
+            boolean isNative = containsMethod.isNative();
+            boolean isStatic = containsMethod.isStatic();
             Optional<Comment> optionalComment = containsMethod.getComment();
             if(optionalComment.isPresent()) {
                 Comment comment = optionalComment.get();
@@ -170,12 +172,21 @@ public abstract class IDLDefaultCodeParser extends DefaultCodeParser {
                     BlockComment blockComment = (BlockComment)optionalComment.get();
                     String headerCommands = CodeParserItem.obtainHeaderCommands(blockComment);
                     // Skip if method already exist with header code
-                    if(headerCommands != null && headerCommands.startsWith(CMD_HEADER_START + headerCMD)) {
-                        return;
+                    if(headerCommands != null) {
+                        if(headerCommands.startsWith(CMD_HEADER_START + headerCMD)) {
+                            return;
+                        }
                     }
                 }
             }
-            containsMethod.remove();
+            if(isNative && !isStatic) {
+                // It's a dummy method
+                containsMethod.remove();
+            }
+            if(!isNative && !isStatic) {
+                // if a simple method exist, keep it.
+                return;
+            }
         }
 
         if(!filterIDLMethod(idlClass, idlMethod)) {
