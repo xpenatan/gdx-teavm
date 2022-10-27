@@ -362,6 +362,30 @@ public class TeaBuilder {
         filePath.add("com/badlogic/gdx/utils/lsans-15.fnt");
         filePath.add("com/badlogic/gdx/utils/lsans-15.png");
 
+        filePath.add("net/mgsx/gltf/shaders/brdfLUT.png");
+        filePath.add("net/mgsx/gltf/shaders/default.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/default.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/depth.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/depth.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/emissive-only.fs");
+        filePath.add("net/mgsx/gltf/shaders/ibl-sun.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/ibl-sun.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/skybox.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/skybox.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/compat.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/compat.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/env.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/functions.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/ibl.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/iridescence.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/lights.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/material.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.fs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.vs.glsl");
+        filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
+
         filePath.add("scripts/soundmanager2-jsmin.js");
         filePath.add("scripts/freetype.js");
         filePath.add("scripts/bullet.js");
