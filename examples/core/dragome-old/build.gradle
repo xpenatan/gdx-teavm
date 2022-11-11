@@ -1,20 +1,20 @@
 plugins {
-  id "org.gretty" version "3.0.6"
+    id "org.gretty" version "3.0.6"
 }
 
 sourceCompatibility = 1.8
 
 gretty {
-  servletContainer = 'jetty9'
-  extraResourceBase 'webapp'
+    servletContainer = 'jetty9'
+    extraResourceBase 'webapp'
 }
 
 sourceSets.main.java.srcDirs = ["src"]
 
 dependencies {
-  implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-  implementation project(":backends:backend-dragome-old")
-  implementation project(":examples:core:core")
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation project(":backends:backend-dragome-old")
+    implementation project(":examples:core:core")
 //  implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
-  implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
 }

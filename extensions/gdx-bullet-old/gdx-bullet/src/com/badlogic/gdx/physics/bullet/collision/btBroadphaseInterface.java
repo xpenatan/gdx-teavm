@@ -2,14 +2,16 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btBroadphaseInterface extends BulletBase {
 
 	/*JNI
 		#include <src/bullet/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h>
 	*/
 
-	btOverlappingPairCache overlappingPairCache = new btOverlappingPairCache(0, false);
+    btOverlappingPairCache overlappingPairCache = new btOverlappingPairCache(0, false);
 
 
 	/*[0;X;F;L]
@@ -19,12 +21,12 @@ public class btBroadphaseInterface extends BulletBase {
 		}
 	*/
 
-	public btOverlappingPairCache getOverlappingPairCache() {
-		checkPointer();
-		if(overlappingPairCache.cPointer == 0)
-			overlappingPairCache.resetObj(getOverlappingPairCache(cPointer), false);
-		return overlappingPairCache;
-	}
+    public btOverlappingPairCache getOverlappingPairCache() {
+        checkPointer();
+        if(overlappingPairCache.cPointer == 0)
+            overlappingPairCache.resetObj(getOverlappingPairCache(cPointer), false);
+        return overlappingPairCache;
+    }
 	/*[0;X;L]
 	 	checkPointer(); #J
 	 	jsObj, this.jsObj #P
@@ -35,9 +37,9 @@ public class btBroadphaseInterface extends BulletBase {
 	 	return overlappingPairCache; #J
 	*/
 
-	private static native long getOverlappingPairCache(long addr); /*
+    private static native long getOverlappingPairCache(long addr); /*
 		btBroadphaseInterface * cobj = (btBroadphaseInterface *)addr;
 		return (jlong)cobj->getOverlappingPairCache();
 	*/
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 }

@@ -8,15 +8,17 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class RayResultCallback extends BulletBase {
 
     static LocalRayResult tmpLocalRes = new LocalRayResult(0, false);
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.RayResultCallback);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.RayResultCallback);", this);
+    }
 
     @Override
     protected void delete() {
@@ -25,31 +27,31 @@ public class RayResultCallback extends BulletBase {
     }
 
     public boolean hasHit() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalBoolean("jsObj.hasHit();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalBoolean("jsObj.hasHit();", this);
     }
 
     public void setClosestHitFraction(float value) {
-		com.dragome.commons.javascript.ScriptHelper.put("value",value,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_closestHitFraction(value);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("value", value, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_closestHitFraction(value);", this);
     }
 
     public void setCollisionObject(btCollisionObject value) {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.put("coladdr",(value !=null ? value.cPointer : 0),this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var colobj=Bullet.wrapPointer(coladdr,Bullet.btCollisionObject);jsObj.set_m_collisionObject(colobj);",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.put("coladdr", (value != null ? value.cPointer : 0), this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var colobj=Bullet.wrapPointer(coladdr,Bullet.btCollisionObject);jsObj.set_m_collisionObject(colobj);", this);
     }
 
     public btCollisionObject getCollisionObject(btCollisionWorld world) {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var collObj=jsObj.get_m_collisionObject();var colAddr=0;if(collObj !==undefined) {var pointer=Bullet.getPointer(collObj);if(pointer !==undefined)colAddr=pointer;}",this);
-		long colAddr = com.dragome.commons.javascript.ScriptHelper.evalLong("colAddr;",this);
-		return world.bodies.get(colAddr);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var collObj=jsObj.get_m_collisionObject();var colAddr=0;if(collObj !==undefined) {var pointer=Bullet.getPointer(collObj);if(pointer !==undefined)colAddr=pointer;}", this);
+        long colAddr = com.dragome.commons.javascript.ScriptHelper.evalLong("colAddr;", this);
+        return world.bodies.get(colAddr);
     }
 
     public float addSingleResult(LocalRayResult rayResult, boolean normalInWorldSpace) {
@@ -57,8 +59,8 @@ public class RayResultCallback extends BulletBase {
     }
 
     /**
-	 * Use to remove objects after raycasting
-	 */
+     * Use to remove objects after raycasting
+     */
     public void clear() {
         setCollisionObject(null);
     }

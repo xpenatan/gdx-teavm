@@ -14,7 +14,7 @@ public class MouseJoint extends Joint<b2MouseJoint> {
         b2Joint.setPointer(addr);
     }
 
-    public void setTarget (Vector2 target) {
+    public void setTarget(Vector2 target) {
         b2Vec2.TMP_01.Set(target.x, target.y);
         b2Joint.SetTarget(b2Vec2.TMP_01);
     }

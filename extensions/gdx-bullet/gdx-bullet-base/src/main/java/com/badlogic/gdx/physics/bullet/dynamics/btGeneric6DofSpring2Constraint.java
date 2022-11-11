@@ -11,7 +11,7 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
     protected btGeneric6DofSpring2Constraint() {
     }
 
-    public btGeneric6DofSpring2Constraint (btRigidBody rbA, btRigidBody rbB, Matrix4 frameInA, Matrix4 frameInB) {
+    public btGeneric6DofSpring2Constraint(btRigidBody rbA, btRigidBody rbB, Matrix4 frameInA, Matrix4 frameInB) {
         btTransform btframeInA = btTransform.TEMP_0;
         btTransform btframeInB = btTransform.TEMP_1;
         btTransform.convert(frameInA, btframeInA);

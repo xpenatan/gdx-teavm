@@ -5,7 +5,7 @@ package com.badlogic.gdx.physics.bullet.collision;
  */
 public class btCapsuleShape extends btConvexInternalShape {
 
-    public btCapsuleShape (float radius, float height) {
+    public btCapsuleShape(float radius, float height) {
         initObject(createNative(radius, height), true);
     }
 

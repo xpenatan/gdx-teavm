@@ -14,7 +14,7 @@ public class LocalRayResult extends BulletBase {
         initObject(0, false);
     }
 
-    public btCollisionObject getCollisionObject () {
+    public btCollisionObject getCollisionObject() {
         btCollisionObject.temp01.setPointer(getCollisionObject(cPointer));
         return btCollisionObject.temp01;
     }
@@ -26,7 +26,7 @@ public class LocalRayResult extends BulletBase {
      */
     private static native long getCollisionObject(long addr);
 
-    public btVector3 getHitNormalLocal () {
+    public btVector3 getHitNormalLocal() {
         btVector3.emptyTransform.setPointer(getHitNormalLocal(cPointer));
         return btVector3.emptyTransform;
     }
@@ -38,7 +38,7 @@ public class LocalRayResult extends BulletBase {
      */
     private static native long getHitNormalLocal(long addr);
 
-    public void setHitFraction (float value) {
+    public void setHitFraction(float value) {
         setHitFraction(cPointer, value);
     }
 
@@ -48,7 +48,7 @@ public class LocalRayResult extends BulletBase {
      */
     private static native void setHitFraction(long addr, float value);
 
-    public float getHitFraction () {
+    public float getHitFraction() {
         return getHitFraction(cPointer);
     }
 

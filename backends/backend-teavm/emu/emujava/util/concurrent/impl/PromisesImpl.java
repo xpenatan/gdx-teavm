@@ -21,58 +21,60 @@ import java.util.function.BiConsumer;
  *
  */
 final class PromisesImpl implements Promises {
-  @Override
-  public Promise<Void> allOf(Promise[] promises) {
-    assert promises.length > 0;
+    @Override
+    public Promise<Void> allOf(Promise[] promises) {
+        assert promises.length > 0;
 
-    Promise<Void> andPromise = new PromiseImpl<>();
-    BiConsumer<Object, Throwable> callback = new BiConsumer<Object, Throwable>() {
-      int counter = promises.length;
+        Promise<Void> andPromise = new PromiseImpl<>();
+        BiConsumer<Object, Throwable> callback = new BiConsumer<Object, Throwable>() {
+            int counter = promises.length;
 
-      @Override
-      public void accept(Object value, Throwable e) {
-        if (e != null) {
-          andPromise.reject(e);
-        } else if (--counter == 0) {
-          andPromise.resolve(null);
+            @Override
+            public void accept(Object value, Throwable e) {
+                if(e != null) {
+                    andPromise.reject(e);
+                }
+                else if(--counter == 0) {
+                    andPromise.resolve(null);
+                }
+            }
+        };
+
+        for(Promise<?> promise : promises) {
+            promise.then(callback);
         }
-      }
-    };
-
-    for (Promise<?> promise : promises) {
-      promise.then(callback);
+        return andPromise;
     }
-    return andPromise;
-  }
 
-  @Override
-  public Promise<Object> anyOf(Promise[] promises) {
-    assert promises.length > 0;
+    @Override
+    public Promise<Object> anyOf(Promise[] promises) {
+        assert promises.length > 0;
 
-    Promise<Object> orPromise = new PromiseImpl<>();
-    BiConsumer<Object, Throwable> callback = (value, e) -> {
-      if (e != null) {
-        orPromise.reject(e);
-      } else {
-        orPromise.resolve(value);
-      }
-    };
+        Promise<Object> orPromise = new PromiseImpl<>();
+        BiConsumer<Object, Throwable> callback = (value, e) -> {
+            if(e != null) {
+                orPromise.reject(e);
+            }
+            else {
+                orPromise.resolve(value);
+            }
+        };
 
-    for (Promise<?> promise : promises) {
-      promise.then(callback);
+        for(Promise<?> promise : promises) {
+            promise.then(callback);
+        }
+        return orPromise;
     }
-    return orPromise;
-  }
 
-  @Override
-  public <V> Promise<V> completed(V value) {
-    PromiseImpl<V> promise = new PromiseImpl<>();
-    promise.resolve(value);
-    return promise;
-  }
+    @Override
+    public <V> Promise<V> completed(V value) {
+        PromiseImpl<V> promise = new PromiseImpl<>();
+        promise.resolve(value);
+        return promise;
+    }
 
-  @Override
-  public <V> Promise<V> incomplete() {
-    return new PromiseImpl<>();
-  }
+    @Override
+    public <V> Promise<V> incomplete() {
+        return new PromiseImpl<>();
+    }
 }

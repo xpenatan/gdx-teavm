@@ -6,7 +6,9 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.dynamics;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 
     public btSequentialImpulseConstraintSolver() {
@@ -14,12 +16,12 @@ public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
     }
 
     private static long createNative() {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var obj=new Bullet.btSequentialImpulseConstraintSolver();",null);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(obj);",null);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var obj=new Bullet.btSequentialImpulseConstraintSolver();", null);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(obj);", null);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btSequentialImpulseConstraintSolver);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btSequentialImpulseConstraintSolver);", this);
+    }
 }

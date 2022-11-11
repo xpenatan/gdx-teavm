@@ -7,15 +7,15 @@ group 'com.github.xpenatan.gdx-html5-tools'
 version '1.0.0'
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.generator.Main"
-sourceSets.main.java.srcDirs = [ "src/main/java/" ]
+sourceSets.main.java.srcDirs = ["src/main/java/"]
 
 configurations {
     provided
     implementation.extendsFrom provided
 }
 
-task fromClasses (type: Jar) {
-    from (sourceSets.main.output){
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
     }
 }
 
@@ -36,37 +36,37 @@ task run(dependsOn: classes, type: JavaExec) {
 }
 
 task copyDependencies(type: Copy) {
-    from {configurations.default }
-    {
-        exclude "core*.jar"
-        exclude "jorbis-*.jar"
-        exclude "sac-*.jar"
-        exclude "validation-api-*.jar"
-        exclude "jutils-*.jar"
-        exclude "jsinterop-*.jar"
-        exclude "jlayer-*.jar"
-        exclude "jinput-*.jar"
-        exclude "javax.*.jar"
-        exclude "gwt-user*.jar"
-    }
+    from { configurations.default }
+            {
+                exclude "core*.jar"
+                exclude "jorbis-*.jar"
+                exclude "sac-*.jar"
+                exclude "validation-api-*.jar"
+                exclude "jutils-*.jar"
+                exclude "jsinterop-*.jar"
+                exclude "jlayer-*.jar"
+                exclude "jinput-*.jar"
+                exclude "javax.*.jar"
+                exclude "gwt-user*.jar"
+            }
     into 'build/libs/dependencies'
 }
 
-def projectsToCollect = [':tools:generator:desktop',':tools:generator:core']
+def projectsToCollect = [':tools:generator:desktop', ':tools:generator:core']
 
-task dist (type: Jar, dependsOn: [copyDependencies, projectsToCollect.collect{ it+":compileJava"}])  {
+task dist(type: Jar, dependsOn: [copyDependencies, projectsToCollect.collect { it + ":compileJava" }]) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes (
-           'Main-Class': project.mainClassName
+        attributes(
+                'Main-Class': project.mainClassName
         )
     }
-    from files(projectsToCollect.collect{ project(it).sourceSets.main.output })
+    from files(projectsToCollect.collect { project(it).sourceSets.main.output })
     from {
         (configurations.provided).collect
-            {
-                it.isDirectory() ? it : zipTree(it)
-            }
+                {
+                    it.isDirectory() ? it : zipTree(it)
+                }
     }
     with jar
 }

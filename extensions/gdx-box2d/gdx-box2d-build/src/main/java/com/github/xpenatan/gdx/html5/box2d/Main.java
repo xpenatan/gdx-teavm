@@ -1,11 +1,8 @@
 package com.github.xpenatan.gdx.html5.box2d;
 
-
-
 import com.github.xpenatan.tools.jparser.JParser;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLParser;
-
 import java.io.File;
 
 public class Main {

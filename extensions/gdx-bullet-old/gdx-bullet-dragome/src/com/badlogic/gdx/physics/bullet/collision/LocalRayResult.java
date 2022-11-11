@@ -8,7 +8,9 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class LocalRayResult extends BulletBase {
 
     private LocalShapeInfo localShapeInfo = new LocalShapeInfo(0, false);
@@ -17,26 +19,26 @@ public class LocalRayResult extends BulletBase {
         resetObj(cPtr, cMemoryOwn);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.LocalRayResult);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.LocalRayResult);", this);
+    }
 
     public LocalShapeInfo getLocalShapeInfo() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_localShapeInfo());",this);
-		if(addr != 0) {
-			localShapeInfo.resetObj(addr, false);
-			return localShapeInfo;
-		}
-		return null;
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_localShapeInfo());", this);
+        if(addr != 0) {
+            localShapeInfo.resetObj(addr, false);
+            return localShapeInfo;
+        }
+        return null;
     }
 
     public btCollisionObject getCollisionObject(btCollisionWorld world) {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_collisionObject());",this);
-		return world.bodies.get(addr);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_collisionObject());", this);
+        return world.bodies.get(addr);
     }
 }

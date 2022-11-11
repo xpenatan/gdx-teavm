@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btShapeHull extends BulletBase {
 
-    public btShapeHull (btConvexShape shape) {
+    public btShapeHull(btConvexShape shape) {
         initObject(createNative(shape.getCPointer()), true);
     }
 

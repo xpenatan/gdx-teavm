@@ -5,37 +5,39 @@ package com.github.xpenatan.gdx.backends.web.soundmanager;
  */
 public interface SMSoundWrapper {
 
-	/** Constants for play state. */
-	public static final int STOPPED = 0;
-	public static final int PLAYING = 1;
+    /**
+     * Constants for play state.
+     */
+    public static final int STOPPED = 0;
+    public static final int PLAYING = 1;
 
-	public int getPosition();
+    public int getPosition();
 
-	public void destruct();
+    public void destruct();
 
-	public void setPosition(int position);
+    public void setPosition(int position);
 
-	public void pause();
+    public void pause();
 
-	public void play(SMSoundOptions options);
+    public void play(SMSoundOptions options);
 
-	public void play();
+    public void play();
 
-	public void resume();
+    public void resume();
 
-	public void stop();
+    public void stop();
 
-	public void setVolume(int volume);
+    public void setVolume(int volume);
 
-	public int getVolume();
+    public int getVolume();
 
-	public void setPan(int pan);
+    public void setPan(int pan);
 
-	public int getPan();
+    public int getPan();
 
-	public int getPlayState();
+    public int getPlayState();
 
-	public boolean getPaused();
+    public boolean getPaused();
 
-	public int getLoops();
+    public int getLoops();
 }

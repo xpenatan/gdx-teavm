@@ -11,10 +11,9 @@ import org.teavm.vm.spi.TeaVMPlugin;
 @Before(JSOPlugin.class)
 public class TeaPlugin implements TeaVMPlugin {
 
-	@Override
-	public void install(TeaVMHost host) {
-		host.add(new TeaClassTransformer());
-		host.add(new JavaObjectExporterDependency());
-	}
-
+    @Override
+    public void install(TeaVMHost host) {
+        host.add(new TeaClassTransformer());
+        host.add(new JavaObjectExporterDependency());
+    }
 }

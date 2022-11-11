@@ -63,12 +63,12 @@ public class GeneratorView {
     }
 
     private void loadPreference() {
-        if (preferences == null)
+        if(preferences == null)
             return;
     }
 
     private void savePreference() {
-        if (preferences == null)
+        if(preferences == null)
             return;
         preferences.putString(PREF_JAR_PATH, gameJarPath.getValue());
         preferences.putString(PREF_APP_CLASS_NAME, appClassName.getValue());
@@ -112,7 +112,7 @@ public class GeneratorView {
         ImGui.Checkbox("##obfuscate", obfuscateFlag);
 
         boolean compiling = viewModel.isCompiling();
-        if (compiling) {
+        if(compiling) {
             ImGui.PushItemFlag(ImGuiItemFlags.Disabled, true);
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
         }
@@ -124,7 +124,7 @@ public class GeneratorView {
             ImGui.Button("##COMPILE", BTN_BUILD_WIDTH, 0);
         }
         else {
-            if (ImGui.Button(STR_BTN_COMPILE, BTN_BUILD_WIDTH, 0)) {
+            if(ImGui.Button(STR_BTN_COMPILE, BTN_BUILD_WIDTH, 0)) {
                 viewModel.compile(
                         gameJarPath.getValue(),
                         appClassName.getValue(),
@@ -135,15 +135,15 @@ public class GeneratorView {
             }
         }
 
-        if (compiling) {
+        if(compiling) {
             ImGui.PopItemFlag();
             ImGui.PopStyleVar();
         }
         ImGui.SameLine();
 
         if(compiling) {
-            float gTime = (float) ImGui.GetContextTime();
-            float posX = posX1 + BTN_BUILD_WIDTH / 2.5f ;
+            float gTime = (float)ImGui.GetContextTime();
+            float posX = posX1 + BTN_BUILD_WIDTH / 2.5f;
             float posY = posY1 + 1;
             SpinnerView.drawSpinner("test", 6, 2, loadingColor, gTime, posX, posY, false);
 
@@ -166,20 +166,20 @@ public class GeneratorView {
 
     private void renderServerView() {
         boolean compiling = viewModel.isCompiling();
-        if (compiling) {
+        if(compiling) {
             ImGui.PushItemFlag(ImGuiItemFlags.Disabled, true);
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
         }
 
         boolean serverRunning = viewModel.isServerRunning();
         String buttonText = serverRunning ? STR_SERVER_STOP : STR_SERVER_START;
-        if (ImGui.Button(buttonText)) {
-            if (serverRunning)
+        if(ImGui.Button(buttonText)) {
+            if(serverRunning)
                 viewModel.stopLocalServer();
             else
                 viewModel.startLocalServer(webappDirectory.getValue());
         }
-        if (compiling) {
+        if(compiling) {
             ImGui.PopItemFlag();
             ImGui.PopStyleVar();
         }
@@ -189,6 +189,4 @@ public class GeneratorView {
         savePreference();
         viewModel.dispose();
     }
-
-
 }

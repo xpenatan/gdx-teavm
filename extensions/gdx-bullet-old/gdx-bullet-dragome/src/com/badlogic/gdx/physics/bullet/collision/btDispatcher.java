@@ -8,28 +8,30 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btDispatcher extends BulletBase {
 
     private btPersistentManifold manifold = new btPersistentManifold(0, false);
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btDispatcher);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btDispatcher);", this);
+    }
 
     public int getNumManifolds() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.getNumManifolds();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.getNumManifolds();", this);
     }
 
     public btPersistentManifold getManifoldByIndexInternal(int index) {
-		com.dragome.commons.javascript.ScriptHelper.put("index",index,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.getManifoldByIndexInternal(index));",this);
-		manifold.resetObj(addr, false);
-		return manifold;
+        com.dragome.commons.javascript.ScriptHelper.put("index", index, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.getManifoldByIndexInternal(index));", this);
+        manifold.resetObj(addr, false);
+        return manifold;
     }
 }

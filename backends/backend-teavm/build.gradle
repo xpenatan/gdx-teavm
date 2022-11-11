@@ -8,8 +8,8 @@ def module_name = "backend-teavm"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets.main.java.srcDirs = [ "emu", "src/main/java/" ]
-sourceSets.main.resources.srcDirs = [ "src/main/resources/" ]
+sourceSets.main.java.srcDirs = ["emu", "src/main/java/"]
+sourceSets.main.resources.srcDirs = ["src/main/resources/"]
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
@@ -41,12 +41,12 @@ dependencies {
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
-task fromClasses (type: Jar) {
-    from (sourceSets.main.output){
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
     }
 }
 
-task addNative (type: Jar) {
+task addNative(type: Jar) {
     from zipTree("/libs/teavm-cli-0.7.0-dev-1200.jar")
 }
 

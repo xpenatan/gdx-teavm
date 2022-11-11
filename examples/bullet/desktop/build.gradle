@@ -5,31 +5,31 @@ plugins {
 apply from: '../../../dependencies.gradle'
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.bullet.Main"
-sourceSets.main.java.srcDirs = [ "src/main/java/" ]
+sourceSets.main.java.srcDirs = ["src/main/java/"]
 sourceSets.main.resources.srcDirs = ["../desktop/assets"]
 
 dependencies {
-	implementation project(":examples:bullet:core")
-	implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
-	implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
-	implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
+    implementation project(":examples:bullet:core")
+    implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
 }
 
 task run(dependsOn: classes, type: JavaExec) {
-	group = 'other'
-	description = 'Run bullet example'
+    group = 'other'
+    description = 'Run bullet example'
 
-	main = project.mainClassName
-	classpath = sourceSets.main.runtimeClasspath
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 task dist(type: Jar) {
-	manifest {
-		attributes 'Main-Class': project.mainClassName
-	}
-	dependsOn configurations.runtimeClasspath
-	from {
-		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-	}
-	with jar
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
 }

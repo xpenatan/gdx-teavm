@@ -20,34 +20,34 @@ package emujava.util.concurrent.impl;
  */
 final class NativePromisesImpl implements Promises {
 
-  @Override
-  public Promise<Void> allOf(Promise[] promises) {
-    assert promises.length > 0;
-    return new NativePromiseImpl<>(JsPromise.all(unwrap(promises)));
-  }
-
-  @Override
-  public Promise<Object> anyOf(Promise[] promises) {
-    assert promises.length > 0;
-    return new NativePromiseImpl<>(JsPromise.race(unwrap(promises)));
-  }
-
-  @Override
-  public <V> Promise<V> completed(V value) {
-    return new NativePromiseImpl<>(JsPromise.resolve(null));
-  }
-
-  @Override
-  public <V> Promise<V> incomplete() {
-    return new NativePromiseImpl<>();
-  }
-
-  private static JsPromise[] unwrap(Promise[] promises) {
-    int length = promises.length;
-    JsPromise[] jsPromises = new JsPromise[length];
-    for (int i = 0; i < length; ++i) {
-      jsPromises[i] = ((NativePromiseImpl) promises[i]).jsPromise;
+    @Override
+    public Promise<Void> allOf(Promise[] promises) {
+        assert promises.length > 0;
+        return new NativePromiseImpl<>(JsPromise.all(unwrap(promises)));
     }
-    return jsPromises;
-  }
+
+    @Override
+    public Promise<Object> anyOf(Promise[] promises) {
+        assert promises.length > 0;
+        return new NativePromiseImpl<>(JsPromise.race(unwrap(promises)));
+    }
+
+    @Override
+    public <V> Promise<V> completed(V value) {
+        return new NativePromiseImpl<>(JsPromise.resolve(null));
+    }
+
+    @Override
+    public <V> Promise<V> incomplete() {
+        return new NativePromiseImpl<>();
+    }
+
+    private static JsPromise[] unwrap(Promise[] promises) {
+        int length = promises.length;
+        JsPromise[] jsPromises = new JsPromise[length];
+        for(int i = 0; i < length; ++i) {
+            jsPromises[i] = ((NativePromiseImpl)promises[i]).jsPromise;
+        }
+        return jsPromises;
+    }
 }

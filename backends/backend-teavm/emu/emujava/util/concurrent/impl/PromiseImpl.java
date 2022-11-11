@@ -20,80 +20,79 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
-import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
 
 /**
  *
  */
 final class PromiseImpl<V> implements Promise<V> {
-  private V value;
-  private Throwable reason;
-  private boolean done;
-  private final List<Runnable> callbacks = new ArrayList<>();
+    private V value;
+    private Throwable reason;
+    private boolean done;
+    private final List<Runnable> callbacks = new ArrayList<>();
 
-  @Override
-  public void resolve(V value) {
-    complete(value, null);
-  }
-
-  @Override
-  public void reject(Throwable reason) {
-    assert reason != null;
-    complete(null, reason);
-  }
-
-  @Override
-  public void then(BiConsumer<? super V, ? super Throwable> callback) {
-    assert callback != null;
-    Runnable run = new Runnable() {
-      @Override
-      public void run() {
-        callback.accept(value, reason);
-      }
-    };
-    then(run);
-  }
-
-  @Override
-  public void then(Runnable callback) {
-    assert callback != null;
-    callbacks.add(callback);
-    if (done) {
-      runCallbacks();
+    @Override
+    public void resolve(V value) {
+        complete(value, null);
     }
-  }
 
-  private void complete(V value, Throwable reason) {
-    if (!done) {
-      this.value = value;
-      this.reason = reason;
-      done = true;
-      runCallbacks();
+    @Override
+    public void reject(Throwable reason) {
+        assert reason != null;
+        complete(null, reason);
     }
-  }
 
-  private void runCallbacks() {
-    if (!callbacks.isEmpty()) {
-      TimerCallback callbackk = new TimerCallback() {
-        @Override
-        public void onTick() {
-          for (Runnable callback : callbacks) {
-            callback.run();
-          }
-          callbacks.clear();
+    @Override
+    public void then(BiConsumer<? super V, ? super Throwable> callback) {
+        assert callback != null;
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                callback.accept(value, reason);
+            }
+        };
+        then(run);
+    }
+
+    @Override
+    public void then(Runnable callback) {
+        assert callback != null;
+        callbacks.add(callback);
+        if(done) {
+            runCallbacks();
         }
-      };
-      setTimeout(callbackk, 0);
     }
-  }
 
-  // TODO: use $entry?
-  @JSBody(params = { "callback", "time" }, script = "setTimeout(callback, time);")
-  private static native int setTimeout(TimerCallback callback, int time);
+    private void complete(V value, Throwable reason) {
+        if(!done) {
+            this.value = value;
+            this.reason = reason;
+            done = true;
+            runCallbacks();
+        }
+    }
 
-  @JSFunctor
-  private interface TimerCallback extends JSObject {
-    void onTick();
-  }
+    private void runCallbacks() {
+        if(!callbacks.isEmpty()) {
+            TimerCallback callbackk = new TimerCallback() {
+                @Override
+                public void onTick() {
+                    for(Runnable callback : callbacks) {
+                        callback.run();
+                    }
+                    callbacks.clear();
+                }
+            };
+            setTimeout(callbackk, 0);
+        }
+    }
+
+    // TODO: use $entry?
+    @JSBody(params = {"callback", "time"}, script = "setTimeout(callback, time);")
+    private static native int setTimeout(TimerCallback callback, int time);
+
+    @JSFunctor
+    private interface TimerCallback extends JSObject {
+        void onTick();
+    }
 }

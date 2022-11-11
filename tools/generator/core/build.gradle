@@ -8,7 +8,7 @@ group 'com.github.xpenatan.gdx-web-tools'
 
 def module_name = "generator"
 
-sourceSets.main.java.srcDirs = [ "src/main/java/" ]
+sourceSets.main.java.srcDirs = ["src/main/java/"]
 
 configurations {
     includeDep
@@ -40,8 +40,8 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task fromClasses (type: Jar) {
-    from (sourceSets.main.output){
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
     }
 }
 

@@ -5,7 +5,7 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface KeyboardEventWrapper extends EventWrapper {
 
-	public int getCharCode();
+    public int getCharCode();
 
-	public int getKeyCode();
+    public int getKeyCode();
 }

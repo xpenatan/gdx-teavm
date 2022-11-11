@@ -7,14 +7,15 @@ public class CompletableFutureUtils {
     public static <T> T checkNotNull(T reference) {
         try {
             checkCriticalNotNull(reference);
-        } catch (Exception e) {
+        }
+        catch(Exception e) {
             throw new AssertionError(e);
         }
         return reference;
     }
 
     public static <T> T checkCriticalNotNull(T reference) {
-        if (reference == null) {
+        if(reference == null) {
             throw new NullPointerException();
         }
         return reference;

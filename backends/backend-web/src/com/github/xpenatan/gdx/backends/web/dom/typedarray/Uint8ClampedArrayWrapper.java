@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.web.dom.typedarray;
 
-public interface Uint8ClampedArrayWrapper extends ArrayBufferViewWrapper{
+public interface Uint8ClampedArrayWrapper extends ArrayBufferViewWrapper {
 
     public int getLength();
 

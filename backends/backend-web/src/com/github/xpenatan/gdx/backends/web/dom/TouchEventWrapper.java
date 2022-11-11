@@ -5,5 +5,5 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface TouchEventWrapper extends EventWrapper {
 
-	public TouchListWrapper getChangedTouches();
+    public TouchListWrapper getChangedTouches();
 }

@@ -6,10 +6,10 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrap
  * @author xpenatan
  */
 public interface ImageDataWrapper {
-	// ImageData
-	public int getWidth();
+    // ImageData
+    public int getWidth();
 
-	public int getHeight();
+    public int getHeight();
 
-	public Uint8ClampedArrayWrapper getData();
+    public Uint8ClampedArrayWrapper getData();
 }

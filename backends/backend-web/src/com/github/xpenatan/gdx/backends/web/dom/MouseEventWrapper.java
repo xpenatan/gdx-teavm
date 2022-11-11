@@ -4,13 +4,13 @@ package com.github.xpenatan.gdx.backends.web.dom;
  * @author xpenatan
  */
 public interface MouseEventWrapper extends EventWrapper {
-	int getClientX();
+    int getClientX();
 
-	int getClientY();
+    int getClientY();
 
-	float getMovementX();
+    float getMovementX();
 
-	float getMovementY();
+    float getMovementY();
 
-	short getButton();
+    short getButton();
 }

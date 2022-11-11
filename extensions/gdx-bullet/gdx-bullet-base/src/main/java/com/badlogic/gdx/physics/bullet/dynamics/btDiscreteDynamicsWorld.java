@@ -33,5 +33,4 @@ public class btDiscreteDynamicsWorld extends btDynamicsWorld {
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);
-
 }

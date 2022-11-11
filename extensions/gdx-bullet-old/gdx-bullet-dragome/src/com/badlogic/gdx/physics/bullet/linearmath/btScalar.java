@@ -6,10 +6,12 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.linearmath;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btScalar {
 
     public static int btGetVersion() {
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("Bullet.MyClassHelper.prototype.getBTVersion();",null);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("Bullet.MyClassHelper.prototype.getBTVersion();", null);
     }
 }

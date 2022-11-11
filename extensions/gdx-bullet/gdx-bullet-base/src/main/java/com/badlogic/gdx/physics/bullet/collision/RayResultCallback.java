@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class RayResultCallback extends BulletBase {
 
-    public void setCollisionObject (btCollisionObject value) {
+    public void setCollisionObject(btCollisionObject value) {
         setCollisionObject(cPointer, value != null ? value.getCPointer() : 0);
     }
 
@@ -23,7 +23,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native void setCollisionObject(long addr, long collisionObjAddr);
 
-    public btCollisionObject getCollisionObject () {
+    public btCollisionObject getCollisionObject() {
         long collisionObjectAddr = getCollisionObject(cPointer);
         if(collisionObjectAddr != 0) {
             btCollisionObject.temp01.setPointer(collisionObjectAddr);
@@ -38,7 +38,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native long getCollisionObject(long addr);
 
-    public void setClosestHitFraction (float value) {
+    public void setClosestHitFraction(float value) {
         setClosestHitFraction(cPointer, value);
     }
 
@@ -48,7 +48,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native void setClosestHitFraction(long addr, float value);
 
-    public float getClosestHitFraction () {
+    public float getClosestHitFraction() {
         return getClosestHitFraction(cPointer);
     }
 
@@ -58,7 +58,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native float getClosestHitFraction(long addr);
 
-    public void setCollisionFilterGroup (int value) {
+    public void setCollisionFilterGroup(int value) {
         setCollisionFilterGroup(cPointer, value);
     }
 
@@ -68,7 +68,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native void setCollisionFilterGroup(long addr, int value);
 
-    public int getCollisionFilterGroup () {
+    public int getCollisionFilterGroup() {
         return getCollisionFilterGroup(cPointer);
     }
 
@@ -78,7 +78,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native int getCollisionFilterGroup(long addr);
 
-    public void setCollisionFilterMask (int value) {
+    public void setCollisionFilterMask(int value) {
         setCollisionFilterMask(cPointer, value);
     }
 
@@ -88,7 +88,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native void setCollisionFilterMask(long addr, int value);
 
-    public int getCollisionFilterMask () {
+    public int getCollisionFilterMask() {
         return getCollisionFilterMask(cPointer);
     }
 
@@ -103,7 +103,7 @@ public class RayResultCallback extends BulletBase {
         setFlags(cPointer, (int)value);
     }
      */
-    public void setFlags (long value) {
+    public void setFlags(long value) {
         setFlags(cPointer, value);
     }
 
@@ -113,7 +113,7 @@ public class RayResultCallback extends BulletBase {
      */
     private static native void setFlags(long addr, long value);
 
-    public long getFlags () {
+    public long getFlags() {
         return getFlags(cPointer);
     }
 

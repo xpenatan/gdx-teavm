@@ -8,7 +8,9 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btBroadphasePair extends BulletBase {
 
     btCollisionAlgorithm tmp = new btCollisionAlgorithm(0, false);
@@ -17,17 +19,17 @@ public class btBroadphasePair extends BulletBase {
         resetObj(cPtr, cMemoryOwn);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btBroadphasePair);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btBroadphasePair);", this);
+    }
 
     public btCollisionAlgorithm getAlgorithm() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_algorithm());",this);
-		if(addr == 0) return null;
-		tmp.resetObj(addr, false);
-		return tmp;
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        long addr = com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsObj.get_m_algorithm());", this);
+        if(addr == 0) return null;
+        tmp.resetObj(addr, false);
+        return tmp;
     }
 }

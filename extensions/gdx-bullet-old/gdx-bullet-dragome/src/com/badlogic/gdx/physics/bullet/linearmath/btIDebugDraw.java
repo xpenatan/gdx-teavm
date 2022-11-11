@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btIDebugDraw extends BulletBase {
 
     public btIDebugDraw() {
@@ -18,66 +20,66 @@ public class btIDebugDraw extends BulletBase {
     }
 
     private long createNative() {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var debugDraw=new Bullet.MyDebugDraw();debugDraw.self=this;debugDraw.drawLine=this.drawFuc;debugDraw.drawContactPoint=this.drawCont;debugDraw.getDebugMode=this.getDebug;",this);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(debugDraw);",this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var debugDraw=new Bullet.MyDebugDraw();debugDraw.self=this;debugDraw.drawLine=this.drawFuc;debugDraw.drawContactPoint=this.drawCont;debugDraw.getDebugMode=this.getDebug;", this);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(debugDraw);", this);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyDebugDraw);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyDebugDraw);", this);
+    }
 
-	@MethodAlias(local_alias= "drawFuc")
-	private void debugDrawFuc(long vecFrom, long vecTo, long color) {
-		com.dragome.commons.javascript.ScriptHelper.put("color",color,this);
-		com.dragome.commons.javascript.ScriptHelper.put("vecTo",vecTo,this);
-		com.dragome.commons.javascript.ScriptHelper.put("vecFrom",vecFrom,this);
-		Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1;
-		Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2;
-		Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("vecFrom=Bullet.wrapPointer(vecFrom,Bullet.btVector3);vecTo=Bullet.wrapPointer(vecTo,Bullet.btVector3);color=Bullet.wrapPointer(color,Bullet.btVector3);",this);
-		tmp1.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.x();",this);
-		tmp1.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.y();",this);
-		tmp1.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.z();",this);
-		tmp2.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.x();",this);
-		tmp2.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.y();",this);
-		tmp2.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.z();",this);
-		tmp3.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.x();",this);
-		tmp3.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.y();",this);
-		tmp3.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.z();",this);
-		btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self",this);
-		debugDraw.drawLine(tmp1, tmp2, tmp3);
-	}
+    @MethodAlias(local_alias = "drawFuc")
+    private void debugDrawFuc(long vecFrom, long vecTo, long color) {
+        com.dragome.commons.javascript.ScriptHelper.put("color", color, this);
+        com.dragome.commons.javascript.ScriptHelper.put("vecTo", vecTo, this);
+        com.dragome.commons.javascript.ScriptHelper.put("vecFrom", vecFrom, this);
+        Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1;
+        Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2;
+        Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3;
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("vecFrom=Bullet.wrapPointer(vecFrom,Bullet.btVector3);vecTo=Bullet.wrapPointer(vecTo,Bullet.btVector3);color=Bullet.wrapPointer(color,Bullet.btVector3);", this);
+        tmp1.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.x();", this);
+        tmp1.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.y();", this);
+        tmp1.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.z();", this);
+        tmp2.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.x();", this);
+        tmp2.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.y();", this);
+        tmp2.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.z();", this);
+        tmp3.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.x();", this);
+        tmp3.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.y();", this);
+        tmp3.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.z();", this);
+        btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self", this);
+        debugDraw.drawLine(tmp1, tmp2, tmp3);
+    }
 
-	@MethodAlias(local_alias= "drawCont")
-	private void drawContactFunc(long pointOnB,long normalOnB, float distance, int lifeTime, long color) {
-		com.dragome.commons.javascript.ScriptHelper.put("color",color,this);
-		com.dragome.commons.javascript.ScriptHelper.put("lifeTime",lifeTime,this);
-		com.dragome.commons.javascript.ScriptHelper.put("distance",distance,this);
-		com.dragome.commons.javascript.ScriptHelper.put("normalOnB",normalOnB,this);
-		com.dragome.commons.javascript.ScriptHelper.put("pointOnB",pointOnB,this);
-		Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1;
-		Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2;
-		Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("vecFrom=Bullet.wrapPointer(pointOnB,Bullet.btVector3);vecTo=Bullet.wrapPointer(normalOnB,Bullet.btVector3);color=Bullet.wrapPointer(color,Bullet.btVector3);",this);
-		tmp1.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.x();",this);
-		tmp1.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.y();",this);
-		tmp1.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.z();",this);
-		tmp2.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.x();",this);
-		tmp2.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.y();",this);
-		tmp2.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.z();",this);
-		tmp3.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.x();",this);
-		tmp3.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.y();",this);
-		tmp3.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.z();",this);
-		btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self",this);
-		debugDraw.drawContactPoint(tmp1, tmp2, distance, lifeTime, tmp3);
-	}
+    @MethodAlias(local_alias = "drawCont")
+    private void drawContactFunc(long pointOnB, long normalOnB, float distance, int lifeTime, long color) {
+        com.dragome.commons.javascript.ScriptHelper.put("color", color, this);
+        com.dragome.commons.javascript.ScriptHelper.put("lifeTime", lifeTime, this);
+        com.dragome.commons.javascript.ScriptHelper.put("distance", distance, this);
+        com.dragome.commons.javascript.ScriptHelper.put("normalOnB", normalOnB, this);
+        com.dragome.commons.javascript.ScriptHelper.put("pointOnB", pointOnB, this);
+        Vector3 tmp1 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_1;
+        Vector3 tmp2 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_2;
+        Vector3 tmp3 = com.badlogic.gdx.physics.bullet.linearmath.btVector3.vector3_3;
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("vecFrom=Bullet.wrapPointer(pointOnB,Bullet.btVector3);vecTo=Bullet.wrapPointer(normalOnB,Bullet.btVector3);color=Bullet.wrapPointer(color,Bullet.btVector3);", this);
+        tmp1.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.x();", this);
+        tmp1.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.y();", this);
+        tmp1.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecFrom.z();", this);
+        tmp2.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.x();", this);
+        tmp2.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.y();", this);
+        tmp2.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("vecTo.z();", this);
+        tmp3.x = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.x();", this);
+        tmp3.y = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.y();", this);
+        tmp3.z = com.dragome.commons.javascript.ScriptHelper.evalFloat("color.z();", this);
+        btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self", this);
+        debugDraw.drawContactPoint(tmp1, tmp2, distance, lifeTime, tmp3);
+    }
 
-	@MethodAlias(local_alias= "getDebug")
-	private int drawContactFunc() {
-		btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self",this);
-		return debugDraw.getDebugMode();
-	}
+    @MethodAlias(local_alias = "getDebug")
+    private int drawContactFunc() {
+        btIDebugDraw debugDraw = (btIDebugDraw)com.dragome.commons.javascript.ScriptHelper.eval("this.self", this);
+        return debugDraw.getDebugMode();
+    }
 
     public void drawLine(Vector3 from, Vector3 to, Vector3 color) {
     }
@@ -86,13 +88,13 @@ public class btIDebugDraw extends BulletBase {
     }
 
     public void reportErrorWarning(String warningString) {
-    //FIXME not impl
+        //FIXME not impl
     }
 
     public //FIXME not impl
     void draw3dText(//FIXME not impl
-    Vector3 location, //FIXME not impl
-    String textString) {
+                    Vector3 location, //FIXME not impl
+                    String textString) {
     }
 
     public void setDebugMode(int debugMode) {

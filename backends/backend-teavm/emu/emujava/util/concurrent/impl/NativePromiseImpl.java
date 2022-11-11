@@ -23,63 +23,63 @@ import org.teavm.jso.JSObject;
  */
 final class NativePromiseImpl<V> implements Promise<V> {
 
-  final JsPromise jsPromise;
-  private JsPromise.Resolver resolver;
-  private JsPromise.Rejector rejector;
+    final JsPromise jsPromise;
+    private JsPromise.Resolver resolver;
+    private JsPromise.Rejector rejector;
 
-  NativePromiseImpl() {
-    jsPromise = JsPromise.create((resolve, reject) -> {
-      resolver = resolve;
-      rejector = reject;
-    });
-  }
+    NativePromiseImpl() {
+        jsPromise = JsPromise.create((resolve, reject) -> {
+            resolver = resolve;
+            rejector = reject;
+        });
+    }
 
-  NativePromiseImpl(JsPromise promise) {
-    assert promise != null;
-    this.jsPromise = promise;
-  }
+    NativePromiseImpl(JsPromise promise) {
+        assert promise != null;
+        this.jsPromise = promise;
+    }
 
-  @Override
-  public void resolve(V value) {
-    JSObject jsObject = JsPromise.asJsObject(value);
-    resolver.resolve(jsObject);
-  }
+    @Override
+    public void resolve(V value) {
+        JSObject jsObject = JsPromise.asJsObject(value);
+        resolver.resolve(jsObject);
+    }
 
-  @Override
-  public void reject(Throwable reason) {
-    assert reason != null;
-    JSObject jsObject = JsPromise.asJsObject(reason);
-    rejector.reject(jsObject);
-  }
+    @Override
+    public void reject(Throwable reason) {
+        assert reason != null;
+        JSObject jsObject = JsPromise.asJsObject(reason);
+        rejector.reject(jsObject);
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void then(BiConsumer<? super V, ? super Throwable> callback) {
-    assert callback != null;
+    @SuppressWarnings("unchecked")
+    @Override
+    public void then(BiConsumer<? super V, ? super Throwable> callback) {
+        assert callback != null;
 
-    JsPromise.OnSettledCallback fullFilled = new JsPromise.OnSettledCallback() {
-      @Override
-      public void onSettled(JSObject reason) {
-        Object obj = JsPromise.asJavaObject(reason);
-        callback.accept((V)obj, null);
-      }
-    };
+        JsPromise.OnSettledCallback fullFilled = new JsPromise.OnSettledCallback() {
+            @Override
+            public void onSettled(JSObject reason) {
+                Object obj = JsPromise.asJavaObject(reason);
+                callback.accept((V)obj, null);
+            }
+        };
 
-    JsPromise.OnSettledCallback onRejected = new JsPromise.OnSettledCallback() {
-      @Override
-      public void onSettled(JSObject value) {
-        Object obj = JsPromise.asJavaObject(value);
-        callback.accept(null, (Throwable) obj);
-      }
-    };
+        JsPromise.OnSettledCallback onRejected = new JsPromise.OnSettledCallback() {
+            @Override
+            public void onSettled(JSObject value) {
+                Object obj = JsPromise.asJavaObject(value);
+                callback.accept(null, (Throwable)obj);
+            }
+        };
 
-    jsPromise.then(fullFilled, onRejected);
-  }
+        jsPromise.then(fullFilled, onRejected);
+    }
 
-  @Override
-  public void then(Runnable callback) {
-    assert callback != null;
-    JsPromise.OnSettledCallback func = value -> callback.run();
-    jsPromise.then(func, func);
-  }
+    @Override
+    public void then(Runnable callback) {
+        assert callback != null;
+        JsPromise.OnSettledCallback func = value -> callback.run();
+        jsPromise.then(func, func);
+    }
 }

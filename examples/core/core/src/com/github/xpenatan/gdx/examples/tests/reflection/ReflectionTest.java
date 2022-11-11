@@ -25,7 +25,8 @@ public class ReflectionTest implements ApplicationListener {
             ReflectionModelItem testModel = data.buffers.get(0);
             System.out.println("byteLength: " + testModel.byteLength);
             System.out.println("uri: " + testModel.uri);
-        } catch (Exception ex) {
+        }
+        catch(Exception ex) {
             throw new SerializationException("Error reading file: " + file, ex);
         }
     }

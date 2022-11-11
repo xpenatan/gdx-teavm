@@ -13,18 +13,25 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
-import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
+import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
+import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
@@ -51,7 +58,7 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
     Environment environment;
 
     btDiscreteDynamicsWorld world;
-//    DebugDrawer debugDrawer;
+    //    DebugDrawer debugDrawer;
     btDefaultCollisionConfiguration collisionConfiguration;
     btCollisionDispatcher dispatcher;
     btDbvtBroadphase broadphase;
@@ -140,7 +147,6 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
         cameraController.forwardTarget = false;
         cameraController.translateTarget = false;
 
-
         Gdx.input.setInputProcessor(new InputMultiplexer(this, cameraController));
 
         ModelInstance createBox = null;
@@ -171,7 +177,7 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
         TestMotionState motionState = new TestMotionState(modelInstance.transform);
         btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
 
-        btRigidBody body = new btRigidBody(0, null, null, new Vector3(0,0,0));
+        btRigidBody body = new btRigidBody(0, null, null, new Vector3(0, 0, 0));
         if(add)
             colObjs.add(body);
 
@@ -232,7 +238,6 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
             body.activate();
         }
 
-
         modelBatch.begin(camera);
         for(int i = 0; i < boxes.size; i++) {
             ModelInstance modelInstance = boxes.get(i);
@@ -290,7 +295,7 @@ public class BulletMoveTest implements ApplicationListener, InputProcessor {
         }
         else if(keycode == Keys.ENTER) {
             if(Gdx.graphics.isFullscreen()) {
-                Gdx.graphics.setWindowedMode(0,0);
+                Gdx.graphics.setWindowedMode(0, 0);
             }
             else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());

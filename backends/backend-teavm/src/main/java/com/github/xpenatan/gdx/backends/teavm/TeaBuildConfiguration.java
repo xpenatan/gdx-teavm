@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
-
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;

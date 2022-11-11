@@ -22,31 +22,31 @@ import static emujava.util.concurrent.CompletableFutureUtils.checkNotNull;
  */
 public class Executors {
 
-  public static <T> emujava.util.concurrent.Callable<T> callable(Runnable task, T result) {
-    return new RunnableAdapter<>(task, result);
-  }
-
-  public static emujava.util.concurrent.Callable<Object> callable(Runnable task) {
-    return callable(task, null);
-  }
-
-  private static class RunnableAdapter<T> implements Callable<T> {
-
-    private final Runnable task;
-    private final T result;
-
-    private RunnableAdapter(Runnable task, T result) {
-      this.task = checkNotNull(task);
-      this.result = result;
+    public static <T> emujava.util.concurrent.Callable<T> callable(Runnable task, T result) {
+        return new RunnableAdapter<>(task, result);
     }
 
-    @Override
-    public T call() {
-      task.run();
-      return result;
+    public static emujava.util.concurrent.Callable<Object> callable(Runnable task) {
+        return callable(task, null);
     }
-  }
 
-  private Executors() {
-  }
+    private static class RunnableAdapter<T> implements Callable<T> {
+
+        private final Runnable task;
+        private final T result;
+
+        private RunnableAdapter(Runnable task, T result) {
+            this.task = checkNotNull(task);
+            this.result = result;
+        }
+
+        @Override
+        public T call() {
+            task.run();
+            return result;
+        }
+    }
+
+    private Executors() {
+    }
 }

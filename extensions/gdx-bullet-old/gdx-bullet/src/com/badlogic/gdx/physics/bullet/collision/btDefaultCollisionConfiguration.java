@@ -1,20 +1,22 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 
 	/*JNI
 		#include <src/bullet/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
 	*/
-	
+
 //	public btDefaultCollisionConfiguration(btDefaultCollisionConstructionInfo constructionInfo) {
 //	}
 
-	public btDefaultCollisionConfiguration() {
-		resetObj(createNative(), true);
-	}
-	
-	private static native long createNative(); /*
+    public btDefaultCollisionConfiguration() {
+        resetObj(createNative(), true);
+    }
+
+    private static native long createNative(); /*
 		return (jlong)new btDefaultCollisionConfiguration();
 	*/
 	/*[0;X;L]
@@ -28,16 +30,16 @@ public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDefaultCollisionConfiguration); #EVAL
 		}
 	*/
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		btDefaultCollisionConfiguration * cobj = (btDefaultCollisionConfiguration *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 }

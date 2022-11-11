@@ -6,7 +6,9 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btDbvtBroadphase extends btBroadphaseInterface {
 
     public btDbvtBroadphase() {
@@ -14,12 +16,12 @@ public class btDbvtBroadphase extends btBroadphaseInterface {
     }
 
     private static long createNative() {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var dbvt=new Bullet.btDbvtBroadphase();",null);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(dbvt);",null);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var dbvt=new Bullet.btDbvtBroadphase();", null);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(dbvt);", null);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btDbvtBroadphase);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btDbvtBroadphase);", this);
+    }
 }

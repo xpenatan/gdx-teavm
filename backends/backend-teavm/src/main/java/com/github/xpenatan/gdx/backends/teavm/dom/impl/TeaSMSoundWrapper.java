@@ -8,22 +8,22 @@ import org.teavm.jso.JSObject;
 
 public class TeaSMSoundWrapper implements SMSoundWrapper {
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.position;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.position;")
     private static native int getPositionJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.destruct();")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.destruct();")
     private static native void destructJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS", "position" }, script = "return smSoundJS.setPosition(position);")
+    @JSBody(params = {"smSoundJS", "position"}, script = "return smSoundJS.setPosition(position);")
     private static native void setPositionJS(JSObject smSoundJS, int position);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.pause();")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.pause();")
     private static native void pauseJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.play();")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.play();")
     private static native void playJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS", "volume", "pan", "loop", "from", "callback" }, script = "" +
+    @JSBody(params = {"smSoundJS", "volume", "pan", "loop", "from", "callback"}, script = "" +
             "return smSoundJS.play({" +
             "volume: volume," +
             "pan: pan," +
@@ -33,31 +33,31 @@ public class TeaSMSoundWrapper implements SMSoundWrapper {
             "});")
     private static native void playJS(JSObject smSoundJS, int volume, int pan, int loop, int from, SMSoundCallbackWrapper callback);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.resume();")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.resume();")
     private static native void resumeJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.stop();")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.stop();")
     private static native void stopJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS", "volume" }, script = "return smSoundJS.setVolume(volume);")
+    @JSBody(params = {"smSoundJS", "volume"}, script = "return smSoundJS.setVolume(volume);")
     private static native void setVolumeJS(JSObject smSoundJS, int volume);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.volume;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.volume;")
     private static native int getVolumeJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS", "pan" }, script = "return smSoundJS.setPan(pan);")
+    @JSBody(params = {"smSoundJS", "pan"}, script = "return smSoundJS.setPan(pan);")
     private static native void setPanJS(JSObject smSoundJS, int pan);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.pan;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.pan;")
     private static native int getPanJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.playState;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.playState;")
     private static native int getPlayStateJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.paused;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.paused;")
     private static native boolean getPausedJS(JSObject smSoundJS);
 
-    @JSBody(params = { "smSoundJS" }, script = "return smSoundJS.loops;")
+    @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.loops;")
     private static native int getLoopsJS(JSObject smSoundJS);
 
     private JSObject smSoundJS;

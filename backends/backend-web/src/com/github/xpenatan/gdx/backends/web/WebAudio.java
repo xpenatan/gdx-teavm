@@ -11,30 +11,29 @@ import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 
 public class WebAudio implements Audio {
 
-	private SoundManagerWrapper soundManager;
+    private SoundManagerWrapper soundManager;
 
-	public WebAudio(SoundManagerWrapper soundManager) {
-		this.soundManager = soundManager;
-	}
+    public WebAudio(SoundManagerWrapper soundManager) {
+        this.soundManager = soundManager;
+    }
 
-	@Override
-	public AudioDevice newAudioDevice (int samplingRate, boolean isMono) {
-		throw new GdxRuntimeException("AudioDevice not supported by Web backend");
-	}
+    @Override
+    public AudioDevice newAudioDevice(int samplingRate, boolean isMono) {
+        throw new GdxRuntimeException("AudioDevice not supported by Web backend");
+    }
 
-	@Override
-	public AudioRecorder newAudioRecorder (int samplingRate, boolean isMono) {
-		throw new GdxRuntimeException("AudioRecorder not supported by Web backend");
-	}
+    @Override
+    public AudioRecorder newAudioRecorder(int samplingRate, boolean isMono) {
+        throw new GdxRuntimeException("AudioRecorder not supported by Web backend");
+    }
 
-	@Override
-	public Sound newSound(FileHandle fileHandle) {
-		return new WebSound(soundManager, fileHandle);
-	}
+    @Override
+    public Sound newSound(FileHandle fileHandle) {
+        return new WebSound(soundManager, fileHandle);
+    }
 
-	@Override
-	public Music newMusic(FileHandle file) {
-		return new WebMusic(soundManager, file);
-	}
-
+    @Override
+    public Music newMusic(FileHandle file) {
+        return new WebMusic(soundManager, file);
+    }
 }

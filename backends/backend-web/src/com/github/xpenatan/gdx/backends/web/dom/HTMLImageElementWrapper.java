@@ -5,9 +5,9 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface HTMLImageElementWrapper extends HTMLElementWrapper {
 
-	public void setSrc(String src);
+    public void setSrc(String src);
 
-	public int getWidth();
+    public int getWidth();
 
-	public int getHeight();
+    public int getHeight();
 }

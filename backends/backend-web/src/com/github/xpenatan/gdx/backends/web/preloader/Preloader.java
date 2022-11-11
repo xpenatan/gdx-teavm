@@ -1,11 +1,5 @@
 package com.github.xpenatan.gdx.backends.web.preloader;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -16,6 +10,12 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -200,7 +200,7 @@ public class Preloader {
         return null;
     }
 
-    public boolean contains (String file) {
+    public boolean contains(String file) {
         return texts.containsKey(file) || images.containsKey(file) || binaries.containsKey(file) || audio.containsKey(file)
                 || directories.containsKey(file);
     }
@@ -229,7 +229,7 @@ public class Preloader {
         boolean startsWith = filePath.startsWith(directory + "/");
 //        int indexOf = filePath.indexOf('/', directory.length() + 1);
 //        boolean flag = (indexOf < 0);
-        return startsWith ;
+        return startsWith;
     }
 
     public FileHandle[] list(final String file) {

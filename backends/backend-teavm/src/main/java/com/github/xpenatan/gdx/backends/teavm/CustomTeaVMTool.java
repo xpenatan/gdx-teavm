@@ -1,29 +1,63 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import org.teavm.backend.c.CTarget;
 import org.teavm.backend.c.generate.CNameProvider;
 import org.teavm.backend.javascript.JavaScriptTarget;
 import org.teavm.backend.wasm.WasmTarget;
 import org.teavm.backend.wasm.render.WasmBinaryVersion;
-import org.teavm.cache.*;
+import org.teavm.cache.AlwaysStaleCacheStatus;
+import org.teavm.cache.CacheStatus;
+import org.teavm.cache.DiskCachedClassReaderSource;
+import org.teavm.cache.DiskMethodNodeCache;
+import org.teavm.cache.DiskProgramCache;
+import org.teavm.cache.EmptyProgramCache;
+import org.teavm.cache.FileSymbolTable;
 import org.teavm.debugging.information.DebugInformation;
 import org.teavm.debugging.information.DebugInformationBuilder;
 import org.teavm.dependency.DependencyInfo;
 import org.teavm.dependency.FastDependencyAnalyzer;
 import org.teavm.dependency.PreciseDependencyAnalyzer;
 import org.teavm.diagnostics.ProblemProvider;
-import org.teavm.model.*;
+import org.teavm.model.ClassHolderSource;
+import org.teavm.model.ClassHolderTransformer;
+import org.teavm.model.ClassReader;
+import org.teavm.model.PreOptimizingClassHolderSource;
+import org.teavm.model.ProgramCache;
+import org.teavm.model.ReferenceCache;
 import org.teavm.parsing.ClasspathClassHolderSource;
-import org.teavm.tooling.*;
+import org.teavm.tooling.EmptyTeaVMToolLog;
+import org.teavm.tooling.InstructionLocationReader;
+import org.teavm.tooling.TeaVMTargetType;
+import org.teavm.tooling.TeaVMTool;
+import org.teavm.tooling.TeaVMToolException;
+import org.teavm.tooling.TeaVMToolLog;
 import org.teavm.tooling.sources.SourceFileProvider;
 import org.teavm.tooling.sources.SourceFilesCopier;
-import org.teavm.vm.*;
-
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import org.teavm.vm.BuildTarget;
+import org.teavm.vm.DirectoryBuildTarget;
+import org.teavm.vm.TeaVM;
+import org.teavm.vm.TeaVMBuilder;
+import org.teavm.vm.TeaVMOptimizationLevel;
+import org.teavm.vm.TeaVMProgressListener;
+import org.teavm.vm.TeaVMTarget;
 
 public class CustomTeaVMTool {
     private File targetDirectory = new File(".");
@@ -327,7 +361,7 @@ public class CustomTeaVMTool {
             TeaVMBuilder vmBuilder = new TeaVMBuilder(this.prepareTarget());
             vmBuilder.setReferenceCache(this.referenceCache);
             Object cacheStatus;
-            if (this.incremental) {
+            if(this.incremental) {
                 this.cacheDirectory.mkdirs();
                 this.symbolTable = new FileSymbolTable(new File(this.cacheDirectory, "symbols"));
                 this.fileTable = new FileSymbolTable(new File(this.cacheDirectory, "files"));
@@ -336,7 +370,7 @@ public class CustomTeaVMTool {
                 ClassHolderSource classSource = new PreOptimizingClassHolderSource(innerClassSource);
                 this.cachedClassSource = new DiskCachedClassReaderSource(this.cacheDirectory, this.referenceCache, this.symbolTable, this.fileTable, this.variableTable, classSource, innerClassSource);
                 this.programCache = new DiskProgramCache(this.cacheDirectory, this.referenceCache, this.symbolTable, this.fileTable, this.variableTable);
-                if (this.targetType == TeaVMTargetType.JAVASCRIPT) {
+                if(this.targetType == TeaVMTargetType.JAVASCRIPT) {
                     this.astCache = new DiskMethodNodeCache(this.cacheDirectory, this.referenceCache, this.symbolTable, this.fileTable, this.variableTable);
                     this.javaScriptTarget.setAstCache(this.astCache);
                 }
@@ -345,13 +379,15 @@ public class CustomTeaVMTool {
                     this.symbolTable.update();
                     this.fileTable.update();
                     this.variableTable.update();
-                } catch (IOException var15) {
+                }
+                catch(IOException var15) {
                     this.log.info("Cache is missing");
                 }
 
                 vmBuilder.setClassLoader(this.classLoader).setClassSource(this.cachedClassSource);
                 cacheStatus = this.cachedClassSource;
-            } else {
+            }
+            else {
                 vmBuilder.setClassLoader(this.classLoader).setClassSource(new PreOptimizingClassHolderSource(new ClasspathClassHolderSource(this.classLoader, this.referenceCache)));
                 cacheStatus = AlwaysStaleCacheStatus.INSTANCE;
             }
@@ -360,7 +396,7 @@ public class CustomTeaVMTool {
             vmBuilder.setObfuscated(this.obfuscated);
             vmBuilder.setStrict(this.strict);
             this.vm = vmBuilder.build();
-            if (this.progressListener != null) {
+            if(this.progressListener != null) {
                 this.vm.setProgressListener(this.progressListener);
             }
 
@@ -368,7 +404,7 @@ public class CustomTeaVMTool {
             this.vm.setProgramCache((ProgramCache)(this.incremental ? this.programCache : EmptyProgramCache.INSTANCE));
             this.vm.setCacheStatus((CacheStatus)cacheStatus);
             this.vm.setOptimizationLevel(!this.fastDependencyAnalysis && !this.incremental ? this.optimizationLevel : TeaVMOptimizationLevel.SIMPLE);
-            if (this.incremental) {
+            if(this.incremental) {
                 this.vm.addVirtualMethods((m) -> {
                     return true;
                 });
@@ -383,7 +419,7 @@ public class CustomTeaVMTool {
                 this.vm.add(transformer);
             }
 
-            if (this.mainClass != null) {
+            if(this.mainClass != null) {
                 this.vm.entryPoint(this.mainClass, this.entryPointName != null ? this.entryPointName : "main");
             }
 
@@ -400,22 +436,25 @@ public class CustomTeaVMTool {
             BuildTarget buildTarget = new DirectoryBuildTarget(this.targetDirectory);
             outputName = this.getResolvedTargetFileName();
             this.vm.build(buildTarget, outputName);
-            if (this.vm.wasCancelled()) {
+            if(this.vm.wasCancelled()) {
                 this.log.info("Build cancelled");
                 this.cancelled = true;
-            } else {
+            }
+            else {
                 ProblemProvider problemProvider = this.vm.getProblemProvider();
-                if (problemProvider.getProblems().isEmpty()) {
+                if(problemProvider.getProblems().isEmpty()) {
                     this.log.info("Output file successfully built");
-                } else if (problemProvider.getSevereProblems().isEmpty()) {
+                }
+                else if(problemProvider.getSevereProblems().isEmpty()) {
                     this.log.info("Output file built with warnings");
-                } else {
+                }
+                else {
                     this.log.info("Output file built with errors");
                 }
 
                 File outputFile = new File(this.targetDirectory, outputName);
                 this.generatedFiles.add(outputFile);
-                if (this.targetType == TeaVMTargetType.JAVASCRIPT) {
+                if(this.targetType == TeaVMTargetType.JAVASCRIPT) {
                     FileOutputStream output = new FileOutputStream(new File(this.targetDirectory, outputName), true);
 
                     try {
@@ -423,10 +462,12 @@ public class CustomTeaVMTool {
 
                         try {
                             this.additionalJavaScriptOutput(writer);
-                        } catch (Throwable var13) {
+                        }
+                        catch(Throwable var13) {
                             try {
                                 writer.close();
-                            } catch (Throwable var12) {
+                            }
+                            catch(Throwable var12) {
                                 var13.addSuppressed(var12);
                             }
 
@@ -434,10 +475,12 @@ public class CustomTeaVMTool {
                         }
 
                         writer.close();
-                    } catch (Throwable var14) {
+                    }
+                    catch(Throwable var14) {
                         try {
                             output.close();
-                        } catch (Throwable var11) {
+                        }
+                        catch(Throwable var11) {
                             var14.addSuppressed(var11);
                         }
 
@@ -447,9 +490,9 @@ public class CustomTeaVMTool {
                     output.close();
                 }
 
-                if (this.incremental) {
+                if(this.incremental) {
                     this.programCache.flush();
-                    if (this.astCache != null) {
+                    if(this.astCache != null) {
                         this.astCache.flush();
                     }
 
@@ -462,13 +505,14 @@ public class CustomTeaVMTool {
 
                 this.printStats();
             }
-        } catch (IOException var16) {
+        }
+        catch(IOException var16) {
             throw new TeaVMToolException("IO error occurred", var16);
         }
     }
 
     private String getResolvedTargetFileName() {
-        if (this.targetFileName.isEmpty()) {
+        if(this.targetFileName.isEmpty()) {
             switch(this.targetType) {
                 case JAVASCRIPT:
                     return "classes.js";
@@ -479,14 +523,15 @@ public class CustomTeaVMTool {
                 default:
                     return "classes";
             }
-        } else {
+        }
+        else {
             return this.targetFileName;
         }
     }
 
     private void additionalJavaScriptOutput(Writer writer) throws IOException {
         DebugInformation debugInfo;
-        if (this.debugInformationGenerated) {
+        if(this.debugInformationGenerated) {
             assert this.debugEmitter != null;
 
             debugInfo = this.debugEmitter.getDebugInformation();
@@ -495,10 +540,12 @@ public class CustomTeaVMTool {
 
             try {
                 debugInfo.write(debugInfoOut);
-            } catch (Throwable var11) {
+            }
+            catch(Throwable var11) {
                 try {
                     debugInfoOut.close();
-                } catch (Throwable var9) {
+                }
+                catch(Throwable var9) {
                     var11.addSuppressed(var9);
                 }
 
@@ -510,7 +557,7 @@ public class CustomTeaVMTool {
             this.log.info("Debug information successfully written");
         }
 
-        if (this.sourceMapsFileGenerated) {
+        if(this.sourceMapsFileGenerated) {
             assert this.debugEmitter != null;
 
             debugInfo = this.debugEmitter.getDebugInformation();
@@ -521,10 +568,12 @@ public class CustomTeaVMTool {
 
             try {
                 debugInfo.writeAsSourceMaps(sourceMapsOut, "src", this.getResolvedTargetFileName());
-            } catch (Throwable var10) {
+            }
+            catch(Throwable var10) {
                 try {
                     sourceMapsOut.close();
-                } catch (Throwable var8) {
+                }
+                catch(Throwable var8) {
                     var10.addSuppressed(var8);
                 }
 
@@ -536,15 +585,14 @@ public class CustomTeaVMTool {
             this.log.info("Source maps successfully written");
         }
 
-        if (this.sourceFilesCopied) {
+        if(this.sourceFilesCopied) {
             this.copySourceFiles();
             this.log.info("Source files successfully written");
         }
-
     }
 
     private void printStats() {
-        if (this.vm != null && this.vm.getWrittenClasses() != null) {
+        if(this.vm != null && this.vm.getWrittenClasses() != null) {
             int classCount = this.vm.getWrittenClasses().getClassNames().size();
             int methodCount = 0;
 
@@ -560,7 +608,7 @@ public class CustomTeaVMTool {
     }
 
     private void copySourceFiles() {
-        if (this.vm.getWrittenClasses() != null) {
+        if(this.vm.getWrittenClasses() != null) {
             List var10002 = this.sourceFileProviders;
             Set var10003 = this.generatedFiles;
             Objects.requireNonNull(var10003);
@@ -573,9 +621,10 @@ public class CustomTeaVMTool {
 
     private List<ClassHolderTransformer> resolveTransformers(ClassLoader classLoader) {
         List<ClassHolderTransformer> transformerInstances = new ArrayList();
-        if (this.transformers == null) {
+        if(this.transformers == null) {
             return transformerInstances;
-        } else {
+        }
+        else {
             Iterator var3 = this.transformers.iterator();
 
             while(var3.hasNext()) {
@@ -584,20 +633,23 @@ public class CustomTeaVMTool {
                 Class transformerRawType;
                 try {
                     transformerRawType = Class.forName(transformerName, true, classLoader);
-                } catch (ClassNotFoundException var11) {
+                }
+                catch(ClassNotFoundException var11) {
                     this.log.error("Transformer not found: " + transformerName, var11);
                     continue;
                 }
 
-                if (!ClassHolderTransformer.class.isAssignableFrom(transformerRawType)) {
+                if(!ClassHolderTransformer.class.isAssignableFrom(transformerRawType)) {
                     this.log.error("Transformer " + transformerName + " is not subtype of " + ClassHolderTransformer.class.getName());
-                } else {
+                }
+                else {
                     Class transformerType = transformerRawType.asSubclass(ClassHolderTransformer.class);
 
                     Constructor ctor;
                     try {
                         ctor = transformerType.getConstructor();
-                    } catch (NoSuchMethodException var10) {
+                    }
+                    catch(NoSuchMethodException var10) {
                         this.log.error("Transformer " + transformerName + " has no default constructor");
                         continue;
                     }
@@ -605,7 +657,8 @@ public class CustomTeaVMTool {
                     try {
                         ClassHolderTransformer transformer = (ClassHolderTransformer)ctor.newInstance();
                         transformerInstances.add(transformer);
-                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException var9) {
+                    }
+                    catch(IllegalAccessException | InvocationTargetException | InstantiationException var9) {
                         this.log.error("Error instantiating transformer " + transformerName, var9);
                     }
                 }

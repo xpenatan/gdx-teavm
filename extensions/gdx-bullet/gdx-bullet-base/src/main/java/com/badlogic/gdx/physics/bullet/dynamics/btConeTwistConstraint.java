@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btConeTwistConstraint extends btTypedConstraint {
 
-    public btConeTwistConstraint (btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame) {
+    public btConeTwistConstraint(btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame) {
         btTransform btframeInA = btTransform.TEMP_0;
         btTransform btframeInB = btTransform.TEMP_1;
         btTransform.convert(rbAFrame, btframeInA);
@@ -16,7 +16,7 @@ public class btConeTwistConstraint extends btTypedConstraint {
         initObject(createNative(rbA.getCPointer(), rbB.getCPointer(), btframeInA.getCPointer(), btframeInB.getCPointer()), true);
     }
 
-    public btConeTwistConstraint (btRigidBody rbA, Matrix4 rbAFrame) {
+    public btConeTwistConstraint(btRigidBody rbA, Matrix4 rbAFrame) {
         btTransform btrbAFrame = btTransform.TEMP_0;
         btTransform.convert(rbAFrame, btrbAFrame);
         initObject(createNative(rbA.getCPointer(), btrbAFrame.getCPointer()), true);

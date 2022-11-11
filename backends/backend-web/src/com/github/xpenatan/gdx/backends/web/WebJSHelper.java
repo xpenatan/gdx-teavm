@@ -5,34 +5,33 @@ import com.github.xpenatan.gdx.backends.web.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan
  */
 public abstract class WebJSHelper {
-	static WebJSHelper JSHelper;
+    static WebJSHelper JSHelper;
 
-	public static WebJSHelper get() {
-		return JSHelper;
-	}
+    public static WebJSHelper get() {
+        return JSHelper;
+    }
 
-	public abstract HTMLCanvasElementWrapper getCanvas();
+    public abstract HTMLCanvasElementWrapper getCanvas();
 
-	public abstract WindowWrapper getCurrentWindow();
+    public abstract WindowWrapper getCurrentWindow();
 
-	public abstract WebAgentInfo getAgentInfo();
+    public abstract WebAgentInfo getAgentInfo();
 
-	public abstract HTMLImageElementWrapper createImageElement();
+    public abstract HTMLImageElementWrapper createImageElement();
 
-	public abstract XMLHttpRequestWrapper creatHttpRequest();
+    public abstract XMLHttpRequestWrapper creatHttpRequest();
 
-	public abstract StorageWrapper getStorage();
+    public abstract StorageWrapper getStorage();
 
-	public abstract SoundManagerWrapper createSoundManager();
+    public abstract SoundManagerWrapper createSoundManager();
 
-	public abstract WebJSGraphics getGraphics();
+    public abstract WebJSGraphics getGraphics();
 
-	public abstract WebJSApplication getApplication();
+    public abstract WebJSApplication getApplication();
 }

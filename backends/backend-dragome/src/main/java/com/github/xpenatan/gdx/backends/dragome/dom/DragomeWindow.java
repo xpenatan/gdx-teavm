@@ -14,37 +14,37 @@ import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
  */
 public class DragomeWindow implements WindowWrapper {
 
-	Window window;
+    Window window;
 
-	WindowWrapper wrapper;
+    WindowWrapper wrapper;
 
-	public DragomeWindow() {
-		window = Window.getInstance();
-		Object windowObj = ScriptHelper.eval("window", null);
-		wrapper = JsCast.castTo(windowObj, WindowWrapper.class);
-	}
+    public DragomeWindow() {
+        window = Window.getInstance();
+        Object windowObj = ScriptHelper.eval("window", null);
+        wrapper = JsCast.castTo(windowObj, WindowWrapper.class);
+    }
 
-	@Override
-	public DocumentWrapper getDocument() {
-		Document document = Window.getDocument();
-		DocumentWrapper document2 = JsCast.castTo(document, DocumentWrapper.class);
-		return document2;
-	}
+    @Override
+    public DocumentWrapper getDocument() {
+        Document document = Window.getDocument();
+        DocumentWrapper document2 = JsCast.castTo(document, DocumentWrapper.class);
+        return document2;
+    }
 
-	@Override
-	public void requestAnimationFrame(Runnable runnable) {
-		window.requestAnimationFrame(runnable);
-	}
+    @Override
+    public void requestAnimationFrame(Runnable runnable) {
+        window.requestAnimationFrame(runnable);
+    }
 
-	@Override
-	public LocationWrapper getLocation () {
-		LocationWrapper location = wrapper.getLocation();
-		return location;
-	}
+    @Override
+    public LocationWrapper getLocation() {
+        LocationWrapper location = wrapper.getLocation();
+        return location;
+    }
 
-	@Override
-	public TimerWrapper getTimer () {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public TimerWrapper getTimer() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

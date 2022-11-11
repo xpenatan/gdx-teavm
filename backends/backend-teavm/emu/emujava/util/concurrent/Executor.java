@@ -19,5 +19,5 @@ package emujava.util.concurrent;
  * Emulation of Executor.
  */
 public interface Executor {
-  void execute(Runnable command);
+    void execute(Runnable command);
 }

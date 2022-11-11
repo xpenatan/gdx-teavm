@@ -52,11 +52,11 @@ public class Joint<T extends b2Joint> {
             return JointDef.JointType.Unknown;
     }
 
-    public void setUserData (Object userData) {
+    public void setUserData(Object userData) {
         this.userData = userData;
     }
 
-    public Object getUserData () {
+    public Object getUserData() {
         return userData;
     }
 }

@@ -1,6 +1,5 @@
 package com.badlogic.gdx.graphics.glutils;
 
-public class GLLVersion
-{
+public class GLLVersion {
 
 }

@@ -20,30 +20,32 @@ import org.w3c.dom.Element;
 
 import com.dragome.commons.javascript.ScriptHelper;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class DragomeWindow {
 
-	public static int getInnerWidth () {
-		return ScriptHelper.evalInt("window.innerWidth", null);
-	}
+    public static int getInnerWidth() {
+        return ScriptHelper.evalInt("window.innerWidth", null);
+    }
 
-	public static int getInnerHeight () {
-		return ScriptHelper.evalInt("window.innerHeight", null);
-	}
+    public static int getInnerHeight() {
+        return ScriptHelper.evalInt("window.innerHeight", null);
+    }
 
-	public static void onResize (Runnable run) {
-		ScriptHelper.put("run", run, null);
-		ScriptHelper.evalNoResult("window.addEventListener('resize', function(){run.$run$void();})", null);
-	}
+    public static void onResize(Runnable run) {
+        ScriptHelper.put("run", run, null);
+        ScriptHelper.evalNoResult("window.addEventListener('resize', function(){run.$run$void();})", null);
+    }
 
-	public static void requestAnimationFrame (Runnable run, Element element) {
-		ScriptHelper.put("run", run, null);
-		ScriptHelper.put("element", element, null);
-		ScriptHelper.evalNoResult("requestAnimationFrame(function(time) {run.$run$void();}, element)", null);
-	}
+    public static void requestAnimationFrame(Runnable run, Element element) {
+        ScriptHelper.put("run", run, null);
+        ScriptHelper.put("element", element, null);
+        ScriptHelper.evalNoResult("requestAnimationFrame(function(time) {run.$run$void();}, element)", null);
+    }
 
-	public static void requestAnimationFrame (Runnable run) {
-		ScriptHelper.put("run", run, null);
-		ScriptHelper.evalNoResult("requestAnimationFrame(function() {run.$run$void();})", null);
-	}
+    public static void requestAnimationFrame(Runnable run) {
+        ScriptHelper.put("run", run, null);
+        ScriptHelper.evalNoResult("requestAnimationFrame(function() {run.$run$void();})", null);
+    }
 }

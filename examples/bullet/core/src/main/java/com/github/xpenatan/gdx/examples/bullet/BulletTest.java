@@ -31,11 +31,17 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
-import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
+import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
-import com.badlogic.gdx.physics.bullet.linearmath.*;
+import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
+import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -152,9 +158,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         cameraController.forwardTarget = false;
         cameraController.translateTarget = false;
 
-
         Gdx.input.setInputProcessor(new InputMultiplexer(this, cameraController));
-
     }
 
     Vector3 tmp = new Vector3();
@@ -294,7 +298,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         }
         else if(keycode == Keys.ENTER) {
             if(Gdx.graphics.isFullscreen()) {
-                Gdx.graphics.setWindowedMode(0,0);
+                Gdx.graphics.setWindowedMode(0, 0);
             }
             else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());

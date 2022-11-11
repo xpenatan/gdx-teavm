@@ -75,7 +75,7 @@ public class Transform {
 
     public void setPosition(Vector2 pos) {
         float x = pos.x;
-        float y= pos.y;
+        float y = pos.y;
         b2Vec2.TMP_01.Set(x, y);
         vals[POS_X] = x;
         vals[POS_Y] = y;

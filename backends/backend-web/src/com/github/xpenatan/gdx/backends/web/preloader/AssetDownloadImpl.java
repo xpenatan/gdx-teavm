@@ -63,18 +63,18 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void load(boolean async, String url, AssetType type, String mimeType, AssetLoaderListener<?> listener) {
-        switch (type) {
+        switch(type) {
             case Text:
-                loadText(async, url, (AssetLoaderListener<String>) listener);
+                loadText(async, url, (AssetLoaderListener<String>)listener);
                 break;
             case Image:
-                loadImage(async, url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>) listener);
+                loadImage(async, url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>)listener);
                 break;
             case Binary:
-                loadBinary(async, url, (AssetLoaderListener<Blob>) listener);
+                loadBinary(async, url, (AssetLoaderListener<Blob>)listener);
                 break;
             case Audio:
-                loadAudio(async, url, (AssetLoaderListener<Void>) listener);
+                loadAudio(async, url, (AssetLoaderListener<Void>)listener);
                 break;
             case Directory:
                 listener.onSuccess(url, null);
@@ -86,17 +86,18 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
-        if (showLog)
+        if(showLog)
             System.out.println("Loading asset : " + url);
         final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
-                if (request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    if (request.getStatus() != 200) {
+                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                    if(request.getStatus() != 200) {
                         listener.onFailure(url);
-                    } else {
-                        if (showLog)
+                    }
+                    else {
+                        if(showLog)
                             System.out.println("Asset loaded: " + url);
                         listener.onSuccess(url, request.getResponseText());
                     }
@@ -113,25 +114,26 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
-        if (showLog)
+        if(showLog)
             System.out.println("Loading script : " + url);
         final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
-                if (request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                     boolean subtractQueue = true;
-                    if (request.getStatus() != 200) {
+                    if(request.getStatus() != 200) {
                         listener.onFailure(url);
-                    } else {
-                        if (showLog)
+                    }
+                    else {
+                        if(showLog)
                             System.out.println("Script loaded: " + url);
                         NodeWrapper response = request.getResponse();
                         WindowWrapper currentWindow = jsHelper.getCurrentWindow();
                         DocumentWrapper document = currentWindow.getDocument();
                         HTMLElementWrapper scriptElement = document.createElement("script");
                         scriptElement.appendChild(document.createTextNode(response));
-						document.getBody().appendChild(scriptElement);
+                        document.getBody().appendChild(scriptElement);
                         listener.onSuccess(url, request.getResponseText());
                     }
                     subtractQueue();
@@ -165,20 +167,21 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
-        if (showLog)
+        if(showLog)
             System.out.println("Loading asset : " + url);
         XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
-                if (request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    if (request.getStatus() != 200) {
+                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                    if(request.getStatus() != 200) {
                         listener.onFailure(url);
-                    } else {
-                        if (showLog)
+                    }
+                    else {
+                        if(showLog)
                             System.out.println("Asset loaded: " + url);
 
-                        ArrayBufferWrapper response = (ArrayBufferWrapper) request.getResponse();
+                        ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
                         Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
                         listener.onSuccess(url, new Blob(response, data));
                     }
@@ -219,23 +222,24 @@ public class AssetDownloadImpl implements AssetDownload {
             public boolean onSuccess(String url, Blob result) {
                 final HTMLImageElementWrapper image = jsHelper.createImageElement();
 
-                if (crossOrigin != null) {
+                if(crossOrigin != null) {
                     image.setAttribute("crossOrigin", crossOrigin);
                 }
                 addQueue();
                 hookImgListener(image, new EventListenerWrapper() {
                     @Override
                     public void handleEvent(EventWrapper evt) {
-                        if (evt.getType().equals("error"))
+                        if(evt.getType().equals("error"))
                             listener.onFailure(url);
                         else
                             listener.onSuccess(url, image);
                         subtractQueue();
                     }
                 });
-                if (isUseInlineBase64) {
+                if(isUseInlineBase64) {
                     image.setSrc("data:" + mimeType + ";base64," + result.toBase64());
-                } else {
+                }
+                else {
                     image.setSrc(url);
                 }
                 return false;
@@ -252,7 +256,7 @@ public class AssetDownloadImpl implements AssetDownload {
         req.setOnprogress(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
-                ProgressEventWrapper progressEvent = (ProgressEventWrapper) evt;
+                ProgressEventWrapper progressEvent = (ProgressEventWrapper)evt;
                 listener.onProgress(progressEvent.getLoaded());
             }
         });

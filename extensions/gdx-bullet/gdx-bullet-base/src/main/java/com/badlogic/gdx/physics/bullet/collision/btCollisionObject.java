@@ -18,7 +18,7 @@ public class btCollisionObject extends BulletBase {
 
     btCollisionShape collisionShape;
 
-    public void setCollisionShape (btCollisionShape collisionShape) {
+    public void setCollisionShape(btCollisionShape collisionShape) {
         this.collisionShape = collisionShape;
         setCollisionShape(cPointer, collisionShape != null ? collisionShape.getCPointer() : 0);
     }
@@ -29,14 +29,14 @@ public class btCollisionObject extends BulletBase {
      */
     private static native void setCollisionShape(long addr, long collisionShapeAddr);
 
-    public btCollisionShape getCollisionShape () {
+    public btCollisionShape getCollisionShape() {
         return collisionShape;
     }
 
     public void setUserPointer(VoidPtr userPointer) {
     }
 
-    public void setUserPointer (long userPointer) {
+    public void setUserPointer(long userPointer) {
         setUserPointerNATIVE(cPointer, userPointer);
     }
 
@@ -53,7 +53,7 @@ public class btCollisionObject extends BulletBase {
         return longPointer;
     }
      */
-    public long getUserPointer () {
+    public long getUserPointer() {
         long userPointer = getUserPointer(cPointer);
         return userPointer;
     }
@@ -65,7 +65,7 @@ public class btCollisionObject extends BulletBase {
      */
     private static native long getUserPointer(long addr);
 
-    public void getWorldTransform (Matrix4 out) {
+    public void getWorldTransform(Matrix4 out) {
         // Gdx method
         int worldTransformAddr = (int)getWorldTransformAddr(cPointer);
         btTransform.convert(worldTransformAddr, out);

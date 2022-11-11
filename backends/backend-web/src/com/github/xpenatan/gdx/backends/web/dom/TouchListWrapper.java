@@ -5,7 +5,7 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface TouchListWrapper extends EventWrapper {
 
-	public int getLength();
+    public int getLength();
 
-	public TouchWrapper item(int index);
+    public TouchWrapper item(int index);
 }

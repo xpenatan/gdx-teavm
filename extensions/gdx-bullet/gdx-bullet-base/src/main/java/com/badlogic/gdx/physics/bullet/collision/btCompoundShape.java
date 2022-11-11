@@ -29,11 +29,11 @@ public class btCompoundShape extends btCollisionShape {
      */
     private static native void deleteNative(long addr);
 
-    public void addChildShape (Matrix4 localTransform, btCollisionShape shape) {
+    public void addChildShape(Matrix4 localTransform, btCollisionShape shape) {
         // Required. it's called from Bullet class
         btTransform.convert(localTransform, btTransform.TEMP_0);
         btTransform btLocalTransform = btTransform.TEMP_0;
-        addChildShapeNATIVE((int) cPointer, (int) btLocalTransform.getCPointer(), (int) shape.getCPointer());
+        addChildShapeNATIVE((int)cPointer, (int)btLocalTransform.getCPointer(), (int)shape.getCPointer());
     }
 
     /*[-teaVM;-NATIVE]

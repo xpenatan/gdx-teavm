@@ -8,41 +8,43 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class LocalShapeInfo extends BulletBase {
 
     public LocalShapeInfo(long cPtr, boolean cMemoryOwn) {
         resetObj(cPtr, cMemoryOwn);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.LocalShapeInfo);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.LocalShapeInfo);", this);
+    }
 
     public void setShapePart(int value) {
-		com.dragome.commons.javascript.ScriptHelper.put("value",value,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_shapePart(value);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("value", value, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_shapePart(value);", this);
     }
 
     public int getShapePart() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.get_m_shapePart();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.get_m_shapePart();", this);
     }
 
     public void setTriangleIndex(int value) {
-		com.dragome.commons.javascript.ScriptHelper.put("value",value,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_triangleIndex(value);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("value", value, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.set_m_triangleIndex(value);", this);
     }
 
     public int getTriangleIndex() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.get_m_triangleIndex();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.get_m_triangleIndex();", this);
     }
 }

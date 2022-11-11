@@ -25,14 +25,14 @@ package emujava.util.concurrent;
  * the official Java API doc</a> for details.
  */
 public interface Future<V> {
-  boolean cancel(boolean mayInterruptIfRunning);
+    boolean cancel(boolean mayInterruptIfRunning);
 
-  boolean isCancelled();
+    boolean isCancelled();
 
-  boolean isDone();
+    boolean isDone();
 
-  V get() throws InterruptedException, emujava.util.concurrent.ExecutionException;
+    V get() throws InterruptedException, emujava.util.concurrent.ExecutionException;
 
-  V get(long timeout, TimeUnit unit)
-      throws InterruptedException, ExecutionException, TimeoutException;
+    V get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException;
 }

@@ -17,44 +17,53 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class Bullet {
 
-    /** The version of the Bullet library used by this wrapper. */
+    /**
+     * The version of the Bullet library used by this wrapper.
+     */
     public static final int VERSION = LinearMathConstants.BT_BULLET_VERSION;
 
     protected static boolean enableLogging = true;
 
     private static boolean bulletInit = false;
 
-    /** Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
-	 * classes/methods can be used. */
+    /**
+     * Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
+     * classes/methods can be used.
+     */
     public static void init() {
         init(true);
     }
 
-    /** Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
-	 * classes/methods can be used.
-	 * @param useRefCounting Whether to use reference counting, causing object to be destroyed when no longer referenced. You must
-	 *           use {@link BulletBase#obtain()} and {@link BulletBase#release()} when using reference counting.
-	 * @param logging Whether to log an error on potential errors in the application. */
+    /**
+     * Loads the native Bullet native library and initializes the gdx-bullet extension. Must be called before any of the bullet
+     * classes/methods can be used.
+     *
+     * @param useRefCounting Whether to use reference counting, causing object to be destroyed when no longer referenced. You must
+     *                       use {@link BulletBase#obtain()} and {@link BulletBase#release()} when using reference counting.
+     * @param logging        Whether to log an error on potential errors in the application.
+     */
     public static void init(boolean logging) {
-		if(Bullet.bulletInit)
-		return;
-		Bullet.bulletInit = true;
-		Bullet.enableLogging = logging;
-		final int version = btScalar.btGetVersion();
-		if (version != VERSION)
-		throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
-		+ ")");
+        if(Bullet.bulletInit)
+            return;
+        Bullet.bulletInit = true;
+        Bullet.enableLogging = logging;
+        final int version = btScalar.btGetVersion();
+        if(version != VERSION)
+            throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
+                    + ")");
     }
 
     /**
-	 * Dispose static temporary objects. Use when ending app.
-	 */
+     * Dispose static temporary objects. Use when ending app.
+     */
     public static void dispose() {
-		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.dispose();
-		com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_2.dispose();
+        com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_1.dispose();
+        com.badlogic.gdx.physics.bullet.linearmath.btVector3.btVector3_2.dispose();
     }
 
     protected static class ShapePart {
@@ -80,29 +89,29 @@ public class Bullet {
 
     public static void getShapeParts(final Node node, final boolean applyTransform, final Array<ShapePart> out, final int offset, final Pool<ShapePart> pool) {
         final Matrix4 transform = applyTransform ? node.localTransform : idt;
-        if (node.parts.size > 0) {
+        if(node.parts.size > 0) {
             ShapePart part = null;
-            for (int i = offset, n = out.size; i < n; i++) {
+            for(int i = offset, n = out.size; i < n; i++) {
                 final ShapePart p = out.get(i);
-                if (Arrays.equals(p.transform.val, transform.val)) {
+                if(Arrays.equals(p.transform.val, transform.val)) {
                     part = p;
                     break;
                 }
             }
-            if (part == null) {
+            if(part == null) {
                 part = pool.obtain();
                 part.parts.clear();
                 part.transform.set(transform);
                 out.add(part);
             }
-            for (int i = 0, n = node.parts.size; i < n; i++) part.parts.add(node.parts.get(i).meshPart);
+            for(int i = 0, n = node.parts.size; i < n; i++) part.parts.add(node.parts.get(i).meshPart);
         }
-        if (node.hasChildren()) {
+        if(node.hasChildren()) {
             final boolean transformed = applyTransform && !Arrays.equals(transform.val, idt.val);
             final int o = transformed ? out.size : offset;
             getShapeParts(node.getChildren(), out, o, pool);
-            if (transformed) {
-                for (int i = o, n = out.size; i < n; i++) {
+            if(transformed) {
+                for(int i = o, n = out.size; i < n; i++) {
                     final ShapePart part = out.get(i);
                     tmpM.set(part.transform);
                     part.transform.set(transform).mul(tmpM);
@@ -112,6 +121,6 @@ public class Bullet {
     }
 
     public static <T extends Node> void getShapeParts(final Iterable<T> nodes, final Array<ShapePart> out, final int offset, final Pool<ShapePart> pool) {
-        for (T node : nodes) getShapeParts(node, true, out, offset, pool);
+        for(T node : nodes) getShapeParts(node, true, out, offset, pool);
     }
 }

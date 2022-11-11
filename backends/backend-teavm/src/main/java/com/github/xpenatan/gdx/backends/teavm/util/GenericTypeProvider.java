@@ -33,11 +33,12 @@ public class GenericTypeProvider {
             Class<?> owner = findClass(methodCache.getDeclaringClass().getName());
             Class<?>[] params = Arrays.stream(methodCache.getParameterTypes())
                     .map(this::convertType)
-                    .toArray((IntFunction<Class<?>[]>) Class[]::new);
-            while (owner != null) {
+                    .toArray((IntFunction<Class<?>[]>)Class[]::new);
+            while(owner != null) {
                 try {
                     return owner.getDeclaredMethod(methodCache.getName(), params);
-                } catch (NoSuchMethodException e) {
+                }
+                catch(NoSuchMethodException e) {
                     owner = owner.getSuperclass();
                 }
             }
@@ -50,11 +51,12 @@ public class GenericTypeProvider {
             Class<?> owner = findClass(method.getDeclaringClass().getName());
             Class<?>[] params = Arrays.stream(method.getParameterTypes())
                     .map(this::convertType)
-                    .toArray((IntFunction<Class<?>[]>) Class[]::new);
-            while (owner != null) {
+                    .toArray((IntFunction<Class<?>[]>)Class[]::new);
+            while(owner != null) {
                 try {
                     return owner.getDeclaredConstructor(params);
-                } catch (NoSuchMethodException e) {
+                }
+                catch(NoSuchMethodException e) {
                     owner = owner.getSuperclass();
                 }
             }
@@ -65,10 +67,11 @@ public class GenericTypeProvider {
     public Field findField(ReflectField field) {
         return fieldCache.computeIfAbsent(field, f -> {
             Class<?> owner = findClass(field.getDeclaringClass().getName());
-            while (owner != null) {
+            while(owner != null) {
                 try {
                     return owner.getDeclaredField(field.getName());
-                } catch (NoSuchFieldException e) {
+                }
+                catch(NoSuchFieldException e) {
                     owner = owner.getSuperclass();
                 }
             }
@@ -77,8 +80,8 @@ public class GenericTypeProvider {
     }
 
     private Class<?> convertType(ReflectClass<?> type) {
-        if (type.isPrimitive()) {
-            switch (type.getName()) {
+        if(type.isPrimitive()) {
+            switch(type.getName()) {
                 case "boolean":
                     return boolean.class;
                 case "byte":
@@ -98,7 +101,8 @@ public class GenericTypeProvider {
                 case "void":
                     return void.class;
             }
-        } else if (type.isArray()) {
+        }
+        else if(type.isArray()) {
             Class<?> itemCls = convertType(type.getComponentType());
             return Array.newInstance(itemCls, 0).getClass();
         }
@@ -109,24 +113,30 @@ public class GenericTypeProvider {
         return classCache.computeIfAbsent(name, n -> {
             try {
                 return Class.forName(name, false, classLoader);
-            } catch (ClassNotFoundException e) {
+            }
+            catch(ClassNotFoundException e) {
                 throw new RuntimeException("Can't find class " + name, e);
             }
         });
     }
 
     static Class<?> rawType(Type type) {
-        if (type instanceof Class<?>) {
-            return (Class<?>) type;
-        } else if (type instanceof ParameterizedType) {
-            return rawType(((ParameterizedType) type).getRawType());
-        } else if (type instanceof GenericArrayType) {
-            return Array.newInstance(rawType(((GenericArrayType) type).getGenericComponentType()), 0).getClass();
-        } else if (type instanceof TypeVariable<?>) {
-            return rawType(((TypeVariable<?>) type).getBounds()[0]);
-        } else if (type instanceof WildcardType) {
-            return rawType(((WildcardType) type).getUpperBounds()[0]);
-        } else {
+        if(type instanceof Class<?>) {
+            return (Class<?>)type;
+        }
+        else if(type instanceof ParameterizedType) {
+            return rawType(((ParameterizedType)type).getRawType());
+        }
+        else if(type instanceof GenericArrayType) {
+            return Array.newInstance(rawType(((GenericArrayType)type).getGenericComponentType()), 0).getClass();
+        }
+        else if(type instanceof TypeVariable<?>) {
+            return rawType(((TypeVariable<?>)type).getBounds()[0]);
+        }
+        else if(type instanceof WildcardType) {
+            return rawType(((WildcardType)type).getUpperBounds()[0]);
+        }
+        else {
             throw new IllegalArgumentException("Don't know how to convert generic type: " + type);
         }
     }

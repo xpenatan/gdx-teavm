@@ -9,61 +9,71 @@ package com.badlogic.gdx.physics.bullet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class BulletBase implements Disposable {
 
-    /** Low level usage. Don't change the pointer. */
+    /**
+     * Low level usage. Don't change the pointer.
+     */
     public long cPointer;
 
     private boolean cMemOwn;
 
     private boolean disposed;
 
-	public Object jsObj; // cached obj
+    public Object jsObj; // cached obj
 
-    /** Do not call directly. Called when object is owned and dispose is called. */
+    /**
+     * Do not call directly. Called when object is owned and dispose is called.
+     */
     protected void delete() {
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("Bullet.destroy(jsObj);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("Bullet.destroy(jsObj);", this);
     }
 
     /**
-	 * Internal use. Can cause memory leak if not used correctly.
-	 */
+     * Internal use. Can cause memory leak if not used correctly.
+     */
     public final void resetObj(long cPtr, boolean cMemoryOwn) {
-		cMemOwn = cMemoryOwn;
-		cPointer = cPtr;
-		disposed = false;
-		if(cPtr == 0) {
-			this.jsObj = null;
-		}
-		else {
-			cacheObj();
-		}
+        cMemOwn = cMemoryOwn;
+        cPointer = cPtr;
+        disposed = false;
+        if(cPtr == 0) {
+            this.jsObj = null;
+        }
+        else {
+            cacheObj();
+        }
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+    }
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof BulletBase) && (((BulletBase) obj).cPointer == this.cPointer);
+        return (obj instanceof BulletBase) && (((BulletBase)obj).cPointer == this.cPointer);
     }
 
     @Override
     public int hashCode() {
-        return (int) cPointer;
+        return (int)cPointer;
     }
 
-    /** Take ownership of the native instance, causing the native object to be deleted when this object gets out of scope or calling dispose. 
-	 *  Only call it if you know what your doing. */
+    /**
+     * Take ownership of the native instance, causing the native object to be deleted when this object gets out of scope or calling dispose.
+     * Only call it if you know what your doing.
+     */
     public void takeOwnership() {
         cMemOwn = true;
     }
 
-    /** Release ownership of the native instance, causing the native object NOT to be deleted when this object gets out of scope or calling dispose. 
-	 *  Only call it if you know what your doing. */
+    /**
+     * Release ownership of the native instance, causing the native object NOT to be deleted when this object gets out of scope or calling dispose.
+     * Only call it if you know what your doing.
+     */
     public void releaseOwnership() {
         cMemOwn = false;
     }
@@ -74,12 +84,13 @@ public class BulletBase implements Disposable {
 
     @Override
     public final void dispose() {
-        if (cPointer != 0 && cMemOwn) {
-            if (disposed) {
-                if (Bullet.enableLogging && Gdx.app != null)
+        if(cPointer != 0 && cMemOwn) {
+            if(disposed) {
+                if(Bullet.enableLogging && Gdx.app != null)
                     Gdx.app.error("Bullet", "Already disposed " + toString());
-            } else {
-                if (Bullet.enableLogging && Gdx.app != null)
+            }
+            else {
+                if(Bullet.enableLogging && Gdx.app != null)
                     Gdx.app.debug("Bullet", "Disposing " + toString());
                 destroy();
             }
@@ -87,16 +98,16 @@ public class BulletBase implements Disposable {
     }
 
     private void destroy() {
-		try {
-			delete();
-			disposed = true;
-			cPointer = 0;
-			jsObj = null;
-		}
-		catch (Throwable e) {
-			if(Gdx.app != null)
-			Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
-		}
+        try {
+            delete();
+            disposed = true;
+            cPointer = 0;
+            jsObj = null;
+        }
+        catch(Throwable e) {
+            if(Gdx.app != null)
+                Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
+        }
     }
 
     public boolean isDisposed() {
@@ -110,17 +121,19 @@ public class BulletBase implements Disposable {
 
     @Override
     protected void finalize() throws Throwable {
-        if (cPointer != 0 && cMemOwn && disposed == false) {
-            if (Bullet.enableLogging && Gdx.app != null)
+        if(cPointer != 0 && cMemOwn && disposed == false) {
+            if(Bullet.enableLogging && Gdx.app != null)
                 Gdx.app.error("Bullet", "Disposing " + toString() + " due to garbage collection. Memmory Leak Warning. Call Dispose instead.");
             destroy();
         }
         super.finalize();
     }
 
-    /** Internal use */
+    /**
+     * Internal use
+     */
     public void checkPointer() {
-        if (cPointer == 0)
+        if(cPointer == 0)
             throw new NullPointerException("Tried to access native object with null pointer " + getClass().getSimpleName());
     }
 }

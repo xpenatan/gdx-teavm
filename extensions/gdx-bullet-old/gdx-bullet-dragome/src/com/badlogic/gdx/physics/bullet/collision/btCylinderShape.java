@@ -8,7 +8,9 @@ package com.badlogic.gdx.physics.bullet.collision;
 
 import com.badlogic.gdx.math.Vector3;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btCylinderShape extends btConvexInternalShape {
 
     public btCylinderShape(Vector3 halfExtents) {
@@ -16,15 +18,15 @@ public class btCylinderShape extends btConvexInternalShape {
     }
 
     public static long createNative(float x, float y, float z) {
-		com.dragome.commons.javascript.ScriptHelper.put("z",z,null);
-		com.dragome.commons.javascript.ScriptHelper.put("y",y,null);
-		com.dragome.commons.javascript.ScriptHelper.put("x",x,null);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);",null);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btCylinderShape(vec));",null);
+        com.dragome.commons.javascript.ScriptHelper.put("z", z, null);
+        com.dragome.commons.javascript.ScriptHelper.put("y", y, null);
+        com.dragome.commons.javascript.ScriptHelper.put("x", x, null);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=Bullet.MyTemp.prototype.btVec3_1(x,y,z);", null);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btCylinderShape(vec));", null);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btCylinderShape);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btCylinderShape);", this);
+    }
 }

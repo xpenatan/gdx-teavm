@@ -4,8 +4,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 /*[0;X] com.dragome.commons.compiler.annotations.MethodAlias */
 
-/** @author xpenatan */
-public class btIDebugDraw extends BulletBase{
+/**
+ * @author xpenatan
+ */
+public class btIDebugDraw extends BulletBase {
 
 	/*JNI
 		#include <src/bullet/LinearMath/btIDebugDraw.h>
@@ -58,12 +60,12 @@ public class btIDebugDraw extends BulletBase{
 				}
 		};
 	*/
-	
-	public btIDebugDraw() {
-		resetObj(createNative(), true);
-	}
-	
-	private native long createNative(); /*
+
+    public btIDebugDraw() {
+        resetObj(createNative(), true);
+    }
+
+    private native long createNative(); /*
 		if(!drawLineID) {
 			jclass cls = env->GetObjectClass(object);
 			drawLineID = env->GetMethodID(cls, "drawLine", "(FFFFFFFFF)V");
@@ -142,80 +144,78 @@ public class btIDebugDraw extends BulletBase{
 		}
 	 */
 
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		CustomDebugDraw * cobj = (CustomDebugDraw *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
-	
-	private void drawLine (float fromX, float fromY, float fromZ, float toX, float toY, float toZ, float colorX, float colorY, float colorZ) {
-		btVector3.vector3_1.set(fromX, fromY, fromZ);
-		btVector3.vector3_2.set(toX, toY, toZ);
-		btVector3.vector3_3.set(colorX, colorY, colorZ);
-		drawLine(btVector3.vector3_1, btVector3.vector3_2, btVector3.vector3_3);
-	}
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 
-	public void drawLine (Vector3 from, Vector3 to, Vector3 color) {
-	}
+    private void drawLine(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, float colorX, float colorY, float colorZ) {
+        btVector3.vector3_1.set(fromX, fromY, fromZ);
+        btVector3.vector3_2.set(toX, toY, toZ);
+        btVector3.vector3_3.set(colorX, colorY, colorZ);
+        drawLine(btVector3.vector3_1, btVector3.vector3_2, btVector3.vector3_3);
+    }
+    /*[0;X;D]*/
 
-	private void drawContactPoint (float pointOnBX, float pointOnBY, float pointOnBZ, float normalOnX, float normalOnY, float normalOnZ, float colorX, float colorY, float colorZ, float distance, int lifeTime) {
-		btVector3.vector3_1.set(pointOnBX, pointOnBY, pointOnBZ);
-		btVector3.vector3_2.set(normalOnX, normalOnY, normalOnZ);
-		btVector3.vector3_3.set(colorX, colorY, colorZ);
-		drawContactPoint(btVector3.vector3_1, btVector3.vector3_2, distance, lifeTime, btVector3.vector3_3);
-	}
-	/*[0;X;D]*/
-	
-	public void drawContactPoint (Vector3 pointOnB, Vector3 normalOnB, float distance, int lifeTime, Vector3 color) {
-	}
-	
-	public void reportErrorWarning (String warningString) { 
-		//FIXME not impl
-	}
+    public void drawLine(Vector3 from, Vector3 to, Vector3 color) {
+    }
 
-	public void draw3dText (Vector3 location, String textString) { //FIXME not impl
-	}
+    private void drawContactPoint(float pointOnBX, float pointOnBY, float pointOnBZ, float normalOnX, float normalOnY, float normalOnZ, float colorX, float colorY, float colorZ, float distance, int lifeTime) {
+        btVector3.vector3_1.set(pointOnBX, pointOnBY, pointOnBZ);
+        btVector3.vector3_2.set(normalOnX, normalOnY, normalOnZ);
+        btVector3.vector3_3.set(colorX, colorY, colorZ);
+        drawContactPoint(btVector3.vector3_1, btVector3.vector3_2, distance, lifeTime, btVector3.vector3_3);
+    }
+    /*[0;X;D]*/
 
-	public void setDebugMode (int debugMode){
-		setDebugMode(cPointer, debugMode);
-	}
-	
-	private static native void setDebugMode(long addr, int debugMode); /*
+    public void drawContactPoint(Vector3 pointOnB, Vector3 normalOnB, float distance, int lifeTime, Vector3 color) {
+    }
+
+    public void reportErrorWarning(String warningString) {
+        //FIXME not impl
+    }
+
+    public void draw3dText(Vector3 location, String textString) { //FIXME not impl
+    }
+
+    public void setDebugMode(int debugMode) {
+        setDebugMode(cPointer, debugMode);
+    }
+
+    private static native void setDebugMode(long addr, int debugMode); /*
 		CustomDebugDraw * cobj = (CustomDebugDraw *)addr;
 		cobj->setDebugMode(debugMode);
 	*/
-	
-	
-	public int getDebugMode () {
-		return 0;
-	}
-	
-	public final static class DebugDrawModes
-	{
-		public final static int DBG_NoDebug = 0;
-		public final static int DBG_DrawWireframe = 1;
-		public final static int DBG_DrawAabb = 2;
-		public final static int DBG_DrawFeaturesText = 4;
-		public final static int DBG_DrawContactPoints = 8;
-		public final static int DBG_NoDeactivation = 16;
-		public final static int DBG_NoHelpText = 32;
-		public final static int DBG_DrawText = 64;
-		public final static int DBG_ProfileTimings = 128;
-		public final static int DBG_EnableSatComparison = 256;
-		public final static int DBG_DisableBulletLCP = 512;
-		public final static int DBG_EnableCCD = 1024;
-		public final static int DBG_DrawConstraints = (1 << 11);
-		public final static int DBG_DrawConstraintLimits = (1 << 12);
-		public final static int DBG_FastWireframe = (1 << 13);
-		public final static int DBG_DrawNormals = (1 << 14);
-		public final static int DBG_DrawFrames = (1 << 15);
-		public final static int DBG_MAX_DEBUG_DRAW_MODE = DBG_DrawFrames + 1;
-	}
+
+    public int getDebugMode() {
+        return 0;
+    }
+
+    public final static class DebugDrawModes {
+        public final static int DBG_NoDebug = 0;
+        public final static int DBG_DrawWireframe = 1;
+        public final static int DBG_DrawAabb = 2;
+        public final static int DBG_DrawFeaturesText = 4;
+        public final static int DBG_DrawContactPoints = 8;
+        public final static int DBG_NoDeactivation = 16;
+        public final static int DBG_NoHelpText = 32;
+        public final static int DBG_DrawText = 64;
+        public final static int DBG_ProfileTimings = 128;
+        public final static int DBG_EnableSatComparison = 256;
+        public final static int DBG_DisableBulletLCP = 512;
+        public final static int DBG_EnableCCD = 1024;
+        public final static int DBG_DrawConstraints = (1 << 11);
+        public final static int DBG_DrawConstraintLimits = (1 << 12);
+        public final static int DBG_FastWireframe = (1 << 13);
+        public final static int DBG_DrawNormals = (1 << 14);
+        public final static int DBG_DrawFrames = (1 << 15);
+        public final static int DBG_MAX_DEBUG_DRAW_MODE = DBG_DrawFrames + 1;
+    }
 }

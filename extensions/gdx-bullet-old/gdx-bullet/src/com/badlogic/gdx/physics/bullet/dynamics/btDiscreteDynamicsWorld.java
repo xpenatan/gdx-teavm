@@ -4,20 +4,22 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btDispatcher;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btDiscreteDynamicsWorld extends btDynamicsWorld {
 
 	/*JNI
 		#include <src/bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 	*/
-	
-	public btDiscreteDynamicsWorld(btDispatcher dispatcher, btBroadphaseInterface broadInterface, btConstraintSolver constraintSolver, btCollisionConfiguration collisionConfiguration) {
-		this.dispatcher = dispatcher;
-		this.broadphasePairCache = broadInterface;
-		resetObj(createNative(dispatcher.cPointer, broadInterface.cPointer, constraintSolver.cPointer, collisionConfiguration.cPointer), true);
-	}
-	
-	private native long createNative(long dispatcherAddr, long pairCacheAddr, long constraintSolverAddr, long collisionConfigurationAddr); /*
+
+    public btDiscreteDynamicsWorld(btDispatcher dispatcher, btBroadphaseInterface broadInterface, btConstraintSolver constraintSolver, btCollisionConfiguration collisionConfiguration) {
+        this.dispatcher = dispatcher;
+        this.broadphasePairCache = broadInterface;
+        resetObj(createNative(dispatcher.cPointer, broadInterface.cPointer, constraintSolver.cPointer, collisionConfiguration.cPointer), true);
+    }
+
+    private native long createNative(long dispatcherAddr, long pairCacheAddr, long constraintSolverAddr, long collisionConfigurationAddr); /*
 		btDispatcher * dispatcher = (btDispatcher *)dispatcherAddr;
 		btBroadphaseInterface * broadphaseInterface = (btBroadphaseInterface *)pairCacheAddr;
 		btConstraintSolver * constraintSolver = (btConstraintSolver *)constraintSolverAddr;
@@ -39,17 +41,16 @@ public class btDiscreteDynamicsWorld extends btDynamicsWorld {
 			this.jsObj = Bullet.wrapPointer(addr, Bullet.btDiscreteDynamicsWorld); #EVAL
 		}
 	*/
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
 
-	private static native void deletePointer(long addr); /*
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		btDiscreteDynamicsWorld * cobj = (btDiscreteDynamicsWorld *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
-	
+    /*[0;X;D]*/
 }

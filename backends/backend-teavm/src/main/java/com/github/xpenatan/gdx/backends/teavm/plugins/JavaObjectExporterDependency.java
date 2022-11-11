@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
-import emujava.util.concurrent.impl.JsPromise;
 import org.teavm.dependency.AbstractDependencyListener;
 import org.teavm.dependency.DependencyAgent;
 import org.teavm.dependency.DependencyNode;
@@ -17,8 +16,8 @@ public class JavaObjectExporterDependency extends AbstractDependencyListener {
     @Override
     public void methodReached(DependencyAgent agent, MethodDependency method) {
         String ownerName = method.getMethod().getOwnerName();
-        if (ownerName.equals("java.util.concurrent.impl.JsPromise")) {
-            switch (method.getMethod().getName()) {
+        if(ownerName.equals("java.util.concurrent.impl.JsPromise")) {
+            switch(method.getMethod().getName()) {
                 case "asJsObject":
                     DependencyNode variable = method.getVariable(1);
                     variable.connect(node);

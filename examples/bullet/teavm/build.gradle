@@ -1,38 +1,38 @@
 plugins {
-  id "org.gretty" version "3.0.6"
+    id "org.gretty" version "3.0.6"
 }
 
 sourceCompatibility = 1.8
 
 gretty {
-  servletContainer = 'jetty9'
-  extraResourceBase 'webapp'
+    servletContainer = 'jetty9'
+    extraResourceBase 'webapp'
 }
 
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.bullet.Build"
 
 dependencies {
-  implementation project(":examples:bullet:core")
-  implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation project(":examples:bullet:core")
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 
-  // Use snapshots
+    // Use snapshots
 //  implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:1.0.0-SNAPSHOT"
 
-  // Or source projects
-  implementation project(":backends:backend-web")
-  implementation project(":backends:backend-teavm")
-  implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
+    // Or source projects
+    implementation project(":backends:backend-web")
+    implementation project(":backends:backend-teavm")
+    implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 
 task buildJavaScript(dependsOn: classes, type: JavaExec) {
-  group = 'teavm'
-  description = 'Run core example'
+    group = 'teavm'
+    description = 'Run core example'
 
-  main = project.mainClassName
-  classpath = sourceSets.main.runtimeClasspath
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
 }
 

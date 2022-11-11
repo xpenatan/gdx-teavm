@@ -18,25 +18,28 @@ package com.github.xpenatan.gdx.backends.dragome;
 
 import com.badlogic.gdx.utils.Clipboard;
 
-/** Ported from GWT backend
- * @author xpenatan */
+/**
+ * Ported from GWT backend
+ *
+ * @author xpenatan
+ */
 public class DragomeClipboard implements Clipboard {
 
-	private String content = "";
+    private String content = "";
 
-	@Override
-	public String getContents () {
-		return content;
-	}
+    @Override
+    public String getContents() {
+        return content;
+    }
 
-	@Override
-	public void setContents (String content) {
-		this.content = content;
-	}
+    @Override
+    public void setContents(String content) {
+        this.content = content;
+    }
 
-	@Override
-	public boolean hasContents () {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean hasContents() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

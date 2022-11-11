@@ -1,6 +1,8 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btConvexInternalShape extends btConvexShape {
 
 	/*[0;X;F;L]

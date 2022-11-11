@@ -23,62 +23,62 @@ public class EdgeShape extends Shape<b2EdgeShape> {
         b2Shape.set(v1X, v1Y, v2X, v2Y);
     }
 
-    public void getVertex0 (Vector2 vec) {
+    public void getVertex0(Vector2 vec) {
         b2Vec2 b2Vec2 = b2Shape.m_vertex0();
         vec.set(b2Vec2.x(), b2Vec2.y());
     }
 
-    public void setVertex0 (Vector2 vec) {
+    public void setVertex0(Vector2 vec) {
         b2Vec2.TMP_01.Set(vec.x, vec.y);
         b2Shape.m_vertex0(b2Vec2.TMP_01);
     }
 
-    public void setVertex0 (float x, float y) {
+    public void setVertex0(float x, float y) {
         b2Vec2.TMP_01.Set(x, y);
         b2Shape.m_vertex0(b2Vec2.TMP_01);
     }
 
-    public void getVertex1 (Vector2 vec) {
+    public void getVertex1(Vector2 vec) {
         b2Vec2 b2Vec2 = b2Shape.m_vertex1();
         vec.set(b2Vec2.x(), b2Vec2.y());
     }
 
-    public void setVertex1 (Vector2 vec) {
+    public void setVertex1(Vector2 vec) {
         b2Vec2.TMP_01.Set(vec.x, vec.y);
         b2Shape.m_vertex1(b2Vec2.TMP_01);
     }
 
-    public void setVertex1 (float x, float y) {
+    public void setVertex1(float x, float y) {
         b2Vec2.TMP_01.Set(x, y);
         b2Shape.m_vertex1(b2Vec2.TMP_01);
     }
 
-    public void getVertex2 (Vector2 vec) {
+    public void getVertex2(Vector2 vec) {
         b2Vec2 b2Vec2 = b2Shape.m_vertex2();
         vec.set(b2Vec2.x(), b2Vec2.y());
     }
 
-    public void setVertex2 (Vector2 vec) {
+    public void setVertex2(Vector2 vec) {
         b2Vec2.TMP_01.Set(vec.x, vec.y);
         b2Shape.m_vertex2(b2Vec2.TMP_01);
     }
 
-    public void setVertex2 (float x, float y) {
+    public void setVertex2(float x, float y) {
         b2Vec2.TMP_01.Set(x, y);
         b2Shape.m_vertex2(b2Vec2.TMP_01);
     }
 
-    public void getVertex3 (Vector2 vec) {
+    public void getVertex3(Vector2 vec) {
         b2Vec2 b2Vec2 = b2Shape.m_vertex3();
         vec.set(b2Vec2.x(), b2Vec2.y());
     }
 
-    public void setVertex3 (Vector2 vec) {
+    public void setVertex3(Vector2 vec) {
         b2Vec2.TMP_01.Set(vec.x, vec.y);
         b2Shape.m_vertex3(b2Vec2.TMP_01);
     }
 
-    public void setVertex3 (float x, float y) {
+    public void setVertex3(float x, float y) {
         b2Vec2.TMP_01.Set(x, y);
         b2Shape.m_vertex3(b2Vec2.TMP_01);
     }

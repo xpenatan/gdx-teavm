@@ -10,31 +10,27 @@ import com.github.xpenatan.gdx.backends.dragome.DragomeApplication;
 import com.github.xpenatan.gdx.backends.dragome.DragomeApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.dragome.DragomeWindow;
 
-@PageAlias(alias= "Premultiplied")
-public class LossyPremulti extends DragomeApplication
-{
-	@Override
-	public ApplicationListener createApplicationListener()
-	{
-		getPreloader().loadAsset("data/premultiplied_alpha_test.png", AssetType.Image, null, new AssetLoaderListener<Object>());
-		return new DragomeLossyPremultipliedAlphaTest();
-	}
+@PageAlias(alias = "Premultiplied")
+public class LossyPremulti extends DragomeApplication {
+    @Override
+    public ApplicationListener createApplicationListener() {
+        getPreloader().loadAsset("data/premultiplied_alpha_test.png", AssetType.Image, null, new AssetLoaderListener<Object>());
+        return new DragomeLossyPremultipliedAlphaTest();
+    }
 
-	@Override
-	public DragomeApplicationConfiguration getConfig()
-	{
-		return null;
-	}
+    @Override
+    public DragomeApplicationConfiguration getConfig() {
+        return null;
+    }
 
-	@Override
-	protected void onResize()
-	{
-		int clientWidth= DragomeWindow.getInnerWidth();
-		int clientHeight= DragomeWindow.getInnerHeight();
-		getCanvas().setWidth(clientWidth);
-		getCanvas().setHeight(clientHeight);
-		getCanvas().setCoordinateSpaceWidth(clientWidth);
-		getCanvas().setCoordinateSpaceHeight(clientHeight);
-		super.onResize();
-	}
+    @Override
+    protected void onResize() {
+        int clientWidth = DragomeWindow.getInnerWidth();
+        int clientHeight = DragomeWindow.getInnerHeight();
+        getCanvas().setWidth(clientWidth);
+        getCanvas().setHeight(clientHeight);
+        getCanvas().setCoordinateSpaceWidth(clientWidth);
+        getCanvas().setCoordinateSpaceHeight(clientHeight);
+        super.onResize();
+    }
 }

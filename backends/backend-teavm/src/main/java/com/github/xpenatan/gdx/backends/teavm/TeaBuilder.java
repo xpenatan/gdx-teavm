@@ -1,10 +1,22 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebClassLoader;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
@@ -12,17 +24,10 @@ import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.model.TextLocation;
 import org.teavm.tooling.TeaVMTargetType;
-import org.teavm.vm.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
+import org.teavm.vm.TeaVMOptimizationLevel;
+import org.teavm.vm.TeaVMPhase;
+import org.teavm.vm.TeaVMProgressFeedback;
+import org.teavm.vm.TeaVMProgressListener;
 
 /**
  * @author xpenatan
@@ -40,56 +45,58 @@ public class TeaBuilder {
 
     public static void build(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
         addDefaultReflectionClasses();
-        for (URL classPath : configuration.getAdditionalClasspath()) {
+        for(URL classPath : configuration.getAdditionalClasspath()) {
             try {
                 ZipInputStream zip = new ZipInputStream(classPath.openStream());
                 WebBuildConfiguration.logHeader("Automatic Reflection Include");
-                for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                    if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                    if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
                         // This ZipEntry represents a class. Now, what class does it represent?
                         String className = entry.getName().replace('/', '.'); // including ".class"
                         String name = className.substring(0, className.length() - ".class".length());
                         boolean add = false;
-                        for (String toInclude : configuration.getReflectionInclude()) {
-                            if (name.startsWith(toInclude)) add = true;
+                        for(String toInclude : configuration.getReflectionInclude()) {
+                            if(name.startsWith(toInclude)) add = true;
                         }
-                        for (String toExclude : configuration.getReflectionExclude()) {
-                            if (name.startsWith(toExclude)) add = false;
+                        for(String toExclude : configuration.getReflectionExclude()) {
+                            if(name.startsWith(toExclude)) add = false;
                         }
 
-                        if (add) {
+                        if(add) {
                             WebBuildConfiguration.log("Include class: " + name);
                             TeaReflectionSupplier.addReflectionClass(name);
                         }
                     }
                 }
-            } catch (IOException e) {
+            }
+            catch(IOException e) {
                 e.printStackTrace();
             }
         }
 
         String pathSeparator = System.getProperty("path.separator");
-        String[] classPathEntries = System.getProperty("java.class.path") .split(pathSeparator);
-        
+        String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
+
         ArrayList<URL> acceptedURL = new ArrayList<>();
         ArrayList<URL> notAcceptedURL = new ArrayList<>();
 
-        for (int i = 0; i < classPathEntries.length; i++) {
+        for(int i = 0; i < classPathEntries.length; i++) {
             String path = classPathEntries[i];
             File file = new File(path);
             path = path.replace("\\", "/");
             URL url = null;
             try {
                 url = file.toURI().toURL();
-            } catch(MalformedURLException e) {
+            }
+            catch(MalformedURLException e) {
                 e.printStackTrace();
             }
             ACCEPT_STATE acceptState = acceptPath(path);
             boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
-            if (accept || acceptState == ACCEPT_STATE.NO_MATCH)
+            if(accept || acceptState == ACCEPT_STATE.NO_MATCH)
                 accept = configuration.acceptClasspath(url);
 
-            if (accept)
+            if(accept)
                 acceptedURL.add(url);
             else
                 notAcceptedURL.add(url);
@@ -101,19 +108,19 @@ public class TeaBuilder {
 
         WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
 
-        for (int i = 0; i < acceptedURL.size(); i++) {
+        for(int i = 0; i < acceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
         }
 
         WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
 
-        for (int i = 0; i < notAcceptedURL.size(); i++) {
+        for(int i = 0; i < notAcceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
         }
 
         int size = acceptedURL.size();
 
-        if (size <= 0) {
+        if(size <= 0) {
             System.err.println("No urls found");
             return;
         }
@@ -189,6 +196,7 @@ public class TeaBuilder {
         AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
         tool.setProgressListener(new TeaVMProgressListener() {
             TeaVMPhase phase = null;
+
             @Override
             public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
                 if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
@@ -208,7 +216,7 @@ public class TeaBuilder {
                     WebBuildConfiguration.logInternal("|");
                 }
                 if(phase == TeaVMPhase.COMPILING) {
-                    if(progressListener!= null) {
+                    if(progressListener != null) {
                         float progress = i / 1000f;
                         progressListener.onProgress(progress);
                     }
@@ -222,7 +230,7 @@ public class TeaBuilder {
             ProblemProvider problemProvider = tool.getProblemProvider();
             List<Problem> problems = problemProvider.getProblems();
 
-            if (problems.size() > 0) {
+            if(problems.size() > 0) {
                 if(progressListener != null) {
                     progressListener.onSuccess(false);
                 }
@@ -230,26 +238,26 @@ public class TeaBuilder {
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
 
-                for (int i = 0; i < problems.size(); i++) {
+                for(int i = 0; i < problems.size(); i++) {
                     Problem problem = problems.get(i);
                     CallLocation location = problem.getLocation();
                     MethodReference method = location != null ? location.getMethod() : null;
                     String classSource = "-";
                     String methodName = "-";
 
-                    if (location != null) {
+                    if(location != null) {
                         TextLocation sourceLocation = location.getSourceLocation();
-                        if (sourceLocation != null)
+                        if(sourceLocation != null)
                             classSource = sourceLocation.toString();
                         else {
                             //TODO
                         }
-                        if (method != null) {
+                        if(method != null) {
                             methodName = method.toString();
                         }
                     }
 
-                    if (i > 0) {
+                    if(i > 0) {
                         WebBuildConfiguration.log("");
                         WebBuildConfiguration.log("----");
                         WebBuildConfiguration.log("");
@@ -263,7 +271,8 @@ public class TeaBuilder {
                     WebBuildConfiguration.log("Text: " + text);
                 }
                 WebBuildConfiguration.logEnd();
-            } else {
+            }
+            else {
                 if(progressListener != null) {
                     progressListener.onSuccess(true);
                 }
@@ -281,8 +290,8 @@ public class TeaBuilder {
                     }
                 }
             }
-
-        } catch (Throwable e) {
+        }
+        catch(Throwable e) {
             e.printStackTrace();
         }
     }
@@ -304,10 +313,10 @@ public class TeaBuilder {
     }
 
     private static void makeClassPathFirst(ArrayList<URL> acceptedURL, String module) {
-        for (int i = 0; i < acceptedURL.size(); i++) {
+        for(int i = 0; i < acceptedURL.size(); i++) {
             URL url = acceptedURL.get(i);
             String string = url.toString();
-            if (string.contains(module)) {
+            if(string.contains(module)) {
                 acceptedURL.remove(i);
                 acceptedURL.add(0, url);
                 break;
@@ -398,79 +407,79 @@ public class TeaBuilder {
 
     private static ACCEPT_STATE acceptPath(String path) {
         ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
-        if (path.contains("teavm-") && path.contains(".jar"))
+        if(path.contains("teavm-") && path.contains(".jar"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("junit"))
+        else if(path.contains("junit"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("hamcrest"))
+        else if(path.contains("hamcrest"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jackson-"))
+        else if(path.contains("jackson-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("Java/jdk"))
+        else if(path.contains("Java/jdk"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("commons-io"))
+        else if(path.contains("commons-io"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("org/ow2"))
+        else if(path.contains("org/ow2"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("carrotsearch"))
+        else if(path.contains("carrotsearch"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("google/code"))
+        else if(path.contains("google/code"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jcraft"))
+        else if(path.contains("jcraft"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("joda-time"))
+        else if(path.contains("joda-time"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("mozilla"))
+        else if(path.contains("mozilla"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jutils"))
+        else if(path.contains("jutils"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jinput-"))
+        else if(path.contains("jinput-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("lwjgl"))
+        else if(path.contains("lwjgl"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jlayer-"))
+        else if(path.contains("jlayer-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("/classes"))
+        else if(path.contains("/classes"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("/resources"))
+        else if(path.contains("/resources"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("javax"))
+        else if(path.contains("javax"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("jsinterop-annotations"))
+        else if(path.contains("jsinterop-annotations"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gwt-user-"))
+        else if(path.contains("gwt-user-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("sac-"))
+        else if(path.contains("sac-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gdx-box2d"))
+        else if(path.contains("gdx-box2d"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gdx-jnigen"))
+        else if(path.contains("gdx-jnigen"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gdx-platform"))
+        else if(path.contains("gdx-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("imgui-"))
+        else if(path.contains("imgui-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("imgui-gdx"))
+        else if(path.contains("imgui-gdx"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("generator/core/"))
+        else if(path.contains("generator/core/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gdx-bullet/"))
+        else if(path.contains("gdx-bullet/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if (path.contains("gdx-bullet-platform"))
+        else if(path.contains("gdx-bullet-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
 
-        if (path.contains("backend-teavm-"))
+        if(path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains(EXTENSION_BOX2D_GWT))
+        else if(path.contains(EXTENSION_BOX2D_GWT))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains(EXTENSION_FREETYPE))
+        else if(path.contains(EXTENSION_FREETYPE))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains(EXTENSION_BULLET))
+        else if(path.contains(EXTENSION_BULLET))
             isValid = ACCEPT_STATE.ACCEPT;
-        else if (path.contains(EXTENSION_BOX2D))
+        else if(path.contains(EXTENSION_BOX2D))
             isValid = ACCEPT_STATE.ACCEPT;
 
-        if (path.contains("backend-teavm-native"))
+        if(path.contains("backend-teavm-native"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         return isValid;
@@ -482,6 +491,7 @@ public class TeaBuilder {
 
     public interface TeaProgressListener {
         void onSuccess(boolean success);
+
         void onProgress(float progress);
     }
 }

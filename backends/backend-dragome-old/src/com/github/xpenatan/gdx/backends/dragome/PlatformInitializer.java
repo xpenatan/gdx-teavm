@@ -7,16 +7,16 @@ import com.github.xpenatan.gdx.backends.dragome.utils.StorageImpl;
 
 public class PlatformInitializer {
 
-	public static void init() {
-		initAssetDownloader();
-		initStorage();
-	}
+    public static void init() {
+        initAssetDownloader();
+        initStorage();
+    }
 
-	public static void initAssetDownloader() {
-		AssetDownloader.setInstance(new AssetDownloaderImpl());
-	}
+    public static void initAssetDownloader() {
+        AssetDownloader.setInstance(new AssetDownloaderImpl());
+    }
 
-	public static void initStorage() {
-		Storage.setInstance(new StorageImpl());
-	}
+    public static void initStorage() {
+        Storage.setInstance(new StorageImpl());
+    }
 }

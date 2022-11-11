@@ -33,7 +33,7 @@ public class Body {
     protected void reset(long addr) {
         b2Body.setPointer(addr);
         this.userData = null;
-        for (int i = 0; i < fixtures.size; i++)
+        for(int i = 0; i < fixtures.size; i++)
             this.world.freeFixtures.free(fixtures.get(i));
         fixtures.clear();
         joints.clear();
@@ -129,8 +129,7 @@ public class Body {
         return joints;
     }
 
-    public float getMass () {
+    public float getMass() {
         return b2Body.GetMass();
     }
-
 }

@@ -4,41 +4,40 @@ package org.w3c.dom.events;
 
 import org.w3c.dom.html.Window;
 
-public interface KeyboardEvent extends UIEvent
-{
-	// KeyboardEvent
-	public static final int DOM_KEY_LOCATION_STANDARD = 0x00;
-	public static final int DOM_KEY_LOCATION_LEFT = 0x01;
-	public static final int DOM_KEY_LOCATION_RIGHT = 0x02;
-	public static final int DOM_KEY_LOCATION_NUMPAD = 0x03;
-	public static final int DOM_KEY_LOCATION_MOBILE = 0x04;
-	public static final int DOM_KEY_LOCATION_JOYSTICK = 0x05;
+public interface KeyboardEvent extends UIEvent {
+    // KeyboardEvent
+    public static final int DOM_KEY_LOCATION_STANDARD = 0x00;
+    public static final int DOM_KEY_LOCATION_LEFT = 0x01;
+    public static final int DOM_KEY_LOCATION_RIGHT = 0x02;
+    public static final int DOM_KEY_LOCATION_NUMPAD = 0x03;
+    public static final int DOM_KEY_LOCATION_MOBILE = 0x04;
+    public static final int DOM_KEY_LOCATION_JOYSTICK = 0x05;
 
-	public String getKey();
+    public String getKey();
 
-	public int getLocation();
+    public int getLocation();
 
-	public boolean getCtrlKey();
+    public boolean getCtrlKey();
 
-	public boolean getShiftKey();
+    public boolean getShiftKey();
 
-	public boolean getAltKey();
+    public boolean getAltKey();
 
-	public boolean getMetaKey();
+    public boolean getMetaKey();
 
-	public boolean getRepeat();
+    public boolean getRepeat();
 
-	public String getLocale();
+    public String getLocale();
 
-	public boolean getModifierState(String keyArg);
+    public boolean getModifierState(String keyArg);
 
-	public void initKeyboardEvent(String typeArg, boolean canBubbleArg, boolean cancelableArg, Window viewArg,
-			String charArg, String keyArg, int locationArg, String modifiersListArg, boolean repeat, String localeArg);
+    public void initKeyboardEvent(String typeArg, boolean canBubbleArg, boolean cancelableArg, Window viewArg,
+                                  String charArg, String keyArg, int locationArg, String modifiersListArg, boolean repeat, String localeArg);
 
-	// KeyboardEvent-41
-	public int getCharCode();
+    // KeyboardEvent-41
+    public int getCharCode();
 
-	public int getKeyCode();
+    public int getKeyCode();
 
-	public int getWhich();
+    public int getWhich();
 }

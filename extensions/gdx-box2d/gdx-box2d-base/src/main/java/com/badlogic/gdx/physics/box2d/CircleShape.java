@@ -17,11 +17,11 @@ public class CircleShape extends Shape<b2CircleShape> {
         b2Shape.setPointer(addr);
     }
 
-    public Type getType () {
+    public Type getType() {
         return Type.Circle;
     }
 
-    public Vector2 getPosition () {
+    public Vector2 getPosition() {
         b2Vec2 b2Vec2 = b2Shape.m_p();
         position.x = b2Vec2.x();
         position.y = b2Vec2.y();

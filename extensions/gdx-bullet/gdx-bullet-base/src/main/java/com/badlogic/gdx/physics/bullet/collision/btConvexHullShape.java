@@ -7,13 +7,13 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
 
-    public btConvexHullShape (java.nio.FloatBuffer points, int numPoints, int stride) {
+    public btConvexHullShape(java.nio.FloatBuffer points, int numPoints, int stride) {
         // Custom constructor from GDX
         initObject(createNative(), true);
         int remaining = points.limit();
-        stride = stride/4;
+        stride = stride / 4;
         int i = 0;
-        while (i < remaining) {
+        while(i < remaining) {
             float x = points.get(i);
             float y = points.get(i + 1);
             float z = points.get(i + 2);
@@ -23,7 +23,7 @@ public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
         }
     }
 
-    public btConvexHullShape (btShapeHull hull) {
+    public btConvexHullShape(btShapeHull hull) {
         // Custom constructor from GDX
         initObject(createNative(hull.getCPointer()), true);
     }

@@ -5,5 +5,5 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
 /**
  * @author xpenatan
  */
-public class btBroadphaseInterface  extends BulletBase {
+public class btBroadphaseInterface extends BulletBase {
 }

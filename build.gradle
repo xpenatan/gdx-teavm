@@ -1,68 +1,68 @@
 apply from: 'dependencies.gradle'
 
 buildscript {
-	repositories {
-		jcenter()
-	}
+    repositories {
+        jcenter()
+    }
 
-	dependencies {
-	}
+    dependencies {
+    }
 }
 
 allprojects {
-	apply plugin: "eclipse"
-	apply plugin: "idea"
-	apply plugin: 'maven-publish'
-	apply plugin: 'java'
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: 'maven-publish'
+    apply plugin: 'java'
 
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-	group = project.groupId
+    group = project.groupId
 
-	ext {
-		repoUser = System.getenv('USER')
-		repoPass = System.getenv('PASSWORD')
-		repoUrl = ''
-		repoUrlSnapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
+    ext {
+        repoUser = System.getenv('USER')
+        repoPass = System.getenv('PASSWORD')
+        repoUrl = ''
+        repoUrlSnapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
 
-		def localFile = project.rootProject.file("local.properties")
-		if(localFile.exists()) {
-			Properties properties = new Properties()
-			properties.load(project.rootProject.file("local.properties").newDataInputStream())
-			repoUser = properties.getProperty("xUser")
-			repoPass = properties.getProperty("xPass")
-		}
-	}
+        def localFile = project.rootProject.file("local.properties")
+        if (localFile.exists()) {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+            repoUser = properties.getProperty("xUser")
+            repoPass = properties.getProperty("xPass")
+        }
+    }
 
-	repositories {
-		mavenLocal()
-		maven { url 'https://jitpack.io' }
-		mavenCentral()
-		jcenter()
-		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-	}
+    repositories {
+        mavenLocal()
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
 
-	publishing {
-		repositories {
-			maven {
-				url {
-					def ver = project.version.toString()
-					def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
-					isSnapshot ? repoUrlSnapshot : repoUrl
-				}
-				credentials {
-					username repoUser
-					password repoPass
-				}
-			}
-		}
-	}
+    publishing {
+        repositories {
+            maven {
+                url {
+                    def ver = project.version.toString()
+                    def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+                    isSnapshot ? repoUrlSnapshot : repoUrl
+                }
+                credentials {
+                    username repoUser
+                    password repoPass
+                }
+            }
+        }
+    }
 
-	eclipse {
-		classpath {
-			defaultOutputDir = file('build/classes/java/main')
-		}
-	}
+    eclipse {
+        classpath {
+            defaultOutputDir = file('build/classes/java/main')
+        }
+    }
 }

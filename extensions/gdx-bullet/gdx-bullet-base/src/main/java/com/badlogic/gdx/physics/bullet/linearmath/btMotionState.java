@@ -2,7 +2,6 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.BulletBase;
-import netscape.javascript.JSObject;
 
 /**
  * @author xpenatan
@@ -69,7 +68,6 @@ public class btMotionState extends BulletBase {
         Bullet.destroy(jsObj);
      */
     private static native void deleteNative(long addr);
-
 
     /**
      * Called to initialize body position. Modify worldTrans.

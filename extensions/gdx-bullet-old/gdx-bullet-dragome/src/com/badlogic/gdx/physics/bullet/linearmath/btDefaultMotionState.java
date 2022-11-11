@@ -8,7 +8,9 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btDefaultMotionState extends btMotionState {
 
     private Matrix4 worldTrans;

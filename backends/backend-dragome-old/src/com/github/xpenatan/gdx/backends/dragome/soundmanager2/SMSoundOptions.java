@@ -18,13 +18,19 @@ package com.github.xpenatan.gdx.backends.dragome.soundmanager2;
 
 import com.github.xpenatan.gdx.backends.dragome.soundmanager2.SMSound.SMSoundCallback;
 
-/** Ported from GWT backend
- * @author xpenatan */
+/**
+ * Ported from GWT backend
+ *
+ * @author xpenatan
+ */
 public class SMSoundOptions {
-	public SMSoundOptions() {};
-	public int volume = 100;
-	public int pan = 0;
-	public int loops = 1;
-	public int from = 0;
-	public SMSoundCallback callback = null;
+    public SMSoundOptions() {
+    }
+
+    ;
+    public int volume = 100;
+    public int pan = 0;
+    public int loops = 1;
+    public int from = 0;
+    public SMSoundCallback callback = null;
 }

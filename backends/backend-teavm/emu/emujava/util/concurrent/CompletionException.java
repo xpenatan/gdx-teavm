@@ -20,17 +20,18 @@ package emujava.util.concurrent;
  */
 public class CompletionException extends IllegalStateException {
 
-  public CompletionException() { }
+    public CompletionException() {
+    }
 
-  public CompletionException(String message) {
-    super(message);
-  }
+    public CompletionException(String message) {
+        super(message);
+    }
 
-  public CompletionException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public CompletionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public CompletionException(Throwable cause) {
-    super(cause);
-  }
+    public CompletionException(Throwable cause) {
+        super(cause);
+    }
 }

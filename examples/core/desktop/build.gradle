@@ -5,34 +5,34 @@ plugins {
 apply from: '../../../dependencies.gradle'
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
 project.ext.assetsDir = new File("/assets");
 
 dependencies {
-	implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
-	implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
-	implementation "com.badlogicgames.gdx:gdx-box2d-platform:$project.gdxVersion:natives-desktop"
-	implementation "com.badlogicgames.gdx:gdx-freetype-platform:$project.gdxVersion:natives-desktop"
-	implementation project(":examples:core:core")
+    implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d-platform:$project.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$project.gdxVersion:natives-desktop"
+    implementation project(":examples:core:core")
 }
 
 task run(dependsOn: classes, type: JavaExec) {
-	group = 'other'
-	description = 'Run core example'
+    group = 'other'
+    description = 'Run core example'
 
-	main = project.mainClassName
-	classpath = sourceSets.main.runtimeClasspath
-	workingDir = project.assetsDir
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = project.assetsDir
 }
 
 task dist(type: Jar) {
-	manifest {
-		attributes 'Main-Class': project.mainClassName
-	}
-	dependsOn configurations.runtimeClasspath
-	from {
-		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-	}
-	with jar
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
 }
 

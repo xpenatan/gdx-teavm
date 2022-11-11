@@ -5,5 +5,5 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 /**
  * @author xpenatan
  */
-public class btDynamicsWorld  extends btCollisionWorld {
+public class btDynamicsWorld extends btCollisionWorld {
 }

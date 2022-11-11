@@ -17,12 +17,12 @@ public class WorldManifold {
         b2WorldManifold = new b2WorldManifold(cMemoryOwn);
     }
 
-    public Vector2[] getPoints () {
+    public Vector2[] getPoints() {
 
         return points;
     }
 
-    public int getNumberOfContactPoints () {
+    public int getNumberOfContactPoints() {
         return numContactPoints;
     }
 }

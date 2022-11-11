@@ -19,11 +19,11 @@ public class PolygonShape extends Shape<b2PolygonShape> {
         b2Shape.SetAsBox(hx, hy);
     }
 
-    public int getVertexCount () {
+    public int getVertexCount() {
         return b2Shape.GetVertexCount();
     }
 
-    public void getVertex (int index, Vector2 vertex) {
+    public void getVertex(int index, Vector2 vertex) {
         b2Vec2 b2Vec2 = b2Shape.GetVertex(index);
         vertex.x = b2Vec2.x();
         vertex.y = b2Vec2.y();

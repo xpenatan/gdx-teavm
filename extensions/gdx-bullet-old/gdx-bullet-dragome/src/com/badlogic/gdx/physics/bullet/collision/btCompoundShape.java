@@ -9,7 +9,9 @@ package com.badlogic.gdx.physics.bullet.collision;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btCompoundShape extends btCollisionShape {
 
     protected Array<btCollisionShape> children = new Array<btCollisionShape>();
@@ -18,36 +20,36 @@ public class btCompoundShape extends btCollisionShape {
         resetObj(createNative(), true);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btCompoundShape);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btCompoundShape);", this);
+    }
 
     public static long createNative() {
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btCompoundShape());",null);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btCompoundShape());", null);
     }
 
     @Override
     protected void delete() {
-		super.delete();
-		children.clear();
+        super.delete();
+        children.clear();
     }
 
     public void addChildShape(Matrix4 localTransform, btCollisionShape shape) {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.put("shapeObj",shape.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.put("value",localTransform.val,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var tran=Bullet.MyTemp.prototype.btTran();tran.setFromOpenGLMatrix(value);jsObj.addChildShape(tran,shapeObj);",this);
-		children.add(shape);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.put("shapeObj", shape.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.put("value", localTransform.val, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var tran=Bullet.MyTemp.prototype.btTran();tran.setFromOpenGLMatrix(value);jsObj.addChildShape(tran,shapeObj);", this);
+        children.add(shape);
     }
 
     public void removeChildShape(btCollisionShape shape) {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.put("shapeObj",shape.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.removeChildShape(shapeObj);",this);
-		children.removeValue(shape, true);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.put("shapeObj", shape.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.removeChildShape(shapeObj);", this);
+        children.removeValue(shape, true);
     }
 
     public int getNumChildShapes() {

@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btCollisionObjectArray extends BulletBase {
 
-    public btCollisionObject atConst (int n) {
+    public btCollisionObject atConst(int n) {
         //TODO impl
         return null;
     }

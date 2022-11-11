@@ -5,5 +5,5 @@ package com.github.xpenatan.gdx.backends.web.dom.typedarray;
  */
 public interface Float64ArrayWrapper extends ArrayBufferViewWrapper {
 
-	public void set(int index, double value);
+    public void set(int index, double value);
 }

@@ -6,7 +6,7 @@ group 'com.github.xpenatan.gdx-web-tools'
 
 def module_name = "gdx-freetype-teavm"
 
-sourceSets.main.resources.srcDirs = [ "resources/" ]
+sourceSets.main.resources.srcDirs = ["resources/"]
 
 repositories {
     mavenCentral()
@@ -31,8 +31,8 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task fromClasses (type: Jar) {
-    from (sourceSets.main.output){
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
     }
 }
 

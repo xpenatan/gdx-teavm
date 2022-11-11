@@ -17,12 +17,13 @@ public class PulleyJoint extends Joint<b2PulleyJoint> {
         b2Joint.setPointer(addr);
     }
 
-    public Vector2 getGroundAnchorA () {
+    public Vector2 getGroundAnchorA() {
         b2Vec2 b2Vec2 = b2Joint.GetGroundAnchorA();
         groundAnchorA.set(b2Vec2.x(), b2Vec2.y());
         return groundAnchorA;
     }
-    public Vector2 getGroundAnchorB () {
+
+    public Vector2 getGroundAnchorB() {
         b2Vec2 b2Vec2 = b2Joint.GetGroundAnchorB();
         groundAnchorB.set(b2Vec2.x(), b2Vec2.y());
         return groundAnchorB;

@@ -9,36 +9,41 @@ import com.badlogic.gdx.utils.Array;
 public class btTriangleIndexVertexArray extends btStridingMeshInterface {
 
     protected final static Array<btTriangleIndexVertexArray> instances = new Array<btTriangleIndexVertexArray>();
-    /** @return Whether the supplied array contains all specified tags. */
-    public static <T extends Object> boolean compare (final btTriangleIndexVertexArray array, final Array<T> tags) {
-        if (array.meshes.size != tags.size) return false;
-        for (final btIndexedMesh mesh : array.meshes) {
+
+    /**
+     * @return Whether the supplied array contains all specified tags.
+     */
+    public static <T extends Object> boolean compare(final btTriangleIndexVertexArray array, final Array<T> tags) {
+        if(array.meshes.size != tags.size) return false;
+        for(final btIndexedMesh mesh : array.meshes) {
             boolean found = false;
             final Object tag = mesh.tag;
-            if (tag == null) return false;
-            for (final T t : tags) {
-                if (t.equals(tag)) {
+            if(tag == null) return false;
+            for(final T t : tags) {
+                if(t.equals(tag)) {
                     found = true;
                     break;
                 }
             }
-            if (!found) return false;
+            if(!found) return false;
         }
         return true;
     }
 
-    protected static <T extends Object> btTriangleIndexVertexArray getInstance (final Array<T> tags) {
-        for (final btTriangleIndexVertexArray instance : instances) {
-            if (compare(instance, tags)) return instance;
+    protected static <T extends Object> btTriangleIndexVertexArray getInstance(final Array<T> tags) {
+        for(final btTriangleIndexVertexArray instance : instances) {
+            if(compare(instance, tags)) return instance;
         }
         return null;
     }
 
-    /** Create or reuse a btTriangleIndexVertexArray instance based on the specified {@link MeshPart} array. Use {@link #release()}
-     * to release the mesh when it's no longer needed. */
-    public static <T extends MeshPart> btTriangleIndexVertexArray obtain (final Array<T> meshParts) {
+    /**
+     * Create or reuse a btTriangleIndexVertexArray instance based on the specified {@link MeshPart} array. Use {@link #release()}
+     * to release the mesh when it's no longer needed.
+     */
+    public static <T extends MeshPart> btTriangleIndexVertexArray obtain(final Array<T> meshParts) {
         btTriangleIndexVertexArray result = getInstance(meshParts);
-        if (result == null) {
+        if(result == null) {
             result = new btTriangleIndexVertexArray(meshParts);
             instances.add(result);
         }
@@ -54,7 +59,7 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
         addMeshPart(meshPart);
     }
 
-    public <T extends MeshPart> btTriangleIndexVertexArray (final Iterable<T> meshParts) {
+    public <T extends MeshPart> btTriangleIndexVertexArray(final Iterable<T> meshParts) {
         // Gdx constructor
         initObject(createNative(), true);
         addMeshParts(meshParts);
@@ -99,9 +104,11 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
      */
     private static native void addIndexedMeshNATIVE(long addr, long meshAddr);
 
-    /** Add a {@link MeshPart} instance to this btTriangleIndexVertexArray.
+    /**
+     * Add a {@link MeshPart} instance to this btTriangleIndexVertexArray.
      * The specified mesh must be indexed and triangulated and must outlive this btTriangleIndexVertexArray.
-     * The buffers for the vertices and indices are shared amongst both. */
+     * The buffers for the vertices and indices are shared amongst both.
+     */
     public btTriangleIndexVertexArray addMeshPart(final MeshPart meshPart) {
         btIndexedMesh mesh = btIndexedMesh.obtain(meshPart);
         addIndexedMesh(mesh, PHY_ScalarType.PHY_SHORT);
@@ -109,13 +116,14 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
         return this;
     }
 
-    /** Add one or more {@link MeshPart} instances to this btTriangleIndexVertexArray.
+    /**
+     * Add one or more {@link MeshPart} instances to this btTriangleIndexVertexArray.
      * The specified meshes must be indexed and triangulated and must outlive this btTriangleIndexVertexArray.
-     * The buffers for the vertices and indices are shared amongst both. */
+     * The buffers for the vertices and indices are shared amongst both.
+     */
     public <T extends MeshPart> btTriangleIndexVertexArray addMeshParts(final Iterable<T> meshParts) {
-        for (final MeshPart meshPart : meshParts)
+        for(final MeshPart meshPart : meshParts)
             addMeshPart(meshPart);
         return this;
     }
-
 }

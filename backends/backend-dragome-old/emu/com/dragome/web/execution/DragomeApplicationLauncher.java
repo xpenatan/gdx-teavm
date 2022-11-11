@@ -29,89 +29,70 @@ import com.dragome.web.html.dom.DragomeJsException;
 import com.dragome.web.html.dom.w3c.BrowserDomHandler;
 import com.dragome.web.services.RequestExecutorImpl;
 
-public class DragomeApplicationLauncher
-{
-	protected int responseMessagesCounter= 0;
+public class DragomeApplicationLauncher {
+    protected int responseMessagesCounter = 0;
 
-	private ApplicationExecutor prepareLaunch()
-	{
-		WebServiceLocator.getInstance().setDomHandler(new BrowserDomHandler());
-		WebServiceLocator.getInstance().setClientSideEnabled(true);
+    private ApplicationExecutor prepareLaunch() {
+        WebServiceLocator.getInstance().setDomHandler(new BrowserDomHandler());
+        WebServiceLocator.getInstance().setClientSideEnabled(true);
 
-		if (WebServiceLocator.getInstance().isRemoteDebugging())
-			return createDebuggingApplicationExecutor();
-		else
-			return createProductionApplicationExecutor();
-	}
+        if(WebServiceLocator.getInstance().isRemoteDebugging())
+            return createDebuggingApplicationExecutor();
+        else
+            return createProductionApplicationExecutor();
+    }
 
-	private ApplicationExecutor createProductionApplicationExecutor()
-	{
-		return new ApplicationExecutor()
-		{
-			public void pushResult(ServiceInvocationResult result)
-			{
-			}
+    private ApplicationExecutor createProductionApplicationExecutor() {
+        return new ApplicationExecutor() {
+            public void pushResult(ServiceInvocationResult result) {
+            }
 
-			public void executeByClassName(String typeName)
-			{
-				execute((Class<?>) ServiceLocator.getInstance().getReflectionService().forName(typeName));
-			}
+            public void executeByClassName(String typeName) {
+                execute((Class<?>)ServiceLocator.getInstance().getReflectionService().forName(typeName));
+            }
 
-			public void execute(Class<?> type)
-			{
-				VisualActivity visualActivity= (VisualActivity) ServiceLocator.getInstance().getReflectionService().createClassInstance(type);
-				visualActivity.onCreate();
-			}
+            public void execute(Class<?> type) {
+                VisualActivity visualActivity = (VisualActivity)ServiceLocator.getInstance().getReflectionService().createClassInstance(type);
+                visualActivity.onCreate();
+            }
 
-			public void pushException(DragomeJsException exception)
-			{
-				throw exception;
-			}
-		};
-	}
+            public void pushException(DragomeJsException exception) {
+                throw exception;
+            }
+        };
+    }
 
-	private ApplicationExecutor createDebuggingApplicationExecutor()
-	{
-		final ApplicationExecutor applicationExecutor= RequestExecutorImpl.createRemoteServiceByWebSocket(ApplicationExecutor.class);
-		WebServiceLocator.getInstance().getClientToServerMessageChannel().setReceiver(new Receiver()
-		{
-			public void reset()
-			{
-			}
+    private ApplicationExecutor createDebuggingApplicationExecutor() {
+        final ApplicationExecutor applicationExecutor = RequestExecutorImpl.createRemoteServiceByWebSocket(ApplicationExecutor.class);
+        WebServiceLocator.getInstance().getClientToServerMessageChannel().setReceiver(new Receiver() {
+            public void reset() {
+            }
 
-			public void messageReceived(String aMessage)
-			{
-				List<ServiceInvocation> serviceInvocations= (List<ServiceInvocation>) TempHelper.getObjectFromMessage(aMessage);
-				for (ServiceInvocation serviceInvocation : serviceInvocations)
-				{
-					try
-					{
-						Object result= serviceInvocation.invoke();
-						if (!WebServiceLocator.getInstance().isMethodVoid(serviceInvocation.getMethod()))
-						{
-							applicationExecutor.pushResult(new ServiceInvocationResult(serviceInvocation, result));
-						}
-					}
-					catch (Exception e)
-					{
-						applicationExecutor.pushResult(new ServiceInvocationResult(serviceInvocation, new DragomeJsException(e, "Execution failed in browser: " + e.getMessage())));
-					}
-				}
-			}
-		});
-		return applicationExecutor;
-	}
+            public void messageReceived(String aMessage) {
+                List<ServiceInvocation> serviceInvocations = (List<ServiceInvocation>)TempHelper.getObjectFromMessage(aMessage);
+                for(ServiceInvocation serviceInvocation : serviceInvocations) {
+                    try {
+                        Object result = serviceInvocation.invoke();
+                        if(!WebServiceLocator.getInstance().isMethodVoid(serviceInvocation.getMethod())) {
+                            applicationExecutor.pushResult(new ServiceInvocationResult(serviceInvocation, result));
+                        }
+                    }
+                    catch(Exception e) {
+                        applicationExecutor.pushResult(new ServiceInvocationResult(serviceInvocation, new DragomeJsException(e, "Execution failed in browser: " + e.getMessage())));
+                    }
+                }
+            }
+        });
+        return applicationExecutor;
+    }
 
-	public void launch(final String typeName)
-	{
-		final ApplicationExecutor applicationExecutor= prepareLaunch();
-		Runnable runnable= new Runnable()
-		{
-			public void run()
-			{
-				applicationExecutor.executeByClassName(typeName);
-			}
-		};
-		EventDispatcherHelper.runApplication(runnable);
-	}
+    public void launch(final String typeName) {
+        final ApplicationExecutor applicationExecutor = prepareLaunch();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                applicationExecutor.executeByClassName(typeName);
+            }
+        };
+        EventDispatcherHelper.runApplication(runnable);
+    }
 }

@@ -81,10 +81,10 @@ public class TeaJSApplication implements WebJSApplication {
         }
     }
 
-    @org.teavm.jso.JSBody(params = { "bulletFunction" }, script = "BulletLib().then(function(BulletLib){ window.Bullet = BulletLib; bulletFunction(); });")
+    @org.teavm.jso.JSBody(params = {"bulletFunction"}, script = "BulletLib().then(function(BulletLib){ window.Bullet = BulletLib; bulletFunction(); });")
     private static native void initBullet(BulletPhysicsLoadFunction bulletFunction);
 
-    @org.teavm.jso.JSBody(params = { "response", "bulletFunction" }, script = "BulletLib({ wasmBinary: response, async: false }).then(function(BulletLib){ window.Bullet = BulletLib; bulletFunction(); });")
+    @org.teavm.jso.JSBody(params = {"response", "bulletFunction"}, script = "BulletLib({ wasmBinary: response, async: false }).then(function(BulletLib){ window.Bullet = BulletLib; bulletFunction(); });")
     private static native void initBulletWasm(ArrayBufferWrapper response, BulletPhysicsLoadFunction bulletFunction);
 
     @org.teavm.jso.JSFunctor
@@ -151,10 +151,10 @@ public class TeaJSApplication implements WebJSApplication {
         }
     }
 
-    @org.teavm.jso.JSBody(params = { "box2DFunction" }, script = "Box2DLib().then(function(Box2DLib){ window.Box2D = Box2DLib; box2DFunction(); });")
+    @org.teavm.jso.JSBody(params = {"box2DFunction"}, script = "Box2DLib().then(function(Box2DLib){ window.Box2D = Box2DLib; box2DFunction(); });")
     private static native void initBox2D(Box2DPhysicsLoadFunction box2DFunction);
 
-    @org.teavm.jso.JSBody(params = { "response", "box2DFunction" }, script = "Box2DLib({ wasmBinary: response, async: false }).then(function(Box2DLib){ window.Box2D = Box2DLib; box2DFunction(); });")
+    @org.teavm.jso.JSBody(params = {"response", "box2DFunction"}, script = "Box2DLib({ wasmBinary: response, async: false }).then(function(Box2DLib){ window.Box2D = Box2DLib; box2DFunction(); });")
     private static native void initBox2DWasm(ArrayBufferWrapper response, Box2DPhysicsLoadFunction box2DFunction);
 
     @org.teavm.jso.JSFunctor

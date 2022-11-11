@@ -5,9 +5,9 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface TouchWrapper {
 
-	public int getIdentifier();
+    public int getIdentifier();
 
-	public int getClientX();
+    public int getClientX();
 
-	public int getClientY();
+    public int getClientY();
 }

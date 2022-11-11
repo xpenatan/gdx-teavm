@@ -6,8 +6,8 @@ apply from: '../../dependencies.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets.main.java.srcDirs = [ "emu", "src/main/java" ]
-sourceSets.main.resources.srcDirs = [ "resources/" ]
+sourceSets.main.java.srcDirs = ["emu", "src/main/java"]
+sourceSets.main.resources.srcDirs = ["resources/"]
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
@@ -45,28 +45,28 @@ dependencies {
     api "com.github.xpenatan.dragome-sdk:dragome-web:$project.dragomeVersion"
 }
 
-task fromClasses (type: Jar) {
-    from (sourceSets.main.output){
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
     }
 }
 
-task platformAll (type: Jar, dependsOn: [':backends:dragome-backend:build']) {
+task platformAll(type: Jar, dependsOn: [':backends:dragome-backend:build']) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from
-    {
-        (configurations.runtimeClasspath + sourceSets.main.output - configurations.provided).collect
-        {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    {
-        exclude ("gdx-" + gdxVersion + ".jar")
-        exclude "*.template"
-        exclude "*.idl"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-        exclude "META-INF/maven/"
-    }
+            {
+                (configurations.runtimeClasspath + sourceSets.main.output - configurations.provided).collect
+                        {
+                            it.isDirectory() ? it : zipTree(it)
+                        }
+            }
+            {
+                exclude("gdx-" + gdxVersion + ".jar")
+                exclude "*.template"
+                exclude "*.idl"
+                exclude "META-INF/*.DSA"
+                exclude "META-INF/*.RSA"
+                exclude "META-INF/maven/"
+            }
 }
 
 publishing {

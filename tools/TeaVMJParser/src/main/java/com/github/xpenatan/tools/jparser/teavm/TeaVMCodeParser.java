@@ -5,19 +5,33 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.CastExpr;
+import com.github.javaparser.ast.expr.ConditionalExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.NormalAnnotationExpr;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.tools.jparser.JParser;
 import com.github.xpenatan.tools.jparser.JParserHelper;
-import com.github.xpenatan.tools.jparser.codeparser.CodeParserItem;
 import com.github.xpenatan.tools.jparser.codeparser.IDLDefaultCodeParser;
 import com.github.xpenatan.tools.jparser.idl.IDLClass;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +68,9 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             "    return [TYPE].WRAPPER_GEN_01;\n" +
             "}";
 
-    /** When a js method returns a js object, we need get its pointer.  */
+    /**
+     * When a js method returns a js object, we need get its pointer.
+     */
     protected static final String GET_JS_METHOD_OBJ_POINTER_TEMPLATE = "" +
             "var jsObj = [MODULE].wrapPointer(addr, [MODULE].[TYPE]);\n" +
             "var returnedJSObj = jsObj.[METHOD];\n" +
@@ -166,7 +182,8 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         convertJavaPrimitiveArrayToJavaScriptReferenceArray(parameters);
 
         if(content != null) {
-            content = content.replace("\n", "").replace("\r", "").replaceAll("[ ]+", " ");;
+            content = content.replace("\n", "").replace("\r", "").replaceAll("[ ]+", " ");
+            ;
             content = content.trim();
 
             if(!content.isEmpty()) {
@@ -186,7 +203,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
             Parameter parameter = parameters.get(i);
             Type type = parameter.getType();
             if(type.isArrayType()) {
-                ArrayType arrayType = (ArrayType) type;
+                ArrayType arrayType = (ArrayType)type;
                 if(arrayType.getComponentType().isPrimitiveType()) {
                     parameter.addAndGetAnnotation("org.teavm.jso.JSByRef");
                 }
@@ -286,7 +303,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         if(statements.size() > 0) {
             // Find the return block and add the caller
             Statement statement = blockStmt.getStatement(0);
-            return (ReturnStmt) statement;
+            return (ReturnStmt)statement;
         }
         else {
             // should not go here
@@ -294,7 +311,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         }
     }
 
-    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration,  MethodDeclaration nativeMethod, boolean isAttribute) {
+    private void generateNativeMethodAnnotation(ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, MethodDeclaration nativeMethod, boolean isAttribute) {
         NodeList<Parameter> nativeParameters = nativeMethod.getParameters();
         Type returnType = idlMethodDeclaration.getType();
         String methodName = idlMethodDeclaration.getNameAsString();
@@ -365,7 +382,7 @@ public class TeaVMCodeParser extends IDLDefaultCodeParser {
         BlockStmt body = null;
         try {
             BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(newBody);
-            InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
+            InitializerDeclaration initializerDeclaration = (InitializerDeclaration)bodyDeclaration;
             body = initializerDeclaration.getBody();
         }
         catch(Throwable t) {

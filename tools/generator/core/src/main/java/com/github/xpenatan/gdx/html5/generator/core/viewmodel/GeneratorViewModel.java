@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.html5.generator.core.viewmodel;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.html5.generator.core.utils.server.JettyServer;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,7 +53,8 @@ public class GeneratorViewModel {
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
                 teaBuildConfiguration.mainApplicationClass = appClassName;
                 compile(teaBuildConfiguration);
-            } catch(MalformedURLException e) {
+            }
+            catch(MalformedURLException e) {
                 e.printStackTrace();
             }
         }
@@ -90,7 +90,8 @@ public class GeneratorViewModel {
                             startLocalServer(teaBuildConfiguration.webappPath);
                     }
                 }.start();
-            } catch (Exception e) {
+            }
+            catch(Exception e) {
                 e.printStackTrace();
                 isCompiling = false;
                 isError = true;
@@ -148,5 +149,4 @@ public class GeneratorViewModel {
 //        }
 //        return classNames;
 //    }
-
 }

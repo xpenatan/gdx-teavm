@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public abstract class WebBuildConfiguration {
 
-
     public static void log(String msg) {
         String text = "| " + msg;
         logInternalNewLine(text);
@@ -62,7 +61,10 @@ public abstract class WebBuildConfiguration {
     public abstract boolean minifying();
 
     public abstract ArrayList<String> getReflectionInclude();
+
     public abstract ArrayList<String> getReflectionExclude();
+
     public abstract ArrayList<String> getClassesToPreserve();
+
     public abstract boolean logClasses();
 }

@@ -20,12 +20,11 @@ package emujava.util.concurrent.impl;
  */
 public interface Promises {
 
-  Promise<Void> allOf(Promise[] promises);
+    Promise<Void> allOf(Promise[] promises);
 
-  Promise<Object> anyOf(Promise[] promises);
+    Promise<Object> anyOf(Promise[] promises);
 
-  <V> Promise<V> completed(V value);
+    <V> Promise<V> completed(V value);
 
-  <V> Promise<V> incomplete();
-
+    <V> Promise<V> incomplete();
 }

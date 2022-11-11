@@ -21,10 +21,10 @@ import emujava.util.concurrent.Executor;
  *
  */
 public final class DeferredExecutor implements Executor {
-  private final Promise<Void> resolvedPromise = Impl.IMPL.completed(null);
+    private final Promise<Void> resolvedPromise = Impl.IMPL.completed(null);
 
-  @Override
-  public void execute(Runnable command) {
-    resolvedPromise.then(command);
-  }
+    @Override
+    public void execute(Runnable command) {
+        resolvedPromise.then(command);
+    }
 }

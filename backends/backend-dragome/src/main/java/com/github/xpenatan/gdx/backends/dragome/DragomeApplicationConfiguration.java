@@ -13,12 +13,12 @@ import com.github.xpenatan.gdx.backends.dragome.dom.DragomeTypedArrays;
  */
 public class DragomeApplicationConfiguration extends WebApplicationConfiguration {
 
-	public DragomeApplicationConfiguration(String canvasID) {
-		BrowserDomHandler elementBySelector = new BrowserDomHandler();
-		Element canvasElem111 = elementBySelector.getElementBySelector(canvasID);
-		HTMLCanvasElementWrapper canvasElement111 = (HTMLCanvasElementWrapper)canvasElem111;
-		WebAgentInfo agentInfo = DragomeWebAgent.computeAgentInfo();
-		WebApplicationConfiguration.JSHelper = new DragomeJSHelper(agentInfo, canvasElement111);
-		new DragomeTypedArrays();
-	}
+    public DragomeApplicationConfiguration(String canvasID) {
+        BrowserDomHandler elementBySelector = new BrowserDomHandler();
+        Element canvasElem111 = elementBySelector.getElementBySelector(canvasID);
+        HTMLCanvasElementWrapper canvasElement111 = (HTMLCanvasElementWrapper)canvasElem111;
+        WebAgentInfo agentInfo = DragomeWebAgent.computeAgentInfo();
+        WebApplicationConfiguration.JSHelper = new DragomeJSHelper(agentInfo, canvasElement111);
+        new DragomeTypedArrays();
+    }
 }

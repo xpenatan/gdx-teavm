@@ -3,7 +3,10 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 /*[0;X] com.dragome.commons.compiler.annotations.MethodAlias */
-/** @author xpenatan */
+
+/**
+ * @author xpenatan
+ */
 public class btMotionState extends BulletBase {
 	/*JNI
 	#include <src/bullet/LinearMath/btMotionState.h>
@@ -53,24 +56,24 @@ public class btMotionState extends BulletBase {
 			}
 		};
 	*/
-	
-	public btMotionState() {
-		resetObj(createNative(), true);
-	}
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+
+    public btMotionState() {
+        resetObj(createNative(), true);
+    }
+
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		CustomMotionState * cobj = (CustomMotionState *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
-	
-	private native long createNative(); /*
+    /*[0;X;D]*/
+
+    private native long createNative(); /*
 		if(!getWorldTransformID) {
 			jclass cls = env->GetObjectClass(object);
 			getWorldTransformID = env->GetMethodID(cls, "getWorldTransform", "()[F");
@@ -158,48 +161,47 @@ public class btMotionState extends BulletBase {
 		}
 	 */
 
-	private float [] getWorldTransform() {
-		btTransform.tmp_param1.idt();
-		getWorldTransform(btTransform.tmp_param1);
-		return btTransform.tmp_param1.val;
-	}
-	/*[0;X;D]*/
+    private float[] getWorldTransform() {
+        btTransform.tmp_param1.idt();
+        getWorldTransform(btTransform.tmp_param1);
+        return btTransform.tmp_param1.val;
+    }
+    /*[0;X;D]*/
 
-	private void setWorldTransform(
-			float x1, float y1, float z1,
-			float x2, float y2, float z2,
-			float x3, float y3, float z3,
-			float x,  float y,  float z) {
-		btTransform.tmp_param1.val[0] = x1;
-		btTransform.tmp_param1.val[1] = x2;
-		btTransform.tmp_param1.val[2] = x3;
-		btTransform.tmp_param1.val[3] = 0;
-		btTransform.tmp_param1.val[4] = y1;
-		btTransform.tmp_param1.val[5] = y2;
-		btTransform.tmp_param1.val[6] = y3;
-		btTransform.tmp_param1.val[7] = 0;
-		btTransform.tmp_param1.val[8] = z1;
-		btTransform.tmp_param1.val[9] = z2;
-		btTransform.tmp_param1.val[10] = z3;
-		btTransform.tmp_param1.val[11] = 0;
-		btTransform.tmp_param1.val[12] = x;
-		btTransform.tmp_param1.val[13] = y;
-		btTransform.tmp_param1.val[14] = z;
-		btTransform.tmp_param1.val[15] = 1.0f;
-		setWorldTransform(btTransform.tmp_param1);
-	}
-	/*[0;X;D]*/
-	
-	
-	/**
-	 * Called to initialize body position. Modify worldTrans.
-	 */
-	public void getWorldTransform(Matrix4 worldTrans) {
-	}
-	
-	/**
-	 * Called when rigid body change position. Update your render matrix with worldTrans.
-	 */
-	public void setWorldTransform(Matrix4 worldTrans) {
-	}
+    private void setWorldTransform(
+            float x1, float y1, float z1,
+            float x2, float y2, float z2,
+            float x3, float y3, float z3,
+            float x, float y, float z) {
+        btTransform.tmp_param1.val[0] = x1;
+        btTransform.tmp_param1.val[1] = x2;
+        btTransform.tmp_param1.val[2] = x3;
+        btTransform.tmp_param1.val[3] = 0;
+        btTransform.tmp_param1.val[4] = y1;
+        btTransform.tmp_param1.val[5] = y2;
+        btTransform.tmp_param1.val[6] = y3;
+        btTransform.tmp_param1.val[7] = 0;
+        btTransform.tmp_param1.val[8] = z1;
+        btTransform.tmp_param1.val[9] = z2;
+        btTransform.tmp_param1.val[10] = z3;
+        btTransform.tmp_param1.val[11] = 0;
+        btTransform.tmp_param1.val[12] = x;
+        btTransform.tmp_param1.val[13] = y;
+        btTransform.tmp_param1.val[14] = z;
+        btTransform.tmp_param1.val[15] = 1.0f;
+        setWorldTransform(btTransform.tmp_param1);
+    }
+    /*[0;X;D]*/
+
+    /**
+     * Called to initialize body position. Modify worldTrans.
+     */
+    public void getWorldTransform(Matrix4 worldTrans) {
+    }
+
+    /**
+     * Called when rigid body change position. Update your render matrix with worldTrans.
+     */
+    public void setWorldTransform(Matrix4 worldTrans) {
+    }
 }

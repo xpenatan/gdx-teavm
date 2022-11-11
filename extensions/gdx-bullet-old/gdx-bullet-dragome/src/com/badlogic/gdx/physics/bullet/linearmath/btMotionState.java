@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 import com.dragome.commons.compiler.annotations.MethodAlias;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btMotionState extends BulletBase {
 
     public btMotionState() {
@@ -18,75 +20,75 @@ public class btMotionState extends BulletBase {
     }
 
     private long createNative() {
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var jsMotionState=new Bullet.MyMotionState();jsMotionState.self=this;jsMotionState.getWorldTransform=this.getT;jsMotionState.setWorldTransform=this.setT;",this);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsMotionState);",this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var jsMotionState=new Bullet.MyMotionState();jsMotionState.self=this;jsMotionState.getWorldTransform=this.getT;jsMotionState.setWorldTransform=this.setT;", this);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(jsMotionState);", this);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyMotionState);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyMotionState);", this);
+    }
 
-	@MethodAlias(local_alias= "getT")
-	private void getWorldTran(long worldTrans) {
-		com.dragome.commons.javascript.ScriptHelper.put("worldTrans",worldTrans,this);
-		Matrix4 tmpMat = btTransform.tmp_param1;
-		tmpMat.idt();
-		btMotionState motion = (btMotionState)com.dragome.commons.javascript.ScriptHelper.eval("this.self",this);
-		motion.getWorldTransform(tmpMat);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);var origin=worldTrans.getOrigin();var matrix3x3=worldTrans.getBasis();var row0=matrix3x3.getRow(0);var row1=matrix3x3.getRow(1);var row2=matrix3x3.getRow(2);",this);
-		com.dragome.commons.javascript.ScriptHelper.put("x",tmpMat.val[0],this);
-		com.dragome.commons.javascript.ScriptHelper.put("y",tmpMat.val[4],this);
-		com.dragome.commons.javascript.ScriptHelper.put("z",tmpMat.val[8],this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("row0.setValue(x,y,z);",this);
-		com.dragome.commons.javascript.ScriptHelper.put("x",tmpMat.val[1],this);
-		com.dragome.commons.javascript.ScriptHelper.put("y",tmpMat.val[5],this);
-		com.dragome.commons.javascript.ScriptHelper.put("z",tmpMat.val[9],this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("row1.setValue(x,y,z);",this);
-		com.dragome.commons.javascript.ScriptHelper.put("x",tmpMat.val[2],this);
-		com.dragome.commons.javascript.ScriptHelper.put("y",tmpMat.val[6],this);
-		com.dragome.commons.javascript.ScriptHelper.put("z",tmpMat.val[10],this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("row2.setValue(x,y,z);",this);
-		com.dragome.commons.javascript.ScriptHelper.put("x",tmpMat.val[12],this);
-		com.dragome.commons.javascript.ScriptHelper.put("y",tmpMat.val[13],this);
-		com.dragome.commons.javascript.ScriptHelper.put("z",tmpMat.val[14],this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("origin.setValue(x,y,z);",this);
-	}
+    @MethodAlias(local_alias = "getT")
+    private void getWorldTran(long worldTrans) {
+        com.dragome.commons.javascript.ScriptHelper.put("worldTrans", worldTrans, this);
+        Matrix4 tmpMat = btTransform.tmp_param1;
+        tmpMat.idt();
+        btMotionState motion = (btMotionState)com.dragome.commons.javascript.ScriptHelper.eval("this.self", this);
+        motion.getWorldTransform(tmpMat);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);var origin=worldTrans.getOrigin();var matrix3x3=worldTrans.getBasis();var row0=matrix3x3.getRow(0);var row1=matrix3x3.getRow(1);var row2=matrix3x3.getRow(2);", this);
+        com.dragome.commons.javascript.ScriptHelper.put("x", tmpMat.val[0], this);
+        com.dragome.commons.javascript.ScriptHelper.put("y", tmpMat.val[4], this);
+        com.dragome.commons.javascript.ScriptHelper.put("z", tmpMat.val[8], this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("row0.setValue(x,y,z);", this);
+        com.dragome.commons.javascript.ScriptHelper.put("x", tmpMat.val[1], this);
+        com.dragome.commons.javascript.ScriptHelper.put("y", tmpMat.val[5], this);
+        com.dragome.commons.javascript.ScriptHelper.put("z", tmpMat.val[9], this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("row1.setValue(x,y,z);", this);
+        com.dragome.commons.javascript.ScriptHelper.put("x", tmpMat.val[2], this);
+        com.dragome.commons.javascript.ScriptHelper.put("y", tmpMat.val[6], this);
+        com.dragome.commons.javascript.ScriptHelper.put("z", tmpMat.val[10], this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("row2.setValue(x,y,z);", this);
+        com.dragome.commons.javascript.ScriptHelper.put("x", tmpMat.val[12], this);
+        com.dragome.commons.javascript.ScriptHelper.put("y", tmpMat.val[13], this);
+        com.dragome.commons.javascript.ScriptHelper.put("z", tmpMat.val[14], this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("origin.setValue(x,y,z);", this);
+    }
 
-	@MethodAlias(local_alias= "setT")
-	private void setWorldTran(long worldTrans) {
-		com.dragome.commons.javascript.ScriptHelper.put("worldTrans",worldTrans,this);
-		Matrix4 tmpMat = btTransform.tmp_param1;
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);var origin=worldTrans.getOrigin();var matrix3x3=worldTrans.getBasis();var row0=matrix3x3.getRow(0);var row1=matrix3x3.getRow(1);var row2=matrix3x3.getRow(2);",this);
-		tmpMat.val[0] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.x();",this);
-		tmpMat.val[1] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.x();",this);
-		tmpMat.val[2] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.x();",this);
-		tmpMat.val[3] = 0;
-		tmpMat.val[4] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.y();",this);
-		tmpMat.val[5] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.y();",this);
-		tmpMat.val[6] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.y();",this);
-		tmpMat.val[7] = 0;
-		tmpMat.val[8] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.z();",this);
-		tmpMat.val[9] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.z();",this);
-		tmpMat.val[10] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.z();",this);
-		tmpMat.val[11] = 0;
-		tmpMat.val[12] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.x();",this);
-		tmpMat.val[13] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.y();",this);
-		tmpMat.val[14] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.z();",this);
-		tmpMat.val[15] = 1.0f;
-		btMotionState motion = (btMotionState)com.dragome.commons.javascript.ScriptHelper.eval("this.self",this);
-		motion.setWorldTransform(tmpMat);
-	}
+    @MethodAlias(local_alias = "setT")
+    private void setWorldTran(long worldTrans) {
+        com.dragome.commons.javascript.ScriptHelper.put("worldTrans", worldTrans, this);
+        Matrix4 tmpMat = btTransform.tmp_param1;
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var worldTrans=Bullet.wrapPointer(worldTrans,Bullet.btTransform);var origin=worldTrans.getOrigin();var matrix3x3=worldTrans.getBasis();var row0=matrix3x3.getRow(0);var row1=matrix3x3.getRow(1);var row2=matrix3x3.getRow(2);", this);
+        tmpMat.val[0] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.x();", this);
+        tmpMat.val[1] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.x();", this);
+        tmpMat.val[2] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.x();", this);
+        tmpMat.val[3] = 0;
+        tmpMat.val[4] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.y();", this);
+        tmpMat.val[5] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.y();", this);
+        tmpMat.val[6] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.y();", this);
+        tmpMat.val[7] = 0;
+        tmpMat.val[8] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row0.z();", this);
+        tmpMat.val[9] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row1.z();", this);
+        tmpMat.val[10] = com.dragome.commons.javascript.ScriptHelper.evalFloat("row2.z();", this);
+        tmpMat.val[11] = 0;
+        tmpMat.val[12] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.x();", this);
+        tmpMat.val[13] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.y();", this);
+        tmpMat.val[14] = com.dragome.commons.javascript.ScriptHelper.evalFloat("origin.z();", this);
+        tmpMat.val[15] = 1.0f;
+        btMotionState motion = (btMotionState)com.dragome.commons.javascript.ScriptHelper.eval("this.self", this);
+        motion.setWorldTransform(tmpMat);
+    }
 
     /**
-	 * Called to initialize body position. Modify worldTrans.
-	 */
+     * Called to initialize body position. Modify worldTrans.
+     */
     public void getWorldTransform(Matrix4 worldTrans) {
     }
 
     /**
-	 * Called when rigid body change position. Update your render matrix with worldTrans.
-	 */
+     * Called when rigid body change position. Update your render matrix with worldTrans.
+     */
     public void setWorldTransform(Matrix4 worldTrans) {
     }
 }

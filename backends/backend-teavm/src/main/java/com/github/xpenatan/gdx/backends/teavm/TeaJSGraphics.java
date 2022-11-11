@@ -46,7 +46,7 @@ public class TeaJSGraphics implements WebJSGraphics {
         return setFullscreen(fullscreenChanged, canvas, screenWidth, screenHeight);
     }
 
-    @JSBody(params = { "fullscreenChanged", "element", "screenWidth", "screenHeight" }, script = "" +
+    @JSBody(params = {"fullscreenChanged", "element", "screenWidth", "screenHeight"}, script = "" +
             "\t\t// Attempt to use the non-prefixed standard API (https://fullscreen.spec.whatwg.org)\n" +
             "\t\tif (element.requestFullscreen) {\n" +
             "\t\t\telement.width = screenWidth;\n" +

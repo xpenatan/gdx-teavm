@@ -1,11 +1,8 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
-
-
 import com.github.xpenatan.tools.jparser.JParser;
 import com.github.xpenatan.tools.jparser.idl.IDLFile;
 import com.github.xpenatan.tools.jparser.idl.IDLParser;
-
 import java.io.File;
 
 public class Main {
@@ -16,6 +13,4 @@ public class Main {
         String basePath = new File(".").getAbsolutePath();
         JParser.generate(new BulletCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
     }
-
-
 }

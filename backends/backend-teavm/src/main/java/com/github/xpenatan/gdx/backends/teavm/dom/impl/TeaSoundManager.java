@@ -12,7 +12,7 @@ public class TeaSoundManager implements SoundManagerWrapper {
             "return soundManager;")
     private static native JSObject createSM();
 
-    @JSBody(params = { "soundManager", "url", "callback" }, script = "" +
+    @JSBody(params = {"soundManager", "url", "callback"}, script = "" +
             "soundManager.setup({" +
             "url: url," +
             "onready: function() { callback.onready(); }," +
@@ -20,7 +20,7 @@ public class TeaSoundManager implements SoundManagerWrapper {
             "});")
     private static native void setupJS(JSObject soundManager, String url, SoundManagerCallbackWrapper callbackk);
 
-    @JSBody(params = { "soundManager", "url" }, script = "return soundManager.createSound({url: url});")
+    @JSBody(params = {"soundManager", "url"}, script = "return soundManager.createSound({url: url});")
     private static native JSObject createSoundJS(JSObject soundManager, String url);
 
     private JSObject soundManagerJS;

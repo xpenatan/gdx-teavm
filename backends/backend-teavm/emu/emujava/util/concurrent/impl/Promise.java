@@ -20,13 +20,13 @@ import java.util.function.BiConsumer;
 /**
  *
  */
-public interface Promise<V>  {
+public interface Promise<V> {
 
-  void resolve(V value);
+    void resolve(V value);
 
-  void reject(Throwable reason);
+    void reject(Throwable reason);
 
-  void then(BiConsumer<? super V, ? super Throwable> callback);
+    void then(BiConsumer<? super V, ? super Throwable> callback);
 
-  void then(Runnable callback);
+    void then(Runnable callback);
 }

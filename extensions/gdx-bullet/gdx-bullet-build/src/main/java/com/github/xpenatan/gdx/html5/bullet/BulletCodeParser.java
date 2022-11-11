@@ -22,10 +22,11 @@ import com.github.xpenatan.tools.jparser.teavm.TeaVMCodeParser;
 
 /**
  * A Bullet parser which attempt to use the generated idl java methods and bind it to teaVM api.
- *
+ * <p>
  * It also adds additional methods to use Matrix4 and Vector3
  *
- * @author xpenatan */
+ * @author xpenatan
+ */
 public class BulletCodeParser extends TeaVMCodeParser {
 
     public BulletCodeParser(IDLFile idlFile) {
@@ -129,7 +130,7 @@ public class BulletCodeParser extends TeaVMCodeParser {
         btTransformUsed++;
 
         BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(gdxCode);
-        InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
+        InitializerDeclaration initializerDeclaration = (InitializerDeclaration)bodyDeclaration;
         NodeList<Statement> statements = initializerDeclaration.getBody().getStatements();
         for(int j = 0; j < statements.size(); j++) {
             Statement statement = statements.get(j);
@@ -162,7 +163,7 @@ public class BulletCodeParser extends TeaVMCodeParser {
         BlockStmt body = null;
         try {
             BodyDeclaration<?> bodyDeclaration = StaticJavaParser.parseBodyDeclaration(newBody);
-            InitializerDeclaration initializerDeclaration = (InitializerDeclaration) bodyDeclaration;
+            InitializerDeclaration initializerDeclaration = (InitializerDeclaration)bodyDeclaration;
             body = initializerDeclaration.getBody();
         }
         catch(Throwable t) {

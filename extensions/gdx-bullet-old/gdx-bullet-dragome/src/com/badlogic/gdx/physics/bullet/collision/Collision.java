@@ -6,7 +6,9 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public interface Collision {
 
     public static final String btQuantizedBvhDataName = "btQuantizedBvhFloatData";

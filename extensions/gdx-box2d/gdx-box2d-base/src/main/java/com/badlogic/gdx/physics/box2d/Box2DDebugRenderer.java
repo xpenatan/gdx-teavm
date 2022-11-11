@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import static com.badlogic.gdx.physics.box2d.JointDef.*;
+import static com.badlogic.gdx.physics.box2d.JointDef.JointType;
 import com.badlogic.gdx.physics.box2d.joints.PulleyJoint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -84,10 +84,9 @@ public class Box2DDebugRenderer implements Disposable {
             }
         }
 
-
-        if (drawJoints) {
+        if(drawJoints) {
             world.getJoints(joints);
-            for (Iterator<Joint> iter = joints.iterator(); iter.hasNext();) {
+            for(Iterator<Joint> iter = joints.iterator(); iter.hasNext(); ) {
                 Joint joint = iter.next();
                 drawJoint(joint);
             }
@@ -95,7 +94,7 @@ public class Box2DDebugRenderer implements Disposable {
         renderer.end();
         if(drawContacts) {
             renderer.begin(ShapeRenderer.ShapeType.Point);
-            for (Contact contact : world.getContactList())
+            for(Contact contact : world.getContactList())
                 drawContact(contact);
             renderer.end();
         }
@@ -132,7 +131,7 @@ public class Box2DDebugRenderer implements Disposable {
     }
 
     private void drawAABB(Fixture fixture, Transform transform) {
-        if (fixture.getType() == Shape.Type.Circle) {
+        if(fixture.getType() == Shape.Type.Circle) {
 
             CircleShape shape = (CircleShape)fixture.getShape();
             float radius = shape.getRadius();
@@ -148,14 +147,15 @@ public class Box2DDebugRenderer implements Disposable {
             vertices[3].set(lower.x, upper.y);
 
             drawSolidPolygon(vertices, 4, AABB_COLOR, true);
-        } else if (fixture.getType() == Shape.Type.Polygon) {
+        }
+        else if(fixture.getType() == Shape.Type.Polygon) {
             PolygonShape shape = (PolygonShape)fixture.getShape();
             int vertexCount = shape.getVertexCount();
 
             shape.getVertex(0, vertices[0]);
             lower.set(transform.mul(vertices[0]));
             upper.set(lower);
-            for (int i = 1; i < vertexCount; i++) {
+            for(int i = 1; i < vertexCount; i++) {
                 shape.getVertex(i, vertices[i]);
                 transform.mul(vertices[i]);
                 lower.x = Math.min(lower.x, vertices[i].x);
@@ -252,7 +252,7 @@ public class Box2DDebugRenderer implements Disposable {
         if(closed) renderer.line(f.x, f.y, lv.x, lv.y);
     }
 
-    private void drawJoint (Joint joint) {
+    private void drawJoint(Joint joint) {
         Body bodyA = joint.getBodyA();
         Body bodyB = joint.getBodyB();
         Transform xf1 = bodyA.getTransform();
@@ -263,18 +263,21 @@ public class Box2DDebugRenderer implements Disposable {
         Vector2 p1 = joint.getAnchorA();
         Vector2 p2 = joint.getAnchorB();
 
-        if (joint.getType() == JointType.DistanceJoint) {
+        if(joint.getType() == JointType.DistanceJoint) {
             drawSegment(p1, p2, JOINT_COLOR);
-        } else if (joint.getType() == JointType.PulleyJoint) {
+        }
+        else if(joint.getType() == JointType.PulleyJoint) {
             PulleyJoint pulley = (PulleyJoint)joint;
             Vector2 s1 = pulley.getGroundAnchorA();
             Vector2 s2 = pulley.getGroundAnchorB();
             drawSegment(s1, p1, JOINT_COLOR);
             drawSegment(s2, p2, JOINT_COLOR);
             drawSegment(s1, s2, JOINT_COLOR);
-        } else if (joint.getType() == JointType.MouseJoint) {
+        }
+        else if(joint.getType() == JointType.MouseJoint) {
             drawSegment(joint.getAnchorA(), joint.getAnchorB(), JOINT_COLOR);
-        } else {
+        }
+        else {
             drawSegment(x1, p1, JOINT_COLOR);
             drawSegment(p1, p2, JOINT_COLOR);
             drawSegment(x2, p2, JOINT_COLOR);
@@ -286,9 +289,9 @@ public class Box2DDebugRenderer implements Disposable {
         renderer.line(x1.x, x1.y, x2.x, x2.y);
     }
 
-    private void drawContact (Contact contact) {
+    private void drawContact(Contact contact) {
         WorldManifold worldManifold = contact.getWorldManifold();
-        if (worldManifold.getNumberOfContactPoints() == 0) return;
+        if(worldManifold.getNumberOfContactPoints() == 0) return;
         Vector2 point = worldManifold.getPoints()[0];
         renderer.setColor(getColorByBody(contact.getFixtureA().getBody()));
         renderer.point(point.x, point.y, 0);

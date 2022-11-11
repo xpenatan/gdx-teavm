@@ -9,42 +9,44 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btVector3Array extends BulletBase {
 
     public btVector3Array(long cPtr, boolean cMemoryOwn) {
         resetObj(cPtr, cMemoryOwn);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyVector3Array)",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.MyVector3Array)", this);
+    }
 
     public int size() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.size();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.size();", this);
     }
 
     public void at(int n, Vector3 out) {
-		com.dragome.commons.javascript.ScriptHelper.put("n",n,this);
-		checkPointer();
-		float x=0,y=0,z=0;
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=jsObj.at(n);x=vec.x();y=vec.y();z=vec.z();out.set(x,y,z);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("n", n, this);
+        checkPointer();
+        float x = 0, y = 0, z = 0;
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("var vec=jsObj.at(n);x=vec.x();y=vec.y();z=vec.z();out.set(x,y,z);", this);
     }
 
     public int capacity() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.capacity();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalInt("jsObj.capacity();", this);
     }
 
     public void resize(int newsize) {
-		com.dragome.commons.javascript.ScriptHelper.put("newsize",newsize,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.resize(newsize);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("newsize", newsize, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.resize(newsize);", this);
     }
 }

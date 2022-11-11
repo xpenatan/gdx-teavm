@@ -6,7 +6,9 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btSphereShape extends btConvexInternalShape {
 
     public btSphereShape(float radius) {
@@ -14,38 +16,38 @@ public class btSphereShape extends btConvexInternalShape {
     }
 
     public static long createNative(float radius) {
-		com.dragome.commons.javascript.ScriptHelper.put("radius",radius,null);
-		return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btSphereShape(radius));",null);
+        com.dragome.commons.javascript.ScriptHelper.put("radius", radius, null);
+        return com.dragome.commons.javascript.ScriptHelper.evalLong("Bullet.getPointer(new Bullet.btSphereShape(radius));", null);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btSphereShape);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btSphereShape);", this);
+    }
 
     public float getRadius() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalFloat("jsObj.getRadius();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalFloat("jsObj.getRadius();", this);
     }
 
     public void setUnscaledRadius(float radius) {
-		com.dragome.commons.javascript.ScriptHelper.put("radius",radius,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.setUnscaledRadius(radius);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("radius", radius, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.setUnscaledRadius(radius);", this);
     }
 
     public void setMargin(float margin) {
-		com.dragome.commons.javascript.ScriptHelper.put("margin",margin,this);
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.setMargin(margin);",this);
+        com.dragome.commons.javascript.ScriptHelper.put("margin", margin, this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        com.dragome.commons.javascript.ScriptHelper.evalNoResult("jsObj.setMargin(margin);", this);
     }
 
     public float getMargin() {
-		checkPointer();
-		com.dragome.commons.javascript.ScriptHelper.put("jsObj",this.jsObj,this);
-		return com.dragome.commons.javascript.ScriptHelper.evalFloat("jsObj.getMargin();",this);
+        checkPointer();
+        com.dragome.commons.javascript.ScriptHelper.put("jsObj", this.jsObj, this);
+        return com.dragome.commons.javascript.ScriptHelper.evalFloat("jsObj.getMargin();", this);
     }
 }

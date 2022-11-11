@@ -1,7 +1,5 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-
 /**
  * @author xpenatan
  */

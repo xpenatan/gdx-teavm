@@ -12,8 +12,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btRigidBody extends btCollisionObject {
 
-
-    public btRigidBody (btRigidBodyConstructionInfo constructionInfo) {
+    public btRigidBody(btRigidBodyConstructionInfo constructionInfo) {
         super(0);
         btVector3 out = new btVector3();
         btVector3.convert(constructionInfo.localInertia, out);
@@ -26,7 +25,7 @@ public class btRigidBody extends btCollisionObject {
         btVector3.convert(localInertia != null ? localInertia : btVector3.TEMP_GDX_01.setZero(), out);
         long motionStatePointer = motionState != null ? motionState.getCPointer() : 0;
         long shapePointer = collisionShape != null ? collisionShape.getCPointer() : 0;
-        initObject(createNative(mass, motionStatePointer,shapePointer, out.getCPointer()), true);
+        initObject(createNative(mass, motionStatePointer, shapePointer, out.getCPointer()), true);
     }
 
     @Override
@@ -56,14 +55,14 @@ public class btRigidBody extends btCollisionObject {
         public long collisionShapeAddr;
         public Vector3 localInertia = new Vector3();
 
-        public btRigidBodyConstructionInfo (float mass, btMotionState motionState, btCollisionShape collisionShape, Vector3 localInertia) {
+        public btRigidBodyConstructionInfo(float mass, btMotionState motionState, btCollisionShape collisionShape, Vector3 localInertia) {
             this.mass = mass;
             this.motionStateAddr = motionState != null ? motionState.getCPointer() : 0;
             this.collisionShapeAddr = collisionShape != null ? collisionShape.getCPointer() : 0;
             this.localInertia.set(localInertia);
         }
 
-        public btRigidBodyConstructionInfo (float mass, btMotionState motionState, btCollisionShape collisionShape) {
+        public btRigidBodyConstructionInfo(float mass, btMotionState motionState, btCollisionShape collisionShape) {
             this.mass = mass;
             this.motionStateAddr = motionState != null ? motionState.getCPointer() : 0;
             this.collisionShapeAddr = collisionShape != null ? collisionShape.getCPointer() : 0;

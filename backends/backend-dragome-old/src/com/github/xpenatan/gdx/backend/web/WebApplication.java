@@ -4,5 +4,5 @@ import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 
 public interface WebApplication {
 
-	public Preloader getPreloader();
+    public Preloader getPreloader();
 }

@@ -8,15 +8,17 @@ package com.badlogic.gdx.physics.bullet.dynamics;
 
 import com.badlogic.gdx.physics.bullet.linearmath.btTypedObject;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btTypedConstraint extends btTypedObject {
 
     public btTypedConstraint(long cPtr, boolean cMemoryOwn) {
         resetObj(cPtr, cMemoryOwn);
     }
 
-	protected void cacheObj() {
-		com.dragome.commons.javascript.ScriptHelper.put("addr",this.cPointer,this);
-		this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btTypedConstraint);",this);
-	}
+    protected void cacheObj() {
+        com.dragome.commons.javascript.ScriptHelper.put("addr", this.cPointer, this);
+        this.jsObj = com.dragome.commons.javascript.ScriptHelper.eval("Bullet.wrapPointer(addr,Bullet.btTypedConstraint);", this);
+    }
 }

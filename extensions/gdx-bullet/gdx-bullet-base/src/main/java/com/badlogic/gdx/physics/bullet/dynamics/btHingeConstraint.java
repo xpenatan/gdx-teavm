@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  * @author xpenatan
  */
 public class btHingeConstraint extends btTypedConstraint {
-    public btHingeConstraint (btRigidBody rbA, Vector3 pivotInA, Vector3 axisInA) {
+    public btHingeConstraint(btRigidBody rbA, Vector3 pivotInA, Vector3 axisInA) {
         btVector3 btpivotInA = btVector3.TEMP_0;
         btVector3 btaxisInA = btVector3.TEMP_1;
         btVector3.convert(pivotInA, btpivotInA);
@@ -17,11 +17,11 @@ public class btHingeConstraint extends btTypedConstraint {
         initObject(createNative(rbA.getCPointer(), btpivotInA.getCPointer(), btaxisInA.getCPointer()), true);
     }
 
-    public btHingeConstraint (btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame) {
+    public btHingeConstraint(btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame) {
         this(rbA, rbB, rbAFrame, rbBFrame, false);
     }
 
-    public btHingeConstraint (btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame, boolean useReferenceFrameA) {
+    public btHingeConstraint(btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame, boolean useReferenceFrameA) {
         btTransform btrbAFrame = btTransform.TEMP_0;
         btTransform btrbBFrame = btTransform.TEMP_1;
         btTransform.convert(rbAFrame, btrbAFrame);

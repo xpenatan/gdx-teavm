@@ -5,13 +5,13 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface EventWrapper {
 
-	String getType();
+    String getType();
 
-	EventTargetWrapper getTarget();
+    EventTargetWrapper getTarget();
 
-	public void preventDefault();
+    public void preventDefault();
 
-	public void stopPropagation();
+    public void stopPropagation();
 
-	public float getDetail();
+    public float getDetail();
 }

@@ -2,7 +2,9 @@ package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btTypedObject extends BulletBase {
 
 	/*[0;X;F;L]

@@ -2,13 +2,11 @@ package com.github.xpenatan.gdx.examples.box2d;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -25,32 +23,46 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class PyramidTest implements ApplicationListener, InputProcessor {
 
-    /** the camera **/
+    /**
+     * the camera
+     **/
     protected OrthographicCamera camera;
 
-    /** the renderer **/
+    /**
+     * the renderer
+     **/
     protected Box2DDebugRenderer renderer;
 
     SpriteBatch batch;
     BitmapFont font;
 
-    /** our box2D world **/
+    /**
+     * our box2D world
+     **/
     protected World world;
 
-    /** ground body to connect the mouse joint to **/
+    /**
+     * ground body to connect the mouse joint to
+     **/
     protected Body groundBody;
 
-    /** our mouse joint **/
+    /**
+     * our mouse joint
+     **/
     protected MouseJoint mouseJoint = null;
 
-    /** a hit body **/
+    /**
+     * a hit body
+     **/
     protected Body hitBody = null;
 
-    /** temp vector **/
+    /**
+     * temp vector
+     **/
     protected Vector2 tmp = new Vector2();
 
     @Override
-    public void render () {
+    public void render() {
         // update the world with a fixed time step
         long startTime = TimeUtils.nanoTime();
         world.step(Gdx.app.getGraphics().getDeltaTime(), 3, 3);
@@ -71,7 +83,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
-    public void create () {
+    public void create() {
         Gdx.input.setInputProcessor(this);
 
         // setup the camera. In Box2D we operate on a
@@ -103,7 +115,7 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         renderer.dispose();
         world.dispose();
 
@@ -114,37 +126,40 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
-    public boolean keyDown (int keycode) {
+    public boolean keyDown(int keycode) {
         return false;
     }
 
     @Override
-    public boolean keyTyped (char character) {
+    public boolean keyTyped(char character) {
         return false;
     }
 
     @Override
-    public boolean keyUp (int keycode) {
+    public boolean keyUp(int keycode) {
         return false;
     }
 
-    /** we instantiate this vector and the callback here so we don't irritate the GC **/
+    /**
+     * we instantiate this vector and the callback here so we don't irritate the GC
+     **/
     Vector3 testPoint = new Vector3();
     QueryCallback callback = new QueryCallback() {
         @Override
-        public boolean reportFixture (Fixture fixture) {
+        public boolean reportFixture(Fixture fixture) {
             // if the hit point is inside the fixture of the body
             // we report it
-            if (fixture.testPoint(testPoint.x, testPoint.y)) {
+            if(fixture.testPoint(testPoint.x, testPoint.y)) {
                 hitBody = fixture.getBody();
                 return false;
-            } else
+            }
+            else
                 return true;
         }
     };
 
     @Override
-    public boolean touchDown (int x, int y, int pointer, int button) {
+    public boolean touchDown(int x, int y, int pointer, int button) {
         // translate the mouse coordinates to world coordinates
         camera.unproject(testPoint.set(x, y, 0));
         // ask the world which bodies are within the given
@@ -152,14 +167,14 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         hitBody = null;
         world.QueryAABB(callback, testPoint.x - 0.0001f, testPoint.y - 0.0001f, testPoint.x + 0.0001f, testPoint.y + 0.0001f);
 
-        if (hitBody == groundBody) hitBody = null;
+        if(hitBody == groundBody) hitBody = null;
 
         // ignore kinematic bodies, they don't work with the mouse joint
-        if (hitBody != null && hitBody.getType() == BodyDef.BodyType.KinematicBody) return false;
+        if(hitBody != null && hitBody.getType() == BodyDef.BodyType.KinematicBody) return false;
 
         // if we hit something we create a new mouse joint
         // and attach it to the hit body.
-        if (hitBody != null) {
+        if(hitBody != null) {
             MouseJointDef def = new MouseJointDef();
             def.bodyA = groundBody;
             def.bodyB = hitBody;
@@ -174,15 +189,17 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
         return false;
     }
 
-    /** another temporary vector **/
+    /**
+     * another temporary vector
+     **/
     Vector2 target = new Vector2();
 
     @Override
-    public boolean touchDragged (int x, int y, int pointer) {
+    public boolean touchDragged(int x, int y, int pointer) {
         // if a mouse joint exists we simply update
         // the target of the joint based on the new
         // mouse coordinates
-        if (mouseJoint != null) {
+        if(mouseJoint != null) {
             camera.unproject(testPoint.set(x, y, 0));
             mouseJoint.setTarget(target.set(testPoint.x, testPoint.y));
         }
@@ -190,9 +207,9 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
-    public boolean touchUp (int x, int y, int pointer, int button) {
+    public boolean touchUp(int x, int y, int pointer, int button) {
         // if a mouse joint exists we simply destroy it
-        if (mouseJoint != null) {
+        if(mouseJoint != null) {
             world.destroyJoint(mouseJoint);
             mouseJoint = null;
         }
@@ -200,28 +217,28 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
-    public boolean mouseMoved (int x, int y) {
+    public boolean mouseMoved(int x, int y) {
         return false;
     }
 
     @Override
-    public boolean scrolled (float amountX, float amountY) {
+    public boolean scrolled(float amountX, float amountY) {
         return false;
     }
 
-    public void pause () {
+    public void pause() {
 
     }
 
-    public void resume () {
+    public void resume() {
 
     }
 
-    public void resize (int width, int height) {
+    public void resize(int width, int height) {
 
     }
 
-    protected void createWorld (World world) {
+    protected void createWorld(World world) {
         {
             BodyDef bd = new BodyDef();
             Body ground = world.createBody(bd);
@@ -242,10 +259,10 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
             Vector2 deltaX = new Vector2(0.5625f, 1.25f);
             Vector2 deltaY = new Vector2(1.125f, 0.0f);
 
-            for (int i = 0; i < 20; i++) {
+            for(int i = 0; i < 20; i++) {
                 y.set(x);
 
-                for (int j = i; j < 20; j++) {
+                for(int j = i; j < 20; j++) {
                     BodyDef bd = new BodyDef();
                     bd.type = BodyDef.BodyType.DynamicBody;
                     bd.position.set(y);

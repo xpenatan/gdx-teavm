@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btFixedConstraint extends btGeneric6DofSpring2Constraint {
 
-    public btFixedConstraint (btRigidBody rbA, btRigidBody rbB, Matrix4 frameInA, Matrix4 frameInB) {
+    public btFixedConstraint(btRigidBody rbA, btRigidBody rbB, Matrix4 frameInA, Matrix4 frameInB) {
         btTransform btframeInA = btTransform.TEMP_0;
         btTransform btframeInB = btTransform.TEMP_1;
         btTransform.convert(frameInA, btframeInA);

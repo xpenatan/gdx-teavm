@@ -1,17 +1,19 @@
 package com.badlogic.gdx.physics.bullet.dynamics;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 
 	/*JNI
 		#include <src/bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 	*/
-	
-	public btSequentialImpulseConstraintSolver() {
-		resetObj(createNative(), true);
-	}
-	
-	private static native long createNative(); /*
+
+    public btSequentialImpulseConstraintSolver() {
+        resetObj(createNative(), true);
+    }
+
+    private static native long createNative(); /*
 		return (jlong)new btSequentialImpulseConstraintSolver();
 	*/
 	/*[0;X;L]
@@ -25,16 +27,16 @@ public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 			this.jsObj = Bullet.wrapPointer(addr, Bullet.btSequentialImpulseConstraintSolver); #EVAL
 		}
 	*/
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		btSequentialImpulseConstraintSolver * cobj = (btSequentialImpulseConstraintSolver *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 }

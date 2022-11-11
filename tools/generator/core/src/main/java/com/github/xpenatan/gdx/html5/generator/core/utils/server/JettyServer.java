@@ -1,9 +1,8 @@
 package com.github.xpenatan.gdx.html5.generator.core.utils.server;
 
+import java.io.File;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-
-import java.io.File;
 
 public class JettyServer {
 
@@ -31,7 +30,8 @@ public class JettyServer {
         server.setHandler(context);
         try {
             server.start();
-        } catch (Exception e) {
+        }
+        catch(Exception e) {
             e.printStackTrace();
             serverStarted = false;
         }
@@ -63,13 +63,15 @@ public class JettyServer {
             try {
                 context.stop();
                 context.destroy();
-            } catch (Exception e) {
+            }
+            catch(Exception e) {
                 e.printStackTrace();
             }
 
             try {
                 server.stop();
-            } catch (Exception e) {
+            }
+            catch(Exception e) {
                 e.printStackTrace();
             }
             server.setHandler(null);

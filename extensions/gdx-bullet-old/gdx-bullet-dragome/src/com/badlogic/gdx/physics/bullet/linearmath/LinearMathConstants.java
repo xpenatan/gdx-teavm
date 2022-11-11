@@ -6,7 +6,9 @@
  *-------------------------------------------------------*/
 package com.badlogic.gdx.physics.bullet.linearmath;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public interface LinearMathConstants {
 
     public static final int BT_BULLET_VERSION = 285;

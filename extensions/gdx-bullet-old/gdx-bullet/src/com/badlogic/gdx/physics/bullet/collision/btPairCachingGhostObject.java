@@ -1,17 +1,19 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
-public class btPairCachingGhostObject extends btGhostObject{
+/**
+ * @author xpenatan
+ */
+public class btPairCachingGhostObject extends btGhostObject {
 
 	/*JNI
 		#include <src/bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
 	*/
-	
-	protected void create() {
-		resetObj(createNative(), true);
-	}
-	
-	private static native long createNative(); /*
+
+    protected void create() {
+        resetObj(createNative(), true);
+    }
+
+    private static native long createNative(); /*
 		return (jlong)new btPairCachingGhostObject();
 	*/
 	/*[0;X;L]

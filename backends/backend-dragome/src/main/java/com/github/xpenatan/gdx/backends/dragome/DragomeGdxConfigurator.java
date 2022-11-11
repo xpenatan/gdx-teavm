@@ -92,62 +92,58 @@ import com.github.xpenatan.gdx.backends.web.gl.WebGLUniformLocationWrapper;
 /**
  * @author xpenatan
  */
-@DragomeConfiguratorImplementor(priority= 10)
-public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator
-{
+@DragomeConfiguratorImplementor(priority = 10)
+public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigurator {
 
-	private static Logger LOGGER= Logger.getLogger(DragomeGdxConfigurator.class.getName());
-	final StringBuilder sb = new StringBuilder();
+    private static Logger LOGGER = Logger.getLogger(DragomeGdxConfigurator.class.getName());
+    final StringBuilder sb = new StringBuilder();
 
-	String projName;
+    String projName;
 
-	DragomeBuildConfiguration configurator;
+    DragomeBuildConfiguration configurator;
 
-	protected JsDelegateGenerator jsDelegateGenerator;
-	protected List<Class<?>> classes= new ArrayList<>(Arrays.asList(
-			WebGLActiveInfoWrapper.class, WebGLBufferWrapper.class, WebGLContextAttributesWrapper.class, WebGLFramebufferWrapper.class, WebGLProgramWrapper.class,
-			WebGLRenderbufferWrapper.class, WebGLRenderingContextWrapper.class, WebGLShaderWrapper.class, WebGLTextureWrapper.class, WebGLUniformLocationWrapper.class,
-			CanvasPixelArrayWrapper.class, DocumentWrapper.class, ElementWrapper.class, HTMLCanvasElementWrapper.class, HTMLDocumentWrapper.class, HTMLElementWrapper.class,
-			HTMLVideoElementWrapper.class, ImageDataWrapper.class, HTMLImageElementWrapper.class, WindowWrapper.class,
-			ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, FloatArrayWrapper.class,
+    protected JsDelegateGenerator jsDelegateGenerator;
+    protected List<Class<?>> classes = new ArrayList<>(Arrays.asList(
+            WebGLActiveInfoWrapper.class, WebGLBufferWrapper.class, WebGLContextAttributesWrapper.class, WebGLFramebufferWrapper.class, WebGLProgramWrapper.class,
+            WebGLRenderbufferWrapper.class, WebGLRenderingContextWrapper.class, WebGLShaderWrapper.class, WebGLTextureWrapper.class, WebGLUniformLocationWrapper.class,
+            CanvasPixelArrayWrapper.class, DocumentWrapper.class, ElementWrapper.class, HTMLCanvasElementWrapper.class, HTMLDocumentWrapper.class, HTMLElementWrapper.class,
+            HTMLVideoElementWrapper.class, ImageDataWrapper.class, HTMLImageElementWrapper.class, WindowWrapper.class,
+            ArrayBufferViewWrapper.class, ArrayBufferWrapper.class, FloatArrayWrapper.class,
 
-			Float32ArrayWrapper.class, Int32ArrayWrapper.class, Int16ArrayWrapper.class, Uint8ArrayWrapper.class, Float64ArrayWrapper.class, Int8ArrayWrapper.class,
+            Float32ArrayWrapper.class, Int32ArrayWrapper.class, Int16ArrayWrapper.class, Uint8ArrayWrapper.class, Float64ArrayWrapper.class, Int8ArrayWrapper.class,
 
-			LongArrayWrapper.class, ObjectArrayWrapper.class,
-			Element.class, Document.class, HTMLCanvasElement.class, EventTargetWrapper.class, EventWrapper.class, EventListenerWrapper.class,
-			ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
-			Int32Array.class, Int8Array.class, Uint8ClampedArray.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
-			ArrayBufferFactory.class, TypedArraysFactory.class, EventTarget.class, EventListener.class, Event.class,
-			WheelEventWrapper.class, TouchWrapper.class, TouchListWrapper.class, TouchEventWrapper.class, NodeWrapper.class, KeyboardEventWrapper.class, MouseEventWrapper.class,
-			XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class, LocationWrapper.class, XMLHttpRequestWrapper.class, EventHandlerWrapper.class
-			));
+            LongArrayWrapper.class, ObjectArrayWrapper.class,
+            Element.class, Document.class, HTMLCanvasElement.class, EventTargetWrapper.class, EventWrapper.class, EventListenerWrapper.class,
+            ArrayBuffer.class, ArrayBufferView.class, Float32Array.class, Float64Array.class, Int16Array.class,
+            Int32Array.class, Int8Array.class, Uint8ClampedArray.class, Uint16Array.class, Uint32Array.class, Uint8Array.class,
+            ArrayBufferFactory.class, TypedArraysFactory.class, EventTarget.class, EventListener.class, Event.class,
+            WheelEventWrapper.class, TouchWrapper.class, TouchListWrapper.class, TouchEventWrapper.class, NodeWrapper.class, KeyboardEventWrapper.class, MouseEventWrapper.class,
+            XMLHttpRequest.class, Object.class, WebSocket.class, XMLHttpRequestExtension.class, LocationWrapper.class, XMLHttpRequestWrapper.class, EventHandlerWrapper.class
+    ));
 
-	public DragomeGdxConfigurator(DragomeBuildConfiguration configurator)
-	{
-		super();
-		this.configurator = configurator;
-		String projPath= System.getProperty("user.dir");
-		File file= new File(projPath);
-		projName = file.getName().replace("\\", "/");
+    public DragomeGdxConfigurator(DragomeBuildConfiguration configurator) {
+        super();
+        this.configurator = configurator;
+        String projPath = System.getProperty("user.dir");
+        File file = new File(projPath);
+        projName = file.getName().replace("\\", "/");
 
-		final String thisClassName = getClass().getSimpleName();
+        final String thisClassName = getClass().getSimpleName();
 
-		setClasspathFilter(new DefaultClasspathFileFilter()
-		{
-			@Override
-			public boolean accept(ClasspathFile classpathFile)
-			{
-				if(!super.accept(classpathFile))
-					return false;
-				boolean flag = true;
-				String fileName = classpathFile.getFilename();
-				String path = classpathFile.getPath();
-				path = path.replace("\\", "/");
+        setClasspathFilter(new DefaultClasspathFileFilter() {
+            @Override
+            public boolean accept(ClasspathFile classpathFile) {
+                if(!super.accept(classpathFile))
+                    return false;
+                boolean flag = true;
+                String fileName = classpathFile.getFilename();
+                String path = classpathFile.getPath();
+                path = path.replace("\\", "/");
 
-				{
-					flag = true;
+                {
+                    flag = true;
 
-					// All classes will compile except
+                    // All classes will compile except
 //					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiConsumer", flag);
 //					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BiFunction", flag);
 //					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/function/BinaryOperator", flag);
@@ -159,335 +155,318 @@ public class DragomeGdxConfigurator extends ChainedInstrumentationDragomeConfigu
 //					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/stream/Collectors", flag);
 //					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "java/util/StreamImpl", flag);
 
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeGdxConfigurator.class.getSimpleName(), flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeStandaloneAppGenerator.class.getSimpleName(), flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".conf", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javax/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "junit/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/junit/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "sun/reflect", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".html", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".idl", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".css", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".MF", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".xml", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".txt", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".properties", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".template", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/tests/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/config/DomHandlerApplicationConfigurator", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/helpers/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/commons/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/compiler/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/android/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jf", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xmlvm/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/javaparser/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/badlogic/gdx/jnigen/", flag);
+                    flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, thisClassName, flag);
 
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeGdxConfigurator.class.getSimpleName(), flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, DragomeStandaloneAppGenerator.class.getSimpleName(), flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetFilter", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/AssetsCopy", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/xpenatan/gdx/backends/dragome/preloader/DefaultAssetFilter", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".conf", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javax/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "junit/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/junit/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "sun/reflect", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".html", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".idl", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".css", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".MF", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".xml", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".txt", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".properties", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".template", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/tests/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/config/DomHandlerApplicationConfigurator", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/web/helpers/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/commons/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/dragome/compiler/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/android/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jf", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xmlvm/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/github/javaparser/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/badlogic/gdx/jnigen/", flag);
-					flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, thisClassName, flag);
+                    {
+                        //Ignore classes added by gradle getty. Eclipse jetty is not needed.
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javolution/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/jpountz/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/sf/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".tld", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "proguard/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/google/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "io/netty/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "JDOMAbout", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "ro/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/apache", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xml/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/mockito/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/atmosphere/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objectweb/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objenesis/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/dom4j/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/slf4j/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jdom/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/reflections/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "META-INF/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javassist/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".vm", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".so", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".dylib", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "/serverside/", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "LICENSE", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "NOTICE", flag);
+                        flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "Main.class", flag);
+                    }
 
-					{
-						//Ignore classes added by gradle getty. Eclipse jetty is not needed.
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javolution/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/jpountz/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "net/sf/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".tld", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "proguard/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "com/google/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "io/netty/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "JDOMAbout", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "ro/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/apache", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/xml/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/mockito/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/atmosphere/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objectweb/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/objenesis/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/hamcrest/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/dom4j/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/slf4j/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/jdom/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "org/reflections/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "META-INF/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "javassist/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".vm", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".so", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, ".dylib", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "/serverside/", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "LICENSE", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "NOTICE", flag);
-						flag = toAccept(ACCEPT_TYPE.DONT_ACCEPT, path, "Main.class", flag);
-					}
+                    flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler", flag);
+                    flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/ProxyRelatedInvocationHandler", flag);
+                    flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/compiler/annotations/", flag);
+                    flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag);
+                }
 
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/AbstractProxyRelatedInvocationHandler", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/ProxyRelatedInvocationHandler", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/compiler/annotations/", flag);
-					flag = toAccept(ACCEPT_TYPE.ACCEPT, path, "com/dragome/commons/javascript/", flag);
-				}
+                if(path.endsWith("/"))
+                    flag = false;
 
-				if(path.endsWith("/"))
-					flag = false;
+                if(flag)
+                    System.out.println("Allow Class: " + flag + " Path: " + path);
 
-				if(flag)
-					System.out.println("Allow Class: " + flag + " Path: " + path);
+                return flag;
+            }
+        });
+    }
 
-				return flag;
-			}
-		});
+    @Override
+    public boolean isRemoveUnusedCode() {
+        return false;
+    }
 
-	}
+    @Override
+    public boolean isObfuscateCode() {
+        return false;
+    }
 
-	@Override
-	public boolean isRemoveUnusedCode()
-	{
-		return false;
-	}
+    @Override
+    public List<URL> getAdditionalCodeKeepConfigFile() {
+        URL resource = getClass().getResource("/dragome/proguard-extra.conf");
+        return Arrays.asList(resource);
+    }
 
-	@Override
-	public boolean isObfuscateCode()
-	{
-		return false;
-	}
+    @Override
+    public List<URL> getAdditionalObfuscateCodeKeepConfigFile() {
+        URL resource = getClass().getResource("/proguard-extra.conf");
+        return Arrays.asList(resource);
+    }
 
-	@Override
-	public List<URL> getAdditionalCodeKeepConfigFile()
-	{
-		URL resource = getClass().getResource("/dragome/proguard-extra.conf");
-		return Arrays.asList(resource);
-	}
+    @Override
+    public boolean filterClassPath(String classpathEntry) {
+        boolean include = super.filterClassPath(classpathEntry);
+        classpathEntry = classpathEntry.replace("\\", "/");
+        include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin");
+        include |= classpathEntry.contains("dragome-js-jre");
+        include |= classpathEntry.contains("dragome-web");
+        include |= classpathEntry.contains("dragome-core");
+        include |= classpathEntry.contains("dragome-js-commons");
+        include |= classpathEntry.contains("dragome-w3c-standards");
+        include |= classpathEntry.contains("dragome-bytecode-js-compiler");
 
-	@Override
-	public List<URL> getAdditionalObfuscateCodeKeepConfigFile()
-	{
-		URL resource = getClass().getResource("/proguard-extra.conf");
-		return Arrays.asList(resource);
-	}
+        include &= !classpathEntry.contains("/resources/");
 
-	@Override
-	public boolean filterClassPath(String classpathEntry)
-	{
-		boolean include= super.filterClassPath(classpathEntry);
-		classpathEntry = classpathEntry.replace("\\", "/");
-		include |= classpathEntry.contains(projName + "/") && classpathEntry.endsWith("/bin");
-		include |= classpathEntry.contains("dragome-js-jre");
-		include |= classpathEntry.contains("dragome-web");
-		include |= classpathEntry.contains("dragome-core");
-		include |= classpathEntry.contains("dragome-js-commons");
-		include |= classpathEntry.contains("dragome-w3c-standards");
-		include |= classpathEntry.contains("dragome-bytecode-js-compiler");
+        if(!include && classpathEntry.contains("/bin"))
+            include = true;
 
-		include &= !classpathEntry.contains("/resources/");
+        if(include) {
+            String text = "Compile: " + include + " path: " + classpathEntry + "\n";
 
+            System.out.println(text);
+        }
 
-		if(!include && classpathEntry.contains("/bin"))
-			include = true;
+        return include;
+    }
 
-		if(include) {
-			String text = "Compile: " + include + " path: " + classpathEntry + "\n";
+    @Override
+    public void sortClassPath(Classpath classPath) {
+        classPath.sortByPriority(new PrioritySolver() {
+            @Override
+            public int getPriorityOf(ClasspathEntry string) {
+                String name = string.getName();
+                if(name.contains("backend-dragome"))
+                    return 5; // dragome backend is first so it can override any dragome classes
+                else if(name.contains("backend-web"))
+                    return 4;
+                else if(name.contains("dragome-js-jre"))
+                    return 3;
+                else if(name.contains("dragome-"))
+                    return 2;
+                else if(name.contains("gdx-box2d-gwt"))
+                    return 1;
+                else
+                    return 0;
+            }
+        });
 
-			System.out.println(text);
-		}
+        if(sb.length() > 0)
+            sb.insert(0, "\n" + "########### Libs/Classes PATH to allow Dragome to compile ###########" + "\n");
 
-		return include;
-	}
+        Iterator<ClasspathEntry> iterator = classPath.getEntries().iterator();
+        int i = 0;
+        sb.append("\n" + "######################## Libs ClassPath Order ########################\n");
+        while(iterator.hasNext()) {
+            ClasspathEntry next = iterator.next();
+            String name = next.getName();
+            if(next instanceof VirtualFolderClasspathEntry)
+                name = "Delegate Virtual Path";
+            sb.append(i + ": " + name);
+            sb.append("\n");
+            i++;
+        }
+        sb.append("#################################################################");
+        LOGGER.info(sb.toString());
+        sb.setLength(0);
+    }
 
-	@Override
-	public void sortClassPath(Classpath classPath) {
-		classPath.sortByPriority(new PrioritySolver()
-		{
-			@Override
-			public int getPriorityOf(ClasspathEntry string)
-			{
-				String name = string.getName();
-				if (name.contains("backend-dragome"))
-					return 5; // dragome backend is first so it can override any dragome classes
-				else if (name.contains("backend-web"))
-					return 4;
-				else if (name.contains("dragome-js-jre"))
-					return 3;
-				else if (name.contains("dragome-"))
-					return 2;
-				else if (name.contains("gdx-box2d-gwt"))
-					return 1;
-				else
-					return 0;
-			}
-		});
+    @Override
+    public List<ClasspathEntry> getExtraClasspath(Classpath classpath) {
+        List<ClasspathEntry> result = new ArrayList<ClasspathEntry>();
+        List<ClasspathFile> classpathFiles = new ArrayList<ClasspathFile>();
 
-		if(sb.length() > 0)
-			sb.insert(0, "\n" + "########### Libs/Classes PATH to allow Dragome to compile ###########" + "\n");
+        result.add(new VirtualFolderClasspathEntry(classpathFiles));
 
-		Iterator<ClasspathEntry> iterator = classPath.getEntries().iterator();
-		int i = 0;
-		sb.append("\n" + "######################## Libs ClassPath Order ########################\n");
-		while(iterator.hasNext()) {
-			ClasspathEntry next = iterator.next();
-			String name = next.getName();
-			if(next instanceof VirtualFolderClasspathEntry)
-				name = "Delegate Virtual Path";
-			sb.append(i + ": " + name);
-			sb.append("\n");
-			i++;
-		}
-		sb.append("#################################################################");
-		LOGGER.info(sb.toString());
-		sb.setLength(0);
-	}
+        if(jsDelegateGenerator == null)
+            createJsDelegateGenerator(classpath);
 
-	@Override
-	public List<ClasspathEntry> getExtraClasspath(Classpath classpath)
-	{
-		List<ClasspathEntry> result= new ArrayList<ClasspathEntry>();
-		List<ClasspathFile> classpathFiles= new ArrayList<ClasspathFile>();
+        for(Class<?> class1 : classes) {
+            InMemoryClasspathFile inMemoryClasspathFile = jsDelegateGenerator.generateAsClasspathFile(class1);
+            addClassBytecode(inMemoryClasspathFile.getBytecode(), inMemoryClasspathFile.getClassname());
+            classpathFiles.add(inMemoryClasspathFile);
+        }
 
-		result.add(new VirtualFolderClasspathEntry(classpathFiles));
+        return result;
+    }
 
-		if (jsDelegateGenerator == null)
-			createJsDelegateGenerator(classpath);
+    private void createJsDelegateGenerator(Classpath classpath) {
+        jsDelegateGenerator = new JsDelegateGenerator(classpath.toString().replace(";", System.getProperty("path.separator")), new DomHandlerDelegateStrategy() {
+            @Override
+            public String createMethodCall(Method method, String params) {
+                String longName = method.toGenericString();
+                String name = method.getName();
+                Class<?> declaringClass = method.getDeclaringClass();
 
-		for (Class<?> class1 : classes)
-		{
-			InMemoryClasspathFile inMemoryClasspathFile= jsDelegateGenerator.generateAsClasspathFile(class1);
-			addClassBytecode(inMemoryClasspathFile.getBytecode(), inMemoryClasspathFile.getClassname());
-			classpathFiles.add(inMemoryClasspathFile);
-		}
+                if(declaringClass == HTMLDocumentWrapper.class && name.startsWith("createElement")) {
+                    System.out.println("");
+                }
 
-		return result;
-	}
+                String result = super.createMethodCall(method, params);
 
-	private void createJsDelegateGenerator(Classpath classpath)
-	{
-		jsDelegateGenerator= new JsDelegateGenerator(classpath.toString().replace(";", System.getProperty("path.separator")), new DomHandlerDelegateStrategy()
-		{
-			@Override
-			public String createMethodCall(Method method, String params) {
-				String longName = method.toGenericString();
-				String name = method.getName();
-				Class<?> declaringClass = method.getDeclaringClass();
+                if(name.startsWith("get")) {
+                    String tmpName = null;
+                    if(name.endsWith("Float"))
+                        tmpName = name.replace("Float", "");
+                    else if(name.endsWith("Int"))
+                        tmpName = name.replace("Int", "");
+                    else if(name.endsWith("String"))
+                        tmpName = name.replace("String", "");
+                    else if(name.endsWith("Boolean"))
+                        tmpName = name.replace("Boolean", "");
+                    if(tmpName != null) {
+                        if(params != null) {
+                            result = "this.node." + tmpName + "(" + params + ")";
+                        }
+                        else {
+                            result = "this.node." + tmpName;
+                        }
+                    }
+                }
 
-				if(declaringClass == HTMLDocumentWrapper.class && name.startsWith("createElement"))
-				{
-					System.out.println("");
-				}
+                if(declaringClass == EventTargetWrapper.class && name.startsWith("addEventListener")) {
+                    if(method.getParameterTypes().length >= 2) {
+                        String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
+                        String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
+                        String paramListener = "var listener = function myFunction(event) {" + castEventToDelegate + callMethod + "};";
+                        String param = "$1, listener";
+                        if(method.getParameterTypes().length == 3)
+                            param += ",$3";
+                        result = paramListener + " this.node.addEventListener(" + param + ");";
+                    }
+                }
 
-				String result = super.createMethodCall(method, params);
+                if(declaringClass == HTMLImageElementWrapper.class && name.startsWith("addEventListener")) {
+                    if(method.getParameterTypes().length >= 2) {
+                        String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
+                        String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
+                        String paramListener = "var listener = function myFunction(event) {" + castEventToDelegate + callMethod + "};";
+                        String param = "$1, listener";
+                        if(method.getParameterTypes().length == 3)
+                            param += ",$3";
+                        result = paramListener + " this.node.addEventListener(" + param + ");";
+                    }
+                }
+                if(declaringClass == XMLHttpRequestWrapper.class && name.startsWith("setOnreadystatechange")) {
+                    if(method.getParameterTypes().length == 1) {
+                        String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
+                        String callMethod = "$1.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
+                        String paramListener = "var listener = function myFunction(event) {" + castEventToDelegate + callMethod + "};";
+                        String param = "listener";
+                        result = paramListener + " this.node.onreadystatechange = " + param + ";";
+                    }
+                }
 
-				if(name.startsWith("get")) {
-					String tmpName = null;
-					if(name.endsWith("Float"))
-						tmpName = name.replace("Float", "");
-					else if(name.endsWith("Int"))
-						tmpName = name.replace("Int", "");
-					else if(name.endsWith("String"))
-						tmpName = name.replace("String", "");
-					else if(name.endsWith("Boolean"))
-						tmpName = name.replace("Boolean", "");
-					if(tmpName != null) {
-						if(params != null) {
-							result = "this.node." + tmpName + "(" + params + ")";
-						}
-						else {
-							result = "this.node." + tmpName;
-						}
-					}
-				}
+                Class<?>[] superclass = method.getDeclaringClass().getInterfaces();
+                boolean isTypedArray = superclass.length > 0 && superclass[0].equals(ArrayBufferViewWrapper.class);
 
-				if(declaringClass == EventTargetWrapper.class && name.startsWith("addEventListener")) {
-					if(method.getParameterTypes().length >= 2) {
-						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
-						String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
-						String paramListener = "var listener = function myFunction(event) {"+ castEventToDelegate + callMethod  +"};";
-						String param = "$1, listener";
-						if(method.getParameterTypes().length == 3)
-							param += ",$3";
-						result = paramListener + " this.node.addEventListener(" + param + ");";
-					}
-				}
+                if(isTypedArray && name.equals("set") && method.getParameterTypes().length == 2 && method.getParameterTypes()[0].equals(int.class))
+                    result = "this.node[$1] = $2";
+                else if(isTypedArray && (name.equals("get") || name.equals("getAsDouble")) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(int.class))
+                    result = "this.node[$1]";
 
-				if(declaringClass == HTMLImageElementWrapper.class && name.startsWith("addEventListener")) {
-					if(method.getParameterTypes().length >= 2) {
-						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
-						String callMethod = "$2.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
-						String paramListener = "var listener = function myFunction(event) {"+ castEventToDelegate + callMethod  +"};";
-						String param = "$1, listener";
-						if(method.getParameterTypes().length == 3)
-							param += ",$3";
-						result = paramListener + " this.node.addEventListener(" + param + ");";
-					}
-				}
-				if(declaringClass == XMLHttpRequestWrapper.class && name.startsWith("setOnreadystatechange")) {
-					if(method.getParameterTypes().length == 1) {
-						String castEventToDelegate = "var newEvent = com_dragome_web_enhancers_jsdelegate_JsCast.$castTo___java_lang_Object__java_lang_Class$java_lang_Object(event, java_lang_Class.$forName___java_lang_String$java_lang_Class('com.github.xpenatan.gdx.backend.web.dom.EventWrapper'));";
-						String callMethod = "$1.$handleEvent___com_github_xpenatan_gdx_backend_web_dom_EventWrapper$void(newEvent);";
-						String paramListener = "var listener = function myFunction(event) {"+ castEventToDelegate + callMethod  +"};";
-						String param = "listener";
-						result = paramListener + " this.node.onreadystatechange = " + param + ";";
-					}
-				}
+                return result;
+            }
 
-				Class<?>[] superclass= method.getDeclaringClass().getInterfaces();
-				boolean isTypedArray= superclass.length > 0 && superclass[0].equals(ArrayBufferViewWrapper.class);
+            @Override
+            public String getSubTypeExtractorFor(Class<?> interface1, String methodName) {
+                String subTypeExtractorFor = super.getSubTypeExtractorFor(interface1, methodName);
+                return subTypeExtractorFor;
+            }
 
-				if (isTypedArray && name.equals("set") && method.getParameterTypes().length == 2 && method.getParameterTypes()[0].equals(int.class))
-					result= "this.node[$1] = $2";
-				else if (isTypedArray && (name.equals("get") || name.equals("getAsDouble")) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(int.class))
-					result= "this.node[$1]";
+            @Override
+            public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName) {
+                Class<? extends SubTypeFactory> subTypeFactoryClassFor = super.getSubTypeFactoryClassFor(interface1, methodName);
+                return subTypeFactoryClassFor;
+            }
+        });
+    }
 
-				return result;
-			}
+    @Override
+    public boolean isCaching() {
+        return false;
+    }
 
-			@Override
-			public String getSubTypeExtractorFor(Class<?> interface1, String methodName) {
-				String subTypeExtractorFor = super.getSubTypeExtractorFor(interface1, methodName);
-				return subTypeExtractorFor;
-			}
+    public boolean toAccept(ACCEPT_TYPE filter, String path, String toSearch, boolean flag) {
+        boolean contains = path.contains(toSearch);
+        if(filter == ACCEPT_TYPE.DONT_ACCEPT)
+            flag &= !contains;
+        else if(filter == ACCEPT_TYPE.ACCEPT)
+            flag |= contains;
+        return flag;
+    }
 
-			@Override
-			public Class<? extends SubTypeFactory> getSubTypeFactoryClassFor(Class<?> interface1, String methodName) {
-				Class<? extends SubTypeFactory> subTypeFactoryClassFor = super.getSubTypeFactoryClassFor(interface1, methodName);
-				return subTypeFactoryClassFor;
-			}
-		});
-	}
-
-	@Override
-	public boolean isCaching()
-	{
-		return false;
-	}
-
-	public boolean toAccept(ACCEPT_TYPE filter, String path, String toSearch, boolean flag) {
-		boolean contains = path.contains(toSearch);
-		if(filter == ACCEPT_TYPE.DONT_ACCEPT)
-			flag &= !contains;
-		else if(filter == ACCEPT_TYPE.ACCEPT)
-			flag |= contains;
-		return flag;
-	}
-
-	enum ACCEPT_TYPE{
-		ACCEPT, DONT_ACCEPT
-	}
-
+    enum ACCEPT_TYPE {
+        ACCEPT, DONT_ACCEPT
+    }
 
 //	@Override
 //	public String mainClassName() {
 //		return configurator.getMainClass().getName();
 //	}
 
-	@Override
-	public CompilerType getDefaultCompilerType() {
-		return CompilerType.Standard;
-	}
+    @Override
+    public CompilerType getDefaultCompilerType() {
+        return CompilerType.Standard;
+    }
 
-	@Override
-	public boolean isCheckingCast() {
-		return true;
-	}
+    @Override
+    public boolean isCheckingCast() {
+        return true;
+    }
 }

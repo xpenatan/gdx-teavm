@@ -15,24 +15,27 @@ import java.nio.ShortBuffer;
  */
 public class btIndexedMesh extends BulletBase {
     protected final static Array<btIndexedMesh> instances = new Array<btIndexedMesh>();
+
     protected static btIndexedMesh getInstance(final Object tag) {
         final int n = instances.size;
-        for (int i = 0; i < n; i++) {
+        for(int i = 0; i < n; i++) {
             final btIndexedMesh mesh = instances.get(i);
-            if (tag.equals(mesh.tag))
+            if(tag.equals(mesh.tag))
                 return mesh;
         }
         return null;
     }
 
-    /** Create or reuse a btIndexedMesh instance based on the specified {@link com.badlogic.gdx.graphics.g3d.model.MeshPart}.
-     * Use {@link #release()} to release the mesh when it's no longer needed. */
+    /**
+     * Create or reuse a btIndexedMesh instance based on the specified {@link com.badlogic.gdx.graphics.g3d.model.MeshPart}.
+     * Use {@link #release()} to release the mesh when it's no longer needed.
+     */
     public static btIndexedMesh obtain(final MeshPart meshPart) {
-        if (meshPart == null)
+        if(meshPart == null)
             throw new GdxRuntimeException("meshPart cannot be null");
 
         btIndexedMesh result = getInstance(meshPart);
-        if (result == null) {
+        if(result == null) {
             result = new btIndexedMesh(meshPart);
             instances.add(result);
         }
@@ -40,12 +43,13 @@ public class btIndexedMesh extends BulletBase {
         return result;
     }
 
-
     public Object tag;
 
-    /** Construct a new btIndexedMesh based on the supplied {@link MeshPart}
+    /**
+     * Construct a new btIndexedMesh based on the supplied {@link MeshPart}
      * The specified mesh must be indexed and triangulated and must outlive this btIndexedMesh.
-     * The buffers for the vertices and indices are shared amonst both. */
+     * The buffers for the vertices and indices are shared amonst both.
+     */
     public btIndexedMesh(final MeshPart meshPart) {
         initObject(createNative(), true);
         set(meshPart);
@@ -68,33 +72,38 @@ public class btIndexedMesh extends BulletBase {
      */
     private static native void deleteNative(long addr);
 
-
-    /** Convenience method to set this btIndexedMesh to the specified {@link MeshPart}
+    /**
+     * Convenience method to set this btIndexedMesh to the specified {@link MeshPart}
      * The specified mesh must be indexed and triangulated and must outlive this btIndexedMesh.
-     * The buffers for the vertices and indices are shared amonst both. */
+     * The buffers for the vertices and indices are shared amonst both.
+     */
     public void set(final MeshPart meshPart) {
-        if (meshPart.primitiveType != com.badlogic.gdx.graphics.GL20.GL_TRIANGLES)
+        if(meshPart.primitiveType != com.badlogic.gdx.graphics.GL20.GL_TRIANGLES)
             throw new com.badlogic.gdx.utils.GdxRuntimeException("Mesh must be indexed and triangulated");
         set(meshPart, meshPart.mesh, meshPart.offset, meshPart.size);
     }
 
-    /** Convenience method to set this btIndexedMesh to the specified {@link com.badlogic.gdx.graphics.Mesh}
+    /**
+     * Convenience method to set this btIndexedMesh to the specified {@link com.badlogic.gdx.graphics.Mesh}
      * The specified mesh must be indexed and triangulated and must outlive this btIndexedMesh.
-     * The buffers for the vertices and indices are shared amonst both. */
+     * The buffers for the vertices and indices are shared amonst both.
+     */
     public void set(final Object tag, final Mesh mesh, int offset, int count) {
-        if ((count <= 0) || ((count % 3) != 0))
+        if((count <= 0) || ((count % 3) != 0))
             throw new com.badlogic.gdx.utils.GdxRuntimeException("Mesh must be indexed and triangulated");
 
         VertexAttribute posAttr = mesh.getVertexAttribute(Usage.Position);
 
-        if (posAttr == null)
+        if(posAttr == null)
             throw new com.badlogic.gdx.utils.GdxRuntimeException("Mesh doesn't have a position attribute");
 
         set(tag, mesh.getVerticesBuffer(), mesh.getVertexSize(), mesh.getNumVertices(), posAttr.offset, mesh.getIndicesBuffer(), offset, count);
     }
 
-    /** Convenience method to set this btIndexedMesh to the specified vertex and index data.
-     * The specified data must be indexed and triangulated and must outlive this btIndexedMesh. */
+    /**
+     * Convenience method to set this btIndexedMesh to the specified vertex and index data.
+     * The specified data must be indexed and triangulated and must outlive this btIndexedMesh.
+     */
     public void set(final Object tag,
                     final FloatBuffer vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes,
                     final ShortBuffer indices, int indexOffset, int indexCount) {
@@ -123,7 +132,7 @@ public class btIndexedMesh extends BulletBase {
 
         Bullet.MyClassHelper.prototype.setVertices(jsObj, dataHeap1.byteOffset, sizeInBytesOfEachVertex, vertexCount, positionOffsetInBytes);
      */
-    private static native void setVertices(long addr, float [] vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes);
+    private static native void setVertices(long addr, float[] vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes);
 
     public void setIndices(java.nio.ShortBuffer indices, int indexOffset, int indexCount) {
         int remaining = indices.limit();
@@ -145,6 +154,5 @@ public class btIndexedMesh extends BulletBase {
 
         Bullet.MyClassHelper.prototype.setIndices(jsObj, dataHeap2.byteOffset, indexOffset, indexCount);
      */
-    private static native void setIndices(long addr, short [] indices, int indexOffset, int indexCount);
-
+    private static native void setIndices(long addr, short[] indices, int indexOffset, int indexCount);
 }

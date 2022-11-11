@@ -1,17 +1,19 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
-public class btCollisionDispatcher extends btDispatcher{
+/**
+ * @author xpenatan
+ */
+public class btCollisionDispatcher extends btDispatcher {
 
 	/*JNI
 		#include <src/bullet/BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
 	*/
-	
-	public btCollisionDispatcher(btCollisionConfiguration collisionConfiguration) {
-		resetObj(createNative(collisionConfiguration.cPointer), true);
-	}
-	
-	private static native long createNative(long collisionConfigurationAddr); /*
+
+    public btCollisionDispatcher(btCollisionConfiguration collisionConfiguration) {
+        resetObj(createNative(collisionConfiguration.cPointer), true);
+    }
+
+    private static native long createNative(long collisionConfigurationAddr); /*
 		btCollisionConfiguration * conf = (btCollisionConfiguration *)collisionConfigurationAddr;
 		return (jlong)new btCollisionDispatcher(conf);
 	*/
@@ -27,16 +29,16 @@ public class btCollisionDispatcher extends btDispatcher{
 			jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionDispatcher); #EVAL
 		}
 	*/
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		btCollisionDispatcher * cobj = (btCollisionDispatcher *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 }

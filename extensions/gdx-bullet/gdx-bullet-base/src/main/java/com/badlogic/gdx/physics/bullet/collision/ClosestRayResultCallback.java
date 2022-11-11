@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  * @author xpenatan
  */
 public class ClosestRayResultCallback extends RayResultCallback {
-    public ClosestRayResultCallback (Vector3 rayFromWorld, Vector3 rayToWorld) {
+    public ClosestRayResultCallback(Vector3 rayFromWorld, Vector3 rayToWorld) {
         btVector3 btFrom = btVector3.TEMP_0;
         btVector3 btTo = btVector3.TEMP_1;
         btVector3.convert(rayFromWorld, btFrom);
@@ -55,8 +55,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native void deleteNative(long addr);
 
-
-    public void getRayFromWorld (Vector3 out) {
+    public void getRayFromWorld(Vector3 out) {
         long outAddr = getRayFromWorld(cPointer);
         btVector3.convert(outAddr, out);
     }
@@ -67,7 +66,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long getRayFromWorld(long addr);
 
-    public void setRayFromWorld (Vector3 value) {
+    public void setRayFromWorld(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_1);
         setRayFromWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
@@ -79,7 +78,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long setRayFromWorld(long addr, long valueAddr);
 
-    public void getRayToWorld (Vector3 out) {
+    public void getRayToWorld(Vector3 out) {
         long outAddr = getRayToWorld(cPointer);
         btVector3.convert(outAddr, out);
     }
@@ -90,7 +89,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long getRayToWorld(long addr);
 
-    public void setRayToWorld (Vector3 value) {
+    public void setRayToWorld(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_1);
         setRayToWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
@@ -102,7 +101,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long setRayToWorld(long addr, long valueAddr);
 
-    public void getHitNormalWorld (Vector3 out) {
+    public void getHitNormalWorld(Vector3 out) {
         long outAddr = getHitNormalWorld(cPointer);
         btVector3.convert(outAddr, out);
     }
@@ -113,7 +112,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long getHitNormalWorld(long addr);
 
-    public void setHitNormalWorld (Vector3 value) {
+    public void setHitNormalWorld(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_1);
         setHitNormalWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
@@ -125,7 +124,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long setHitNormalWorld(long addr, long valueAddr);
 
-    public void getHitPointWorld (Vector3 out) {
+    public void getHitPointWorld(Vector3 out) {
         long outAddr = getHitPointWorld(cPointer);
         btVector3.convert(outAddr, out);
     }
@@ -136,7 +135,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long getHitPointWorld(long addr);
 
-    public void setHitPointWorld (Vector3 value) {
+    public void setHitPointWorld(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_1);
         setHitPointWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
@@ -148,7 +147,7 @@ public class ClosestRayResultCallback extends RayResultCallback {
      */
     private static native long setHitPointWorld(long addr, long valueAddr);
 
-    public float addSingleResult (LocalRayResult rayResult, boolean normalInWorldSpace) {
+    public float addSingleResult(LocalRayResult rayResult, boolean normalInWorldSpace) {
         return addSingleResult(cPointer, rayResult.getCPointer(), normalInWorldSpace);
     }
 

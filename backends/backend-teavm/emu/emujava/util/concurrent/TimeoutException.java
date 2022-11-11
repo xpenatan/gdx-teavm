@@ -17,12 +17,12 @@ package emujava.util.concurrent;
 
 /**
  * Emulation of TimeoutException.
- *
  */
 public class TimeoutException extends Exception {
-  public TimeoutException() {}
+    public TimeoutException() {
+    }
 
-  public TimeoutException(String message) {
-    super(message);
-  }
+    public TimeoutException(String message) {
+        super(message);
+    }
 }

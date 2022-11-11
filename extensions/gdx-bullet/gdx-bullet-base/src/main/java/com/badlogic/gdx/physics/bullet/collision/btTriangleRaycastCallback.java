@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 public class btTriangleRaycastCallback extends btTriangleCallback {
     Vector3 tempVec = new Vector3();
 
-    public btTriangleRaycastCallback (Vector3 from, Vector3 to) {
+    public btTriangleRaycastCallback(Vector3 from, Vector3 to) {
         btVector3 btFrom = btVector3.TEMP_0;
         btVector3 btTo = btVector3.TEMP_1;
         btVector3.convert(from, btFrom);
@@ -62,7 +62,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         return 0;
     }
 
-    public void setFrom (btVector3 value) {
+    public void setFrom(btVector3 value) {
         setFrom(cPointer, value.getCPointer());
     }
 
@@ -73,7 +73,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native long setFrom(long addr, long valueAddr);
 
-    public btVector3 getFrom () {
+    public btVector3 getFrom() {
         long outAddr = getFrom(cPointer);
         btVector3.emptyTransform.setPointer(outAddr);
         return btVector3.emptyTransform;
@@ -85,7 +85,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native long getFrom(long addr);
 
-    public void setTo (btVector3 value) {
+    public void setTo(btVector3 value) {
         setTo(cPointer, value.getCPointer());
     }
 
@@ -96,7 +96,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native long setTo(long addr, long valueAddr);
 
-    public btVector3 getTo () {
+    public btVector3 getTo() {
         long outAddr = getTo(cPointer);
         btVector3.emptyTransform.setPointer(outAddr);
         return btVector3.emptyTransform;
@@ -113,7 +113,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         setFlags(cPointer, (int)value);
     }
      */
-    public void setFlags (long value) {
+    public void setFlags(long value) {
         setFlags(cPointer, value);
     }
 
@@ -123,7 +123,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native void setFlags(long addr, long value);
 
-    public long getFlags () {
+    public long getFlags() {
         return getFlags(cPointer);
     }
 
@@ -133,7 +133,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native long getFlags(long addr);
 
-    public void setHitFraction (float value) {
+    public void setHitFraction(float value) {
         setHitFraction(cPointer, value);
     }
 
@@ -143,7 +143,7 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
      */
     private static native void setHitFraction(long addr, float value);
 
-    public float getHitFraction () {
+    public float getHitFraction() {
         return getHitFraction(cPointer);
     }
 

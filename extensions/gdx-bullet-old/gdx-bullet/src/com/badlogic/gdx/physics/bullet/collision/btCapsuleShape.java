@@ -1,16 +1,18 @@
 package com.badlogic.gdx.physics.bullet.collision;
 
-/** @author xpenatan */
+/**
+ * @author xpenatan
+ */
 public class btCapsuleShape extends btConvexInternalShape {
 	/*JNI
 		#include <src/bullet/BulletCollision/CollisionShapes/btCapsuleShape.h>
 	*/
 
-	public btCapsuleShape(float radius, float height) {
-		resetObj(createNative(radius, height), true);
-	}
-	
-	public static native long createNative(float radius, float height); /*
+    public btCapsuleShape(float radius, float height) {
+        resetObj(createNative(radius, height), true);
+    }
+
+    public static native long createNative(float radius, float height); /*
 		return (jlong)new btCapsuleShape(radius, height);
 	*/
 	/*[0;X;L]
@@ -23,16 +25,16 @@ public class btCapsuleShape extends btConvexInternalShape {
 			this.jsObj = Bullet.wrapPointer(addr, Bullet.btCapsuleShape); #EVAL
 		}
 	*/
-	
-	@Override
-	protected void delete() {
-		deletePointer(cPointer);
-	}
-	/*[0;X;D]*/
-	
-	private static native void deletePointer(long addr); /*
+
+    @Override
+    protected void delete() {
+        deletePointer(cPointer);
+    }
+    /*[0;X;D]*/
+
+    private static native void deletePointer(long addr); /*
 		btCapsuleShape * cobj = (btCapsuleShape *)addr;
 		delete cobj;
 	*/
-	/*[0;X;D]*/
+    /*[0;X;D]*/
 }

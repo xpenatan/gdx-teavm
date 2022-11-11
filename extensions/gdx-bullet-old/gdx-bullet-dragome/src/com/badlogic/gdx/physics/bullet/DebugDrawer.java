@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,9 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-/** @author xoppa */
+/**
+ * @author xoppa
+ */
 public class DebugDrawer extends btIDebugDraw implements Disposable {
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -72,17 +74,18 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
 
     @Override
     public void draw3dText(Vector3 location, String textString) {
-        if (spriteBatch == null) {
+        if(spriteBatch == null) {
             spriteBatch = new SpriteBatch();
         }
-        if (font == null) {
+        if(font == null) {
             font = new BitmapFont();
         }
         // this check is necessary to avoid "mirrored" instances of the text
-        if (camera.frustum.pointInFrustum(location)) {
-            if (viewport != null) {
+        if(camera.frustum.pointInFrustum(location)) {
+            if(viewport != null) {
                 camera.project(location, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
-            } else {
+            }
+            else {
                 camera.project(location);
             }
             shapeRenderer.end();
@@ -96,8 +99,8 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
 
     @Override
     public void setDebugMode(int debugMode) {
-		checkPointer();
-		this.debugMode = debugMode;
+        checkPointer();
+        this.debugMode = debugMode;
     }
 
     @Override
@@ -105,23 +108,31 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
         return debugMode;
     }
 
-    /** Use this in case no {@code glViewport} is in use. Otherwise please supply the used {@link Viewport} to
-	 * {@link #begin(Viewport)}.
-	 * @param camera The (perspective) camera to be used when doing the debug rendering. */
+    /**
+     * Use this in case no {@code glViewport} is in use. Otherwise please supply the used {@link Viewport} to
+     * {@link #begin(Viewport)}.
+     *
+     * @param camera The (perspective) camera to be used when doing the debug rendering.
+     */
     public void begin(Camera camera) {
         this.camera = camera;
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeType.Line);
     }
 
-    /** This has to be used in case the camera to be used is managed via a {@link Viewport}.
-	 * @param viewport The currently used viewport with its managed (perspective) camera. */
+    /**
+     * This has to be used in case the camera to be used is managed via a {@link Viewport}.
+     *
+     * @param viewport The currently used viewport with its managed (perspective) camera.
+     */
     public void begin(Viewport viewport) {
         this.viewport = viewport;
         begin(viewport.getCamera());
     }
 
-    /** Ends the debug rendering process and leads to a flush. */
+    /**
+     * Ends the debug rendering process and leads to a flush.
+     */
     public void end() {
         shapeRenderer.end();
     }
@@ -130,9 +141,11 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
         return shapeRenderer;
     }
 
-    /** Switches the {@link ShapeRenderer}. The given shape renderer won't be disposed when {@link #dispose()} is called. */
+    /**
+     * Switches the {@link ShapeRenderer}. The given shape renderer won't be disposed when {@link #dispose()} is called.
+     */
     public void setShapeRenderer(ShapeRenderer shapeRenderer) {
-        if (ownsShapeRenderer) {
+        if(ownsShapeRenderer) {
             this.shapeRenderer.dispose();
         }
         this.shapeRenderer = shapeRenderer;
@@ -143,9 +156,11 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
         return spriteBatch;
     }
 
-    /** Switches the {@link SpriteBatch}. The given sprite batch won't be disposed when {@link #dispose()} is called. */
+    /**
+     * Switches the {@link SpriteBatch}. The given sprite batch won't be disposed when {@link #dispose()} is called.
+     */
     public void setSpriteBatch(SpriteBatch spriteBatch) {
-        if (ownsSpriteBatch && this.spriteBatch != null) {
+        if(ownsSpriteBatch && this.spriteBatch != null) {
             this.spriteBatch.dispose();
         }
         this.spriteBatch = spriteBatch;
@@ -156,9 +171,11 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
         return font;
     }
 
-    /** Switches the {@link BitmapFont}. The given font won't be disposed when {@link #dispose()} is called. */
+    /**
+     * Switches the {@link BitmapFont}. The given font won't be disposed when {@link #dispose()} is called.
+     */
     public void setFont(BitmapFont font) {
-        if (ownsFont && this.font != null) {
+        if(ownsFont && this.font != null) {
             this.font.dispose();
         }
         this.font = font;
@@ -168,13 +185,13 @@ public class DebugDrawer extends btIDebugDraw implements Disposable {
     @Override
     protected void delete() {
         super.delete();
-        if (ownsShapeRenderer) {
+        if(ownsShapeRenderer) {
             shapeRenderer.dispose();
         }
-        if (ownsSpriteBatch && spriteBatch != null) {
+        if(ownsSpriteBatch && spriteBatch != null) {
             spriteBatch.dispose();
         }
-        if (ownsFont && font != null) {
+        if(ownsFont && font != null) {
             font.dispose();
         }
     }

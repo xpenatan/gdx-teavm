@@ -16,34 +16,39 @@
 
 package com.github.xpenatan.gdx.backends.web.preloader;
 
-
 import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetType;
 
-/** Adapted from gwt backend
- * @author xpenatan */
-public class AssetDownloader
-{
-	private static AssetDownload instance;
+/**
+ * Adapted from gwt backend
+ *
+ * @author xpenatan
+ */
+public class AssetDownloader {
+    private static AssetDownload instance;
 
-	private AssetDownloader(){}
+    private AssetDownloader() {
+    }
 
-	public static AssetDownload getInstance() {
-		return AssetDownloader.instance;
-	}
+    public static AssetDownload getInstance() {
+        return AssetDownloader.instance;
+    }
 
-	public static void setInstance(AssetDownload instance) {
-		AssetDownloader.instance = instance;
-	}
+    public static void setInstance(AssetDownload instance) {
+        AssetDownloader.instance = instance;
+    }
 
+    static public interface AssetDownload {
+        public void load(final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener);
 
-	static public interface AssetDownload {
-		public void load(final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener);
-		public void loadText(final String url, final AssetLoaderListener<String> listener);
-		public void loadScript(final String url, final AssetLoaderListener<Object> listener);
-		public boolean isUseBrowserCache();
-		public String getHostPageBaseURL();
-		public int getQueue();
-	}
+        public void loadText(final String url, final AssetLoaderListener<String> listener);
 
+        public void loadScript(final String url, final AssetLoaderListener<Object> listener);
+
+        public boolean isUseBrowserCache();
+
+        public String getHostPageBaseURL();
+
+        public int getQueue();
+    }
 }

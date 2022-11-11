@@ -5,19 +5,19 @@ package com.github.xpenatan.gdx.backends.web;
  */
 public interface WebAgentInfo {
 
-	public boolean isFirefox();
+    public boolean isFirefox();
 
-	public boolean isChrome();
+    public boolean isChrome();
 
-	public boolean isSafari();
+    public boolean isSafari();
 
-	public boolean isOpera();
+    public boolean isOpera();
 
-	public boolean isIE();
+    public boolean isIE();
 
-	public boolean isMacOS();
+    public boolean isMacOS();
 
-	public boolean isLinux();
+    public boolean isLinux();
 
-	public boolean isWindows();
+    public boolean isWindows();
 }

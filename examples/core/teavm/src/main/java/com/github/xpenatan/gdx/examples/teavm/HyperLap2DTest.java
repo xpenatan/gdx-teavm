@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +12,8 @@ public class HyperLap2DTest {
         URL appJarAppUrl = null;
         try {
             appJarAppUrl = new File("/home/kalculon/Games/HyperRunner2/lwjgl3/build/libs/HyperRunner-0.0.1.jar").toURI().toURL();
-        } catch (MalformedURLException e) {
+        }
+        catch(MalformedURLException e) {
             e.printStackTrace();
         }
 

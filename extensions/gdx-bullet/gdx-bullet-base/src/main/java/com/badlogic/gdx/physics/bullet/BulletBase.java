@@ -65,12 +65,12 @@ public abstract class BulletBase implements Disposable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof BulletBase) && (((BulletBase) obj).cPointer == this.cPointer);
+        return (obj instanceof BulletBase) && (((BulletBase)obj).cPointer == this.cPointer);
     }
 
     @Override
     public int hashCode() {
-        return (int) cPointer;
+        return (int)cPointer;
     }
 
     /**
@@ -139,10 +139,12 @@ public abstract class BulletBase implements Disposable {
             destroyed = true;
 
             if(cMemOwn && !disposed) {
-                if(Bullet.enableLogging) Gdx.app.error("Bullet", "Disposing " + toString() + " due to garbage collection.");
+                if(Bullet.enableLogging)
+                    Gdx.app.error("Bullet", "Disposing " + toString() + " due to garbage collection.");
                 dispose();
             }
-        } catch(Throwable e) {
+        }
+        catch(Throwable e) {
             Gdx.app.error("Bullet", "Exception while destroying " + toString(), e);
         }
     }

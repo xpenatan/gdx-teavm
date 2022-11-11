@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.Pool;
 import java.util.Iterator;
 
-public class World implements AABBFunction{
+public class World implements AABBFunction {
 
     /**
      * pool for bodies

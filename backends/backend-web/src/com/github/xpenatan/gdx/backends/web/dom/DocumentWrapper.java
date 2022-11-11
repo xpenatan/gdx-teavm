@@ -5,15 +5,15 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface DocumentWrapper extends ElementWrapper {
 
-	public ElementWrapper getDocumentElement();
+    public ElementWrapper getDocumentElement();
 
-	public String getCompatMode();
+    public String getCompatMode();
 
-	HTMLElementWrapper getElementById(String id);
+    HTMLElementWrapper getElementById(String id);
 
-	public NodeWrapper createTextNode(NodeWrapper text);
+    public NodeWrapper createTextNode(NodeWrapper text);
 
-	public HTMLElementWrapper createElement(String value);
+    public HTMLElementWrapper createElement(String value);
 
-	public NodeWrapper getBody();
+    public NodeWrapper getBody();
 }

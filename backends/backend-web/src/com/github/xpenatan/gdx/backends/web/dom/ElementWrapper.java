@@ -5,13 +5,13 @@ package com.github.xpenatan.gdx.backends.web.dom;
  */
 public interface ElementWrapper extends NodeWrapper {
 
-	public int getScrollTop();
+    public int getScrollTop();
 
-	public int getScrollLeft();
+    public int getScrollLeft();
 
-	public int getClientWidth();
+    public int getClientWidth();
 
-	public int getClientHeight();
+    public int getClientHeight();
 
-	public void setAttribute(String qualifiedName, String value);
+    public void setAttribute(String qualifiedName, String value);
 }

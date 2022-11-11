@@ -22,25 +22,26 @@ import org.teavm.jso.JSBody;
  */
 public class Impl {
 
-  public static final Promises IMPL = isSupported() ? new NativePromisesImpl() :
-      new PromisesImpl();
+    public static final Promises IMPL = isSupported() ? new NativePromisesImpl() :
+            new PromisesImpl();
 
-  @JSBody(script = "" +
-          "return typeof Promise === \"function\"\n" +
-          "        // Some of these methods are missing from\n" +
-          "        // Firefox/Chrome experimental implementations\n" +
-          "        && \"resolve\" in Promise\n" +
-          "        && \"reject\" in Promise\n" +
-          "        && \"all\" in Promise\n" +
-          "        && \"race\" in Promise\n" +
-          "        // Older version of the spec had a resolver object\n" +
-          "        // as the arg rather than a function\n" +
-          "        && (function() {\n" +
-          "          var resolve;\n" +
-          "          new Promise(function(r) { resolve = r; });\n" +
-          "          return typeof resolve === \"function\";\n" +
-          "        }());")
-  private static native boolean isSupported();
+    @JSBody(script = "" +
+            "return typeof Promise === \"function\"\n" +
+            "        // Some of these methods are missing from\n" +
+            "        // Firefox/Chrome experimental implementations\n" +
+            "        && \"resolve\" in Promise\n" +
+            "        && \"reject\" in Promise\n" +
+            "        && \"all\" in Promise\n" +
+            "        && \"race\" in Promise\n" +
+            "        // Older version of the spec had a resolver object\n" +
+            "        // as the arg rather than a function\n" +
+            "        && (function() {\n" +
+            "          var resolve;\n" +
+            "          new Promise(function(r) { resolve = r; });\n" +
+            "          return typeof resolve === \"function\";\n" +
+            "        }());")
+    private static native boolean isSupported();
 
-  private Impl() { }
+    private Impl() {
+    }
 }

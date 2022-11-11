@@ -9,18 +9,18 @@ import com.badlogic.gdx.utils.Array;
 public class btBvhTriangleMeshShape extends btTriangleMeshShape {
     protected final static Array<btBvhTriangleMeshShape> instances = new Array<btBvhTriangleMeshShape>();
 
-    protected static <T extends MeshPart> btBvhTriangleMeshShape getInstance (final Array<T> meshParts) {
-        for (final btBvhTriangleMeshShape instance : instances) {
-            if (instance.meshInterface instanceof btTriangleIndexVertexArray
+    protected static <T extends MeshPart> btBvhTriangleMeshShape getInstance(final Array<T> meshParts) {
+        for(final btBvhTriangleMeshShape instance : instances) {
+            if(instance.meshInterface instanceof btTriangleIndexVertexArray
                     && btTriangleIndexVertexArray.compare((btTriangleIndexVertexArray)(instance.meshInterface), meshParts))
                 return instance;
         }
         return null;
     }
 
-    public static <T extends MeshPart> btBvhTriangleMeshShape obtain (final Array<T> meshParts) {
+    public static <T extends MeshPart> btBvhTriangleMeshShape obtain(final Array<T> meshParts) {
         btBvhTriangleMeshShape result = getInstance(meshParts);
-        if (result == null) {
+        if(result == null) {
             result = new btBvhTriangleMeshShape(btTriangleIndexVertexArray.obtain(meshParts), true);
             instances.add(result);
         }
@@ -28,14 +28,16 @@ public class btBvhTriangleMeshShape extends btTriangleMeshShape {
         return result;
     }
 
-    public btBvhTriangleMeshShape (btStridingMeshInterface meshInterface, boolean useQuantizedAabbCompression) {
+    public btBvhTriangleMeshShape(btStridingMeshInterface meshInterface, boolean useQuantizedAabbCompression) {
         initObject(createNative(meshInterface.getCPointer(), useQuantizedAabbCompression), true);
     }
 
     private btStridingMeshInterface meshInterface = null;
 
-    /** @return The {@link btStridingMeshInterface} this shape encapsulates. */
-    public btStridingMeshInterface getMeshInterface () {
+    /**
+     * @return The {@link btStridingMeshInterface} this shape encapsulates.
+     */
+    public btStridingMeshInterface getMeshInterface() {
         return meshInterface;
     }
 
