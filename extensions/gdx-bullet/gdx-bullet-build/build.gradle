@@ -7,7 +7,7 @@ group 'com.github.xpenatan.gdx-web-tools'
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
 
 dependencies {
-    implementation project(":tools:JParser")
+    implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
     implementation project(":tools:TeaVMJParser")
 }
 

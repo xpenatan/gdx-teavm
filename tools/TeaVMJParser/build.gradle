@@ -1,7 +1,8 @@
 apply plugin: "java"
 
+
 group 'com.github.xpenatan.gdx-web-tools'
 
 dependencies {
-    implementation project(":tools:JParser")
+    implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
 }
