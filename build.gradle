@@ -65,4 +65,9 @@ allprojects {
             defaultOutputDir = file('build/classes/java/main')
         }
     }
+
+    configurations.all {
+        // Check for updates every build
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
 }
