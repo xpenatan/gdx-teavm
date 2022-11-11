@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
-import com.github.xpenatan.tools.jparser.JParser;
-import com.github.xpenatan.tools.jparser.idl.IDLFile;
-import com.github.xpenatan.tools.jparser.idl.IDLParser;
+import com.github.xpenatan.jparser.core.JParser;
+import com.github.xpenatan.jparser.core.idl.IDLFile;
+import com.github.xpenatan.jparser.core.idl.IDLParser;
 import java.io.File;
 
 public class Main {

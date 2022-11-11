@@ -14,11 +14,11 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.JParserHelper;
-import com.github.xpenatan.tools.jparser.idl.IDLClass;
-import com.github.xpenatan.tools.jparser.idl.IDLFile;
-import com.github.xpenatan.tools.jparser.idl.IDLMethod;
-import com.github.xpenatan.tools.jparser.teavm.TeaVMCodeParser;
+import com.github.xpenatan.jparser.core.JParserHelper;
+import com.github.xpenatan.jparser.core.idl.IDLClass;
+import com.github.xpenatan.jparser.core.idl.IDLFile;
+import com.github.xpenatan.jparser.core.idl.IDLMethod;
+import com.github.xpenatan.jparser.teavm.TeaVMCodeParser;
 
 /**
  * A Bullet parser which attempt to use the generated idl java methods and bind it to teaVM api.

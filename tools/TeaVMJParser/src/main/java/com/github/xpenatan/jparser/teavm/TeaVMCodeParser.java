@@ -1,4 +1,4 @@
-package com.github.xpenatan.tools.jparser.teavm;
+package com.github.xpenatan.jparser.teavm;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -27,11 +27,11 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
-import com.github.xpenatan.tools.jparser.JParser;
-import com.github.xpenatan.tools.jparser.JParserHelper;
-import com.github.xpenatan.tools.jparser.codeparser.IDLDefaultCodeParser;
-import com.github.xpenatan.tools.jparser.idl.IDLClass;
-import com.github.xpenatan.tools.jparser.idl.IDLFile;
+import com.github.xpenatan.jparser.core.JParser;
+import com.github.xpenatan.jparser.core.JParserHelper;
+import com.github.xpenatan.jparser.core.codeparser.IDLDefaultCodeParser;
+import com.github.xpenatan.jparser.core.idl.IDLClass;
+import com.github.xpenatan.jparser.core.idl.IDLFile;
 import java.util.List;
 import java.util.Optional;
 
