@@ -34,7 +34,7 @@ public class Build {
         ;
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.logClasses = true;
+        teaBuildConfiguration.logClasses = false;
         teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
