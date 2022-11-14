@@ -38,6 +38,7 @@ public class TeaBuilder {
     private static final String EXTENSION_BULLET = "gdx-bullet-teavm";
     private static final String EXTENSION_BOX2D = "gdx-box2d-teavm";
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
+    private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
     public static void build(WebBuildConfiguration configuration) {
         build(configuration, null);
@@ -307,6 +308,7 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, EXTENSION_FREETYPE);
         makeClassPathFirst(acceptedURL, EXTENSION_BULLET);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
+        makeClassPathFirst(acceptedURL, EXTENSION_IMGUI);
         // Move generic backend to be first
         makeClassPathFirst(acceptedURL, "backend-web");
         makeClassPathFirst(acceptedURL, "backend-teavm");
@@ -477,6 +479,8 @@ public class TeaBuilder {
         else if(path.contains(EXTENSION_BULLET))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_BOX2D))
+            isValid = ACCEPT_STATE.ACCEPT;
+        else if(path.contains(EXTENSION_IMGUI))
             isValid = ACCEPT_STATE.ACCEPT;
 
         if(path.contains("backend-teavm-native"))
