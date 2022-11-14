@@ -20,6 +20,8 @@ jobs:
       run: chmod +x ./gradlew
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
+    - name: Build
+      run: ./gradlew build
     - name: build java script
       run: ./gradlew buildJavaScript
     - name: Upload to repository
