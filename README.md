@@ -1,4 +1,5 @@
 # Gdx Html5 tools
+![Build](https://github.com/xpenatan/gdx-html5-tools/workflows/Build/badge.svg)
 
 Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](https://github.com/konsoletyper/teavm) with some reflection support.
 
