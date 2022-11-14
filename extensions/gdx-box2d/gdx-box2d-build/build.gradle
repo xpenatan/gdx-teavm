@@ -8,7 +8,7 @@ project.ext.mainClassName = "com.github.xpenatan.gdx.html5.box2d.Main"
 
 dependencies {
     implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
-    implementation project(":tools:TeaVMJParser")
+    implementation "com.github.xpenatan.jParser:jParser-teavm:$project.jParserVersion"
 }
 
 task generateNativeProject(dependsOn: classes, type: JavaExec) {
