@@ -12,7 +12,7 @@ dependencies {
 }
 
 task generateNativeProject(dependsOn: classes, type: JavaExec) {
-    group = 'other'
+    group = 'teavm'
     description = 'Generate native project'
 
     main = project.mainClassName

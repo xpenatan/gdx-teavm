@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.generator.core.view;
+package com.github.xpenatan.teavm.generator.core.view;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;

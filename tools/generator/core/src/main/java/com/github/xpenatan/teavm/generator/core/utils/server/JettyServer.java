@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.html5.generator.core.utils.server;
+package com.github.xpenatan.teavm.generator.core.utils.server;
 
 import java.io.File;
 import org.eclipse.jetty.server.Server;

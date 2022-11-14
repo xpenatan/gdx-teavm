@@ -27,8 +27,8 @@ dependencies {
     implementation "com.github.xpenatan.jDear-Imgui:imgui-core-platform:$project.jDearImguiVersion:natives-desktop"
 }
 
-task run(dependsOn: classes, type: JavaExec) {
-    group = 'other'
+task runGenerator(dependsOn: classes, type: JavaExec) {
+    group = 'teavm'
     description = 'Run core example'
 
     main = project.mainClassName

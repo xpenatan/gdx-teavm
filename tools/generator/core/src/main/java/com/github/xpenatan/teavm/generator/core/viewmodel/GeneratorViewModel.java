@@ -1,8 +1,8 @@
-package com.github.xpenatan.gdx.html5.generator.core.viewmodel;
+package com.github.xpenatan.teavm.generator.core.viewmodel;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.html5.generator.core.utils.server.JettyServer;
+import com.github.xpenatan.teavm.generator.core.utils.server.JettyServer;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

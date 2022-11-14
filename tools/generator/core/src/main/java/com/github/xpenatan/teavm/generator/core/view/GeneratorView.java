@@ -1,8 +1,8 @@
-package com.github.xpenatan.gdx.html5.generator.core.view;
+package com.github.xpenatan.teavm.generator.core.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.github.xpenatan.gdx.html5.generator.core.viewmodel.GeneratorViewModel;
+import com.github.xpenatan.teavm.generator.core.viewmodel.GeneratorViewModel;
 import com.github.xpenatan.imgui.ImGui;
 import com.github.xpenatan.imgui.ImGuiBoolean;
 import com.github.xpenatan.imgui.ImGuiString;

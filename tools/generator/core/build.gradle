@@ -6,7 +6,7 @@ apply from: '../../../dependencies.gradle'
 
 group 'com.github.xpenatan.gdx-web-tools'
 
-def module_name = "generator"
+def module_name = "generator-core"
 
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 
