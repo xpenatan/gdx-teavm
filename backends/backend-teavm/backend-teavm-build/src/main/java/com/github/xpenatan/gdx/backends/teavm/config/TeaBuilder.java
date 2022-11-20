@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
-import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer;
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.web.config.AssetsCopy;
 import com.github.xpenatan.gdx.backends.web.config.WebBuildConfiguration;

@@ -8,7 +8,7 @@ def module_name = "backend-web"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets.main.java.srcDirs = ["emu", "src"]
+sourceSets.main.java.srcDirs = ["src"]
 sourceSets.main.resources.srcDirs = ["resources/"]
 
 task javadocJar(type: Jar) {

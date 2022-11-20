@@ -23,8 +23,8 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     includeDep "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    includeDep project(":backends:backend-teavm:backend-teavm-build")
-    includeDep project(":backends:backend-web:backend-web-build")
+    implementation project(":backends:backend-teavm:backend-teavm-build")
+    implementation project(":backends:backend-web:backend-web-build")
 //    includeDep project(":backends:backend-teavm")
 //    includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
@@ -33,12 +33,12 @@ dependencies {
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier.set("javadoc")
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
