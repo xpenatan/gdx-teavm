@@ -1,0 +1,8 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+//    implementation project(":backends:backend-web:backend-web")
+}

@@ -1,8 +1,6 @@
 apply plugin: "java"
 apply plugin: 'java-library'
 
-apply from: '../../dependencies.gradle'
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -35,7 +33,7 @@ configurations {
 }
 
 dependencies {
-    api project(":backends:backend-web")
+    api project(":backends:backend-web:backend-web")
     api "com.github.xpenatan.dragome-sdk:dragome-js-jre:$project.dragomeVersion"
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     api "com.github.xpenatan.dragome-sdk:dragome-bytecode-js-compiler:$project.dragomeVersion"

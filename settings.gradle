@@ -1,5 +1,7 @@
-include ":backends:backend-web"
-include ":backends:backend-teavm"
+include ":backends:backend-web:backend-web"
+include ":backends:backend-web:backend-web-build"
+include ":backends:backend-teavm:backend-teavm"
+include ":backends:backend-teavm:backend-teavm-build"
 
 include ":extensions:gdx-freetype-teavm"
 include ":extensions:gdx-bullet:gdx-bullet-base"

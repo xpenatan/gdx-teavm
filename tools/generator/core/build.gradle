@@ -2,9 +2,7 @@ plugins {
     id 'java'
 }
 
-apply from: '../../../dependencies.gradle'
-
-group 'com.github.xpenatan.gdx-web-tools'
+group = project.groupId
 
 def module_name = "generator-core"
 
@@ -16,15 +14,19 @@ configurations {
 }
 
 dependencies {
-    implementation "com.github.xpenatan.jDear-Imgui:imgui-core:$project.jDearImguiVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:imgui-gdx:$project.jDearImguiGdxVersion"
+
+    implementation files("../../../backends/backend-teavm/backend-teavm/libs/teavm-cli-0.7.0-dev-1200.jar")
+
+    implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
+    implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
 
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     includeDep "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    includeDep project(":backends:backend-web")
-    includeDep project(":backends:backend-teavm")
-    includeDep project(":extensions:gdx-freetype-teavm")
+    includeDep project(":backends:backend-teavm:backend-teavm-build")
+    includeDep project(":backends:backend-web:backend-web-build")
+//    includeDep project(":backends:backend-teavm")
+//    includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
 //    includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
 //    implementation project(":backends:backend-dragome")

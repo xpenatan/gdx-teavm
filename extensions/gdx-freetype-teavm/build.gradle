@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.github.xpenatan.gdx-web-tools'
+group = project.groupId
 
 def module_name = "gdx-freetype-teavm"
 
@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(":backends:backend-teavm")
-    implementation project(":backends:backend-web")
+    implementation project(":backends:backend-web:backend-web")
+    implementation project(":backends:backend-teavm:backend-teavm")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -22,12 +22,12 @@ dependencies {
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier.set("javadoc")
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 

@@ -1,9 +1,9 @@
 package com.github.xpenatan.teavm.generator.core.view;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.github.xpenatan.imgui.ImDrawList;
-import com.github.xpenatan.imgui.ImGui;
-import com.github.xpenatan.imgui.ImGuiStyle;
+import com.github.xpenatan.imgui.core.ImDrawList;
+import com.github.xpenatan.imgui.core.ImGui;
+import com.github.xpenatan.imgui.core.ImGuiStyle;
 
 public class SpinnerView {
 

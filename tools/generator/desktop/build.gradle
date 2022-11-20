@@ -1,8 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 
-apply from: '../../../dependencies.gradle'
-
 group 'com.github.xpenatan.gdx-html5-tools'
 version '1.0.0'
 
@@ -20,11 +18,11 @@ task fromClasses(type: Jar) {
 }
 
 dependencies {
-    implementation project(":tools:generator:core")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:imgui-core-platform:$project.jDearImguiVersion:natives-desktop"
+    implementation "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
+    implementation project(":tools:generator:core")
 }
 
 task runGenerator(dependsOn: classes, type: JavaExec) {

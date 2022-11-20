@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.examples.bullet;
 
-import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import java.io.File;
 
 public class Build {

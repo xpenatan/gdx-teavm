@@ -2,7 +2,6 @@ apply from: 'dependencies.gradle'
 
 buildscript {
     repositories {
-        jcenter()
     }
 
     dependencies {
@@ -10,15 +9,11 @@ buildscript {
 }
 
 allprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
     apply plugin: 'maven-publish'
     apply plugin: 'java'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-
-    group = project.groupId
 
     ext {
         repoUser = System.getenv('USER')
@@ -39,7 +34,6 @@ allprojects {
         mavenLocal()
         maven { url 'https://jitpack.io' }
         mavenCentral()
-        jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -57,12 +51,6 @@ allprojects {
                     password repoPass
                 }
             }
-        }
-    }
-
-    eclipse {
-        classpath {
-            defaultOutputDir = file('build/classes/java/main')
         }
     }
 

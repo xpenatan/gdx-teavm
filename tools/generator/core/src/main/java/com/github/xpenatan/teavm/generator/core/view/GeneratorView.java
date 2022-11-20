@@ -2,14 +2,14 @@ package com.github.xpenatan.teavm.generator.core.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.github.xpenatan.imgui.core.ImGui;
+import com.github.xpenatan.imgui.core.ImGuiBoolean;
+import com.github.xpenatan.imgui.core.ImGuiString;
+import com.github.xpenatan.imgui.core.enums.ImGuiCol;
+import com.github.xpenatan.imgui.core.enums.ImGuiItemFlags;
+import com.github.xpenatan.imgui.core.enums.ImGuiStyleVar;
+import com.github.xpenatan.imgui.core.enums.ImGuiWindowFlags;
 import com.github.xpenatan.teavm.generator.core.viewmodel.GeneratorViewModel;
-import com.github.xpenatan.imgui.ImGui;
-import com.github.xpenatan.imgui.ImGuiBoolean;
-import com.github.xpenatan.imgui.ImGuiString;
-import com.github.xpenatan.imgui.enums.ImGuiCol;
-import com.github.xpenatan.imgui.enums.ImGuiItemFlags;
-import com.github.xpenatan.imgui.enums.ImGuiStyleVar;
-import com.github.xpenatan.imgui.enums.ImGuiWindowFlags;
 
 public class GeneratorView {
     private static final String PREF_JAR_PATH = "jarPath";

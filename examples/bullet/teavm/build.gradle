@@ -23,8 +23,10 @@ dependencies {
 //  implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects
-    implementation project(":backends:backend-web")
-    implementation project(":backends:backend-teavm")
+    implementation project(":backends:backend-web:backend-web")
+    implementation project(":backends:backend-web:backend-web-build")
+    implementation project(":backends:backend-teavm:backend-teavm")
+    implementation project(":backends:backend-teavm:backend-teavm-build")
     implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 

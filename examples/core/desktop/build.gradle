@@ -2,8 +2,6 @@ plugins {
     id 'java'
 }
 
-apply from: '../../../dependencies.gradle'
-
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
 sourceSets.main.java.srcDirs = ["src/"]
 project.ext.assetsDir = new File("/assets");

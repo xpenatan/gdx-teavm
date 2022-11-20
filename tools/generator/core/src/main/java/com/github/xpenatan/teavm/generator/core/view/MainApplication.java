@@ -3,7 +3,7 @@ package com.github.xpenatan.teavm.generator.core.view;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.github.xpenatan.imgui.ImGui;
+import com.github.xpenatan.imgui.core.ImGui;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxInput;
 

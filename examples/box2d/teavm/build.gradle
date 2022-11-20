@@ -23,8 +23,8 @@ dependencies {
 //  implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects
-    implementation project(":backends:backend-web")
-    implementation project(":backends:backend-teavm")
+    implementation project(":backends:backend-web:backend-web")
+    implementation project(":backends:backend-teavm:backend-teavm")
     implementation project(":extensions:gdx-box2d:gdx-box2d-teavm")
 }
 
