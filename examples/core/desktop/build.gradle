@@ -3,7 +3,6 @@ plugins {
 }
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
-sourceSets.main.java.srcDirs = ["src/"]
 project.ext.assetsDir = new File("/assets");
 
 dependencies {
@@ -14,13 +13,17 @@ dependencies {
     implementation project(":examples:core:core")
 }
 
-task run(dependsOn: classes, type: JavaExec) {
-    group = 'other'
-    description = 'Run core example'
-
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+task runDesktopCoreExample(dependsOn: classes, type: JavaExec) {
+    setGroup("examples")
+    setDescription("Run core example")
+    mainClass.set(project.mainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
     workingDir = project.assetsDir
+
+    if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
+        // Required to run on macOS
+        jvmArgs += "-XstartOnFirstThread"
+    }
 }
 
 task dist(type: Jar) {
@@ -33,4 +36,3 @@ task dist(type: Jar) {
     }
     with jar
 }
-

@@ -24,9 +24,7 @@ dependencies {
 
     // Or source projects
     implementation project(":backends:backend-web:backend-web")
-    implementation project(":backends:backend-web:backend-web-build")
     implementation project(":backends:backend-teavm:backend-teavm")
-    implementation project(":backends:backend-teavm:backend-teavm-build")
     implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 

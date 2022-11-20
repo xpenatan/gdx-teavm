@@ -1,7 +1,6 @@
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-sourceSets.main.java.srcDirs = ["src"]
+plugins {
+    id 'java'
+}
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"

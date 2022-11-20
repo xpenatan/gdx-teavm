@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.web;
 
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
@@ -9,6 +8,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int16ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLFramebufferWrapper;
@@ -466,7 +466,7 @@ public class WebGL20 implements GL20 {
             }
             else {
                 int index = ((ByteBuffer)pixels).getInt(0);
-                Pixmap pixmap = Pixmap.pixmaps.get(index);
+                PixmapEmu pixmap = PixmapEmu.pixmaps.get(index);
                 // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
                 if(pixmap.canUseImageElement()) {
                     gl.texImage2D(target, level, internalformat, format, type, pixmap.getImageElement());
@@ -502,7 +502,7 @@ public class WebGL20 implements GL20 {
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
-            Pixmap pixmap = Pixmap.pixmaps.get(index);
+            PixmapEmu pixmap = PixmapEmu.pixmaps.get(index);
             gl.texSubImage2D(target, level, xoffset, yoffset, format, type, pixmap.getCanvasElement());
         }
     }
