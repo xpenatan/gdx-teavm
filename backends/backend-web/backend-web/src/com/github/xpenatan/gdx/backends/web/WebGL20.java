@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
-@Emulate(WebGL20.class) // glTexImage2D
+@Emulate(WebGL20.class)
 public class WebGL20 implements GL20 {
 
     private WebGLRenderingContextWrapper gl;
