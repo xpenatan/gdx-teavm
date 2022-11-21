@@ -6,7 +6,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 
-@Emulate(Number.class)
+@Emulate(valueStr = "java.io.Numbers")
 public class NumbersEmu {
 
     static final double LN2 = Math.log(2);

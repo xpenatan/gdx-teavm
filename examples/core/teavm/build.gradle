@@ -64,3 +64,31 @@ task runCoreAnimationTest(dependsOn: [':examples:core:teavm:buildExampleCoreAnim
     setGroup("examples-teavm")
     setDescription("Run AnimationTest example")
 }
+
+project.ext.helloTriangleMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildHelloTriangle"
+
+task buildExampleCoreHelloTriangle(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build teavm Hello Triangle example")
+    mainClass.set(project.helloTriangleMainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+task runCoreHelloTriangle(dependsOn: [':examples:core:teavm:buildExampleCoreHelloTriangle', ':examples:core:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run Hello Triangle example")
+}
+
+project.ext.uiTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildUITest"
+
+task buildExampleCoreUITest(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build teavm UITest example")
+    mainClass.set(project.uiTestMainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+task runCoreUITest(dependsOn: [':examples:core:teavm:buildExampleCoreUITest', ':examples:core:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run UITest example")
+}
