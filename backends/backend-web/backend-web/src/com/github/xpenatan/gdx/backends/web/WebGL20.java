@@ -8,6 +8,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int16ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLBufferWrapper;
@@ -29,6 +30,7 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
+@Emulate(WebGL20.class) // glTexImage2D
 public class WebGL20 implements GL20 {
 
     private WebGLRenderingContextWrapper gl;

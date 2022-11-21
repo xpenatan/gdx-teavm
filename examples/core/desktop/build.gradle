@@ -13,8 +13,8 @@ dependencies {
     implementation project(":examples:core:core")
 }
 
-task runDesktopCoreExample(dependsOn: classes, type: JavaExec) {
-    setGroup("examples")
+task runCoreDesktop(dependsOn: classes, type: JavaExec) {
+    setGroup("examples-desktop")
     setDescription("Run core example")
     mainClass.set(project.mainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)

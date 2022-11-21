@@ -5,5 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Emulate{
-    Class<?> value();
+    Class<?> value() default Object.class;
+    String valueStr() default "";
 }

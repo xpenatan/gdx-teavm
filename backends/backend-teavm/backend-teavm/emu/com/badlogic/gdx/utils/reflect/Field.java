@@ -1,5 +1,6 @@
 package com.badlogic.gdx.utils.reflect;
 
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.util.GenericTypeProvider;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
@@ -143,11 +144,10 @@ public final class Field {
 
     private static void getElementType(ReflectClass<?> cls, Value<String> fieldNameValue, Value<Integer> indexValue) {
         String name = cls.getName();
-        //TODO fixme
-//        if(!TeaReflectionSupplier.containsReflection(name)) {
-//            Metaprogramming.unsupportedCase();
-//            return;
-//        }
+        if(!TeaReflectionSupplier.containsReflection(name)) {
+            Metaprogramming.unsupportedCase();
+            return;
+        }
         ClassLoader classLoader = Metaprogramming.getClassLoader();
         GenericTypeProvider genericTypeProvider = new GenericTypeProvider(classLoader);
 
@@ -248,11 +248,6 @@ public final class Field {
         return field.get(obj);
     }
 
-    /**
-     * Sets the value of the field on the supplied object.
-     *
-     * @throws ReflectionException
-     */
     public void set(Object obj, Object value) throws ReflectionException {
         try {
             field.set(obj, value);

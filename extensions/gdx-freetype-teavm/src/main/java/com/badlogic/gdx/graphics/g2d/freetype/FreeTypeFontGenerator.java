@@ -17,12 +17,12 @@
 package com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
+import emucom.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FreeTypePixmap;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Blending;
-import com.badlogic.gdx.graphics.Pixmap.Format;
+import emucom.badlogic.gdx.graphics.Pixmap;
+import emucom.badlogic.gdx.graphics.Pixmap.Blending;
+import emucom.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
@@ -40,7 +40,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeType.GlyphSlot;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Library;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.SizeMetrics;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Stroker;
-import com.badlogic.gdx.math.MathUtils;
+import emucom.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;

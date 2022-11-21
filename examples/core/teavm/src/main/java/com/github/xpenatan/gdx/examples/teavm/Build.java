@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
+import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -35,10 +36,10 @@ public class Build {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-        teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
+//        teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
-//		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
+		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = Box2DTest.class.getName();
 
         if(BUILD_FROM_COMPILED_FOLDER) {

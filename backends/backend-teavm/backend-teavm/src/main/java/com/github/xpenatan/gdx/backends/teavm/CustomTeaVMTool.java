@@ -366,8 +366,8 @@ public class CustomTeaVMTool {
                 this.symbolTable = new FileSymbolTable(new File(this.cacheDirectory, "symbols"));
                 this.fileTable = new FileSymbolTable(new File(this.cacheDirectory, "files"));
                 this.variableTable = new FileSymbolTable(new File(this.cacheDirectory, "variables"));
-                ClasspathClassHolderSource innerClassSource = new ClasspathClassHolderSource(this.classLoader, this.referenceCache);
-                ClassHolderSource classSource = new PreOptimizingClassHolderSource(innerClassSource);
+                CustomClasspathClassHolderSource innerClassSource = new CustomClasspathClassHolderSource(this.classLoader, this.referenceCache);
+                ClassHolderSource classSource = new CustomPreOptimizingClassHolderSource(innerClassSource);
                 this.cachedClassSource = new DiskCachedClassReaderSource(this.cacheDirectory, this.referenceCache, this.symbolTable, this.fileTable, this.variableTable, classSource, innerClassSource);
                 this.programCache = new DiskProgramCache(this.cacheDirectory, this.referenceCache, this.symbolTable, this.fileTable, this.variableTable);
                 if(this.targetType == TeaVMTargetType.JAVASCRIPT) {
@@ -388,7 +388,7 @@ public class CustomTeaVMTool {
                 cacheStatus = this.cachedClassSource;
             }
             else {
-                vmBuilder.setClassLoader(this.classLoader).setClassSource(new PreOptimizingClassHolderSource(new ClasspathClassHolderSource(this.classLoader, this.referenceCache)));
+                vmBuilder.setClassLoader(this.classLoader).setClassSource(new CustomPreOptimizingClassHolderSource(new CustomClasspathClassHolderSource(this.classLoader, this.referenceCache)));
                 cacheStatus = AlwaysStaleCacheStatus.INSTANCE;
             }
 

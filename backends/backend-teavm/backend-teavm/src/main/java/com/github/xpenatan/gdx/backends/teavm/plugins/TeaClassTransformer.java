@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.teavm.CustomPreOptimizingClassHolderSource;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
@@ -41,6 +42,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ObjectArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLContextAttributesWrapper;
@@ -55,8 +57,11 @@ import com.github.xpenatan.gdx.backends.web.soundmanager.SMSoundCallbackWrapper;
 import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerCallbackWrapper;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.reflections.Reflections;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSIndexer;
 import org.teavm.jso.JSMethod;
@@ -73,9 +78,14 @@ import org.teavm.model.ClassReader;
 import org.teavm.model.ClassReaderSource;
 import org.teavm.model.ElementModifier;
 import org.teavm.model.FieldHolder;
+import org.teavm.model.FieldReader;
 import org.teavm.model.MethodDescriptor;
 import org.teavm.model.MethodHolder;
+import org.teavm.model.MethodReader;
+import org.teavm.model.ReferenceCache;
 import org.teavm.model.emit.ProgramEmitter;
+import org.teavm.model.util.ModelUtils;
+import org.teavm.parsing.ClassRefsRenamer;
 
 /**
  * @author xpenatan
@@ -86,8 +96,35 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     public static String applicationListener = "";
 
+    private HashMap<String, Class<?>> emulations = new HashMap<>();
+    private HashMap<String, String> emulations2 = new HashMap<>();
+    private ReferenceCache referenceCache = new ReferenceCache();
+
+    public TeaClassTransformer() {
+        Reflections reflections = new Reflections();
+
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Emulate.class);
+        for(Class<?> type : annotated){
+            Emulate em = type.getAnnotation(Emulate.class);
+            Class<?> toEmulate = em.value();
+            String typeName = null;
+            if(toEmulate == Object.class) {
+                typeName = em.valueStr();
+            }
+            else {
+                typeName = toEmulate.getTypeName();
+            }
+            typeName = typeName.trim();
+            if(!typeName.isEmpty()) {
+                emulations.put(typeName, type);
+                emulations2.put(type.getName(), typeName);
+            }
+        }
+    }
+
     @Override
     public void transformClass(ClassHolder cls, ClassHolderTransformerContext context) {
+        CustomPreOptimizingClassHolderSource innerSource = (CustomPreOptimizingClassHolderSource)context.getHierarchy().getClassSource();
         String className = cls.getName();
         if(!init) {
             init = true;
@@ -359,6 +396,12 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             // Hack to make it compile. For some reason teavm add MapNode reference class but it does not even exist in js file
             fixHack(cls, context);
         }
+        String name = cls.getName();
+        if(emulations.containsKey(name)){
+            Class<?> emulated = emulations.get(cls.getName());
+            ClassHolder emulatedClassHolder = innerSource.get(emulated.getName());
+            replaceClass(innerSource, cls, emulatedClassHolder);
+        }
     }
 
     private void fixHack(ClassHolder cur, ClassHolderTransformerContext context) {
@@ -453,5 +496,59 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         AnnotationContainer annotations = classHolder.getAnnotations();
         AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
         annotations.add(annotation);
+    }
+
+    private void replaceClass(CustomPreOptimizingClassHolderSource innerSource, final ClassHolder cls, final ClassHolder emuCls){
+        ClassRefsRenamer renamer = new ClassRefsRenamer(referenceCache, preimage -> {
+            String newName = emulations2.get(preimage);
+            if(newName != null) {
+                return newName;
+            }
+            else {
+                return preimage;
+            }
+        });
+
+        cls.getInterfaces().clear();
+        Set<String> interfaces = emuCls.getInterfaces();
+        Iterator<String> interfaceIt = interfaces.iterator();
+        while(interfaceIt.hasNext()) {
+            String interfaceStr = interfaceIt.next();
+            ClassHolder interfaceClassHolder = innerSource.get(interfaceStr);
+            if(interfaceClassHolder != null) {
+                ClassHolder classHolder = ModelUtils.copyClass(interfaceClassHolder);
+                ClassHolder interfaceRename = renamer.rename(classHolder);
+                String name = interfaceRename.getName();
+                cls.getInterfaces().add(name);
+            }
+        }
+
+        String parent = emuCls.getParent();
+        if(parent != null && !parent.isEmpty()) {
+            ClassHolder parentClassHolder = innerSource.get(parent);
+            if(parentClassHolder != null) {
+                ClassHolder classHolder = ModelUtils.copyClass(parentClassHolder);
+                ClassHolder parentClassHolderRename = renamer.rename(classHolder);
+                String name = parentClassHolderRename.getName();
+                cls.setParent(name);
+            }
+        }
+
+        for(FieldHolder field : cls.getFields().toArray(new FieldHolder[0])){
+            cls.removeField(field);
+        }
+        for(MethodHolder method : cls.getMethods().toArray(new MethodHolder[0])){
+            cls.removeMethod(method);
+        }
+        for(FieldReader field : emuCls.getFields()){
+            FieldHolder newfieldHolder = ModelUtils.copyField(field);
+            FieldHolder renamedField = renamer.rename(newfieldHolder);
+            cls.addField(renamedField);
+        }
+        for(MethodReader method : emuCls.getMethods()){
+            MethodHolder newMethodHolder = ModelUtils.copyMethod(method);
+            MethodHolder renamedMethod = renamer.rename(newMethodHolder);
+            cls.addMethod(renamedMethod);
+        }
     }
 }

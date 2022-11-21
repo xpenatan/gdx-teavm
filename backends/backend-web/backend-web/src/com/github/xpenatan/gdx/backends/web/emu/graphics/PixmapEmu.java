@@ -1,19 +1,3 @@
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-
 package com.github.xpenatan.gdx.backends.web.emu.graphics;
 
 import com.badlogic.gdx.Gdx;
@@ -21,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -48,15 +33,11 @@ public class PixmapEmu implements Disposable {
     public static Map<Integer, PixmapEmu> pixmaps = new HashMap<Integer, PixmapEmu>();
     static int nextId = 0;
 
-    /**
-     * Different pixel formats.
-     *
-     * @author mzechner
-     */
-    public enum Format {
+    @Emulate(Pixmap.Format.class)
+    public enum FormatEmu {
         Alpha, Intensity, LuminanceAlpha, RGB565, RGBA4444, RGB888, RGBA8888;
 
-        public static int toGlFormat(Format format) {
+        public static int toGlFormat(FormatEmu format) {
             if(format == Alpha) return GL20.GL_ALPHA;
             if(format == Intensity) return GL20.GL_ALPHA;
             if(format == LuminanceAlpha) return GL20.GL_LUMINANCE_ALPHA;
@@ -67,7 +48,7 @@ public class PixmapEmu implements Disposable {
             throw new GdxRuntimeException("unknown format: " + format);
         }
 
-        public static int toGlType(Format format) {
+        public static int toGlType(FormatEmu format) {
             if(format == Alpha) return GL20.GL_UNSIGNED_BYTE;
             if(format == Intensity) return GL20.GL_UNSIGNED_BYTE;
             if(format == LuminanceAlpha) return GL20.GL_UNSIGNED_BYTE;
@@ -77,48 +58,41 @@ public class PixmapEmu implements Disposable {
             if(format == RGBA8888) return GL20.GL_UNSIGNED_BYTE;
             throw new GdxRuntimeException("unknown format: " + format);
         }
+
+        public static FormatEmu fromGdx2DPixmapFormat (int format) {
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_ALPHA) return Alpha;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_LUMINANCE_ALPHA) return LuminanceAlpha;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB565) return RGB565;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA4444) return RGBA4444;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB888) return RGB888;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA8888) return RGBA8888;
+            throw new GdxRuntimeException("Unknown Gdx2DPixmap Format: " + format);
+        }
     }
 
-    /**
-     * Blending functions to be set with {@link Pixmap#setBlending}.
-     *
-     * @author mzechner
-     */
-    public enum Blending {
+    @Emulate(Pixmap.Blending.class)
+    public enum BlendingEmu {
         None, SourceOver
     }
 
-    /**
-     * Filters to be used with {@link Pixmap#drawPixmap(Pixmap, int, int, int, int, int, int, int, int)}.
-     *
-     * @author mzechner
-     */
-    public enum Filter {
+    @Emulate(Pixmap.Filter.class)
+    public enum FilterEmu {
         NearestNeighbour, BiLinear
     }
 
-    /**
-     * Creates a Pixmap from a part of the current framebuffer.
-     *
-     * @param x framebuffer region x
-     * @param y framebuffer region y
-     * @param w framebuffer region width
-     * @param h framebuffer region height
-     * @return the pixmap
-     */
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
 
-        final PixmapEmu pixmap = new PixmapEmu(w, h, Format.RGBA8888);
+        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
         ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
         pixmap.setPixels(pixels);
         return pixmap;
     }
-
+    int testVar;
     int width;
     int height;
-    Format format;
+    FormatEmu format;
     HTMLCanvasElementWrapper canvas;
     CanvasRenderingContext2DWrapper context;
     int id;
@@ -127,13 +101,13 @@ public class PixmapEmu implements Disposable {
     float a;
     String color = make(r, g, b, a);
     static String clearColor = make(255, 255, 255, 1.0f);
-    Blending blending = Blending.SourceOver;
-    Filter filter = Filter.BiLinear;
+    BlendingEmu blending = BlendingEmu.SourceOver;
+    FilterEmu filter = FilterEmu.BiLinear;
     Uint8ClampedArrayWrapper pixels;
     private HTMLImageElementWrapper imageElement;
     private HTMLVideoElementWrapper videoElement;
 
-    public static void downloadFromUrl(String url, final DownloadPixmapResponseListener responseListener) {
+    public static void downloadFromUrl(String url, final DownloadPixmapResponseListenerEmu responseListener) {
         AssetDownloader.getInstance().load(true, url, AssetType.Image, null, new AssetLoaderListener<HTMLImageElementWrapper>() {
             @Override
             public void onFailure(String url) {
@@ -153,7 +127,7 @@ public class PixmapEmu implements Disposable {
         String path = webFileHandler.path();
         Object object = webFileHandler.preloader.images.get(path);
         HTMLImageElementWrapper htmlImageElement = (HTMLImageElementWrapper)object;
-        init(-1, -1, htmlImageElement, null);
+        initPixmapEmu(-1, -1, htmlImageElement, null);
         if(imageElement == null)
             throw new GdxRuntimeException("Couldn't load image '" + file.path() + "', file does not exist");
     }
@@ -166,19 +140,19 @@ public class PixmapEmu implements Disposable {
         this(-1, -1, vid);
     }
 
-    public PixmapEmu(int width, int height, Format format) {
-        init(width, height, null, null);
+    public PixmapEmu(int width, int height, FormatEmu format) {
+        initPixmapEmu(width, height, null, null);
     }
 
     private PixmapEmu(int width, int height, HTMLImageElementWrapper imageElement) {
-        init(width, height, imageElement, null);
+        initPixmapEmu(width, height, imageElement, null);
     }
 
     private PixmapEmu(int width, int height, HTMLVideoElementWrapper videoElement) {
-        init(width, height, null, videoElement);
+        initPixmapEmu(width, height, null, videoElement);
     }
 
-    private void init(int width, int height, HTMLImageElementWrapper imageElement, HTMLVideoElementWrapper videoElement) {
+    private void initPixmapEmu(int width, int height, HTMLImageElementWrapper imageElement, HTMLVideoElementWrapper videoElement) {
         if(videoElement != null) {
             this.videoElement = videoElement;
             this.width = videoElement.getWidth();
@@ -194,11 +168,14 @@ public class PixmapEmu implements Disposable {
             this.height = height;
         }
 
-        this.format = Format.RGBA8888;
+        this.format = FormatEmu.RGBA8888;
         buffer = BufferUtils.newByteBuffer(4);
         id = nextId++;
         buffer.putInt(0, id);
         pixmaps.put(id, this);
+
+        int size = pixmaps.size();
+        testVar = size;
     }
 
     private void create() {
@@ -225,42 +202,25 @@ public class PixmapEmu implements Disposable {
         return "rgba(" + r2 + "," + g2 + "," + b2 + "," + a2 + ")";
     }
 
-    /**
-     * Sets the type of {@link Blending} to be used for all operations. Default is {@link Blending#SourceOver}.
-     *
-     * @param blending the blending type
-     */
-    public void setBlending(Blending blending) {
+    public void setBlending(BlendingEmu blending) {
         this.blending = blending;
         this.ensureCanvasExists();
         this.context.setGlobalCompositeOperation(getComposite().toString());
     }
 
-    /**
-     * @return the currently set {@link Blending}
-     */
-    public Blending getBlending() {
+    public BlendingEmu getBlending() {
         return blending;
     }
 
-    /**
-     * Sets the type of interpolation {@link Filter} to be used in conjunction with
-     * {@link Pixmap#drawPixmap(Pixmap, int, int, int, int, int, int, int, int)}.
-     *
-     * @param filter the filter.
-     */
-    public void setFilter(Filter filter) {
+    public void setFilter(FilterEmu filter) {
         this.filter = filter;
     }
 
-    /**
-     * @return the currently set {@link Filter}
-     */
-    public Filter getFilter() {
+    public FilterEmu getFilter() {
         return filter;
     }
 
-    public Format getFormat() {
+    public FormatEmu getFormat() {
         return format;
     }
 
@@ -288,11 +248,6 @@ public class PixmapEmu implements Disposable {
         return buffer;
     }
 
-    /**
-     * Sets pixels from a provided byte buffer.
-     *
-     * @param pixels Pixels to copy from, should match Pixmap data size (see {@link #getPixels()}).
-     */
     public void setPixels(ByteBuffer pixels) {
         if(width == 0 || height == 0) return;
         CanvasRenderingContext2DWrapper context = getContext();
@@ -444,98 +399,32 @@ public class PixmapEmu implements Disposable {
         image(image, 0, 0, image.getWidth(), image.getHeight(), x, y, image.getWidth(), image.getHeight());
     }
 
-    /**
-     * Draws an area form another Pixmap to this Pixmap.
-     *
-     * @param pixmap    The other Pixmap
-     * @param x         The target x-coordinate (top left corner)
-     * @param y         The target y-coordinate (top left corner)
-     * @param srcx      The source x-coordinate (top left corner)
-     * @param srcy      The source y-coordinate (top left corner);
-     * @param srcWidth  The width of the area form the other Pixmap in pixels
-     * @param srcHeight The height of the area form the other Pixmap in pixles
-     */
     public void drawPixmap(PixmapEmu pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
         HTMLCanvasElementWrapper image = pixmap.getCanvasElement();
         image(image, srcx, srcy, srcWidth, srcHeight, x, y, srcWidth, srcHeight);
     }
 
-    /**
-     * Draws an area form another Pixmap to this Pixmap. This will automatically scale and stretch the source image to the
-     * specified target rectangle. Use {@link PixmapEmu#setFilter(Filter)} to specify the type of filtering to be used (nearest
-     * neighbour or bilinear).
-     *
-     * @param pixmap    The other Pixmap
-     * @param srcx      The source x-coordinate (top left corner)
-     * @param srcy      The source y-coordinate (top left corner);
-     * @param srcWidth  The width of the area form the other Pixmap in pixels
-     * @param srcHeight The height of the area form the other Pixmap in pixles
-     * @param dstx      The target x-coordinate (top left corner)
-     * @param dsty      The target y-coordinate (top left corner)
-     * @param dstWidth  The target width
-     * @param dstHeight the target height
-     */
     public void drawPixmap(PixmapEmu pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth,
                            int dstHeight) {
         image(pixmap.getCanvasElement(), srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
     }
 
-    /**
-     * Fills a rectangle starting at x, y extending by width to the right and by height downwards (y-axis points downwards) using
-     * the current color.
-     *
-     * @param x      The x coordinate
-     * @param y      The y coordinate
-     * @param width  The width in pixels
-     * @param height The height in pixels
-     */
     public void fillRectangle(int x, int y, int width, int height) {
         rectangle(x, y, width, height, DrawType.FILL);
     }
 
-    /**
-     * Draws a circle outline with the center at x,y and a radius using the current color and stroke width.
-     *
-     * @param x      The x-coordinate of the center
-     * @param y      The y-coordinate of the center
-     * @param radius The radius in pixels
-     */
     public void drawCircle(int x, int y, int radius) {
         circle(x, y, radius, DrawType.STROKE);
     }
 
-    /**
-     * Fills a circle with the center at x,y and a radius using the current color.
-     *
-     * @param x      The x-coordinate of the center
-     * @param y      The y-coordinate of the center
-     * @param radius The radius in pixels
-     */
     public void fillCircle(int x, int y, int radius) {
         circle(x, y, radius, DrawType.FILL);
     }
 
-    /**
-     * Fills a triangle with vertices at x1,y1 and x2,y2 and x3,y3 using the current color.
-     *
-     * @param x1 The x-coordinate of vertex 1
-     * @param y1 The y-coordinate of vertex 1
-     * @param x2 The x-coordinate of vertex 2
-     * @param y2 The y-coordinate of vertex 2
-     * @param x3 The x-coordinate of vertex 3
-     * @param y3 The y-coordinate of vertex 3
-     */
     public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
         triangle(x1, y1, x2, y2, x3, y3, DrawType.FILL);
     }
 
-    /**
-     * Returns the 32-bit RGBA8888 value of the pixel at x, y. For Alpha formats the RGB components will be one.
-     *
-     * @param x The x-coordinate
-     * @param y The y-coordinate
-     * @return The pixel color in RGBA8888 format.
-     */
     public int getPixel(int x, int y) {
         ensureCanvasExists();
         if(pixels == null) pixels = context.getImageData(0, 0, width, height).getData();
@@ -547,23 +436,10 @@ public class PixmapEmu implements Disposable {
         return (r << 24) | (g << 16) | (b << 8) | (a);
     }
 
-    /**
-     * Draws a pixel at the given location with the current color.
-     *
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     */
     public void drawPixel(int x, int y) {
         rectangle(x, y, 1, 1, DrawType.FILL);
     }
 
-    /**
-     * Draws a pixel at the given location with the given color.
-     *
-     * @param x     the x-coordinate
-     * @param y     the y-coordinate
-     * @param color the color in RGBA8888 format.
-     */
     public void drawPixel(int x, int y, int color) {
         setColor(color);
         drawPixel(x, y);
@@ -571,7 +447,7 @@ public class PixmapEmu implements Disposable {
 
     private void circle(int x, int y, int radius, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == Blending.None) {
+        if(blending == BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -592,7 +468,7 @@ public class PixmapEmu implements Disposable {
 
     private void line(int x, int y, int x2, int y2, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == Blending.None) {
+        if(blending == BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -615,7 +491,7 @@ public class PixmapEmu implements Disposable {
 
     private void rectangle(int x, int y, int width, int height, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == Blending.None) {
+        if(blending == BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -636,7 +512,7 @@ public class PixmapEmu implements Disposable {
 
     private void triangle(int x1, int y1, int x2, int y2, int x3, int y3, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == Blending.None) {
+        if(blending == BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -663,7 +539,7 @@ public class PixmapEmu implements Disposable {
 
     private void image(HTMLCanvasElementWrapper image, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
         ensureCanvasExists();
-        if(blending == Blending.None) {
+        if(blending == BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -697,7 +573,8 @@ public class PixmapEmu implements Disposable {
         FILL, STROKE
     }
 
-    public interface DownloadPixmapResponseListener {
+    @Emulate(Pixmap.DownloadPixmapResponseListener.class)
+    public interface DownloadPixmapResponseListenerEmu {
         void downloadComplete(PixmapEmu pixmap);
 
         void downloadFailed(Throwable t);

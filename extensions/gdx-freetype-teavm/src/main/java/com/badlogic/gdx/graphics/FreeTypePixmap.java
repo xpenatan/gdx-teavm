@@ -2,6 +2,7 @@ package com.badlogic.gdx.graphics;
 
 import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
+import emucom.badlogic.gdx.graphics.Pixmap;
 import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 

@@ -17,14 +17,14 @@
 package com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
+import emucom.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FreeTypePixmap;
 import com.badlogic.gdx.graphics.FreeTypeUtil;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Blending;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.utils.BufferUtils;
+import emucom.badlogic.gdx.graphics.Pixmap;
+import emucom.badlogic.gdx.graphics.Pixmap.Blending;
+import emucom.badlogic.gdx.graphics.Pixmap.Format;
+import emucom.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;

@@ -469,6 +469,8 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("gdx-bullet-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("org.reflections"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         if(path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;
