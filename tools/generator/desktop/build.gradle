@@ -19,7 +19,6 @@ task fromClasses(type: Jar) {
 
 dependencies {
     implementation project(":tools:generator:core")
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
     implementation "com.github.xpenatan.jParser:jParser-loader:$project.jParserVersion"
@@ -27,11 +26,15 @@ dependencies {
 }
 
 task runGenerator(dependsOn: classes, type: JavaExec) {
-    group = 'teavm'
-    description = 'Run core example'
+    setGroup("teavm")
+    setDescription("Run Generator")
+    mainClass.set(project.mainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
 
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+    if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
+        // Required to run on macOS
+        jvmArgs += "-XstartOnFirstThread"
+    }
 }
 
 task copyDependencies(type: Copy) {
