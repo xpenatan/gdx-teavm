@@ -20,12 +20,6 @@ jobs:
       run: chmod +x ./gradlew
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
-    - name: Build
-      run: ./gradlew build
-    - name: build Box2D example script
-      run: ./gradlew buildExampleBox2D
-    - name: build Bullet example script
-      run: ./gradlew buildExampleBullet
     - name: Upload to repository
       run: ./gradlew publish
       env:
