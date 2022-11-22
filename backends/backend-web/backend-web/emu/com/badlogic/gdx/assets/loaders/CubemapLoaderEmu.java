@@ -20,8 +20,6 @@ public class CubemapLoaderEmu extends AsynchronousAssetLoader<Cubemap, CubemapLo
         Cubemap cubemap;
     }
 
-    ;
-
     CubemapLoaderInfo info = new CubemapLoaderInfo();
 
     public CubemapLoaderEmu(FileHandleResolver resolver) {
