@@ -43,7 +43,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import java.nio.ByteBuffer;
 
 /**

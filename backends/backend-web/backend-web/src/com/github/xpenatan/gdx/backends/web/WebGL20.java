@@ -9,7 +9,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
-import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLFramebufferWrapper;

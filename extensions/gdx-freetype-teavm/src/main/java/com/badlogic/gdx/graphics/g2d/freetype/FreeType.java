@@ -31,7 +31,7 @@ import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebApplication;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 import java.io.IOException;
 import java.io.InputStream;
