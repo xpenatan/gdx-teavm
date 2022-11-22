@@ -2,13 +2,13 @@ package com.github.xpenatan.gdx.backends.web.emu.com.badlogic.gdx.graphics.gluti
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import com.github.xpenatan.gdx.backends.web.emu.com.badlogic.gdx.graphics.TextureDataEmu;
 import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
-import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu.FormatEmu;
 
 @Emulate(FileTextureData.class)
 public class FileTextureDataEmu implements TextureDataEmu {
@@ -17,12 +17,12 @@ public class FileTextureDataEmu implements TextureDataEmu {
     final FileHandle file;
     int width = 0;
     int height = 0;
-    FormatEmu format;
+    Pixmap.Format format;
     PixmapEmu pixmap;
     boolean useMipMaps;
     boolean isPrepared = false;
 
-    public FileTextureDataEmu(FileHandle file, PixmapEmu preloadedPixmap, FormatEmu format, boolean useMipMaps) {
+    public FileTextureDataEmu(FileHandle file, PixmapEmu preloadedPixmap, Pixmap.Format format, boolean useMipMaps) {
         this.file = file;
         this.pixmap = preloadedPixmap;
         this.format = format;
@@ -93,7 +93,7 @@ public class FileTextureDataEmu implements TextureDataEmu {
     }
 
     @Override
-    public FormatEmu getFormat() {
+    public Pixmap.Format getFormat() {
         return format;
     }
 

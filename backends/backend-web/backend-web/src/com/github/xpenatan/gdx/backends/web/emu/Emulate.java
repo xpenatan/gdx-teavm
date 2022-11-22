@@ -7,4 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Emulate{
     Class<?> value() default Object.class;
     String valueStr() default "";
+    boolean replace() default false;
 }

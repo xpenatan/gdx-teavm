@@ -33,57 +33,10 @@ public class PixmapEmu implements Disposable {
     public static Map<Integer, PixmapEmu> pixmaps = new HashMap<Integer, PixmapEmu>();
     static int nextId = 0;
 
-    @Emulate(Pixmap.Format.class)
-    public enum FormatEmu {
-        Alpha, Intensity, LuminanceAlpha, RGB565, RGBA4444, RGB888, RGBA8888;
-
-        public static int toGlFormat(FormatEmu format) {
-            if(format == Alpha) return GL20.GL_ALPHA;
-            if(format == Intensity) return GL20.GL_ALPHA;
-            if(format == LuminanceAlpha) return GL20.GL_LUMINANCE_ALPHA;
-            if(format == RGB565) return GL20.GL_RGB;
-            if(format == RGB888) return GL20.GL_RGB;
-            if(format == RGBA4444) return GL20.GL_RGBA;
-            if(format == RGBA8888) return GL20.GL_RGBA;
-            throw new GdxRuntimeException("unknown format: " + format);
-        }
-
-        public static int toGlType(FormatEmu format) {
-            if(format == Alpha) return GL20.GL_UNSIGNED_BYTE;
-            if(format == Intensity) return GL20.GL_UNSIGNED_BYTE;
-            if(format == LuminanceAlpha) return GL20.GL_UNSIGNED_BYTE;
-            if(format == RGB565) return GL20.GL_UNSIGNED_SHORT_5_6_5;
-            if(format == RGB888) return GL20.GL_UNSIGNED_BYTE;
-            if(format == RGBA4444) return GL20.GL_UNSIGNED_SHORT_4_4_4_4;
-            if(format == RGBA8888) return GL20.GL_UNSIGNED_BYTE;
-            throw new GdxRuntimeException("unknown format: " + format);
-        }
-
-        public static FormatEmu fromGdx2DPixmapFormat (int format) {
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_ALPHA) return Alpha;
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_LUMINANCE_ALPHA) return LuminanceAlpha;
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB565) return RGB565;
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA4444) return RGBA4444;
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB888) return RGB888;
-            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA8888) return RGBA8888;
-            throw new GdxRuntimeException("Unknown Gdx2DPixmap Format: " + format);
-        }
-    }
-
-    @Emulate(Pixmap.Blending.class)
-    public enum BlendingEmu {
-        None, SourceOver
-    }
-
-    @Emulate(Pixmap.Filter.class)
-    public enum FilterEmu {
-        NearestNeighbour, BiLinear
-    }
-
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
 
-        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
+        final PixmapEmu pixmap = new PixmapEmu(w, h, Pixmap.Format.RGBA8888);
         ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
         pixmap.setPixels(pixels);
@@ -92,7 +45,7 @@ public class PixmapEmu implements Disposable {
     int testVar;
     int width;
     int height;
-    FormatEmu format;
+    Pixmap.Format format;
     HTMLCanvasElementWrapper canvas;
     CanvasRenderingContext2DWrapper context;
     int id;
@@ -101,9 +54,9 @@ public class PixmapEmu implements Disposable {
     float a;
     String color = make(r, g, b, a);
     static String clearColor = make(255, 255, 255, 1.0f);
-    BlendingEmu blending = BlendingEmu.SourceOver;
-    FilterEmu filter = FilterEmu.BiLinear;
-    Uint8ClampedArrayWrapper pixels;
+    Pixmap.Blending blending = Pixmap.Blending.SourceOver;
+    Pixmap.Filter filter = Pixmap.Filter.BiLinear;
+    public Uint8ClampedArrayWrapper pixels;
     private HTMLImageElementWrapper imageElement;
     private HTMLVideoElementWrapper videoElement;
 
@@ -140,7 +93,7 @@ public class PixmapEmu implements Disposable {
         this(-1, -1, vid);
     }
 
-    public PixmapEmu(int width, int height, FormatEmu format) {
+    public PixmapEmu(int width, int height, Pixmap.Format format) {
         initPixmapEmu(width, height, null, null);
     }
 
@@ -168,7 +121,7 @@ public class PixmapEmu implements Disposable {
             this.height = height;
         }
 
-        this.format = FormatEmu.RGBA8888;
+        this.format = Pixmap.Format.RGBA8888;
         buffer = BufferUtils.newByteBuffer(4);
         id = nextId++;
         buffer.putInt(0, id);
@@ -202,25 +155,25 @@ public class PixmapEmu implements Disposable {
         return "rgba(" + r2 + "," + g2 + "," + b2 + "," + a2 + ")";
     }
 
-    public void setBlending(BlendingEmu blending) {
+    public void setBlending(Pixmap.Blending blending) {
         this.blending = blending;
         this.ensureCanvasExists();
         this.context.setGlobalCompositeOperation(getComposite().toString());
     }
 
-    public BlendingEmu getBlending() {
+    public Pixmap.Blending getBlending() {
         return blending;
     }
 
-    public void setFilter(FilterEmu filter) {
+    public void setFilter(Pixmap.Filter filter) {
         this.filter = filter;
     }
 
-    public FilterEmu getFilter() {
+    public Pixmap.Filter getFilter() {
         return filter;
     }
 
-    public FormatEmu getFormat() {
+    public Pixmap.Format getFormat() {
         return format;
     }
 
@@ -447,7 +400,7 @@ public class PixmapEmu implements Disposable {
 
     private void circle(int x, int y, int radius, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == BlendingEmu.None) {
+        if(blending == Pixmap.Blending.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -468,7 +421,7 @@ public class PixmapEmu implements Disposable {
 
     private void line(int x, int y, int x2, int y2, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == BlendingEmu.None) {
+        if(blending == Pixmap.Blending.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -491,7 +444,7 @@ public class PixmapEmu implements Disposable {
 
     private void rectangle(int x, int y, int width, int height, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == BlendingEmu.None) {
+        if(blending == Pixmap.Blending.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -512,7 +465,7 @@ public class PixmapEmu implements Disposable {
 
     private void triangle(int x1, int y1, int x2, int y2, int x3, int y3, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == BlendingEmu.None) {
+        if(blending == Pixmap.Blending.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -539,7 +492,7 @@ public class PixmapEmu implements Disposable {
 
     private void image(HTMLCanvasElementWrapper image, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
         ensureCanvasExists();
-        if(blending == BlendingEmu.None) {
+        if(blending == Pixmap.Blending.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");

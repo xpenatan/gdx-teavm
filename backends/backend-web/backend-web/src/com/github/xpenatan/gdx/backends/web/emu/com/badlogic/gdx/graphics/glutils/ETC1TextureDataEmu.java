@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.web.emu.com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ETC1TextureData;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
@@ -57,7 +58,7 @@ public class ETC1TextureDataEmu implements TextureDataEmu {
     }
 
     @Override
-    public PixmapEmu.FormatEmu getFormat() {
+    public Pixmap.Format getFormat() {
         return null;
     }
 

@@ -17,12 +17,10 @@
 package com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.Gdx;
-import emucom.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FreeTypePixmap;
-import emucom.badlogic.gdx.graphics.Pixmap;
-import emucom.badlogic.gdx.graphics.Pixmap.Blending;
-import emucom.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
@@ -40,11 +38,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeType.GlyphSlot;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Library;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.SizeMetrics;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Stroker;
-import emucom.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
 import java.nio.ByteBuffer;
 
 /**
@@ -392,7 +391,7 @@ public class FreeTypeFontGenerator implements Disposable {
                 packStrategy = new SkylineStrategy();
             }
             ownsAtlas = true;
-            packer = new PixmapPacker(size, size, Format.RGBA8888, 1, false, packStrategy);
+            packer = new PixmapPacker(size, size, Pixmap.Format.RGBA8888, 1, false, packStrategy);
             packer.setTransparentColor(parameter.color);
             packer.getTransparentColor().a = 0;
             if(parameter.borderWidth > 0) {
@@ -527,7 +526,7 @@ public class FreeTypeFontGenerator implements Disposable {
             return null;
         }
         Bitmap mainBitmap = mainGlyph.getBitmap();
-        Pixmap mainPixmap = mainBitmap.getPixmap(Format.RGBA8888, parameter.color, parameter.gamma);
+        PixmapEmu mainPixmap = mainBitmap.getPixmap(Pixmap.Format.RGBA8888, parameter.color, parameter.gamma);
 
         if(mainBitmap.getWidth() != 0 && mainBitmap.getRows() != 0) {
             int offsetX = 0, offsetY = 0;
@@ -542,7 +541,7 @@ public class FreeTypeFontGenerator implements Disposable {
 
                 // Render border (pixmap is bigger than main).
                 Bitmap borderBitmap = borderGlyph.getBitmap();
-                Pixmap borderPixmap = borderBitmap.getPixmap(Format.RGBA8888, parameter.borderColor, parameter.borderGamma);
+                PixmapEmu borderPixmap = borderBitmap.getPixmap(Pixmap.Format.RGBA8888, parameter.borderColor, parameter.borderGamma);
 
                 // Draw main glyph on top of border.
                 for(int i = 0, n = parameter.renderCount; i < n; i++)
@@ -558,7 +557,7 @@ public class FreeTypeFontGenerator implements Disposable {
                 int mainW = mainPixmap.getWidth(), mainH = mainPixmap.getHeight();
                 int shadowOffsetX = Math.max(parameter.shadowOffsetX, 0), shadowOffsetY = Math.max(parameter.shadowOffsetY, 0);
                 int shadowW = mainW + Math.abs(parameter.shadowOffsetX), shadowH = mainH + Math.abs(parameter.shadowOffsetY);
-                Pixmap shadowPixmap = new Pixmap(shadowW, shadowH, mainPixmap.getFormat());
+                PixmapEmu shadowPixmap = new PixmapEmu(shadowW, shadowH, mainPixmap.getFormat());
 
                 Color shadowColor = parameter.shadowColor;
                 float a = shadowColor.a;
@@ -595,9 +594,9 @@ public class FreeTypeFontGenerator implements Disposable {
             }
 
             if(parameter.padTop > 0 || parameter.padLeft > 0 || parameter.padBottom > 0 || parameter.padRight > 0) {
-                Pixmap padPixmap = new Pixmap(mainPixmap.getWidth() + parameter.padLeft + parameter.padRight,
+                PixmapEmu padPixmap = new PixmapEmu(mainPixmap.getWidth() + parameter.padLeft + parameter.padRight,
                         mainPixmap.getHeight() + parameter.padTop + parameter.padBottom, mainPixmap.getFormat());
-                padPixmap.setBlending(Blending.None);
+                padPixmap.setBlending(Pixmap.Blending.None);
                 padPixmap.drawPixmap(mainPixmap, parameter.padLeft, parameter.padTop);
                 mainPixmap.dispose();
                 mainPixmap = padPixmap;
@@ -631,7 +630,9 @@ public class FreeTypeFontGenerator implements Disposable {
             }
         }
 
-        Rectangle rect = packer.pack(mainPixmap);
+        Object obj = mainPixmap;
+        Pixmap pixmap = (Pixmap)obj;
+        Rectangle rect = packer.pack(pixmap);
         glyph.page = packer.getPages().size - 1; // Glyph is always packed into the last page for now.
         glyph.srcX = (int)rect.x;
         glyph.srcY = (int)rect.y;

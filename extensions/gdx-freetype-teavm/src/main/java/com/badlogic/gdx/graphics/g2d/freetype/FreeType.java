@@ -17,14 +17,12 @@
 package com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.Gdx;
-import emucom.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FreeTypePixmap;
 import com.badlogic.gdx.graphics.FreeTypeUtil;
-import emucom.badlogic.gdx.graphics.Pixmap;
-import emucom.badlogic.gdx.graphics.Pixmap.Blending;
-import emucom.badlogic.gdx.graphics.Pixmap.Format;
-import emucom.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
@@ -33,6 +31,7 @@ import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebApplication;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -605,7 +604,7 @@ public class FreeType {
         private static native Int8ArrayWrapper getBuffer(int bitmap, int offset, int length);
 
         // @on
-        public Pixmap getPixmap(Format format, Color color, float gamma) {
+        public PixmapEmu getPixmap(Pixmap.Format format, Color color, float gamma) {
             int width = getWidth(), rows = getRows();
             ByteBuffer src = getBuffer();
             FreeTypePixmap pixmap;
@@ -613,12 +612,12 @@ public class FreeType {
             int pixelMode = getPixelMode();
             int rowBytes = Math.abs(getPitch()); // We currently ignore negative pitch.
             if(color == Color.WHITE && pixelMode == FT_PIXEL_MODE_GRAY && rowBytes == width && gamma == 1) {
-                pixmap = new FreeTypePixmap(width, rows, Format.Alpha);
+                pixmap = new FreeTypePixmap(width, rows, Pixmap.Format.Alpha);
                 changedPixels = pixmap.getRealPixels();
                 BufferUtils.copy(src, changedPixels, changedPixels.capacity());
             }
             else {
-                pixmap = new FreeTypePixmap(width, rows, Format.RGBA8888);
+                pixmap = new FreeTypePixmap(width, rows, Pixmap.Format.RGBA8888);
                 int rgba = Color.rgba8888(color);
                 byte[] srcRow = new byte[rowBytes];
                 int[] dstRow = new int[width];
@@ -666,12 +665,12 @@ public class FreeType {
             pixmap.putPixelsBack(changedPixels);
             pixmap.setPixelsNull();
 
-            Pixmap converted = pixmap;
+            PixmapEmu converted = pixmap;
             if(format != pixmap.getFormat()) {
-                converted = new Pixmap(pixmap.getWidth(), pixmap.getHeight(), format);
-                converted.setBlending(Blending.None);
+                converted = new PixmapEmu(pixmap.getWidth(), pixmap.getHeight(), format);
+                converted.setBlending(Pixmap.Blending.None);
                 converted.drawPixmap(pixmap, 0, 0);
-                converted.setBlending(Blending.SourceOver);
+                converted.setBlending(Pixmap.Blending.SourceOver);
                 pixmap.dispose();
             }
             return converted;

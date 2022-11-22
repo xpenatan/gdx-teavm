@@ -1,11 +1,11 @@
 package com.github.xpenatan.gdx.backends.web.emu.com.badlogic.gdx.graphics;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.TextureData;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import com.github.xpenatan.gdx.backends.web.emu.com.badlogic.gdx.graphics.glutils.FileTextureDataEmu;
 import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu;
-import com.github.xpenatan.gdx.backends.web.emu.graphics.PixmapEmu.FormatEmu;
 
 @Emulate(TextureData.class)
 public interface TextureDataEmu {
@@ -31,7 +31,7 @@ public interface TextureDataEmu {
 
     public int getHeight();
 
-    public FormatEmu getFormat();
+    public Pixmap.Format getFormat();
 
     public boolean useMipMaps();
 
@@ -44,7 +44,7 @@ public interface TextureDataEmu {
             return loadFromFile(file, null, useMipMaps);
         }
 
-        public static TextureDataEmu loadFromFile(FileHandle file, FormatEmu format, boolean useMipMaps) {
+        public static TextureDataEmu loadFromFile(FileHandle file, Pixmap.Format format, boolean useMipMaps) {
             if(file == null) return null;
             FileTextureDataEmu fileTextureDataEmu = new FileTextureDataEmu(file, new PixmapEmu(file), format, useMipMaps);
             return fileTextureDataEmu;

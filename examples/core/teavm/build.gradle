@@ -21,7 +21,7 @@ dependencies {
     // Or source projects
     implementation project(":backends:backend-web:backend-web")
     implementation project(":backends:backend-teavm:backend-teavm")
-//    implementation project(":extensions:gdx-freetype-teavm")
+    implementation project(":extensions:gdx-freetype-teavm")
 
     implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
@@ -91,4 +91,18 @@ task buildExampleCoreUITest(dependsOn: classes, type: JavaExec) {
 task runCoreUITest(dependsOn: [':examples:core:teavm:buildExampleCoreUITest', ':examples:core:teavm:jettyRun']) {
     setGroup("examples-teavm")
     setDescription("Run UITest example")
+}
+
+project.ext.freeTypeTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildFreeTypeTest"
+
+task buildExampleCoreFreeTypeTest(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build teavm FreeTypeTest example")
+    mainClass.set(project.freeTypeTestMainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+task runCoreFreeTypeTest(dependsOn: [':examples:core:teavm:buildExampleCoreFreeTypeTest', ':examples:core:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run FreeTypeTest example")
 }
