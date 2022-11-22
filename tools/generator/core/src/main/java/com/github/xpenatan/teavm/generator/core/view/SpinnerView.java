@@ -1,6 +1,6 @@
 package com.github.xpenatan.teavm.generator.core.view;
 
-import emucom.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.MathUtils;
 import com.github.xpenatan.imgui.core.ImDrawList;
 import com.github.xpenatan.imgui.core.ImGui;
 import com.github.xpenatan.imgui.core.ImGuiStyle;

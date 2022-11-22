@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 
 @Emulate(VertexArray.class)
-public class VertexArrayEmu extends VertexBufferObjectEmu {
+public class VertexArrayEmu extends VertexBufferObject {
     public VertexArrayEmu(int numVertices, VertexAttribute... attributes) {
         this(numVertices, new VertexAttributes(attributes));
     }

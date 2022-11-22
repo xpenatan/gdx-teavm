@@ -24,6 +24,7 @@ import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 
 @Emulate(ResolutionFileResolver.class)
 public class ResolutionFileResolverEmu implements FileHandleResolver {
+
     @Emulate(ResolutionFileResolver.Resolution.class)
     public static class ResolutionEmu {
         public final int portraitWidth;
@@ -37,17 +38,17 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
         }
     }
 
-    protected final FileHandleResolver baseResolver;
-    protected final ResolutionEmu[] descriptors;
+    public FileHandleResolver baseResolver;
+    public ResolutionFileResolver.Resolution descriptors;
 
-    public ResolutionFileResolverEmu(FileHandleResolver baseResolver, ResolutionEmu... descriptors) {
-        this.baseResolver = baseResolver;
+    public ResolutionFileResolverEmu(FileHandleResolver baseResolver, ResolutionFileResolver.Resolution descriptors) {
         this.descriptors = descriptors;
+        this.baseResolver = baseResolver;
     }
 
     @Override
     public FileHandle resolve(String fileName) {
-        ResolutionEmu bestDesc = choose(descriptors);
+        ResolutionFileResolver.Resolution bestDesc = choose(descriptors);
         FileHandle originalHandle = new WebFileHandle(fileName);
         FileHandle handle = baseResolver.resolve(resolve(originalHandle, bestDesc.folder));
         if(!handle.exists()) handle = baseResolver.resolve(fileName);
@@ -58,7 +59,7 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
         return originalHandle.parent() + "/" + suffix + "/" + originalHandle.name();
     }
 
-    static public ResolutionEmu choose(ResolutionEmu... descriptors) {
+    static public ResolutionFileResolver.Resolution choose(ResolutionFileResolver.Resolution... descriptors) {
         int width = 0;
         if(Gdx.graphics.getWidth() > Gdx.graphics.getHeight()) {
             width = Gdx.graphics.getHeight();
@@ -67,7 +68,7 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
             width = Gdx.graphics.getWidth();
         }
 
-        ResolutionEmu bestDesc = null;
+        ResolutionFileResolver.Resolution bestDesc = null;
         // Find lowest.
         int best = Integer.MAX_VALUE;
         for(int i = 0, n = descriptors.length; i < n; i++) {
