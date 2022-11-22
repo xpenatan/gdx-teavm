@@ -12,9 +12,8 @@ dependencies {
 }
 
 task generateNativeProject(dependsOn: classes, type: JavaExec) {
-    group = 'teavm'
-    description = 'Generate native project'
-
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+    setGroup("teavm")
+    setDescription("Generate native project")
+    mainClass.set(project.mainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
 }

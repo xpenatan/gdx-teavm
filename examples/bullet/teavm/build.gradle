@@ -28,11 +28,16 @@ dependencies {
     implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 
-task buildJavaScript(dependsOn: classes, type: JavaExec) {
-    group = 'teavm'
-    description = 'Run core example'
-
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+task buildExampleBullet(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build Bullet example")
+    mainClass.set(project.mainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
 }
 
+task runBullet(dependsOn: [':examples:bullet:teavm:clean', ':examples:bullet:teavm:buildExampleBullet', ':examples:bullet:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run Bullet example")
+}
+
+runBullet.shouldRunAfter ":examples:bullet:teavm:clean"

@@ -22,8 +22,10 @@ jobs:
       run: ./gradlew generateNativeProject
     - name: Build
       run: ./gradlew build
-    - name: build java script
-      run: ./gradlew buildJavaScript
+    - name: build Box2D example script
+      run: ./gradlew buildExampleBox2D
+    - name: build Bullet example script
+      run: ./gradlew buildExampleBullet
     - name: Upload to repository
       run: ./gradlew publish
       env:

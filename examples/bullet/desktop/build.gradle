@@ -13,12 +13,16 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
 }
 
-task run(dependsOn: classes, type: JavaExec) {
-    group = 'other'
-    description = 'Run bullet example'
+task runBulletDesktop(dependsOn: classes, type: JavaExec) {
+    setGroup("examples-desktop")
+    setDescription("Run bullet example")
+    mainClass.set(project.mainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
 
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+    if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
+        // Required to run on macOS
+        jvmArgs += "-XstartOnFirstThread"
+    }
 }
 
 task dist(type: Jar) {
