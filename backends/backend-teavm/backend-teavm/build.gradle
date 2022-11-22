@@ -5,9 +5,6 @@ group = project.groupId
 
 def module_name = "backend-teavm"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 sourceSets.main.java.srcDirs = [ "emu", "src/main/java/"]
 sourceSets.main.resources.srcDirs = ["src/main/resources/"]
 
