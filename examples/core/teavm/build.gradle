@@ -12,6 +12,10 @@ gretty {
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 
 dependencies {
+    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation project(":examples:core:core")
+
     // Use snapshots
 //  implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
@@ -22,20 +26,14 @@ dependencies {
     implementation project(":backends:backend-web:backend-web")
     implementation project(":backends:backend-teavm:backend-teavm")
     implementation project(":extensions:gdx-freetype-teavm")
-
-    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation project(":examples:core:core")
 }
-
 
 clean.doFirst {
-    def jniPath = projectDir.toString() + "/webapp/"
-    if(new File(jniPath).exists()) {
-        project.delete(files(jniPath))
+    def webappPath = projectDir.toString() + "/webapp/"
+    if(new File(webappPath).exists()) {
+        project.delete(files(webappPath))
     }
 }
-
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
 

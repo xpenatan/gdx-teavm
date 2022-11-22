@@ -28,6 +28,13 @@ dependencies {
     implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 
+clean.doFirst {
+    def webappPath = projectDir.toString() + "/webapp/"
+    if(new File(webappPath).exists()) {
+        project.delete(files(webappPath))
+    }
+}
+
 task buildExampleBullet(dependsOn: classes, type: JavaExec) {
     setGroup("teavm")
     setDescription("Build Bullet example")

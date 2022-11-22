@@ -21,4 +21,3 @@ include ":examples:bullet:teavm"
 include ":examples:box2d:core"
 include ":examples:box2d:desktop"
 include ":examples:box2d:teavm"
-

@@ -28,6 +28,13 @@ dependencies {
     implementation project(":extensions:gdx-box2d:gdx-box2d-teavm")
 }
 
+clean.doFirst {
+    def webappPath = projectDir.toString() + "/webapp/"
+    if(new File(webappPath).exists()) {
+        project.delete(files(webappPath))
+    }
+}
+
 task buildExampleBox2D(dependsOn: classes, type: JavaExec) {
     setGroup("teavm")
     setDescription("Build Box2D example")
