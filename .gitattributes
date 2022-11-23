@@ -5,3 +5,5 @@
 *.jpg binary
 *.jar binary
 *.ttf binary
+*.js binary
+*.wasm binary
