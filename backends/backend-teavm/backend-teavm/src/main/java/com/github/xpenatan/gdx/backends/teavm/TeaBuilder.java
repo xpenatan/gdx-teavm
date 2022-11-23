@@ -471,6 +471,10 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.reflections"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("com.google.guava"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("org.javassist"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         if(path.contains("backend-teavm-"))
             isValid = ACCEPT_STATE.ACCEPT;
