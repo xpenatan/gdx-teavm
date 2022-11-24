@@ -14,8 +14,8 @@ configurations {
 }
 
 dependencies {
-
     implementation files("../../../backends/backend-teavm/backend-teavm/libs/teavm-cli-0.7.0-dev-1200.jar")
+//    includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
 
     implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
     implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
@@ -23,13 +23,10 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     includeDep "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    implementation project(":backends:backend-teavm:backend-teavm")
-    implementation project(":backends:backend-web:backend-web")
-//    includeDep project(":backends:backend-teavm")
-//    includeDep project(":extensions:gdx-freetype-teavm")
+    includeDep project(":backends:backend-teavm:backend-teavm")
+    includeDep project(":backends:backend-web:backend-web")
+    includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
-//    includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
-//    implementation project(":backends:backend-dragome")
 }
 
 task javadocJar(type: Jar) {
