@@ -15,10 +15,10 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 
     // Use snapshots
-      implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
-      implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
-      implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
-      implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects
 //    implementation project(":backends:backend-web:backend-web")
