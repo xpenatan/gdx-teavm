@@ -45,12 +45,9 @@ public class GeneratorView {
     private final ImGuiBoolean obfuscateFlag;
 
     public GeneratorView() {
-        // TODO remove emulated class from Classloader
-//        preferences = Gdx.app.getPreferences("gdx-html5-generator");
+        preferences = Gdx.app.getPreferences("gdx-html5-generator");
 
         viewModel = new GeneratorViewModel();
-
-        loadPreference();
 
         loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
         errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
@@ -60,11 +57,18 @@ public class GeneratorView {
         assetsDirectory = new ImGuiString(200, "");
         webappDirectory = new ImGuiString(200, "");
         obfuscateFlag = new ImGuiBoolean();
+
+        loadPreference();
     }
 
     private void loadPreference() {
         if(preferences == null)
             return;
+        gameJarPath.setValue(preferences.getString(PREF_JAR_PATH, ""));
+        appClassName.setValue(preferences.getString(PREF_APP_CLASS_NAME, ""));
+        assetsDirectory.setValue(preferences.getString(PREF_ASSET_PATH, ""));
+        webappDirectory.setValue(preferences.getString(PREF_WEBAPP_PATH, ""));
+        obfuscateFlag.setValue(preferences.getBoolean(PREF_JAR_PATH, false));
     }
 
     private void savePreference() {
@@ -75,6 +79,7 @@ public class GeneratorView {
         preferences.putString(PREF_ASSET_PATH, assetsDirectory.getValue());
         preferences.putString(PREF_WEBAPP_PATH, webappDirectory.getValue());
         preferences.putBoolean(PREF_OBFUSCATE, obfuscateFlag.getValue());
+        preferences.flush();
     }
 
     public void render() {
