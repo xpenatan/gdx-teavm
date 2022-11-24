@@ -7,7 +7,7 @@ project.ext {
 
     dragomeVersion = "0.97-SNAPSHOT"
 
-    gdxVersion = "1.10.0"
+    gdxVersion = "1.11.0"
 
     jDearImguiVersion = '1.0.0-SNAPSHOT'
     jDearImguiGdxVersion = "1.0.0-SNAPSHOT"
