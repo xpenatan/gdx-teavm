@@ -14,9 +14,6 @@ configurations {
 }
 
 dependencies {
-    implementation files("../../../backends/backend-teavm/backend-teavm/libs/teavm-cli-0.7.0-dev-1200.jar")
-//    includeDep "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxHtmlVersion$project.gdxHtmlType"
-
     implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
     implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
 
