@@ -105,7 +105,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     private ReferenceCache referenceCache = new ReferenceCache();
 
     public TeaClassTransformer() {
-        Reflections reflections = new Reflections("com", "java", "org");
+        Reflections reflections = new Reflections("com", "java", "org", "net");
 
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Emulate.class);
         for(Class<?> type : annotated) {
