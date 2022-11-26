@@ -12,5 +12,5 @@ project.ext {
     jDearImguiVersion = '1.0.0-SNAPSHOT'
     jDearImguiGdxVersion = "1.0.0-SNAPSHOT"
 
-    reflectionVersion = "0.9.11"
+    reflectionVersion = "0.10.2"
 }

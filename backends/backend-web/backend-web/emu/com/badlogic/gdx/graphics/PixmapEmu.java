@@ -38,6 +38,34 @@ public class PixmapEmu implements Disposable {
         pixmap.setPixels(pixels);
         return pixmap;
     }
+
+    @Emulate(Pixmap.Format.class)
+    public enum FormatEmu {
+        Alpha, Intensity, LuminanceAlpha, RGB565, RGBA4444, RGB888, RGBA8888;
+
+        public static int toGlFormat(FormatEmu format) {
+            if(format == Alpha) return GL20.GL_ALPHA;
+            if(format == Intensity) return GL20.GL_ALPHA;
+            if(format == LuminanceAlpha) return GL20.GL_LUMINANCE_ALPHA;
+            if(format == RGB565) return GL20.GL_RGB;
+            if(format == RGB888) return GL20.GL_RGB;
+            if(format == RGBA4444) return GL20.GL_RGBA;
+            if(format == RGBA8888) return GL20.GL_RGBA;
+            throw new GdxRuntimeException("unknown format: " + format);
+        }
+
+        public static int toGlType(FormatEmu format) {
+            if(format == Alpha) return GL20.GL_UNSIGNED_BYTE;
+            if(format == Intensity) return GL20.GL_UNSIGNED_BYTE;
+            if(format == LuminanceAlpha) return GL20.GL_UNSIGNED_BYTE;
+            if(format == RGB565) return GL20.GL_UNSIGNED_SHORT_5_6_5;
+            if(format == RGB888) return GL20.GL_UNSIGNED_BYTE;
+            if(format == RGBA4444) return GL20.GL_UNSIGNED_SHORT_4_4_4_4;
+            if(format == RGBA8888) return GL20.GL_UNSIGNED_BYTE;
+            throw new GdxRuntimeException("unknown format: " + format);
+        }
+    }
+
     int testVar;
     int width;
     int height;

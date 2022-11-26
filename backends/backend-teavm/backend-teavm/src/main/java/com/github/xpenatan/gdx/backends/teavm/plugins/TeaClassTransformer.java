@@ -55,6 +55,7 @@ import com.github.xpenatan.gdx.backends.web.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLUniformLocationWrapper;
 import com.github.xpenatan.gdx.backends.web.soundmanager.SMSoundCallbackWrapper;
 import com.github.xpenatan.gdx.backends.web.soundmanager.SoundManagerCallbackWrapper;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSIndexer;
@@ -100,13 +103,11 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
     private HashMap<String, String> emulations2 = new HashMap<>();
-    private HashMap<String, Class<?>> replace = new HashMap<>();
-    private HashMap<String, String> replace2 = new HashMap<>();
+    private HashMap<String, Class<?>> updateCode = new HashMap<>();
     private ReferenceCache referenceCache = new ReferenceCache();
 
     public TeaClassTransformer() {
-        Reflections reflections = new Reflections("com", "java", "org", "net");
-
+        Reflections reflections = new Reflections("emu", "com", "org", "net");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Emulate.class);
         for(Class<?> type : annotated) {
             Emulate em = type.getAnnotation(Emulate.class);
@@ -123,9 +124,8 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             }
             typeName = typeName.trim();
             if(!typeName.isEmpty()) {
-                if(em.replace()) {
-                    replace.put(typeName, type);
-                    replace2.put(type.getName(), typeName);
+                if(em.updateCode()) {
+                    updateCode.put(typeName, type);
                 }
                 else {
                     emulations.put(typeName, type);
@@ -411,15 +411,14 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         }
         String name = cls.getName();
 
-        if(replace.containsKey(cls.getName())) {
-            System.out.println("Emulating " + cls.getName());
-            Class<?> emulated = replace.get(cls.getName());
+        if(updateCode.containsKey(cls.getName())) {
+            Class<?> emulated = updateCode.get(cls.getName());
             List<MethodDescriptor> descList = new ArrayList<>();
-            for(Method method : emulated.getDeclaredMethods()) {
+
+            Predicate<AnnotatedElement> annotatedElementPredicate = ReflectionUtils.withAnnotation(Emulate.class);
+            Set<Method> methods = ReflectionUtils.getMethods(emulated, annotatedElementPredicate);
+            for(Method method : methods) {
                 Class[] classes = new Class[method.getParameterTypes().length + 1];
-
-                System.out.println("  method " + method.getName());
-
                 classes[classes.length - 1] = method.getReturnType();
                 System.arraycopy(method.getParameterTypes(), 0, classes, 0, method.getParameterTypes().length);
                 descList.add(new MethodDescriptor(method.getName(), classes));
@@ -527,14 +526,15 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         annotations.add(annotation);
     }
 
-    private void replaceMethods(ClassHolder cls, Class<?> emuType, ClassReaderSource innerSource,
-                                List<MethodDescriptor> descList) {
+    private void replaceMethods(ClassHolder cls, Class<?> emuType, ClassReaderSource innerSource, List<MethodDescriptor> descList) {
         ClassReader emuCls = innerSource.get(emuType.getName());
         for(MethodDescriptor methodDesc : descList) {
             if(cls.getMethod(methodDesc) != null) {
                 cls.removeMethod(cls.getMethod(methodDesc));
             }
-            cls.addMethod(ModelUtils.copyMethod(emuCls.getMethod(methodDesc)));
+            MethodReader method = emuCls.getMethod(methodDesc);
+            MethodHolder methodHolder = ModelUtils.copyMethod(method);
+            cls.addMethod(methodHolder);
         }
     }
 
