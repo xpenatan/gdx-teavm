@@ -26,7 +26,7 @@ set(USE_GLUT OFF)
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type")
 
 # Default is 64*1024*1024 = 64MB
-set(TOTAL_MEMORY 67108864 CACHE STRING "Total Memory")
+set(INITIAL_MEMORY 67108864 CACHE STRING "Total Memory")
 
 # Enable for resizable heap, with some amount of slowness
 set(ALLOW_MEMORY_GROWTH 0 CACHE STRING "Allow Memory Growth")
@@ -36,44 +36,40 @@ set(EMCC_ARGS
   -g0 -Wall
   --llvm-lto 1
   --post-js glue.js
+  --extern-post-js ../../post.js
   --closure 1
   -s ALLOW_MEMORY_GROWTH=${ALLOW_MEMORY_GROWTH}
   -s ALLOW_TABLE_GROWTH=1
-  -s EXPORT_NAME="BulletLib"
+  -s EXPORT_NAME="Bullet"
   -s MODULARIZE=1
-  -s NO_EXIT_RUNTIME=1
   -s NO_FILESYSTEM=1
-  -s TOTAL_MEMORY=${TOTAL_MEMORY}
+  -s INITIAL_MEMORY=${INITIAL_MEMORY}
   -s EXPORTED_FUNCTIONS=["_free","_malloc"]
   -s EXPORTED_RUNTIME_METHODS=["UTF8ToString"]
-
 )
 
-set(EMCC_JS_ARGS ${EMCC_ARGS}
-  -s AGGRESSIVE_VARIABLE_ELIMINATION=1
-  -s ELIMINATE_DUPLICATE_FUNCTIONS=1
-  -s LEGACY_VM_SUPPORT=1
-  -s SINGLE_FILE=1
-  -s WASM=0
-  )
+#set(EMCC_JS_ARGS ${EMCC_ARGS}
+#  -s AGGRESSIVE_VARIABLE_ELIMINATION=1
+#  -s ELIMINATE_DUPLICATE_FUNCTIONS=1
+#  -s SINGLE_FILE=1
+#  -s WASM=0
+#)
 
 set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1
-  )
+)
 
 set(EMCC_GLUE_ARGS
   -c
   -I${BULLET_SRC_DIR}
   -include ../../custom_glue.cpp
   -include${BULLET_HEADER_FILE}
-  )
-
+)
 
 #######################################
 project("bullet")
 add_subdirectory(bullet EXCLUDE_FROM_ALL)
-
 
 #######################################
 add_custom_command(
@@ -82,25 +78,25 @@ add_custom_command(
   COMMAND ${PYTHON} ${WEBIDL_BINDER_SCRIPT} ${BULLET_IDL_FILE} glue
   DEPENDS ${BULLET_IDL_FILE}
   COMMENT "Generating bullet bindings"
-  VERBATIM)
+  VERBATIM
+)
 add_custom_command(
   OUTPUT glue.o
   COMMAND em++ glue.cpp ${EMCC_GLUE_ARGS} -o glue.o
   DEPENDS glue.cpp ${BULLET_HEADER_FILE}
   COMMENT "Building bullet bindings"
-  VERBATIM)
+  VERBATIM
+)
 add_custom_target(bullet-bindings ALL DEPENDS glue.js glue.o)
 
-
 #######################################
-add_custom_command(
-  OUTPUT bullet.js
-  COMMAND em++ glue.o ${BULLET_LIBS} ${EMCC_JS_ARGS} -o bullet.js
-  DEPENDS bullet-bindings ${BULLET_TARGETS}
-  COMMENT "Building bullet javascript"
-  VERBATIM)
-add_custom_target(bullet-javascript ALL DEPENDS bullet.js)
-
+#add_custom_command(
+#  OUTPUT bullet.js
+#  COMMAND em++ glue.o ${BULLET_LIBS} ${EMCC_JS_ARGS} -o bullet.js
+#  DEPENDS bullet-bindings ${BULLET_TARGETS}
+#  COMMENT "Building bullet javascript"
+#  VERBATIM)
+#add_custom_target(bullet-javascript ALL DEPENDS bullet.js)
 
 #######################################
 add_custom_command(
@@ -108,5 +104,6 @@ add_custom_command(
   COMMAND emcc glue.o ${BULLET_LIBS} ${EMCC_WASM_ARGS} -o bullet.wasm.js
   DEPENDS bullet-bindings ${BULLET_TARGETS}
   COMMENT "Building bullet webassembly"
-  VERBATIM)
+  VERBATIM
+)
 add_custom_target(bullet-wasm ALL DEPENDS bullet.wasm.js bullet.wasm.wasm)

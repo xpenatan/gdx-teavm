@@ -19,10 +19,16 @@ dependencies {
 
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     includeDep "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
-    includeDep project(":backends:backend-teavm:backend-teavm")
-    includeDep project(":backends:backend-web:backend-web")
-    includeDep project(":extensions:gdx-freetype-teavm")
-    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
+//    includeDep project(":backends:backend-teavm:backend-teavm")
+//    includeDep project(":backends:backend-web:backend-web")
+//    includeDep project(":extensions:gdx-freetype-teavm")
+//    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
+
+    implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:1.0.0-SNAPSHOT"
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 }
 
 task javadocJar(type: Jar) {

@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import java.util.Arrays;
 
 /**
@@ -38,6 +39,7 @@ public class Bullet {
     public static void init(boolean useRefCounting, boolean logging) {
         if(Bullet.bulletInit)
             return;
+//        new SharedLibraryLoader().load("bullet.wasm");
         Bullet.bulletInit = true;
         Bullet.useRefCounting = useRefCounting;
         Bullet.enableLogging = logging;

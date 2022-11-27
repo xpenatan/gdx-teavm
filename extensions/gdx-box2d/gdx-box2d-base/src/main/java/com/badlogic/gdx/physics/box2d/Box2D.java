@@ -1,6 +1,7 @@
 package com.badlogic.gdx.physics.box2d;
 
 import com.badlogic.gdx.physics.box2d.cpp.b2Vec2;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 /**
  * @author xpenatan
@@ -25,6 +26,7 @@ public class Box2D {
     public static void init(boolean useRefCounting, boolean logging) {
         if(Box2D.box2DInit)
             return;
+//        new SharedLibraryLoader().load("box2D");
         Box2D.box2DInit = true;
         Box2D.useRefCounting = useRefCounting;
         Box2D.enableLogging = logging;

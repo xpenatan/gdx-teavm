@@ -28,6 +28,8 @@ public class Preloader {
     public ObjectMap<String, String> texts = new ObjectMap<String, String>();
     public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
 
+    private static String ASSET_FOLDER = "assets/";
+
     public static class Asset {
         public Asset(String url, AssetType type, long size, String mimeType) {
             this.url = url;
@@ -52,7 +54,7 @@ public class Preloader {
     }
 
     public void preload(final String assetFileUrl) {
-        AssetDownloader.getInstance().loadText(true, baseUrl + assetFileUrl, new AssetLoaderListener<String>() {
+        AssetDownloader.getInstance().loadText(true, baseUrl + ASSET_FOLDER + assetFileUrl, new AssetLoaderListener<String>() {
             @Override
             public void onProgress(double amount) {
             }
@@ -114,7 +116,7 @@ public class Preloader {
     }
 
     public void loadBinaryAsset(boolean async, final String url, AssetLoaderListener<Blob> listener) {
-        AssetDownloader.getInstance().load(async, baseUrl + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
+        AssetDownloader.getInstance().load(async, baseUrl + ASSET_FOLDER + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);
@@ -135,7 +137,7 @@ public class Preloader {
     }
 
     public void loadAsset(boolean async, final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().load(async, baseUrl + url, type, mimeType, new AssetLoaderListener<Object>() {
+        AssetDownloader.getInstance().load(async, baseUrl + ASSET_FOLDER + url, type, mimeType, new AssetLoaderListener<Object>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);

@@ -96,7 +96,7 @@ public class WebApplication implements Application, Runnable {
             hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
             hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
         }
-        preloader = new Preloader(hostPageBaseURL + "assets/");
+        preloader = new Preloader(hostPageBaseURL);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
         preloader.preload("assets.txt");
 //		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
@@ -199,7 +199,7 @@ public class WebApplication implements Application, Runnable {
     }
 
     private void initSound() {
-        preloader.loadScript(true, "scripts/soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 WebJSHelper jsHelper = WebJSHelper.get();

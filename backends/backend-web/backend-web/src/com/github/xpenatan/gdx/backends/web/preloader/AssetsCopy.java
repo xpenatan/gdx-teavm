@@ -46,12 +46,15 @@ public class AssetsCopy {
         ArrayList<Asset> assets = new ArrayList<Asset>();
         DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
         WebBuildConfiguration.log("");
-        WebBuildConfiguration.log("Copying assets from:");
-        for(int i = 0; i < assetsPaths.size(); i++) {
-            String path = assetsPaths.get(i).getAbsolutePath();
-            FileWrapper source = new FileWrapper(path);
-            WebBuildConfiguration.log(path);
-            copyDirectory(source, target, defaultAssetFilter, assets);
+
+        if(assetsPaths != null) {
+            WebBuildConfiguration.log("Copying assets from:");
+            for(int i = 0; i < assetsPaths.size(); i++) {
+                String path = assetsPaths.get(i).getAbsolutePath();
+                FileWrapper source = new FileWrapper(path);
+                WebBuildConfiguration.log(path);
+                copyDirectory(source, target, defaultAssetFilter, assets);
+            }
         }
 
         if(classloader != null && classPathAssetsFiles != null) {

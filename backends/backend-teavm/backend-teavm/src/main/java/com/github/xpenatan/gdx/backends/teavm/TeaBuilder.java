@@ -187,14 +187,20 @@ public class TeaBuilder {
 
         WebBuildConfiguration.logHeader("Copying Assets");
 
-        String assetsOutputPath = webappDirectory + File.separator + webappName + File.separator + "assets";
+        String scriptsOutputPath = webappDirectory + File.separator + webappName;
+        String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
+        ArrayList<String> classPathScriptFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
+        scriptsDefault(classPathScriptFiles);
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
         AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
+
+        // Copy Scripts
+        AssetsCopy.copy(classLoader, classPathScriptFiles, null, scriptsOutputPath, false);
         tool.setProgressListener(new TeaVMProgressListener() {
             TeaVMPhase phase = null;
 
@@ -396,15 +402,17 @@ public class TeaBuilder {
         filePath.add("net/mgsx/gltf/shaders/pbr/pbr.fs.glsl");
         filePath.add("net/mgsx/gltf/shaders/pbr/pbr.vs.glsl");
         filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
+    }
 
-        filePath.add("scripts/soundmanager2-jsmin.js");
-        filePath.add("scripts/freetype.js");
-        filePath.add("scripts/bullet.js");
-        filePath.add("scripts/bullet.wasm.js");
-        filePath.add("scripts/bullet.wasm.wasm");
-        filePath.add("scripts/box2D.js");
-        filePath.add("scripts/box2D.wasm.js");
-        filePath.add("scripts/box2D.wasm.wasm");
+    private static void scriptsDefault(ArrayList<String> filePath) {
+        filePath.add("soundmanager2-jsmin.js");
+        filePath.add("freetype.js");
+        filePath.add("bullet.js");
+        filePath.add("bullet.wasm.js");
+        filePath.add("bullet.wasm.wasm");
+        filePath.add("box2D.js");
+        filePath.add("box2D.wasm.js");
+        filePath.add("box2D.wasm.wasm");
     }
 
     private static ACCEPT_STATE acceptPath(String path) {
@@ -474,6 +482,10 @@ public class TeaBuilder {
         else if(path.contains("com.google.guava"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.javassist"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("com.google.code.findbugs"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("org.slf4j"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         if(path.contains("backend-teavm-"))
