@@ -220,7 +220,7 @@ public class TextureEmu extends GLTexture {
 
                     // create the parameters, passing the reference to the texture as
                     // well as a callback that sets the ref count.
-                    TextureLoaderEmu.TextureParameter params = new TextureLoaderEmu.TextureParameter();
+                    TextureLoaderEmu.TextureParameterEmu params = new TextureLoaderEmu.TextureParameterEmu();
                     params.textureData = texture.getTextureData();
                     params.minFilter = texture.getMinFilter();
                     params.magFilter = texture.getMagFilter();

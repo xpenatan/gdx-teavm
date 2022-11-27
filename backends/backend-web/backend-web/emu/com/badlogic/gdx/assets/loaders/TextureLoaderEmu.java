@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 
 @Emulate(TextureLoader.class)
-public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, TextureLoaderEmu.TextureParameter> {
+public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, TextureLoaderEmu.TextureParameterEmu> {
     TextureData data;
     TextureEmu texture;
 
@@ -23,7 +23,7 @@ public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, Tex
     }
 
     @Override
-    public void loadAsync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameter parameter) {
+    public void loadAsync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameterEmu parameter) {
         if(parameter == null || (parameter != null && parameter.textureData == null)) {
             Pixmap pixmap = null;
             Pixmap.Format format = null;
@@ -48,7 +48,7 @@ public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, Tex
     }
 
     @Override
-    public TextureEmu loadSync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameter parameter) {
+    public TextureEmu loadSync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameterEmu parameter) {
         TextureEmu texture = this.texture;
         if(texture != null) {
             texture.load(data);
@@ -64,11 +64,12 @@ public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, Tex
     }
 
     @Override
-    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle fileHandle, TextureParameter parameter) {
+    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle fileHandle, TextureParameterEmu parameter) {
         return null;
     }
 
-    static public class TextureParameter extends AssetLoaderParameters<TextureEmu> {
+    @Emulate(TextureLoader.TextureParameter.class)
+    static public class TextureParameterEmu extends AssetLoaderParameters<TextureEmu> {
         /**
          * the format of the final Texture. Uses the source images format if null
          **/
