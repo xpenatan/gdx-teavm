@@ -58,8 +58,9 @@ public class BulletCodeParser extends TeaVMCodeParser {
 //         Generate a new method if the parameters contains btVector3 or btTransform
         boolean containsVector3 = idlMethodDeclaration.getParameterByType("btVector3").isPresent();
         boolean containsTransform = idlMethodDeclaration.getParameterByType("btTransform").isPresent();
+        boolean containsQuaternion = idlMethodDeclaration.getParameterByType("btQuaternion").isPresent();
 
-        if(containsVector3 || containsTransform) {
+        if(containsVector3 || containsTransform || containsQuaternion) {
             MethodDeclaration gdxMethod = new MethodDeclaration();
             gdxMethod.setName(idlMethodDeclaration.getNameAsString());
             gdxMethod.setModifiers(Modifier.createModifierList(Modifier.Keyword.PUBLIC));
@@ -70,6 +71,7 @@ public class BulletCodeParser extends TeaVMCodeParser {
 
             int btVec3Used = 0;
             int btTransformUsed = 0;
+            int btQuaternionUsed = 0;
             for(int i = 0; i < idlParameters.size(); i++) {
                 Parameter parameter = idlParameters.get(i);
                 String paramName = parameter.getNameAsString();
@@ -86,6 +88,12 @@ public class BulletCodeParser extends TeaVMCodeParser {
                     gdxMethod.addParameter("Matrix4", newParam);
                     convertGdxToNative(body, btTransformUsed, paramName, paramTypeStr, newParam);
                     btTransformUsed++;
+                }
+                else if(paramTypeStr.equals("btQuaternion")) {
+                    String newParam = paramName + "GDX";
+                    gdxMethod.addParameter("Quaternion", newParam);
+                    convertGdxToNative(body, btQuaternionUsed, paramName, paramTypeStr, newParam);
+                    btQuaternionUsed++;
                 }
                 else {
                     gdxMethod.addParameter(paramType, paramName);
@@ -115,6 +123,9 @@ public class BulletCodeParser extends TeaVMCodeParser {
                 }
                 if(containsTransform) {
                     JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
+                }
+                if(containsQuaternion) {
+                    JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Quaternion");
                 }
                 classDeclaration.getMembers().add(gdxMethod);
             }
@@ -157,6 +168,11 @@ public class BulletCodeParser extends TeaVMCodeParser {
                 newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, "btTransform");
                 idlMethodDeclaration.setType("Matrix4");
                 JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Matrix4");
+            }
+            else if(returnTypeName.equals("btQuaternion") || returnTypeName.equals("Quaternion")) {
+                newBody = CONVERT_TO_GDX_TEMPLATE.replace(TEMPLATE_TAG_METHOD, methodCaller).replace(TEMPLATE_TAG_TYPE, "btQuaternion");
+                idlMethodDeclaration.setType("Quaternion");
+                JParserHelper.addMissingImportType(unit, "com.badlogic.gdx.math.Quaternion");
             }
         }
 

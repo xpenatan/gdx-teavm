@@ -754,6 +754,18 @@ interface btGeneric6DofSpring2Constraint {
     void setLinearUpperLimit([Const, Ref]btVector3 linearUpper);
     void setAngularLowerLimit([Const, Ref]btVector3 linearLower);
     void setAngularUpperLimit([Const, Ref]btVector3 linearUpper);
+    void setLimit(long axis, float lo, float hi);
+    void setStiffness(long index, float stiffness);
+    void setDamping(long index, float damping);
+    void setBounce(long index, float bounce);
+    void setServo(long index, boolean onOff);
+    void enableMotor(long index, boolean onOff);
+    void enableSpring(long index, boolean onOff);
+    void setTargetVelocity(long index, float velocity);
+    void setMaxMotorForce(long index, float force);
+    void setEquilibriumPoint();
+    void setEquilibriumPoint(long index);
+    void setEquilibriumPoint(long index, float val);
 };
 btGeneric6DofSpring2Constraint implements btTypedConstraint;
 
