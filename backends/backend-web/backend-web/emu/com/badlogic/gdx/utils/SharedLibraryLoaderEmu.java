@@ -3,9 +3,11 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebApplication;
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 
-public class SharedLibraryLoader {
+@Emulate(SharedLibraryLoader.class)
+public class SharedLibraryLoaderEmu {
 
     public void load (String libraryName) {
         WebApplication app = (WebApplication)Gdx.app;
