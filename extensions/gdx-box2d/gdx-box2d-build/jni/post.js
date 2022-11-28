@@ -1,5 +1,5 @@
 async function asyncCall() {
-	window.Bullet = await Bullet();
+	window.Box2D = await Box2D();
 }
 
 asyncCall();
