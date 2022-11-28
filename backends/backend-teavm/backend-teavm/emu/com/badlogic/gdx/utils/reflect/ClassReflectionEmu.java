@@ -1,5 +1,6 @@
 package com.badlogic.gdx.utils.reflect;
 
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import java.lang.reflect.Modifier;
 
 /**
@@ -7,7 +8,8 @@ import java.lang.reflect.Modifier;
  *
  * @author nexsoftware
  */
-public final class ClassReflection {
+@Emulate(ClassReflection.class)
+public final class ClassReflectionEmu {
 
     /**
      * Returns the Class object associated with the class or interface with the supplied string name.

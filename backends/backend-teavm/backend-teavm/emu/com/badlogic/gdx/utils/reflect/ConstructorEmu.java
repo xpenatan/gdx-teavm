@@ -1,5 +1,6 @@
 package com.badlogic.gdx.utils.reflect;
 
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -7,11 +8,12 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author nexsoftware
  */
-public final class Constructor {
+@Emulate(Constructor.class)
+public final class ConstructorEmu {
 
     private final java.lang.reflect.Constructor constructor;
 
-    Constructor(java.lang.reflect.Constructor constructor) {
+    ConstructorEmu(java.lang.reflect.Constructor constructor) {
         this.constructor = constructor;
     }
 

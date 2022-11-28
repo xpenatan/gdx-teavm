@@ -15,11 +15,11 @@ import org.teavm.metaprogramming.Value;
 import org.teavm.metaprogramming.reflect.ReflectField;
 
 @CompileTime
-public final class Field {
+public class FieldGen {
 
     private final java.lang.reflect.Field field;
 
-    Field(java.lang.reflect.Field field) {
+    public FieldGen(java.lang.reflect.Field field) {
         this.field = field;
     }
 
@@ -201,7 +201,7 @@ public final class Field {
     }
 
     public <T extends java.lang.annotation.Annotation> T getAnnotation(Class<T> annotationClass) {
-        final Annotation declaredAnnotation = getDeclaredAnnotation(annotationClass);
+        final AnnotationEmu declaredAnnotation = getDeclaredAnnotation(annotationClass);
         return declaredAnnotation != null ? declaredAnnotation.getAnnotation(annotationClass) : null;
     }
 
@@ -212,32 +212,23 @@ public final class Field {
         return field.isAnnotationPresent(annotationType);
     }
 
-    /**
-     * Returns an array of {@link Annotation} objects reflecting all annotations declared by this field,
-     * or an empty array if there are none. Does not include inherited annotations.
-     */
-    public Annotation[] getDeclaredAnnotations() {
+    public AnnotationEmu[] getDeclaredAnnotations() {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
-        Annotation[] result = new Annotation[annotations.length];
+        AnnotationEmu[] result = new AnnotationEmu[annotations.length];
         for(int i = 0; i < annotations.length; i++) {
-            result[i] = new Annotation(annotations[i]);
+            result[i] = new AnnotationEmu(annotations[i]);
         }
         return result;
     }
 
-    /**
-     * Returns an {@link Annotation} object reflecting the annotation provided, or null of this field doesn't
-     * have such an annotation. This is a convenience function if the caller knows already which annotation
-     * type he's looking for.
-     */
-    public Annotation getDeclaredAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {
+    public AnnotationEmu getDeclaredAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
         if(annotations == null) {
             return null;
         }
         for(java.lang.annotation.Annotation annotation : annotations) {
             if(annotation.annotationType().equals(annotationType)) {
-                return new Annotation(annotation);
+                return new AnnotationEmu(annotation);
             }
         }
         return null;

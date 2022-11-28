@@ -1,15 +1,18 @@
 package com.artemis.utils.reflect;
 
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+
 /**
  * Provides information about, and access to, an annotation of a field, class or interface.
  *
  * @author dludwig
  */
-public final class Annotation {
+@Emulate(valueStr = "com.artemis.utils.reflect.Annotation")
+public final class AnnotationEmu {
 
     private java.lang.annotation.Annotation annotation;
 
-    Annotation(java.lang.annotation.Annotation annotation) {
+    AnnotationEmu(java.lang.annotation.Annotation annotation) {
         this.annotation = annotation;
     }
 

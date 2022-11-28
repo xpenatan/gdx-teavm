@@ -1,13 +1,15 @@
 package com.badlogic.gdx.utils.reflect;
 
+import com.github.xpenatan.gdx.backends.web.emu.Emulate;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
-public class Method {
+@Emulate(Method.class)
+public class MethodEmu {
 
     private final java.lang.reflect.Method method;
 
-    Method(java.lang.reflect.Method method) {
+    MethodEmu(java.lang.reflect.Method method) {
         this.method = method;
     }
 

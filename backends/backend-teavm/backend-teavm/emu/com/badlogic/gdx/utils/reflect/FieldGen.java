@@ -13,11 +13,11 @@ import org.teavm.metaprogramming.Value;
 import org.teavm.metaprogramming.reflect.ReflectField;
 
 @CompileTime
-public final class Field {
+public class FieldGen {
 
     private final java.lang.reflect.Field field;
 
-    Field(java.lang.reflect.Field field) {
+    public FieldGen(java.lang.reflect.Field field) {
         this.field = field;
     }
 
