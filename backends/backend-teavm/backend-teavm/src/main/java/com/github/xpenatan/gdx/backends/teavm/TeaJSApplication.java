@@ -36,9 +36,9 @@ public class TeaJSApplication implements WebJSApplication {
     // Box2D
 
     private void initBox2DPhysicsWasm(Preloader preloader) {
-        preloader.loadBinaryAsset(false, "box2D.wasm.wasm", new AssetLoaderListener<Blob>() {
+        preloader.loadScript(false, "box2D.wasm.js", new AssetLoaderListener<Object>() {
             @Override
-            public boolean onSuccess(String url, Blob result) {
+            public boolean onSuccess(String url, Object result) {
                 return true;
             }
 
