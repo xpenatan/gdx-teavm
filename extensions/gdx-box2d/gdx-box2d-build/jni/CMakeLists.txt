@@ -96,7 +96,7 @@ add_custom_target(box2D-bindings ALL DEPENDS glue.js glue.o)
 #  DEPENDS box2D-bindings ${BOX2D_TARGETS}
 #  COMMENT "Building box2D javascript"
 #  VERBATIM
-)
+#)
 #add_custom_target(box2D-javascript ALL DEPENDS box2D.js)
 
 #######################################
@@ -105,5 +105,6 @@ add_custom_command(
   COMMAND emcc glue.o ${BOX2D_LIBS} ${EMCC_WASM_ARGS} -o box2D.wasm.js
   DEPENDS box2D-bindings ${BOX2D_TARGETS}
   COMMENT "Building box2D webassembly"
-  VERBATIM)
+  VERBATIM
+)
 add_custom_target(box2D-wasm ALL DEPENDS box2D.wasm.js box2D.wasm.wasm)

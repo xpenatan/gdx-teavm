@@ -304,7 +304,7 @@ else if (typeof define === 'function' && define['amd'])
 else if (typeof exports === 'object')
   exports["Box2D"] = Box2D;
 async function asyncCall() {
-	window.Bullet = await Bullet();
+	window.Box2D = await Box2D();
 }
 
 asyncCall();
