@@ -2,10 +2,7 @@ package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeAtlasTest;
-import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeMetricsTest;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypePackTest;
-import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeTest;
 import java.io.File;
 
 public class BuildFreeTypeTest {
@@ -19,7 +16,7 @@ public class BuildFreeTypeTest {
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class;
-		teaBuildConfiguration.applicationListenerClass = FreeTypePackTest.class;
+        teaBuildConfiguration.setApplicationListener(FreeTypePackTest.class);
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

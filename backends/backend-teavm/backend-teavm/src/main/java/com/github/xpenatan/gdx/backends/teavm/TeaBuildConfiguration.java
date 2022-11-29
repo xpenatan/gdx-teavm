@@ -16,7 +16,8 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     public boolean logClasses = false;
     public boolean obfuscate = false;
-    public Class<? extends ApplicationListener> applicationListenerClass;
+    private String mainApplicationClass;
+
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
     public final ArrayList<String> reflectionInclude = new ArrayList<>();
@@ -30,7 +31,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     @Override
     public String getApplicationListenerClass() {
-        return applicationListenerClass.getName();
+        return mainApplicationClass;
     }
 
     @Override
@@ -81,5 +82,13 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     @Override
     public void assetsClasspath(ArrayList<String> classPaths) {
+    }
+
+    public void setApplicationListener(Class<? extends ApplicationListener> applicationListener) {
+        setApplicationListener(applicationListener.getName());
+    }
+
+    public void setApplicationListener(String applicationListener) {
+        mainApplicationClass = applicationListener;
     }
 }

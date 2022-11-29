@@ -51,7 +51,7 @@ public class GeneratorViewModel {
                 teaBuildConfiguration.webappPath = webappDestination;
                 teaBuildConfiguration.obfuscate = obfuscate;
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
-                teaBuildConfiguration.mainApplicationClass = appClassName;
+                teaBuildConfiguration.setApplicationListener(appClassName);
                 compile(teaBuildConfiguration);
             }
             catch(MalformedURLException e) {

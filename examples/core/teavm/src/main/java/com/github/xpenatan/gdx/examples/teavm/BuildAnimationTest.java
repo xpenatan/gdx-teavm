@@ -13,7 +13,7 @@ public class BuildAnimationTest {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-		teaBuildConfiguration.applicationListenerClass = AnimationTest.class;
+        teaBuildConfiguration.setApplicationListener(AnimationTest.class);
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

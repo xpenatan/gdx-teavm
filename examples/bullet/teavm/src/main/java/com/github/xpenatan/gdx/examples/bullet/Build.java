@@ -13,7 +13,7 @@ public class Build {
         teaBuildConfiguration.webappPath = new File(".").getCanonicalPath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-        teaBuildConfiguration.applicationListenerClass = BulletTest.class;
+        teaBuildConfiguration.setApplicationListener( BulletTest.class);
         TeaBuilder.build(teaBuildConfiguration);
     }
 }
