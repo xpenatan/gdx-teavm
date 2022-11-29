@@ -12,19 +12,39 @@ Gdx-Html5-tools is a solution to run libgdx games in a browser using [TeaVM](htt
 * [test-box2d-wasm](https://xpenatan.github.io/gdx-html5-tools/teavm/test-box2d/)
 
 ## How it works:
-The backend-web was created with the idea of code reuse in mind so that each compiler-backend doesn't have to start from scratch.
-The backend-web contains some interface required for specific javascript communication and that's where the compiler backend comes in.
-It started with a very simple test case using Dragome and teaVM, but when some breaking bugs in the Dragome compiler began to appear I decided to stop.
-Some codes are ported from GWT backend.
+The backend-web was created with the idea of code reuse in mind so multiple javascript backends can use it, it only contains java code. backend-teavm contains teaVM code to generate libgdx games to javascript.
 
-Like GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript.
-backend-web contains an emu folder that emulate some classes that work for any compiler solution while teaVM contains specific emulation code that it's only for teaVM compiler. 
+Like GDX GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript.
+
+Box2d, Bullet and freetype extension use emscripten to convert C++ to Javascript/WebAssembly. Box2d and Bullet use a custom parser ([jParser](https://github.com/xpenatan/jParser)) to generate java class to bind javascript code.
 
 ## Setup:
-- TODO
+```groovy
+// Add sonatype repository to Root gradle
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+```
+    gdxWebToolsVersion = "1.0.0-SNAPSHOT"
+```groovy
+// In teaVM module
+dependencies {
+    implementation "com.github.xpenatan.gdx-web-tools:backend-web:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxWebToolsVersion"
+
+    // Bullet extension
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:$project.gdxWebToolsVersion"
+    // Box2D extension
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:$project.gdxWebToolsVersion"
+    // FreeType extension
+    implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:$project.gdxWebToolsVersion"
+}
+```
 
 ## Supported Extensions:
-- Box2D
+- Box2D (WIP)
 - Bullet Physics (WIP)¹
 - FreeType
 
