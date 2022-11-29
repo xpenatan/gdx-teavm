@@ -417,7 +417,7 @@ public class TeaBuilder {
 
     private static ACCEPT_STATE acceptPath(String path) {
         ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
-        if(path.contains("teavm-") && path.contains(".jar"))
+        if(path.contains("teavm-cli") && path.contains(".jar"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("junit"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
