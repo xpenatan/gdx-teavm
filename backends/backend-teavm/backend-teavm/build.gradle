@@ -40,7 +40,7 @@ task fromClasses(type: Jar) {
 }
 
 task addNative(type: Jar) {
-    from zipTree("./libs/teavm-cli-0.7.0-dev-1200.jar")
+    from zipTree("./libs/teavm-cli-0.7.0-dev-1209.jar")
 }
 
 publishing {
