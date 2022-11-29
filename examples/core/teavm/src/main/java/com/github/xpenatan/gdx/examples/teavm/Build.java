@@ -38,7 +38,7 @@ public class Build {
 //        teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
-		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
+		teaBuildConfiguration.applicationListenerClass = GearsDemo.class;
 //		teaBuildConfiguration.mainApplicationClass = Box2DTest.class.getName();
 
         if(BUILD_FROM_COMPILED_FOLDER) {

@@ -13,7 +13,7 @@ public class BuildUITest {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-		teaBuildConfiguration.mainApplicationClass = UITest.class.getName();
+		teaBuildConfiguration.applicationListenerClass = UITest.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

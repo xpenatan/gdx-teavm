@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import java.io.File;
 import java.net.URL;
@@ -15,7 +16,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     public boolean logClasses = false;
     public boolean obfuscate = false;
-    public String mainApplicationClass;
+    public Class<? extends ApplicationListener> applicationListenerClass;
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
     public final ArrayList<String> reflectionInclude = new ArrayList<>();
@@ -29,7 +30,7 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     @Override
     public String getApplicationListenerClass() {
-        return mainApplicationClass;
+        return applicationListenerClass.getName();
     }
 
     @Override

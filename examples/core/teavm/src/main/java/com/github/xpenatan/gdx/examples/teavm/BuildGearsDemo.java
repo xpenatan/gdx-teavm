@@ -13,7 +13,7 @@ public class BuildGearsDemo {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-		teaBuildConfiguration.mainApplicationClass = GearsDemo.class.getName();
+		teaBuildConfiguration.applicationListenerClass = GearsDemo.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

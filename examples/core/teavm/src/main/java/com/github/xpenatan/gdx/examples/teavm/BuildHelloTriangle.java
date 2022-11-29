@@ -13,7 +13,7 @@ public class BuildHelloTriangle {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-		teaBuildConfiguration.mainApplicationClass = HelloTriangle.class.getName();
+		teaBuildConfiguration.applicationListenerClass = HelloTriangle.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

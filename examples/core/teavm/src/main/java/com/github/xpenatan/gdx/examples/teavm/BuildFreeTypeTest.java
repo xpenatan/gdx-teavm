@@ -16,10 +16,10 @@ public class BuildFreeTypeTest {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-//		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
-//		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class.getName();
-//		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();
-		teaBuildConfiguration.mainApplicationClass = FreeTypePackTest.class.getName();
+//		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class;
+//		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class;
+//		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class;
+		teaBuildConfiguration.applicationListenerClass = FreeTypePackTest.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }

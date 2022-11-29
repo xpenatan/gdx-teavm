@@ -17,7 +17,7 @@ public class BuildReflectionTest {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-		teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
+		teaBuildConfiguration.applicationListenerClass = ReflectionTest.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }
