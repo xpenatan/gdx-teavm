@@ -8,11 +8,6 @@ def module_name = "backend-web"
 sourceSets.main.java.srcDirs = [ "emu", "src" ]
 sourceSets.main.resources.srcDirs = ["resources/"]
 
-task javadocJar(type: Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
 task sourcesJar(type: Jar) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource
@@ -38,7 +33,7 @@ dependencies {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives sourcesJar
 }
 
 publishing {

@@ -32,11 +32,6 @@ dependencies {
 //    implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 }
 
-task javadocJar(type: Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
 task sourcesJar(type: Jar) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource
@@ -53,7 +48,7 @@ javadoc {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives sourcesJar
 }
 
 publishing {
