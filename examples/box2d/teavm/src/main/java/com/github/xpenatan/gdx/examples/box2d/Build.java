@@ -12,7 +12,7 @@ public class Build {
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
-        teaBuildConfiguration.mainApplicationClass = PyramidTest.class.getName();
+        teaBuildConfiguration.applicationListenerClass = PyramidTest.class;
         TeaBuilder.build(teaBuildConfiguration);
     }
 }
