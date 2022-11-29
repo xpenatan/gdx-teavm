@@ -6,7 +6,7 @@ import com.github.xpenatan.gdx.examples.tests.AnimationTest;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeAtlasTest;
-import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
+import com.github.xpenatan.gdx.examples.tests.ReflectionTest;
 
 public class Main {
 

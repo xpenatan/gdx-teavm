@@ -3,13 +3,13 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.examples.tests.reflection.ReflectionTest;
+import com.github.xpenatan.gdx.examples.tests.ReflectionTest;
 import java.io.File;
 
 public class BuildReflectionTest {
 
     public static void main(String[] args) {
-        String reflectionPackage = "com.github.xpenatan.gdx.examples.tests.reflection.models";
+        String reflectionPackage = "com.badlogic.gdx.math";
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
