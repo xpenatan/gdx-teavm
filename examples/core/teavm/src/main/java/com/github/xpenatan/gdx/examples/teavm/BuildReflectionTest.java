@@ -5,6 +5,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.examples.tests.ReflectionTest;
 import java.io.File;
+import org.teavm.tooling.TeaVMTool;
 
 public class BuildReflectionTest {
 
@@ -18,6 +19,7 @@ public class BuildReflectionTest {
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
         teaBuildConfiguration.setApplicationListener(ReflectionTest.class);
-        TeaBuilder.build(teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        TeaBuilder.build(tool);
     }
 }

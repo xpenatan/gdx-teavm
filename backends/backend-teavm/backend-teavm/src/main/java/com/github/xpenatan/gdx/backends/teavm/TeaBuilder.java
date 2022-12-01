@@ -24,6 +24,7 @@ import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.model.TextLocation;
 import org.teavm.tooling.TeaVMTargetType;
+import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
 import org.teavm.vm.TeaVMPhase;
 import org.teavm.vm.TeaVMProgressFeedback;
@@ -40,11 +41,11 @@ public class TeaBuilder {
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
     private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
-    public static void build(WebBuildConfiguration configuration) {
-        build(configuration, null);
+    public static TeaVMTool config(WebBuildConfiguration configuration) {
+        return config(configuration, null);
     }
 
-    public static void build(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
         addDefaultReflectionClasses();
         for(URL classPath : configuration.getAdditionalClasspath()) {
             try {
@@ -123,13 +124,13 @@ public class TeaBuilder {
 
         if(size <= 0) {
             System.err.println("No urls found");
-            return;
+            return null;
         }
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
-        CustomTeaVMTool tool = new CustomTeaVMTool();
+        TeaVMTool tool = new TeaVMTool();
 
         boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
@@ -231,16 +232,20 @@ public class TeaBuilder {
                 return TeaVMProgressFeedback.CONTINUE;
             }
         });
+        return tool;
+    }
 
+    public static void build(TeaVMTool tool) {
+        build(tool, false);
+    }
+
+    public static void build(TeaVMTool tool, boolean logClassNames) {
         try {
             tool.generate();
             ProblemProvider problemProvider = tool.getProblemProvider();
+            Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
-
             if(problems.size() > 0) {
-                if(progressListener != null) {
-                    progressListener.onSuccess(false);
-                }
                 WebBuildConfiguration.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
@@ -256,9 +261,6 @@ public class TeaBuilder {
                         TextLocation sourceLocation = location.getSourceLocation();
                         if(sourceLocation != null)
                             classSource = sourceLocation.toString();
-                        else {
-                            //TODO
-                        }
                         if(method != null) {
                             methodName = method.toString();
                         }
@@ -280,21 +282,15 @@ public class TeaBuilder {
                 WebBuildConfiguration.logEnd();
             }
             else {
-                if(progressListener != null) {
-                    progressListener.onSuccess(true);
-                }
-                Collection<String> classes = tool.getClasses();
                 WebBuildConfiguration.logHeader("Build Complete. Total Classes: " + classes.size());
+            }
 
-                boolean classLog = configuration.logClasses();
-
-                if(classLog) {
-                    Stream<String> sorted = classes.stream().sorted();
-                    Iterator<String> iterator = sorted.iterator();
-                    while(iterator.hasNext()) {
-                        String clazz = iterator.next();
-                        WebBuildConfiguration.log(clazz);
-                    }
+            if(logClassNames) {
+                Stream<String> sorted = classes.stream().sorted();
+                Iterator<String> iterator = sorted.iterator();
+                while(iterator.hasNext()) {
+                    String clazz = iterator.next();
+                    WebBuildConfiguration.log(clazz);
                 }
             }
         }
@@ -507,8 +503,6 @@ public class TeaBuilder {
     }
 
     public interface TeaProgressListener {
-        void onSuccess(boolean success);
-
         void onProgress(float progress);
     }
 }

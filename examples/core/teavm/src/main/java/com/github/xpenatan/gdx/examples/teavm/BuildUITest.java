@@ -4,6 +4,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 import java.io.File;
+import org.teavm.tooling.TeaVMTool;
 
 public class BuildUITest {
 
@@ -14,6 +15,7 @@ public class BuildUITest {
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
 		teaBuildConfiguration.setApplicationListener(UITest.class);
-        TeaBuilder.build(teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        TeaBuilder.build(tool);
     }
 }

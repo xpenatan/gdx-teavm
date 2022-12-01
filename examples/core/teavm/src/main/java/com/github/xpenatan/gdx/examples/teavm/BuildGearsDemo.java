@@ -4,6 +4,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import java.io.File;
+import org.teavm.tooling.TeaVMTool;
 
 public class BuildGearsDemo {
 
@@ -14,6 +15,7 @@ public class BuildGearsDemo {
         teaBuildConfiguration.obfuscate = false;
         teaBuildConfiguration.logClasses = false;
         teaBuildConfiguration.setApplicationListener(GearsDemo.class);
-        TeaBuilder.build(teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        TeaBuilder.build(tool);
     }
 }

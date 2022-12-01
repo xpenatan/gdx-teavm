@@ -4,6 +4,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypePackTest;
 import java.io.File;
+import org.teavm.tooling.TeaVMTool;
 
 public class BuildFreeTypeTest {
 
@@ -16,7 +17,7 @@ public class BuildFreeTypeTest {
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class;
-        teaBuildConfiguration.setApplicationListener(FreeTypePackTest.class);
-        TeaBuilder.build(teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        TeaBuilder.build(tool);
     }
 }

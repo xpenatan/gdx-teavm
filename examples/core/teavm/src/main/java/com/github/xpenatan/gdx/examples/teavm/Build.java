@@ -7,6 +7,7 @@ import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.teavm.tooling.TeaVMTool;
 
 public class Build {
     /**
@@ -54,6 +55,7 @@ public class Build {
             teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
         }
 
-        TeaBuilder.build(teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        TeaBuilder.build(tool);
     }
 }
