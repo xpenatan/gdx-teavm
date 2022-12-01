@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.CustomPreOptimizingClassHolderSource;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
@@ -137,14 +136,16 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     @Override
     public void transformClass(ClassHolder cls, ClassHolderTransformerContext context) {
-        CustomPreOptimizingClassHolderSource innerSource = (CustomPreOptimizingClassHolderSource)context.getHierarchy().getClassSource();
+        ClassReaderSource innerSource = context.getHierarchy().getClassSource();
         String className = cls.getName();
         if(!init) {
             init = true;
             ClassHolder classHolder = null;
 
-            classHolder = findClassHolder(cls, context, TeaLauncher.class);
-            setGdxApplicationClass(classHolder, context);
+            if(!applicationListener.isEmpty()) {
+                classHolder = findClassHolder(cls, context, TeaLauncher.class);
+                setGdxApplicationClass(classHolder, context);
+            }
 
             classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
             setClassInterface(classHolder, JSObject.class);
@@ -427,7 +428,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         }
         else if(emulations.containsKey(name)) {
             Class<?> emulated = emulations.get(cls.getName());
-            ClassHolder emulatedClassHolder = innerSource.get(emulated.getName());
+            ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
             replaceClass(innerSource, cls, emulatedClassHolder);
         }
     }
@@ -538,7 +539,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         }
     }
 
-    private void replaceClass(CustomPreOptimizingClassHolderSource innerSource, final ClassHolder cls, final ClassHolder emuCls) {
+    private void replaceClass(ClassReaderSource innerSource, final ClassHolder cls, final ClassReader emuCls) {
         ClassRefsRenamer renamer = new ClassRefsRenamer(referenceCache, preimage -> {
             String newName = emulations2.get(preimage);
             if(newName != null) {
@@ -554,7 +555,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         Iterator<String> interfaceIt = interfaces.iterator();
         while(interfaceIt.hasNext()) {
             String interfaceStr = interfaceIt.next();
-            ClassHolder interfaceClassHolder = innerSource.get(interfaceStr);
+            ClassReader interfaceClassHolder = innerSource.get(interfaceStr);
             if(interfaceClassHolder != null) {
                 ClassHolder classHolder = ModelUtils.copyClass(interfaceClassHolder);
                 ClassHolder interfaceRename = renamer.rename(classHolder);
@@ -565,7 +566,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
         String parent = emuCls.getParent();
         if(parent != null && !parent.isEmpty()) {
-            ClassHolder parentClassHolder = innerSource.get(parent);
+            ClassReader parentClassHolder = innerSource.get(parent);
             if(parentClassHolder != null) {
                 ClassHolder classHolder = ModelUtils.copyClass(parentClassHolder);
                 ClassHolder parentClassHolderRename = renamer.rename(classHolder);

@@ -21,8 +21,8 @@ jobs:
       run: chmod +x ./gradlew
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
-    - name: Upload to repository
-      run: ./gradlew publish
-      env:
-        USER: ${{ secrets.USER }}
-        PASSWORD: ${{ secrets.PASSWORD }}
+#    - name: Upload to repository
+#      run: ./gradlew publish
+#      env:
+#        USER: ${{ secrets.USER }}
+#        PASSWORD: ${{ secrets.PASSWORD }}

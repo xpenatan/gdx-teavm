@@ -24,6 +24,7 @@ import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.model.TextLocation;
 import org.teavm.tooling.TeaVMTargetType;
+import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
 import org.teavm.vm.TeaVMPhase;
 import org.teavm.vm.TeaVMProgressFeedback;
@@ -40,11 +41,16 @@ public class TeaBuilder {
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
     private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
-    public static void build(WebBuildConfiguration configuration) {
-        build(configuration, null);
+    public static TeaVMTool config(WebBuildConfiguration configuration) {
+        TeaVMTool tool = new TeaVMTool();
+        return config(tool, configuration, null);
     }
 
-    public static void build(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration) {
+        return config(tool, configuration);
+    }
+
+    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration, TeaProgressListener progressListener) {
         addDefaultReflectionClasses();
         for(URL classPath : configuration.getAdditionalClasspath()) {
             try {
@@ -123,13 +129,11 @@ public class TeaBuilder {
 
         if(size <= 0) {
             System.err.println("No urls found");
-            return;
+            return null;
         }
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
-
-        CustomTeaVMTool tool = new CustomTeaVMTool();
 
         boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
@@ -144,9 +148,6 @@ public class TeaBuilder {
         File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";
         boolean setMinifying = configuration.minifying();
-        String mainClass = configuration.getMainClass();
-        TeaClassTransformer.applicationListener = configuration.getApplicationListenerClass();
-
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
         boolean setIncremental = false;
@@ -161,7 +162,12 @@ public class TeaBuilder {
         tool.setFastDependencyAnalysis(false);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
-        tool.setMainClass(mainClass);
+        String applicationListenerClass = configuration.getApplicationListenerClass();
+        if(applicationListenerClass != null) {
+            String mainClass = configuration.getMainClass();
+            TeaClassTransformer.applicationListener = applicationListenerClass;
+            tool.setMainClass(mainClass);
+        }
         //		tool.getProperties().putAll(profile.getProperties());
         tool.setIncremental(setIncremental);
         tool.setCacheDirectory(setCacheDirectory);
@@ -231,16 +237,20 @@ public class TeaBuilder {
                 return TeaVMProgressFeedback.CONTINUE;
             }
         });
+        return tool;
+    }
 
+    public static void build(TeaVMTool tool) {
+        build(tool, false);
+    }
+
+    public static void build(TeaVMTool tool, boolean logClassNames) {
         try {
             tool.generate();
             ProblemProvider problemProvider = tool.getProblemProvider();
+            Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
-
             if(problems.size() > 0) {
-                if(progressListener != null) {
-                    progressListener.onSuccess(false);
-                }
                 WebBuildConfiguration.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
@@ -256,9 +266,6 @@ public class TeaBuilder {
                         TextLocation sourceLocation = location.getSourceLocation();
                         if(sourceLocation != null)
                             classSource = sourceLocation.toString();
-                        else {
-                            //TODO
-                        }
                         if(method != null) {
                             methodName = method.toString();
                         }
@@ -280,21 +287,15 @@ public class TeaBuilder {
                 WebBuildConfiguration.logEnd();
             }
             else {
-                if(progressListener != null) {
-                    progressListener.onSuccess(true);
-                }
-                Collection<String> classes = tool.getClasses();
                 WebBuildConfiguration.logHeader("Build Complete. Total Classes: " + classes.size());
+            }
 
-                boolean classLog = configuration.logClasses();
-
-                if(classLog) {
-                    Stream<String> sorted = classes.stream().sorted();
-                    Iterator<String> iterator = sorted.iterator();
-                    while(iterator.hasNext()) {
-                        String clazz = iterator.next();
-                        WebBuildConfiguration.log(clazz);
-                    }
+            if(logClassNames) {
+                Stream<String> sorted = classes.stream().sorted();
+                Iterator<String> iterator = sorted.iterator();
+                while(iterator.hasNext()) {
+                    String clazz = iterator.next();
+                    WebBuildConfiguration.log(clazz);
                 }
             }
         }
@@ -447,8 +448,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("jlayer-"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("/classes"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("/resources"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("javax"))
@@ -507,8 +506,6 @@ public class TeaBuilder {
     }
 
     public interface TeaProgressListener {
-        void onSuccess(boolean success);
-
         void onProgress(float progress);
     }
 }

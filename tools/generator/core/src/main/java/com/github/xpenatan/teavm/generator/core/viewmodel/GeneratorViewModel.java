@@ -71,7 +71,7 @@ public class GeneratorViewModel {
                     public void run() {
                         boolean serverRunning = server.isServerRunning();
                         stopLocalServer();
-                        TeaBuilder.build(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
+                        TeaBuilder.config(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
                             @Override
                             public void onSuccess(boolean success) {
                                 isError = !success;

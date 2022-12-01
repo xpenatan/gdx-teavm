@@ -10,7 +10,6 @@ gretty {
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation project(":examples:core:core")
 
