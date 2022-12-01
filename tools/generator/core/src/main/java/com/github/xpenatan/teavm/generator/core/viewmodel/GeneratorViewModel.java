@@ -6,6 +6,7 @@ import com.github.xpenatan.teavm.generator.core.utils.server.JettyServer;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.teavm.tooling.TeaVMTool;
 
 public class GeneratorViewModel {
     private JettyServer server;
@@ -71,20 +72,17 @@ public class GeneratorViewModel {
                     public void run() {
                         boolean serverRunning = server.isServerRunning();
                         stopLocalServer();
-                        TeaBuilder.config(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
-                            @Override
-                            public void onSuccess(boolean success) {
-                                isError = !success;
-                                if(success) {
-                                    progress = 0;
-                                }
-                            }
 
+                        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
                             @Override
                             public void onProgress(float progress) {
                                 GeneratorViewModel.this.progress = progress;
                             }
                         });
+
+                        boolean isSuccess = TeaBuilder.build(tool);
+                        isError = !isSuccess;
+
                         isCompiling = false;
                         if(serverRunning)
                             startLocalServer(teaBuildConfiguration.webappPath);

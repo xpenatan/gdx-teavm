@@ -30,16 +30,16 @@ repositories {
 ```groovy
 // In teaVM module
 dependencies {
-    implementation "com.github.xpenatan.gdx-web-tools:backend-web:$project.gdxWebToolsVersion"
-    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:$project.gdxWebToolsVersion"
-    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:backend-web:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:backend-teavm:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:backend-teavm-native:$project.gdxWebToolsVersion"
 
     // Bullet extension
-    implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:gdx-bullet-teavm:$project.gdxWebToolsVersion"
     // Box2D extension
-    implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:gdx-box2d-teavm:$project.gdxWebToolsVersion"
     // FreeType extension
-    implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:$project.gdxWebToolsVersion"
+    implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:$project.gdxWebToolsVersion"
 }
 ```
 
