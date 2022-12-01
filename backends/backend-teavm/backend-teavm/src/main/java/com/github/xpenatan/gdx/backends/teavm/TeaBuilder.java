@@ -417,9 +417,7 @@ public class TeaBuilder {
 
     private static ACCEPT_STATE acceptPath(String path) {
         ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
-        if(path.contains("teavm-cli") && path.contains(".jar"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("junit"))
+        if(path.contains("junit"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("hamcrest"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
@@ -500,9 +498,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_IMGUI))
             isValid = ACCEPT_STATE.ACCEPT;
-
-        if(path.contains("backend-teavm-native"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         return isValid;
     }
