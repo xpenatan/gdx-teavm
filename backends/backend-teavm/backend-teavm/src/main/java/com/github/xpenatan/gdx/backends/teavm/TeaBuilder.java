@@ -46,6 +46,11 @@ public class TeaBuilder {
         return config(tool, configuration, null);
     }
 
+    public static TeaVMTool config(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+        TeaVMTool tool = new TeaVMTool();
+        return config(tool, configuration, progressListener);
+    }
+
     public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration) {
         return config(tool, configuration);
     }
@@ -240,11 +245,12 @@ public class TeaBuilder {
         return tool;
     }
 
-    public static void build(TeaVMTool tool) {
-        build(tool, false);
+    public static boolean build(TeaVMTool tool) {
+        return build(tool, false);
     }
 
-    public static void build(TeaVMTool tool, boolean logClassNames) {
+    public static boolean build(TeaVMTool tool, boolean logClassNames) {
+        boolean isSuccess = false;
         try {
             tool.generate();
             ProblemProvider problemProvider = tool.getProblemProvider();
@@ -287,6 +293,7 @@ public class TeaBuilder {
                 WebBuildConfiguration.logEnd();
             }
             else {
+                isSuccess = true;
                 WebBuildConfiguration.logHeader("Build Complete. Total Classes: " + classes.size());
             }
 
@@ -301,7 +308,9 @@ public class TeaBuilder {
         }
         catch(Throwable e) {
             e.printStackTrace();
+            return false;
         }
+        return isSuccess;
     }
 
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {

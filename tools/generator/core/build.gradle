@@ -15,8 +15,9 @@ configurations {
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
+    includeDep "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
+    includeDep "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
+    includeDep "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
 
     includeDep project(":backends:backend-teavm:backend-teavm")
     includeDep project(":backends:backend-web:backend-web")
@@ -24,12 +25,12 @@ dependencies {
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
     includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
 
-//    implementation "com.github.xpenatan.gdx-web-tools:backend-web:1.0.0-SNAPSHOT"
-//    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm:1.0.0-SNAPSHOT"
-//    implementation "com.github.xpenatan.gdx-web-tools:backend-teavm-native:1.0.0-SNAPSHOT"
-//    implementation "com.github.xpenatan.gdx-web-tools:gdx-bullet-teavm:1.0.0-SNAPSHOT"
-//    implementation "com.github.xpenatan.gdx-web-tools:gdx-box2d-teavm:1.0.0-SNAPSHOT"
-//    implementation "com.github.xpenatan.gdx-web-tools:gdx-freetype-teavm:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:backend-web:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:backend-teavm:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:backend-teavm-native:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:gdx-bullet-teavm:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:gdx-box2d-teavm:1.0.0-SNAPSHOT"
+//    implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 }
 
 task sourcesJar(type: Jar) {

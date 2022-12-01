@@ -22,8 +22,6 @@ dependencies {
     implementation project(":tools:generator:core")
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
-    implementation "com.github.xpenatan.jParser:jParser-loader:$project.jParserVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
 }
 
 task runGenerator(dependsOn: classes, type: JavaExec) {
