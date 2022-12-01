@@ -13,7 +13,6 @@ public class Build {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getCanonicalPath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.logClasses = false;
         teaBuildConfiguration.setApplicationListener( BulletTest.class);
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         TeaBuilder.build(tool);

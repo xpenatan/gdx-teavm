@@ -13,7 +13,6 @@ public class BuildHelloTriangle {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.logClasses = false;
         teaBuildConfiguration.setApplicationListener(HelloTriangle.class);
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         TeaBuilder.build(tool);

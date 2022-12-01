@@ -34,7 +34,6 @@ public class Build {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.logClasses = false;
 //        teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class.getName();

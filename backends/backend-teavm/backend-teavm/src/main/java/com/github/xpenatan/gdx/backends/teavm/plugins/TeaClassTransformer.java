@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.CustomPreOptimizingClassHolderSource;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
@@ -143,8 +142,10 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             init = true;
             ClassHolder classHolder = null;
 
-            classHolder = findClassHolder(cls, context, TeaLauncher.class);
-            setGdxApplicationClass(classHolder, context);
+            if(!applicationListener.isEmpty()) {
+                classHolder = findClassHolder(cls, context, TeaLauncher.class);
+                setGdxApplicationClass(classHolder, context);
+            }
 
             classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
             setClassInterface(classHolder, JSObject.class);

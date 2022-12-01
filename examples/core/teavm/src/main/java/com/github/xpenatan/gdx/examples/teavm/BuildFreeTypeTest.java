@@ -13,7 +13,6 @@ public class BuildFreeTypeTest {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.logClasses = false;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeAtlasTest.class;
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeMetricsTest.class;

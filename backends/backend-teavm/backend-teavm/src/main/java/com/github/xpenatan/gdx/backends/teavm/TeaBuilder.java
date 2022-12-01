@@ -42,10 +42,15 @@ public class TeaBuilder {
     private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
     public static TeaVMTool config(WebBuildConfiguration configuration) {
-        return config(configuration, null);
+        TeaVMTool tool = new TeaVMTool();
+        return config(tool, configuration, null);
     }
 
-    public static TeaVMTool config(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration) {
+        return config(tool, configuration);
+    }
+
+    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration, TeaProgressListener progressListener) {
         addDefaultReflectionClasses();
         for(URL classPath : configuration.getAdditionalClasspath()) {
             try {
@@ -130,8 +135,6 @@ public class TeaBuilder {
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
-        TeaVMTool tool = new TeaVMTool();
-
         boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
         boolean setSourceFilesCopied = false;
@@ -145,9 +148,6 @@ public class TeaBuilder {
         File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";
         boolean setMinifying = configuration.minifying();
-        String mainClass = configuration.getMainClass();
-        TeaClassTransformer.applicationListener = configuration.getApplicationListenerClass();
-
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
         boolean setIncremental = false;
@@ -162,7 +162,12 @@ public class TeaBuilder {
         tool.setFastDependencyAnalysis(false);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
 //		tool.setRuntime(mapRuntime(configuration.getRuntime()));
-        tool.setMainClass(mainClass);
+        String applicationListenerClass = configuration.getApplicationListenerClass();
+        if(applicationListenerClass != null) {
+            String mainClass = configuration.getMainClass();
+            TeaClassTransformer.applicationListener = applicationListenerClass;
+            tool.setMainClass(mainClass);
+        }
         //		tool.getProperties().putAll(profile.getProperties());
         tool.setIncremental(setIncremental);
         tool.setCacheDirectory(setCacheDirectory);
@@ -442,8 +447,6 @@ public class TeaBuilder {
         else if(path.contains("lwjgl"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("jlayer-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("/classes"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("/resources"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
