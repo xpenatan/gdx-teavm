@@ -6,5 +6,6 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-box2d:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-ai:$project.aiVersion"
 }
 
