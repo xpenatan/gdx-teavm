@@ -151,3 +151,19 @@ task runCoreAnnotationTest(dependsOn: [':examples:core:teavm:clean', ':examples:
 }
 
 runCoreAnnotationTest.shouldRunAfter ":examples:core:teavm:clean"
+
+project.ext.aiTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildAITest"
+
+task buildExampleCoreAITest(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build teavm AITest example")
+    mainClass.set(project.aiTestMainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+task runCoreAITest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreAITest', ':examples:core:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run AITest example")
+}
+
+runCoreAITest.shouldRunAfter ":examples:core:teavm:clean"
