@@ -37,6 +37,7 @@ public class GeneratorView {
     private float progress;
     private int loadingColor;
     private int errorColor;
+    private int successColor;
 
     private final ImGuiString gameJarPath;
     private final ImGuiString appClassName;
@@ -51,6 +52,7 @@ public class GeneratorView {
 
         loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
         errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
+        successColor = ImGui.ColorToIntBits(0, 255, 0, 255);
 
         gameJarPath = new ImGuiString(200, "");
         appClassName = new ImGuiString(200, "");
@@ -154,15 +156,18 @@ public class GeneratorView {
 
             ImGui.SameLine();
         }
-
+        float progress = viewModel.getProgress();
         int progressColor = loadingColor;
         if(viewModel.getError()) {
             progressColor = errorColor;
         }
+        else if(progress == 1.0f) {
+            progressColor = successColor;
+        }
 
         ImGui.PushStyleColor(ImGuiCol.PlotHistogram, progressColor);
 
-        ImGui.ProgressBar(viewModel.getProgress());
+        ImGui.ProgressBar(progress);
 
         ImGui.PopStyleColor();
 
