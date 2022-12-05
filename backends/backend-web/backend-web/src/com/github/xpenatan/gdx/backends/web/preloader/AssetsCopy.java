@@ -45,8 +45,6 @@ public class AssetsCopy {
         FileWrapper target = new FileWrapper(assetsOutputPath);
         ArrayList<Asset> assets = new ArrayList<Asset>();
         DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
-        WebBuildConfiguration.log("");
-
         if(assetsPaths != null && assetsPaths.size() > 0) {
             WebBuildConfiguration.log("Copying assets from:");
             for(int i = 0; i < assetsPaths.size(); i++) {
@@ -55,6 +53,9 @@ public class AssetsCopy {
                 WebBuildConfiguration.log(path);
                 copyDirectory(source, target, defaultAssetFilter, assets);
             }
+
+            WebBuildConfiguration.log("to:");
+            WebBuildConfiguration.log(assetsOutputPath);
         }
 
         if(classloader != null && classPathAssetsFiles != null) {
@@ -62,7 +63,7 @@ public class AssetsCopy {
 
             addDirectoryClassPathFiles(classPathAssetsFiles);
             WebBuildConfiguration.log("");
-            WebBuildConfiguration.log("Copying classpath asset from:");
+            WebBuildConfiguration.log("Copying assets from:");
             for(String classpathFile : classPathAssetsFiles) {
                 String path = classpathFile;
                 if(path.startsWith("/") == false) {
@@ -92,7 +93,6 @@ public class AssetsCopy {
             }
         }
 
-        WebBuildConfiguration.log("");
         WebBuildConfiguration.log("to:");
         WebBuildConfiguration.log(assetsOutputPath);
         if(generateTextFile == false) return;

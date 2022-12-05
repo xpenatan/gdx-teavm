@@ -73,7 +73,9 @@ public class TeaBuilder {
         automaticReflection(configuration);
         configClasspath(configuration, acceptedURL, notAcceptedURL);
 
+        WebBuildConfiguration.log("");
         WebBuildConfiguration.log("targetDirectory: " + webappDirectory);
+        WebBuildConfiguration.log("");
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
@@ -291,12 +293,12 @@ public class TeaBuilder {
 
         sortAcceptedClassPath(acceptedURL);
 
-        WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
+        WebBuildConfiguration.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
         }
 
-        WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
+        WebBuildConfiguration.logHeader("IGNORED CLASSPATH");
 
         for(int i = 0; i < notAcceptedURL.size(); i++) {
             WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
@@ -517,9 +519,10 @@ public class TeaBuilder {
     public static void configAssets(WebClassLoader classLoader, WebBuildConfiguration configuration, String webappDirectory, String webappName) {
         ArrayList<String> webappAssetsFiles = new ArrayList<>();
         webappAssetsFiles.add(webappName);
-        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
+        WebBuildConfiguration.logHeader("COPYING ASSETS");
 
-        WebBuildConfiguration.logHeader("Copying Assets");
+        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
+        WebBuildConfiguration.log("");
 
         String scriptsOutputPath = webappDirectory + File.separator + webappName;
         String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
@@ -535,5 +538,6 @@ public class TeaBuilder {
 
         // Copy Scripts
         AssetsCopy.copy(classLoader, classPathScriptFiles, null, scriptsOutputPath, false);
+        WebBuildConfiguration.log("");
     }
 }
