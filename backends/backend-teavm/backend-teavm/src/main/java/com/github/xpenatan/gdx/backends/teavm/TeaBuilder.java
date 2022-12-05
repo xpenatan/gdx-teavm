@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -252,7 +253,10 @@ public class TeaBuilder {
     public static boolean build(TeaVMTool tool, boolean logClassNames) {
         boolean isSuccess = false;
         try {
+            long timeStart = new Date().getTime();
             tool.generate();
+            long timeEnd = new Date().getTime();
+            float seconds = (timeEnd - timeStart) / 1000f;
             ProblemProvider problemProvider = tool.getProblemProvider();
             Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
@@ -294,7 +298,7 @@ public class TeaBuilder {
             }
             else {
                 isSuccess = true;
-                WebBuildConfiguration.logHeader("Build Complete. Total Classes: " + classes.size());
+                WebBuildConfiguration.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
             }
 
             if(logClassNames) {
