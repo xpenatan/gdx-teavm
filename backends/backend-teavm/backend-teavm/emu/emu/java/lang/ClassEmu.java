@@ -1,6 +1,6 @@
 package emu.java.lang;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 

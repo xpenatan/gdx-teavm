@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
 @Emulate(CubemapLoader.class)
 public class CubemapLoaderEmu extends AsynchronousAssetLoader<Cubemap, CubemapLoaderEmu.CubemapParameterEmu> {

@@ -1,6 +1,6 @@
 package com.badlogic.gdx.utils.async;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
 @Emulate(AsyncResult.class)
 public class AsyncResultEmu<T> {

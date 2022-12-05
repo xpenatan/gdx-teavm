@@ -1,6 +1,6 @@
 package com.badlogic.gdx.utils.reflect;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
 /**
  * Provides information about, and access to, an annotation of a field, class or interface.

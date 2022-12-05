@@ -2,7 +2,7 @@ package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
 @Emulate(VertexArray.class)
 public class VertexArrayEmu extends VertexBufferObject {

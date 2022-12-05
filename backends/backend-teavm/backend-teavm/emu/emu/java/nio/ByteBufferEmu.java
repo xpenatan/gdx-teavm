@@ -1,6 +1,6 @@
 package emu.java.nio;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import java.nio.ByteBuffer;
 
 @Emulate(value = ByteBuffer.class, updateCode = true)

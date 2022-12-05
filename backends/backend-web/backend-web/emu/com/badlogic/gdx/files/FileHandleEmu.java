@@ -2,7 +2,7 @@ package com.badlogic.gdx.files;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,6 +1,6 @@
 package java.nio.channels;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
 @Emulate(FileChannel.class)
 public abstract class FileChannelEmu {

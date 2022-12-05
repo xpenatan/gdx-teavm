@@ -3,7 +3,7 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 
 @Emulate(SharedLibraryLoader.class)

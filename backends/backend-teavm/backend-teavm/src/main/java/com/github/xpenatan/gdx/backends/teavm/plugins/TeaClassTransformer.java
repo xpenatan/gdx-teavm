@@ -41,7 +41,7 @@ import com.github.xpenatan.gdx.backends.web.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.ObjectArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLContextAttributesWrapper;

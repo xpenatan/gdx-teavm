@@ -17,7 +17,7 @@ import com.github.xpenatan.gdx.backends.web.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetType;
 import java.nio.ByteBuffer;

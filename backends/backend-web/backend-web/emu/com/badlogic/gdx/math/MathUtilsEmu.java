@@ -1,6 +1,6 @@
 package com.badlogic.gdx.math;
 
-import com.github.xpenatan.gdx.backends.web.emu.Emulate;
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import java.util.Random;
 
 @Emulate(MathUtils.class)
