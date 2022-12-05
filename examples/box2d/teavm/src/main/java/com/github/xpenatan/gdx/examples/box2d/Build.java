@@ -12,8 +12,8 @@ public class Build {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.setApplicationListener(PyramidTest.class);
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        tool.setMainClass(TeaVMLauncher.class.getName());
         TeaBuilder.build(tool);
     }
 }
