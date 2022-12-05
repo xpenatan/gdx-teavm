@@ -327,7 +327,7 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, EXTENSION_IMGUI);
         // Move generic backend to be first
         makeClassPathFirst(acceptedURL, "backend-web");
-        makeClassPathFirst(acceptedURL, "backend-teavm");
+        makeClassPathFirst(acceptedURL, "backend-teavm-core");
     }
 
     private static void makeClassPathFirst(ArrayList<URL> acceptedURL, String module) {
@@ -493,8 +493,12 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.slf4j"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("jDear-Imgui"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
+        else if(path.contains("jParser"))
+            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
-        if(path.contains("backend-teavm-"))
+        if(path.contains("backend-teavm-core"))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_BOX2D_GWT))
             isValid = ACCEPT_STATE.ACCEPT;

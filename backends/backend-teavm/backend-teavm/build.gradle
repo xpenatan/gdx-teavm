@@ -3,10 +3,27 @@ apply plugin: 'java-library'
 
 group = project.groupId
 
-def module_name = "backend-teavm"
+def module_name = "backend-teavm-core"
+def module_native_name = "backend-teavm-native"
 
 sourceSets.main.java.srcDirs = [ "emu", "src/main/java/"]
 sourceSets.main.resources.srcDirs = ["src/main/resources/"]
+
+configurations {
+    includeDep
+    implementation.extendsFrom includeDep
+}
+
+dependencies {
+    includeDep "org.reflections:reflections:$project.reflectionVersion"
+    implementation project(":backends:backend-web:backend-web")
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+}
+
+jar {
+    archivesBaseName = module_name
+}
 
 task sourcesJar(type: Jar) {
     archiveClassifier.set("sources");
@@ -20,18 +37,6 @@ artifacts {
 javadoc {
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
-}
-
-configurations {
-    includeDep
-    implementation.extendsFrom includeDep
-}
-
-dependencies {
-    includeDep "org.reflections:reflections:$project.reflectionVersion"
-    implementation project(":backends:backend-web:backend-web")
-    api fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
 task fromClasses(type: Jar) {
@@ -48,7 +53,7 @@ publishing {
         teavmNatives(MavenPublication) {
             version project.gdxHtmlVersion + project.gdxHtmlType
             project.version = project.gdxHtmlVersion + project.gdxHtmlType
-            artifactId module_name + "-native"
+            artifactId module_native_name
             artifact addNative
         }
         maven(MavenPublication) {
