@@ -8,6 +8,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -20,9 +21,12 @@ public class WebClassLoader extends URLClassLoader {
     private URL[] jarFiles;
     private HashMap<String, ArrayList<String>> fileMap = new HashMap<>();
 
-    public WebClassLoader(URL[] classPaths, ClassLoader parent) {
+    private final ArrayList<String> skipClasses = new ArrayList<>();
+
+    public WebClassLoader(URL[] classPaths, ClassLoader parent, ArrayList<String> skipClasses) {
         super(classPaths, parent);
         this.jarFiles = classPaths;
+        this.skipClasses.addAll(skipClasses);
     }
 
     @Override
@@ -87,6 +91,12 @@ public class WebClassLoader extends URLClassLoader {
         String fixName = name.replace(";.class", ".class");
         fixName = fixName.replace("[L", "");
         fixName = fixName.replace("[", "");
+
+        String toPackage = fixName.replace("/", ".");
+        if(containsSkipClass(toPackage)) {
+            return null;
+        }
+
         for(int i = 0; i < jarFiles.length; i++) {
             URL url = jarFiles[i];
             String path = url.getPath();
@@ -122,6 +132,16 @@ public class WebClassLoader extends URLClassLoader {
         }
 
         return null;
+    }
+
+    private boolean containsSkipClass(String clazz) {
+        for(int i = 0; i < skipClasses.size(); i++) {
+            String name = skipClasses.get(i);
+            if(clazz.contains(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ArrayList<String> getAllFiles(String path) {

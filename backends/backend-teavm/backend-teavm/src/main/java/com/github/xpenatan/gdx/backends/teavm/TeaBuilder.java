@@ -4,6 +4,7 @@ import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebClassLoader;
+import com.github.xpenatan.gdx.backends.web.emu.SkipClass;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
 import java.io.File;
 import java.io.IOException;
@@ -12,11 +13,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.reflections.Reflections;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
@@ -78,7 +82,17 @@ public class TeaBuilder {
         WebBuildConfiguration.log("");
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
-        WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
+
+        Reflections reflections = new Reflections();
+        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(SkipClass.class);
+
+        ArrayList<String> skipClasses = new ArrayList<>();
+        Iterator<Class<?>> iterator = typesAnnotatedWith.stream().iterator();
+        while(iterator.hasNext()) {
+            Class<?> skipClass = iterator.next();
+            skipClasses.add(skipClass.getName());
+        }
+        WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
         configAssets(classLoader, configuration, webappDirectory, webappName);
