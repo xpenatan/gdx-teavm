@@ -47,7 +47,7 @@ public class AssetsCopy {
         DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
         WebBuildConfiguration.log("");
 
-        if(assetsPaths != null) {
+        if(assetsPaths != null && assetsPaths.size() > 0) {
             WebBuildConfiguration.log("Copying assets from:");
             for(int i = 0; i < assetsPaths.size(); i++) {
                 String path = assetsPaths.get(i).getAbsolutePath();
