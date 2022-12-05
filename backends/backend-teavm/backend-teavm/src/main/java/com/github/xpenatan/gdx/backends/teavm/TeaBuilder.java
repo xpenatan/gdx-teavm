@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -35,6 +34,14 @@ import org.teavm.vm.TeaVMProgressListener;
  * @author xpenatan
  */
 public class TeaBuilder {
+
+    enum ACCEPT_STATE {
+        ACCEPT, NOT_ACCEPT, NO_MATCH
+    }
+
+    public interface TeaProgressListener {
+        void onProgress(float progress);
+    }
 
     private static final String EXTENSION_FREETYPE = "gdx-freetype-teavm";
     private static final String EXTENSION_BULLET = "gdx-bullet-teavm";
@@ -57,192 +64,23 @@ public class TeaBuilder {
     }
 
     public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration, TeaProgressListener progressListener) {
-        addDefaultReflectionClasses();
-        for(URL classPath : configuration.getAdditionalClasspath()) {
-            try {
-                ZipInputStream zip = new ZipInputStream(classPath.openStream());
-                WebBuildConfiguration.logHeader("Automatic Reflection Include");
-                for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                    if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-                        // This ZipEntry represents a class. Now, what class does it represent?
-                        String className = entry.getName().replace('/', '.'); // including ".class"
-                        String name = className.substring(0, className.length() - ".class".length());
-                        boolean add = false;
-                        for(String toInclude : configuration.getReflectionInclude()) {
-                            if(name.startsWith(toInclude)) add = true;
-                        }
-                        for(String toExclude : configuration.getReflectionExclude()) {
-                            if(name.startsWith(toExclude)) add = false;
-                        }
-
-                        if(add) {
-                            WebBuildConfiguration.log("Include class: " + name);
-                            TeaReflectionSupplier.addReflectionClass(name);
-                        }
-                    }
-                }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String pathSeparator = System.getProperty("path.separator");
-        String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
-
         ArrayList<URL> acceptedURL = new ArrayList<>();
         ArrayList<URL> notAcceptedURL = new ArrayList<>();
+        String webappDirectory = configuration.getWebAppPath();
+        String webappName = "webapp";
 
-        for(int i = 0; i < classPathEntries.length; i++) {
-            String path = classPathEntries[i];
-            File file = new File(path);
-            path = path.replace("\\", "/");
-            URL url = null;
-            try {
-                url = file.toURI().toURL();
-            }
-            catch(MalformedURLException e) {
-                e.printStackTrace();
-            }
-            ACCEPT_STATE acceptState = acceptPath(path);
-            boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
-            if(accept || acceptState == ACCEPT_STATE.NO_MATCH)
-                accept = configuration.acceptClasspath(url);
+        addDefaultReflectionClasses();
+        automaticReflection(configuration);
+        configClasspath(configuration, acceptedURL, notAcceptedURL);
 
-            if(accept)
-                acceptedURL.add(url);
-            else
-                notAcceptedURL.add(url);
-        }
-
-        acceptedURL.addAll(configuration.getAdditionalClasspath());
-
-        sortAcceptedClassPath(acceptedURL);
-
-        WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
-
-        for(int i = 0; i < acceptedURL.size(); i++) {
-            WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
-        }
-
-        WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
-
-        for(int i = 0; i < notAcceptedURL.size(); i++) {
-            WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
-        }
-
-        int size = acceptedURL.size();
-
-        if(size <= 0) {
-            System.err.println("No urls found");
-            return null;
-        }
+        WebBuildConfiguration.log("targetDirectory: " + webappDirectory);
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
-        boolean setDebugInformationGenerated = false;
-        boolean setSourceMapsFileGenerated = false;
-        boolean setSourceFilesCopied = false;
+        configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
+        configAssets(classLoader, configuration, webappDirectory, webappName);
 
-        String webappDirectory = configuration.getWebAppPath();
-
-        String webappName = "webapp";
-
-        System.err.println("targetDirectory: " + webappDirectory);
-
-        File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
-        String setTargetFileName = "app.js";
-        boolean setMinifying = configuration.minifying();
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
-        boolean setIncremental = false;
-
-        tool.setClassLoader(classLoader);
-        tool.setDebugInformationGenerated(setDebugInformationGenerated);
-        tool.setSourceMapsFileGenerated(setSourceMapsFileGenerated);
-        tool.setSourceFilesCopied(setSourceFilesCopied);
-        tool.setTargetDirectory(setTargetDirectory);
-        tool.setTargetFileName(setTargetFileName);
-        tool.setObfuscated(setMinifying);
-        tool.setFastDependencyAnalysis(false);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
-//		tool.setRuntime(mapRuntime(configuration.getRuntime()));
-        String applicationListenerClass = configuration.getApplicationListenerClass();
-        if(applicationListenerClass != null) {
-            String mainClass = configuration.getMainClass();
-            TeaClassTransformer.applicationListener = applicationListenerClass;
-            tool.setMainClass(mainClass);
-        }
-        //		tool.getProperties().putAll(profile.getProperties());
-        tool.setIncremental(setIncremental);
-        tool.setCacheDirectory(setCacheDirectory);
-        tool.setStrict(false);
-        tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
-
-        List<String> classesToPreserve = tool.getClassesToPreserve();
-
-        ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
-        List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
-        configClassesToPreserve.addAll(reflectionClasses);
-        ArrayList<String> preserveClasses = classLoader.getPreserveClasses(configClassesToPreserve);
-        classesToPreserve.addAll(preserveClasses);
-
-        Properties properties = tool.getProperties();
-
-        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
-        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
-
-        ArrayList<String> webappAssetsFiles = new ArrayList<>();
-        webappAssetsFiles.add(webappName);
-        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
-
-        WebBuildConfiguration.logHeader("Copying Assets");
-
-        String scriptsOutputPath = webappDirectory + File.separator + webappName;
-        String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
-        ArrayList<File> assetsPaths = new ArrayList<>();
-        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
-        ArrayList<String> classPathScriptFiles = new ArrayList<>();
-        assetsDefaultClasspath(classPathAssetsFiles);
-        scriptsDefault(classPathScriptFiles);
-        ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
-        classPathAssetsFiles.addAll(additionalAssetClasspath);
-        boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
-        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
-
-        // Copy Scripts
-        AssetsCopy.copy(classLoader, classPathScriptFiles, null, scriptsOutputPath, false);
-        tool.setProgressListener(new TeaVMProgressListener() {
-            TeaVMPhase phase = null;
-
-            @Override
-            public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
-                if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    WebBuildConfiguration.logHeader("DEPENDENCY_ANALYSIS");
-                }
-                else if(teaVMPhase == TeaVMPhase.COMPILING) {
-                    WebBuildConfiguration.logInternalNewLine("");
-                    WebBuildConfiguration.logHeader("COMPILING");
-                }
-                phase = teaVMPhase;
-                return TeaVMProgressFeedback.CONTINUE;
-            }
-
-            @Override
-            public TeaVMProgressFeedback progressReached(int i) {
-                if(phase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    WebBuildConfiguration.logInternal("|");
-                }
-                if(phase == TeaVMPhase.COMPILING) {
-                    if(progressListener != null) {
-                        float progress = i / 1000f;
-                        progressListener.onProgress(progress);
-                    }
-                }
-                return TeaVMProgressFeedback.CONTINUE;
-            }
-        });
         return tool;
     }
 
@@ -317,6 +155,16 @@ public class TeaBuilder {
         return isSuccess;
     }
 
+    private static void preserveClasses(TeaVMTool tool, WebBuildConfiguration configuration, WebClassLoader classLoader) {
+        //Keep reflection classes
+        List<String> classesToPreserve = tool.getClassesToPreserve();
+        ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
+        List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
+        configClassesToPreserve.addAll(reflectionClasses);
+        ArrayList<String> preserveClasses = classLoader.getPreserveClasses(configClassesToPreserve);
+        classesToPreserve.addAll(preserveClasses);
+    }
+
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
         // The idea here is to replace native java classes with the emulated java class.
         // 0 - TeaVM backend - Contains all teavm api stuff to make it work.
@@ -342,6 +190,37 @@ public class TeaBuilder {
                 acceptedURL.remove(i);
                 acceptedURL.add(0, url);
                 break;
+            }
+        }
+    }
+
+    private static void automaticReflection(WebBuildConfiguration configuration) {
+        for(URL classPath : configuration.getAdditionalClasspath()) {
+            try {
+                ZipInputStream zip = new ZipInputStream(classPath.openStream());
+                WebBuildConfiguration.logHeader("Automatic Reflection Include");
+                for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                    if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                        // This ZipEntry represents a class. Now, what class does it represent?
+                        String className = entry.getName().replace('/', '.'); // including ".class"
+                        String name = className.substring(0, className.length() - ".class".length());
+                        boolean add = false;
+                        for(String toInclude : configuration.getReflectionInclude()) {
+                            if(name.startsWith(toInclude)) add = true;
+                        }
+                        for(String toExclude : configuration.getReflectionExclude()) {
+                            if(name.startsWith(toExclude)) add = false;
+                        }
+
+                        if(add) {
+                            WebBuildConfiguration.log("Include class: " + name);
+                            TeaReflectionSupplier.addReflectionClass(name);
+                        }
+                    }
+                }
+            }
+            catch(IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -382,6 +261,53 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.renderers");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math.Interpolation");
         TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
+    }
+
+    private static void configClasspath(WebBuildConfiguration configuration, ArrayList<URL> acceptedURL, ArrayList<URL> notAcceptedURL) {
+        String pathSeparator = System.getProperty("path.separator");
+        String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
+        for(int i = 0; i < classPathEntries.length; i++) {
+            String path = classPathEntries[i];
+            File file = new File(path);
+            path = path.replace("\\", "/");
+            URL url = null;
+            try {
+                url = file.toURI().toURL();
+            }
+            catch(MalformedURLException e) {
+                e.printStackTrace();
+            }
+            ACCEPT_STATE acceptState = acceptPath(path);
+            boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
+            if(accept || acceptState == ACCEPT_STATE.NO_MATCH)
+                accept = configuration.acceptClasspath(url);
+
+            if(accept)
+                acceptedURL.add(url);
+            else
+                notAcceptedURL.add(url);
+        }
+        acceptedURL.addAll(configuration.getAdditionalClasspath());
+
+        sortAcceptedClassPath(acceptedURL);
+
+        WebBuildConfiguration.logHeader("Accepted Libs ClassPath Order");
+        for(int i = 0; i < acceptedURL.size(); i++) {
+            WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
+        }
+
+        WebBuildConfiguration.logHeader("Not Accepted Libs ClassPath");
+
+        for(int i = 0; i < notAcceptedURL.size(); i++) {
+            WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
+        }
+
+        int size = acceptedURL.size();
+
+        if(size <= 0) {
+            System.err.println("No urls found");
+            throw new RuntimeException("No Urls Found");
+        }
     }
 
     private static void assetsDefaultClasspath(ArrayList<String> filePath) {
@@ -518,11 +444,96 @@ public class TeaBuilder {
         return isValid;
     }
 
-    enum ACCEPT_STATE {
-        ACCEPT, NOT_ACCEPT, NO_MATCH
+    private static void configTool(TeaVMTool tool, WebClassLoader classLoader, WebBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {
+        boolean setDebugInformationGenerated = false;
+        boolean setSourceMapsFileGenerated = false;
+        boolean setSourceFilesCopied = false;
+
+        File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
+        String setTargetFileName = "app.js";
+        boolean setMinifying = configuration.minifying();
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
+        boolean setIncremental = false;
+
+        tool.setClassLoader(classLoader);
+        tool.setDebugInformationGenerated(setDebugInformationGenerated);
+        tool.setSourceMapsFileGenerated(setSourceMapsFileGenerated);
+        tool.setSourceFilesCopied(setSourceFilesCopied);
+        tool.setTargetDirectory(setTargetDirectory);
+        tool.setTargetFileName(setTargetFileName);
+        tool.setObfuscated(setMinifying);
+        tool.setFastDependencyAnalysis(false);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
+        String applicationListenerClass = configuration.getApplicationListenerClass();
+        if(applicationListenerClass != null) {
+            String mainClass = configuration.getMainClass();
+            TeaClassTransformer.applicationListener = applicationListenerClass;
+            tool.setMainClass(mainClass);
+        }
+        tool.setIncremental(setIncremental);
+        tool.setCacheDirectory(setCacheDirectory);
+        tool.setStrict(false);
+        tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
+        tool.setProgressListener(new TeaVMProgressListener() {
+            TeaVMPhase phase = null;
+
+            @Override
+            public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
+                if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
+                    WebBuildConfiguration.logHeader("DEPENDENCY_ANALYSIS");
+                }
+                else if(teaVMPhase == TeaVMPhase.COMPILING) {
+                    WebBuildConfiguration.logInternalNewLine("");
+                    WebBuildConfiguration.logHeader("COMPILING");
+                }
+                phase = teaVMPhase;
+                return TeaVMProgressFeedback.CONTINUE;
+            }
+
+            @Override
+            public TeaVMProgressFeedback progressReached(int i) {
+                if(phase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
+                    WebBuildConfiguration.logInternal("|");
+                }
+                if(phase == TeaVMPhase.COMPILING) {
+                    if(progressListener != null) {
+                        float progress = i / 1000f;
+                        progressListener.onProgress(progress);
+                    }
+                }
+                return TeaVMProgressFeedback.CONTINUE;
+            }
+        });
+        preserveClasses(tool, configuration, classLoader);
+
+        //TODO Remove
+//        Properties properties = tool.getProperties();
+//        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
+//        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
+
     }
 
-    public interface TeaProgressListener {
-        void onProgress(float progress);
+    public static void configAssets(WebClassLoader classLoader, WebBuildConfiguration configuration, String webappDirectory, String webappName) {
+        ArrayList<String> webappAssetsFiles = new ArrayList<>();
+        webappAssetsFiles.add(webappName);
+        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
+
+        WebBuildConfiguration.logHeader("Copying Assets");
+
+        String scriptsOutputPath = webappDirectory + File.separator + webappName;
+        String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
+        ArrayList<File> assetsPaths = new ArrayList<>();
+        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
+        ArrayList<String> classPathScriptFiles = new ArrayList<>();
+        assetsDefaultClasspath(classPathAssetsFiles);
+        scriptsDefault(classPathScriptFiles);
+        ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
+        classPathAssetsFiles.addAll(additionalAssetClasspath);
+        boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
+        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
+
+        // Copy Scripts
+        AssetsCopy.copy(classLoader, classPathScriptFiles, null, scriptsOutputPath, false);
     }
 }
