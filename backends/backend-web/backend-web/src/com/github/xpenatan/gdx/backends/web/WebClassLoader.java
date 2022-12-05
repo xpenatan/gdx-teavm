@@ -41,39 +41,41 @@ public class WebClassLoader extends URLClassLoader {
             String path = url.getPath();
             String finalFile = "jar:file:" + path + "!/";
             File file = new File(path);
-            if(!file.isDirectory()) {
-                try {
-                    JarFile jarFile = new JarFile(file);
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    while(entries.hasMoreElements()) {
-                        JarEntry jarEntry = entries.nextElement();
-                        if(!jarEntry.isDirectory()) {
-                            String jarEntryName = jarEntry.getName();
-                            if(jarEntryName.equals(fixName)) {
-                                String filee = finalFile + jarEntryName;
-                                return new URL(filee);
+            if(file.exists()) {
+                if(!file.isDirectory()) {
+                    try {
+                        JarFile jarFile = new JarFile(file);
+                        Enumeration<JarEntry> entries = jarFile.entries();
+                        while(entries.hasMoreElements()) {
+                            JarEntry jarEntry = entries.nextElement();
+                            if(!jarEntry.isDirectory()) {
+                                String jarEntryName = jarEntry.getName();
+                                if(jarEntryName.equals(fixName)) {
+                                    String filee = finalFile + jarEntryName;
+                                    return new URL(filee);
+                                }
                             }
                         }
                     }
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                try {
-                    ArrayList<String> allClasses = getAllFiles(path);
-                    String resName = fixName.replace("\\", "/");
-                    for(int j = 0; j < allClasses.size(); j++) {
-                        String className = allClasses.get(j);
-                        if(className.contains(resName)) {
-                            String filee = path + className;
-                            return new File(filee).toURI().toURL();
-                        }
+                    catch(Exception e) {
+                        e.printStackTrace();
                     }
                 }
-                catch(MalformedURLException e) {
-                    e.printStackTrace();
+                else {
+                    try {
+                        ArrayList<String> allClasses = getAllFiles(path);
+                        String resName = fixName.replace("\\", "/");
+                        for(int j = 0; j < allClasses.size(); j++) {
+                            String className = allClasses.get(j);
+                            if(className.contains(resName)) {
+                                String filee = path + className;
+                                return new File(filee).toURI().toURL();
+                            }
+                        }
+                    }
+                    catch(MalformedURLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -89,25 +91,27 @@ public class WebClassLoader extends URLClassLoader {
             URL url = jarFiles[i];
             String path = url.getPath();
             File file = new File(path);
-            if(!file.isDirectory()) {
-                try {
-                    JarFile jarFile = new JarFile(file);
-                    ZipEntry entry = jarFile.getEntry(fixName);
-                    if(entry != null) {
-                        return jarFile.getInputStream(entry);
+            if(file.exists()) {
+                if(!file.isDirectory()) {
+                    try {
+                        JarFile jarFile = new JarFile(file);
+                        ZipEntry entry = jarFile.getEntry(fixName);
+                        if(entry != null) {
+                            return jarFile.getInputStream(entry);
+                        }
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
                     }
                 }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                ArrayList<String> allClasses = getAllFiles(path);
-                String resName = fixName.replace("\\", "/");
-                for(int j = 0; j < allClasses.size(); j++) {
-                    String className = allClasses.get(j);
-                    if(className.contains(resName)) {
-                        return super.getResourceAsStream(name);
+                else {
+                    ArrayList<String> allClasses = getAllFiles(path);
+                    String resName = fixName.replace("\\", "/");
+                    for(int j = 0; j < allClasses.size(); j++) {
+                        String className = allClasses.get(j);
+                        if(className.contains(resName)) {
+                            return super.getResourceAsStream(name);
+                        }
                     }
                 }
             }
@@ -178,33 +182,35 @@ public class WebClassLoader extends URLClassLoader {
             URL url = jarFiles[i];
             String path = url.getPath();
             File file = new File(path);
-            if(!file.isDirectory()) {
-                try {
-                    JarFile jarFile = new JarFile(file);
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    while(entries.hasMoreElements()) {
-                        JarEntry jarEntry = entries.nextElement();
-                        String name = jarEntry.getName();
+            if(file.exists()) {
+                if(!file.isDirectory()) {
+                    try {
+                        JarFile jarFile = new JarFile(file);
+                        Enumeration<JarEntry> entries = jarFile.entries();
+                        while(entries.hasMoreElements()) {
+                            JarEntry jarEntry = entries.nextElement();
+                            String name = jarEntry.getName();
+                            if(name.startsWith(packagePath)) {
+                                if(name.endsWith(".class")) {
+                                    String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
+                                    array.add(className);
+                                }
+                            }
+                        }
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    ArrayList<String> allClasses = getAllFiles(path);
+                    for(int j = 0; j < allClasses.size(); j++) {
+                        String name = allClasses.get(j);
                         if(name.startsWith(packagePath)) {
                             if(name.endsWith(".class")) {
                                 String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
                                 array.add(className);
                             }
-                        }
-                    }
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                ArrayList<String> allClasses = getAllFiles(path);
-                for(int j = 0; j < allClasses.size(); j++) {
-                    String name = allClasses.get(j);
-                    if(name.startsWith(packagePath)) {
-                        if(name.endsWith(".class")) {
-                            String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
-                            array.add(className);
                         }
                     }
                 }
