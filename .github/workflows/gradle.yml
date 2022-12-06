@@ -19,6 +19,8 @@ jobs:
         java-version: 11
     - name: Change wrapper permissions
       run: chmod +x ./gradlew
+    - name: Clean Project
+      run: ./gradlew clean
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
     - name: Build Project
