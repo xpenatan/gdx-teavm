@@ -1,7 +1,7 @@
 # Gdx-teaVM
 ![Build](https://github.com/xpenatan/gdx-html5-tools/workflows/Build/badge.svg)
 
-Gdx-teaVM is a solution to run [libgdx](https://github.com/libgdx/libgdx) games in a web browser. [TeaVM](https://github.com/konsoletyper/teavm) is tool to convert java/kotlin bytecode to javascript. It's a WIP só not everything will work.
+Gdx-teaVM is a solution to run [libgdx](https://github.com/libgdx/libgdx) games in a web browser. [TeaVM](https://github.com/konsoletyper/teavm) is tool to convert java/kotlin bytecode to javascript. It's a WIP so not everything will work.
 
 Note:
 * Reflection support is very small so only reflection used in [ReflectionTest](https://github.com/xpenatan/gdx-teavm/blob/master/examples/core/core/src/main/java/com/github/xpenatan/gdx/examples/tests/ReflectionTest.java) and teaVM [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
