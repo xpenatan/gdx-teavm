@@ -21,7 +21,7 @@ jobs:
       run: chmod +x ./gradlew
     - name: Turn off the gradle Daemon
       shell: bash
-      run: ./gradle --stop
+      run: ./gradlew --stop
     - name: Cleanup the Gradle cache
       shell: bash
       run: |
