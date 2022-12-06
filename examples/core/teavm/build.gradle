@@ -21,7 +21,7 @@ dependencies {
 
     // Or source projects
     implementation project(":backends:backend-web:backend-web")
-    implementation project(":backends:backend-teavm:backend-teavm")
+    implementation project(":backends:backend-teavm:backend-teavm-core")
     implementation project(":extensions:gdx-freetype-teavm")
 }
 

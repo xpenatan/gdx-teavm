@@ -1,5 +1,5 @@
 include ":backends:backend-web:backend-web"
-include ":backends:backend-teavm:backend-teavm"
+include ":backends:backend-teavm:backend-teavm-core"
 
 include ":extensions:gdx-freetype-teavm"
 include ":extensions:gdx-bullet:gdx-bullet-base"
