@@ -2,10 +2,12 @@ package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
+import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.teavm.launcher.UITestLauncher;
 import java.io.File;
 import org.teavm.tooling.TeaVMTool;
 
+@SkipClass
 public class BuildUITest {
 
     public static void main(String[] args) {
