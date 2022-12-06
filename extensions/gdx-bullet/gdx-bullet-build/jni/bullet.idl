@@ -768,6 +768,7 @@ interface btGeneric6DofSpring2Constraint {
     void setEquilibriumPoint();
     void setEquilibriumPoint(long index);
     void setEquilibriumPoint(long index, float val);
+    void setFrames([Const, Ref]btTransform frameA, [Const, Ref]btTransform frameB);
 };
 btGeneric6DofSpring2Constraint implements btTypedConstraint;
 
