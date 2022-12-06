@@ -745,8 +745,8 @@ interface btTypedConstraint {
 	void enableFeedback(boolean needsFeedback);
 	[Const]float getBreakingImpulseThreshold();
 	void setBreakingImpulseThreshold([Const]float threshold);
-	[Ref]btRigidBody getRigidBodyA();
-	[Ref]btRigidBody getRigidBodyB();
+	[Const, Ref]btRigidBody getRigidBodyA();
+	[Const, Ref]btRigidBody getRigidBodyB();
 };
 
 interface btGeneric6DofSpring2Constraint {
