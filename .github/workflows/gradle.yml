@@ -19,20 +19,8 @@ jobs:
         java-version: 11
     - name: Change wrapper permissions
       run: chmod +x ./gradlew
-    - name: Turn off the gradle Daemon
-      shell: bash
-      run: ./gradlew --stop
-    - name: Cleanup the Gradle cache
-      shell: bash
-      run: |
-        rm -f ~/.gradle/caches/modules-2/modules-2.lock
-        rm -f ~/.gradle/caches/modules-2/gc.properties
-    - name: Clean Project
-      run: ./gradlew clean
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
-    - name: Build Project
-      run: ./gradlew build
     - name: Upload to repository
       run: ./gradlew publish
       env:
