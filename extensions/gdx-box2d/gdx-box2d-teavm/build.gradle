@@ -40,7 +40,7 @@ javadoc {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives  sourcesJar
 }
 
 publishing {
