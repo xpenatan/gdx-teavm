@@ -6,7 +6,7 @@ Gdx-teaVM is a solution to run [libgdx](https://github.com/libgdx/libgdx) games 
 Note:
 * Reflection support is very small so only reflection used in [ReflectionTest](https://github.com/xpenatan/gdx-teavm/blob/master/examples/core/core/src/main/java/com/github/xpenatan/gdx/examples/tests/ReflectionTest.java) and teaVM [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
 * teaVM does not support every class methods from java package. For example, if your code or a lib call a method from Class that it is not [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib/java/lang/TClass.java), you will get errors. 
-
+* Kotlin [discussions](https://github.com/libktx/ktx/discussions/443).
 
 ## TeaVM Examples:
 * [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
@@ -19,7 +19,7 @@ Note:
 ## How it works:
 The backend-web was created with the idea of code reuse in mind so multiple javascript backends can use it, it only contains java code. backend-teavm contains teaVM code to generate libgdx games to javascript.
 
-Like GDX GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript. Some backend code is ported from Gdx-gwt-backend
+Like GDX GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript. Some backend code was ported from gdx-gwt-backend.
 
 Box2d, Bullet and freetype extension use emscripten to convert C++ to Javascript/WebAssembly. Box2d and Bullet use a custom parser ([jParser](https://github.com/xpenatan/jParser)) to generate java class to bind javascript code.
 
