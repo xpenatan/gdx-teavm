@@ -21,6 +21,8 @@ jobs:
       run: chmod +x ./gradlew
     - name: Generate Native Project
       run: ./gradlew generateNativeProject
+    - name: Build Project
+      run: ./gradlew build
     - name: Upload to repository
       run: ./gradlew publish
       env:
