@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.examples.box2d;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.backends.web.emu.SkipClass;
+import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
 import java.io.File;
 import org.teavm.tooling.TeaVMTool;
 
