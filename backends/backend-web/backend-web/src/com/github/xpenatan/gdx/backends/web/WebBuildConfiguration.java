@@ -40,7 +40,13 @@ public abstract class WebBuildConfiguration {
         return true;
     }
 
+    public abstract String getHtmlWidth();
+
+    public abstract String getHtmlHeight();
+
     public abstract String getMainClass();
+
+    public abstract String getMainClassArgs();
 
     public abstract String getApplicationListenerClass();
 

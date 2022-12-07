@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
@@ -539,6 +540,17 @@ public class TeaBuilder {
 
         String scriptsOutputPath = webappDirectory + File.separator + webappName;
         String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
+
+        File indexFile = new File(scriptsOutputPath + File.separator + "index.html");
+        FileHandle handler = new FileHandle(indexFile);
+        String indexHtmlStr = handler.readString();
+
+        indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
+        indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
+        indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
+
+        handler.writeString(indexHtmlStr, false);
+
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         ArrayList<String> classPathScriptFiles = new ArrayList<>();

@@ -23,9 +23,30 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public final ArrayList<String> reflectionExclude = new ArrayList<>();
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
+    public String mainClass = TeaLauncher.class.getName();
+    public String mainClassArgs = "";
+
+    public int htmlWidth = 800;
+    public int htmlHeight = 600;
+
+    @Override
+    public String getHtmlWidth() {
+        return String.valueOf(htmlWidth);
+    }
+
+    @Override
+    public String getHtmlHeight() {
+        return String.valueOf(htmlHeight);
+    }
+
     @Override
     public String getMainClass() {
-        return TeaLauncher.class.getName();
+        return mainClass;
+    }
+
+    @Override
+    public String getMainClassArgs() {
+        return mainClassArgs;
     }
 
     @Override
