@@ -16,6 +16,8 @@ public class GeneratorViewModel {
 
     private float progress;
 
+    public boolean logClassName = false;
+
     public GeneratorViewModel() {
         server = new JettyServer();
     }
@@ -84,7 +86,7 @@ public class GeneratorViewModel {
                         boolean serverRunning = server.isServerRunning();
                         stopLocalServer();
 
-                        boolean isSuccess = TeaBuilder.build(tool);
+                        boolean isSuccess = TeaBuilder.build(tool, logClassName);
                         isError = !isSuccess;
 
                         isCompiling = false;
