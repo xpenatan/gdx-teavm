@@ -3,7 +3,7 @@ apply plugin: 'java-library'
 
 group = project.groupId
 
-def module_name = "backend-teavm-core"
+def module_name = "backend-teavm"
 
 sourceSets.main.java.srcDirs = [ "emu", "src/main/java/"]
 sourceSets.main.resources.srcDirs = ["src/main/resources/"]

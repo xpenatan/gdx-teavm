@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation project(":backends:backend-web:backend-web")
-    implementation project(":backends:backend-teavm:backend-teavm-core")
+    implementation project(":backends:backend-teavm:backend-teavm")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
