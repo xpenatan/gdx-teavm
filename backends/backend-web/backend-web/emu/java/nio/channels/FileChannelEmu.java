@@ -2,7 +2,7 @@ package java.nio.channels;
 
 import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 
-@Emulate(FileChannel.class)
+@Emulate(valueStr = "java.nio.channels.FileChannel")
 public abstract class FileChannelEmu {
 
     public static class MapMode {
