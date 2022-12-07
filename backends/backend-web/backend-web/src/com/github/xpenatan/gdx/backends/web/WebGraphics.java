@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.web.gl.WebGLRenderingContextWrapper;
 
@@ -47,7 +48,16 @@ public class WebGraphics implements Graphics {
 
         if(config.width >= 0 || config.height >= 0) {
             // update canvas size
-            setWindowedMode(config.width, config.height);
+//            setWindowedMode(config.width, config.height);
+            if (config.isFixedSizeApplication()) {
+                setCanvasSize(config.width, config.height);
+            } else {
+                WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
+                int width = currentWindow.getClientWidth() - config.padHorizontal;
+                int height = currentWindow.getClientHeight() - config.padVertical;
+                double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
+                setCanvasSize((int)(density * width), (int)(density * height));
+            }
         }
     }
 
@@ -248,23 +258,33 @@ public class WebGraphics implements Graphics {
     @Override
     public boolean setWindowedMode(int width, int height) {
         if(isFullscreen()) jsGraphics.exitFullscreen();
-
-        if(width > 0 && height > 0) {
+        // don't set canvas for resizable applications, resize handler will do it
+        if (!config.isAutoSizeApplication()) {
             setCanvasSize(width, height);
         }
-        else {
-            WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
-            int newWidth = currentWindow.getClientWidth();
-            int newHeight = currentWindow.getClientHeight();
-            setCanvasSize(newWidth, newHeight);
-        }
+
+//        if(width > 0 && height > 0) {
+//            setCanvasSize(width, height);
+//        }
+//        else {
+//            WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
+//            int newWidth = currentWindow.getClientWidth();
+//            int newHeight = currentWindow.getClientHeight();
+//            setCanvasSize(newWidth, newHeight);
+//        }
         return true;
     }
 
     void setCanvasSize(int width, int height) {
-        double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
-        canvas.setWidth((int)(width * density));
-        canvas.setHeight((int)(height * density));
+        canvas.setWidth(width);
+        canvas.setHeight(height);
+        if (config.usePhysicalPixels) {
+            //TODO Not tested
+            double density = jsGraphics.getNativeScreenDensity();
+            StyleWrapper style = canvas.getStyle();
+            style.setProperty("width", width / density + StyleWrapper.Unit.PX.getType());
+            style.setProperty("height", height / density + StyleWrapper.Unit.PX.getType());
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.box2d;
+package com.github.xpenatan.gdx.examples.bullet;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebApplication;
@@ -9,6 +9,6 @@ public class TeaVMLauncher {
         WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
-        new WebApplication(new PyramidTest(), config);
+        new WebApplication(new BulletTest(), config);
     }
 }

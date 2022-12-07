@@ -1,12 +1,14 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
 import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.events.EventListener;
 
 /**
  * @author xpenatan
@@ -60,5 +62,11 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
     @Override
     public int getClientHeight() {
         return window.getDocument().getDocumentElement().getClientHeight();
+    }
+
+    @Override
+    public void addEventListener(String type, EventListenerWrapper listener) {
+        EventListener<?> eListener = (EventListener<?>)listener;
+        window.addEventListener(type, eListener);
     }
 }

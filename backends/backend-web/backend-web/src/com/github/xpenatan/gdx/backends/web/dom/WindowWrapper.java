@@ -16,4 +16,6 @@ public interface WindowWrapper {
     public int getClientWidth();
 
     public int getClientHeight();
+
+    public void addEventListener(String type, EventListenerWrapper listener);
 }

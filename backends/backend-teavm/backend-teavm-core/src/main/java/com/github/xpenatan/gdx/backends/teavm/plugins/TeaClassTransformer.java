@@ -22,6 +22,7 @@ import com.github.xpenatan.gdx.backends.web.dom.MouseEventWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.ProgressEventWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.TouchEventWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.TouchListWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.TouchWrapper;
@@ -336,6 +337,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "getScrollLeft", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getClientWidth", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getClientHeight", null);
+            setMethodAnnotation(classHolder, JSProperty.class, "getStyle", null);
 
             classHolder = findClassHolder(cls, context, HTMLElementWrapper.class);
             setClassInterface(classHolder, JSObject.class);
@@ -406,6 +408,9 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "setLineJoin", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getMiterLimit", null);
             setMethodAnnotation(classHolder, JSProperty.class, "setMiterLimit", null);
+
+            classHolder = findClassHolder(cls, context, StyleWrapper.class);
+            setClassInterface(classHolder, JSObject.class);
 
             // Hack to make it compile. For some reason teavm add MapNode reference class but it does not even exist in js file
             fixHack(cls, context);

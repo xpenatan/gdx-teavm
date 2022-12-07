@@ -2,10 +2,12 @@ package com.github.xpenatan.gdx.examples.bullet;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
+import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.tooling.TeaVMTool;
 
+@SkipClass
 public class Build {
 
     public static void main(String[] args) throws IOException {
@@ -13,8 +15,8 @@ public class Build {
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File(".").getCanonicalPath();
         teaBuildConfiguration.obfuscate = false;
-        teaBuildConfiguration.setApplicationListener( BulletTest.class);
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        tool.setMainClass(TeaVMLauncher.class.getName());
         TeaBuilder.build(tool);
     }
 }

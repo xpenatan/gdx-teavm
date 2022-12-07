@@ -14,6 +14,8 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.xpenatan.gdx.backends.web.dom.EventListenerWrapper;
+import com.github.xpenatan.gdx.backends.web.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.WindowWrapper;
@@ -136,6 +138,32 @@ public class WebApplication implements Application, Runnable {
         Gdx.files = files;
 
         window.requestAnimationFrame(this);
+
+        if(config.isAutoSizeApplication()) {
+            window.addEventListener("resize", new EventListenerWrapper() {
+                @Override
+                public void handleEvent(EventWrapper evt) {
+                    int width = window.getClientWidth() - config.padHorizontal;
+                    int height = window.getClientHeight() - config.padVertical;
+
+                    if (width <= 0 || height <= 0) {
+                        return;
+                    }
+
+                    if (graphics != null) {
+                        // event calls us with logical pixel size, so if we use physical pixels internally,
+                        // we need to convert them
+                        if (config.usePhysicalPixels) {
+                            WebJSHelper webJSHelper = WebJSHelper.get();
+                            double density = webJSHelper.getGraphics().getNativeScreenDensity();
+                            width = (int)(width * density);
+                            height = (int)(height * density);
+                        }
+                        graphics.setCanvasSize(width, height);
+                    }
+                }
+            });
+        }
     }
 
     @Override
