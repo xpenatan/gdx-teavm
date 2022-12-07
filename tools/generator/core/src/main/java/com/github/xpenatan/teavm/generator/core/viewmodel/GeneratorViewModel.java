@@ -53,7 +53,8 @@ public class GeneratorViewModel {
                 teaBuildConfiguration.obfuscate = obfuscate;
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
                 teaBuildConfiguration.setApplicationListener(appClassName);
-                compile(teaBuildConfiguration);
+                TeaVMTool tool = config(teaBuildConfiguration);
+                compile(tool, teaBuildConfiguration);
             }
             catch(MalformedURLException e) {
                 e.printStackTrace();
@@ -61,7 +62,17 @@ public class GeneratorViewModel {
         }
     }
 
-    public void compile(TeaBuildConfiguration teaBuildConfiguration) {
+    public TeaVMTool config(TeaBuildConfiguration teaBuildConfiguration) {
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
+            @Override
+            public void onProgress(float progress) {
+                GeneratorViewModel.this.progress = progress;
+            }
+        });
+        return tool;
+    }
+
+    public void compile(TeaVMTool tool, TeaBuildConfiguration teaBuildConfiguration) {
         if(!isCompiling) {
             isCompiling = true;
             isError = false;
@@ -72,13 +83,6 @@ public class GeneratorViewModel {
                     public void run() {
                         boolean serverRunning = server.isServerRunning();
                         stopLocalServer();
-
-                        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration, new TeaBuilder.TeaProgressListener() {
-                            @Override
-                            public void onProgress(float progress) {
-                                GeneratorViewModel.this.progress = progress;
-                            }
-                        });
 
                         boolean isSuccess = TeaBuilder.build(tool);
                         isError = !isSuccess;
