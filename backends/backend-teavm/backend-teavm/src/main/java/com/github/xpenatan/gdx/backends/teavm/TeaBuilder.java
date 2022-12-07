@@ -485,6 +485,7 @@ public class TeaBuilder {
         String mainClass = configuration.getMainClass();
         if(applicationListenerClass != null) {
             TeaClassTransformer.applicationListener = applicationListenerClass;
+            TeaClassTransformer.mainClass = mainClass;
         }
         tool.setMainClass(mainClass);
         tool.setIncremental(setIncremental);

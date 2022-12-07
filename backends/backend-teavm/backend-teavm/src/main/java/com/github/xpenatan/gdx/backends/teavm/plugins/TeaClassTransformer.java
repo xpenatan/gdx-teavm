@@ -100,6 +100,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     private boolean init = false;
 
     public static String applicationListener = "";
+    public static String mainClass = "";
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
     private HashMap<String, String> emulations2 = new HashMap<>();
@@ -144,8 +145,8 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             ClassHolder classHolder = null;
 
             if(!applicationListener.isEmpty()) {
-                classHolder = findClassHolder(cls, context, TeaLauncher.class);
-                setGdxApplicationClass(classHolder, context);
+                classHolder = findClassHolder(cls, context, TeaClassTransformer.mainClass);
+                setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
             }
 
             classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
@@ -446,8 +447,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         }
     }
 
-    private void setGdxApplicationClass(ClassHolder classHolder, ClassHolderTransformerContext context) {
-        String entryPoint = TeaClassTransformer.applicationListener;
+    private void setGdxApplicationClass(ClassHolder classHolder, ClassHolderTransformerContext context, String entryPoint) {
         MethodHolder method = null;
         for(MethodHolder methodHolder : classHolder.getMethods()) {
             MethodDescriptor descriptor = methodHolder.getDescriptor();
