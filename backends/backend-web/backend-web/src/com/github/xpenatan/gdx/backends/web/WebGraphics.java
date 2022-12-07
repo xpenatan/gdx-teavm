@@ -47,8 +47,6 @@ public class WebGraphics implements Graphics {
         glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 
         if(config.width >= 0 || config.height >= 0) {
-            // update canvas size
-//            setWindowedMode(config.width, config.height);
             if (config.isFixedSizeApplication()) {
                 setCanvasSize(config.width, config.height);
             } else {
@@ -262,16 +260,6 @@ public class WebGraphics implements Graphics {
         if (!config.isAutoSizeApplication()) {
             setCanvasSize(width, height);
         }
-
-//        if(width > 0 && height > 0) {
-//            setCanvasSize(width, height);
-//        }
-//        else {
-//            WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
-//            int newWidth = currentWindow.getClientWidth();
-//            int newHeight = currentWindow.getClientHeight();
-//            setCanvasSize(newWidth, newHeight);
-//        }
         return true;
     }
 
