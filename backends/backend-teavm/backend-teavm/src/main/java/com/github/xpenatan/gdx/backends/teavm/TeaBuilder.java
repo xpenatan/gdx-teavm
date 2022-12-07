@@ -482,11 +482,11 @@ public class TeaBuilder {
         tool.setFastDependencyAnalysis(false);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         String applicationListenerClass = configuration.getApplicationListenerClass();
+        String mainClass = configuration.getMainClass();
         if(applicationListenerClass != null) {
-            String mainClass = configuration.getMainClass();
             TeaClassTransformer.applicationListener = applicationListenerClass;
-            tool.setMainClass(mainClass);
         }
+        tool.setMainClass(mainClass);
         tool.setIncremental(setIncremental);
         tool.setCacheDirectory(setCacheDirectory);
         tool.setStrict(false);
