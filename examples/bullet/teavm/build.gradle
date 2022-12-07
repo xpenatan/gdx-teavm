@@ -17,7 +17,6 @@ dependencies {
     // Use snapshots
     implementation "com.github.xpenatan.gdx-teavm:backend-web:1.0.0-SNAPSHOT"
     implementation "com.github.xpenatan.gdx-teavm:backend-teavm-core:1.0.0-SNAPSHOT"
-    implementation "com.github.xpenatan.gdx-teavm:backend-teavm-native:1.0.0-SNAPSHOT"
     implementation "com.github.xpenatan.gdx-teavm:gdx-bullet-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects

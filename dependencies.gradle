@@ -3,6 +3,8 @@ project.ext {
     gdxHtmlVersion = "1.0.0"
     gdxHtmlType = "-SNAPSHOT"
 
+    teaVMVersion = "0.7.0-dev-1200"
+
     gdxVersion = "1.11.0"
     jParserVersion = "1.0.0-SNAPSHOT"
 

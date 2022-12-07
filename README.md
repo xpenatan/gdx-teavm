@@ -37,7 +37,6 @@ repositories {
 dependencies {
     implementation "com.github.xpenatan.gdx-teavm:backend-web:$project.gdxTeaVMVersion"
     implementation "com.github.xpenatan.gdx-teavm:backend-teavm-core:$project.gdxTeaVMVersion"
-    implementation "com.github.xpenatan.gdx-teavm:backend-teavm-native:$project.gdxTeaVMVersion"
 
     // Bullet extension
     implementation "com.github.xpenatan.gdx-teavm:gdx-bullet-teavm:$project.gdxTeaVMVersion"
