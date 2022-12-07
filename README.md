@@ -29,6 +29,7 @@ Box2d, Bullet and freetype extension use emscripten to convert C++ to Javascript
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    maven { url "https://teavm.org/maven/repository/" }
 }
 ```
     gdxTeaVMVersion = "1.0.0-SNAPSHOT"
