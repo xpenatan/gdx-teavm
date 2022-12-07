@@ -1,4 +1,4 @@
-package java.io;
+package emu.java.io;
 
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
