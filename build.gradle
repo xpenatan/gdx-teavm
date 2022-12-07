@@ -18,7 +18,7 @@ allprojects {
     ext {
         repoUser = System.getenv('USER')
         repoPass = System.getenv('PASSWORD')
-        repoUrl = ''
+        repoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
         repoUrlSnapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
 
         def localFile = project.rootProject.file("local.properties")
