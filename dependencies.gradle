@@ -1,7 +1,7 @@
 project.ext {
     groupId = "com.github.xpenatan.gdx-teavm"
     gdxHtmlVersion = "1.0.0"
-    gdxHtmlType = "-SNAPSHOT"
+    gdxHtmlType = "-b1"
 
     teaVMVersion = "0.7.0-dev-1200"
 
