@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'signing'
 }
 
 group = project.groupId
@@ -19,6 +20,11 @@ clean.doFirst {
     project.delete(files(srcPath))
 }
 
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
+    }
+}
+
 task javadocJar(type: Jar) {
     archiveClassifier.set("javadoc")
     from javadoc
@@ -29,27 +35,58 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task fromClasses(type: Jar) {
-    from(sourceSets.main.output) {
-    }
-}
-
 javadoc {
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 artifacts {
-    archives sourcesJar
+    archives javadocJar, sourcesJar
 }
 
 publishing {
     publications {
-        imguiClasses(MavenPublication) {
+        maven(MavenPublication) {
             version project.gdxHtmlVersion + project.gdxHtmlType
             project.version = project.gdxHtmlVersion + project.gdxHtmlType
             artifactId module_name
             artifact fromClasses
+            artifact javadocJar
+            artifact sourcesJar
+
+            pom {
+                name = "Gdx-teaVM"
+                description = "Tool to generate libgdx to javascript using teaVM"
+                url = "https://github.com/xpenatan/gdx-teavm"
+                developers {
+                    developer {
+                        id = "Xpe"
+                        name = "Natan"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
+                    developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
+                    url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
+                }
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+            }
         }
+    }
+}
+
+signing {
+    def ver = project.version.toString()
+    def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+    if(!isSnapshot) {
+        def signingKey = System.getenv("signingKey")
+        def signingPassword = System.getenv("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.maven
     }
 }
