@@ -53,8 +53,12 @@ public class Preloader {
         baseUrl = newBaseURL;
     }
 
+    public String getAssetUrl() {
+        return baseUrl + ASSET_FOLDER;
+    }
+
     public void preload(final String assetFileUrl) {
-        AssetDownloader.getInstance().loadText(true, baseUrl + ASSET_FOLDER + assetFileUrl, new AssetLoaderListener<String>() {
+        AssetDownloader.getInstance().loadText(true, getAssetUrl() + assetFileUrl, new AssetLoaderListener<String>() {
             @Override
             public void onProgress(double amount) {
             }
@@ -116,7 +120,7 @@ public class Preloader {
     }
 
     public void loadBinaryAsset(boolean async, final String url, AssetLoaderListener<Blob> listener) {
-        AssetDownloader.getInstance().load(async, baseUrl + ASSET_FOLDER + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
+        AssetDownloader.getInstance().load(async, getAssetUrl()  + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);
@@ -137,7 +141,7 @@ public class Preloader {
     }
 
     public void loadAsset(boolean async, final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().load(async, baseUrl + ASSET_FOLDER + url, type, mimeType, new AssetLoaderListener<Object>() {
+        AssetDownloader.getInstance().load(async, getAssetUrl() + url, type, mimeType, new AssetLoaderListener<Object>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);

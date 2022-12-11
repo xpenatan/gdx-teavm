@@ -166,3 +166,19 @@ task runCoreAITest(dependsOn: [':examples:core:teavm:clean', ':examples:core:tea
 }
 
 runCoreAITest.shouldRunAfter ":examples:core:teavm:clean"
+
+project.ext.soundTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildSoundTest"
+
+task buildExampleCoreSoundTest(dependsOn: classes, type: JavaExec) {
+    setGroup("teavm")
+    setDescription("Build teavm SoundTest example")
+    mainClass.set(project.soundTestMainClassName)
+    setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+task runCoreSoundTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreSoundTest', ':examples:core:teavm:jettyRun']) {
+    setGroup("examples-teavm")
+    setDescription("Run SoundTest example")
+}
+
+runCoreSoundTest.shouldRunAfter ":examples:core:teavm:clean"

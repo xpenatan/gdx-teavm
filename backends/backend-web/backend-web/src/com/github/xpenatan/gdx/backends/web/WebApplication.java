@@ -401,7 +401,7 @@ public class WebApplication implements Application, Runnable {
     }
 
     public String getAssetUrl() {
-        return preloader.baseUrl;
+        return preloader.getAssetUrl();
     }
 
     public enum AppState {
