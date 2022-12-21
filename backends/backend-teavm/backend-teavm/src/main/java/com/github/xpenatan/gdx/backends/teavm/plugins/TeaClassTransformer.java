@@ -435,7 +435,9 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         else if(emulations.containsKey(name)) {
             Class<?> emulated = emulations.get(cls.getName());
             ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
-            replaceClass(innerSource, cls, emulatedClassHolder);
+            if(emulatedClassHolder != null) {
+                replaceClass(innerSource, cls, emulatedClassHolder);
+            }
         }
     }
 

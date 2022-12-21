@@ -23,6 +23,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public final ArrayList<String> reflectionExclude = new ArrayList<>();
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
+    /**
+     * Array of class.getName() to skip
+     */
+    public final ArrayList<String> classesToSkip = new ArrayList<>();
+
     public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
 
@@ -93,6 +98,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     @Override
     public ArrayList<String> getClassesToPreserve() {
         return classesToPreserve;
+    }
+
+    @Override
+    public ArrayList<String> getSkipClasses() {
+        return classesToSkip;
     }
 
     @Override

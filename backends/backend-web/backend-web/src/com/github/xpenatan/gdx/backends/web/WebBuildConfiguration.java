@@ -72,5 +72,10 @@ public abstract class WebBuildConfiguration {
 
     public abstract ArrayList<String> getClassesToPreserve();
 
+    /**
+     * Array of class.getName() to skip
+     */
+    public abstract ArrayList<String> getSkipClasses();
+
     public abstract boolean logClasses();
 }

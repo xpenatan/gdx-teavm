@@ -92,6 +92,7 @@ public class TeaBuilder {
             Class<?> skipClass = iterator.next();
             skipClasses.add(skipClass.getName());
         }
+        skipClasses.addAll(configuration.getSkipClasses());
         WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
