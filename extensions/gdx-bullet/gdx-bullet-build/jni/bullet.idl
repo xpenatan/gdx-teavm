@@ -761,6 +761,7 @@ interface btGeneric6DofSpring2Constraint {
     void setDamping(long index, float damping);
     void setBounce(long index, float bounce);
     void setServo(long index, boolean onOff);
+    void setServoTarget(long index, float target);
     void enableMotor(long index, boolean onOff);
     void enableSpring(long index, boolean onOff);
     void setTargetVelocity(long index, float velocity);
