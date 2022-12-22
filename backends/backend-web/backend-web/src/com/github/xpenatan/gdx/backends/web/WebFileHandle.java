@@ -28,7 +28,7 @@ public class WebFileHandle extends FileHandle {
 
     public WebFileHandle(Preloader preloader, String fileName, FileType type) {
         if(type != FileType.Internal && type != FileType.Classpath)
-            throw new GdxRuntimeException("FileType '" + type + "' Not supported in Dragome backend");
+            throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
         this.preloader = preloader;
         this.file = fixSlashes(fileName);
         this.type = type;
@@ -83,7 +83,7 @@ public class WebFileHandle extends FileHandle {
      * {@link FileType#Absolute} and {@link FileType#External} file handles.
      */
     public File file() {
-        throw new GdxRuntimeException("Not supported in Dragome backend");
+        throw new GdxRuntimeException("Not supported in web backend");
     }
 
     /**
@@ -253,7 +253,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**
@@ -265,7 +265,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void write(InputStream input, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**
@@ -288,7 +288,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public Writer writer(boolean append, String charset) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**
@@ -311,7 +311,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeString(String string, boolean append, String charset) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**
@@ -322,7 +322,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeBytes(byte[] bytes, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**
@@ -333,7 +333,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeBytes(byte[] bytes, int offset, int length, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in Dragome backend");
+        throw new GdxRuntimeException("Cannot write to files in web backend");
     }
 
     /**

@@ -24,11 +24,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class ETC1TextureData implements TextureData {
     public ETC1TextureData(FileHandle file) {
-        throw new GdxRuntimeException("ETC1TextureData not supported in Dragome backend");
+        throw new GdxRuntimeException("ETC1TextureData not supported in Web backend");
     }
 
     public ETC1TextureData(FileHandle file, boolean useMipMaps) {
-        throw new GdxRuntimeException("ETC1TextureData not supported in Dragome backend");
+        throw new GdxRuntimeException("ETC1TextureData not supported in Web backend");
     }
 
     @Override

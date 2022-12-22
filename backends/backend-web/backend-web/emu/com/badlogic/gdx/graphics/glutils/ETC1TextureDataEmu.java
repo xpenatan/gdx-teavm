@@ -10,11 +10,11 @@ import com.badlogic.gdx.graphics.PixmapEmu;
 @Emulate(ETC1TextureData.class)
 public class ETC1TextureDataEmu implements TextureDataEmu {
     public ETC1TextureDataEmu(FileHandle file) {
-        throw new GdxRuntimeException("ETC1TextureData not supported in Dragome backend");
+        throw new GdxRuntimeException("ETC1TextureData not supported in web backend");
     }
 
     public ETC1TextureDataEmu(FileHandle file, boolean useMipMaps) {
-        throw new GdxRuntimeException("ETC1TextureData not supported in Dragome backend");
+        throw new GdxRuntimeException("ETC1TextureData not supported in web backend");
     }
 
     @Override

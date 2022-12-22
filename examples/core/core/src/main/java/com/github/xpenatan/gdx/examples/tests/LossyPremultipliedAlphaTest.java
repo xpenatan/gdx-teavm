@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.glutils.FileTextureData;
  *
  * @author barkholt
  */
-public class DragomeLossyPremultipliedAlphaTest implements ApplicationListener {
+public class LossyPremultipliedAlphaTest implements ApplicationListener {
     private SpriteBatch batch;
     private Texture goodTexture;
     private Texture badTexture;

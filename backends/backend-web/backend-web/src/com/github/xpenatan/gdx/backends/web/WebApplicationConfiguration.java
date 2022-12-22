@@ -25,8 +25,7 @@ public abstract class WebApplicationConfiguration {
      **/
     public boolean antialiasing = false;
     /**
-     * whether to include an alpha channel in the color buffer to combine the color buffer with the rest of the webpage
-     * effectively allows transparent backgrounds in Dragome, at a performance cost.
+     * whether to include an alpha channel in the color buffer
      **/
     public boolean alpha = false;
     /**
