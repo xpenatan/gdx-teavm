@@ -1,4 +1,7 @@
-[1.0.0-b2] - SNAPSHOT
+[1.0.0-SNAPSHOT]
+
+
+[1.0.0-b2]
 - Fix sound/music assets path
 - Add TeaBuildConfiguration.classesToSkip option
 - Remove MathUtilsEmu.
