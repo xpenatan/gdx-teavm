@@ -41,7 +41,6 @@ public class AnimationTest implements ApplicationListener {
 
     @Override
     public void create() {
-        System.out.println("Dragome 2D AnimationTest");
         texture = new Texture(Gdx.files.internal("data/walkanim.png"));
         TextureRegion[] leftWalkFrames = TextureRegion.split(texture, 64, 64)[0];
         TextureRegion[] rightWalkFrames = new TextureRegion[leftWalkFrames.length];
