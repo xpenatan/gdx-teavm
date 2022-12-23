@@ -6,7 +6,7 @@ project.ext {
     teaVMVersion = "0.7.0-dev-1200"
 
     gdxVersion = "1.11.0"
-    jParserVersion = "1.0.0-b1"
+    jParserVersion = "1.0.0-b2"
 
     jDearImguiVersion = '1.0.0-SNAPSHOT'
     jDearImguiGdxVersion = "1.0.0-SNAPSHOT"
