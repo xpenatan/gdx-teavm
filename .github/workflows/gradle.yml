@@ -17,6 +17,8 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: 11
+      - name: Check Ant
+      run: ant -version
     - name: Change wrapper permissions
       run: chmod +x ./gradlew
     - name: Generate Native Project
