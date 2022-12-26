@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_Linux:
-    name: Windows/Linux
+    name: Linux
     runs-on: ubuntu-latest
 
     steps:
