@@ -1,0 +1,102 @@
+plugins {
+    id 'java'
+//    id 'signing'
+}
+
+group = project.groupId
+
+def module_name = "gdx-bullet"
+
+sourceSets.main.resources.srcDirs = ["resources/"]
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+}
+
+clean.doFirst {
+    def srcPath = projectDir.toString() + "/src/main/"
+    project.delete(files(srcPath))
+}
+
+task platformAll(type: Jar) {
+    archiveClassifier.set("natives-desktop")
+    from zipTree(projectDir.toString() + "/libs/imgui-core-natives.jar")
+}
+
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
+    }
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier.set("javadoc")
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+//publishing {
+//    publications {
+//        maven(mavenpublication) {
+//            version project.gdxhtmlversion + project.gdxhtmltype
+//            project.version = project.gdxhtmlversion + project.gdxhtmltype
+//            artifactid module_name
+//            artifact fromclasses
+//            artifact javadocjar
+//            artifact sourcesjar
+//
+//            pom {
+//                name = "gdx-teavm"
+//                description = "tool to generate libgdx to javascript using teavm"
+//                url = "https://github.com/xpenatan/gdx-teavm"
+//                developers {
+//                    developer {
+//                        id = "xpe"
+//                        name = "natan"
+//                    }
+//                }
+//                scm {
+//                    connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
+//                    developerconnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
+//                    url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
+//                }
+//                licenses {
+//                    license {
+//                        name = "the apache license, version 2.0"
+//                        url = "https://www.apache.org/licenses/license-2.0.txt"
+//                    }
+//                }
+//            }
+//        }
+//        natives(mavenpublication) {
+//            version project.gdxhtmlversion + project.gdxhtmltype
+//            project.version = project.gdxhtmlversion + project.gdxhtmltype
+//            artifactid module_name + "-platform"
+//            artifact platformall
+//        }
+//    }
+//}
+
+//signing {
+//    def ver = project.version.toString()
+//    def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+//    if(!isSnapshot) {
+//        def signingKey = System.getenv("signingKey")
+//        def signingPassword = System.getenv("signingPassword")
+//        useInMemoryPgpKeys(signingKey, signingPassword)
+//        sign publishing.publications.maven
+//        sign publishing.publications.natives
+//    }
+//}
