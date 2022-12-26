@@ -19,6 +19,9 @@ jobs:
         java-version: 11
     - name: Check Ant
       run: ant -version
+    - name: Set up MinGW
+      run: |
+        sudo apt install -y --force-yes mingw-w64 lib32z1
     - name: Change wrapper permissions
       run: chmod +x ./gradlew
     - name: Generate Native Project
