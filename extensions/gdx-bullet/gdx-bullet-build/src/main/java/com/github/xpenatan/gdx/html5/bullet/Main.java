@@ -16,7 +16,10 @@ public class Main {
         String basePath = new File(".").getAbsolutePath();
         JParser.generate(new BulletCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
 
+        buildBulletCPP(idlFile);
+    }
 
+    private static void buildBulletCPP(IDLFile idlFile) throws Exception {
         String libName = "gdx-bullet";
         String bulletPath = new File("../gdx-bullet/").getCanonicalPath();
         String cppPath = new File("./jni/").getCanonicalPath();
@@ -24,8 +27,8 @@ public class Main {
         FileCopyHelper.copyDir(cppPath + "/bullet/src/", buildPath + "/src");
 
         String sourceDir = "../gdx-bullet-base/src/main/java/";
-        BulletCppParser cppParser = new BulletCppParser(idlFile, CppCodeParser.getClassPath("imgui-core"), buildPath);
-        JParser.generate(cppParser, sourceDir, bulletPath + "/src");
+        BulletCppParser cppParser = new BulletCppParser(idlFile, CppCodeParser.getClassPath("gdx-bullet", "gdx-1"), buildPath);
+        JParser.generate(cppParser, sourceDir, bulletPath + "/src/main/java");
 
         String [] flags = new String[1];
         flags[0] = " -DBT_USE_INVERSE_DYNAMICS_WITH_BULLET2";

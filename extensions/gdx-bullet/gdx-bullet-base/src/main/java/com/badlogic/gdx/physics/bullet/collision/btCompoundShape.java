@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btCompoundShape extends btCollisionShape {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btCompoundShape() {
         initObject(createNative(), true);
     }

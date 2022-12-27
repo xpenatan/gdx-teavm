@@ -7,6 +7,10 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btMatrix3x3 extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "LinearMath/btMatrix3x3.h"
+    */
+
     public btMatrix3x3() {
         this(true);
     }

@@ -7,6 +7,7 @@ group = project.groupId
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
 
 dependencies {
+    implementation project(":extensions:gdx-bullet:gdx-bullet-base")
     implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
     implementation "com.github.xpenatan.jParser:jParser-teavm:$project.jParserVersion"
     implementation "com.github.xpenatan.jParser:jParser-cpp:$project.jParserVersion"

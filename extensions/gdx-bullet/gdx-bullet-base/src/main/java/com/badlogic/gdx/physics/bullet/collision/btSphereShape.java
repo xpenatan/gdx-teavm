@@ -5,6 +5,10 @@ package com.badlogic.gdx.physics.bullet.collision;
  */
 public class btSphereShape extends btConvexInternalShape {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btSphereShape(float radius) {
         initObject(createNative(radius), true);
     }

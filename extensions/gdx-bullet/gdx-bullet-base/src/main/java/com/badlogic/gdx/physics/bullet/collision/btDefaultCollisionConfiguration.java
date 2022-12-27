@@ -5,6 +5,10 @@ package com.badlogic.gdx.physics.bullet.collision;
  */
 public class btDefaultCollisionConfiguration extends btCollisionConfiguration {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btDefaultCollisionConfiguration() {
         initObject(createNative(), true);
     }

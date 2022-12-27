@@ -9,6 +9,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btCollisionShape extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "BulletCollision/CollisionShapes/btCollisionShape.h"
+    */
+
     public void calculateLocalInertia(float mass, Vector3 inertia) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(inertia, out);

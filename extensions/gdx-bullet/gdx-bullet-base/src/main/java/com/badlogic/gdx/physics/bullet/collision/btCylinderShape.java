@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btCylinderShape extends btConvexInternalShape {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btCylinderShape(Vector3 halfExtents) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(halfExtents, out);

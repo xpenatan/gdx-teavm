@@ -28,6 +28,10 @@ public class btBvhTriangleMeshShape extends btTriangleMeshShape {
         return result;
     }
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btBvhTriangleMeshShape(btStridingMeshInterface meshInterface, boolean useQuantizedAabbCompression) {
         initObject(createNative(meshInterface.getCPointer(), useQuantizedAabbCompression), true);
     }

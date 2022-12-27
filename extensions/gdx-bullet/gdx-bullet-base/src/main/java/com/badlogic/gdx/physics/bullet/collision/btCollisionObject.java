@@ -10,6 +10,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btCollisionObject extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public static btCollisionObject temp01 = new btCollisionObject(0);
 
     protected btCollisionObject(long cPointer) {

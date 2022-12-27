@@ -5,6 +5,10 @@ package com.badlogic.gdx.physics.bullet.collision;
  */
 public class btCollisionDispatcher extends btDispatcher {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btCollisionDispatcher(btCollisionConfiguration config) {
         initObject(createNative(config.getCPointer()), true);
     }

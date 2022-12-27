@@ -7,6 +7,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btConvexHullShape extends btPolyhedralConvexAabbCachingShape {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btConvexHullShape(java.nio.FloatBuffer points, int numPoints, int stride) {
         // Custom constructor from GDX
         initObject(createNative(), true);

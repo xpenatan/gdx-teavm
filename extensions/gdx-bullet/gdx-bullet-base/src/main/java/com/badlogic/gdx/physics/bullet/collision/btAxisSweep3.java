@@ -5,6 +5,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 public class btAxisSweep3 extends btAxisSweep3InternalShort{
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btAxisSweep3 (Vector3 worldAabbMin, Vector3 worldAabbMax, int maxHandles) {
         btVector3 btWorldAabbMin = new btVector3();
         btVector3 btWorldAabbMax = new btVector3();

@@ -5,6 +5,10 @@ package com.badlogic.gdx.physics.bullet.dynamics;
  */
 public class btSequentialImpulseConstraintSolver extends btConstraintSolver {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletDynamicsCommon.h"
+    */
+
     public btSequentialImpulseConstraintSolver() {
         initObject(createNative(), true);
     }

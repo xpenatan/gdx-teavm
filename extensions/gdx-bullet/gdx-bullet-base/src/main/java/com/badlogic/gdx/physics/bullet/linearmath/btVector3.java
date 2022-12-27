@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btVector3 extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "LinearMath/btVector3.h"
+    */
+
     public static btVector3 TEMP_0 = new btVector3(true);
     public static btVector3 TEMP_1 = new btVector3(true);
     public static btVector3 TEMP_2 = new btVector3(true);

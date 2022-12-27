@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btTransform extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "LinearMath/btTransform.h"
+    */
+
     public static btTransform TEMP_0 = new btTransform(true);
     public static btTransform TEMP_1 = new btTransform(true);
     public static btTransform TEMP_2 = new btTransform(true);

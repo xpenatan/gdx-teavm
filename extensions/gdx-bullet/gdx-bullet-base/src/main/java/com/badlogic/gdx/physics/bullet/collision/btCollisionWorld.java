@@ -7,6 +7,10 @@ import com.badlogic.gdx.physics.bullet.BulletBase;
  */
 public class btCollisionWorld extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btCollisionWorld() {
         initObject(createNative(), true);
     }

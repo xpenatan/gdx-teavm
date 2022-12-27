@@ -5,6 +5,10 @@ package com.badlogic.gdx.physics.bullet.collision;
  */
 public class btDbvtBroadphase extends btBroadphaseInterface {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btDbvtBroadphase() {
         initObject(createNative(), true);
     }
