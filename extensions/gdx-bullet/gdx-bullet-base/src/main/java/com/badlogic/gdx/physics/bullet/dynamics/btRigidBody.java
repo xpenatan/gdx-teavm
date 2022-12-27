@@ -12,12 +12,12 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btRigidBody extends btCollisionObject {
 
+    public static btRigidBody WRAPPER_GEN_01 = new btRigidBody(false);
+    public static btRigidBody WRAPPER_GEN_02 = new btRigidBody(false);
+
     /*[-C++;-NATIVE]
         #include "btBulletDynamicsCommon.h"
     */
-
-    public static btRigidBody WRAPPER_GEN_01 = new btRigidBody(false);
-    public static btRigidBody WRAPPER_GEN_02 = new btRigidBody(false);
 
     public btRigidBody(boolean cMemoryOwn) {
         super(0);
