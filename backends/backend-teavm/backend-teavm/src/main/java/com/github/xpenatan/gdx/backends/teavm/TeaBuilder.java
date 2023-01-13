@@ -457,6 +457,8 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_IMGUI))
             isValid = ACCEPT_STATE.ACCEPT;
+        else if(path.contains("jParser-loader"))
+            isValid = ACCEPT_STATE.ACCEPT;
 
         return isValid;
     }

@@ -7,12 +7,20 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTypedObject;
  */
 public class btTypedConstraint extends btTypedObject {
 
+    /*[-C++;-NATIVE]
+        #include "BulletDynamics/ConstraintSolver/btHingeConstraint.h"
+    */
+
     public btRigidBody getRigidBodyA() {
         int pointer = getRigidBodyANATIVE((int) cPointer);
         btRigidBody.WRAPPER_GEN_01.setPointer(pointer);
         return btRigidBody.WRAPPER_GEN_01;
     }
 
+    /*[-C++;-NATIVE]
+        btRigidBody & body = ((btTypedConstraint*)addr)->getRigidBodyA();
+        return (jlong)&body;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTypedConstraint);
         var returnedJSObj = jsObj.getRigidBodyA();
@@ -26,6 +34,10 @@ public class btTypedConstraint extends btTypedObject {
         return btRigidBody.WRAPPER_GEN_02;
     }
 
+    /*[-C++;-NATIVE]
+        btRigidBody & body = ((btTypedConstraint*)addr)->getRigidBodyB();
+        return (jlong)&body;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTypedConstraint);
         var returnedJSObj = jsObj.getRigidBodyB();

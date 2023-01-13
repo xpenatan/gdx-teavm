@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
 
+    /*[-C++;-NATIVE]
+        #include "BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h"
+    */
+
     protected btGeneric6DofSpring2Constraint() {
     }
 
@@ -19,10 +23,13 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
         initObject(createNative(rbA.getCPointer(), rbB.getCPointer(), btframeInA.getCPointer(), btframeInB.getCPointer()), true);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btGeneric6DofSpring2Constraint(*((btRigidBody*)rbAAddr), *((btRigidBody*)rbBAddr), *((btTransform*)frameInAAddr), *((btTransform*)frameInBAddr));
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btGeneric6DofSpring2Constraint(rbAAddr, rbBAddr, frameInAAddr, frameInBAddr);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(long rbAAddr, long rbBAddr, long frameInAAddr, long frameInBAddr);
 
     @Override
@@ -30,9 +37,12 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btGeneric6DofSpring2Constraint*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btGeneric6DofSpring2Constraint);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }

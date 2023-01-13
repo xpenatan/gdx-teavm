@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
+import com.github.xpenatan.jparser.loader.JParserLibraryLoader;
 import java.util.Arrays;
 
 /**
@@ -39,7 +40,7 @@ public class Bullet {
     public static void init(boolean useRefCounting, boolean logging) {
         if(Bullet.bulletInit)
             return;
-//        new SharedLibraryLoader().load("bullet.wasm");
+        loadBullet();
         Bullet.bulletInit = true;
         Bullet.useRefCounting = useRefCounting;
         Bullet.enableLogging = logging;
@@ -47,6 +48,11 @@ public class Bullet {
         if(version != VERSION)
             throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
                     + ")");
+    }
+
+    private static void loadBullet() {
+        JParserLibraryLoader loader = new JParserLibraryLoader();
+        loader.load("gdx-bullet");
     }
 
     /**

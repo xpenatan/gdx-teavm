@@ -1,12 +1,15 @@
 package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * @author xpenatan
  */
 public class btQuaternion extends btQuadWord {
+
+    /*[-C++;-NATIVE]
+        #include "LinearMath/btQuaternion.h"
+    */
 
     public static btQuaternion TEMP_0 = new btQuaternion(true);
     public static btQuaternion TEMP_1 = new btQuaternion(true);
@@ -29,10 +32,13 @@ public class btQuaternion extends btQuadWord {
         initObject(cMemoryOwn ? createNative() : 0, cMemoryOwn);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btQuaternion();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btQuaternion();
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative();
 
     @Override
@@ -40,11 +46,16 @@ public class btQuaternion extends btQuadWord {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btQuaternion*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btQuaternion);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
+
+    public native float getW();
 
     public native void setValue(float x, float y, float z, float w);
 
@@ -53,10 +64,10 @@ public class btQuaternion extends btQuadWord {
     }
 
     public static void convert(btQuaternion in, Quaternion out) {
-        out.x = in.x();
-        out.y = in.y();
-        out.z = in.z();
-        out.w = in.w();
+        out.x = in.getX();
+        out.y = in.getY();
+        out.z = in.getZ();
+        out.w = in.getW();
     }
 
     public static void convert(Quaternion in, long outAddr) {

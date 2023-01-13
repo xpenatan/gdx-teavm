@@ -69,7 +69,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
     btCollisionDispatcher dispatcher;
     btDbvtBroadphase broadphase;
     btSequentialImpulseConstraintSolver solver;
-    ClosestRayResultCallback raycast;
+//    ClosestRayResultCallback raycast;
 
     BitmapFont font;
 
@@ -107,7 +107,7 @@ public class BulletTest implements ApplicationListener, InputProcessor {
         debugDrawer = new DebugDrawer();
         world.setDebugDrawer(debugDrawer);
         debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE | btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints);
-        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
+//        raycast = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
         camera = new PerspectiveCamera();
         viewport = new ScreenViewport(camera);
@@ -322,20 +322,20 @@ public class BulletTest implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(button == Buttons.LEFT) {
-            Ray ray = camera.getPickRay(screenX, screenY);
-            float ScaleToMeter = 1;
-            rayFrom.set(ray.origin.scl(ScaleToMeter));
-            rayTo.set(ray.direction).scl(200).add(rayFrom);
-            raycast.setCollisionObject(null);
-            raycast.setClosestHitFraction(1f);
-            world.rayTest(rayFrom, rayTo, raycast);
-
-            if(raycast.hasHit()) {
-                btCollisionObject collisionObject = raycast.getCollisionObject();
-                System.out.println("HIT Body:" + collisionObject.getUserPointer());
-            }
-        }
+//        if(button == Buttons.LEFT) {
+//            Ray ray = camera.getPickRay(screenX, screenY);
+//            float ScaleToMeter = 1;
+//            rayFrom.set(ray.origin.scl(ScaleToMeter));
+//            rayTo.set(ray.direction).scl(200).add(rayFrom);
+//            raycast.setCollisionObject(null);
+//            raycast.setClosestHitFraction(1f);
+//            world.rayTest(rayFrom, rayTo, raycast);
+//
+//            if(raycast.hasHit()) {
+//                btCollisionObject collisionObject = raycast.getCollisionObject();
+//                System.out.println("HIT Body:" + collisionObject.getUserPointer());
+//            }
+//        }
         return false;
     }
 

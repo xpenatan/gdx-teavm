@@ -12,6 +12,8 @@ public class btVector3 extends BulletBase {
         #include "LinearMath/btVector3.h"
     */
 
+    public static btVector3 WRAPPER_GEN_01 = new btVector3(false);
+
     public static btVector3 TEMP_0 = new btVector3(true);
     public static btVector3 TEMP_1 = new btVector3(true);
     public static btVector3 TEMP_2 = new btVector3(true);
@@ -21,6 +23,8 @@ public class btVector3 extends BulletBase {
     public static btVector3 emptyTransform = new btVector3(false);
 
     public static Vector3 TEMP_GDX_01 = new Vector3();
+    public static Vector3 TEMP_GDX_02 = new Vector3();
+    public static Vector3 TEMP_GDX_03 = new Vector3();
 
     public btVector3() {
         this(true);
@@ -39,11 +43,11 @@ public class btVector3 extends BulletBase {
 
     /*[-C++;-NATIVE]
         return (jlong)new btVector3(x,y,z);
-     */
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btVector3(x,y,z);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(float x, float y, float z);
 
     @Override
@@ -51,63 +55,22 @@ public class btVector3 extends BulletBase {
         deleteNative(cPointer);
     }
 
-    /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
-        Bullet.destroy(jsObj);
-     */
-    private static native void deleteNative(long addr);
-
-    public float getX() {
-        return getX(cPointer);
-    }
-
     /*[-C++;-NATIVE]
-        btVector3 * vec = (btVector3 *)addr;
-        return vec->x();
-     */
-    /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return jsObj.x();
-     */
-    private static native float getX(long addr);
-
-    public float getY() {
-        return getY(cPointer);
-    }
-
-    /*[-C++;-NATIVE]
-        btVector3 * vec = (btVector3 *)addr;
-        return vec->y();
-     */
-    /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return jsObj.y();
-     */
-    private static native float getY(long addr);
-
-    public float getZ() {
-        return getZ(cPointer);
-    }
-
-    /*[-C++;-NATIVE]
-        btVector3 * vec = (btVector3 *)addr;
-        return vec->z();
+        delete (btVector3*)addr;
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
-        return jsObj.z();
-     */
-    private static native float getZ(long addr);
+        Bullet.destroy(jsObj);
+    */
+    private static native void deleteNative(long addr);
 
-    public void setValue(float x, float y, float z) {
-        setValue(cPointer, x, y, z);
-    }
+    public native float getX();
 
-    /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btVector3);
-        jsObj.setValue(x, y, z);
-     */
-    private static native void setValue(long addr, float x, float y, float z);
+    public native float getY();
+
+    public native float getZ();
+
+    public native void setValue(float x, float y, float z);
 
     public static void convert(Vector3 in, btVector3 out) {
         out.setValue(in.x, in.y, in.z);

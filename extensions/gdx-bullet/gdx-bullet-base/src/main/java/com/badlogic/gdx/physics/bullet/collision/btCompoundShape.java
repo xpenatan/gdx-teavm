@@ -16,10 +16,13 @@ public class btCompoundShape extends btCollisionShape {
         initObject(createNative(), true);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btCompoundShape();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btCompoundShape();
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative();
 
     @Override
@@ -27,10 +30,13 @@ public class btCompoundShape extends btCollisionShape {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btCompoundShape*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCompoundShape);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 
     public void addChildShape(Matrix4 localTransform, btCollisionShape shape) {
@@ -40,9 +46,12 @@ public class btCompoundShape extends btCollisionShape {
         addChildShapeNATIVE((int)cPointer, (int)btLocalTransform.getCPointer(), (int)shape.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        ((btCompoundShape*)addr)->addChildShape(*((btTransform*)localTransformAddr), (btCollisionShape*)shapeAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCompoundShape);
         jsObj.addChildShape(localTransformAddr, shapeAddr);
-     */
+    */
     private static native void addChildShapeNATIVE(long addr, long localTransformAddr, long shapeAddr);
 }

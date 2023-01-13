@@ -22,16 +22,19 @@ public class Main {
     private static void buildBulletCPP(IDLFile idlFile) throws Exception {
         String libName = "gdx-bullet";
         String bulletPath = new File("../gdx-bullet/").getCanonicalPath();
+        String genDir = bulletPath + "/src/main/java";
         String cppPath = new File("./jni/").getCanonicalPath();
         String buildPath = cppPath + "/build/c++/";
         FileCopyHelper.copyDir(cppPath + "/bullet/src/", buildPath + "/src");
 
         String sourceDir = "../gdx-bullet-base/src/main/java/";
-        BulletCppParser cppParser = new BulletCppParser(idlFile, CppCodeParser.getClassPath("gdx-bullet", "gdx-1"), buildPath);
-        JParser.generate(cppParser, sourceDir, bulletPath + "/src/main/java");
+        String classPath = CppCodeParser.getClassPath("gdx-1", "gdx-jnigen-loader", "jParser-loader");
+        BulletCppParser cppParser = new BulletCppParser(idlFile, classPath, buildPath);
+        JParser.generate(cppParser, sourceDir, genDir);
 
         String [] flags = new String[1];
         flags[0] = " -DBT_USE_INVERSE_DYNAMICS_WITH_BULLET2";
+//        CPPBuildHelper.DEBUG_BUILD = true;
         CPPBuildHelper.build(libName, buildPath, flags);
     }
 }

@@ -20,10 +20,13 @@ public class btCollisionShape extends BulletBase {
         btVector3.convert(out, inertia);
     }
 
+    /*[-C++;-NATIVE]
+        ((btCollisionShape*)addr)->calculateLocalInertia(mass, *((btVector3*)inertiaAddr));
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btBoxShape);
         var inertiaJSObj = Bullet.wrapPointer(inertiaAddr, Bullet.btVector3);
         jsObj.calculateLocalInertia(mass, inertiaJSObj);
-     */
+    */
     private static native void calculateLocalInertia(long addr, float mass, long inertiaAddr);
 }

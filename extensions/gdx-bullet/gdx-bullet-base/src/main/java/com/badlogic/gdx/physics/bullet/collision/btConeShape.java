@@ -18,15 +18,21 @@ public class btConeShape extends btConvexInternalShape {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btConeShape(radius, height);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btConeShape(radius, height);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(float radius, float height);
 
+    /*[-C++;-NATIVE]
+        delete (btConeShape*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btConeShape);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }

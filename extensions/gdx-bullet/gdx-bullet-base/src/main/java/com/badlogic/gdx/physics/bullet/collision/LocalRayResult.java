@@ -10,6 +10,10 @@ public class LocalRayResult extends BulletBase {
 
     public static LocalRayResult temp01 = new LocalRayResult();
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public LocalRayResult() {
         initObject(0, false);
     }
@@ -19,6 +23,10 @@ public class LocalRayResult extends BulletBase {
         return btCollisionObject.temp01;
     }
 
+    /*[-C++;-NATIVE]
+        btCollisionWorld::LocalRayResult* nativeObject = (btCollisionWorld::LocalRayResult*)addr;
+        return (jlong)nativeObject->m_collisionObject;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.LocalRayResult);
         var colJSObj = jsObj.get_m_collisionObject();
@@ -31,6 +39,10 @@ public class LocalRayResult extends BulletBase {
         return btVector3.emptyTransform;
     }
 
+    /*[-C++;-NATIVE]
+        btCollisionWorld::LocalRayResult* nativeObject = (btCollisionWorld::LocalRayResult*)addr;
+        return (jlong)&nativeObject->m_hitNormalLocal;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.LocalRayResult);
         var vec3JSObj = jsObj.get_m_hitNormalLocal();
@@ -42,6 +54,10 @@ public class LocalRayResult extends BulletBase {
         setHitFraction(cPointer, value);
     }
 
+    /*[-C++;-NATIVE]
+        btCollisionWorld::LocalRayResult* nativeObject = (btCollisionWorld::LocalRayResult*)addr;
+        nativeObject->m_hitFraction = value;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.LocalRayResult);
         jsObj.set_m_hitFraction(value);
@@ -52,6 +68,10 @@ public class LocalRayResult extends BulletBase {
         return getHitFraction(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        btCollisionWorld::LocalRayResult* nativeObject = (btCollisionWorld::LocalRayResult*)addr;
+        return nativeObject->m_hitFraction;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.LocalRayResult);
         return jsObj.get_m_hitFraction();

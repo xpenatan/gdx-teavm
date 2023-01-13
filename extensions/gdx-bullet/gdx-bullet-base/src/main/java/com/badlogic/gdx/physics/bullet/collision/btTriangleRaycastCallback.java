@@ -7,6 +7,11 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  * @author xpenatan
  */
 public class btTriangleRaycastCallback extends btTriangleCallback {
+
+    /*[-C++;-NATIVE]
+        #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+    */
+
     Vector3 tempVec = new Vector3();
 
     public btTriangleRaycastCallback(Vector3 from, Vector3 to) {

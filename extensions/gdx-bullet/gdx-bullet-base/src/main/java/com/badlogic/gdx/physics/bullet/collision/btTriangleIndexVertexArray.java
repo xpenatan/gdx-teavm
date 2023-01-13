@@ -8,6 +8,10 @@ import com.badlogic.gdx.utils.Array;
  */
 public class btTriangleIndexVertexArray extends btStridingMeshInterface {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     protected final static Array<btTriangleIndexVertexArray> instances = new Array<btTriangleIndexVertexArray>();
 
     /**
@@ -65,10 +69,13 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
         addMeshParts(meshParts);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btTriangleIndexVertexArray();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btTriangleIndexVertexArray();
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative();
 
     @Override
@@ -76,32 +83,49 @@ public class btTriangleIndexVertexArray extends btStridingMeshInterface {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btTriangleIndexVertexArray*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTriangleIndexVertexArray);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
+
+    /*[-IDL_SKIP]
+    */
+    public static native void addIndexedMesh(btIndexedMesh mesh, PHY_ScalarType indexType);
 
     public void addIndexedMesh(btIndexedMesh mesh, int indexType) {
         addIndexedMeshNATIVE(cPointer, mesh.getCPointer(), indexType);
     }
 
+    /*[-C++;-NATIVE]
+        btTriangleIndexVertexArray* nativeObj = (btTriangleIndexVertexArray*)addr;
+        btIndexedMesh* meshObj = (btIndexedMesh*)meshAddr;
+        nativeObj->addIndexedMesh(*meshObj, (PHY_ScalarType)indexType);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTriangleIndexVertexArray);
         var meshJSObj = Bullet.wrapPointer(meshAddr, Bullet.btIndexedMesh);
         jsObj.addIndexedMesh(meshJSObj, indexType);
-     */
+    */
     private static native void addIndexedMeshNATIVE(long addr, long meshAddr, int indexType);
 
     public void addIndexedMesh(btIndexedMesh mesh) {
         addIndexedMeshNATIVE(cPointer, mesh.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        btTriangleIndexVertexArray* nativeObj = (btTriangleIndexVertexArray*)addr;
+        btIndexedMesh* meshObj = (btIndexedMesh*)meshAddr;
+        nativeObj->addIndexedMesh(*meshObj);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTriangleIndexVertexArray);
         var meshJSObj = Bullet.wrapPointer(meshAddr, Bullet.btIndexedMesh);
         jsObj.addIndexedMesh(meshJSObj);
-     */
+    */
     private static native void addIndexedMeshNATIVE(long addr, long meshAddr);
 
     /**

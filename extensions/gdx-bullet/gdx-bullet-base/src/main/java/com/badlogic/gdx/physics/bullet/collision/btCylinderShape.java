@@ -23,16 +23,22 @@ public class btCylinderShape extends btConvexInternalShape {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btCylinderShape(*((btVector3*)halfExtentsAddr));
+    */
     /*[-teaVM;-NATIVE]
         var boxHalfExtentsJSObj = Bullet.wrapPointer(halfExtentsAddr, Bullet.btVector3);
         var jsObj = new Bullet.btCylinderShape(boxHalfExtentsJSObj);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(long halfExtentsAddr);
 
+    /*[-C++;-NATIVE]
+        delete (btCylinderShape*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCylinderShape);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }

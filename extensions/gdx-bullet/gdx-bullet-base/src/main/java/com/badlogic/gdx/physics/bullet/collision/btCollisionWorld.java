@@ -11,8 +11,11 @@ public class btCollisionWorld extends BulletBase {
         #include "btBulletCollisionCommon.h"
     */
 
-    public btCollisionWorld() {
-        initObject(createNative(), true);
+    public btCollisionWorld(btDispatcher dispatcher, btBroadphaseInterface pairCache, btCollisionConfiguration collisionConfiguration) {
+        initObject(createNative(dispatcher.getCPointer(), pairCache.getCPointer(), collisionConfiguration.getCPointer()), true);
+    }
+
+    protected btCollisionWorld() {
     }
 
     @Override
@@ -20,12 +23,21 @@ public class btCollisionWorld extends BulletBase {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btCollisionWorld((btDispatcher*)dispatcherAddr, (btBroadphaseInterface*)pairCacheAddr, (btCollisionConfiguration*)collisionConfigurationAddr);
+    */
     /*[-teaVM;-NATIVE]
-        var jsObj = new Bullet.btCollisionWorld();
+        var dispatcherJSObj = Bullet.wrapPointer(dispatcherAddr, Bullet.btDispatcher);
+        var broadphaceJSObj = Bullet.wrapPointer(pairCacheAddr, Bullet.btBroadphaseInterface);
+        var configJSObj = Bullet.wrapPointer(collisionConfigurationAddr, Bullet.btCollisionConfiguration);
+        var jsObj = new Bullet.btCollisionWorld(dispatcherJSObj, broadphaceJSObj, configJSObj);
         return Bullet.getPointer(jsObj);
      */
-    private static native long createNative();
+    private static native long createNative(long dispatcherAddr, long pairCacheAddr, long collisionConfigurationAddr);
 
+    /*[-C++;-NATIVE]
+        delete (btCollisionWorld*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionWorld);
         Bullet.destroy(jsObj);

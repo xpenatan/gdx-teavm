@@ -43,6 +43,10 @@ public class btIndexedMesh extends BulletBase {
         return result;
     }
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public Object tag;
 
     /**
@@ -55,10 +59,13 @@ public class btIndexedMesh extends BulletBase {
         set(meshPart);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btIndexedMesh();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btIndexedMesh();
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative();
 
     @Override
@@ -66,10 +73,13 @@ public class btIndexedMesh extends BulletBase {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btIndexedMesh*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btIndexedMesh);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 
     /**
@@ -131,7 +141,7 @@ public class btIndexedMesh extends BulletBase {
         dataHeap1.set(new Uint8Array(vertices.buffer));
 
         Bullet.MyClassHelper.prototype.setVertices(jsObj, dataHeap1.byteOffset, sizeInBytesOfEachVertex, vertexCount, positionOffsetInBytes);
-     */
+    */
     private static native void setVertices(long addr, float[] vertices, int sizeInBytesOfEachVertex, int vertexCount, int positionOffsetInBytes);
 
     public void setIndices(java.nio.ShortBuffer indices, int indexOffset, int indexCount) {
@@ -153,6 +163,6 @@ public class btIndexedMesh extends BulletBase {
         dataHeap2.set(new Uint8Array(indices.buffer));
 
         Bullet.MyClassHelper.prototype.setIndices(jsObj, dataHeap2.byteOffset, indexOffset, indexCount);
-     */
+    */
     private static native void setIndices(long addr, short[] indices, int indexOffset, int indexCount);
 }

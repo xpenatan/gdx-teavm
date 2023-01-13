@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.Matrix4;
  */
 public class btDefaultMotionState extends btMotionState {
 
+    /*[-C++;-NATIVE]
+        #include "LinearMath/btDefaultMotionState.h"
+    */
+
     private Matrix4 worldTrans;
 
     public btDefaultMotionState() {

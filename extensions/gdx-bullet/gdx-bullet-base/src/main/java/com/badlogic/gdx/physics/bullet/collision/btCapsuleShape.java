@@ -13,10 +13,13 @@ public class btCapsuleShape extends btConvexInternalShape {
         initObject(createNative(radius, height), true);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btCapsuleShape(radius, height);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btCapsuleShape(radius, height);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(float radius, float height);
 
     @Override
@@ -24,9 +27,12 @@ public class btCapsuleShape extends btConvexInternalShape {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btCapsuleShape*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCapsuleShape);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }
