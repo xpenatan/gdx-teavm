@@ -12,11 +12,6 @@ public class btMotionState extends BulletBase {
         #include "LinearMath/btMotionState.h"
     */
 
-    public static btMotionState WRAPPER_GEN_01 = new btMotionState(false);
-
-    protected btMotionState(boolean cMemoryOwn) {
-    }
-
     /*[-C++;-NATIVE]
         static jclass motionClass = 0;
         static jmethodID getWorldTransformID = 0;
@@ -50,6 +45,11 @@ public class btMotionState extends BulletBase {
     */
 
     Matrix4 tempMat = new Matrix4();
+
+    public static btMotionState WRAPPER_GEN_01 = new btMotionState(false);
+
+    protected btMotionState(boolean cMemoryOwn) {
+    }
 
     public btMotionState() {
         initJavaObject();

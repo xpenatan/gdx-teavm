@@ -12,6 +12,33 @@ public class ClosestRayResultCallback extends RayResultCallback {
         #include "btBulletCollisionCommon.h"
     */
 
+    /*[-C++;-NATIVE]
+
+        static jclass closestRayResultClass = 0;
+        static jmethodID onAddSingleResultID = 0;
+
+        class CustomClosestRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+        {
+
+        private:
+            JNIEnv* env;
+            jobject obj;
+
+        public:
+            CustomClosestRayResultCallback(JNIEnv* env, jobject obj, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+                : btCollisionWorld::ClosestRayResultCallback(rayFromWorld, rayToWorld)
+            {
+                this->env = env;
+                this->obj = obj;
+            }
+
+            virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+            {
+                return env->CallFloatMethod(obj, onAddSingleResultID, (jlong)&rayResult, normalInWorldSpace);
+            }
+        };
+    */
+
     public ClosestRayResultCallback(Vector3 rayFromWorld, Vector3 rayToWorld) {
         btVector3 btFrom = btVector3.TEMP_0;
         btVector3 btTo = btVector3.TEMP_1;
@@ -43,17 +70,27 @@ public class ClosestRayResultCallback extends RayResultCallback {
         initObject(createNative(from.getCPointer(), to.getCPointer()), true);
     }
 
+    /*[-C++;-NATIVE]
+        if(closestRayResultClass == 0) {
+            closestRayResultClass = (jclass)env->NewGlobalRef(env->GetObjectClass(object));
+            onAddSingleResultID = env->GetMethodID(closestRayResultClass, "onAddSingleResult", "(JZ)F");
+        }
+        return (jlong)new CustomClosestRayResultCallback(env, env->NewGlobalRef(object), *((btVector3*)fromAddr), *((btVector3*)toAddr));
+    */
     /*[-teaVM;-REPLACE]
     @org.teavm.jso.JSBody(params = { "rayFromWorldAddr", "rayToWorldAddr", "addSingleResultFunction" }, script = "var callback = new Bullet.MyClosestRayResultCallback(rayFromWorldAddr, rayToWorldAddr); callback.addSingleResult = addSingleResultFunction; return Bullet.getPointer(callback);")
     private static native int createNative(long rayFromWorldAddr, long rayToWorldAddr, AddSingleResultFunction addSingleResultFunction);
     */
-    private static native long createNative(long fromAddr, long toAddr);
+    private native long createNative(long fromAddr, long toAddr);
 
     @Override
     protected void deleteNative() {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (CustomClosestRayResultCallback*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         Bullet.destroy(jsObj);
@@ -155,10 +192,18 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public float addSingleResult(LocalRayResult rayResult, boolean normalInWorldSpace) {
         return addSingleResult(cPointer, rayResult.getCPointer(), normalInWorldSpace);
     }
-
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        return nativeObject->ClosestRayResultCallback::addSingleResult(*((btCollisionWorld::LocalRayResult*)rayResultAddr), normalInWorldSpace);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         return jsObj.addSingleResultSuper(rayResultAddr, normalInWorldSpace);
     */
     private static native float addSingleResult(long addr, long rayResultAddr, boolean normalInWorldSpace);
+
+    private float onAddSingleResult(long rayResultAddr, boolean normalInWorldSpace) {
+        LocalRayResult.temp01.setPointer(rayResultAddr);
+        return addSingleResult(LocalRayResult.temp01, normalInWorldSpace);
+    }
 }
