@@ -10,6 +10,11 @@ public class btBroadphasePairArray extends BulletBase {
         #include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
     */
 
+    public static btBroadphasePairArray WRAPPER_GEN_01 = new btBroadphasePairArray(false);
+
+    protected btBroadphasePairArray(boolean cMemoryOwn) {
+    }
+
     public btBroadphasePair at(int n) {
         long pointer = atNATIVE(cPointer, n);
         btBroadphasePair.WRAPPER_GEN_01.setPointer(pointer);

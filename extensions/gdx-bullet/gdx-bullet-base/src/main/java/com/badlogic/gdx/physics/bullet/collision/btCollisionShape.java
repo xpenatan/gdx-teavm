@@ -13,6 +13,11 @@ public class btCollisionShape extends BulletBase {
         #include "BulletCollision/CollisionShapes/btCollisionShape.h"
     */
 
+    public static btCollisionShape WRAPPER_GEN_01 = new btCollisionShape(false);
+
+    protected btCollisionShape(boolean cMemoryOwn) {
+    }
+
     protected btCollisionShape() {
     }
 

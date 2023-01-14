@@ -11,4 +11,11 @@ public class btDispatcher extends BulletBase {
         #include "BulletCollision/BroadphaseCollision/btDispatcher.h"
     */
 
+    public static btDispatcher WRAPPER_GEN_01 = new btDispatcher(false);
+
+    protected btDispatcher() {
+    }
+
+    protected btDispatcher(boolean cMemoryOwn) {
+    }
 }

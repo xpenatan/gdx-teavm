@@ -18,6 +18,11 @@ public class btCollisionObject extends BulletBase {
 
     public static btCollisionObject temp01 = new btCollisionObject(0);
 
+    public static btCollisionObject WRAPPER_GEN_01 = new btCollisionObject(false);
+
+    protected btCollisionObject(boolean cMemoryOwn) {
+    }
+
     public btCollisionObject() {
         //TODO add native code
     }

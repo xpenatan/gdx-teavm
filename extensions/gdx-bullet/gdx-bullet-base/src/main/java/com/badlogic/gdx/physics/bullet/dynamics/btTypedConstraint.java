@@ -11,6 +11,14 @@ public class btTypedConstraint extends btTypedObject {
         #include "BulletDynamics/ConstraintSolver/btHingeConstraint.h"
     */
 
+    public static btTypedConstraint WRAPPER_GEN_01 = new btTypedConstraint(false);
+
+    protected btTypedConstraint() {
+    }
+
+    protected btTypedConstraint(boolean cMemoryOwn) {
+    }
+
     public btRigidBody getRigidBodyA() {
         int pointer = getRigidBodyANATIVE((int) cPointer);
         btRigidBody.WRAPPER_GEN_01.setPointer(pointer);

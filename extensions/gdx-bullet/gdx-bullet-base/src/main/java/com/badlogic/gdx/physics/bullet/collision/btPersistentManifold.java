@@ -10,4 +10,9 @@ public class btPersistentManifold extends btTypedObject {
     /*[-C++;-NATIVE]
         #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
     */
+
+    public static btPersistentManifold WRAPPER_GEN_01 = new btPersistentManifold(false);
+
+    protected btPersistentManifold(boolean cMemoryOwn) {
+    }
 }

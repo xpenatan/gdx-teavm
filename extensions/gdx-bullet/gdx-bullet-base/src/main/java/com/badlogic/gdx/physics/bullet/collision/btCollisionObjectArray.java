@@ -11,6 +11,11 @@ public class btCollisionObjectArray extends BulletBase {
         #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
     */
 
+    public static btCollisionObjectArray WRAPPER_GEN_01 = new btCollisionObjectArray(false);
+
+    protected btCollisionObjectArray(boolean cMemoryOwn) {
+    }
+
     public btCollisionObject atConst(int n) {
         //TODO impl
         return null;
