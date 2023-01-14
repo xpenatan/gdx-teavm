@@ -28,7 +28,7 @@ public class btQuaternion extends btQuadWord {
     /**
      * Useful on creating temp objects
      */
-    public btQuaternion(boolean cMemoryOwn) {
+    protected btQuaternion(boolean cMemoryOwn) {
         initObject(cMemoryOwn ? createNative() : 0, cMemoryOwn);
     }
 

@@ -13,6 +13,10 @@ public class btCollisionShape extends BulletBase {
         #include "BulletCollision/CollisionShapes/btCollisionShape.h"
     */
 
+    public btCollisionShape() {
+        // TODO create native code
+    }
+
     public void calculateLocalInertia(float mass, Vector3 inertia) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(inertia, out);
