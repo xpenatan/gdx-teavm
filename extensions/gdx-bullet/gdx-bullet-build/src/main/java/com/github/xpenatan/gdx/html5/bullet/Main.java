@@ -28,7 +28,7 @@ public class Main {
         FileCopyHelper.copyDir(cppPath + "/bullet/src/", buildPath + "/src");
 
         String sourceDir = "../gdx-bullet-base/src/main/java/";
-        String classPath = CppCodeParser.getClassPath("gdx-1", "gdx-jnigen-loader", "jParser-loader");
+        String classPath = CppCodeParser.getClassPath("bullet-base", "gdx-1", "gdx-jnigen-loader", "jParser-loader");
         BulletCppParser cppParser = new BulletCppParser(idlFile, classPath, buildPath);
         JParser.generate(cppParser, sourceDir, genDir);
 
