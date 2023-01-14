@@ -13,8 +13,7 @@ public class btCollisionShape extends BulletBase {
         #include "BulletCollision/CollisionShapes/btCollisionShape.h"
     */
 
-    public btCollisionShape() {
-        // TODO create native code
+    protected btCollisionShape() {
     }
 
     public void calculateLocalInertia(float mass, Vector3 inertia) {
