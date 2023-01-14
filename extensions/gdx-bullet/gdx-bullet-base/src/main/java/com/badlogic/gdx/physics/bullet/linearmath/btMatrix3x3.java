@@ -1,8 +1,6 @@
 package com.badlogic.gdx.physics.bullet.linearmath;
 
 import com.badlogic.gdx.physics.bullet.BulletBase;
-import com.badlogic.gdx.physics.bullet.collision.PHY_ScalarType;
-import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 
 /**
  * @author xpenatan
@@ -12,6 +10,8 @@ public class btMatrix3x3 extends BulletBase {
     /*[-C++;-NATIVE]
         #include "LinearMath/btMatrix3x3.h"
     */
+
+    public static btMatrix3x3 WRAPPER_GEN_01 = new btMatrix3x3(false);
 
     public btMatrix3x3() {
         this(true);
