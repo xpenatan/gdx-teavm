@@ -1,5 +1,5 @@
 [1.0.0-SNAPSHOT]
-
+- Add gdx-bullet c++ module so desktop and web use the same c++ code/version
 
 [1.0.0-b2]
 - Fix sound/music assets path
