@@ -83,7 +83,7 @@ public class btPoint2PointConstraint extends btTypedConstraint {
     */
     /*[-teaVM;-NATIVE]
         var nativeObject = Bullet.wrapPointer(addr, Bullet.btPoint2PointConstraint);
-        nativeObject.set_m_setting(settingsAddr)
+        nativeObject.set_m_setting(settingsAddr);
     */
     private static native void setSettingNATIVE(long addr, long settingsAddr);
 }
