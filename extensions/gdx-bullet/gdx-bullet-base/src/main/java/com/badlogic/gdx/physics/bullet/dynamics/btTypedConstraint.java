@@ -20,13 +20,14 @@ public class btTypedConstraint extends btTypedObject {
     }
 
     public btRigidBody getRigidBodyA() {
-        int pointer = getRigidBodyANATIVE((int) cPointer);
+        int pointer = getRigidBodyANATIVE(cPointer);
         btRigidBody.WRAPPER_GEN_01.setPointer(pointer);
         return btRigidBody.WRAPPER_GEN_01;
     }
 
     /*[-C++;-NATIVE]
-        btRigidBody & body = ((btTypedConstraint*)addr)->getRigidBodyA();
+        btTypedConstraint* nativeObject = (btTypedConstraint*)addr;
+        btRigidBody & body = nativeObject->getRigidBodyA();
         return (jlong)&body;
     */
     /*[-teaVM;-NATIVE]
@@ -34,16 +35,17 @@ public class btTypedConstraint extends btTypedObject {
         var returnedJSObj = jsObj.getRigidBodyA();
         return Bullet.getPointer(returnedJSObj);
     */
-    private static native int getRigidBodyANATIVE(int addr);
+    private static native int getRigidBodyANATIVE(long addr);
 
     public btRigidBody getRigidBodyB() {
-        int pointer = getRigidBodyBNATIVE((int) cPointer);
+        int pointer = getRigidBodyBNATIVE(cPointer);
         btRigidBody.WRAPPER_GEN_02.setPointer(pointer);
         return btRigidBody.WRAPPER_GEN_02;
     }
 
     /*[-C++;-NATIVE]
-        btRigidBody & body = ((btTypedConstraint*)addr)->getRigidBodyB();
+        btTypedConstraint* nativeObject = (btTypedConstraint*)addr;
+        btRigidBody & body = nativeObject->getRigidBodyB();
         return (jlong)&body;
     */
     /*[-teaVM;-NATIVE]
@@ -51,5 +53,5 @@ public class btTypedConstraint extends btTypedObject {
         var returnedJSObj = jsObj.getRigidBodyB();
         return Bullet.getPointer(returnedJSObj);
     */
-    private static native int getRigidBodyBNATIVE(int addr);
+    private static native int getRigidBodyBNATIVE(long addr);
 }
