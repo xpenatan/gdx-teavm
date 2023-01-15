@@ -71,4 +71,19 @@ public class btPoint2PointConstraint extends btTypedConstraint {
         return Bullet.getPointer(nativeObject.get_m_setting());
     */
     private static native long getSettingNATIVE(long addr);
+
+    public void setSetting (btConstraintSetting value) {
+        setSettingNATIVE(getCPointer(), value.getCPointer());
+    }
+
+    /*[-C++;-NATIVE]
+        btPoint2PointConstraint* nativeObject = (btPoint2PointConstraint*)addr;
+        btConstraintSetting* settingsObject = (btConstraintSetting*)settingsAddr;
+        nativeObject->m_setting = *settingsObject;
+    */
+    /*[-teaVM;-NATIVE]
+        var nativeObject = Bullet.wrapPointer(addr, Bullet.btPoint2PointConstraint);
+        nativeObject.set_m_setting(settingsAddr)
+    */
+    private static native void setSettingNATIVE(long addr, long settingsAddr);
 }
