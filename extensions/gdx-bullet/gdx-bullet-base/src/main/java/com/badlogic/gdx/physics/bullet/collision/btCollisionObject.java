@@ -38,6 +38,10 @@ public class btCollisionObject extends BulletBase {
         setCollisionShape(cPointer, collisionShape != null ? collisionShape.getCPointer() : 0);
     }
 
+    /*[-C++;-NATIVE]
+        btCollisionObject* nativeObject = (btCollisionObject*)addr;
+        nativeObject->setCollisionShape((btCollisionShape*)collisionShapeAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionObject);
         jsObj.setCollisionShape(collisionShapeAddr);
