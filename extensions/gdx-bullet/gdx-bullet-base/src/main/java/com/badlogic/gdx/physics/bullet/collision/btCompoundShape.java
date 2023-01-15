@@ -43,11 +43,12 @@ public class btCompoundShape extends btCollisionShape {
         // Required. it's called from Bullet class
         btTransform.convert(localTransform, btTransform.TEMP_0);
         btTransform btLocalTransform = btTransform.TEMP_0;
-        addChildShapeNATIVE((int)cPointer, (int)btLocalTransform.getCPointer(), (int)shape.getCPointer());
+        addChildShapeNATIVE(cPointer, btLocalTransform.getCPointer(), shape.getCPointer());
     }
 
     /*[-C++;-NATIVE]
-        ((btCompoundShape*)addr)->addChildShape(*((btTransform*)localTransformAddr), (btCollisionShape*)shapeAddr);
+        btCompoundShape* nativeObject = (btCompoundShape*)addr;
+        nativeObject->addChildShape(*((btTransform* )localTransformAddr), (btCollisionShape* )shapeAddr);
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCompoundShape);
