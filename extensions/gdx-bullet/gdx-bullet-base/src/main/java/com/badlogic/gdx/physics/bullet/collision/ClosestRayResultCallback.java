@@ -102,6 +102,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         btVector3.convert(outAddr, out);
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        return (jlong)&nativeObject->m_rayFromWorld;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         return Bullet.getPointer(jsObj.get_m_rayFromWorld());
@@ -113,6 +117,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         setRayFromWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        nativeObject->m_rayFromWorld = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -125,6 +133,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         btVector3.convert(outAddr, out);
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        return (jlong)&nativeObject->m_rayToWorld;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         return Bullet.getPointer(jsObj.get_m_rayToWorld());
@@ -136,6 +148,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         setRayToWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        nativeObject->m_rayToWorld = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -148,6 +164,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         btVector3.convert(outAddr, out);
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        return (jlong)&nativeObject->m_hitNormalWorld;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         return Bullet.getPointer(jsObj.get_m_hitNormalWorld());
@@ -159,6 +179,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         setHitNormalWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        nativeObject->m_hitNormalWorld = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -171,6 +195,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         btVector3.convert(outAddr, out);
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        return (jlong)&nativeObject->m_hitPointWorld;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         return Bullet.getPointer(jsObj.get_m_hitPointWorld());
@@ -182,6 +210,10 @@ public class ClosestRayResultCallback extends RayResultCallback {
         setHitPointWorld(cPointer, btVector3.TEMP_1.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
+        nativeObject->m_hitPointWorld = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MyClosestRayResultCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -192,6 +224,9 @@ public class ClosestRayResultCallback extends RayResultCallback {
     public float addSingleResult(LocalRayResult rayResult, boolean normalInWorldSpace) {
         return addSingleResult(cPointer, rayResult.getCPointer(), normalInWorldSpace);
     }
+
+    //TODO native code must call single result
+
     /*[-C++;-NATIVE]
         CustomClosestRayResultCallback* nativeObject = (CustomClosestRayResultCallback*)addr;
         return nativeObject->ClosestRayResultCallback::addSingleResult(*((btCollisionWorld::LocalRayResult*)rayResultAddr), normalInWorldSpace);

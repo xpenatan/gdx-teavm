@@ -73,11 +73,18 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         initObject(createNative(from.getCPointer(), to.getCPointer()), true);
     }
 
+    /*[-C++;-NATIVE]
+        if(triangleRaycastClass == 0) {
+            triangleRaycastClass = (jclass)env->NewGlobalRef(env->GetObjectClass(object));
+            onReportHitID = env->GetMethodID(triangleRaycastClass, "onReportHit", "(JFII)F");
+        }
+        return (jlong)new CustombtTriangleRaycastCallback(env, env->NewGlobalRef(object), *((btVector3*)fromAddr), *((btVector3*)toAddr), 0);
+    */
     /*[-teaVM;-REPLACE]
     @org.teavm.jso.JSBody(params = { "fromAddr", "toAddr", "hitFunction" }, script = "var callback = new Bullet.MybtTriangleRaycastCallback(fromAddr, toAddr); callback.reportHit = hitFunction; return Bullet.getPointer(callback);")
     private static native int createNative(long fromAddr, long toAddr, ReportHitFunction hitFunction);
     */
-    private static native long createNative(long fromAddr, long toAddr);
+    private native long createNative(long fromAddr, long toAddr);
 
     @Override
     protected void deleteNative() {
@@ -109,6 +116,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         setFrom(cPointer, value.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        nativeObject->m_from = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -122,6 +133,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         return btVector3.emptyTransform;
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        return (jlong)&nativeObject->m_from;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         return Bullet.getPointer(jsObj.get_m_from());
@@ -132,6 +147,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         setTo(cPointer, value.getCPointer());
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        nativeObject->m_to = *((btVector3*)valueAddr);
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         var jsVec3Obj = Bullet.wrapPointer(valueAddr, Bullet.btVector3);
@@ -145,6 +164,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         return btVector3.emptyTransform;
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        return (jlong)&nativeObject->m_to;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         return Bullet.getPointer(jsObj.get_m_to());
@@ -160,6 +183,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         setFlags(cPointer, value);
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        nativeObject->m_flags = value;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         jsObj.set_m_flags(value);
@@ -170,6 +197,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         return getFlags(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        return nativeObject->m_flags;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         return jsObj.get_m_flags();
@@ -180,6 +211,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         setHitFraction(cPointer, value);
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        nativeObject->m_hitFraction = value;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         jsObj.set_m_hitFraction(value);
@@ -190,6 +225,10 @@ public class btTriangleRaycastCallback extends btTriangleCallback {
         return getHitFraction(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        CustombtTriangleRaycastCallback* nativeObject = (CustombtTriangleRaycastCallback*)addr;
+        return nativeObject->m_hitFraction;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.MybtTriangleRaycastCallback);
         return jsObj.get_m_hitFraction();
