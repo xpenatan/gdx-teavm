@@ -16,31 +16,37 @@ public class btPersistentManifold extends btTypedObject {
     protected btPersistentManifold(boolean cMemoryOwn) {
     }
 
-    public btCollisionObject getBody0() {
-        int pointer = getBody0NATIVE((int) cPointer);
-        return world.bodies.get(pointer);
-    }
-
     void init(btCollisionWorld world) {
         this.world = world;
     }
 
+    public btCollisionObject getBody0() {
+        return world.bodies.get(getBody0NATIVE(cPointer));
+    }
+
+    /*[-C++;-NATIVE]
+        btPersistentManifold* nativeObject = (btPersistentManifold*)addr;
+        return (jlong)nativeObject->getBody0();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btPersistentManifold);
         var returnedJSObj = jsObj.getBody0();
         return Bullet.getPointer(returnedJSObj);
     */
-    private static native int getBody0NATIVE(int addr);
+    private static native long getBody0NATIVE(long addr);
 
     public btCollisionObject getBody1() {
-        int pointer = getBody1NATIVE((int) cPointer);
-        return world.bodies.get(pointer);
+        return world.bodies.get(getBody1NATIVE(cPointer));
     }
 
+    /*[-C++;-NATIVE]
+        btPersistentManifold* nativeObject = (btPersistentManifold*)addr;
+        return (jlong)nativeObject->getBody1();
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btPersistentManifold);
         var returnedJSObj = jsObj.getBody1();
         return Bullet.getPointer(returnedJSObj);
     */
-    private static native int getBody1NATIVE(int addr);
+    private static native long getBody1NATIVE(long addr);
 }

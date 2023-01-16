@@ -21,8 +21,7 @@ public class btCollisionObjectArray extends BulletBase {
     }
 
     public btCollisionObject at(int n) {
-        int pointer = atNATIVE((int) cPointer, n);
-        return world.bodies.get(pointer);
+        return world.bodies.get(atNATIVE(cPointer, n));
     }
 
     /*[-C++;-NATIVE]
@@ -34,5 +33,5 @@ public class btCollisionObjectArray extends BulletBase {
         var returnedJSObj = jsObj.at(n);
         return Bullet.getPointer(returnedJSObj);
     */
-    private static native int atNATIVE(int addr, int n);
+    private static native long atNATIVE(long addr, int n);
 }
