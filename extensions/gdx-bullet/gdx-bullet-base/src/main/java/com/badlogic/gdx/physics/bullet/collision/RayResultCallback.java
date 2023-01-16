@@ -11,6 +11,12 @@ public class RayResultCallback extends BulletBase {
         #include "btBulletCollisionCommon.h"
     */
 
+    private btCollisionWorld world;
+
+    void init(btCollisionWorld world) {
+        this.world = world;
+    }
+
     public void setCollisionObject(btCollisionObject value) {
         setCollisionObject(cPointer, value != null ? value.getCPointer() : 0);
     }
@@ -34,8 +40,7 @@ public class RayResultCallback extends BulletBase {
     public btCollisionObject getCollisionObject() {
         long collisionObjectAddr = getCollisionObject(cPointer);
         if(collisionObjectAddr != 0) {
-            btCollisionObject.temp01.setPointer(collisionObjectAddr);
-            return btCollisionObject.temp01;
+            return world.bodies.get(collisionObjectAddr);
         }
         return null;
     }

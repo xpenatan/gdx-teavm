@@ -11,13 +11,28 @@ public class btCollisionObjectArray extends BulletBase {
         #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
     */
 
-    public static btCollisionObjectArray WRAPPER_GEN_01 = new btCollisionObjectArray(false);
+    private btCollisionWorld world;
 
     protected btCollisionObjectArray(boolean cMemoryOwn) {
     }
 
-    public btCollisionObject atConst(int n) {
-        //TODO impl
-        return null;
+    void init(btCollisionWorld world) {
+        this.world = world;
     }
+
+    public btCollisionObject at(int n) {
+        int pointer = atNATIVE((int) cPointer, n);
+        return world.bodies.get(pointer);
+    }
+
+    /*[-C++;-NATIVE]
+        btCollisionObjectArray* nativeObject = (btCollisionObjectArray*)addr;
+        return (jlong)nativeObject->at(n);
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btCollisionObjectArray);
+        var returnedJSObj = jsObj.at(n);
+        return Bullet.getPointer(returnedJSObj);
+    */
+    private static native int atNATIVE(int addr, int n);
 }
