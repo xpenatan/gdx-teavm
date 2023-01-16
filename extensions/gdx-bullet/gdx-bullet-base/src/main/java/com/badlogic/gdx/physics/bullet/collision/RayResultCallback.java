@@ -180,11 +180,17 @@ public class RayResultCallback extends BulletBase {
         btCollisionWorld::RayResultCallback* nativeObject = (btCollisionWorld::RayResultCallback*)addr;
         return nativeObject->hasHit();
     */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.RayResultCallback);
+        return jsObj.hasHit();
+    */
     private static native boolean hasHitNATIVE(long addr);
 
     public float addSingleResult(LocalRayResult rayResult, boolean normalInWorldSpace) {
         return addSingleResultNATIVE(cPointer, (int) rayResult.getCPointer(), normalInWorldSpace);
     }
+
+    //TODO native code must call single result
 
     /*[-C++;-NATIVE]
         btCollisionWorld::RayResultCallback* nativeObject = (btCollisionWorld::RayResultCallback*)addr;
