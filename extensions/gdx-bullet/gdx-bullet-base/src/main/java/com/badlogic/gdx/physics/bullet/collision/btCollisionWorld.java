@@ -154,6 +154,7 @@ public class btCollisionWorld extends BulletBase {
     private static native void rayTestNATIVE(long addr, long rayFromWorldAddr, long rayToWorldAddr, long resultCallbackAddr);
 
     public void rayTest(Vector3 rayFromWorldGDX, Vector3 rayToWorldGDX, RayResultCallback resultCallback) {
+        resultCallback.init(this);
         btVector3.convert(rayFromWorldGDX, btVector3.TEMP_0);
         btVector3 rayFromWorld = btVector3.TEMP_0;
         btVector3.convert(rayToWorldGDX, btVector3.TEMP_1);
