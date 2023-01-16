@@ -36,4 +36,48 @@ public class btDynamicsWorld extends btCollisionWorld {
     */
     private static native void getGravityNATIVE(long addr, float [] array);
 
+    public void addRigidBody(btRigidBody body) {
+        bodies.put(body.getCPointer(), body);
+        addRigidBodyNATIVE(cPointer, body.getCPointer());
+    }
+
+    /*[-C++;-NATIVE]
+        btDynamicsWorld* nativeObject = (btDynamicsWorld*)addr;
+        nativeObject->addRigidBody((btRigidBody* )bodyAddr);
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btDynamicsWorld);
+        jsObj.addRigidBody(bodyAddr);
+    */
+    private static native void addRigidBodyNATIVE(long addr, long bodyAddr);
+
+    public void addRigidBody(btRigidBody body, int group, int mask) {
+        bodies.put(body.getCPointer(), body);
+        addRigidBodyNATIVE(cPointer, body.getCPointer(), group, mask);
+    }
+
+    /*[-C++;-NATIVE]
+        btDynamicsWorld* nativeObject = (btDynamicsWorld*)addr;
+        nativeObject->addRigidBody((btRigidBody* )bodyAddr, group, mask);
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btDynamicsWorld);
+        jsObj.addRigidBody(bodyAddr, group, mask);
+    */
+    private static native void addRigidBodyNATIVE(long addr, long bodyAddr, int group, int mask);
+
+    public void removeRigidBody(btRigidBody body) {
+        bodies.remove(body.getCPointer());
+        removeRigidBodyNATIVE(cPointer, body.getCPointer());
+    }
+
+    /*[-C++;-NATIVE]
+        btDynamicsWorld* nativeObject = (btDynamicsWorld*)addr;
+        nativeObject->removeRigidBody((btRigidBody* )bodyAddr);
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btDynamicsWorld);
+        jsObj.removeRigidBody(bodyAddr);
+    */
+    private static native void removeRigidBodyNATIVE(long addr, long bodyAddr);
 }
