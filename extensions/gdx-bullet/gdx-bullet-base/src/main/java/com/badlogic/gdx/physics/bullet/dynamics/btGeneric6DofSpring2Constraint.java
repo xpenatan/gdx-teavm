@@ -12,6 +12,11 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
         #include "BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h"
     */
 
+    private btTranslationalLimitMotor2 translationalLimitMotor2 = new btTranslationalLimitMotor2();
+    private btRotationalLimitMotor2 rotationLimitMotor2X = new btRotationalLimitMotor2();
+    private btRotationalLimitMotor2 rotationLimitMotor2Y = new btRotationalLimitMotor2();
+    private btRotationalLimitMotor2 rotationLimitMotor2Z = new btRotationalLimitMotor2();
+
     protected btGeneric6DofSpring2Constraint() {
     }
 
@@ -45,4 +50,50 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
         Bullet.destroy(jsObj);
     */
     private static native void deleteNative(long addr);
+
+    public btRotationalLimitMotor2 getRotationalLimitMotor (int index) {
+        if(index == 0) {
+            rotationLimitMotor2X.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            return rotationLimitMotor2X;
+        }
+        else if(index == 1) {
+            rotationLimitMotor2Y.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            return rotationLimitMotor2Y;
+        }
+        else if(index == 2) {
+            rotationLimitMotor2Z.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            return rotationLimitMotor2Z;
+        }
+        return null;
+    }
+
+    /*[-C++;-NATIVE]
+        btGeneric6DofSpring2Constraint* nativeObject = (btGeneric6DofSpring2Constraint*)addr;
+        btRotationalLimitMotor2 * returnObj = nativeObject->getRotationalLimitMotor(index);
+        return (jlong)returnObj;
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btGeneric6DofSpring2Constraint);
+        var returnedJSObj = jsObj.getRotationalLimitMotor(index);
+        return Bullet.getPointer(returnedJSObj);
+    */
+    private static native long getRotationalLimitMotorNATIVE(long addr, long index);
+
+    public btTranslationalLimitMotor2 getTranslationalLimitMotor () {
+        translationalLimitMotor2.setPointer(getTranslationalLimitMotorNATIVE(getCPointer()));
+        return translationalLimitMotor2;
+    }
+
+    /*[-C++;-NATIVE]
+        btGeneric6DofSpring2Constraint* nativeObject = (btGeneric6DofSpring2Constraint*)addr;
+        btTranslationalLimitMotor2 * returnObj = nativeObject->getTranslationalLimitMotor();
+        return (jlong)returnObj;
+    */
+    /*[-teaVM;-NATIVE]
+        var jsObj = Bullet.wrapPointer(addr, Bullet.btGeneric6DofSpring2Constraint);
+        var returnedJSObj = jsObj.getTranslationalLimitMotor();
+        return Bullet.getPointer(returnedJSObj);
+    */
+    private static native long getTranslationalLimitMotorNATIVE(long addr);
+
 }

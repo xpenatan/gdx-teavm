@@ -770,8 +770,55 @@ interface btGeneric6DofSpring2Constraint {
     void setEquilibriumPoint(long index);
     void setEquilibriumPoint(long index, float val);
     void setFrames([Const, Ref]btTransform frameA, [Const, Ref]btTransform frameB);
+    btRotationalLimitMotor2 getRotationalLimitMotor(long index);
+    btTranslationalLimitMotor2 getTranslationalLimitMotor();
 };
 btGeneric6DofSpring2Constraint implements btTypedConstraint;
+
+interface btRotationalLimitMotor2 {
+	attribute float m_loLimit;
+	attribute float m_hiLimit;
+	attribute float m_stopERP;
+	attribute float m_stopCFM;
+	attribute float m_motorERP;
+	attribute float m_motorCFM;
+	attribute boolean m_enableMotor;
+	attribute float m_targetVelocity;
+	attribute float m_maxMotorForce;
+	attribute boolean m_servoMotor;
+	attribute float m_servoTarget;
+	attribute boolean m_enableSpring;
+	attribute float m_springStiffness;
+	attribute boolean m_springStiffnessLimited;
+	attribute float m_springDamping;
+	attribute boolean m_springDampingLimited;
+	attribute float m_equilibriumPoint;
+	boolean isLimited();
+	void testLimitValue(float test_value);
+};
+
+interface btTranslationalLimitMotor2 {
+	[Value]attribute btVector3 m_lowerLimit;
+	[Value]attribute btVector3 m_upperLimit;
+	[Value]attribute btVector3 m_bounce;
+	[Value]attribute btVector3 m_stopERP;
+	[Value]attribute btVector3 m_stopCFM;
+	[Value]attribute btVector3 m_motorERP;
+	[Value]attribute btVector3 m_motorCFM;
+	attribute boolean [] m_enableMotor;
+	attribute boolean [] m_servoMotor;
+	attribute boolean [] m_enableSpring;
+	[Value]attribute btVector3 m_servoTarget;
+	[Value]attribute btVector3 m_springStiffness;
+	attribute boolean [] m_springStiffnessLimited;
+	[Value]attribute btVector3 m_springDamping;
+	attribute boolean [] m_springDampingLimited;
+	[Value]attribute btVector3 m_equilibriumPoint;
+	[Value]attribute btVector3 m_targetVelocity;
+	[Value]attribute btVector3 m_maxMotorForce;
+	boolean isLimited(long limitIndex);
+	void testLimitValue(long limitIndex, float test_value);
+};
 
 interface btFixedConstraint {
 	void btFixedConstraint([Ref]btRigidBody rbA, [Ref]btRigidBody rbB, [Const, Ref]btTransform frameInA, [Const, Ref]btTransform frameInB);
