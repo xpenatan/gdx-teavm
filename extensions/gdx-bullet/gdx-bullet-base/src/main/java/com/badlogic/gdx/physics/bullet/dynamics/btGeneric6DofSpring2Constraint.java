@@ -52,16 +52,17 @@ public class btGeneric6DofSpring2Constraint extends btTypedConstraint {
     private static native void deleteNative(long addr);
 
     public btRotationalLimitMotor2 getRotationalLimitMotor (int index) {
+        long pointer = getRotationalLimitMotorNATIVE(getCPointer(), index);
         if(index == 0) {
-            rotationLimitMotor2X.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            rotationLimitMotor2X.setPointer(pointer);
             return rotationLimitMotor2X;
         }
         else if(index == 1) {
-            rotationLimitMotor2Y.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            rotationLimitMotor2Y.setPointer(pointer);
             return rotationLimitMotor2Y;
         }
         else if(index == 2) {
-            rotationLimitMotor2Z.setPointer(getRotationalLimitMotorNATIVE(getCPointer(), index));
+            rotationLimitMotor2Z.setPointer(pointer);
             return rotationLimitMotor2Z;
         }
         return null;
