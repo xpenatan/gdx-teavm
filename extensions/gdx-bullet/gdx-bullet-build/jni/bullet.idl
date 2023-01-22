@@ -778,6 +778,7 @@ btGeneric6DofSpring2Constraint implements btTypedConstraint;
 interface btRotationalLimitMotor2 {
 	attribute float m_loLimit;
 	attribute float m_hiLimit;
+	attribute float m_bounce;
 	attribute float m_stopERP;
 	attribute float m_stopCFM;
 	attribute float m_motorERP;
