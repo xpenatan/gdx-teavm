@@ -32,6 +32,14 @@ public class btRigidBody extends btCollisionObject {
         initObject(createNative(constructionInfo.mass, (int)constructionInfo.motionStateAddr, (int)constructionInfo.collisionShapeAddr, out.getCPointer()), true);
     }
 
+    public btRigidBody(float mass, btMotionState motionState, btCollisionShape collisionShape) {
+        super(0);
+        long motionStatePointer = motionState != null ? motionState.getCPointer() : 0;
+        long shapePointer = collisionShape != null ? collisionShape.getCPointer() : 0;
+        long aNative = createNative(mass, motionStatePointer, shapePointer);
+        initObject(aNative, true);
+    }
+
     public btRigidBody(float mass, btMotionState motionState, btCollisionShape collisionShape, Vector3 localInertia) {
         super(0);
         btVector3 out = new btVector3();
@@ -58,6 +66,17 @@ public class btRigidBody extends btCollisionObject {
         return Bullet.getPointer(jsObj);
     */
     private static native long createNative(float mass, long motionStateAddr, long collisionShapeAddr, long localInertiaAddr);
+
+    /*[-C++;-NATIVE]
+        return (jlong)new btRigidBody(mass, (btMotionState*)motionStateAddr, ((btCollisionShape*)collisionShapeAddr));
+    */
+    /*[-teaVM;-NATIVE]
+        var motionStateJSObj = Bullet.wrapPointer(motionStateAddr, Bullet.btMotionState);
+        var collisionShapeJSObj = Bullet.wrapPointer(collisionShapeAddr, Bullet.btCollisionShape);
+        var jsObj = new Bullet.btRigidBody(mass, motionStateJSObj, collisionShapeJSObj);
+        return Bullet.getPointer(jsObj);
+    */
+    private static native long createNative(float mass, long motionStateAddr, long collisionShapeAddr);
 
     /*[-C++;-NATIVE]
         delete (btRigidBody*)addr;
