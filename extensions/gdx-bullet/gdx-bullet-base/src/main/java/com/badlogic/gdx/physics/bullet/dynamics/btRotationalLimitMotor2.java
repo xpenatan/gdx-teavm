@@ -465,11 +465,11 @@ public class btRotationalLimitMotor2 extends BulletBase {
 
     /*[-C++;-NATIVE]
         btRotationalLimitMotor2* nativeObject = (btRotationalLimitMotor2*)addr;
-        nativeObject->m_springDamping = value;
+        nativeObject->m_springDampingLimited = value;
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btRotationalLimitMotor2);
-        jsObj.set_m_springDamping(value);
+        jsObj.set_m_springDampingLimited(value);
     */
     private static native void setSpringDampingLimitedNATIVE(long addr, boolean value);
 
