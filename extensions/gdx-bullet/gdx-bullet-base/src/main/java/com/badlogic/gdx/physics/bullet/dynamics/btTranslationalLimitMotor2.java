@@ -1,12 +1,14 @@
 package com.badlogic.gdx.physics.bullet.dynamics;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.BulletBase;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 public class btTranslationalLimitMotor2 extends BulletBase {
 
     private boolean [] tempBoolean = new boolean[3];
+    private byte [] tempByte = new byte[3];
 
     /*[-C++;-NATIVE]
         #include "BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h"
@@ -226,7 +228,8 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     private static native long getMotorCFMNATIVE(long addr);
 
     public void setEnableMotor(boolean[] value) {
-        setEnableMotorNATIVE(getCPointer(), value);
+        Bullet.set(tempBoolean, tempByte);
+        setEnableMotorNATIVE(getCPointer(), tempByte);
     }
 
     //TODO test javascript enable motor
@@ -239,12 +242,16 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTranslationalLimitMotor2);
-        jsObj.set_m_enableMotor(value);
+        var array = jsObj.get_m_enableMotor();
+        array[0] = value[0];
+        array[1] = value[1];
+        array[2] = value[2];
     */
-    private static native void setEnableMotorNATIVE(long addr, boolean[] value);
+    private static native void setEnableMotorNATIVE(long addr, byte[] value);
 
     public boolean[] getEnableMotor() {
-        getEnableMotorNATIVE(getCPointer(), tempBoolean);
+        getEnableMotorNATIVE(getCPointer(), tempByte);
+        Bullet.set(tempByte, tempBoolean);
         return tempBoolean;
     }
 
@@ -261,10 +268,11 @@ public class btTranslationalLimitMotor2 extends BulletBase {
         value[1] = boolArray[1];
         value[2] = boolArray[2];
     */
-    private static native void getEnableMotorNATIVE(long addr, boolean[] value);
+    private static native void getEnableMotorNATIVE(long addr, byte[] value);
 
     public void setServoMotor(boolean[] value) {
-        setServoMotorNATIVE(getCPointer(), value);
+        Bullet.set(value, tempByte);
+        setServoMotorNATIVE(getCPointer(), tempByte);
     }
 
     //TODO test javascript enable motor
@@ -277,12 +285,16 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTranslationalLimitMotor2);
-        jsObj.set_m_servoMotor(value);
+        var array = jsObj.get_m_servoMotor();
+        array[0] = value[0];
+        array[1] = value[1];
+        array[2] = value[2];
     */
-    private static native void setServoMotorNATIVE(long addr, boolean[] value);
+    private static native void setServoMotorNATIVE(long addr, byte[] value);
 
     public boolean[] getServoMotor() {
-        getServoMotorNATIVE(getCPointer(), tempBoolean);
+        getServoMotorNATIVE(getCPointer(), tempByte);
+        Bullet.set(tempByte, tempBoolean);
         return tempBoolean;
     }
 
@@ -299,10 +311,11 @@ public class btTranslationalLimitMotor2 extends BulletBase {
         value[1] = boolArray[1];
         value[2] = boolArray[2];
     */
-    private static native void getServoMotorNATIVE(long addr, boolean[] value);
+    private static native void getServoMotorNATIVE(long addr, byte[] value);
 
     public void setEnableSpring(boolean[] value) {
-        setEnableSpringNATIVE(getCPointer(), value);
+        Bullet.set(value, tempByte);
+        setEnableSpringNATIVE(getCPointer(), tempByte);
     }
 
     /*[-C++;-NATIVE]
@@ -313,12 +326,16 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTranslationalLimitMotor2);
-        jsObj.set_m_enableSpring(value);
+        var array = jsObj.get_m_enableSpring();
+        array[0] = value[0];
+        array[1] = value[1];
+        array[2] = value[2];
     */
-    private static native void setEnableSpringNATIVE(long addr, boolean[] value);
+    private static native void setEnableSpringNATIVE(long addr, byte[] value);
 
     public boolean[] getEnableSpring() {
-        getEnableSpringNATIVE(getCPointer(), tempBoolean);
+        getEnableSpringNATIVE(getCPointer(), tempByte);
+        Bullet.set(tempByte, tempBoolean);
         return tempBoolean;
     }
 
@@ -335,7 +352,7 @@ public class btTranslationalLimitMotor2 extends BulletBase {
         value[1] = boolArray[1];
         value[2] = boolArray[2];
     */
-    private static native void getEnableSpringNATIVE(long addr, boolean[] value);
+    private static native void getEnableSpringNATIVE(long addr, byte[] value);
 
     public void setServoTarget(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_0);
@@ -398,7 +415,8 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     private static native long getSpringStiffnessTargetNATIVE(long addr);
 
     public void setSpringStiffnessLimited(boolean[] value) {
-        setSpringStiffnessLimitedNATIVE(getCPointer(), value);
+        Bullet.set(value, tempByte);
+        setSpringStiffnessLimitedNATIVE(getCPointer(), tempByte);
     }
 
     /*[-C++;-NATIVE]
@@ -409,12 +427,16 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTranslationalLimitMotor2);
-        jsObj.set_m_springStiffnessLimited(value);
+        var array = jsObj.get_m_springStiffnessLimited();
+        array[0] = value[0];
+        array[1] = value[1];
+        array[2] = value[2];
     */
-    private static native void setSpringStiffnessLimitedNATIVE(long addr, boolean[] value);
+    private static native void setSpringStiffnessLimitedNATIVE(long addr, byte[] value);
 
     public boolean[] getSpringStiffnessLimited() {
-        getSpringStiffnessLimitedNATIVE(getCPointer(), tempBoolean);
+        getSpringStiffnessLimitedNATIVE(getCPointer(), tempByte);
+        Bullet.set(tempByte, tempBoolean);
         return tempBoolean;
     }
 
@@ -431,7 +453,7 @@ public class btTranslationalLimitMotor2 extends BulletBase {
         value[1] = boolArray[1];
         value[2] = boolArray[2];
     */
-    private static native void getSpringStiffnessLimitedNATIVE(long addr, boolean[] value);
+    private static native void getSpringStiffnessLimitedNATIVE(long addr, byte[] value);
 
     public void setSpringDamping(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_0);
@@ -464,7 +486,8 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     private static native long getSpringDampingNATIVE(long addr);
 
     public void setSpringDampingLimited(boolean[] value) {
-        setSpringDampingLimitedNATIVE(getCPointer(), value);
+        Bullet.set(value, tempByte);
+        setSpringDampingLimitedNATIVE(getCPointer(), tempByte);
     }
 
     /*[-C++;-NATIVE]
@@ -475,12 +498,16 @@ public class btTranslationalLimitMotor2 extends BulletBase {
     */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btTranslationalLimitMotor2);
-        jsObj.set_m_springDampingLimited(value);
+        var array = jsObj.get_m_springDampingLimited();
+        array[0] = value[0];
+        array[1] = value[1];
+        array[2] = value[2];
     */
-    private static native void setSpringDampingLimitedNATIVE(long addr, boolean[] value);
+    private static native void setSpringDampingLimitedNATIVE(long addr, byte[] value);
 
     public boolean[] getSpringDampingLimited() {
-        getSpringDampingLimitedNATIVE(getCPointer(), tempBoolean);
+        getSpringDampingLimitedNATIVE(getCPointer(), tempByte);
+        Bullet.set(tempByte, tempBoolean);
         return tempBoolean;
     }
 
@@ -497,7 +524,7 @@ public class btTranslationalLimitMotor2 extends BulletBase {
         value[1] = boolArray[1];
         value[2] = boolArray[2];
     */
-    private static native void getSpringDampingLimitedNATIVE(long addr, boolean[] value);
+    private static native void getSpringDampingLimitedNATIVE(long addr, byte[] value);
 
     public void setEquilibriumPoint(Vector3 value) {
         btVector3.convert(value, btVector3.TEMP_0);
