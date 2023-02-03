@@ -420,9 +420,7 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("gdx-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("imgui-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("imgui-gdx"))
+        else if(path.contains("imgui-core"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("generator/core/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
