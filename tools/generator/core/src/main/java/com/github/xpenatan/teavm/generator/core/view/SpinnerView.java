@@ -22,13 +22,13 @@ public class SpinnerView {
         ImGuiStyle imGuiStyle = ImGui.GetStyle();
 
         float sizeX = (radius) * 2;
-        float sizeY = (radius + imGuiStyle.FramePaddingY) * 2;
+        float sizeY = (radius + imGuiStyle.getFramePadding().getY()) * 2;
 
         float pos2X = posX + sizeX;
         float pos2Y = posY + sizeY;
 
         if(itemAdd) {
-            ImGui.ItemSize(posX, posY, pos2X, pos2Y, imGuiStyle.FramePaddingY);
+            ImGui.ItemSize(posX, posY, pos2X, pos2Y, imGuiStyle.getFramePadding().getY());
             if(!ImGui.ItemAdd(posX, posY, pos2X, pos2Y, id))
                 return false;
         }
@@ -42,7 +42,7 @@ public class SpinnerView {
         float a_max = MathUtils.PI * 2.0f * ((float)num_segments - 3) / (float)num_segments;
 
         float centerX = posX + radius;
-        float centerY = posY + radius + imGuiStyle.FramePaddingY;
+        float centerY = posY + radius + imGuiStyle.getFramePadding().getY();
 
         for(int i = 0; i < num_segments; i++) {
             float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
