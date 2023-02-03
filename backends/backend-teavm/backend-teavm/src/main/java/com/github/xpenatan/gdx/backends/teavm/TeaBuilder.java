@@ -438,8 +438,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.slf4j"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jDear-Imgui"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("jParser"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
 
