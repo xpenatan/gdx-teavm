@@ -301,6 +301,21 @@ public class Preloader {
                 files.add(new WebFileHandle(this, file, FileType.Internal));
             }
         }
+        for(String file : images.keys()) {
+            if(filter.accept(file)) {
+                files.add(new WebFileHandle(this, file, FileType.Internal));
+            }
+        }
+        for(String file : binaries.keys()) {
+            if(filter.accept(file)) {
+                files.add(new WebFileHandle(this, file, FileType.Internal));
+            }
+        }
+        for(String file : audio.keys()) {
+            if(filter.accept(file)) {
+                files.add(new WebFileHandle(this, file, FileType.Internal));
+            }
+        }
         FileHandle[] filesArray = new FileHandle[files.size];
         System.arraycopy(files.items, 0, filesArray, 0, filesArray.length);
         return filesArray;
