@@ -17,6 +17,7 @@ configurations {
 }
 
 dependencies {
+    provided "com.github.xpenatan.gdx-teavm:backend-teavm:$gdxHtmlVersion$gdxHtmlType"
     provided "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
