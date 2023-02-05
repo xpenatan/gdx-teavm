@@ -45,7 +45,7 @@ public class WebFiles implements Files {
 
     @Override
     public FileHandle local(String path) {
-        throw new GdxRuntimeException("Not supported in Web backend");
+      return new WebFileHandle(preloader, path, FileType.Local);
     }
 
     @Override
