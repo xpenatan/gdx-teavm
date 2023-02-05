@@ -169,7 +169,7 @@ public class WebGL20 implements GL20 {
     }
 
     private int allocateFrameBufferId(WebGLFramebufferWrapper frameBuffer) {
-        int id = nextBufferId++;
+        int id = nextFrameBufferId++;
         frameBuffers.put(id, frameBuffer);
         return id;
     }
