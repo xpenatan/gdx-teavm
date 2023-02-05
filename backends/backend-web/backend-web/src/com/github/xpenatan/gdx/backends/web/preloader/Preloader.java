@@ -28,7 +28,7 @@ public class Preloader {
     public ObjectMap<String, String> texts = new ObjectMap<String, String>();
     public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
 
-    private static String ASSET_FOLDER = "assets/";
+    private static final String ASSET_FOLDER = "assets/";
 
     public static class Asset {
         public Asset(String url, AssetType type, long size, String mimeType) {
@@ -232,10 +232,7 @@ public class Preloader {
     }
 
     private boolean isChild(String filePath, String directory) {
-        boolean startsWith = filePath.startsWith(directory + "/");
-//        int indexOf = filePath.indexOf('/', directory.length() + 1);
-//        boolean flag = (indexOf < 0);
-        return startsWith;
+        return filePath.startsWith(directory + "/");
     }
 
     public FileHandle[] list(final String file) {
