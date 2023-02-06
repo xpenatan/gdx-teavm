@@ -63,6 +63,6 @@ public class WebFiles implements Files {
 
     @Override
     public boolean isLocalStorageAvailable() {
-        return false;
+        return true;
     }
 }
