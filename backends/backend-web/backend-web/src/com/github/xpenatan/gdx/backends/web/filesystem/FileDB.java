@@ -4,7 +4,6 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
-import org.teavm.jso.browser.Storage;
 
 import java.io.*;
 import java.util.ArrayList;
