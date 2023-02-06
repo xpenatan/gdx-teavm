@@ -288,7 +288,7 @@ public class WebFileHandle extends FileHandle {
     public void write(InputStream input, boolean append) {
       OutputStream output = null;
       try {
-          output = write(append);
+          output = write(append, (int)length());
           StreamUtils.copyStream(input, output);
       }
       catch (Exception ex) {
@@ -585,9 +585,7 @@ public class WebFileHandle extends FileHandle {
             case Internal: {
                 throw new GdxRuntimeException("Cannot move an internal file: " + file);
             }
-            case Local: {
-
-            }
+            case Local:
             case Absolute:
             case External:
             default:
