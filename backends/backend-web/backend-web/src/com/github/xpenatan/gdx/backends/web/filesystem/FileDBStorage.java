@@ -38,7 +38,7 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public void writeInternal(WebFileHandle file, byte[] data) {
+  public void writeInternal(WebFileHandle file, byte[] data, int expectedLength) {
     storage.setItem(ID_FILE + file.path(), new String(Base64Coder.encode(data)));
   }
 

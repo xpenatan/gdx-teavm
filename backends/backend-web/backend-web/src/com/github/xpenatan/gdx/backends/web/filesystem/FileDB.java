@@ -35,10 +35,11 @@ public abstract class FileDB {
 
   public final OutputStream write(WebFileHandle file, boolean append, int bufferSize) {
     // buffer for writing
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream(bufferSize);
+    int bufferSizeMax = 8192;
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(bufferSize, bufferSizeMax));
 
     // append as needed (we read the existing content)
-    if (append) {
+    if (append && exists(file)) {
       InputStream input = null;
       try {
         input = read(file);
@@ -73,13 +74,14 @@ public abstract class FileDB {
         super.close();
 
         // store the data now
-        writeInternal(file, buffer.toByteArray());
+        byte[] data = buffer.toByteArray();
+        writeInternal(file, data, Math.max(data.length, bufferSize));
       }
     };
   }
 
   /** Notifies when data has been written for a file. */
-  protected abstract void writeInternal(WebFileHandle file, byte[] data);
+  protected abstract void writeInternal(WebFileHandle file, byte[] data, int expectedLength);
 
   public final FileHandle[] list(WebFileHandle file) {
     // convert paths to file handles
@@ -90,7 +92,7 @@ public abstract class FileDB {
       if ((path.length() > 0) && (path.charAt(path.length() - 1) == '/')) {
         path = path.substring(0, path.length() - 1);
       }
-      files[i] = new WebFileHandle(null, paths[i], Files.FileType.Local);
+      files[i] = new WebFileHandle(null, path, Files.FileType.Local);
     }
     return files;
   }

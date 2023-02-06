@@ -249,7 +249,7 @@ public class WebFileHandle extends FileHandle {
         return position - offset;
     }
 
-  /**
+    /**
      * Returns a stream for writing to this file. Parent directories will be created if necessary.
      *
      * @param append If false, this file will be overwritten if it exists, otherwise it will be appended.
@@ -257,7 +257,7 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
-        return write(append, 512);
+        return write(append, 4096);
     }
 
     /**
@@ -579,10 +579,15 @@ public class WebFileHandle extends FileHandle {
      */
     public void moveTo(FileHandle dest) {
         switch (type) {
-            case Classpath:
+            case Classpath: {
                 throw new GdxRuntimeException("Cannot move a classpath file: " + file);
-            case Internal:
+            }
+            case Internal: {
                 throw new GdxRuntimeException("Cannot move an internal file: " + file);
+            }
+            case Local: {
+
+            }
             case Absolute:
             case External:
             default:
