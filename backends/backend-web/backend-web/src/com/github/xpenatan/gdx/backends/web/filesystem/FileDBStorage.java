@@ -7,6 +7,8 @@ import com.github.xpenatan.gdx.backends.web.utils.Storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Local storage based file system. Stays persistent but is limited to about 2.5-5MB in general.
@@ -44,12 +46,16 @@ final class FileDBStorage extends FileDB {
 
   @Override
   public String[] paths(WebFileHandle file) {
-    String[] paths = new String[storage.getLength()];
+    String dir = file.path() + "/";
+    List<String> paths = new ArrayList<String>(storage.getLength());
     for (int i = 0; i < storage.getLength(); i++) {
       // cut the identifier for files and directories and add to path list
-      paths[i] = storage.key(i).substring(2);
+      String path = storage.key(i).substring(2);
+      if (path.startsWith(dir)) {
+        paths.add(path);
+      }
     }
-    return paths;
+    return paths.toArray(new String[paths.size()]);
   }
 
   @Override
