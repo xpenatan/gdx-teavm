@@ -51,10 +51,9 @@ class MemoryStorage implements StorageWrapper {
 
         // and clean it..
         removeItem(largeKey);
-        cleaned = true;
       }
       else {
-        // so far so good
+        // we are done cleaning...
         cleaned = false;
       }
     }
