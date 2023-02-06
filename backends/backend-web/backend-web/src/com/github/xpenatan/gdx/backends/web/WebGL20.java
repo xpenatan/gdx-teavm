@@ -169,7 +169,7 @@ public class WebGL20 implements GL20 {
     }
 
     private int allocateFrameBufferId(WebGLFramebufferWrapper frameBuffer) {
-        int id = nextBufferId++;
+        int id = nextFrameBufferId++;
         frameBuffers.put(id, frameBuffer);
         return id;
     }
@@ -565,15 +565,16 @@ public class WebGL20 implements GL20 {
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
         if(data instanceof FloatBuffer) {
-            FloatBuffer buf = (FloatBuffer)data;
-            Float32ArrayWrapper copy = copy(buf);
-            gl.bufferData(target, copy, usage);
+            gl.bufferData(target, copy((FloatBuffer)data), usage);
         }
         else if(data instanceof ShortBuffer) {
             gl.bufferData(target, copy((ShortBuffer)data), usage);
         }
+        else if(data instanceof IntBuffer) {
+            gl.bufferData(target, copy((IntBuffer)data), usage);
+        }
         else {
-            throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
+            throw new GdxRuntimeException("Can only cope with FloatBuffer, ShortBuffer and IntBuffer at the moment");
         }
     }
 
