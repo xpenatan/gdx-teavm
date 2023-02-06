@@ -20,8 +20,8 @@ final class FileDBStorage extends FileDB {
   /** Our files stored and encoded as Base64. Directories with "d:..." and regular files stored as "f:...". */
   private final StorageWrapper storage;
 
-  private static final String ID_FILE = "f:";
-  private static final String ID_DIR = "d:";
+  private static final String ID_FILE = "file-f:";
+  private static final String ID_DIR = "file-d:";
 
 
   FileDBStorage(StorageWrapper storage) {
