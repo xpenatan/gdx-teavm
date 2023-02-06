@@ -18,8 +18,6 @@ public class WebFiles implements Files {
 
     @Override
     public FileHandle getFileHandle(String path, FileType type) {
-        if(type != FileType.Internal)
-            throw new GdxRuntimeException("FileType '" + type + "' not supported in Web backend");
         return new WebFileHandle(preloader, path, type);
     }
 
@@ -35,12 +33,12 @@ public class WebFiles implements Files {
 
     @Override
     public FileHandle external(String path) {
-        throw new GdxRuntimeException("Not supported in Web backend");
+        return new WebFileHandle(preloader, path, FileType.External);
     }
 
     @Override
     public FileHandle absolute(String path) {
-        throw new GdxRuntimeException("Not supported in Web backend");
+        return new WebFileHandle(preloader, path, FileType.Absolute);
     }
 
     @Override
