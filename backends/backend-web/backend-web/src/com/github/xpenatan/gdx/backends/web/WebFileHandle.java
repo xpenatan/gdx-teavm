@@ -4,7 +4,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.StreamUtils;
+import com.github.xpenatan.gdx.backends.web.filesystem.FileDB;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
 
 import java.io.*;
@@ -15,7 +15,6 @@ import java.io.*;
 public class WebFileHandle extends FileHandle {
     public final Preloader preloader;
     private final String file;
-    private final FileType type;
 
     public WebFileHandle(Preloader preloader, String fileName, FileType type) {
         if ((type != FileType.Internal) && (type != FileType.Classpath) && (type != FileType.Local)) {
@@ -32,16 +31,19 @@ public class WebFileHandle extends FileHandle {
         this.file = fixSlashes(path);
     }
 
+    @Override
     public String path() {
         return file;
     }
 
+    @Override
     public String name() {
         int index = file.lastIndexOf('/');
         if(index < 0) return file;
         return file.substring(index + 1);
     }
 
+    @Override
     public String extension() {
         String name = name();
         int dotIndex = name.lastIndexOf('.');
@@ -49,6 +51,7 @@ public class WebFileHandle extends FileHandle {
         return name.substring(dotIndex + 1);
     }
 
+    @Override
     public String nameWithoutExtension() {
         String name = name();
         int dotIndex = name.lastIndexOf('.');
@@ -56,9 +59,7 @@ public class WebFileHandle extends FileHandle {
         return name.substring(0, dotIndex);
     }
 
-    /**
-     * @return the path and filename without the extension, e.g. dir/dir2/file.png -> dir/dir2/file
-     */
+    @Override
     public String pathWithoutExtension() {
         String path = file;
         int dotIndex = path.lastIndexOf('.');
@@ -66,26 +67,15 @@ public class WebFileHandle extends FileHandle {
         return path.substring(0, dotIndex);
     }
 
-    public FileType type() {
-        return type;
-    }
-
-    /**
-     * Returns a java.io.File that represents this file handle. Note the returned file will only be usable for
-     * {@link FileType#Absolute} and {@link FileType#External} file handles.
-     */
+    @Override
     public File file() {
         throw new GdxRuntimeException("Not supported in web backend");
     }
 
-    /**
-     * Returns a stream for reading this file as bytes.
-     *
-     * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
-     */
+    @Override
     public InputStream read() {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().read(this);
+            return FileDB.getInstance().read(this);
         }
         else {
             InputStream in = preloader.read(file);
@@ -94,11 +84,7 @@ public class WebFileHandle extends FileHandle {
         }
     }
 
-    /**
-     * Reads the entire file into a string using the specified charset.
-     *
-     * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
-     */
+    @Override
     public String readString(String charset) {
         if (type == FileType.Local) {
             // obtain via reader
@@ -115,30 +101,17 @@ public class WebFileHandle extends FileHandle {
         }
     }
 
-    /**
-     * Returns a stream for writing to this file. Parent directories will be created if necessary.
-     *
-     * @param append If false, this file will be overwritten if it exists, otherwise it will be appended.
-     * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
-     *                             {@link FileType#Internal} file, or if it could not be written.
-     */
+    @Override
     public OutputStream write(boolean append) {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().write(this, append);
+            return FileDB.getInstance().write(this, append);
         }
         else {
             throw new GdxRuntimeException("Cannot write to the given file.");
         }
     }
 
-    /**
-     * Returns a writer for writing to this file. Parent directories will be created if necessary.
-     *
-     * @param append  If false, this file will be overwritten if it exists, otherwise it will be appended.
-     * @param charset May be null to use the default charset.
-     * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
-     *                             {@link FileType#Internal} file, or if it could not be written.
-     */
+    @Override
     public Writer writer(boolean append, String charset) {
         try {
             return new BufferedWriter(new OutputStreamWriter(write(append), "UTF-8"));
@@ -148,95 +121,63 @@ public class WebFileHandle extends FileHandle {
         }
     }
 
-    /**
-     * Returns the paths to the children of this directory. Returns an empty list if this file handle represents a file and not a
-     * directory. On the desktop, an {@link FileType#Internal} handle to a directory on the classpath will return a zero length
-     * array.
-     *
-     * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
-     */
+    @Override
     public FileHandle[] list() {
       if (type == FileType.Local) {
-          return WebFileHandleDB.getInstance().list(this);
+          return FileDB.getInstance().list(this);
       }
       else {
           return preloader.list(file);
       }
     }
 
-    /**
-     * Returns the paths to the children of this directory that satisfy the specified filter. Returns an empty list if this file
-     * handle represents a file and not a directory. On the desktop, an {@link FileType#Internal} handle to a directory on the
-     * classpath will return a zero length array.
-     *
-     * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
-     */
+    @Override
     public FileHandle[] list(FileFilter filter) {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().list(this, filter);
+            return FileDB.getInstance().list(this, filter);
         }
         else {
             return preloader.list(file, filter);
         }
     }
 
-    /**
-     * Returns the paths to the children of this directory that satisfy the specified filter. Returns an empty list if this file
-     * handle represents a file and not a directory. On the desktop, an {@link FileType#Internal} handle to a directory on the
-     * classpath will return a zero length array.
-     *
-     * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
-     */
+    @Override
     public FileHandle[] list(FilenameFilter filter) {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().list(this, filter);
+            return FileDB.getInstance().list(this, filter);
         }
         else {
             return preloader.list(file, filter);
         }
     }
 
-    /**
-     * Returns the paths to the children of this directory with the specified suffix. Returns an empty list if this file handle
-     * represents a file and not a directory. On the desktop, an {@link FileType#Internal} handle to a directory on the classpath
-     * will return a zero length array.
-     *
-     * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
-     */
+    @Override
     public FileHandle[] list(String suffix) {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().list(this, suffix);
+            return FileDB.getInstance().list(this, suffix);
         }
         else {
             return preloader.list(file, suffix);
         }
     }
 
-    /**
-     * Returns true if this file is a directory. Always returns false for classpath files. On Android, an
-     * {@link FileType#Internal} handle to an empty directory will return false. On the desktop, an {@link FileType#Internal}
-     * handle to a directory on the classpath will return false.
-     */
+    @Override
     public boolean isDirectory() {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().isDirectory(this);
+            return FileDB.getInstance().isDirectory(this);
         }
         else {
             return preloader.isDirectory(file);
         }
     }
 
-    /**
-     * Returns a handle to the child with the specified name.
-     *
-     * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} and the child
-     *                             doesn't exist.
-     */
+    @Override
     public FileHandle child(String name) {
         return new WebFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
                 FileType.Internal);
     }
 
+    @Override
     public FileHandle parent() {
         int index = file.lastIndexOf("/");
         String dir = "";
@@ -244,6 +185,7 @@ public class WebFileHandle extends FileHandle {
         return new WebFileHandle(preloader, dir, type);
     }
 
+    @Override
     public FileHandle sibling(String name) {
         return parent().child(fixSlashes(name));
     }
@@ -253,71 +195,54 @@ public class WebFileHandle extends FileHandle {
      */
     public void mkdirs() {
         if (type == FileType.Local) {
-            WebFileHandleDB.getInstance().mkdirs(this);
+            FileDB.getInstance().mkdirs(this);
         }
         else {
             throw new GdxRuntimeException("Cannot mkdirs for non-local file: " + file);
         }
     }
 
-    /**
-     * Returns true if the file exists. On Android, a {@link FileType#Classpath} or {@link FileType#Internal} handle to a
-     * directory will always return false.
-     */
+    @Override
     public boolean exists() {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().exists(this);
+            return FileDB.getInstance().exists(this);
         }
         else {
             return preloader.contains(file);
         }
     }
 
-    /**
-     * Deletes this file or empty directory and returns success. Will not delete a directory that has children.
-     *
-     * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
-     */
+    @Override
     public boolean delete() {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().delete(this);
+            return FileDB.getInstance().delete(this);
         }
         else {
             throw new GdxRuntimeException("Cannot delete a non-local file: " + file);
         }
     }
 
-    /**
-     * Deletes this file or directory and all children, recursively.
-     *
-     * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
-     */
+    @Override
     public boolean deleteDirectory() {
         throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
 
-    /**
-     * Returns the length in bytes of this file, or 0 if this file is a directory, does not exist, or the size cannot otherwise be
-     * determined.
-     */
+    @Override
     public long length() {
         if (type == FileType.Local) {
-            return WebFileHandleDB.getInstance().length(this);
+            return FileDB.getInstance().length(this);
         }
         else {
             return preloader.length(file);
         }
     }
 
-    /**
-     * Returns the last modified time in milliseconds for this file. Zero is returned if the file doesn't exist. Zero is returned
-     * for {@link FileType#Classpath} files. On Android, zero is returned for {@link FileType#Internal} files. On the desktop, zero
-     * is returned for {@link FileType#Internal} files on the classpath.
-     */
+    @Override
     public long lastModified() {
         return 0;
     }
 
+    @Override
     public String toString() {
         return file;
     }
