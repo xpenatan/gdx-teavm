@@ -627,13 +627,14 @@ public class WebFileHandle extends FileHandle {
     static private void copyDirectory (WebFileHandle sourceDir, WebFileHandle destDir) {
       destDir.mkdirs();
       WebFileHandle[] files = (WebFileHandle[])sourceDir.list();
-      for (int i = 0, n = files.length; i < n; i++) {
-          WebFileHandle srcFile = files[i];
-          WebFileHandle destFile = (WebFileHandle)destDir.child(srcFile.name());
-          if (srcFile.isDirectory())
-              copyDirectory(srcFile, destFile);
-          else
-              copyFile(srcFile, destFile);
+      for (WebFileHandle srcFile : files) {
+          WebFileHandle destFile = (WebFileHandle) destDir.child(srcFile.name());
+          if (srcFile.isDirectory()) {
+            copyDirectory(srcFile, destFile);
+          }
+          else {
+            copyFile(srcFile, destFile);
+          }
       }
     }
 }

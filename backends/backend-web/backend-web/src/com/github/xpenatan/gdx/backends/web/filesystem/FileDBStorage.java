@@ -1,13 +1,11 @@
 package com.github.xpenatan.gdx.backends.web.filesystem;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 import org.teavm.jso.browser.Storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * Local storage based file system. Stays persistent but is limited to about 2.5-5MB in general.
