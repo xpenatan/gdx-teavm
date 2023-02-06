@@ -249,7 +249,7 @@ public class WebFileHandle extends FileHandle {
         return position - offset;
     }
 
-    /**
+  /**
      * Returns a stream for writing to this file. Parent directories will be created if necessary.
      *
      * @param append If false, this file will be overwritten if it exists, otherwise it will be appended.
@@ -257,8 +257,20 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
+        return write(append, 512);
+    }
+
+    /**
+     * Returns a buffered stream for writing to this file. Parent directories will be created if necessary.
+     *
+     * @param append     If false, this file will be overwritten if it exists, otherwise it will be appended.
+     * @param bufferSize The size of the buffer.
+     * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
+     *                             {@link FileType#Internal} file, or if it could not be written.
+     */
+    public OutputStream write(boolean append, int bufferSize) {
         if (type == FileType.Local) {
-            return FileDB.getInstance().write(this, append);
+            return FileDB.getInstance().write(this, append, bufferSize);
         }
         else {
             throw new GdxRuntimeException("Cannot write to the given file.");

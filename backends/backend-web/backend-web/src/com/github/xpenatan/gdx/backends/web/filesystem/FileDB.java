@@ -33,9 +33,9 @@ public abstract class FileDB {
 
   public abstract InputStream read(WebFileHandle file);
 
-  public final OutputStream write(WebFileHandle file, boolean append) {
+  public final OutputStream write(WebFileHandle file, boolean append, int bufferSize) {
     // buffer for writing
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream(512);
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream(bufferSize);
 
     // append as needed (we read the existing content)
     if (append) {

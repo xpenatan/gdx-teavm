@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.web.filesystem;
 
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
-import org.teavm.jso.browser.Storage;
+import com.github.xpenatan.gdx.backends.web.WebJSHelper;
 
 import java.io.InputStream;
 
@@ -19,7 +19,7 @@ public final class FileDBManager extends FileDB {
 
 
   FileDBManager() {
-    localStorage = new FileDBStorage(Storage.getLocalStorage());
+    localStorage = new FileDBStorage(WebJSHelper.get().getStorage());
     memory = new FileDBStorage(new MemoryStorage());
   }
 

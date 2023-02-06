@@ -1,7 +1,8 @@
 package com.github.xpenatan.gdx.backends.web.filesystem;
 
 import com.badlogic.gdx.utils.ObjectMap;
-import org.teavm.jso.browser.Storage;
+import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.web.utils.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author noblemaster
  */
-class MemoryStorage extends Storage {
+class MemoryStorage implements StorageWrapper {
 
   /** Contains all the data. */
   private final List<String> keys;

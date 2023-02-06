@@ -2,7 +2,8 @@ package com.github.xpenatan.gdx.backends.web.filesystem;
 
 import com.badlogic.gdx.utils.Base64Coder;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
-import org.teavm.jso.browser.Storage;
+import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.web.utils.Storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -15,17 +16,17 @@ import java.io.InputStream;
 final class FileDBStorage extends FileDB {
 
   /** Our files stored and encoded as Base64. Directories with "d:..." and regular files stored as "f:...". */
-  private final Storage storage;
+  private final StorageWrapper storage;
 
   private static final String ID_FILE = "f:";
   private static final String ID_DIR = "d:";
 
 
-  FileDBStorage(Storage storage) {
+  FileDBStorage(StorageWrapper storage) {
     this.storage = storage;
   }
 
-  Storage storage() {
+  StorageWrapper storage() {
     return storage;
   }
 
