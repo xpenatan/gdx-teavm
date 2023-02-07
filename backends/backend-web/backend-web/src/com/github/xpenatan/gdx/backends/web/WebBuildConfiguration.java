@@ -42,6 +42,8 @@ public abstract class WebBuildConfiguration {
         return true;
     }
 
+    public abstract String getHtmlTitle();
+
     public abstract String getHtmlWidth();
 
     public abstract String getHtmlHeight();

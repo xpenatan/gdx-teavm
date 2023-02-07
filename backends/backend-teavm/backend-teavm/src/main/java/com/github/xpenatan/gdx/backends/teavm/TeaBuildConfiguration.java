@@ -35,10 +35,16 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
 
+    public String htmlTitle = "TeaVMCoreExample";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
 
     @Override
+    public String getHtmlTitle() {
+      return htmlTitle;
+    }
+
+  @Override
     public String getHtmlWidth() {
         return String.valueOf(htmlWidth);
     }

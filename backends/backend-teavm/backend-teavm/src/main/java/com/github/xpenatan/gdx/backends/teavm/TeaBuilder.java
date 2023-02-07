@@ -546,6 +546,7 @@ public class TeaBuilder {
         FileHandle handler = new FileHandle(indexFile);
         String indexHtmlStr = handler.readString();
 
+        indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
         indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
         indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
         indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
