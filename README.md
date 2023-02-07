@@ -19,6 +19,7 @@ Note:
 * [test-bullet-wasm](https://xpenatan.github.io/gdx-teavm/teavm/test-bullet/)
 * [test-box2d-wasm](https://xpenatan.github.io/gdx-teavm/teavm/test-box2d/)
 * [micronaut-libgdx-teavm](https://github.com/hollingsworthd/micronaut-libgdx-teavm)
+* [6dof-vehicle](https://xpenatan.github.io/gdx-6dof-vehicle-demo/teavm/vehicle/) ([source](https://github.com/xpenatan/gdx-6dof-vehicle-demo))
 
 ## How it works:
 The backend-web was created with the idea of code reuse in mind so multiple javascript backends can use it, it only contains java code. backend-teavm contains teaVM code to generate libgdx games to javascript.
