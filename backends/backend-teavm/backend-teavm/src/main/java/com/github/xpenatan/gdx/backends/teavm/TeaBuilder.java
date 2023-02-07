@@ -6,6 +6,7 @@ import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
 import com.github.xpenatan.gdx.backends.web.WebClassLoader;
 import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetFilter;
 import com.github.xpenatan.gdx.backends.web.preloader.AssetsCopy;
 import java.io.File;
 import java.io.IOException;
@@ -535,7 +536,7 @@ public class TeaBuilder {
         webappAssetsFiles.add(webappName);
         WebBuildConfiguration.logHeader("COPYING ASSETS");
 
-        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), webappDirectory, false);
+        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false);
         WebBuildConfiguration.log("");
 
         String scriptsOutputPath = webappDirectory + File.separator + webappName;
@@ -551,6 +552,7 @@ public class TeaBuilder {
 
         handler.writeString(indexHtmlStr, false);
 
+        AssetFilter filter = configuration.assetFilter();
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         ArrayList<String> classPathScriptFiles = new ArrayList<>();
@@ -559,10 +561,10 @@ public class TeaBuilder {
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
-        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, assetsOutputPath, generateAssetPaths);
+        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, filter, assetsOutputPath, generateAssetPaths);
 
         // Copy Scripts
-        AssetsCopy.copy(classLoader, classPathScriptFiles, null, scriptsOutputPath, false);
+        AssetsCopy.copy(classLoader, classPathScriptFiles, null, null, scriptsOutputPath, false);
         WebBuildConfiguration.log("");
     }
 }

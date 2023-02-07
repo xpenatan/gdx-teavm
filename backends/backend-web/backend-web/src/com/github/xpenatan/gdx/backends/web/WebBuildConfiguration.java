@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.web;
 
+import com.github.xpenatan.gdx.backends.web.preloader.AssetFilter;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,11 +60,11 @@ public abstract class WebBuildConfiguration {
 
     public abstract void assetsClasspath(ArrayList<String> classPaths);
 
-    /**
-     * @param paths
-     * @return true to generate a file which contains all assets patch
-     */
+    /** @return True to generate a file which contains all assets patch */
     public abstract boolean assetsPath(ArrayList<File> paths);
+
+    /** An asset filter for files we want to copy to the "assets" directory or 'null' for all. */
+    public abstract AssetFilter assetFilter();
 
     public abstract boolean minifying();
 
