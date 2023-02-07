@@ -37,8 +37,10 @@ public final class FileDBManager extends FileDB {
   protected void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
     // write larger files into memory: up to 16.384kb into local storage (permanent)
     if (expectedLength >= 16384) {
-      // >= 100kb: in memory
-      ((MemoryStorage)memory.storage()).cleanup();  // <-- removes data as needed
+      // data is large: store in memory
+      if ((!append) || (!memory.exists(file))) {
+        ((MemoryStorage) memory.storage()).cleanup();  // <-- removes old data as needed (to make sure we have enough space)
+      }
 
       // write to memory...
       memory.writeInternal(file, data, append, expectedLength);
