@@ -4,19 +4,11 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.StreamUtils;
+import com.github.xpenatan.gdx.backends.web.filesystem.FileDB;
 import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+
+import java.io.*;
 
 /**
  * @author xpenatan
@@ -27,8 +19,9 @@ public class WebFileHandle extends FileHandle {
     private final FileType type;
 
     public WebFileHandle(Preloader preloader, String fileName, FileType type) {
-        if(type != FileType.Internal && type != FileType.Classpath)
-            throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
+        if((type != FileType.Internal) && (type != FileType.Classpath) && (type != FileType.Local)) {
+          throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
+        }
         this.preloader = preloader;
         this.file = fixSlashes(fileName);
         this.type = type;
@@ -92,9 +85,14 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
     public InputStream read() {
-        InputStream in = preloader.read(file);
-        if(in == null) throw new GdxRuntimeException(file + " does not exist");
-        return in;
+        if (type == FileType.Local) {
+            return FileDB.getInstance().read(this);
+        }
+        else {
+            InputStream in = preloader.read(file);
+            if (in == null) throw new GdxRuntimeException(file + " does not exist");
+            return in;
+        }
     }
 
     /**
@@ -162,12 +160,18 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
     public String readString(String charset) {
-        if(preloader.isText(file)) return preloader.texts.get(file);
-        try {
-            return new String(readBytes(), "UTF-8");
+        if (type == FileType.Local) {
+            // obtain via reader
+            return super.readString(charset);
         }
-        catch(UnsupportedEncodingException e) {
-            return null;
+        else {
+            if (preloader.isText(file)) return preloader.texts.get(file);
+            try {
+                return new String(readBytes(), "UTF-8");
+            }
+            catch (UnsupportedEncodingException e) {
+              return null;
+            }
         }
     }
 
@@ -178,7 +182,7 @@ public class WebFileHandle extends FileHandle {
      */
     public byte[] readBytes() {
         int length = (int)length();
-        if(length == 0) length = 512;
+        if (length == 0) length = 512;
         byte[] buffer = new byte[length];
         int position = 0;
         InputStream input = read();
@@ -253,7 +257,24 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+        return write(append, 4096);
+    }
+
+    /**
+     * Returns a buffered stream for writing to this file. Parent directories will be created if necessary.
+     *
+     * @param append     If false, this file will be overwritten if it exists, otherwise it will be appended.
+     * @param bufferSize The size of the buffer.
+     * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
+     *                             {@link FileType#Internal} file, or if it could not be written.
+     */
+    public OutputStream write(boolean append, int bufferSize) {
+        if (type == FileType.Local) {
+            return FileDB.getInstance().write(this, append, bufferSize);
+        }
+        else {
+            throw new GdxRuntimeException("Cannot write to the given file.");
+        }
     }
 
     /**
@@ -265,7 +286,18 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void write(InputStream input, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+      OutputStream output = null;
+      try {
+          output = write(append, (int)length());
+          StreamUtils.copyStream(input, output);
+      }
+      catch (Exception ex) {
+          throw new GdxRuntimeException("Error stream writing to file: " + file + " (" + type + ")", ex);
+      }
+      finally {
+          StreamUtils.closeQuietly(input);
+          StreamUtils.closeQuietly(output);
+      }
     }
 
     /**
@@ -288,7 +320,12 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public Writer writer(boolean append, String charset) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+        try {
+            return new BufferedWriter(new OutputStreamWriter(write(append), "UTF-8"));
+        }
+        catch (Exception e) {
+            throw new GdxRuntimeException("Error obtaining writer.", e);
+        }
     }
 
     /**
@@ -311,7 +348,17 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeString(String string, boolean append, String charset) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+      Writer writer = null;
+      try {
+          writer = writer(append, charset);
+          writer.write(string);
+      }
+      catch (Exception ex) {
+          throw new GdxRuntimeException("Error writing file: " + file + " (" + type + ")", ex);
+      }
+      finally {
+          StreamUtils.closeQuietly(writer);
+      }
     }
 
     /**
@@ -322,7 +369,16 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeBytes(byte[] bytes, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+      OutputStream output = write(append);
+      try {
+          output.write(bytes);
+      }
+      catch (IOException ex) {
+          throw new GdxRuntimeException("Error writing file: " + file + " (" + type + ")", ex);
+      }
+      finally {
+          StreamUtils.closeQuietly(output);
+      }
     }
 
     /**
@@ -333,7 +389,16 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public void writeBytes(byte[] bytes, int offset, int length, boolean append) {
-        throw new GdxRuntimeException("Cannot write to files in web backend");
+      OutputStream output = write(append);
+      try {
+          output.write(bytes, offset, length);
+      }
+      catch (IOException ex) {
+          throw new GdxRuntimeException("Error writing file: " + file + " (" + type + ")", ex);
+      }
+      finally {
+          StreamUtils.closeQuietly(output);
+      }
     }
 
     /**
@@ -344,7 +409,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list() {
+      if (type == FileType.Local) {
+        return FileDB.getInstance().list(this);
+      }
+      else {
         return preloader.list(file);
+      }
     }
 
     /**
@@ -355,7 +425,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(FileFilter filter) {
-        return preloader.list(file, filter);
+      if (type == FileType.Local) {
+          return FileDB.getInstance().list(this, filter);
+      }
+      else {
+          return preloader.list(file);
+      }
     }
 
     /**
@@ -366,7 +441,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(FilenameFilter filter) {
-        return preloader.list(file, filter);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().list(this, filter);
+        }
+        else {
+            return preloader.list(file, filter);
+        }
     }
 
     /**
@@ -377,7 +457,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(String suffix) {
-        return preloader.list(file, suffix);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().list(this, suffix);
+        }
+        else {
+            return preloader.list(file, suffix);
+        }
     }
 
     /**
@@ -386,7 +471,12 @@ public class WebFileHandle extends FileHandle {
      * handle to a directory on the classpath will return false.
      */
     public boolean isDirectory() {
-        return preloader.isDirectory(file);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().isDirectory(this);
+        }
+        else {
+            return preloader.isDirectory(file);
+        }
     }
 
     /**
@@ -397,7 +487,7 @@ public class WebFileHandle extends FileHandle {
      */
     public FileHandle child(String name) {
         return new WebFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
-                FileType.Internal);
+                type);
     }
 
     public FileHandle parent() {
@@ -415,7 +505,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public void mkdirs() {
-        throw new GdxRuntimeException("Cannot mkdirs with an internal file: " + file);
+        if (type == FileType.Local) {
+            FileDB.getInstance().mkdirs(this);
+        }
+        else {
+            throw new GdxRuntimeException("Cannot mkdirs for non-local file: " + file);
+        }
     }
 
     /**
@@ -423,7 +518,12 @@ public class WebFileHandle extends FileHandle {
      * directory will always return false.
      */
     public boolean exists() {
-        return preloader.contains(file);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().exists(this);
+        }
+        else {
+            return preloader.contains(file);
+        }
     }
 
     /**
@@ -432,7 +532,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public boolean delete() {
-        throw new GdxRuntimeException("Cannot delete an internal file: " + file);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().delete(this);
+        }
+        else {
+            throw new GdxRuntimeException("Cannot delete a non-local file: " + file);
+        }
     }
 
     /**
@@ -441,7 +546,7 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public boolean deleteDirectory() {
-        throw new GdxRuntimeException("Cannot delete an internal file: " + file);
+        throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
 
     /**
@@ -456,7 +561,19 @@ public class WebFileHandle extends FileHandle {
      *                             or copying failed.
      */
     public void copyTo(FileHandle dest) {
-        throw new GdxRuntimeException("Cannot copy to an internal file: " + dest);
+        if (!isDirectory()) {
+            if (dest.isDirectory()) dest = dest.child(name());
+            copyFile(this, (WebFileHandle)dest);
+            return;
+        }
+        if (dest.exists()) {
+            if (!dest.isDirectory()) throw new GdxRuntimeException("Destination exists but is not a directory: " + dest);
+        }
+        else {
+            dest.mkdirs();
+            if (!dest.isDirectory()) throw new GdxRuntimeException("Destination directory cannot be created: " + dest);
+        }
+        copyDirectory(this, (WebFileHandle)dest.child(name()));
     }
 
     /**
@@ -466,15 +583,41 @@ public class WebFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file.
      */
     public void moveTo(FileHandle dest) {
-        throw new GdxRuntimeException("Cannot move an internal file: " + file);
-    }
+        switch (type) {
+            case Classpath: {
+                throw new GdxRuntimeException("Cannot move a classpath file: " + file);
+            }
+            case Internal: {
+                throw new GdxRuntimeException("Cannot move an internal file: " + file);
+            }
+            case Local:
+            case Absolute:
+            case External:
+            default:
+                if ((type == FileType.Local) && (dest.type() == FileType.Local)) {
+                  // we can potentially rename directly?
+                  if (isDirectory() == dest.isDirectory()) {
+                    FileDB.getInstance().rename(this, (WebFileHandle)dest);
+                    return;
+                  }
+                }
+                copyTo(dest);
+                delete();
+                if (exists() && isDirectory()) deleteDirectory();
+        }
+		}
 
     /**
      * Returns the length in bytes of this file, or 0 if this file is a directory, does not exist, or the size cannot otherwise be
      * determined.
      */
     public long length() {
-        return preloader.length(file);
+        if (type == FileType.Local) {
+            return FileDB.getInstance().length(this);
+        }
+        else {
+            return preloader.length(file);
+        }
     }
 
     /**
@@ -496,5 +639,29 @@ public class WebFileHandle extends FileHandle {
             path = path.substring(0, path.length() - 1);
         }
         return path;
+    }
+
+    static private void copyFile (WebFileHandle source, WebFileHandle dest) {
+      try {
+        dest.write(source.read(), false);
+      }
+      catch (Exception ex) {
+        throw new GdxRuntimeException("Error copying source file: " + source.file + " (" + source.type + ")\n" //
+          + "To destination: " + dest.file + " (" + dest.type + ")", ex);
+      }
+    }
+
+    static private void copyDirectory (WebFileHandle sourceDir, WebFileHandle destDir) {
+      destDir.mkdirs();
+      WebFileHandle[] files = (WebFileHandle[])sourceDir.list();
+      for (WebFileHandle srcFile : files) {
+          WebFileHandle destFile = (WebFileHandle) destDir.child(srcFile.name());
+          if (srcFile.isDirectory()) {
+            copyDirectory(srcFile, destFile);
+          }
+          else {
+            copyFile(srcFile, destFile);
+          }
+      }
     }
 }

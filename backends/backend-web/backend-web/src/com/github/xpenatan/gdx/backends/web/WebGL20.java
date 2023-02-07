@@ -366,7 +366,7 @@ public class WebGL20 implements GL20 {
             params.put(0, param);
         }
         else
-            throw new GdxRuntimeException("glGetFloat not supported by web WebGL backend");
+            throw new GdxRuntimeException("glGetInteger not supported by web WebGL backend");
     }
 
     @Override
