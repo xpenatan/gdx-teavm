@@ -125,4 +125,12 @@ final class FileDBStorage extends FileDB {
       return 0L;
     }
   }
+
+  @Override
+  public void rename(WebFileHandle source, WebFileHandle target) {
+    // assuming file (not directory)
+    String data = storage.getItem(ID_FOR_FILE + source.path());
+    storage.removeItem(ID_FOR_FILE + source.path());
+    storage.setItem(ID_FOR_FILE + target.path(), data);
+  }
 }

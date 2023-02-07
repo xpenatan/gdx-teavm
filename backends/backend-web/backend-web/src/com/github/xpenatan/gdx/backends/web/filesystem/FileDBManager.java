@@ -35,10 +35,10 @@ public final class FileDBManager extends FileDB {
 
   @Override
   protected void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
-    // write larger files into memory
-    if (expectedLength >= 100000) {
+    // write larger files into memory: up to 16.384kb into local storage (permanent)
+    if (expectedLength >= 16384) {
       // >= 100kb: in memory
-//    ((MemoryStorage)memory.storage()).cleanup();  // <-- removes data as needed
+      ((MemoryStorage)memory.storage()).cleanup();  // <-- removes data as needed
 
       // write to memory...
       memory.writeInternal(file, data, append, expectedLength);
@@ -96,6 +96,16 @@ public final class FileDBManager extends FileDB {
     }
     else {
       return localStorage.length(file);
+    }
+  }
+
+  @Override
+  public void rename(WebFileHandle source, WebFileHandle target) {
+    if (memory.exists(source)) {
+      memory.rename(source, target);
+    }
+    else {
+      localStorage.rename(source, target);
     }
   }
 }

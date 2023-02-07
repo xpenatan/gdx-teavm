@@ -409,7 +409,12 @@ public class WebFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list() {
+      if (type == FileType.Local) {
+        return FileDB.getInstance().list(this);
+      }
+      else {
         return preloader.list(file);
+      }
     }
 
     /**
@@ -421,7 +426,7 @@ public class WebFileHandle extends FileHandle {
      */
     public FileHandle[] list(FileFilter filter) {
       if (type == FileType.Local) {
-          return FileDB.getInstance().list(this);
+          return FileDB.getInstance().list(this, filter);
       }
       else {
           return preloader.list(file);
@@ -589,6 +594,13 @@ public class WebFileHandle extends FileHandle {
             case Absolute:
             case External:
             default:
+                if ((type == FileType.Local) && (dest.type() == FileType.Local)) {
+                  // we can potentially rename directly?
+                  if (isDirectory() == dest.isDirectory()) {
+                    FileDB.getInstance().rename(this, (WebFileHandle)dest);
+                    return;
+                  }
+                }
                 copyTo(dest);
                 delete();
                 if (exists() && isDirectory()) deleteDirectory();

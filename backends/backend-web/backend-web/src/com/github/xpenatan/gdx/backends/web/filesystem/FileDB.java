@@ -105,4 +105,6 @@ public abstract class FileDB {
   public abstract boolean delete(WebFileHandle file);
 
   public abstract long length(WebFileHandle file);
+
+  public abstract void rename(WebFileHandle source, WebFileHandle target);
 }
