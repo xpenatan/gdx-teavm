@@ -573,6 +573,12 @@ public class WebGL20 implements GL20 {
         else if(data instanceof IntBuffer) {
             gl.bufferData(target, copy((IntBuffer)data), usage);
         }
+        else if(data instanceof ByteBuffer) {
+            gl.bufferData(target, copy((ByteBuffer)data), usage);
+        }
+        else if(data == null) {
+            gl.bufferData(target, size, usage);
+        }
         else {
             throw new GdxRuntimeException("Can only cope with FloatBuffer, ShortBuffer and IntBuffer at the moment");
         }
