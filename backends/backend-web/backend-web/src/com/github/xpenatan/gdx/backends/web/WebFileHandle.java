@@ -182,7 +182,7 @@ public class WebFileHandle extends FileHandle {
      */
     public byte[] readBytes() {
         int length = (int)length();
-        if(length == 0) length = 512;
+        if (length == 0) length = 512;
         byte[] buffer = new byte[length];
         int position = 0;
         InputStream input = read();

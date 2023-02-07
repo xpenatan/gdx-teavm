@@ -38,7 +38,7 @@ public final class FileDBManager extends FileDB {
     // write larger files into memory
     if (expectedLength >= 100000) {
       // >= 100kb: in memory
-      ((MemoryStorage)memory.storage()).cleanup();  // <-- removes data as needed
+//    ((MemoryStorage)memory.storage()).cleanup();  // <-- removes data as needed
 
       // write to memory...
       memory.writeInternal(file, data, append, expectedLength);

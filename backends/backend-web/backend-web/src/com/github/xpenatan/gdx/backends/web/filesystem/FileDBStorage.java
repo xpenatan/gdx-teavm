@@ -119,9 +119,10 @@ final class FileDBStorage extends FileDB {
       return HEXCoder.decode(data).length;
     }
     catch (RuntimeException e) {
-      // something corrupted: we remove it & re-throw the error
+      // something corrupted: we report 'null'
+      Gdx.app.error("File System", "Error Decoding Data", e);
       storage.removeItem(ID_FOR_FILE + file.path());
-      throw e;
+      return 0L;
     }
   }
 }

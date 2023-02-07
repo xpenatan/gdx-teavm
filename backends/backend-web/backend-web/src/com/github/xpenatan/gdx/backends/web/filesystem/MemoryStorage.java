@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.web.filesystem;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.web.utils.Storage;
@@ -33,7 +34,10 @@ class MemoryStorage implements StorageWrapper {
       // calculate new total
       long total = 0;
       for (String key: keys) {
-        total += map.get(key).length();
+        String val = map.get(key);
+        if (val != null) {
+          total += val.length();
+        }
       }
 
       // over max?
@@ -42,14 +46,18 @@ class MemoryStorage implements StorageWrapper {
         String largeKey = null;
         long largeKeyLength = -1;
         for (String key: keys) {
-          long length = map.get(key).length();
-          if (length > largeKeyLength) {
-            largeKey = key;
-            largeKeyLength = length;
+          String val = map.get(key);
+          if (val != null) {
+            long length = val.length();
+            if (length > largeKeyLength) {
+              largeKey = key;
+              largeKeyLength = length;
+            }
           }
         }
 
         // and clean it..
+        Gdx.app.debug("File System", "Cleanup of " + largeKey);
         removeItem(largeKey);
       }
       else {
