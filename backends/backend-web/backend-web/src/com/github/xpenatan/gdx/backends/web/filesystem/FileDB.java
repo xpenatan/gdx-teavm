@@ -38,31 +38,6 @@ public abstract class FileDB {
     int bufferSizeMax = 8192;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(bufferSize, bufferSizeMax));
 
-    // append as needed (we read the existing content)
-    if (append && exists(file)) {
-      InputStream input = null;
-      try {
-        input = read(file);
-        int b;
-        while ((b = input.read()) >= 0) {
-          buffer.write(b);
-        }
-      }
-      catch (Exception e) {
-        throw new GdxRuntimeException("Error appending to file.", e);
-      }
-      finally {
-        if (input != null) {
-          try {
-            input.close();
-          }
-          catch (Exception e) {
-            // ignored...
-          }
-        }
-      }
-    }
-
     // wrap output stream so we get notified when we are done writing
     return new OutputStream() {
       @Override
@@ -75,13 +50,13 @@ public abstract class FileDB {
 
         // store the data now
         byte[] data = buffer.toByteArray();
-        writeInternal(file, data, Math.max(data.length, bufferSize));
+        writeInternal(file, data, append, Math.max(data.length, bufferSize));
       }
     };
   }
 
   /** Notifies when data has been written for a file. */
-  protected abstract void writeInternal(WebFileHandle file, byte[] data, int expectedLength);
+  protected abstract void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength);
 
   public final FileHandle[] list(WebFileHandle file) {
     // convert paths to file handles

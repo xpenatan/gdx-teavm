@@ -25,7 +25,7 @@ class MemoryStorage implements StorageWrapper {
   }
 
   /** Removes large files as needed to prevent out of memory problems. */
-  void cleanup() {
+  synchronized void cleanup() {
     // remove large files if we are above max. bytes
     long maxChars = 10000000;
     boolean cleaned = true;
@@ -60,22 +60,22 @@ class MemoryStorage implements StorageWrapper {
   }
 
   @Override
-  public int getLength() {
+  public synchronized int getLength() {
     return keys.size();
   }
 
   @Override
-  public String key(int i) {
+  public synchronized String key(int i) {
     return map.get(keys.get(i));
   }
 
   @Override
-  public String getItem(String key) {
+  public synchronized String getItem(String key) {
     return map.get(key);
   }
 
   @Override
-  public void setItem(String key, String item) {
+  public synchronized void setItem(String key, String item) {
     if (!map.containsKey(key)) {
       keys.add(key);
     }
@@ -83,13 +83,13 @@ class MemoryStorage implements StorageWrapper {
   }
 
   @Override
-  public void removeItem(String key) {
+  public synchronized void removeItem(String key) {
     keys.remove(key);
     map.remove(key);
   }
 
   @Override
-  public void clear() {
+  public synchronized void clear() {
     keys.clear();
     map.clear();
   }

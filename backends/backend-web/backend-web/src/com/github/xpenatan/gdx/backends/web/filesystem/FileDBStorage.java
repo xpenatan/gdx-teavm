@@ -40,7 +40,7 @@ final class FileDBStorage extends FileDB {
     // we obtain the stored byte array
     String data = storage.getItem(ID_FOR_FILE + file.path());
     try {
-      return new ByteArrayInputStream(Base64Coder.decode(data));
+      return new ByteArrayInputStream(HEXCoder.decode(data));
     }
     catch (RuntimeException e) {
       // something corrupted: we remove it & re-throw the error
@@ -50,8 +50,17 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public void writeInternal(WebFileHandle file, byte[] data, int expectedLength) {
-    storage.setItem(ID_FOR_FILE + file.path(), String.valueOf(Base64Coder.encode(data)));
+  public void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
+    String value = HEXCoder.encode(data);
+
+    // append to existing as needed
+    if (append) {
+      String dataCurrent = storage.getItem(ID_FOR_FILE + file.path());
+      if (dataCurrent != null) {
+        value = dataCurrent + value;
+      }
+    }
+    storage.setItem(ID_FOR_FILE + file.path(), value);
   }
 
   @Override
@@ -107,7 +116,7 @@ final class FileDBStorage extends FileDB {
     // this is somewhat slow
     String data = storage.getItem(ID_FOR_FILE + file.path());
     try {
-      return Base64Coder.decode(data).length;
+      return HEXCoder.decode(data).length;
     }
     catch (RuntimeException e) {
       // something corrupted: we remove it & re-throw the error
