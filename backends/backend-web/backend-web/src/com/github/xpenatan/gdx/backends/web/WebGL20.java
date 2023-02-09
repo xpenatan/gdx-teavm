@@ -33,7 +33,7 @@ import java.util.Map;
 @Emulate(WebGL20.class)
 public class WebGL20 implements GL20 {
 
-    private WebGLRenderingContextWrapper gl;
+    protected WebGLRenderingContextWrapper gl;
 
     final Map<Integer, WebGLProgramWrapper> programs = new HashMap<Integer, WebGLProgramWrapper>();
     int nextProgramId = 1;
