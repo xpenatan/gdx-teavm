@@ -40,7 +40,7 @@ public class WebGraphics implements Graphics {
         this.canvas = webJSHelper.getCanvas();
         this.jsGraphics = webJSHelper.getGraphics();
         this.context = jsGraphics.getGLContext(webJSHelper.getCanvas(), config);
-        gl = new WebGL20(context);
+        gl = config.useDebugGL ? new WebGL20Debug(context) : new WebGL20(context);
         String versionString = gl.glGetString(GL20.GL_VERSION);
         String vendorString = gl.glGetString(GL20.GL_VENDOR);
         String rendererString = gl.glGetString(GL20.GL_RENDERER);

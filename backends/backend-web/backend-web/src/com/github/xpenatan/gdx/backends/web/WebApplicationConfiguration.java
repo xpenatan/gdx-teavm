@@ -36,10 +36,10 @@ public abstract class WebApplicationConfiguration {
      * preserve the back buffer, needed if you fetch a screenshot via canvas#toDataUrl, may have performance impact
      **/
     public boolean preserveDrawingBuffer = false;
-//    /**
-//     * whether to use debugging mode for OpenGL calls. Errors will result in a RuntimeException being thrown.
-//     */
-//    public boolean useDebugGL = false;
+    /**
+     * whether to use debugging mode for OpenGL calls. Errors will result in a RuntimeException being thrown.
+     */
+    public boolean useDebugGL = false;
 
     public boolean usePhysicalPixels;
 

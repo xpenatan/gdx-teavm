@@ -368,6 +368,9 @@ public class TeaBuilder {
         filePath.add("bullet.js");
         filePath.add("bullet.wasm.js");
         filePath.add("bullet.wasm.wasm");
+        filePath.add("imgui.js");
+        filePath.add("imgui.wasm.js");
+        filePath.add("imgui.wasm.wasm");
         filePath.add("box2D.js");
         filePath.add("box2D.wasm.js");
         filePath.add("box2D.wasm.wasm");

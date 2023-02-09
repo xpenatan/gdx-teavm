@@ -127,8 +127,11 @@ public class WebApplication implements Application, Runnable {
         files = new WebFiles(preloader);
         logger = new WebApplicationLogger();
         initSound();
-        initBulletPhysics();
-        initBox2DPhysics();
+
+        //TODO remove script loading from application
+        webJSApplication.initBulletPhysics(this);
+        webJSApplication.initBox2dPhysics(this);
+        webJSApplication.initImGui(this);
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -247,14 +250,6 @@ public class WebApplication implements Application, Runnable {
                 return true;
             }
         });
-    }
-
-    private void initBulletPhysics() {
-        webJSApplication.initBulletPhysics(this);
-    }
-
-    private void initBox2DPhysics() {
-        webJSApplication.initBox2dPhysics(this);
     }
 
     public Preloader getPreloader() {
