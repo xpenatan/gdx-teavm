@@ -36,15 +36,15 @@ public class AssetsCopy {
         }
     }
 
-    public static void copy(ArrayList<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
-        copy(null, null, assetsPaths, assetsOutputPath, generateTextFile);
+    public static void copy(ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
+        copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile);
     }
 
-    public static void copy(WebClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, String assetsOutputPath, boolean generateTextFile) {
+    public static void copy(WebClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
         assetsOutputPath = assetsOutputPath.replace("\\", "/");
         FileWrapper target = new FileWrapper(assetsOutputPath);
         ArrayList<Asset> assets = new ArrayList<Asset>();
-        DefaultAssetFilter defaultAssetFilter = new DefaultAssetFilter();
+        AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
         if(assetsPaths != null && assetsPaths.size() > 0) {
             WebBuildConfiguration.log("Copying assets from:");
             for(int i = 0; i < assetsPaths.size(); i++) {

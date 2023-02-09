@@ -2,6 +2,9 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backends.web.preloader.AssetFilter;
+import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
  */
 public class TeaBuildConfiguration extends WebBuildConfiguration {
 
+    public AssetFilter assetFilter = null;
     public ArrayList<File> assetsPath = new ArrayList<>();
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
 
@@ -31,10 +35,16 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
 
+    public String htmlTitle = "TeaVMCoreExample";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
 
     @Override
+    public String getHtmlTitle() {
+      return htmlTitle;
+    }
+
+  @Override
     public String getHtmlWidth() {
         return String.valueOf(htmlWidth);
     }
@@ -81,6 +91,11 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     }
 
     @Override
+    public AssetFilter assetFilter() {
+      return assetFilter;
+    }
+
+  @Override
     public boolean minifying() {
         return obfuscate;
     }
