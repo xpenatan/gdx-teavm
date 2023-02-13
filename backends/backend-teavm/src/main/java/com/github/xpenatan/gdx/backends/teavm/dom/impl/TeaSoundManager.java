@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
@@ -16,7 +16,7 @@ public class TeaSoundManager {
             "onready: function() { callback.onready(); }," +
             "ontimeout: function(status) { callback.ontimeout(); }" +
             "});")
-    private static native void setupJS(JSObject soundManager, String url, SoundManagerCallbackWrapper callbackk);
+    private static native void setupJS(JSObject soundManager, String url, SoundManagerCallback callbackk);
 
     @JSBody(params = {"soundManager", "url"}, script = "return soundManager.createSound({url: url});")
     private static native JSObject createSoundJS(JSObject soundManager, String url);
@@ -32,7 +32,7 @@ public class TeaSoundManager {
         return new TeaSMSound(soundJS);
     }
 
-    public void setup(String url, SoundManagerCallbackWrapper callback) {
+    public void setup(String url, SoundManagerCallback callback) {
         setupJS(soundManagerJS, url, callback);
     }
 }

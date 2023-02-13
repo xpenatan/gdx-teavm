@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
@@ -30,7 +30,7 @@ public class TeaSMSound {
             "from: from," +
             "onfinish: function() { if(callback != null) callback.onfinish(); }" +
             "});")
-    private static native void playJS(JSObject smSoundJS, int volume, int pan, int loop, int from, SMSoundCallbackWrapper callback);
+    private static native void playJS(JSObject smSoundJS, int volume, int pan, int loop, int from, SMSoundCallback callback);
 
     @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.resume();")
     private static native void resumeJS(JSObject smSoundJS);

@@ -11,5 +11,5 @@ public class SMSoundOptions {
     public int pan = 0;
     public int loops = 1;
     public int from = 0;
-    public SMSoundCallbackWrapper callback = null;
+    public SMSoundCallback callback = null;
 }

@@ -52,8 +52,6 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -384,12 +382,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             classHolder = findClassHolder(cls, context, StorageWrapper.class);
             setClassInterface(classHolder, JSObject.class);
             setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, SoundManagerCallbackWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, SMSoundCallbackWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, CanvasRenderingContext2DWrapper.class);
             setClassInterface(classHolder, JSObject.class);

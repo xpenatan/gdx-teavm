@@ -24,7 +24,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
@@ -230,7 +230,7 @@ public class TeaApplication implements Application, Runnable {
             @Override
             public boolean onSuccess(String url, Object result) {
                 TeaSoundManager soundManager = new TeaSoundManager();
-                soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
+                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
                     @Override
                     public void onready() {
                         audio = new TeaAudio(soundManager);

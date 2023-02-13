@@ -5,13 +5,13 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSMSound;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
 
 /**
  * @author xpenatan
  */
-public class TeaMusic implements Music, SMSoundCallbackWrapper {
+public class TeaMusic implements Music, SMSoundCallback {
 
     private boolean isPlaying = false;
     private boolean isLooping = false;
