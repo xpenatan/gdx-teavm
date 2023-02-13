@@ -24,11 +24,9 @@ public class TeaJSHelper implements JSObject {
         return JSHelper;
     }
 
-    private TeaAgentInfo agentInfo;
     private HTMLCanvasElementWrapper canvasWrapper;
 
-    public TeaJSHelper(TeaAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
-        this.agentInfo = agentInfo;
+    public TeaJSHelper(HTMLCanvasElementWrapper canvasWrapper) {
         this.canvasWrapper = canvasWrapper;
     }
 
@@ -38,10 +36,6 @@ public class TeaJSHelper implements JSObject {
 
     public WindowWrapper getCurrentWindow() {
         return new TeaWindow();
-    }
-
-    public TeaAgentInfo getAgentInfo() {
-        return agentInfo;
     }
 
     public HTMLImageElementWrapper createImageElement() {

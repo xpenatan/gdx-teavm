@@ -64,10 +64,9 @@ public class TeaApplicationConfiguration {
     public TeaApplicationConfiguration(String canvasID) {
         TeaWindow window = new TeaWindow();
         DocumentWrapper document = window.getDocument();
-        TeaAgentInfo agentInfo = TeaWebAgent.computeAgentInfo();
         HTMLElementWrapper elementID = document.getElementById(canvasID);
         HTMLCanvasElementWrapper htmlCanvasDocument = (HTMLCanvasElementWrapper)elementID;
-        jsHelper = new TeaJSHelper(agentInfo, htmlCanvasDocument);
+        jsHelper = new TeaJSHelper(htmlCanvasDocument);
         new TeaTypedArrays();
     }
 

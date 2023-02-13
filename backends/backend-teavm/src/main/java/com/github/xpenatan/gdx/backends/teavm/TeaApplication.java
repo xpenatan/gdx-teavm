@@ -18,6 +18,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
@@ -74,7 +75,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void init() {
-        TeaApplication.agentInfo = TeaJSHelper.get().getAgentInfo();
+        TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
         if(agentInfo.isWindows() == true)
             System.setProperty("os.name", "Windows");
