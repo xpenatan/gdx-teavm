@@ -6,7 +6,7 @@ on:
       - 'master'
 
 jobs:
-  build_Linux:
+  pull_request:
     name: Build Windows/Linux
     runs-on: ubuntu-latest
     steps:
