@@ -1,7 +1,10 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.util;
 
+import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.WebApplication;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
+@Deprecated
 public class TeaJSApplication implements WebJSApplication {
 
     @Override

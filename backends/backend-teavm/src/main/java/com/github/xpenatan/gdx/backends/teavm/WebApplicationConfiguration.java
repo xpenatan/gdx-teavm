@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
+
 /**
  * @author xpenatan
  */

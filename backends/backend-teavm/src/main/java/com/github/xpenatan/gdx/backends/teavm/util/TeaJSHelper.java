@@ -1,5 +1,6 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.util;
 
+import com.github.xpenatan.gdx.backends.teavm.WebAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -16,6 +17,7 @@ import org.teavm.jso.browser.Storage;
 /**
  * @author xpenatan
  */
+@Deprecated
 public class TeaJSHelper extends WebJSHelper implements JSObject {
 
     private WebAgentInfo agentInfo;

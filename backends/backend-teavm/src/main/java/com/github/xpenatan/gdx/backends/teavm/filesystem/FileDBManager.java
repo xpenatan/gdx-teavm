@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.WebJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 import java.io.InputStream;
 

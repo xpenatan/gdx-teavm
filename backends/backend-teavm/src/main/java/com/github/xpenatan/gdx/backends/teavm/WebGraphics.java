@@ -13,6 +13,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSGraphics;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 /**
  * @author xpenatan

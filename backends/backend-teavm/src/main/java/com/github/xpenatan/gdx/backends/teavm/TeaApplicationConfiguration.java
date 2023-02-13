@@ -6,6 +6,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 /**
  * @author xpenatan

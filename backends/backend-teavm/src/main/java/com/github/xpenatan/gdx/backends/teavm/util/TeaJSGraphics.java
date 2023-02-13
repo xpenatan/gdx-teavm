@@ -1,5 +1,7 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.util;
 
+import com.github.xpenatan.gdx.backends.teavm.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.WebGraphics;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
@@ -7,6 +9,7 @@ import org.teavm.jso.JSFunctor;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
+@Deprecated
 public class TeaJSGraphics implements WebJSGraphics {
 
     @Override

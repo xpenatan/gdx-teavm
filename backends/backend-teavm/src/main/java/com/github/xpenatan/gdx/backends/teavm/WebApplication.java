@@ -25,6 +25,8 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDow
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSApplication;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 /**
  * @author xpenatan

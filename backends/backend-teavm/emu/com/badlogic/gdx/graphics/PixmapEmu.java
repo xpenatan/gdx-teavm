@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.WebJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
