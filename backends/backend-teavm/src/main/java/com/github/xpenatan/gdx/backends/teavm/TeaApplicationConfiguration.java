@@ -13,6 +13,8 @@ import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 public class TeaApplicationConfiguration {
     private TeaJSHelper jsHelper;
 
+    public String canvasID;
+
     /**
      * the width of the drawing area in pixels, 0 for using the available space or -1 to use html canvas size
      **/
@@ -63,11 +65,8 @@ public class TeaApplicationConfiguration {
     }
 
     public TeaApplicationConfiguration(String canvasID) {
-        TeaWindow window = new TeaWindow();
-        DocumentWrapper document = window.getDocument();
-        HTMLElementWrapper elementID = document.getElementById(canvasID);
-        HTMLCanvasElementWrapper htmlCanvasDocument = (HTMLCanvasElementWrapper)elementID;
-        jsHelper = new TeaJSHelper(htmlCanvasDocument);
+        this.canvasID = canvasID;
+        jsHelper = new TeaJSHelper();
         new TeaTypedArrays();
     }
 

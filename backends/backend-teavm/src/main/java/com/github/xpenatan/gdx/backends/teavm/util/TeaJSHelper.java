@@ -23,14 +23,7 @@ public class TeaJSHelper implements JSObject {
         return JSHelper;
     }
 
-    private HTMLCanvasElementWrapper canvasWrapper;
-
-    public TeaJSHelper(HTMLCanvasElementWrapper canvasWrapper) {
-        this.canvasWrapper = canvasWrapper;
-    }
-
-    public HTMLCanvasElementWrapper getCanvas() {
-        return canvasWrapper;
+    public TeaJSHelper() {
     }
 
     public WindowWrapper getCurrentWindow() {

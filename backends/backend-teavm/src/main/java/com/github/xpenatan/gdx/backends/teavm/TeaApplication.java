@@ -18,7 +18,6 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
@@ -44,7 +43,6 @@ public class TeaApplication implements Application, Runnable {
     private TeaInput input;
     private TeaFiles files;
     private TeaAudio audio;
-    private HTMLCanvasElementWrapper canvas;
     private TeaApplicationConfiguration config;
     private ApplicationListener appListener;
     private WindowWrapper window;
@@ -71,7 +69,6 @@ public class TeaApplication implements Application, Runnable {
         this.window = jsHelper.getCurrentWindow();
         this.appListener = appListener;
         this.config = config;
-        this.canvas = jsHelper.getCanvas();
         init();
     }
 
@@ -122,7 +119,7 @@ public class TeaApplication implements Application, Runnable {
 //		getPreloader().loadAsset("data/shotgun.ogg", AssetType.Audio, null, new AssetLoaderListener<>());
 
         graphics = new TeaGraphics(config);
-        input = new TeaInput(this.canvas);
+        input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);
         logger = new TeaApplicationLogger();
         initSound();

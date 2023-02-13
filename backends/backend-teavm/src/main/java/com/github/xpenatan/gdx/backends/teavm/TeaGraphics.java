@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
+import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import org.teavm.jso.JSBody;
@@ -38,10 +41,13 @@ public class TeaGraphics implements Graphics {
     int frames;
 
     public TeaGraphics(TeaApplicationConfiguration config) {
-        TeaJSHelper webJSHelper = TeaJSHelper.get();
         this.config = config;
-        this.canvas = webJSHelper.getCanvas();
-        this.context = getGLContext(webJSHelper.getCanvas(), config);
+        HTMLCanvasElement a;
+        TeaWindow window = new TeaWindow();
+        DocumentWrapper document = window.getDocument();
+        HTMLElementWrapper elementID = document.getElementById(config.canvasID);
+        this.canvas = (HTMLCanvasElementWrapper)elementID;
+        this.context = getGLContext(canvas, config);
         gl = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
         String versionString = gl.glGetString(GL20.GL_VERSION);
         String vendorString = gl.glGetString(GL20.GL_VENDOR);
