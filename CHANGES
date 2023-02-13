@@ -1,5 +1,12 @@
 [1.0.0-SNAPSHOT]
 - Add gdx-bullet c++ module so desktop and web use the same c++ code/version
+- Update teaVM to 0.7.0-dev-1212 and project Java version to 11
+- Add missing buffer in glBufferData
+- Add web gl debug
+- Bugfix for File Listing: file listing now also includes binary, image and audio files
+- Build Configuration: Asset Filter & Title for HTML File can now be Configured
+- load imgui javascript file if exist (Temp).
+- Some Bullet missing methods/improvements.
 
 [1.0.0-b2]
 - Fix sound/music assets path

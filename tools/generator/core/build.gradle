@@ -25,6 +25,8 @@ dependencies {
     includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
     includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
+    includeDep 'org.eclipse.jetty:jetty-server:11.0.13'
+    includeDep 'org.eclipse.jetty:jetty-webapp:11.0.13'
 }
 
 task fromClasses(type: Jar) {

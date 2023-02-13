@@ -21,7 +21,12 @@ dependencies {
     implementation project(":backends:backend-web:backend-web")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 
-    includeDep "org.teavm:teavm-cli:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-tooling:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-core:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-classlib:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso-apis:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso-impl:$project.teaVMVersion"
 }
 
 task fromClasses(type: Jar) {

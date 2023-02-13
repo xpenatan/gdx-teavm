@@ -1,10 +1,10 @@
 plugins {
-    id "org.gretty" version "3.0.6"
+    id "org.gretty" version '3.1.0'
 }
 
 gretty {
-    servletContainer = 'jetty9'
-    extraResourceBase 'webapp'
+    contextPath = '/'
+    extraResourceBase 'build/dist/webapp'
 }
 
 sourceSets.main.java.srcDirs = ["src/main/java/"]
@@ -22,13 +22,6 @@ dependencies {
     implementation project(":backends:backend-web:backend-web")
     implementation project(":backends:backend-teavm:backend-teavm")
     implementation project(":extensions:gdx-freetype-teavm")
-}
-
-clean.doFirst {
-    def webappPath = projectDir.toString() + "/webapp/"
-    if(new File(webappPath).exists()) {
-        project.delete(files(webappPath))
-    }
 }
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
