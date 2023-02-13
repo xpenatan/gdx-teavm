@@ -1,7 +1,7 @@
 package com.badlogic.gdx.graphics;
 
-import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 

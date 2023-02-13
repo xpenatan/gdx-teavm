@@ -14,13 +14,11 @@ dependencies {
     implementation project(":examples:core:core")
 
     // Use snapshots
-//  implementation "com.github.xpenatan.gdx-teavm:backend-web:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-teavm:backend-teavm:1.0.0-SNAPSHOT"
 //  implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects
-    implementation project(":backends:backend-web:backend-web")
-    implementation project(":backends:backend-teavm:backend-teavm")
+    implementation project(":backends:backend-teavm")
     implementation project(":extensions:gdx-freetype-teavm")
 }
 

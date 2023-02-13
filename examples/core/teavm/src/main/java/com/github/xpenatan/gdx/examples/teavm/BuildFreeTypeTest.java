@@ -2,8 +2,7 @@ package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
-import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
-import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypePackTest;
+import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.tests.freetype.FreeTypeTest;
 import java.io.File;
 import java.io.IOException;
