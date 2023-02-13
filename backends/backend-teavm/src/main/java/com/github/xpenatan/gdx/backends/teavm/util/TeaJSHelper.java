@@ -42,10 +42,6 @@ public class TeaJSHelper implements JSObject {
         return (HTMLImageElementWrapper)document.createElement("img");
     }
 
-    public XMLHttpRequestWrapper creatHttpRequest() {
-        return (XMLHttpRequestWrapper)XMLHttpRequest.create();
-    }
-
     public StorageWrapper getStorage() {
         StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
         return storage;

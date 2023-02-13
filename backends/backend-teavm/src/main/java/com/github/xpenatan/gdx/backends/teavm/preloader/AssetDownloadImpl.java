@@ -18,6 +18,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
+import org.teavm.jso.ajax.XMLHttpRequest;
 
 public class AssetDownloadImpl implements AssetDownload {
 
@@ -88,7 +89,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
         if(showLog)
             System.out.println("Loading asset : " + url);
-        final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
+        final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
@@ -116,7 +117,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
         if(showLog)
             System.out.println("Loading script : " + url);
-        final XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
+        final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
@@ -169,7 +170,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
         if(showLog)
             System.out.println("Loading asset : " + url);
-        XMLHttpRequestWrapper request = jsHelper.creatHttpRequest();
+        XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
         request.setOnreadystatechange(new EventHandlerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
