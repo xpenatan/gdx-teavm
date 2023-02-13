@@ -6,7 +6,7 @@ public class TeaLauncher {
 
     public static void main(String[] args) {
         try {
-            WebApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
+            TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
             Object appListener = getApplicationListener();
             if(appListener != null) {
                 ApplicationListener listener = (ApplicationListener)appListener;

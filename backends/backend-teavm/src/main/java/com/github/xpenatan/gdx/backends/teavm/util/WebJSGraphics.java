@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
-import com.github.xpenatan.gdx.backends.teavm.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
@@ -19,5 +19,5 @@ public interface WebJSGraphics {
 
     boolean isFullscreenJSNI();
 
-    WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, WebApplicationConfiguration config);
+    WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, TeaApplicationConfiguration config);
 }

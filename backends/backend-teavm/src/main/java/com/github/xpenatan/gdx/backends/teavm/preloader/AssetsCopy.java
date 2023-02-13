@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.WebBuildConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import java.io.File;
 import java.io.IOException;
@@ -46,24 +46,24 @@ public class AssetsCopy {
         ArrayList<Asset> assets = new ArrayList<Asset>();
         AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
         if(assetsPaths != null && assetsPaths.size() > 0) {
-            WebBuildConfiguration.log("Copying assets from:");
+            TeaBuilder.log("Copying assets from:");
             for(int i = 0; i < assetsPaths.size(); i++) {
                 String path = assetsPaths.get(i).getAbsolutePath();
                 FileWrapper source = new FileWrapper(path);
-                WebBuildConfiguration.log(path);
+                TeaBuilder.log(path);
                 copyDirectory(source, target, defaultAssetFilter, assets);
             }
 
-            WebBuildConfiguration.log("to:");
-            WebBuildConfiguration.log(assetsOutputPath);
+            TeaBuilder.log("to:");
+            TeaBuilder.log(assetsOutputPath);
         }
 
         if(classloader != null && classPathAssetsFiles != null) {
             // Copy assets from class package directory
 
             addDirectoryClassPathFiles(classPathAssetsFiles);
-            WebBuildConfiguration.log("");
-            WebBuildConfiguration.log("Copying assets from:");
+            TeaBuilder.log("");
+            TeaBuilder.log("Copying assets from:");
             for(String classpathFile : classPathAssetsFiles) {
                 String path = classpathFile;
                 if(path.startsWith("/") == false) {
@@ -74,7 +74,7 @@ public class AssetsCopy {
                 }
                 if(defaultAssetFilter.accept(path, false)) {
                     try {
-                        WebBuildConfiguration.log(classpathFile);
+                        TeaBuilder.log(classpathFile);
                         InputStream is = classloader.getResourceAsStream(classpathFile);
                         if(is != null) {
                             FileWrapper dest = target.child(classpathFile);
@@ -93,8 +93,8 @@ public class AssetsCopy {
             }
         }
 
-        WebBuildConfiguration.log("to:");
-        WebBuildConfiguration.log(assetsOutputPath);
+        TeaBuilder.log("to:");
+        TeaBuilder.log(assetsOutputPath);
         if(generateTextFile == false) return;
 
         HashMap<String, ArrayList<Asset>> bundles = new HashMap<String, ArrayList<Asset>>();

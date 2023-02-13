@@ -23,7 +23,7 @@ public class TeaGraphics implements Graphics {
 
     private WebGLRenderingContextWrapper context;
     protected HTMLCanvasElementWrapper canvas;
-    protected WebApplicationConfiguration config;
+    protected TeaApplicationConfiguration config;
     protected GL20 gl;
     protected GLVersion glVersion;
 
@@ -36,7 +36,7 @@ public class TeaGraphics implements Graphics {
 
     private WebJSGraphics jsGraphics;
 
-    public TeaGraphics(WebApplicationConfiguration config) {
+    public TeaGraphics(TeaApplicationConfiguration config) {
         WebJSHelper webJSHelper = WebJSHelper.get();
         this.config = config;
         this.canvas = webJSHelper.getCanvas();

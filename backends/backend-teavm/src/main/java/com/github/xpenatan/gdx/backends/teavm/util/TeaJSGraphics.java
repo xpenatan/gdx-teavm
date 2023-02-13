@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
-import com.github.xpenatan.gdx.backends.teavm.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
@@ -147,7 +147,7 @@ public class TeaJSGraphics implements WebJSGraphics {
     }
 
     @Override
-    public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, WebApplicationConfiguration config) {
+    public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, TeaApplicationConfiguration config) {
         WebGLContextAttributes attr = WebGLContextAttributes.create();
         attr.setAlpha(config.alpha);
         attr.setAntialias(config.antialiasing);

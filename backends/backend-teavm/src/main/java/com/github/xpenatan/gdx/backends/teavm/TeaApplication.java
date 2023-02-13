@@ -44,7 +44,7 @@ public class TeaApplication implements Application, Runnable {
     private TeaFiles files;
     private TeaAudio audio;
     private HTMLCanvasElementWrapper canvas;
-    private WebApplicationConfiguration config;
+    private TeaApplicationConfiguration config;
     private ApplicationListener appListener;
     private WindowWrapper window;
 
@@ -66,7 +66,7 @@ public class TeaApplication implements Application, Runnable {
 
     private WebJSApplication webJSApplication;
 
-    public TeaApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
+    public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
         WebJSHelper jsHelper = config.getJSHelper();
         WebJSHelper.JSHelper = jsHelper;
         this.window = jsHelper.getCurrentWindow();
