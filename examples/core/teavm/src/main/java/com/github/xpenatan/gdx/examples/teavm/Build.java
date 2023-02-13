@@ -3,9 +3,10 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.backends.web.gen.SkipClass;
+import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.teavm.tooling.TeaVMTool;
@@ -19,7 +20,7 @@ public class Build {
      */
     private final static boolean BUILD_FROM_COMPILED_FOLDER = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String reflectionPackage = "com.github.xpenatan.gdx.examples.tests.reflection.models";
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
@@ -34,7 +35,7 @@ public class Build {
             }
         };
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
-        teaBuildConfiguration.webappPath = new File(".").getAbsolutePath();
+        teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.obfuscate = false;
 //        teaBuildConfiguration.mainApplicationClass = ReflectionTest.class.getName();
 //		teaBuildConfiguration.mainApplicationClass = FreeTypeTest.class.getName();

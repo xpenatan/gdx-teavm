@@ -1,0 +1,109 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'signing'
+}
+
+group = project.groupId
+
+def module_name = "backend-teavm"
+
+sourceSets.main.java.srcDirs = [ "emu", "src/main/java/"]
+sourceSets.main.resources.srcDirs = ["src/main/resources/"]
+
+configurations {
+    includeDep
+    api.extendsFrom includeDep
+}
+
+dependencies {
+    includeDep "org.reflections:reflections:$project.reflectionVersion"
+    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+
+    includeDep "org.teavm:teavm-tooling:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-core:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-classlib:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso-apis:$project.teaVMVersion"
+    includeDep "org.teavm:teavm-jso-impl:$project.teaVMVersion"
+}
+
+task fromClasses(type: Jar) {
+    from(sourceSets.main.output) {
+    }
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier.set("javadoc")
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            version project.gdxHtmlVersion + project.gdxHtmlType
+            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            artifactId module_name
+            artifact fromClasses
+            artifact javadocJar
+            artifact sourcesJar
+
+            pom {
+                name = "Gdx-teaVM"
+                description = "Tool to generate libgdx to javascript using teaVM"
+                url = "https://github.com/xpenatan/gdx-teavm"
+                developers {
+                    developer {
+                        id = "Xpe"
+                        name = "Natan"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
+                    developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
+                    url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
+                }
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                withXml {
+                    def dependencies = asNode().appendNode('dependencies')
+                    configurations.includeDep.allDependencies.each {
+                        def dependencyNode = dependencies.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    def ver = project.version.toString()
+    def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+    if(!isSnapshot) {
+        def signingKey = System.getenv("signingKey")
+        def signingPassword = System.getenv("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.maven
+    }
+}

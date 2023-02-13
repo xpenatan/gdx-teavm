@@ -11,8 +11,7 @@ def module_name = "gdx-freetype-teavm"
 sourceSets.main.resources.srcDirs = ["resources/"]
 
 dependencies {
-    implementation project(":backends:backend-web:backend-web")
-    implementation project(":backends:backend-teavm:backend-teavm")
+    implementation project(":backends:backend-teavm")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
