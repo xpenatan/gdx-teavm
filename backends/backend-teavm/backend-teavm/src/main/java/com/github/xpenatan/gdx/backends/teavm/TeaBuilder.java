@@ -186,8 +186,7 @@ public class TeaBuilder {
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
         // The idea here is to replace native java classes with the emulated java class.
         // 0 - TeaVM backend - Contains all teavm api stuff to make it work.
-        // 1 - Backend-web - Emulate generic java classes. Some classes may be implemented by the teavm backend.
-        // 2 - Extensions - Emulate native extension classes
+        // 1 - Extensions - Emulate native extension classes
 
         // TODO make a better sort. Lazy to do it now
         // Move extensions to be first so native classes are replaced by the emulated classes
@@ -196,7 +195,6 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
         makeClassPathFirst(acceptedURL, EXTENSION_IMGUI);
         // Move generic backend to be first
-        makeClassPathFirst(acceptedURL, "backend-web");
         makeClassPathFirst(acceptedURL, "backend-teavm");
     }
 

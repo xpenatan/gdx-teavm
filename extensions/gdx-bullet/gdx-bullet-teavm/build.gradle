@@ -15,7 +15,6 @@ configurations {
 }
 
 dependencies {
-    implementation project(":backends:backend-web:backend-web")
     implementation project(":backends:backend-teavm:backend-teavm")
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
     includeDep "com.github.xpenatan.jParser:jParser-loader:$project.jParserVersion"

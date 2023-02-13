@@ -1,4 +1,3 @@
-include ":backends:backend-web:backend-web"
 include ":backends:backend-teavm:backend-teavm"
 
 include ":extensions:gdx-freetype-teavm"

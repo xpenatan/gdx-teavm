@@ -22,7 +22,7 @@ Note:
 * [6dof-vehicle](https://xpenatan.github.io/gdx-6dof-vehicle-demo/teavm/vehicle/) ([source](https://github.com/xpenatan/gdx-6dof-vehicle-demo))
 
 ## How it works:
-The backend-web was created with the idea of code reuse in mind so multiple javascript backends can use it, it only contains java code. backend-teavm contains teaVM code to generate libgdx games to javascript.
+~~The backend-web was created with the idea of code reuse in mind so multiple javascript backends can use it, it only contains java code. backend-teavm contains teaVM code to generate libgdx games to javascript.~~
 
 Like GDX GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript. Some backend code was ported from gdx-gwt-backend.
 
@@ -41,7 +41,6 @@ repositories {
 ```groovy
 // In teaVM module
 dependencies {
-    implementation "com.github.xpenatan.gdx-teavm:backend-web:$project.gdxTeaVMVersion"
     implementation "com.github.xpenatan.gdx-teavm:backend-teavm:$project.gdxTeaVMVersion"
 
     // Bullet extension
