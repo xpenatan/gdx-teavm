@@ -7,7 +7,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 
 public class TeaAudio implements Audio {
 

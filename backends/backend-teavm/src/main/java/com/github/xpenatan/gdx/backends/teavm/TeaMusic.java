@@ -3,8 +3,8 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSMSound;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSMSound;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
 

@@ -19,7 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;

@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 
 /**
  * @author xpenatan

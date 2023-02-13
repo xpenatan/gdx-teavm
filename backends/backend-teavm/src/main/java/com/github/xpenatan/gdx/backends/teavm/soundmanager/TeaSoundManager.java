@@ -1,6 +1,5 @@
-package com.github.xpenatan.gdx.backends.teavm.dom.impl;
+package com.github.xpenatan.gdx.backends.teavm.soundmanager;
 
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
