@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
-
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class TeaBuildConfiguration {
     public int htmlHeight = 600;
 
     public String getHtmlTitle() {
-      return htmlTitle;
+        return htmlTitle;
     }
 
     public String getHtmlWidth() {
@@ -79,7 +78,7 @@ public class TeaBuildConfiguration {
     }
 
     public AssetFilter assetFilter() {
-      return assetFilter;
+        return assetFilter;
     }
 
     public boolean minifying() {

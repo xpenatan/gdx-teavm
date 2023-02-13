@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
@@ -9,7 +10,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.badlogic.gdx.graphics.PixmapEmu;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;

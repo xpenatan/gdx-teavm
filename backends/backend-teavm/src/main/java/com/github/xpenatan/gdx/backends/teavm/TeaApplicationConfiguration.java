@@ -1,10 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
@@ -21,9 +21,11 @@ public class TeaApplicationConfiguration {
      * the height of the drawing area in pixels, 0 for using the available space or -1 to use html canvas size
      **/
     public int height = -1;
-    /** Padding to use for resizing the game content in the browser window, for resizable applications only. Defaults to 0. The
+    /**
+     * Padding to use for resizing the game content in the browser window, for resizable applications only. Defaults to 0. The
      * padding is necessary to prevent the browser from showing scrollbars. This can happen if the game content is of the same size
-     * than the browser window. The padding is given in logical pixels, not affected by {@link #usePhysicalPixels}. */
+     * than the browser window. The padding is given in logical pixels, not affected by {@link #usePhysicalPixels}.
+     */
     public int padHorizontal = 0, padVertical = 0;
     /**
      * whether to use a stencil buffer

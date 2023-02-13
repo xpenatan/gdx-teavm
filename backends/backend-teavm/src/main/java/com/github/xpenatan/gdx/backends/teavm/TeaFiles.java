@@ -42,7 +42,7 @@ public class TeaFiles implements Files {
 
     @Override
     public FileHandle local(String path) {
-      return new TeaFileHandle(preloader, path, FileType.Local);
+        return new TeaFileHandle(preloader, path, FileType.Local);
     }
 
     @Override

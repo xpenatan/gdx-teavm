@@ -15,18 +15,18 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
+import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
-import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
@@ -148,14 +148,14 @@ public class TeaApplication implements Application, Runnable {
                     int width = window.getClientWidth() - config.padHorizontal;
                     int height = window.getClientHeight() - config.padVertical;
 
-                    if (width <= 0 || height <= 0) {
+                    if(width <= 0 || height <= 0) {
                         return;
                     }
 
-                    if (graphics != null) {
+                    if(graphics != null) {
                         // event calls us with logical pixel size, so if we use physical pixels internally,
                         // we need to convert them
-                        if (config.usePhysicalPixels) {
+                        if(config.usePhysicalPixels) {
                             double density = graphics.getNativeScreenDensity();
                             width = (int)(width * density);
                             height = (int)(height * density);

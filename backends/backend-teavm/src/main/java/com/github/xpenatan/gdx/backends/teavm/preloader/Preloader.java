@@ -120,7 +120,7 @@ public class Preloader {
     }
 
     public void loadBinaryAsset(boolean async, final String url, AssetLoaderListener<Blob> listener) {
-        AssetDownloader.getInstance().load(async, getAssetUrl()  + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
+        AssetDownloader.getInstance().load(async, getAssetUrl() + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
                 listener.onProgress(amount);

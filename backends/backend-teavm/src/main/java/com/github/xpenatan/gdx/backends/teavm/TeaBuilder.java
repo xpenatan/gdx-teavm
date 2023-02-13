@@ -1,9 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetsCopy;
 import java.io.File;

@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
@@ -18,6 +17,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 public class AssetDownloadImpl implements AssetDownload {
 

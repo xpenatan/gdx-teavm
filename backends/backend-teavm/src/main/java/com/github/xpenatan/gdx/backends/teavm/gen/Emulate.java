@@ -7,8 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-public @interface Emulate{
+public @interface Emulate {
     Class<?> value() default Object.class;
+
     String valueStr() default "";
+
     boolean updateCode() default false;
 }

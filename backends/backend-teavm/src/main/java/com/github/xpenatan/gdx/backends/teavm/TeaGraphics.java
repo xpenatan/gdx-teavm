@@ -49,9 +49,10 @@ public class TeaGraphics implements Graphics {
         glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 
         if(config.width >= 0 || config.height >= 0) {
-            if (config.isFixedSizeApplication()) {
+            if(config.isFixedSizeApplication()) {
                 setCanvasSize(config.width, config.height);
-            } else {
+            }
+            else {
                 WindowWrapper currentWindow = TeaJSHelper.get().getCurrentWindow();
                 int width = currentWindow.getClientWidth() - config.padHorizontal;
                 int height = currentWindow.getClientHeight() - config.padVertical;
@@ -259,7 +260,7 @@ public class TeaGraphics implements Graphics {
     public boolean setWindowedMode(int width, int height) {
         if(isFullscreen()) exitFullscreen();
         // don't set canvas for resizable applications, resize handler will do it
-        if (!config.isAutoSizeApplication()) {
+        if(!config.isAutoSizeApplication()) {
             setCanvasSize(width, height);
         }
         return true;
@@ -268,7 +269,7 @@ public class TeaGraphics implements Graphics {
     void setCanvasSize(int width, int height) {
         canvas.setWidth(width);
         canvas.setHeight(height);
-        if (config.usePhysicalPixels) {
+        if(config.usePhysicalPixels) {
             //TODO Not tested
             double density = getNativeScreenDensity();
             StyleWrapper style = canvas.getStyle();
