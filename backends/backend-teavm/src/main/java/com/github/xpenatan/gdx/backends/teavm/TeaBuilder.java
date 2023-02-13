@@ -482,6 +482,8 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains("jParser-loader"))
             isValid = ACCEPT_STATE.ACCEPT;
+        else if(path.contains("jzlib"))
+          isValid = ACCEPT_STATE.ACCEPT;
 
         return isValid;
     }
