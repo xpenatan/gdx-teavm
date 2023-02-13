@@ -19,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import org.teavm.jso.ajax.XMLHttpRequest;
+import org.teavm.jso.browser.Window;
 
 public class AssetDownloadImpl implements AssetDownload {
 
@@ -221,7 +222,8 @@ public class AssetDownloadImpl implements AssetDownload {
 
             @Override
             public boolean onSuccess(String url, Blob result) {
-                final HTMLImageElementWrapper image = jsHelper.createImageElement();
+                DocumentWrapper document = (DocumentWrapper)Window.current().getDocument();
+                final HTMLImageElementWrapper image = (HTMLImageElementWrapper)document.createElement("img");
 
                 if(crossOrigin != null) {
                     image.setAttribute("crossOrigin", crossOrigin);

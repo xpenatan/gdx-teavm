@@ -30,11 +30,6 @@ public class TeaJSHelper implements JSObject {
         return new TeaWindow();
     }
 
-    public HTMLImageElementWrapper createImageElement() {
-        DocumentWrapper document = getCurrentWindow().getDocument();
-        return (HTMLImageElementWrapper)document.createElement("img");
-    }
-
     public StorageWrapper getStorage() {
         StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
         return storage;
