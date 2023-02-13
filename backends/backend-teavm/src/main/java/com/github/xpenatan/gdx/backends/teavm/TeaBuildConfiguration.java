@@ -15,7 +15,9 @@ public class TeaBuildConfiguration {
     public ArrayList<File> assetsPath = new ArrayList<>();
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
 
+    @Deprecated
     public boolean obfuscate = false;
+    @Deprecated
     private String mainApplicationClass;
 
     public String webappPath;
@@ -81,6 +83,7 @@ public class TeaBuildConfiguration {
         return assetFilter;
     }
 
+    @Deprecated
     public boolean minifying() {
         return obfuscate;
     }
@@ -108,10 +111,12 @@ public class TeaBuildConfiguration {
     public void assetsClasspath(ArrayList<String> classPaths) {
     }
 
+    @Deprecated
     public void setApplicationListener(Class<? extends ApplicationListener> applicationListener) {
         setApplicationListener(applicationListener.getName());
     }
 
+    @Deprecated
     public void setApplicationListener(String applicationListener) {
         mainApplicationClass = applicationListener;
     }

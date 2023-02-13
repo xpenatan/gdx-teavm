@@ -8,6 +8,7 @@
 - load imgui javascript file if exist (Temp).
 - Some Bullet missing methods/improvements.
 - Remove backend-web.
+- Deprecate some settings from TeaBuildConfiguration (main class method and obfuscate flag)
 
 [1.0.0-b2]
 - Fix sound/music assets path
