@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import java.io.InputStream;
 
 /**
@@ -19,7 +19,7 @@ public final class FileDBManager extends FileDB {
 
 
   FileDBManager() {
-    localStorage = new FileDBStorage(WebJSHelper.get().getStorage());
+    localStorage = new FileDBStorage(TeaJSHelper.get().getStorage());
     memory = new FileDBStorage(new MemoryStorage());
   }
 

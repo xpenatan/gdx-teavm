@@ -25,8 +25,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDow
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSApplication;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
  * @author xpenatan
@@ -64,22 +63,18 @@ public class TeaApplication implements Application, Runnable {
 
     private String hostPageBaseURL;
 
-    private WebJSApplication webJSApplication;
-
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
-        WebJSHelper jsHelper = config.getJSHelper();
-        WebJSHelper.JSHelper = jsHelper;
+        TeaJSHelper jsHelper = config.getJSHelper();
+        TeaJSHelper.JSHelper = jsHelper;
         this.window = jsHelper.getCurrentWindow();
         this.appListener = appListener;
         this.config = config;
         this.canvas = jsHelper.getCanvas();
-        this.webJSApplication = jsHelper.getApplication();
-
         init();
     }
 
     private void init() {
-        TeaApplication.agentInfo = WebJSHelper.get().getAgentInfo();
+        TeaApplication.agentInfo = TeaJSHelper.get().getAgentInfo();
         System.setProperty("java.runtime.name", "");
         if(agentInfo.isWindows() == true)
             System.setProperty("os.name", "Windows");
@@ -90,7 +85,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl(WebJSHelper.get()));
+        AssetDownloader.setInstance(new AssetDownloadImpl(TeaJSHelper.get()));
 
         AssetDownload instance = AssetDownloader.getInstance();
         hostPageBaseURL = instance.getHostPageBaseURL();
@@ -131,9 +126,9 @@ public class TeaApplication implements Application, Runnable {
         initSound();
 
         //TODO remove script loading from application
-        webJSApplication.initBulletPhysics(this);
-        webJSApplication.initBox2dPhysics(this);
-        webJSApplication.initImGui(this);
+        initBulletPhysics(this);
+        initBox2dPhysics(this);
+        initImGui(this);
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -159,8 +154,7 @@ public class TeaApplication implements Application, Runnable {
                         // event calls us with logical pixel size, so if we use physical pixels internally,
                         // we need to convert them
                         if (config.usePhysicalPixels) {
-                            WebJSHelper webJSHelper = WebJSHelper.get();
-                            double density = webJSHelper.getGraphics().getNativeScreenDensity();
+                            double density = graphics.getNativeScreenDensity();
                             width = (int)(width * density);
                             height = (int)(height * density);
                         }
@@ -235,7 +229,7 @@ public class TeaApplication implements Application, Runnable {
         preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
-                WebJSHelper jsHelper = WebJSHelper.get();
+                TeaJSHelper jsHelper = TeaJSHelper.get();
                 SoundManagerWrapper soundManager = jsHelper.createSoundManager();
                 soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
                     @Override
@@ -363,7 +357,7 @@ public class TeaApplication implements Application, Runnable {
     public Preferences getPreferences(String name) {
         Preferences pref = prefs.get(name);
         if(pref == null) {
-            StorageWrapper storage = WebJSHelper.get().getStorage();
+            StorageWrapper storage = TeaJSHelper.get().getStorage();
             pref = new TeaPreferences(storage, name);
             prefs.put(name, pref);
         }
@@ -407,5 +401,64 @@ public class TeaApplication implements Application, Runnable {
         INIT_SOUND,
         APP_CREATE,
         APP_READY
+    }
+
+    // ##################### NATIVE CALLS #####################
+
+    public void initBulletPhysics(TeaApplication application) {
+        Preloader preloader = application.getPreloader();
+        initBulletPhysicsWasm(preloader);
+    }
+
+    public void initBox2dPhysics(TeaApplication application) {
+        Preloader preloader = application.getPreloader();
+        initBox2DPhysicsWasm(preloader);
+    }
+
+    public void initImGui(TeaApplication application) {
+        //TODO script loading should be inside lib and not application
+        Preloader preloader = application.getPreloader();
+        initImGuiWasm(preloader);
+    }
+
+    private void initBulletPhysicsWasm(Preloader preloader) {
+        preloader.loadScript(false, "bullet.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+
+            @Override
+            public void onFailure(String url) {
+            }
+        });
+    }
+
+    private void initImGuiWasm(Preloader preloader) {
+        preloader.loadScript(false, "imgui.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+
+            @Override
+            public void onFailure(String url) {
+            }
+        });
+    }
+
+    // Box2D
+
+    private void initBox2DPhysicsWasm(Preloader preloader) {
+        preloader.loadScript(false, "box2D.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+
+            @Override
+            public void onFailure(String url) {
+            }
+        });
     }
 }

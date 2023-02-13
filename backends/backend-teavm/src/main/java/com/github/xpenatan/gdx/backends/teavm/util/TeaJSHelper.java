@@ -18,64 +18,49 @@ import org.teavm.jso.browser.Storage;
  * @author xpenatan
  */
 @Deprecated
-public class TeaJSHelper extends WebJSHelper implements JSObject {
+public class TeaJSHelper implements JSObject {
+
+    public static TeaJSHelper JSHelper;
+
+    public static TeaJSHelper get() {
+        return JSHelper;
+    }
 
     private TeaAgentInfo agentInfo;
     private HTMLCanvasElementWrapper canvasWrapper;
-    private TeaJSGraphics graphics;
-    private TeaJSApplication application;
 
     public TeaJSHelper(TeaAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
         this.agentInfo = agentInfo;
         this.canvasWrapper = canvasWrapper;
-        this.graphics = new TeaJSGraphics();
-        this.application = new TeaJSApplication();
     }
 
-    @Override
     public HTMLCanvasElementWrapper getCanvas() {
         return canvasWrapper;
     }
 
-    @Override
     public WindowWrapper getCurrentWindow() {
         return new TeaWindow();
     }
 
-    @Override
     public TeaAgentInfo getAgentInfo() {
         return agentInfo;
     }
 
-    @Override
     public HTMLImageElementWrapper createImageElement() {
         DocumentWrapper document = getCurrentWindow().getDocument();
         return (HTMLImageElementWrapper)document.createElement("img");
     }
 
-    @Override
     public XMLHttpRequestWrapper creatHttpRequest() {
         return (XMLHttpRequestWrapper)XMLHttpRequest.create();
     }
 
-    @Override
     public StorageWrapper getStorage() {
         StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
         return storage;
     }
 
-    @Override
     public SoundManagerWrapper createSoundManager() {
         return new TeaSoundManager();
-    }
-
-    @Override
-    public WebJSGraphics getGraphics() {
-        return graphics;
-    }
-
-    @Override
-    public WebJSApplication getApplication() {
-        return application;
     }
 }

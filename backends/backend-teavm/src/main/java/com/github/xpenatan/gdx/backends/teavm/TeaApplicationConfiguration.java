@@ -7,13 +7,12 @@ import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 /**
  * @author xpenatan
  */
 public class TeaApplicationConfiguration {
-    private WebJSHelper jsHelper;
+    private TeaJSHelper jsHelper;
 
     /**
      * the width of the drawing area in pixels, 0 for using the available space or -1 to use html canvas size
@@ -72,7 +71,7 @@ public class TeaApplicationConfiguration {
         new TeaTypedArrays();
     }
 
-    public WebJSHelper getJSHelper() {
+    public TeaJSHelper getJSHelper() {
         return jsHelper;
     }
 }

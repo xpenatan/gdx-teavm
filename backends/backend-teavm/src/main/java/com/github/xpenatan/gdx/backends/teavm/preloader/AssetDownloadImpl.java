@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
@@ -21,7 +21,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDow
 
 public class AssetDownloadImpl implements AssetDownload {
 
-    private WebJSHelper jsHelper;
+    private TeaJSHelper jsHelper;
 
     private int queue;
     private boolean useBrowserCache = true;
@@ -29,7 +29,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     private boolean showLog = true;
 
-    public AssetDownloadImpl(WebJSHelper jsHelper) {
+    public AssetDownloadImpl(TeaJSHelper jsHelper) {
         this.jsHelper = jsHelper;
     }
 

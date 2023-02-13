@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
@@ -20,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWr
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -156,7 +156,7 @@ public class PixmapEmu implements Disposable {
     }
 
     private void create() {
-        WindowWrapper window = WebJSHelper.get().getCurrentWindow();
+        WindowWrapper window = TeaJSHelper.get().getCurrentWindow();
         DocumentWrapper document = window.getDocument();
         ElementWrapper createElement = document.createElement("canvas");
         canvas = (HTMLCanvasElementWrapper)createElement;

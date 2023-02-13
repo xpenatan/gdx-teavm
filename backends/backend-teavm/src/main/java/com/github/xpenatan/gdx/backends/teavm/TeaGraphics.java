@@ -13,8 +13,11 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSGraphics;
-import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
+import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSFunctor;
+import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.webgl.WebGLContextAttributes;
 
 /**
  * @author xpenatan
@@ -34,14 +37,11 @@ public class TeaGraphics implements Graphics {
     float time = 0;
     int frames;
 
-    private WebJSGraphics jsGraphics;
-
     public TeaGraphics(TeaApplicationConfiguration config) {
-        WebJSHelper webJSHelper = WebJSHelper.get();
+        TeaJSHelper webJSHelper = TeaJSHelper.get();
         this.config = config;
         this.canvas = webJSHelper.getCanvas();
-        this.jsGraphics = webJSHelper.getGraphics();
-        this.context = jsGraphics.getGLContext(webJSHelper.getCanvas(), config);
+        this.context = getGLContext(webJSHelper.getCanvas(), config);
         gl = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
         String versionString = gl.glGetString(GL20.GL_VERSION);
         String vendorString = gl.glGetString(GL20.GL_VENDOR);
@@ -52,10 +52,10 @@ public class TeaGraphics implements Graphics {
             if (config.isFixedSizeApplication()) {
                 setCanvasSize(config.width, config.height);
             } else {
-                WindowWrapper currentWindow = WebJSHelper.get().getCurrentWindow();
+                WindowWrapper currentWindow = TeaJSHelper.get().getCurrentWindow();
                 int width = currentWindow.getClientWidth() - config.padHorizontal;
                 int height = currentWindow.getClientHeight() - config.padVertical;
-                double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
+                double density = config.usePhysicalPixels ? getNativeScreenDensity() : 1;
                 setCanvasSize((int)(density * width), (int)(density * height));
             }
         }
@@ -238,8 +238,8 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public DisplayMode getDisplayMode() {
-        double density = config.usePhysicalPixels ? jsGraphics.getNativeScreenDensity() : 1;
-        return new DisplayMode((int)(jsGraphics.getScreenWidthJSNI() * density), (int)(jsGraphics.getScreenHeightJSNI() * density), 60, 8) {
+        double density = config.usePhysicalPixels ? getNativeScreenDensity() : 1;
+        return new DisplayMode((int)(getScreenWidthNATIVE() * density), (int)(getScreenHeightNATIVE() * density), 60, 8) {
         };
     }
 
@@ -252,12 +252,12 @@ public class TeaGraphics implements Graphics {
     public boolean setFullscreenMode(DisplayMode displayMode) {
         DisplayMode supportedMode = getDisplayMode();
         if(displayMode.width != supportedMode.width && displayMode.height != supportedMode.height) return false;
-        return jsGraphics.setFullscreenJSNI(this, canvas, displayMode.width, displayMode.height);
+        return setFullscreenJSNI(this, canvas, displayMode.width, displayMode.height);
     }
 
     @Override
     public boolean setWindowedMode(int width, int height) {
-        if(isFullscreen()) jsGraphics.exitFullscreen();
+        if(isFullscreen()) exitFullscreen();
         // don't set canvas for resizable applications, resize handler will do it
         if (!config.isAutoSizeApplication()) {
             setCanvasSize(width, height);
@@ -270,7 +270,7 @@ public class TeaGraphics implements Graphics {
         canvas.setHeight(height);
         if (config.usePhysicalPixels) {
             //TODO Not tested
-            double density = jsGraphics.getNativeScreenDensity();
+            double density = getNativeScreenDensity();
             StyleWrapper style = canvas.getStyle();
             style.setProperty("width", width / density + StyleWrapper.Unit.PX.getType());
             style.setProperty("height", height / density + StyleWrapper.Unit.PX.getType());
@@ -335,7 +335,7 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public boolean isFullscreen() {
-        return jsGraphics.isFullscreenJSNI();
+        return isFullscreenJSNI();
     }
 
     @Override
@@ -366,5 +366,139 @@ public class TeaGraphics implements Graphics {
     public void setForegroundFPS(int fps) {
         // TODO Auto-generated method stub
 
+    }
+
+    // ##################### NATIVE CALLS #####################
+
+    public double getNativeScreenDensity() {
+        return getNativeScreenDensityNATIVE();
+    }
+
+    @JSBody(script = "return devicePixelRatio || 1;")
+    private static native int getNativeScreenDensityNATIVE();
+
+    @JSBody(script = "return screen.width;")
+    private static native int getScreenWidthNATIVE();
+
+    @JSBody(script = "return screen.height;")
+    private static native int getScreenHeightNATIVE();
+
+    public boolean setFullscreenJSNI(TeaGraphics graphics, HTMLCanvasElementWrapper canvas, int screenWidth, int screenHeight) {
+        FullscreenChanged fullscreenChanged = new FullscreenChanged() {
+            @Override
+            public void fullscreenChanged() {
+            }
+        };
+        return setFullscreen(fullscreenChanged, canvas, screenWidth, screenHeight);
+    }
+
+    @JSBody(params = {"fullscreenChanged", "element", "screenWidth", "screenHeight"}, script = "" +
+            "\t\t// Attempt to use the non-prefixed standard API (https://fullscreen.spec.whatwg.org)\n" +
+            "\t\tif (element.requestFullscreen) {\n" +
+            "\t\t\telement.width = screenWidth;\n" +
+            "\t\t\telement.height = screenHeight;\n" +
+            "\t\t\telement.requestFullscreen();\n" +
+            "\t\t\tdocument\n" +
+            "\t\t\t\t\t.addEventListener(\n" +
+            "\t\t\t\t\t\t\t\"fullscreenchange\",\n" +
+            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
+            "\t\t\treturn true;\n" +
+            "\t\t}\n" +
+            "\t\t// Attempt to the vendor specific variants of the API\n" +
+            "\t\tif (element.webkitRequestFullScreen) {\n" +
+            "\t\t\telement.width = screenWidth;\n" +
+            "\t\t\telement.height = screenHeight;\n" +
+            "\t\t\telement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);\n" +
+            "\t\t\tdocument\n" +
+            "\t\t\t\t\t.addEventListener(\n" +
+            "\t\t\t\t\t\t\t\"webkitfullscreenchange\",\n" +
+            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
+            "\t\t\treturn true;\n" +
+            "\t\t}\n" +
+            "\t\tif (element.mozRequestFullScreen) {\n" +
+            "\t\t\telement.width = screenWidth;\n" +
+            "\t\t\telement.height = screenHeight;\n" +
+            "\t\t\telement.mozRequestFullScreen();\n" +
+            "\t\t\tdocument\n" +
+            "\t\t\t\t\t.addEventListener(\n" +
+            "\t\t\t\t\t\t\t\"mozfullscreenchange\",\n" +
+            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
+            "\t\t\treturn true;\n" +
+            "\t\t}\n" +
+            "\t\tif (element.msRequestFullscreen) {\n" +
+            "\t\t\telement.width = screenWidth;\n" +
+            "\t\t\telement.height = screenHeight;\n" +
+            "\t\t\telement.msRequestFullscreen();\n" +
+            "\t\t\tdocument\n" +
+            "\t\t\t\t\t.addEventListener(\n" +
+            "\t\t\t\t\t\t\t\"msfullscreenchange\",\n" +
+            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
+            "\t\t\treturn true;\n" +
+            "\t\t}\n" +
+            "\n" +
+            "\t\treturn false;")
+    private static native boolean setFullscreen(FullscreenChanged fullscreenChanged, HTMLCanvasElementWrapper element, int screenWidth, int screenHeight);
+
+    public void exitFullscreen() {
+        exitFullscreenJS();
+    }
+
+    @JSBody(script = "" +
+            "if (document.exitFullscreen)\n" +
+            "document.exitFullscreen();\n" +
+            "if (document.msExitFullscreen)\n" +
+            "document.msExitFullscreen();\n" +
+            "if (document.webkitExitFullscreen)\n" +
+            "document.webkitExitFullscreen();\n" +
+            "if (document.mozExitFullscreen)\n" +
+            "document.mozExitFullscreen();\n" +
+            "if (document.webkitCancelFullScreen) // Old WebKit\n" +
+            "document.webkitCancelFullScreen();")
+    private static native boolean exitFullscreenJS();
+
+    public boolean isFullscreenJSNI() {
+        return isFullscreenNATIVE();
+    }
+
+    @JSBody(script = "" +
+            "// Standards compliant check for fullscreen\n" +
+            "if (\"fullscreenElement\" in document) {\n" +
+            "return document.fullscreenElement != null;\n" +
+            "}" +
+            "// Vendor prefixed versions of standard check\n" +
+            "if (\"msFullscreenElement\" in document) {\n" +
+            "return document.msFullscreenElement != null;\n" +
+            "}" +
+            "if (\"webkitFullscreenElement\" in document) {\n" +
+            "return document.webkitFullscreenElement != null;\n" +
+            "}" +
+            "if (\"mozFullScreenElement\" in document) { // Yes, with a capital 'S'\n" +
+            "return document.mozFullScreenElement != null;\n" +
+            "}" +
+            "// Older, non-standard ways of checking for fullscreen\n" +
+            "if (\"webkitIsFullScreen\" in document) {\n" +
+            "return document.webkitIsFullScreen;\n" +
+            "}" +
+            "if (\"mozFullScreen\" in document) {\n" +
+            "return document.mozFullScreen;\n" +
+            "}" +
+            "return false")
+    private static native boolean isFullscreenNATIVE();
+
+    @JSFunctor
+    public interface FullscreenChanged extends org.teavm.jso.JSObject {
+        void fullscreenChanged();
+    }
+
+    public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, TeaApplicationConfiguration config) {
+        WebGLContextAttributes attr = WebGLContextAttributes.create();
+        attr.setAlpha(config.alpha);
+        attr.setAntialias(config.antialiasing);
+        attr.setStencil(config.stencil);
+        attr.setPremultipliedAlpha(config.premultipliedAlpha);
+        attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
+        HTMLCanvasElement canvas = (HTMLCanvasElement)canvasWrapper;
+        WebGLRenderingContextWrapper context = (WebGLRenderingContextWrapper)canvas.getContext("webgl", attr);
+        return context;
     }
 }
