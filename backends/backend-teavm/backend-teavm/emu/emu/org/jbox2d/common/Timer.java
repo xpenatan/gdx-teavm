@@ -1,7 +1,9 @@
-package emuorg.jbox2d.common;
+package emu.org.jbox2d.common;
 
+import com.github.xpenatan.gdx.backends.web.gen.Emulate;
 import org.teavm.jso.JSBody;
 
+@Emulate(valueStr = "org.jbox2d.common.Timer")
 public class Timer {
 
     private double resetMillis;
