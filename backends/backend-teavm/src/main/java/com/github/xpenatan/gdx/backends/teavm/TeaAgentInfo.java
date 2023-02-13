@@ -1,23 +1,34 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
-public interface TeaAgentInfo {
+public interface TeaAgentInfo extends JSObject {
 
-    public boolean isFirefox();
+    @JSProperty
+    boolean isFirefox();
 
-    public boolean isChrome();
+    @JSProperty
+    boolean isChrome();
 
-    public boolean isSafari();
+    @JSProperty
+    boolean isSafari();
 
-    public boolean isOpera();
+    @JSProperty
+    boolean isOpera();
 
-    public boolean isIE();
+    @JSProperty
+    boolean isIE();
 
-    public boolean isMacOS();
+    @JSProperty
+    boolean isMacOS();
 
-    public boolean isLinux();
+    @JSProperty
+    boolean isLinux();
 
-    public boolean isWindows();
+    @JSProperty
+    boolean isWindows();
 }

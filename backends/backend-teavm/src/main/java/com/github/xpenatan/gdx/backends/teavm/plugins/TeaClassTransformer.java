@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
@@ -311,17 +310,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "getIdentifier", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getClientX", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getClientY", null);
-
-            classHolder = findClassHolder(cls, context, TeaAgentInfo.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "isFirefox", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isChrome", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isSafari", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isOpera", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isIE", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isMacOS", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isLinux", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "isWindows", null);
 
             classHolder = findClassHolder(cls, context, DocumentWrapper.class);
             setClassInterface(classHolder, JSObject.class);
