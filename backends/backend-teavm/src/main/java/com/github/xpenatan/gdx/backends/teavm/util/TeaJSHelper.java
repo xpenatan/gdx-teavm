@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
@@ -9,7 +8,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Storage;
@@ -58,9 +56,5 @@ public class TeaJSHelper implements JSObject {
     public StorageWrapper getStorage() {
         StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
         return storage;
-    }
-
-    public SoundManagerWrapper createSoundManager() {
-        return new TeaSoundManager();
     }
 }

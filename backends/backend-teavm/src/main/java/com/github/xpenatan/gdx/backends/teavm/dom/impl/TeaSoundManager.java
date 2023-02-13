@@ -1,12 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
-public class TeaSoundManager implements SoundManagerWrapper {
+public class TeaSoundManager {
     @JSBody(script = "var soundManager = new SoundManager();" +
             "soundManager.debugMode = false;" +
             "return soundManager;")
@@ -29,13 +27,11 @@ public class TeaSoundManager implements SoundManagerWrapper {
         soundManagerJS = createSM();
     }
 
-    @Override
-    public SMSoundWrapper createSound(String url) {
+    public TeaSMSound createSound(String url) {
         JSObject soundJS = createSoundJS(soundManagerJS, url);
-        return new TeaSMSoundWrapper(soundJS);
+        return new TeaSMSound(soundJS);
     }
 
-    @Override
     public void setup(String url, SoundManagerCallbackWrapper callback) {
         setupJS(soundManagerJS, url, callback);
     }

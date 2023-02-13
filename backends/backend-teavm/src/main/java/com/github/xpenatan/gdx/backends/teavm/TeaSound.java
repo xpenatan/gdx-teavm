@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 
 /**
  * @author xpenatan
@@ -27,9 +27,9 @@ public class TeaSound implements Sound {
      */
     private FileHandle soundFile;
 
-    private SoundManagerWrapper soundManager;
+    private TeaSoundManager soundManager;
 
-    public TeaSound(SoundManagerWrapper soundManager, FileHandle file) {
+    public TeaSound(TeaSoundManager soundManager, FileHandle file) {
         this.soundManager = soundManager;
         soundFile = file;
         sounds = new TeaMusic[MAX_SOUNDS];

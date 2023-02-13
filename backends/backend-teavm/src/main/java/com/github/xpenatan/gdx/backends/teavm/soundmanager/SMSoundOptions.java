@@ -7,7 +7,6 @@ public class SMSoundOptions {
     public SMSoundOptions() {
     }
 
-    ;
     public int volume = 100;
     public int pan = 0;
     public int loops = 1;

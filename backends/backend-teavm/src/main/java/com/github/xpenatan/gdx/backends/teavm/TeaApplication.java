@@ -19,12 +19,12 @@ import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallbackWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
@@ -229,8 +229,7 @@ public class TeaApplication implements Application, Runnable {
         preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
-                TeaJSHelper jsHelper = TeaJSHelper.get();
-                SoundManagerWrapper soundManager = jsHelper.createSoundManager();
+                TeaSoundManager soundManager = new TeaSoundManager();
                 soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
                     @Override
                     public void onready() {
@@ -242,7 +241,6 @@ public class TeaApplication implements Application, Runnable {
                     public void ontimeout() {
                     }
                 });
-                jsHelper.createSoundManager();
                 return true;
             }
         });

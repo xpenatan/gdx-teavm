@@ -2,11 +2,10 @@ package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
-public class TeaSMSoundWrapper implements SMSoundWrapper {
+public class TeaSMSound {
 
     @JSBody(params = {"smSoundJS"}, script = "return smSoundJS.position;")
     private static native int getPositionJS(JSObject smSoundJS);
@@ -62,81 +61,66 @@ public class TeaSMSoundWrapper implements SMSoundWrapper {
 
     private JSObject smSoundJS;
 
-    public TeaSMSoundWrapper(JSObject smSoundJS) {
+    public TeaSMSound(JSObject smSoundJS) {
         this.smSoundJS = smSoundJS;
     }
 
-    @Override
     public int getPosition() {
         return getPositionJS(smSoundJS);
     }
 
-    @Override
     public void destruct() {
         destructJS(smSoundJS);
     }
 
-    @Override
     public void setPosition(int position) {
         setPositionJS(smSoundJS, position);
     }
 
-    @Override
     public void pause() {
         pauseJS(smSoundJS);
     }
 
-    @Override
     public void play(SMSoundOptions options) {
         playJS(smSoundJS, options.volume, options.pan, options.loops, options.from, options.callback);
     }
 
-    @Override
     public void play() {
         playJS(smSoundJS);
     }
 
-    @Override
     public void resume() {
         resumeJS(smSoundJS);
     }
 
-    @Override
     public void stop() {
         stopJS(smSoundJS);
     }
 
-    @Override
     public void setVolume(int volume) {
         setVolumeJS(smSoundJS, volume);
     }
 
-    @Override
     public int getVolume() {
         return getVolumeJS(smSoundJS);
     }
 
-    @Override
     public void setPan(int pan) {
         setPanJS(smSoundJS, pan);
     }
 
-    @Override
     public int getPan() {
         return getPanJS(smSoundJS);
     }
 
-    @Override
     public int getPlayState() {
         return getPlayStateJS(smSoundJS);
     }
 
-    @Override
     public boolean getPaused() {
         return getPausedJS(smSoundJS);
     }
 
-    @Override
     public int getLoops() {
         return getLoopsJS(smSoundJS);
     }

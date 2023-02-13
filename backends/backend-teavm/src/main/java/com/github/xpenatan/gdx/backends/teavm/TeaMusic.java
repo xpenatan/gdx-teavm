@@ -3,10 +3,10 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSMSound;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundWrapper;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 
 /**
  * @author xpenatan
@@ -15,13 +15,13 @@ public class TeaMusic implements Music, SMSoundCallbackWrapper {
 
     private boolean isPlaying = false;
     private boolean isLooping = false;
-    private SMSoundWrapper sound;
+    private TeaSMSound sound;
     private float volume = 1f;
     private float pan = 0f;
     private SMSoundOptions soundOptions;
     private OnCompletionListener onCompletionListener;
 
-    public TeaMusic(SoundManagerWrapper soundManager, FileHandle file) {
+    public TeaMusic(TeaSoundManager soundManager, FileHandle file) {
         String url = ((TeaApplication)Gdx.app).getAssetUrl() + file.path();
         sound = soundManager.createSound(url);
         soundOptions = new SMSoundOptions();
