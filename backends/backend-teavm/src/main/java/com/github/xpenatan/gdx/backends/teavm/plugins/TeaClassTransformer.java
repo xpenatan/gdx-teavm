@@ -391,9 +391,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
             classHolder = findClassHolder(cls, context, StyleWrapper.class);
             setClassInterface(classHolder, JSObject.class);
-
-            // Hack to make it compile. For some reason teavm add MapNode reference class but it does not even exist in js file
-            fixHack(cls, context);
         }
         String name = cls.getName();
 
@@ -417,14 +414,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             if(emulatedClassHolder != null) {
                 replaceClass(innerSource, cls, emulatedClassHolder);
             }
-        }
-    }
-
-    private void fixHack(ClassHolder cur, ClassHolderTransformerContext context) {
-        ClassHolder classHolder = findClassHolder(cur, context, FileHandle.class);
-        MethodHolder methodHolder = getMethodHolder(classHolder, "FileChannel$MapMode");
-        if(methodHolder != null) {
-            classHolder.removeMethod(methodHolder);
         }
     }
 
