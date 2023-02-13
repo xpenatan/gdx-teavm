@@ -2,7 +2,7 @@ package com.badlogic.gdx.utils.async;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(AsyncExecutor.class)
 public class AsyncExecutorEmu implements Disposable {

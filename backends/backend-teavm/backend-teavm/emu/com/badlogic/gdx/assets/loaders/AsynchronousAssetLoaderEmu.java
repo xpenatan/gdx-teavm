@@ -3,7 +3,7 @@ package com.badlogic.gdx.assets.loaders;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(AsynchronousAssetLoader.class)
 public abstract class AsynchronousAssetLoaderEmu<T, P extends AssetLoaderParameters<T>> extends AssetLoader<T, P> {

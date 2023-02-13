@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.web.soundmanager.SMSoundCallbackWrapper;
-import com.github.xpenatan.gdx.backends.web.soundmanager.SMSoundOptions;
-import com.github.xpenatan.gdx.backends.web.soundmanager.SMSoundWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundCallbackWrapper;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundOptions;
+import com.github.xpenatan.gdx.backends.teavm.soundmanager.SMSoundWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 

@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.TextureEmu;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.utils.Array;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(TextureLoader.class)
 public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, TextureLoaderEmu.TextureParameterEmu> {

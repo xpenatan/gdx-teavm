@@ -3,12 +3,9 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
-import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
-import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.web.WebJSHelper;
-import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.HTMLElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 
 /**
  * @author xpenatan

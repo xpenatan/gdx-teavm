@@ -1,6 +1,6 @@
 package com.artemis.utils.reflect;
 
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 /**
  * Provides information about, and access to, an annotation of a field, class or interface.

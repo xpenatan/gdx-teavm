@@ -1,8 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.github.xpenatan.gdx.backends.web.WebBuildConfiguration;
-import com.github.xpenatan.gdx.backends.web.preloader.AssetFilter;
+import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 
 import java.io.File;
 import java.net.URL;

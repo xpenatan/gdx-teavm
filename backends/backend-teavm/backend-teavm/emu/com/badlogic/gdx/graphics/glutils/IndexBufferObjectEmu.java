@@ -20,7 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.nio.ShortBuffer;
 
 /**

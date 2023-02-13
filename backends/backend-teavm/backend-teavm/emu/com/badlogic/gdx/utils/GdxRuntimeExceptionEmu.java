@@ -7,7 +7,7 @@ package com.badlogic.gdx.utils;
  * @author xpenatan
  */
 
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(GdxRuntimeException.class)
 public class GdxRuntimeExceptionEmu extends RuntimeException {

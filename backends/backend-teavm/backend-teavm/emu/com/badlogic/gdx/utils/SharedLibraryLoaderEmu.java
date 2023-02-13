@@ -1,10 +1,10 @@
 package com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.Gdx;
-import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
-import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.WebApplication;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
 @Emulate(SharedLibraryLoader.class)
 public class SharedLibraryLoaderEmu {

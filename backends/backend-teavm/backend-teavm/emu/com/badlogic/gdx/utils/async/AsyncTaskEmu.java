@@ -1,6 +1,6 @@
 package com.badlogic.gdx.utils.async;
 
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(AsyncTask.class)
 public interface AsyncTaskEmu<T> {

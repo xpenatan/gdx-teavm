@@ -3,7 +3,7 @@ package com.badlogic.gdx.ai;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.io.File;
 
 @Emulate(valueStr = "com.badlogic.gdx.ai.FileSystem")

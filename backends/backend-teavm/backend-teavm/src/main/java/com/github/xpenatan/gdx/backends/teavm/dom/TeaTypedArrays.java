@@ -1,13 +1,13 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float64ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int16ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float64ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int16ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Float64Array;

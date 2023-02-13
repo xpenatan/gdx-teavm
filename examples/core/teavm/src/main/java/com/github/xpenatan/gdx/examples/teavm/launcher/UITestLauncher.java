@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.examples.teavm.launcher;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.WebApplication;
+import com.github.xpenatan.gdx.backends.teavm.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.examples.tests.UITest;
 
 public class UITestLauncher {

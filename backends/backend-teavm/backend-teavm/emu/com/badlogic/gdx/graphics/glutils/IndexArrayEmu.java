@@ -1,6 +1,6 @@
 package com.badlogic.gdx.graphics.glutils;
 
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(IndexArray.class)
 public class IndexArrayEmu extends IndexBufferObject {

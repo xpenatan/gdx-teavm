@@ -2,8 +2,8 @@ package com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.github.xpenatan.gdx.backends.web.WebTool;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.WebTool;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

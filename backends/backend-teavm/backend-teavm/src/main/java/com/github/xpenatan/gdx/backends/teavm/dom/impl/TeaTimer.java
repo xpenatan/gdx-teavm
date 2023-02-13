@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.web.dom.TimerWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.TimerWrapper;
 import org.teavm.jso.browser.TimerHandler;
 import org.teavm.jso.browser.Window;
 

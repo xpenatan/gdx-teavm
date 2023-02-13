@@ -1,9 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.WebJSApplication;
-import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
 public class TeaJSApplication implements WebJSApplication {
 

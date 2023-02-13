@@ -1,10 +1,10 @@
 package emu.java.io;
 
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(valueStr = "java.io.Numbers")
 public class NumbersEmu {

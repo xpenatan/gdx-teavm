@@ -1,8 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.WebApplicationConfiguration;
 
 public class TeaLauncher {
 

@@ -1,6 +1,6 @@
 package com.github.xpenatan.jparser.loader;
 
-import com.github.xpenatan.gdx.backends.web.gen.Emulate;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(valueStr = "com.github.xpenatan.jparser.loader.JParserLibraryLoader")
 public class JParserLibraryLoaderEmu {
