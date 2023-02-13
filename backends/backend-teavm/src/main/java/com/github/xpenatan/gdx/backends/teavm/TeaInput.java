@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventTargetWrapper;

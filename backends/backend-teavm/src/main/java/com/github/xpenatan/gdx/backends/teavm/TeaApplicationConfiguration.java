@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;

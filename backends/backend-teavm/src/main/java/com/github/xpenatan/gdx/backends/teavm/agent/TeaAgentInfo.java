@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.agent;
 
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;

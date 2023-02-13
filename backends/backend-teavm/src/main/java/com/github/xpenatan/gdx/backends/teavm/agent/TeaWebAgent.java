@@ -1,6 +1,5 @@
-package com.github.xpenatan.gdx.backends.teavm.dom;
+package com.github.xpenatan.gdx.backends.teavm.agent;
 
-import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
