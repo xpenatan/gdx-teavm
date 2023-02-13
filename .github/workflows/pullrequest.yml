@@ -1,4 +1,4 @@
-name: Build
+name: Pull Request
 
 on:
   pull_request:
@@ -9,7 +9,6 @@ jobs:
   build_Linux:
     name: Build Windows/Linux
     runs-on: ubuntu-latest
-
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action
