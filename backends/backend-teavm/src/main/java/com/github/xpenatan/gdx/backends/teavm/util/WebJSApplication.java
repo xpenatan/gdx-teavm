@@ -1,12 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
-import com.github.xpenatan.gdx.backends.teavm.WebApplication;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 
 @Deprecated
 public interface WebJSApplication {
-    void initBulletPhysics(WebApplication application);
+    void initBulletPhysics(TeaApplication application);
 
-    void initBox2dPhysics(WebApplication application);
+    void initBox2dPhysics(TeaApplication application);
 
-    void initImGui(WebApplication application);
+    void initImGui(TeaApplication application);
 }

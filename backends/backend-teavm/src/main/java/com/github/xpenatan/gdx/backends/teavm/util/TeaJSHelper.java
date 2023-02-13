@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
-import com.github.xpenatan.gdx.backends.teavm.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -20,12 +20,12 @@ import org.teavm.jso.browser.Storage;
 @Deprecated
 public class TeaJSHelper extends WebJSHelper implements JSObject {
 
-    private WebAgentInfo agentInfo;
+    private TeaAgentInfo agentInfo;
     private HTMLCanvasElementWrapper canvasWrapper;
     private TeaJSGraphics graphics;
     private TeaJSApplication application;
 
-    public TeaJSHelper(WebAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
+    public TeaJSHelper(TeaAgentInfo agentInfo, HTMLCanvasElementWrapper canvasWrapper) {
         this.agentInfo = agentInfo;
         this.canvasWrapper = canvasWrapper;
         this.graphics = new TeaJSGraphics();
@@ -43,7 +43,7 @@ public class TeaJSHelper extends WebJSHelper implements JSObject {
     }
 
     @Override
-    public WebAgentInfo getAgentInfo() {
+    public TeaAgentInfo getAgentInfo() {
         return agentInfo;
     }
 

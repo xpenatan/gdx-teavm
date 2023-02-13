@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.WebBuildConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.WebClassLoader;
+import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +40,7 @@ public class AssetsCopy {
         copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile);
     }
 
-    public static void copy(WebClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
+    public static void copy(TeaClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
         assetsOutputPath = assetsOutputPath.replace("\\", "/");
         FileWrapper target = new FileWrapper(assetsOutputPath);
         ArrayList<Asset> assets = new ArrayList<Asset>();

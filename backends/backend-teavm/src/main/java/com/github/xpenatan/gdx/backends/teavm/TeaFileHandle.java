@@ -13,12 +13,12 @@ import java.io.*;
 /**
  * @author xpenatan
  */
-public class WebFileHandle extends FileHandle {
+public class TeaFileHandle extends FileHandle {
     public final Preloader preloader;
     private final String file;
     private final FileType type;
 
-    public WebFileHandle(Preloader preloader, String fileName, FileType type) {
+    public TeaFileHandle(Preloader preloader, String fileName, FileType type) {
         if((type != FileType.Internal) && (type != FileType.Classpath) && (type != FileType.Local)) {
           throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
         }
@@ -27,9 +27,9 @@ public class WebFileHandle extends FileHandle {
         this.type = type;
     }
 
-    public WebFileHandle(String path) {
+    public TeaFileHandle(String path) {
         this.type = FileType.Internal;
-        this.preloader = ((WebApplication)Gdx.app).getPreloader();
+        this.preloader = ((TeaApplication)Gdx.app).getPreloader();
         this.file = fixSlashes(path);
     }
 
@@ -486,7 +486,7 @@ public class WebFileHandle extends FileHandle {
      *                             doesn't exist.
      */
     public FileHandle child(String name) {
-        return new WebFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
+        return new TeaFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
                 type);
     }
 
@@ -494,7 +494,7 @@ public class WebFileHandle extends FileHandle {
         int index = file.lastIndexOf("/");
         String dir = "";
         if(index > 0) dir = file.substring(0, index);
-        return new WebFileHandle(preloader, dir, type);
+        return new TeaFileHandle(preloader, dir, type);
     }
 
     public FileHandle sibling(String name) {
@@ -563,7 +563,7 @@ public class WebFileHandle extends FileHandle {
     public void copyTo(FileHandle dest) {
         if (!isDirectory()) {
             if (dest.isDirectory()) dest = dest.child(name());
-            copyFile(this, (WebFileHandle)dest);
+            copyFile(this, (TeaFileHandle)dest);
             return;
         }
         if (dest.exists()) {
@@ -573,7 +573,7 @@ public class WebFileHandle extends FileHandle {
             dest.mkdirs();
             if (!dest.isDirectory()) throw new GdxRuntimeException("Destination directory cannot be created: " + dest);
         }
-        copyDirectory(this, (WebFileHandle)dest.child(name()));
+        copyDirectory(this, (TeaFileHandle)dest.child(name()));
     }
 
     /**
@@ -597,7 +597,7 @@ public class WebFileHandle extends FileHandle {
                 if ((type == FileType.Local) && (dest.type() == FileType.Local)) {
                   // we can potentially rename directly?
                   if (isDirectory() == dest.isDirectory()) {
-                    FileDB.getInstance().rename(this, (WebFileHandle)dest);
+                    FileDB.getInstance().rename(this, (TeaFileHandle)dest);
                     return;
                   }
                 }
@@ -641,7 +641,7 @@ public class WebFileHandle extends FileHandle {
         return path;
     }
 
-    static private void copyFile (WebFileHandle source, WebFileHandle dest) {
+    static private void copyFile (TeaFileHandle source, TeaFileHandle dest) {
       try {
         dest.write(source.read(), false);
       }
@@ -651,11 +651,11 @@ public class WebFileHandle extends FileHandle {
       }
     }
 
-    static private void copyDirectory (WebFileHandle sourceDir, WebFileHandle destDir) {
+    static private void copyDirectory (TeaFileHandle sourceDir, TeaFileHandle destDir) {
       destDir.mkdirs();
-      WebFileHandle[] files = (WebFileHandle[])sourceDir.list();
-      for (WebFileHandle srcFile : files) {
-          WebFileHandle destFile = (WebFileHandle) destDir.child(srcFile.name());
+      TeaFileHandle[] files = (TeaFileHandle[])sourceDir.list();
+      for (TeaFileHandle srcFile : files) {
+          TeaFileHandle destFile = (TeaFileHandle) destDir.child(srcFile.name());
           if (srcFile.isDirectory()) {
             copyDirectory(srcFile, destFile);
           }

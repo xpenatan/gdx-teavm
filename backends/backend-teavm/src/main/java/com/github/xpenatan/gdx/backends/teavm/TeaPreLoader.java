@@ -8,7 +8,7 @@ import java.io.InputStream;
 /**
  * @author xpenatan
  */
-public interface WebPreLoader {
+public interface TeaPreLoader {
 
     public InputStream read(String url);
 

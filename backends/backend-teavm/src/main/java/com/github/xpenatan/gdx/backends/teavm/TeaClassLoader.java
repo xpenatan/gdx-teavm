@@ -8,7 +8,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -16,14 +15,14 @@ import java.util.zip.ZipEntry;
 /**
  * @author xpenatan
  */
-public class WebClassLoader extends URLClassLoader {
+public class TeaClassLoader extends URLClassLoader {
 
     private URL[] jarFiles;
     private HashMap<String, ArrayList<String>> fileMap = new HashMap<>();
 
     private final ArrayList<String> skipClasses = new ArrayList<>();
 
-    public WebClassLoader(URL[] classPaths, ClassLoader parent, ArrayList<String> skipClasses) {
+    public TeaClassLoader(URL[] classPaths, ClassLoader parent, ArrayList<String> skipClasses) {
         super(classPaths, parent);
         this.jarFiles = classPaths;
         this.skipClasses.addAll(skipClasses);

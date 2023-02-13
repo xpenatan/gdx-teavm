@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -100,7 +100,7 @@ public class PixmapEmu implements Disposable {
     }
 
     public PixmapEmu(FileHandle file) {
-        WebFileHandle webFileHandler = (WebFileHandle)file;
+        TeaFileHandle webFileHandler = (TeaFileHandle)file;
         String path = webFileHandler.path();
         Object object = webFileHandler.preloader.images.get(path);
         HTMLImageElementWrapper htmlImageElement = (HTMLImageElementWrapper)object;

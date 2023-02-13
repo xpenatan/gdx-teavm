@@ -6,7 +6,7 @@ import com.badlogic.gdx.ApplicationLogger;
 /**
  * @author xpenatan
  */
-public class WebApplicationLogger implements ApplicationLogger {
+public class TeaApplicationLogger implements ApplicationLogger {
 
     private int logLevel = Application.LOG_INFO;
 

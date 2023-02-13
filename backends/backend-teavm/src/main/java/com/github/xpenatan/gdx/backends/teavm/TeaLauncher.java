@@ -10,7 +10,7 @@ public class TeaLauncher {
             Object appListener = getApplicationListener();
             if(appListener != null) {
                 ApplicationListener listener = (ApplicationListener)appListener;
-                new WebApplication(listener, config);
+                new TeaApplication(listener, config);
             }
         }
         catch(Throwable t) {

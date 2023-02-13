@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
-import com.github.xpenatan.gdx.backends.teavm.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
@@ -13,7 +13,7 @@ import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
  */
 @Deprecated
 public abstract class WebJSHelper {
-    static WebJSHelper JSHelper;
+    public static WebJSHelper JSHelper;
 
     public static WebJSHelper get() {
         return JSHelper;
@@ -23,7 +23,7 @@ public abstract class WebJSHelper {
 
     public abstract WindowWrapper getCurrentWindow();
 
-    public abstract WebAgentInfo getAgentInfo();
+    public abstract TeaAgentInfo getAgentInfo();
 
     public abstract HTMLImageElementWrapper createImageElement();
 

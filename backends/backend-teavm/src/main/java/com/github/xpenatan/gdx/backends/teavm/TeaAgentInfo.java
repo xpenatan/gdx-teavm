@@ -3,7 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 /**
  * @author xpenatan
  */
-public interface WebAgentInfo {
+public interface TeaAgentInfo {
 
     public boolean isFirefox();
 

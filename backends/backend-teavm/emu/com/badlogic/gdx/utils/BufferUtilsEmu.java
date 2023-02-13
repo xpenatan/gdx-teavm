@@ -2,7 +2,7 @@ package com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.github.xpenatan.gdx.backends.teavm.WebTool;
+import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -313,7 +313,7 @@ public final class BufferUtilsEmu {
     }
 
     public static FloatBuffer newFloatBuffer(int numFloats) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asFloatBuffer();
@@ -324,7 +324,7 @@ public final class BufferUtilsEmu {
     }
 
     public static DoubleBuffer newDoubleBuffer(int numDoubles) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numDoubles * 8);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asDoubleBuffer();
@@ -335,7 +335,7 @@ public final class BufferUtilsEmu {
     }
 
     public static ByteBuffer newByteBuffer(int numBytes) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numBytes);
             buffer.order(ByteOrder.nativeOrder());
             return buffer;
@@ -346,7 +346,7 @@ public final class BufferUtilsEmu {
     }
 
     public static ShortBuffer newShortBuffer(int numShorts) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numShorts * 2);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asShortBuffer();
@@ -357,7 +357,7 @@ public final class BufferUtilsEmu {
     }
 
     public static CharBuffer newCharBuffer(int numChars) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numChars * 2);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asCharBuffer();
@@ -368,7 +368,7 @@ public final class BufferUtilsEmu {
     }
 
     public static IntBuffer newIntBuffer(int numInts) {
-        if(WebTool.isProdMode()) {
+        if(TeaTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numInts * 4);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asIntBuffer();

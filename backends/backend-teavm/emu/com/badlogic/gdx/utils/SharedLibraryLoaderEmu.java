@@ -2,7 +2,7 @@ package com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.WebApplication;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
@@ -10,7 +10,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 public class SharedLibraryLoaderEmu {
 
     public void load (String libraryName) {
-        WebApplication app = (WebApplication)Gdx.app;
+        TeaApplication app = (TeaApplication)Gdx.app;
         Preloader preloader = app.getPreloader();
         preloader.loadScript(false, libraryName + ".js", new AssetLoaderListener<Object>() {
             @Override

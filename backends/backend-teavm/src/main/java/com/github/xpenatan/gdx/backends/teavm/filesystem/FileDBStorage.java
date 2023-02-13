@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +34,7 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public InputStream read(WebFileHandle file) {
+  public InputStream read(TeaFileHandle file) {
     // we obtain the stored byte array
     String data = storage.getItem(ID_FOR_FILE + file.path());
     try {
@@ -48,7 +48,7 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
+  public void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
     String value = HEXCoder.encode(data);
 
     // append to existing as needed
@@ -62,7 +62,7 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public String[] paths(WebFileHandle file) {
+  public String[] paths(TeaFileHandle file) {
     String dir = file.path() + "/";
     List<String> paths = new ArrayList<String>(storage.getLength());
     for (int i = 0; i < storage.getLength(); i++) {
@@ -76,41 +76,41 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public boolean isDirectory(WebFileHandle file) {
+  public boolean isDirectory(TeaFileHandle file) {
     return storage.getItem(ID_FOR_DIR + file.path()) != null;
   }
 
   @Override
-  public void mkdirs(WebFileHandle file) {
+  public void mkdirs(TeaFileHandle file) {
     // add for current path if not already a file!
     if (storage.getItem(ID_FOR_FILE + file.path()) == null) {
       storage.setItem(ID_FOR_DIR + file.path(), "");
     }
 
     // do for parent directories also
-    file = (WebFileHandle)file.parent();
+    file = (TeaFileHandle)file.parent();
     while (file.path().length() > 0) {
       storage.setItem(ID_FOR_DIR + file.path(), "");
-      file = (WebFileHandle)file.parent();
+      file = (TeaFileHandle)file.parent();
     }
   }
 
   @Override
-  public boolean exists(WebFileHandle file) {
+  public boolean exists(TeaFileHandle file) {
     // check if either a file or directory entry exists
     return (storage.getItem(ID_FOR_DIR + file.path()) != null) ||
            (storage.getItem(ID_FOR_FILE + file.path()) != null);
   }
 
   @Override
-  public boolean delete(WebFileHandle file) {
+  public boolean delete(TeaFileHandle file) {
     storage.removeItem(ID_FOR_DIR + file.path());
     storage.removeItem(ID_FOR_FILE + file.path());
     return true;
   }
 
   @Override
-  public long length(WebFileHandle file) {
+  public long length(TeaFileHandle file) {
     // this is somewhat slow
     String data = storage.getItem(ID_FOR_FILE + file.path());
     try {
@@ -125,7 +125,7 @@ final class FileDBStorage extends FileDB {
   }
 
   @Override
-  public void rename(WebFileHandle source, WebFileHandle target) {
+  public void rename(TeaFileHandle source, TeaFileHandle target) {
     // assuming file (not directory)
     String data = storage.getItem(ID_FOR_FILE + source.path());
     storage.removeItem(ID_FOR_FILE + source.path());

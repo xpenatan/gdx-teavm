@@ -10,13 +10,13 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
-public class WebPreferences implements Preferences {
+public class TeaPreferences implements Preferences {
     final String prefix;
     ObjectMap<String, Object> values = new ObjectMap<String, Object>();
 
     private StorageWrapper storage;
 
-    public WebPreferences(StorageWrapper storage, String prefix) {
+    public TeaPreferences(StorageWrapper storage, String prefix) {
         this.storage = storage;
         this.prefix = prefix + ":";
         int prefixLength = this.prefix.length();

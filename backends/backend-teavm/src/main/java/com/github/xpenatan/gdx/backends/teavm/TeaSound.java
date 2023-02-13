@@ -7,7 +7,7 @@ import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 /**
  * @author xpenatan
  */
-public class WebSound implements Sound {
+public class TeaSound implements Sound {
 
     /**
      * The maximum number of sound instances to create to support simultaneous playback.
@@ -17,7 +17,7 @@ public class WebSound implements Sound {
     /**
      * Our sounds.
      */
-    private WebMusic[] sounds;
+    private TeaMusic[] sounds;
     /**
      * The next player we think should be available for play - we circle through them to find a free one.
      */
@@ -29,11 +29,11 @@ public class WebSound implements Sound {
 
     private SoundManagerWrapper soundManager;
 
-    public WebSound(SoundManagerWrapper soundManager, FileHandle file) {
+    public TeaSound(SoundManagerWrapper soundManager, FileHandle file) {
         this.soundManager = soundManager;
         soundFile = file;
-        sounds = new WebMusic[MAX_SOUNDS];
-        sounds[0] = new WebMusic(soundManager, file);
+        sounds = new TeaMusic[MAX_SOUNDS];
+        sounds[0] = new TeaMusic(soundManager, file);
         soundIndex = 0;
     }
 
@@ -78,9 +78,9 @@ public class WebSound implements Sound {
     private long play(float volume, float pitch, float pan, boolean loop) {
         int soundId = findAvailableSound();
         if(soundId >= 0) {
-            WebMusic sound;
+            TeaMusic sound;
             if(sounds[soundId] == null) {
-                sounds[soundId] = new WebMusic(soundManager, soundFile);
+                sounds[soundId] = new TeaMusic(soundManager, soundFile);
             }
             sound = sounds[soundId];
             sound.stop();

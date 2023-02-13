@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
 import com.github.xpenatan.gdx.backends.teavm.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.WebGraphics;
+import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
@@ -37,7 +37,7 @@ public class TeaJSGraphics implements WebJSGraphics {
     private static native int getScreenHeight();
 
     @Override
-    public boolean setFullscreenJSNI(WebGraphics graphics, HTMLCanvasElementWrapper canvas, int screenWidth, int screenHeight) {
+    public boolean setFullscreenJSNI(TeaGraphics graphics, HTMLCanvasElementWrapper canvas, int screenWidth, int screenHeight) {
         FullscreenChanged fullscreenChanged = new FullscreenChanged() {
             @Override
             public void fullscreenChanged() {

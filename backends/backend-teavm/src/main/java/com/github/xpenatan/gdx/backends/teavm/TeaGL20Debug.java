@@ -9,9 +9,9 @@ import java.nio.IntBuffer;
 /**
  * @author xpenatan
  */
-public class WebGL20Debug extends WebGL20 {
+public class TeaGL20Debug extends TeaGL20 {
 
-    protected WebGL20Debug(WebGLRenderingContextWrapper gl) {
+    protected TeaGL20Debug(WebGLRenderingContextWrapper gl) {
         super(gl);
     }
 

@@ -30,8 +30,8 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
-@Emulate(WebGL20.class)
-public class WebGL20 implements GL20 {
+@Emulate(TeaGL20.class)
+public class TeaGL20 implements GL20 {
 
     protected WebGLRenderingContextWrapper gl;
 
@@ -56,7 +56,7 @@ public class WebGL20 implements GL20 {
     Int16ArrayWrapper shortBuffer;
     Uint8ArrayWrapper byteBuffer;
 
-    public WebGL20(WebGLRenderingContextWrapper gl) {
+    public TeaGL20(WebGLRenderingContextWrapper gl) {
         this.gl = gl;
         floatBuffer = TypedArrays.getInstance().createFloat32Array(2000 * 20);
         shortBuffer = TypedArrays.getInstance().createInt16Array(2000 * 6);

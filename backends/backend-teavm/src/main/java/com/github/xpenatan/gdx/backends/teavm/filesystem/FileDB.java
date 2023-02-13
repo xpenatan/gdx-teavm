@@ -3,7 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,9 +31,9 @@ public abstract class FileDB {
     return INSTANCE;
   }
 
-  public abstract InputStream read(WebFileHandle file);
+  public abstract InputStream read(TeaFileHandle file);
 
-  public final OutputStream write(WebFileHandle file, boolean append, int bufferSize) {
+  public final OutputStream write(TeaFileHandle file, boolean append, int bufferSize) {
     // buffer for writing
     int bufferSizeMax = 8192;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(bufferSize, bufferSizeMax));
@@ -56,9 +56,9 @@ public abstract class FileDB {
   }
 
   /** Notifies when data has been written for a file. */
-  protected abstract void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength);
+  protected abstract void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength);
 
-  public final FileHandle[] list(WebFileHandle file) {
+  public final FileHandle[] list(TeaFileHandle file) {
     // convert paths to file handles
     String[] paths = paths(file);
     FileHandle[] files = new FileHandle[paths.length];
@@ -67,25 +67,25 @@ public abstract class FileDB {
       if ((path.length() > 0) && (path.charAt(path.length() - 1) == '/')) {
         path = path.substring(0, path.length() - 1);
       }
-      files[i] = new WebFileHandle(null, path, Files.FileType.Local);
+      files[i] = new TeaFileHandle(null, path, Files.FileType.Local);
     }
     return files;
   }
 
   /** Returns all the paths. */
-  protected abstract String[] paths(WebFileHandle file);
+  protected abstract String[] paths(TeaFileHandle file);
 
-  public final FileHandle[] list(WebFileHandle file, FileFilter filter) {
+  public final FileHandle[] list(TeaFileHandle file, FileFilter filter) {
     // TeaVM: doesn't support 'File'
     throw new GdxRuntimeException("File filtering not supported.");
   }
 
-  public final FileHandle[] list(WebFileHandle file, FilenameFilter filter) {
+  public final FileHandle[] list(TeaFileHandle file, FilenameFilter filter) {
     // TeaVM: doesn't support 'File'
     throw new GdxRuntimeException("File filtering not supported.");
   }
 
-  public final FileHandle[] list(WebFileHandle file, String suffix) {
+  public final FileHandle[] list(TeaFileHandle file, String suffix) {
     FileHandle[] list = list(file);
     List<FileHandle> filtered = new ArrayList<FileHandle>(list.length);
     for (FileHandle f: list) {
@@ -96,15 +96,15 @@ public abstract class FileDB {
     return filtered.toArray(new FileHandle[filtered.size()]);
   }
 
-  public abstract boolean isDirectory(WebFileHandle file);
+  public abstract boolean isDirectory(TeaFileHandle file);
 
-  public abstract void mkdirs(WebFileHandle file);
+  public abstract void mkdirs(TeaFileHandle file);
 
-  public abstract boolean exists(WebFileHandle file);
+  public abstract boolean exists(TeaFileHandle file);
 
-  public abstract boolean delete(WebFileHandle file);
+  public abstract boolean delete(TeaFileHandle file);
 
-  public abstract long length(WebFileHandle file);
+  public abstract long length(TeaFileHandle file);
 
-  public abstract void rename(WebFileHandle source, WebFileHandle target);
+  public abstract void rename(TeaFileHandle source, TeaFileHandle target);
 }

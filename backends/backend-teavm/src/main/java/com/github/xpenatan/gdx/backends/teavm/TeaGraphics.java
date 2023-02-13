@@ -19,7 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 /**
  * @author xpenatan
  */
-public class WebGraphics implements Graphics {
+public class TeaGraphics implements Graphics {
 
     private WebGLRenderingContextWrapper context;
     protected HTMLCanvasElementWrapper canvas;
@@ -36,13 +36,13 @@ public class WebGraphics implements Graphics {
 
     private WebJSGraphics jsGraphics;
 
-    public WebGraphics(WebApplicationConfiguration config) {
+    public TeaGraphics(WebApplicationConfiguration config) {
         WebJSHelper webJSHelper = WebJSHelper.get();
         this.config = config;
         this.canvas = webJSHelper.getCanvas();
         this.jsGraphics = webJSHelper.getGraphics();
         this.context = jsGraphics.getGLContext(webJSHelper.getCanvas(), config);
-        gl = config.useDebugGL ? new WebGL20Debug(context) : new WebGL20(context);
+        gl = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
         String versionString = gl.glGetString(GL20.GL_VERSION);
         String vendorString = gl.glGetString(GL20.GL_VENDOR);
         String rendererString = gl.glGetString(GL20.GL_RENDERER);

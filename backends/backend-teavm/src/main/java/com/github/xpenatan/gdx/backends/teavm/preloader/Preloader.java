@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -295,22 +295,22 @@ public class Preloader {
         Array<FileHandle> files = new Array<>();
         for(String file : texts.keys()) {
             if(filter.accept(file)) {
-                files.add(new WebFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, file, FileType.Internal));
             }
         }
         for(String file : images.keys()) {
             if(filter.accept(file)) {
-                files.add(new WebFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, file, FileType.Internal));
             }
         }
         for(String file : binaries.keys()) {
             if(filter.accept(file)) {
-                files.add(new WebFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, file, FileType.Internal));
             }
         }
         for(String file : audio.keys()) {
             if(filter.accept(file)) {
-                files.add(new WebFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, file, FileType.Internal));
             }
         }
         FileHandle[] filesArray = new FileHandle[files.size];

@@ -31,18 +31,18 @@ import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 /**
  * @author xpenatan
  */
-public class WebApplication implements Application, Runnable {
+public class TeaApplication implements Application, Runnable {
 
-    private static WebAgentInfo agentInfo;
+    private static TeaAgentInfo agentInfo;
 
-    public static WebAgentInfo getAgentInfo() {
+    public static TeaAgentInfo getAgentInfo() {
         return agentInfo;
     }
 
-    private WebGraphics graphics;
-    private WebInput input;
-    private WebFiles files;
-    private WebAudio audio;
+    private TeaGraphics graphics;
+    private TeaInput input;
+    private TeaFiles files;
+    private TeaAudio audio;
     private HTMLCanvasElementWrapper canvas;
     private WebApplicationConfiguration config;
     private ApplicationListener appListener;
@@ -53,7 +53,7 @@ public class WebApplication implements Application, Runnable {
     private int lastWidth = -1;
     private int lastHeight = 1;
 
-    private WebApplicationLogger logger;
+    private TeaApplicationLogger logger;
 
     private Preloader preloader;
 
@@ -66,7 +66,7 @@ public class WebApplication implements Application, Runnable {
 
     private WebJSApplication webJSApplication;
 
-    public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
+    public TeaApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
         WebJSHelper jsHelper = config.getJSHelper();
         WebJSHelper.JSHelper = jsHelper;
         this.window = jsHelper.getCurrentWindow();
@@ -79,7 +79,7 @@ public class WebApplication implements Application, Runnable {
     }
 
     private void init() {
-        WebApplication.agentInfo = WebJSHelper.get().getAgentInfo();
+        TeaApplication.agentInfo = WebJSHelper.get().getAgentInfo();
         System.setProperty("java.runtime.name", "");
         if(agentInfo.isWindows() == true)
             System.setProperty("os.name", "Windows");
@@ -124,10 +124,10 @@ public class WebApplication implements Application, Runnable {
 //		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<>());
 //		getPreloader().loadAsset("data/shotgun.ogg", AssetType.Audio, null, new AssetLoaderListener<>());
 
-        graphics = new WebGraphics(config);
-        input = new WebInput(this.canvas);
-        files = new WebFiles(preloader);
-        logger = new WebApplicationLogger();
+        graphics = new TeaGraphics(config);
+        input = new TeaInput(this.canvas);
+        files = new TeaFiles(preloader);
+        logger = new TeaApplicationLogger();
         initSound();
 
         //TODO remove script loading from application
@@ -240,7 +240,7 @@ public class WebApplication implements Application, Runnable {
                 soundManager.setup(hostPageBaseURL, new SoundManagerCallbackWrapper() {
                     @Override
                     public void onready() {
-                        audio = new WebAudio(soundManager);
+                        audio = new TeaAudio(soundManager);
                         Gdx.audio = audio;
                     }
 
@@ -364,7 +364,7 @@ public class WebApplication implements Application, Runnable {
         Preferences pref = prefs.get(name);
         if(pref == null) {
             StorageWrapper storage = WebJSHelper.get().getStorage();
-            pref = new WebPreferences(storage, name);
+            pref = new TeaPreferences(storage, name);
             prefs.put(name, pref);
         }
         return pref;

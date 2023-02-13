@@ -24,10 +24,10 @@ import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
 /**
  * @author xpenatan
  */
-public class WebInput implements Input, EventListenerWrapper {
+public class TeaInput implements Input, EventListenerWrapper {
 
     private static float getMouseWheelVelocity(WheelEventWrapper event) {
-        WebAgentInfo agent = WebApplication.getAgentInfo();
+        TeaAgentInfo agent = TeaApplication.getAgentInfo();
         float delta = 0;
         float detail = event.getDetail();
         float wheelDelta = event.getWheelDelta();
@@ -85,7 +85,7 @@ public class WebInput implements Input, EventListenerWrapper {
     long currentEventTimeStamp;
     boolean hasFocus = true;
 
-    public WebInput(HTMLCanvasElementWrapper canvas) {
+    public TeaInput(HTMLCanvasElementWrapper canvas) {
         this.canvas = canvas;
         hookEvents();
     }

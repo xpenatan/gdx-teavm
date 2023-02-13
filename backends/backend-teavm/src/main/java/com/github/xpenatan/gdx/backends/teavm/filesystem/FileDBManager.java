@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.util.WebJSHelper;
 
 import java.io.InputStream;
@@ -24,7 +24,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  public InputStream read(WebFileHandle file) {
+  public InputStream read(TeaFileHandle file) {
     if (memory.exists(file)) {
       return memory.read(file);
     }
@@ -34,7 +34,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  protected void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
+  protected void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
     // write larger files into memory: up to 16.384kb into local storage (permanent)
     if (expectedLength >= 16384) {
       // data is large: store in memory
@@ -51,7 +51,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  protected String[] paths(WebFileHandle file) {
+  protected String[] paths(TeaFileHandle file) {
     // combine & return the paths of memory & local storage
     String[] pathsMemory = memory.paths(file);
     String[] pathsLocalStorage = localStorage.paths(file);
@@ -62,7 +62,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  public boolean isDirectory(WebFileHandle file) {
+  public boolean isDirectory(TeaFileHandle file) {
     if (memory.exists(file)) {
       return memory.isDirectory(file);
     }
@@ -72,17 +72,17 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  public void mkdirs(WebFileHandle file) {
+  public void mkdirs(TeaFileHandle file) {
     localStorage.mkdirs(file);
   }
 
   @Override
-  public boolean exists(WebFileHandle file) {
+  public boolean exists(TeaFileHandle file) {
     return memory.exists(file) || localStorage.exists(file);
   }
 
   @Override
-  public boolean delete(WebFileHandle file) {
+  public boolean delete(TeaFileHandle file) {
     if (memory.exists(file)) {
       return memory.delete(file);
     }
@@ -92,7 +92,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  public long length(WebFileHandle file) {
+  public long length(TeaFileHandle file) {
     if (memory.exists(file)) {
       return memory.length(file);
     }
@@ -102,7 +102,7 @@ public final class FileDBManager extends FileDB {
   }
 
   @Override
-  public void rename(WebFileHandle source, WebFileHandle target) {
+  public void rename(TeaFileHandle source, TeaFileHandle target) {
     if (memory.exists(source)) {
       memory.rename(source, target);
     }

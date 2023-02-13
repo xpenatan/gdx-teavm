@@ -38,6 +38,33 @@ import org.teavm.vm.TeaVMProgressListener;
  */
 public class TeaBuilder {
 
+    public static void log(String msg) {
+        String text = "| " + msg;
+        logInternalNewLine(text);
+    }
+
+    public static void logInternal(String msg) {
+        System.err.print(msg);
+    }
+
+    public static void logInternalNewLine(String msg) {
+        logInternal(msg + "\n");
+    }
+
+    public static void logHeader(String text) {
+        String msg = "";
+        msg += "#################################################################\n";
+        msg += "|\n| " + text + "\n|";
+        msg += "\n" + "#################################################################";
+
+        logInternalNewLine(msg);
+    }
+
+    public static void logEnd() {
+        String msg = "\n#################################################################";
+        logInternalNewLine(msg);
+    }
+
     enum ACCEPT_STATE {
         ACCEPT, NOT_ACCEPT, NO_MATCH
     }
@@ -52,21 +79,21 @@ public class TeaBuilder {
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
     private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
-    public static TeaVMTool config(WebBuildConfiguration configuration) {
+    public static TeaVMTool config(TeaBuildConfiguration configuration) {
         TeaVMTool tool = new TeaVMTool();
         return config(tool, configuration, null);
     }
 
-    public static TeaVMTool config(WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
         TeaVMTool tool = new TeaVMTool();
         return config(tool, configuration, progressListener);
     }
 
-    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration) {
+    public static TeaVMTool config(TeaVMTool tool, TeaBuildConfiguration configuration) {
         return config(tool, configuration);
     }
 
-    public static TeaVMTool config(TeaVMTool tool, WebBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(TeaVMTool tool, TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
         ArrayList<URL> acceptedURL = new ArrayList<>();
         ArrayList<URL> notAcceptedURL = new ArrayList<>();
         String webappDirectory = configuration.getWebAppPath();
@@ -76,9 +103,9 @@ public class TeaBuilder {
         automaticReflection(configuration);
         configClasspath(configuration, acceptedURL, notAcceptedURL);
 
-        WebBuildConfiguration.log("");
-        WebBuildConfiguration.log("targetDirectory: " + webappDirectory);
-        WebBuildConfiguration.log("");
+        TeaBuilder.log("");
+        TeaBuilder.log("targetDirectory: " + webappDirectory);
+        TeaBuilder.log("");
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
 
@@ -92,7 +119,7 @@ public class TeaBuilder {
             skipClasses.add(skipClass.getName());
         }
         skipClasses.addAll(configuration.getSkipClasses());
-        WebClassLoader classLoader = new WebClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
+        TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
         configAssets(classLoader, configuration, webappDirectory, webappName);
@@ -115,7 +142,7 @@ public class TeaBuilder {
             Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
             if(problems.size() > 0) {
-                WebBuildConfiguration.logHeader("Compiler problems");
+                TeaBuilder.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
 
@@ -136,23 +163,23 @@ public class TeaBuilder {
                     }
 
                     if(i > 0) {
-                        WebBuildConfiguration.log("");
-                        WebBuildConfiguration.log("----");
-                        WebBuildConfiguration.log("");
+                        TeaBuilder.log("");
+                        TeaBuilder.log("----");
+                        TeaBuilder.log("");
                     }
-                    WebBuildConfiguration.log(problem.getSeverity().toString() + "[" + i + "]");
-                    WebBuildConfiguration.log("Class: " + classSource);
-                    WebBuildConfiguration.log("Method: " + methodName);
+                    TeaBuilder.log(problem.getSeverity().toString() + "[" + i + "]");
+                    TeaBuilder.log("Class: " + classSource);
+                    TeaBuilder.log("Method: " + methodName);
                     p.clear();
                     problem.render(p);
                     String text = p.getText();
-                    WebBuildConfiguration.log("Text: " + text);
+                    TeaBuilder.log("Text: " + text);
                 }
-                WebBuildConfiguration.logEnd();
+                TeaBuilder.logEnd();
             }
             else {
                 isSuccess = true;
-                WebBuildConfiguration.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
+                TeaBuilder.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
             }
 
             if(logClassNames) {
@@ -160,7 +187,7 @@ public class TeaBuilder {
                 Iterator<String> iterator = sorted.iterator();
                 while(iterator.hasNext()) {
                     String clazz = iterator.next();
-                    WebBuildConfiguration.log(clazz);
+                    TeaBuilder.log(clazz);
                 }
             }
         }
@@ -171,7 +198,7 @@ public class TeaBuilder {
         return isSuccess;
     }
 
-    private static void preserveClasses(TeaVMTool tool, WebBuildConfiguration configuration, WebClassLoader classLoader) {
+    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration, TeaClassLoader classLoader) {
         //Keep reflection classes
         List<String> classesToPreserve = tool.getClassesToPreserve();
         ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
@@ -208,11 +235,11 @@ public class TeaBuilder {
         }
     }
 
-    private static void automaticReflection(WebBuildConfiguration configuration) {
+    private static void automaticReflection(TeaBuildConfiguration configuration) {
         for(URL classPath : configuration.getAdditionalClasspath()) {
             try {
                 ZipInputStream zip = new ZipInputStream(classPath.openStream());
-                WebBuildConfiguration.logHeader("Automatic Reflection Include");
+                TeaBuilder.logHeader("Automatic Reflection Include");
                 for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
                     if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
                         // This ZipEntry represents a class. Now, what class does it represent?
@@ -227,7 +254,7 @@ public class TeaBuilder {
                         }
 
                         if(add) {
-                            WebBuildConfiguration.log("Include class: " + name);
+                            TeaBuilder.log("Include class: " + name);
                             TeaReflectionSupplier.addReflectionClass(name);
                         }
                     }
@@ -277,7 +304,7 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
     }
 
-    private static void configClasspath(WebBuildConfiguration configuration, ArrayList<URL> acceptedURL, ArrayList<URL> notAcceptedURL) {
+    private static void configClasspath(TeaBuildConfiguration configuration, ArrayList<URL> acceptedURL, ArrayList<URL> notAcceptedURL) {
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
         for(int i = 0; i < classPathEntries.length; i++) {
@@ -305,15 +332,15 @@ public class TeaBuilder {
 
         sortAcceptedClassPath(acceptedURL);
 
-        WebBuildConfiguration.logHeader("ACCEPTED CLASSPATH");
+        TeaBuilder.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {
-            WebBuildConfiguration.log(i + " true: " + acceptedURL.get(i).getPath());
+            TeaBuilder.log(i + " true: " + acceptedURL.get(i).getPath());
         }
 
-        WebBuildConfiguration.logHeader("IGNORED CLASSPATH");
+        TeaBuilder.logHeader("IGNORED CLASSPATH");
 
         for(int i = 0; i < notAcceptedURL.size(); i++) {
-            WebBuildConfiguration.log(i + " false: " + notAcceptedURL.get(i).getPath());
+            TeaBuilder.log(i + " false: " + notAcceptedURL.get(i).getPath());
         }
 
         int size = acceptedURL.size();
@@ -459,7 +486,7 @@ public class TeaBuilder {
         return isValid;
     }
 
-    private static void configTool(TeaVMTool tool, WebClassLoader classLoader, WebBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {
+    private static void configTool(TeaVMTool tool, TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {
         boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
         boolean setSourceFilesCopied = false;
@@ -497,11 +524,11 @@ public class TeaBuilder {
             @Override
             public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
                 if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    WebBuildConfiguration.logHeader("DEPENDENCY_ANALYSIS");
+                    TeaBuilder.logHeader("DEPENDENCY_ANALYSIS");
                 }
                 else if(teaVMPhase == TeaVMPhase.COMPILING) {
-                    WebBuildConfiguration.logInternalNewLine("");
-                    WebBuildConfiguration.logHeader("COMPILING");
+                    TeaBuilder.logInternalNewLine("");
+                    TeaBuilder.logHeader("COMPILING");
                 }
                 phase = teaVMPhase;
                 return TeaVMProgressFeedback.CONTINUE;
@@ -510,7 +537,7 @@ public class TeaBuilder {
             @Override
             public TeaVMProgressFeedback progressReached(int i) {
                 if(phase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    WebBuildConfiguration.logInternal("|");
+                    TeaBuilder.logInternal("|");
                 }
                 if(phase == TeaVMPhase.COMPILING) {
                     if(progressListener != null) {
@@ -530,13 +557,13 @@ public class TeaBuilder {
 
     }
 
-    public static void configAssets(WebClassLoader classLoader, WebBuildConfiguration configuration, String webappDirectory, String webappName) {
+    public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName) {
         ArrayList<String> webappAssetsFiles = new ArrayList<>();
         webappAssetsFiles.add(webappName);
-        WebBuildConfiguration.logHeader("COPYING ASSETS");
+        TeaBuilder.logHeader("COPYING ASSETS");
 
         AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false);
-        WebBuildConfiguration.log("");
+        TeaBuilder.log("");
 
         String scriptsOutputPath = webappDirectory + File.separator + webappName;
         String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
@@ -565,6 +592,6 @@ public class TeaBuilder {
 
         // Copy Scripts
         AssetsCopy.copy(classLoader, classPathScriptFiles, null, null, scriptsOutputPath, false);
-        WebBuildConfiguration.log("");
+        TeaBuilder.log("");
     }
 }

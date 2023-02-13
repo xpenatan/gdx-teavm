@@ -7,42 +7,42 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 /**
  * @author xpenatan
  */
-public class WebFiles implements Files {
+public class TeaFiles implements Files {
 
     final Preloader preloader;
 
-    public WebFiles(Preloader preloader) {
+    public TeaFiles(Preloader preloader) {
         this.preloader = preloader;
     }
 
     @Override
     public FileHandle getFileHandle(String path, FileType type) {
-        return new WebFileHandle(preloader, path, type);
+        return new TeaFileHandle(preloader, path, type);
     }
 
     @Override
     public FileHandle classpath(String path) {
-        return new WebFileHandle(preloader, path, FileType.Classpath);
+        return new TeaFileHandle(preloader, path, FileType.Classpath);
     }
 
     @Override
     public FileHandle internal(String path) {
-        return new WebFileHandle(preloader, path, FileType.Internal);
+        return new TeaFileHandle(preloader, path, FileType.Internal);
     }
 
     @Override
     public FileHandle external(String path) {
-        return new WebFileHandle(preloader, path, FileType.External);
+        return new TeaFileHandle(preloader, path, FileType.External);
     }
 
     @Override
     public FileHandle absolute(String path) {
-        return new WebFileHandle(preloader, path, FileType.Absolute);
+        return new TeaFileHandle(preloader, path, FileType.Absolute);
     }
 
     @Override
     public FileHandle local(String path) {
-      return new WebFileHandle(preloader, path, FileType.Local);
+      return new TeaFileHandle(preloader, path, FileType.Local);
     }
 
     @Override

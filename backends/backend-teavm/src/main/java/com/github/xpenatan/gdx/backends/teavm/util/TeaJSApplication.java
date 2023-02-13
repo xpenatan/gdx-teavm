@@ -1,26 +1,26 @@
 package com.github.xpenatan.gdx.backends.teavm.util;
 
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.WebApplication;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
 @Deprecated
 public class TeaJSApplication implements WebJSApplication {
 
     @Override
-    public void initBulletPhysics(WebApplication application) {
+    public void initBulletPhysics(TeaApplication application) {
         Preloader preloader = application.getPreloader();
         initBulletPhysicsWasm(preloader);
     }
 
     @Override
-    public void initBox2dPhysics(WebApplication application) {
+    public void initBox2dPhysics(TeaApplication application) {
         Preloader preloader = application.getPreloader();
         initBox2DPhysicsWasm(preloader);
     }
 
     @Override
-    public void initImGui(WebApplication application) {
+    public void initImGui(TeaApplication application) {
         //TODO script loading should be inside lib and not application
         Preloader preloader = application.getPreloader();
         initImGuiWasm(preloader);

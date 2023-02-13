@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * @author xpenatan
  */
-public class TeaBuildConfiguration extends WebBuildConfiguration {
+public class TeaBuildConfiguration {
 
     public AssetFilter assetFilter = null;
     public ArrayList<File> assetsPath = new ArrayList<>();
@@ -37,93 +37,75 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
     public int htmlWidth = 800;
     public int htmlHeight = 600;
 
-    @Override
     public String getHtmlTitle() {
       return htmlTitle;
     }
 
-  @Override
     public String getHtmlWidth() {
         return String.valueOf(htmlWidth);
     }
 
-    @Override
     public String getHtmlHeight() {
         return String.valueOf(htmlHeight);
     }
 
-    @Override
     public String getMainClass() {
         return mainClass;
     }
 
-    @Override
     public String getMainClassArgs() {
         return mainClassArgs;
     }
 
-    @Override
     public String getApplicationListenerClass() {
         return mainApplicationClass;
     }
 
-    @Override
     public ArrayList<URL> getAdditionalClasspath() {
         return additionalClasspath;
     }
 
-    @Override
     public ArrayList<String> getAdditionalAssetClasspath() {
         return additionalAssetsClasspathFiles;
     }
 
-    @Override
     public String getWebAppPath() {
         return webappPath;
     }
 
-    @Override
     public boolean assetsPath(ArrayList<File> paths) {
         paths.addAll(assetsPath);
         return true;
     }
 
-    @Override
     public AssetFilter assetFilter() {
       return assetFilter;
     }
 
-  @Override
     public boolean minifying() {
         return obfuscate;
     }
 
-    @Override
     public ArrayList<String> getReflectionInclude() {
         return reflectionInclude;
     }
 
-    @Override
     public ArrayList<String> getReflectionExclude() {
         return reflectionExclude;
     }
 
-    @Override
     public ArrayList<String> getClassesToPreserve() {
         return classesToPreserve;
     }
 
-    @Override
     public ArrayList<String> getSkipClasses() {
         return classesToSkip;
     }
 
-    @Override
     public boolean logClasses() {
         return false;
     }
 
-    @Override
     public void assetsClasspath(ArrayList<String> classPaths) {
     }
 
@@ -133,5 +115,9 @@ public class TeaBuildConfiguration extends WebBuildConfiguration {
 
     public void setApplicationListener(String applicationListener) {
         mainApplicationClass = applicationListener;
+    }
+
+    public boolean acceptClasspath(URL url) {
+        return true;
     }
 }

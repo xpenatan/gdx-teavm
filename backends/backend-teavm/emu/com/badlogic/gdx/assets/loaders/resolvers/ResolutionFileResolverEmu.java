@@ -19,7 +19,7 @@ package com.badlogic.gdx.assets.loaders.resolvers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.WebFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(ResolutionFileResolver.class)
@@ -49,7 +49,7 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
     @Override
     public FileHandle resolve(String fileName) {
         ResolutionFileResolver.Resolution bestDesc = choose(descriptors);
-        FileHandle originalHandle = new WebFileHandle(fileName);
+        FileHandle originalHandle = new TeaFileHandle(fileName);
         FileHandle handle = baseResolver.resolve(resolve(originalHandle, bestDesc.folder));
         if(!handle.exists()) handle = baseResolver.resolve(fileName);
         return handle;

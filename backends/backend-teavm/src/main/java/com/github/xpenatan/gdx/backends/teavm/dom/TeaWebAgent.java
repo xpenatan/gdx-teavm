@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-import com.github.xpenatan.gdx.backends.teavm.WebAgentInfo;
+import com.github.xpenatan.gdx.backends.teavm.TeaAgentInfo;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
@@ -23,9 +23,9 @@ public class TeaWebAgent {
                     + "};")
     private static native JSObject createAgent();
 
-    public static WebAgentInfo computeAgentInfo() {
+    public static TeaAgentInfo computeAgentInfo() {
         JSObject jsObj = TeaWebAgent.createAgent();
-        WebAgentInfo agent = (WebAgentInfo)jsObj;
+        TeaAgentInfo agent = (TeaAgentInfo)jsObj;
         return agent;
     }
 }

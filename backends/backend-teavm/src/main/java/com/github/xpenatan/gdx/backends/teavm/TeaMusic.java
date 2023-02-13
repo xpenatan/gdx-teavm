@@ -11,7 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 /**
  * @author xpenatan
  */
-public class WebMusic implements Music, SMSoundCallbackWrapper {
+public class TeaMusic implements Music, SMSoundCallbackWrapper {
 
     private boolean isPlaying = false;
     private boolean isLooping = false;
@@ -21,8 +21,8 @@ public class WebMusic implements Music, SMSoundCallbackWrapper {
     private SMSoundOptions soundOptions;
     private OnCompletionListener onCompletionListener;
 
-    public WebMusic(SoundManagerWrapper soundManager, FileHandle file) {
-        String url = ((WebApplication)Gdx.app).getAssetUrl() + file.path();
+    public TeaMusic(SoundManagerWrapper soundManager, FileHandle file) {
+        String url = ((TeaApplication)Gdx.app).getAssetUrl() + file.path();
         sound = soundManager.createSound(url);
         soundOptions = new SMSoundOptions();
         soundOptions.callback = this;

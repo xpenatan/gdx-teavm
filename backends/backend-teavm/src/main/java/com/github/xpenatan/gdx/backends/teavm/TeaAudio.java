@@ -9,11 +9,11 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerWrapper;
 
-public class WebAudio implements Audio {
+public class TeaAudio implements Audio {
 
     private SoundManagerWrapper soundManager;
 
-    public WebAudio(SoundManagerWrapper soundManager) {
+    public TeaAudio(SoundManagerWrapper soundManager) {
         this.soundManager = soundManager;
     }
 
@@ -29,11 +29,11 @@ public class WebAudio implements Audio {
 
     @Override
     public Sound newSound(FileHandle fileHandle) {
-        return new WebSound(soundManager, fileHandle);
+        return new TeaSound(soundManager, fileHandle);
     }
 
     @Override
     public Music newMusic(FileHandle file) {
-        return new WebMusic(soundManager, file);
+        return new TeaMusic(soundManager, file);
     }
 }
