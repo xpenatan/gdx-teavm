@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm.dom;
 /**
  * @author xpenatan
  */
+@Deprecated
 public interface StorageWrapper {
     public int getLength();
 
