@@ -1,8 +1,6 @@
 package com.github.xpenatan.gdx.backends.web.filesystem;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Base64Coder;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.web.WebFileHandle;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
 

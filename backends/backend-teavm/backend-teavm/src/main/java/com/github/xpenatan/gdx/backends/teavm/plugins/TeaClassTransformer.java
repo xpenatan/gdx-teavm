@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.web.WebAgentInfo;
 import com.github.xpenatan.gdx.backends.web.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.web.dom.DocumentWrapper;

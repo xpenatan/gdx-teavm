@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.backends.web.filesystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.web.dom.StorageWrapper;
-import com.github.xpenatan.gdx.backends.web.utils.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
