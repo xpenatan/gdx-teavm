@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TimerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
@@ -23,11 +22,9 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
     private Window window;
     private Runnable runnable;
-    private TeaTimer timer;
 
     public TeaWindow() {
         this.window = Window.current();
-        timer = new TeaTimer();
     }
 
     @Override
@@ -47,11 +44,6 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
         Runnable toRun = runnable;
         runnable = null;
         toRun.run();
-    }
-
-    @Override
-    public TimerWrapper getTimer() {
-        return timer;
     }
 
     @Override

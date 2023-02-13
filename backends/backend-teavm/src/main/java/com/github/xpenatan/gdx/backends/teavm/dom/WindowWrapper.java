@@ -9,8 +9,6 @@ public interface WindowWrapper {
 
     public void requestAnimationFrame(Runnable runnable);
 
-    public TimerWrapper getTimer();
-
     public LocationWrapper getLocation();
 
     public int getClientWidth();
