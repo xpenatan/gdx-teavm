@@ -20,7 +20,7 @@ dependencies {
     includeDep "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
     includeDep "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
 
-    includeDep project(":backends:backend-teavm:backend-teavm")
+    includeDep project(":backends:backend-teavm")
     includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
     includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")

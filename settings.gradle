@@ -1,4 +1,4 @@
-include ":backends:backend-teavm:backend-teavm"
+include ":backends:backend-teavm"
 
 include ":extensions:gdx-freetype-teavm"
 include ":extensions:gdx-bullet:gdx-bullet"

@@ -18,7 +18,7 @@ dependencies {
 //  implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:1.0.0-SNAPSHOT"
 
     // Or source projects
-    implementation project(":backends:backend-teavm:backend-teavm")
+    implementation project(":backends:backend-teavm")
     implementation project(":extensions:gdx-freetype-teavm")
 }
 
