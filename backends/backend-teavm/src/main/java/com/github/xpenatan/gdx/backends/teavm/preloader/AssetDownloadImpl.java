@@ -13,6 +13,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ProgressEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -42,7 +43,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public String getHostPageBaseURL() {
-        WindowWrapper currentWindow = jsHelper.getCurrentWindow();
+        TeaWindow currentWindow = TeaWindow.get();
         LocationWrapper location = currentWindow.getLocation();
         String href = location.getHref();
         return href;
@@ -131,7 +132,7 @@ public class AssetDownloadImpl implements AssetDownload {
                         if(showLog)
                             System.out.println("Script loaded: " + url);
                         NodeWrapper response = request.getResponse();
-                        WindowWrapper currentWindow = jsHelper.getCurrentWindow();
+                        TeaWindow currentWindow = TeaWindow.get();
                         DocumentWrapper document = currentWindow.getDocument();
                         HTMLElementWrapper scriptElement = document.createElement("script");
                         scriptElement.appendChild(document.createTextNode(response));

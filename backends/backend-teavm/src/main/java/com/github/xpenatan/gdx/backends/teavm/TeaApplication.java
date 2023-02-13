@@ -20,6 +20,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
@@ -45,7 +46,7 @@ public class TeaApplication implements Application, Runnable {
     private TeaAudio audio;
     private TeaApplicationConfiguration config;
     private ApplicationListener appListener;
-    private WindowWrapper window;
+    private TeaWindow window;
 
     private AppState initState = AppState.IDLE;
 
@@ -66,7 +67,7 @@ public class TeaApplication implements Application, Runnable {
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
         TeaJSHelper jsHelper = config.getJSHelper();
         TeaJSHelper.JSHelper = jsHelper;
-        this.window = jsHelper.getCurrentWindow();
+        this.window = TeaWindow.get();
         this.appListener = appListener;
         this.config = config;
         init();

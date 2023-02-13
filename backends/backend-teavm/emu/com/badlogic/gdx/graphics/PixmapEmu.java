@@ -15,6 +15,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
@@ -156,7 +157,7 @@ public class PixmapEmu implements Disposable {
     }
 
     private void create() {
-        WindowWrapper window = TeaJSHelper.get().getCurrentWindow();
+        TeaWindow window = TeaWindow.get();
         DocumentWrapper document = window.getDocument();
         ElementWrapper createElement = document.createElement("canvas");
         canvas = (HTMLCanvasElementWrapper)createElement;

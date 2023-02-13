@@ -26,10 +26,6 @@ public class TeaJSHelper implements JSObject {
     public TeaJSHelper() {
     }
 
-    public WindowWrapper getCurrentWindow() {
-        return new TeaWindow();
-    }
-
     public StorageWrapper getStorage() {
         StorageWrapper storage = (StorageWrapper)Storage.getLocalStorage();
         return storage;

@@ -15,6 +15,12 @@ import org.teavm.jso.dom.events.EventListener;
  */
 public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
+    private static final TeaWindow TEA_WINDOW = new TeaWindow();;
+
+    public static TeaWindow get() {
+        return TEA_WINDOW;
+    }
+
     private Window window;
     private Runnable runnable;
     private TeaTimer timer;

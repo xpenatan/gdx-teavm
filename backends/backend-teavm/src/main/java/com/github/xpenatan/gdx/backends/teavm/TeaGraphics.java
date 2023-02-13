@@ -59,7 +59,7 @@ public class TeaGraphics implements Graphics {
                 setCanvasSize(config.width, config.height);
             }
             else {
-                WindowWrapper currentWindow = TeaJSHelper.get().getCurrentWindow();
+                TeaWindow currentWindow = TeaWindow.get();
                 int width = currentWindow.getClientWidth() - config.padHorizontal;
                 int height = currentWindow.getClientHeight() - config.padVertical;
                 double density = config.usePhysicalPixels ? getNativeScreenDensity() : 1;
