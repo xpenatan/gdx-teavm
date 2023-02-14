@@ -85,7 +85,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl(TeaJSHelper.get()));
+        AssetDownloader.setInstance(new AssetDownloadImpl());
 
         AssetDownload instance = AssetDownloader.getInstance();
         hostPageBaseURL = instance.getHostPageBaseURL();

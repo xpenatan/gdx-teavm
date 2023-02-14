@@ -11,20 +11,16 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ProgressEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
-import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 
 public class AssetDownloadImpl implements AssetDownload {
-
-    private TeaJSHelper jsHelper;
 
     private int queue;
     private boolean useBrowserCache = true;
@@ -32,8 +28,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     private boolean showLog = true;
 
-    public AssetDownloadImpl(TeaJSHelper jsHelper) {
-        this.jsHelper = jsHelper;
+    public AssetDownloadImpl() {
     }
 
     @Override
