@@ -40,11 +40,6 @@ public final class FileDBManager extends FileDB {
         // write larger files into memory: up to 16.384kb into local storage (permanent)
         int localStorageMax = 16384;
         if((data.length >= localStorageMax) || (append && (expectedLength >= localStorageMax))) {
-            // data is large: store in memory
-            if((!append) || (!memory.exists(file))) {
-                ((StoreMemory)memory.storage()).cleanup();  // <-- removes old data as needed (to make sure we have enough space)
-            }
-
             // write to memory...
             memory.writeInternal(file, data, append, expectedLength);
             localStorage.delete(file);

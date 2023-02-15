@@ -5,7 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
 /**
- * Storage for data in memory.
+ * Storage for data in memory (RAM). The limit is on how much memory the browser will allow the JavaScript
+ * application.
  *
  * @author noblemaster
  */
@@ -20,50 +21,6 @@ class StoreMemory implements Store {
     StoreMemory() {
         keys = new Array<String>(16);
         map = new ObjectMap<String, String>(16);
-    }
-
-    /**
-     * Removes large files as needed to prevent out of memory problems.
-     */
-    void cleanup() {
-        // remove large files if we are above max. bytes
-        long maxChars = 10000000;
-        boolean cleaned = true;
-        while(cleaned) {
-            // calculate new total
-            long total = 0;
-            for(String key : keys) {
-                String val = map.get(key);
-                if(val != null) {
-                    total += val.length();
-                }
-            }
-
-            // over max?
-            if(total > maxChars) {
-                // remove the next largest file
-                String largeKey = null;
-                long largeKeyLength = -1;
-                for(String key : keys) {
-                    String val = map.get(key);
-                    if(val != null) {
-                        long length = val.length();
-                        if(length > largeKeyLength) {
-                            largeKey = key;
-                            largeKeyLength = length;
-                        }
-                    }
-                }
-
-                // and clean it..
-                Gdx.app.debug("File System", "Cleanup of " + largeKey);
-                removeItem(largeKey);
-            }
-            else {
-                // we are done cleaning...
-                cleaned = false;
-            }
-        }
     }
 
     @Override

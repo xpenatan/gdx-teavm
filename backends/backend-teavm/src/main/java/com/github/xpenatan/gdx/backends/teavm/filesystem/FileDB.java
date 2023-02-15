@@ -40,8 +40,7 @@ public abstract class FileDB {
 
     public final OutputStream write(TeaFileHandle file, boolean append, int bufferSize) {
         // buffer for writing
-        int bufferSizeMax = 8192;
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(bufferSize, bufferSizeMax));
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.max(512, Math.min(bufferSize, 8192)));
 
         // wrap output stream so we get notified when we are done writing
         return new OutputStream() {

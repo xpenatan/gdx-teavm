@@ -118,14 +118,12 @@ final class FileDBStorage extends FileDB {
     public long length(TeaFileHandle file) {
         // this is somewhat slow
         String data = store.getItem(ID_FOR_FILE + file.path());
-        try {
+        if (data != null) {
             // 2 HEX characters == 1 byte
             return data.length() / 2;
         }
-        catch(Exception e) {
-            // something corrupted: we report 'null'
-            Gdx.app.error("File System", "Error obtaining length.", e);
-            store.removeItem(ID_FOR_FILE + file.path());
+        else {
+            // no data available
             return 0L;
         }
     }
