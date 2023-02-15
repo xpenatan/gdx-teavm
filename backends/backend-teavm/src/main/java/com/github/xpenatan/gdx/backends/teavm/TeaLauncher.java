@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
 
-@Deprecated
 public class TeaLauncher {
 
     public static void main(String[] args) {

@@ -93,9 +93,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     private boolean init = false;
 
-    @Deprecated
     public static String applicationListener = "";
-    @Deprecated
     public static String mainClass = "";
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
