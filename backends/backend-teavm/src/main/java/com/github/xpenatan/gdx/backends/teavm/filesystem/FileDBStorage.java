@@ -1,12 +1,11 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Local storage based file system. Stays persistent but is limited to about 2.5-5MB in general.
@@ -66,10 +65,14 @@ final class FileDBStorage extends FileDB {
     @Override
     public String[] paths(TeaFileHandle file) {
         String dir = file.path() + "/";
-        List<String> paths = new ArrayList<String>(storage.getLength());
-        for(int i = 0; i < storage.getLength(); i++) {
+        int length = storage.getLength();
+        Array<String> paths = new Array<String>(length);
+Gdx.app.error("LISTING", "START /w COUNT=" + length);//FIXME: del
+        for(int i = 0; i < length; i++) {
             // cut the identifier for files and directories and add to path list
+Gdx.app.error("LISTING 1", "i=" + i);//FIXME: del
             String key = storage.key(i);
+Gdx.app.error("LISTING 2", "key=" + key);//FIXME: del
             if (key.startsWith(ID_FOR_DIR) || key.startsWith(ID_FOR_FILE)) {
                 String path = key.substring(ID_LENGTH);
                 if(path.startsWith(dir)) {
@@ -77,7 +80,7 @@ final class FileDBStorage extends FileDB {
                 }
             }
         }
-        return paths.toArray(new String[paths.size()]);
+        return paths.toArray(String.class);
     }
 
     @Override
@@ -119,11 +122,12 @@ final class FileDBStorage extends FileDB {
         // this is somewhat slow
         String data = storage.getItem(ID_FOR_FILE + file.path());
         try {
-            return HEXCoder.decode(data).length;
+            // 2 HEX characters == 1 byte
+            return data.length() / 2;
         }
-        catch(RuntimeException e) {
+        catch(Exception e) {
             // something corrupted: we report 'null'
-            Gdx.app.error("File System", "Error Decoding Data", e);
+            Gdx.app.error("File System", "Error obtaining length.", e);
             storage.removeItem(ID_FOR_FILE + file.path());
             return 0L;
         }

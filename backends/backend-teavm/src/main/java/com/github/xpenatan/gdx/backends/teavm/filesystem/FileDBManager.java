@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
+import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import org.teavm.jso.browser.Storage;

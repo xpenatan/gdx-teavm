@@ -1,10 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Storage for data in memory.
@@ -16,11 +15,11 @@ class MemoryStorage implements StorageWrapper {
     /**
      * Contains all the data.
      */
-    private final List<String> keys;
+    private final Array<String> keys;
     private final ObjectMap<String, String> map;
 
     MemoryStorage() {
-        keys = new ArrayList<String>(16);
+        keys = new Array<String>(16);
         map = new ObjectMap<String, String>(16);
     }
 
@@ -70,7 +69,7 @@ class MemoryStorage implements StorageWrapper {
 
     @Override
     public synchronized int getLength() {
-        return keys.size();
+        return keys.size;
     }
 
     @Override
@@ -93,7 +92,7 @@ class MemoryStorage implements StorageWrapper {
 
     @Override
     public synchronized void removeItem(String key) {
-        keys.remove(key);
+        keys.removeValue(key, false);
         map.remove(key);
     }
 
