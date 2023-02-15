@@ -75,7 +75,7 @@ class MemoryStorage implements StorageWrapper {
 
     @Override
     public synchronized String key(int i) {
-        return map.get(keys.get(i));
+        return keys.get(i);
     }
 
     @Override
