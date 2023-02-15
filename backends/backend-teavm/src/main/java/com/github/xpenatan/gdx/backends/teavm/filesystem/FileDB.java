@@ -51,9 +51,17 @@ public abstract class FileDB {
             }
 
             @Override
-            public void close() throws IOException {
-                super.close();
+            public void write(byte[] b) throws IOException {
+                buffer.write(b);
+            }
 
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                buffer.write(b, off, len);
+            }
+
+            @Override
+            public void close() throws IOException {
                 // store the data now
                 byte[] data = buffer.toByteArray();
                 writeInternal(file, data, append, Math.max(data.length, bufferSize));
