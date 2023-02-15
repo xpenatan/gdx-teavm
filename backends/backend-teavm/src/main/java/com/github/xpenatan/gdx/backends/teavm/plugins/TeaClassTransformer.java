@@ -18,7 +18,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.MouseEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.NodeWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ProgressEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TouchEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TouchListWrapper;
@@ -363,10 +362,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
             classHolder = findClassHolder(cls, context, WebJSObject.class);
             setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, StorageWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
 
             classHolder = findClassHolder(cls, context, CanvasRenderingContext2DWrapper.class);
             setClassInterface(classHolder, JSObject.class);

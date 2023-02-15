@@ -3,9 +3,9 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import java.util.HashMap;
 import java.util.Map;
+import org.teavm.jso.browser.Storage;
 
 /**
  * @author xpenatan
@@ -20,9 +20,9 @@ public class TeaPreferences implements Preferences {
     final String prefix;
     ObjectMap<String, Object> values = new ObjectMap<String, Object>();
 
-    private StorageWrapper storage;
+    private Storage storage;
 
-    public TeaPreferences(StorageWrapper storage, String prefix) {
+    public TeaPreferences(Storage storage, String prefix) {
         this.storage = storage;
         this.prefix = ID_FOR_PREF + prefix + ":";
         int prefixLength = this.prefix.length();
