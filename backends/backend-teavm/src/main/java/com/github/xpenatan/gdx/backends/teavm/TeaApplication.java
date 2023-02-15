@@ -18,7 +18,6 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
@@ -26,7 +25,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDow
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
-import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
+import org.teavm.jso.browser.Storage;
 
 /**
  * @author xpenatan
@@ -69,8 +68,6 @@ public class TeaApplication implements Application, Runnable {
     private String hostPageBaseURL;
 
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
-        TeaJSHelper jsHelper = config.getJSHelper();
-        TeaJSHelper.JSHelper = jsHelper;
         this.window = TeaWindow.get();
         this.config = config;
         setApplicationListener(appListener);
@@ -349,7 +346,7 @@ public class TeaApplication implements Application, Runnable {
     public Preferences getPreferences(String name) {
         Preferences pref = prefs.get(name);
         if(pref == null) {
-            StorageWrapper storage = TeaJSHelper.get().getStorage();
+            Storage storage = Storage.getLocalStorage();;
             pref = new TeaPreferences(storage, name);
             prefs.put(name, pref);
         }
