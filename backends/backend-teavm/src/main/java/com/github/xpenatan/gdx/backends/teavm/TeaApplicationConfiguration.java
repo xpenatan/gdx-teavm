@@ -1,15 +1,11 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
  * @author xpenatan
  */
 public class TeaApplicationConfiguration {
-
-    @Deprecated
-    private TeaJSHelper jsHelper;
 
     /**
      * Load assets before starting the game. For custom loading, change to false.
@@ -69,11 +65,6 @@ public class TeaApplicationConfiguration {
 
     public TeaApplicationConfiguration(String canvasID) {
         this.canvasID = canvasID;
-        jsHelper = new TeaJSHelper();
         new TeaTypedArrays();
-    }
-
-    public TeaJSHelper getJSHelper() {
-        return jsHelper;
     }
 }
