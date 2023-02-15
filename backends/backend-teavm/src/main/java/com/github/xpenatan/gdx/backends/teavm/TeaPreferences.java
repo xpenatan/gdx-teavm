@@ -11,6 +11,12 @@ import java.util.Map;
  * @author xpenatan
  */
 public class TeaPreferences implements Preferences {
+
+    /**
+     * Prefix for preferences, so we don't interfere with file keys.
+     */
+    private static final String ID_FOR_PREF = "pref:";
+
     final String prefix;
     ObjectMap<String, Object> values = new ObjectMap<String, Object>();
 
@@ -18,12 +24,12 @@ public class TeaPreferences implements Preferences {
 
     public TeaPreferences(StorageWrapper storage, String prefix) {
         this.storage = storage;
-        this.prefix = prefix + ":";
+        this.prefix = ID_FOR_PREF + prefix + ":";
         int prefixLength = this.prefix.length();
         try {
             for(int i = 0; i < storage.getLength(); i++) {
                 String key = storage.key(i);
-                if(key.startsWith(prefix)) {
+                if(key.startsWith(this.prefix)) {
                     String value = storage.getItem(key);
                     values.put(key.substring(prefixLength, key.length() - 1), toObject(key, value));
                 }

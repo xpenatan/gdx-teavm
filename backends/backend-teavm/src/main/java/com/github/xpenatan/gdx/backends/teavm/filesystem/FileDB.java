@@ -40,8 +40,7 @@ public abstract class FileDB {
 
     public final OutputStream write(TeaFileHandle file, boolean append, int bufferSize) {
         // buffer for writing
-        int bufferSizeMax = 8192;
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(bufferSize, bufferSizeMax));
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.max(512, Math.min(bufferSize, 8192)));
 
         // wrap output stream so we get notified when we are done writing
         return new OutputStream() {
@@ -51,9 +50,17 @@ public abstract class FileDB {
             }
 
             @Override
-            public void close() throws IOException {
-                super.close();
+            public void write(byte[] b) throws IOException {
+                buffer.write(b);
+            }
 
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                buffer.write(b, off, len);
+            }
+
+            @Override
+            public void close() throws IOException {
                 // store the data now
                 byte[] data = buffer.toByteArray();
                 writeInternal(file, data, append, Math.max(data.length, bufferSize));

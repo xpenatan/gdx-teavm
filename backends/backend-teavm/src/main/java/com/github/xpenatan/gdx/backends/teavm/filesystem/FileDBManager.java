@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
+
 import java.io.InputStream;
 
 /**
@@ -21,8 +21,8 @@ public final class FileDBManager extends FileDB {
     private final FileDBStorage memory;
 
     FileDBManager() {
-        localStorage = new FileDBStorage(TeaJSHelper.get().getStorage());
-        memory = new FileDBStorage(new MemoryStorage());
+        localStorage = new FileDBStorage(new StoreLocal());
+        memory = new FileDBStorage(new StoreMemory());
     }
 
     @Override
@@ -38,17 +38,15 @@ public final class FileDBManager extends FileDB {
     @Override
     protected void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
         // write larger files into memory: up to 16.384kb into local storage (permanent)
-        if(expectedLength >= 16384) {
-            // data is large: store in memory
-            if((!append) || (!memory.exists(file))) {
-                ((MemoryStorage)memory.storage()).cleanup();  // <-- removes old data as needed (to make sure we have enough space)
-            }
-
+        int localStorageMax = 16384;
+        if((data.length >= localStorageMax) || (append && (expectedLength >= localStorageMax))) {
             // write to memory...
             memory.writeInternal(file, data, append, expectedLength);
+            localStorage.delete(file);
         }
         else {
             localStorage.writeInternal(file, data, append, expectedLength);
+            memory.delete(file);
         }
     }
 
