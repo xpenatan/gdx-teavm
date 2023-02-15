@@ -69,9 +69,12 @@ final class FileDBStorage extends FileDB {
         List<String> paths = new ArrayList<String>(storage.getLength());
         for(int i = 0; i < storage.getLength(); i++) {
             // cut the identifier for files and directories and add to path list
-            String path = storage.key(i).substring(ID_LENGTH);
-            if(path.startsWith(dir)) {
-                paths.add(path);
+            String key = storage.key(i);
+            if (key.startsWith(ID_FOR_DIR) || key.startsWith(ID_FOR_FILE)) {
+                String path = key.substring(ID_LENGTH);
+                if(path.startsWith(dir)) {
+                    paths.add(path);
+                }
             }
         }
         return paths.toArray(new String[paths.size()]);
