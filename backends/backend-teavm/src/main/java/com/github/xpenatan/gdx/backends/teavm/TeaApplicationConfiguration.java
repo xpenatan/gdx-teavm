@@ -1,17 +1,20 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.util.TeaJSHelper;
 
 /**
  * @author xpenatan
  */
 public class TeaApplicationConfiguration {
+
+    @Deprecated
     private TeaJSHelper jsHelper;
+
+    /**
+     * Load assets before starting the game. For custom loading, change to false.
+     */
+    public boolean preloadAssets = true;
 
     public String canvasID;
 

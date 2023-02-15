@@ -19,7 +19,6 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
@@ -40,15 +39,20 @@ public class TeaApplication implements Application, Runnable {
         return agentInfo;
     }
 
+    public static TeaApplication get() {
+        return (TeaApplication)Gdx.app;
+    }
+
     private TeaGraphics graphics;
     private TeaInput input;
     private TeaFiles files;
     private TeaAudio audio;
     private TeaApplicationConfiguration config;
+    private ApplicationListener queueAppListener;
     private ApplicationListener appListener;
     private TeaWindow window;
 
-    private AppState initState = AppState.IDLE;
+    private AppState initState = AppState.LOAD_ASSETS;
 
     private int lastWidth = -1;
     private int lastHeight = 1;
@@ -68,8 +72,8 @@ public class TeaApplication implements Application, Runnable {
         TeaJSHelper jsHelper = config.getJSHelper();
         TeaJSHelper.JSHelper = jsHelper;
         this.window = TeaWindow.get();
-        this.appListener = appListener;
         this.config = config;
+        setApplicationListener(appListener);
         init();
     }
 
@@ -85,7 +89,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl(TeaJSHelper.get()));
+        AssetDownloader.setInstance(new AssetDownloadImpl());
 
         AssetDownload instance = AssetDownloader.getInstance();
         hostPageBaseURL = instance.getHostPageBaseURL();
@@ -97,27 +101,7 @@ public class TeaApplication implements Application, Runnable {
         }
         preloader = new Preloader(hostPageBaseURL);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
-        preloader.preload("assets.txt");
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.fnt", AssetType.Text, null, assetListener);
-//		preloader.loadAsset("com/badlogic/gdx/utils/arial-15.png", AssetType.Image, null, assetListener);
-
-        //TODO implement manual and automatic asset loading
-//		getPreloader().loadAsset("data/uiskin.atlas", AssetType.Text, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/uiskin.json", AssetType.Text, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/uiskin.png", AssetType.Image, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/default.fnt", AssetType.Text, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/default.png", AssetType.Image, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/badlogicsmall.jpg", AssetType.Image, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/badlogic.jpg", AssetType.Image, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/jsonTest.json", AssetType.Text, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/walkanim.png", AssetType.Image, null, new AssetLoaderListener<>());
-//		getPreloader().loadAsset("data/shotgun.ogg", AssetType.Audio, null, new AssetLoaderListener<>());
+        preloader.preload(config.preloadAssets, "assets.txt");
 
         graphics = new TeaGraphics(config);
         input = new TeaInput(graphics.canvas);
@@ -170,20 +154,25 @@ public class TeaApplication implements Application, Runnable {
         AppState state = initState;
         try {
             switch(state) {
-                case IDLE:
+                case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
                     if(queue == 0)
-                        initState = AppState.QUEUE_ASSETS_LOADED;
+                        initState = AppState.APP_LOOP;
                     break;
-                case APP_CREATE:
-                case APP_READY:
+                case APP_LOOP:
+                    if(queueAppListener != null) {
+                        if(appListener != null) {
+                            appListener.dispose();
+                        }
+                        input.setInputProcessor(null);
+                        input.reset();
+                        runnables.clear();
+                        appListener = queueAppListener;
+                        queueAppListener = null;
+                        initState = AppState.APP_CREATE;
+                        graphics.frameId  = 0;
+                    }
                     step(appListener);
-                    break;
-                case QUEUE_ASSETS_LOADED:
-                    //				initState = AppState.INIT_SOUND;
-                    initState = AppState.APP_CREATE;
-                    break;
-                default:
                     break;
             }
         }
@@ -199,15 +188,19 @@ public class TeaApplication implements Application, Runnable {
         graphics.update();
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
-        if(width != lastWidth || height != lastHeight) {
+
+        boolean resizeBypass = false;
+
+        if(initState == AppState.APP_CREATE) {
+            initState = AppState.APP_LOOP;
+            appListener.create();
+            resizeBypass = true;
+        }
+
+        if((width != lastWidth || height != lastHeight) || resizeBypass) {
             lastWidth = width;
             lastHeight = height;
             Gdx.gl.glViewport(0, 0, width, height);
-
-            if(initState == AppState.APP_CREATE) {
-                initState = AppState.APP_READY;
-                appListener.create();
-            }
             appListener.resize(width, height);
         }
 
@@ -217,12 +210,13 @@ public class TeaApplication implements Application, Runnable {
             runnablesHelper.get(i).run();
         }
         runnablesHelper.clear();
-
         graphics.frameId++;
-        if(graphics.frameId > 60) { // A bit of delay before rendering;
-            appListener.render();
-        }
+        appListener.render();
         input.reset();
+    }
+
+    public void setApplicationListener(ApplicationListener applicationListener) {
+        this.queueAppListener = applicationListener;
     }
 
     private void initSound() {
@@ -394,11 +388,9 @@ public class TeaApplication implements Application, Runnable {
     }
 
     public enum AppState {
-        IDLE,
-        QUEUE_ASSETS_LOADED,
-        INIT_SOUND,
+        LOAD_ASSETS,
         APP_CREATE,
-        APP_READY
+        APP_LOOP
     }
 
     // ##################### NATIVE CALLS #####################
