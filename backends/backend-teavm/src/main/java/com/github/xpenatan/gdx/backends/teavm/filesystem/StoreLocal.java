@@ -3,7 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 import org.teavm.jso.browser.Storage;
 
 /**
- * Storage for data in memory.
+ * Storage for data in browser's local storage (limited to a max. size of ~2.5MB).
  *
  * @author noblemaster
  */
