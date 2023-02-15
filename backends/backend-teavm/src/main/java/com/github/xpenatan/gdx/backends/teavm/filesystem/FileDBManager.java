@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
-import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 import org.teavm.jso.browser.Storage;
@@ -24,8 +23,8 @@ public final class FileDBManager extends FileDB {
     private final FileDBStorage memory;
 
     FileDBManager() {
-        localStorage = new FileDBStorage((StorageWrapper)Storage.getLocalStorage());
-        memory = new FileDBStorage(new MemoryStorage());
+        localStorage = new FileDBStorage(new StoreLocal());
+        memory = new FileDBStorage(new StoreMemory());
     }
 
     @Override
@@ -45,7 +44,7 @@ public final class FileDBManager extends FileDB {
         if((data.length >= localStorageMax) || (append && (expectedLength >= localStorageMax))) {
             // data is large: store in memory
             if((!append) || (!memory.exists(file))) {
-                ((MemoryStorage)memory.storage()).cleanup();  // <-- removes old data as needed (to make sure we have enough space)
+                ((StoreMemory)memory.storage()).cleanup();  // <-- removes old data as needed (to make sure we have enough space)
             }
 
             // write to memory...

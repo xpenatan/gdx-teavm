@@ -10,7 +10,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
  *
  * @author noblemaster
  */
-class MemoryStorage implements StorageWrapper {
+class StoreMemory implements Store {
 
     /**
      * Contains all the data.
@@ -18,7 +18,7 @@ class MemoryStorage implements StorageWrapper {
     private final Array<String> keys;
     private final ObjectMap<String, String> map;
 
-    MemoryStorage() {
+    StoreMemory() {
         keys = new Array<String>(16);
         map = new ObjectMap<String, String>(16);
     }
@@ -26,7 +26,7 @@ class MemoryStorage implements StorageWrapper {
     /**
      * Removes large files as needed to prevent out of memory problems.
      */
-    synchronized void cleanup() {
+    void cleanup() {
         // remove large files if we are above max. bytes
         long maxChars = 10000000;
         boolean cleaned = true;
@@ -68,22 +68,22 @@ class MemoryStorage implements StorageWrapper {
     }
 
     @Override
-    public synchronized int getLength() {
+    public int getLength() {
         return keys.size;
     }
 
     @Override
-    public synchronized String key(int i) {
+    public String key(int i) {
         return keys.get(i);
     }
 
     @Override
-    public synchronized String getItem(String key) {
+    public String getItem(String key) {
         return map.get(key);
     }
 
     @Override
-    public synchronized void setItem(String key, String item) {
+    public void setItem(String key, String item) {
         if(!map.containsKey(key)) {
             keys.add(key);
         }
@@ -91,13 +91,13 @@ class MemoryStorage implements StorageWrapper {
     }
 
     @Override
-    public synchronized void removeItem(String key) {
+    public void removeItem(String key) {
         keys.removeValue(key, false);
         map.remove(key);
     }
 
     @Override
-    public synchronized void clear() {
+    public void clear() {
         keys.clear();
         map.clear();
     }
