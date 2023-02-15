@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.github.xpenatan.gdx.backends.teavm.dom.StorageWrapper;
 
 /**
  * Storage for data in memory.
