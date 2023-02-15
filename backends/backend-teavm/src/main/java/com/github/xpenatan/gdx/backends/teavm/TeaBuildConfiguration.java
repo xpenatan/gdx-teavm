@@ -17,7 +17,7 @@ public class TeaBuildConfiguration {
 
     @Deprecated
     public boolean obfuscate = false;
-    @Deprecated
+
     private String mainApplicationClass;
 
     public String webappPath;
@@ -111,12 +111,10 @@ public class TeaBuildConfiguration {
     public void assetsClasspath(ArrayList<String> classPaths) {
     }
 
-    @Deprecated
     public void setApplicationListener(Class<? extends ApplicationListener> applicationListener) {
         setApplicationListener(applicationListener.getName());
     }
 
-    @Deprecated
     public void setApplicationListener(String applicationListener) {
         mainApplicationClass = applicationListener;
     }
