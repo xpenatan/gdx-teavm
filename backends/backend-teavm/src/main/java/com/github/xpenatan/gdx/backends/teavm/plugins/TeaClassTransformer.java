@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.plugins;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
@@ -52,13 +51,12 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.reflections.ReflectionUtils;
@@ -123,12 +121,12 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             }
             typeName = typeName.trim();
             if(!typeName.isEmpty()) {
+                emulations2.put(type.getName(), typeName);
                 if(em.updateCode()) {
                     updateCode.put(typeName, type);
                 }
                 else {
                     emulations.put(typeName, type);
-                    emulations2.put(type.getName(), typeName);
                 }
             }
         }
@@ -137,7 +135,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     @Override
     public void transformClass(ClassHolder cls, ClassHolderTransformerContext context) {
         ClassReaderSource innerSource = context.getHierarchy().getClassSource();
-        String className = cls.getName();
         if(!init) {
             init = true;
             ClassHolder classHolder = null;
@@ -394,24 +391,21 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             classHolder = findClassHolder(cls, context, StyleWrapper.class);
             setClassInterface(classHolder, JSObject.class);
         }
-        String name = cls.getName();
 
-        if(updateCode.containsKey(cls.getName())) {
-            Class<?> emulated = updateCode.get(cls.getName());
-            List<MethodDescriptor> descList = new ArrayList<>();
+        emulateClass(context, cls, innerSource);
+    }
 
-            Predicate<AnnotatedElement> annotatedElementPredicate = ReflectionUtils.withAnnotation(Emulate.class);
-            Set<Method> methods = ReflectionUtils.getMethods(emulated, annotatedElementPredicate);
-            for(Method method : methods) {
-                Class[] classes = new Class[method.getParameterTypes().length + 1];
-                classes[classes.length - 1] = method.getReturnType();
-                System.arraycopy(method.getParameterTypes(), 0, classes, 0, method.getParameterTypes().length);
-                descList.add(new MethodDescriptor(method.getName(), classes));
+    private void emulateClass(ClassHolderTransformerContext context, ClassHolder cls, ClassReaderSource innerSource) {
+        String className = cls.getName();
+        if(updateCode.containsKey(className)) {
+            Class<?> emulated = updateCode.get(className);
+            ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
+            if(emulatedClassHolder != null) {
+                replaceClassCode(emulated, cls, emulatedClassHolder);
             }
-            replaceMethods(cls, emulated, innerSource, descList);
         }
-        else if(emulations.containsKey(name)) {
-            Class<?> emulated = emulations.get(cls.getName());
+        else if(emulations.containsKey(className)) {
+            Class<?> emulated = emulations.get(className);
             ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
             if(emulatedClassHolder != null) {
                 replaceClass(innerSource, cls, emulatedClassHolder);
@@ -504,15 +498,46 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         annotations.add(annotation);
     }
 
-    private void replaceMethods(ClassHolder cls, Class<?> emuType, ClassReaderSource innerSource, List<MethodDescriptor> descList) {
-        ClassReader emuCls = innerSource.get(emuType.getName());
-        for(MethodDescriptor methodDesc : descList) {
-            if(cls.getMethod(methodDesc) != null) {
-                cls.removeMethod(cls.getMethod(methodDesc));
+    private void replaceClassCode(Class<?> emulated, final ClassHolder cls, final ClassReader emuCls) {
+        Predicate<AnnotatedElement> annotatedElementPredicate = ReflectionUtils.withAnnotation(Emulate.class);
+        Set<Field> fields = ReflectionUtils.getFields(emulated, annotatedElementPredicate);
+        Set<Method> methods = ReflectionUtils.getMethods(emulated, annotatedElementPredicate);
+
+        ClassRefsRenamer renamer = new ClassRefsRenamer(referenceCache, preimage -> {
+            String newName = emulations2.get(preimage);
+            if(newName != null) {
+                return newName;
             }
-            MethodReader method = emuCls.getMethod(methodDesc);
-            MethodHolder methodHolder = ModelUtils.copyMethod(method);
-            cls.addMethod(methodHolder);
+            else {
+                return preimage;
+            }
+        });
+
+        for(Field field : fields) {
+            String emuFieldName = field.getName();
+            FieldReader emulatedField = emuCls.getField(emuFieldName);
+            FieldHolder originalField = cls.getField(emuFieldName);
+            if(originalField != null) {
+                cls.removeField(originalField);
+            }
+            FieldHolder fieldHolder = ModelUtils.copyField(emulatedField);
+            FieldHolder fieldRename = renamer.rename(fieldHolder);
+            cls.addField(fieldRename);
+        }
+
+        for(Method method : methods) {
+            Class[] classes = new Class[method.getParameterTypes().length + 1];
+            classes[classes.length - 1] = method.getReturnType();
+            System.arraycopy(method.getParameterTypes(), 0, classes, 0, method.getParameterTypes().length);
+            MethodDescriptor methodDescriptor = new MethodDescriptor(method.getName(), classes);
+            MethodHolder originalMethod = cls.getMethod(methodDescriptor);
+            if(originalMethod != null) {
+                cls.removeMethod(originalMethod);
+            }
+            MethodReader emulatedMethodReader = emuCls.getMethod(methodDescriptor);
+            MethodHolder methodHolderCopy = ModelUtils.copyMethod(emulatedMethodReader);
+            MethodHolder methodRename = renamer.rename(methodHolderCopy);
+            cls.addMethod(methodRename);
         }
     }
 

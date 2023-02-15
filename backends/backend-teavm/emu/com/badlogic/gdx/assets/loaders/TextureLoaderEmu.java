@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(TextureLoader.class)
-public class TextureLoaderEmu extends AsynchronousAssetLoaderEmu<TextureEmu, TextureLoaderEmu.TextureParameterEmu> {
+public class TextureLoaderEmu extends AsynchronousAssetLoader<TextureEmu, TextureLoaderEmu.TextureParameterEmu> {
     TextureData data;
     TextureEmu texture;
 

@@ -27,6 +27,7 @@ public class Preloader {
     public ObjectMap<String, Blob> audio = new ObjectMap<String, Blob>();
     public ObjectMap<String, String> texts = new ObjectMap<String, String>();
     public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
+    public Array<Asset> assets = new Array<>();
 
     private static final String ASSET_FOLDER = "assets/";
 
@@ -40,6 +41,7 @@ public class Preloader {
 
         public boolean succeed;
         public boolean failed;
+        public boolean isLoading;
         public long loaded;
         public final String url;
         public final AssetType type;
@@ -57,7 +59,7 @@ public class Preloader {
         return baseUrl + ASSET_FOLDER;
     }
 
-    public void preload(final String assetFileUrl) {
+    public void preload(boolean loadAssets, final String assetFileUrl) {
         AssetDownloader.getInstance().loadText(true, getAssetUrl() + assetFileUrl, new AssetLoaderListener<String>() {
             @Override
             public void onProgress(double amount) {
@@ -71,7 +73,6 @@ public class Preloader {
             @Override
             public boolean onSuccess(String url, String result) {
                 String[] lines = result.split("\n");
-                Array<Asset> assets = new Array<Asset>(lines.length);
                 for(String line : lines) {
                     String[] tokens = line.split(":");
                     if(tokens.length != 4) {
@@ -89,34 +90,74 @@ public class Preloader {
                     assets.add(new Asset(tokens[1].trim(), type, size, tokens[3]));
                 }
 
-                for(int i = 0; i < assets.size; i++) {
-                    final Asset asset = assets.get(i);
-
-                    if(contains(asset.url)) {
-                        asset.loaded = asset.size;
-                        asset.succeed = true;
-                        continue;
+                if(loadAssets) {
+                    for(int i = 0; i < assets.size; i++) {
+                        final Asset asset = assets.get(i);
+                        loadSingleAsset(asset);
                     }
-
-                    loadAsset(true, asset.url, asset.type, asset.mimeType, new AssetLoaderListener<Object>() {
-
-                        @Override
-                        public void onProgress(double amount) {
-                        }
-
-                        @Override
-                        public void onFailure(String url) {
-                        }
-
-                        @Override
-                        public boolean onSuccess(String url, Object result) {
-                            return false;
-                        }
-                    });
                 }
                 return false;
             }
         });
+    }
+
+    public int loadAssets() {
+        int assetsToDownload = 0;
+        for(int i = 0; i < assets.size; i++) {
+            final Asset asset = assets.get(i);
+            if(loadSingleAsset(asset)) {
+                assetsToDownload++;
+            }
+        }
+        return assetsToDownload;
+    }
+
+    public boolean loadSingleAsset(Asset asset) {
+        if(contains(asset.url)) {
+            asset.loaded = asset.size;
+            asset.succeed = true;
+            asset.failed = false;
+            asset.isLoading = false;
+            return false;
+        }
+
+        if(!asset.isLoading) {
+            asset.failed = false;
+            asset.succeed = false;
+            asset.isLoading = true;
+            loadAsset(true, asset.url, asset.type, asset.mimeType, new AssetLoaderListener<Object>() {
+                @Override
+                public void onProgress(double amount) {
+                    asset.loaded = (long)amount;
+                }
+
+                @Override
+                public void onFailure(String url) {
+                    asset.failed = true;
+                    asset.isLoading = false;
+                }
+
+                @Override
+                public boolean onSuccess(String url, Object result) {
+                    asset.succeed = true;
+                    asset.isLoading = false;
+                    return false;
+                }
+            });
+            return true;
+        }
+        return false;
+    }
+
+    public Asset getAsset(String path) {
+        for(int i = 0; i < assets.size; i++) {
+            final Asset asset = assets.get(i);
+            String url = asset.url;
+            if(path.equals(url)) {
+                return asset;
+            }
+        }
+        return null;
     }
 
     public void loadBinaryAsset(boolean async, final String url, AssetLoaderListener<Blob> listener) {
@@ -316,6 +357,10 @@ public class Preloader {
         FileHandle[] filesArray = new FileHandle[files.size];
         System.arraycopy(files.items, 0, filesArray, 0, filesArray.length);
         return filesArray;
+    }
+
+    public int getQueue() {
+        return AssetDownloader.getInstance().getQueue();
     }
 
     public void printLoadedAssets() {
