@@ -63,6 +63,8 @@ public class TeaApplication implements Application, Runnable {
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
+    private TeaClipboard clipboard;
+
     private Array<Runnable> runnables = new Array<Runnable>();
     private Array<Runnable> runnablesHelper = new Array<Runnable>();
 
@@ -106,6 +108,7 @@ public class TeaApplication implements Application, Runnable {
         files = new TeaFiles(preloader);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
+        clipboard = new TeaClipboard();
         initSound();
 
         //TODO remove script loading from application
@@ -357,8 +360,7 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public Clipboard getClipboard() {
-        // TODO Auto-generated method stub
-        return null;
+        return clipboard;
     }
 
     @Override

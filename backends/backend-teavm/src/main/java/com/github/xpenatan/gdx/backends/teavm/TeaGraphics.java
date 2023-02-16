@@ -17,6 +17,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
+import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
@@ -105,7 +106,6 @@ public class TeaGraphics implements Graphics {
     @Override
     public void setGL30(GL30 gl30) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -130,25 +130,21 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public int getSafeInsetLeft() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public int getSafeInsetTop() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public int getSafeInsetBottom() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public int getSafeInsetRight() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -284,26 +280,22 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setTitle(String title) {
-        // TODO Auto-generated method stub
-
+        Window.current().setName(title);
     }
 
     @Override
     public void setUndecorated(boolean undecorated) {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     @Override
     public void setResizable(boolean resizable) {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     @Override
     public void setVSync(boolean vsync) {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     @Override
@@ -322,20 +314,17 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setContinuousRendering(boolean isContinuous) {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     @Override
     public boolean isContinuousRendering() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public void requestRendering() {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     @Override
@@ -369,8 +358,7 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setForegroundFPS(int fps) {
-        // TODO Auto-generated method stub
-
+        // not available
     }
 
     // ##################### NATIVE CALLS #####################
