@@ -38,6 +38,11 @@ public class TeaClassLoader extends URLClassLoader {
         fixName = fixName.replace("[L", "");
         fixName = fixName.replace("[", "");
 
+        String toPackage = fixName.replace("/", ".");
+        if(containsSkipClass(toPackage)) {
+            return null;
+        }
+
         URL resource = super.getResource(name);
         for(int i = 0; i < jarFiles.length; i++) {
             URL url = jarFiles[i];

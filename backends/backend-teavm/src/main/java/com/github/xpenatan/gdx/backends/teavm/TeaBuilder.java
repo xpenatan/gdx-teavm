@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
+import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassFilter;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
@@ -109,8 +110,7 @@ public class TeaBuilder {
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
 
-        Reflections reflections = new Reflections();
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(SkipClass.class);
+        Set<Class<?>> typesAnnotatedWith = TeaClassTransformer.reflections.getTypesAnnotatedWith(SkipClass.class);
 
         ArrayList<String> skipClasses = new ArrayList<>();
         Iterator<Class<?>> iterator = typesAnnotatedWith.stream().iterator();
