@@ -15,5 +15,7 @@ public interface HTMLCanvasElementWrapper extends HTMLElementWrapper, EventTarge
 
     public void setHeight(int height);
 
+    public String toDataURL(String type);
+
     public WebJSObject getContext(String value);
 }

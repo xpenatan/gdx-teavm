@@ -337,20 +337,17 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public Cursor newCursor(Pixmap pixmap, int xHotspot, int yHotspot) {
-        // TODO Auto-generated method stub
-        return null;
+        return new TeaCursor(pixmap, xHotspot, yHotspot);
     }
 
     @Override
     public void setCursor(Cursor cursor) {
-        // TODO Auto-generated method stub
-
+      canvas.getStyle().setProperty("cursor", ((TeaCursor)cursor).cssCursorProperty);
     }
 
     @Override
     public void setSystemCursor(SystemCursor systemCursor) {
-        // TODO Auto-generated method stub
-
+      canvas.getStyle().setProperty("cursor", TeaCursor.getNameForSystemCursor(systemCursor));
     }
 
     @Override
