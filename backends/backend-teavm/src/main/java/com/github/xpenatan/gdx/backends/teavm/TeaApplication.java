@@ -249,8 +249,7 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public ApplicationListener getApplicationListener() {
-        // TODO Auto-generated method stub
-        return null;
+        return appListener;
     }
 
     @Override
