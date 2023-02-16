@@ -121,6 +121,7 @@ public class TeaNet implements Net {
           }
         } catch (Exception e) {
           // return error...
+          httpResponseListeners.remove(httpRequest);
           httpResponseListener.failed(e);
         }
       }
