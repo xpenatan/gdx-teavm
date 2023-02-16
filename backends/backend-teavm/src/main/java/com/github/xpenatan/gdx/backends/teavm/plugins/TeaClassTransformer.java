@@ -94,6 +94,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     public static String applicationListener = "";
     public static String mainClass = "";
+    public static Reflections reflections = new Reflections("emu", "com", "org", "net");
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
     private HashMap<String, String> emulations2 = new HashMap<>();
@@ -101,7 +102,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     private ReferenceCache referenceCache = new ReferenceCache();
 
     public TeaClassTransformer() {
-        Reflections reflections = new Reflections("emu", "com", "org", "net");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Emulate.class);
         for(Class<?> type : annotated) {
             Emulate em = type.getAnnotation(Emulate.class);
