@@ -45,6 +45,7 @@ public class TeaApplication implements Application, Runnable {
     private TeaGraphics graphics;
     private TeaInput input;
     private TeaFiles files;
+    private TeaNet net;
     private TeaAudio audio;
     private TeaApplicationConfiguration config;
     private ApplicationListener queueAppListener;
@@ -103,6 +104,7 @@ public class TeaApplication implements Application, Runnable {
         graphics = new TeaGraphics(config);
         input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);
+        net = new TeaNet();
         logger = new TeaApplicationLogger();
         initSound();
 
@@ -117,6 +119,7 @@ public class TeaApplication implements Application, Runnable {
         Gdx.gl20 = graphics.getGL20();
         Gdx.input = input;
         Gdx.files = files;
+        Gdx.net = net;
 
         window.requestAnimationFrame(this);
 
@@ -269,8 +272,7 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public Net getNet() {
-        // TODO Auto-generated method stub
-        return null;
+        return net;
     }
 
     @Override
