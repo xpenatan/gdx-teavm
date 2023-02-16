@@ -104,10 +104,6 @@ public class TeaBuildConfiguration {
         return classesToSkip;
     }
 
-    public boolean logClasses() {
-        return false;
-    }
-
     public void assetsClasspath(ArrayList<String> classPaths) {
     }
 
