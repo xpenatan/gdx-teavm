@@ -352,8 +352,7 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public float getBackBufferScale() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBackBufferWidth() / (float)getWidth();
     }
 
     @Override

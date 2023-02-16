@@ -27,6 +27,8 @@ import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import org.teavm.jso.browser.Storage;
 
+import java.util.List;
+
 /**
  * @author xpenatan
  */
@@ -50,6 +52,7 @@ public class TeaApplication implements Application, Runnable {
     private TeaApplicationConfiguration config;
     private ApplicationListener queueAppListener;
     private ApplicationListener appListener;
+    private final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(4);
     private TeaWindow window;
 
     private AppState initState = AppState.LOAD_ASSETS;
@@ -124,6 +127,32 @@ public class TeaApplication implements Application, Runnable {
         Gdx.files = files;
         Gdx.net = net;
 
+        window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
+            @Override
+            public void handleEvent(EventWrapper evt) {
+                // notify of state change
+                String state = window.getDocument().getVisibilityState();
+                if ("hidden".equals(state)) {
+                    // hidden: i.e. we are paused
+                    synchronized (lifecycleListeners) {
+                        for (LifecycleListener listener : lifecycleListeners) {
+                            listener.pause();
+                        }
+                    }
+                    appListener.pause();
+                }
+                else {
+                    // visible: i.e. we resume
+                    synchronized (lifecycleListeners) {
+                        for (LifecycleListener listener : lifecycleListeners) {
+                            listener.resume();
+                        }
+                    }
+                    appListener.resume();
+                }
+            }
+        });
+
         window.requestAnimationFrame(this);
 
         if(config.isAutoSizeApplication()) {
@@ -165,6 +194,7 @@ public class TeaApplication implements Application, Runnable {
                 case APP_LOOP:
                     if(queueAppListener != null) {
                         if(appListener != null) {
+                            appListener.pause();
                             appListener.dispose();
                         }
                         input.setInputProcessor(null);
@@ -197,6 +227,7 @@ public class TeaApplication implements Application, Runnable {
         if(initState == AppState.APP_CREATE) {
             initState = AppState.APP_LOOP;
             appListener.create();
+            appListener.resume();
             resizeBypass = true;
         }
 
@@ -373,14 +404,16 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public void addLifecycleListener(LifecycleListener listener) {
-        // TODO Auto-generated method stub
-
+        synchronized (lifecycleListeners) {
+            lifecycleListeners.add(listener);
+        }
     }
 
     @Override
     public void removeLifecycleListener(LifecycleListener listener) {
-        // TODO Auto-generated method stub
-
+        synchronized (lifecycleListeners) {
+            lifecycleListeners.removeValue(listener, true);
+        }
     }
 
     public String getAssetUrl() {

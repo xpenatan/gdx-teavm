@@ -1,11 +1,16 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface DocumentWrapper extends ElementWrapper {
 
     public ElementWrapper getDocumentElement();
+
+    @JSProperty
+    public String getVisibilityState();
 
     public String getCompatMode();
 
