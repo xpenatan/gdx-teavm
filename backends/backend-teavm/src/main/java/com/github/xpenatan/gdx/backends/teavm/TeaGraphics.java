@@ -19,6 +19,7 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.dom.xml.Document;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
 /**
@@ -205,26 +206,28 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public boolean supportsDisplayModeChange() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
+    }
+
+    static class TeaMonitor extends Monitor {
+      protected TeaMonitor (int virtualX, int virtualY, String name) {
+        super(virtualX, virtualY, name);
+      }
     }
 
     @Override
     public Monitor getPrimaryMonitor() {
-        // TODO Auto-generated method stub
-        return null;
+        return new TeaMonitor(0, 0, "Primary Monitor");
     }
 
     @Override
     public Monitor getMonitor() {
-        // TODO Auto-generated method stub
-        return null;
+        return getPrimaryMonitor();
     }
 
     @Override
     public Monitor[] getMonitors() {
-        // TODO Auto-generated method stub
-        return null;
+      return new Monitor[] {getPrimaryMonitor()};
     }
 
     @Override
@@ -280,7 +283,7 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setTitle(String title) {
-        Window.current().setName(title);
+        Window.current().getDocument().setTitle(title);
     }
 
     @Override

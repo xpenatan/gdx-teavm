@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
 
 public class TeaPermissions {
 
@@ -36,7 +37,7 @@ public class TeaPermissions {
   public native static void queryPermission (String permission, TeaPermissionResult result);
 
   /** See <a href="https://w3c.github.io/permissions/#status-of-a-permission">status-of-a-permission</a> for more information */
-  public interface TeaPermissionResult {
+  public interface TeaPermissionResult extends JSObject {
     /** the permission to access the feature is granted without asking the user */
     void granted ();
 
