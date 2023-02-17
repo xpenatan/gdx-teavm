@@ -39,9 +39,9 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
     }
 
     public FileHandleResolver baseResolver;
-    public ResolutionFileResolver.Resolution descriptors;
+    public ResolutionFileResolver.Resolution[] descriptors;
 
-    public ResolutionFileResolverEmu(FileHandleResolver baseResolver, ResolutionFileResolver.Resolution descriptors) {
+    public ResolutionFileResolverEmu(FileHandleResolver baseResolver, ResolutionFileResolver.Resolution... descriptors) {
         this.descriptors = descriptors;
         this.baseResolver = baseResolver;
     }

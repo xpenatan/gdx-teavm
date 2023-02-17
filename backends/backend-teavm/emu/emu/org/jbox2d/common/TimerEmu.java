@@ -4,11 +4,11 @@ import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import org.teavm.jso.JSBody;
 
 @Emulate(valueStr = "org.jbox2d.common.Timer")
-public class Timer {
+public class TimerEmu {
 
     private double resetMillis;
 
-    public Timer() {
+    public TimerEmu() {
         reset();
     }
 

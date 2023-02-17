@@ -83,19 +83,22 @@ public class PixmapEmu implements Disposable {
     private HTMLImageElementWrapper imageElement;
     private HTMLVideoElementWrapper videoElement;
 
-    public static void downloadFromUrl(String url, final DownloadPixmapResponseListenerEmu responseListener) {
-        AssetDownloader.getInstance().load(true, url, AssetType.Image, null, new AssetLoaderListener<HTMLImageElementWrapper>() {
+    public static void downloadFromUrl(String url, final Pixmap.DownloadPixmapResponseListener responseListener) {
+        AssetLoaderListener<HTMLImageElementWrapper> listener = new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
-                responseListener.downloadFailed(new Exception("Failed to download image"));
+                Throwable t = new Exception("Failed to download image");
+                responseListener.downloadFailed(t);
             }
 
             @Override
             public boolean onSuccess(String url, HTMLImageElementWrapper result) {
-                responseListener.downloadComplete(new PixmapEmu(result));
+                Object obj = new PixmapEmu(result);
+                responseListener.downloadComplete((Pixmap)obj);
                 return false;
             }
-        });
+        };
+        AssetDownloader.getInstance().load(true, url, AssetType.Image, null, listener);
     }
 
     public PixmapEmu(FileHandle file) {
@@ -547,12 +550,5 @@ public class PixmapEmu implements Disposable {
 
     private enum DrawType {
         FILL, STROKE
-    }
-
-    @Emulate(Pixmap.DownloadPixmapResponseListener.class)
-    public interface DownloadPixmapResponseListenerEmu {
-        void downloadComplete(PixmapEmu pixmap);
-
-        void downloadFailed(Throwable t);
     }
 }

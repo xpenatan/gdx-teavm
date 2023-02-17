@@ -391,17 +391,25 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     private void emulateClass(ClassHolderTransformerContext context, ClassHolder cls, ClassReaderSource innerSource) {
         String className = cls.getName();
         if(updateCode.containsKey(className)) {
+            ClassReader original = innerSource.get(className);
             Class<?> emulated = updateCode.get(className);
             ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
             if(emulatedClassHolder != null) {
                 replaceClassCode(emulated, cls, emulatedClassHolder);
+
+                // teavm makes bunch of classreader copies. We also need to update the original class
+                replaceClassCode(emulated, (ClassHolder)original, emulatedClassHolder);
             }
         }
         else if(emulations.containsKey(className)) {
+            ClassReader original = innerSource.get(className);
             Class<?> emulated = emulations.get(className);
             ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
             if(emulatedClassHolder != null) {
                 replaceClass(innerSource, cls, emulatedClassHolder);
+
+                // teavm makes bunch of classreader copies. We also need to update the original class
+                replaceClass(innerSource, (ClassHolder)original, emulatedClassHolder);
             }
         }
     }
