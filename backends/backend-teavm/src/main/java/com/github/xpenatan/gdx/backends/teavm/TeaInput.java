@@ -80,9 +80,8 @@ public class TeaInput implements Input, EventListenerWrapper {
     boolean keyJustPressed = false;
     boolean[] justPressedKeys = new boolean[256];
     boolean[] justPressedButtons = new boolean[5];
+    private final IntSet keysToCatch = new IntSet();
     InputProcessor processor;
-    char lastKeyCharPressed;
-    float keyRepeatTimer;
     long currentEventTimeStamp;
     boolean hasFocus = true;
 
@@ -559,8 +558,7 @@ public class TeaInput implements Input, EventListenerWrapper {
 
     @Override
     public int getMaxPointers() {
-        // TODO Auto-generated method stub
-        return 0;
+        return MAX_TOUCHES;
     }
 
     @Override
@@ -726,39 +724,37 @@ public class TeaInput implements Input, EventListenerWrapper {
     }
 
     @Override
-    public void setCatchBackKey(boolean catchBack) {
-        // TODO Auto-generated method stub
-
+    public boolean isCatchBackKey () {
+        return keysToCatch.contains(Keys.BACK);
     }
 
     @Override
-    public boolean isCatchBackKey() {
-        // TODO Auto-generated method stub
-        return false;
+    public void setCatchBackKey (boolean catchBack) {
+        setCatchKey(Keys.BACK, catchBack);
     }
 
     @Override
-    public void setCatchMenuKey(boolean catchMenu) {
-        // TODO Auto-generated method stub
-
+    public boolean isCatchMenuKey () {
+        return keysToCatch.contains(Keys.MENU);
     }
 
     @Override
-    public boolean isCatchMenuKey() {
-        // TODO Auto-generated method stub
-        return false;
+    public void setCatchMenuKey (boolean catchMenu) {
+        setCatchKey(Keys.MENU, catchMenu);
     }
 
     @Override
-    public void setCatchKey(int keycode, boolean catchKey) {
-        // TODO Auto-generated method stub
-
+    public void setCatchKey (int keycode, boolean catchKey) {
+        if (!catchKey) {
+            keysToCatch.remove(keycode);
+        } else {
+            keysToCatch.add(keycode);
+        }
     }
 
     @Override
-    public boolean isCatchKey(int keycode) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isCatchKey (int keycode) {
+      return keysToCatch.contains(keycode);
     }
 
     @Override
