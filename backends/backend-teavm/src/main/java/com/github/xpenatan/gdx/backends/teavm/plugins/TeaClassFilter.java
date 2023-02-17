@@ -6,45 +6,29 @@ import org.teavm.model.MethodReference;
 import org.teavm.vm.spi.ElementFilter;
 
 public class TeaClassFilter implements ElementFilter {
-    private static final ArrayList<String> classKeepFilter = new ArrayList();
-    private static final ArrayList<String> classFilter = new ArrayList();
-    private static final ArrayList<String> methodFilter = new ArrayList();
-    private static final ArrayList<String> fieldFilter = new ArrayList();
+    private static final ArrayList<String> classesToExclude = new ArrayList<>();
+    private static final ArrayList<Pair> methodsToExclude = new ArrayList<>();
+    private static final ArrayList<Pair> fieldsToExclude = new ArrayList<>();
 
     /**
-     * my.package.ClassName
+     * my.package.ClassName or my.package
      */
-    public static void addClassToKeep(String className) {
-        classKeepFilter.add(className);
+    public static void addClassToExclude(String className) {
+        classesToExclude.add(className);
     }
 
     /**
      * my.package.ClassName or my.package
      */
-    public static void addClassToExclude(String className, boolean excludeClass, boolean excludeMethod, boolean excludeField) {
-        if(excludeClass) {
-            classFilter.add(className);
-        }
-        if(excludeMethod) {
-            methodFilter.add(className);
-        }
-        if(excludeField) {
-            fieldFilter.add(className);
-        }
+    public static void addMethodsToExclude(String className, String methodName) {
+        methodsToExclude.add(new Pair(className, methodName));
     }
 
     /**
      * my.package.ClassName or my.package
      */
-    public static void addMethodsToExclude(String className) {
-        methodFilter.add(className);
-    }
-
-    /**
-     * my.package.ClassName or my.package
-     */
-    public static void addFieldsToExclude(String className) {
-        fieldFilter.add(className);
+    public static void addFieldsToExclude(String className, String fieldName) {
+        fieldsToExclude.add(new Pair(className, fieldName));
     }
 
     private static boolean containsClass(ArrayList<String> list, String className) {
@@ -56,13 +40,23 @@ public class TeaClassFilter implements ElementFilter {
         return false;
     }
 
+    private static boolean contains(ArrayList<Pair> list, String className, String methodOrFieldName) {
+        for(int i = 0; i < list.size(); i++) {
+            Pair pair = list.get(i);
+            if(className.contains(pair.key)) {
+                if(methodOrFieldName.equals(pair.value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean acceptClass(String fullClassName) {
         boolean accceptClass = true;
-        if(containsClass(classFilter, fullClassName)) {
-            if(!containsClass(classKeepFilter, fullClassName)) {
-                accceptClass = false;
-            }
+        if(containsClass(classesToExclude, fullClassName)) {
+            accceptClass = false;
         }
         return accceptClass;
     }
@@ -70,7 +64,8 @@ public class TeaClassFilter implements ElementFilter {
     @Override
     public boolean acceptMethod(MethodReference method) {
         String fullClassName = method.getClassName();
-        if(containsClass(methodFilter, fullClassName)) {
+        String name = method.getName();
+        if(contains(methodsToExclude, fullClassName, name)) {
             return false;
         }
         return true;
@@ -79,9 +74,20 @@ public class TeaClassFilter implements ElementFilter {
     @Override
     public boolean acceptField(FieldReference field) {
         String fullClassName = field.getClassName();
-        if(containsClass(fieldFilter, fullClassName)) {
+        String fieldName = field.getFieldName();
+        if(contains(fieldsToExclude, fullClassName, fieldName)) {
             return false;
         }
         return true;
+    }
+
+    public static class Pair {
+        public String key;
+        public String value;
+
+        public Pair(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 }
