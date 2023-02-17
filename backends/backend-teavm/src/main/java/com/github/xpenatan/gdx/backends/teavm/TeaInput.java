@@ -321,11 +321,23 @@ public class TeaInput implements Input, EventListenerWrapper {
                     }
                 }
             }
+
+            // prevent TAB-key propagation, i.e. we handle ourselves!
+            if (code == Keys.TAB) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
         else if(type.equals("keypress") && hasFocus) {
             KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
             char c = (char)keyboardEvent.getCharCode();
             if(processor != null) processor.keyTyped(c);
+
+            // prevent TAB-key propagation, i.e. we handle ourselves!
+            if (c == '\t') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
 
         else if(type.equals("keyup") && hasFocus) {
@@ -337,6 +349,12 @@ public class TeaInput implements Input, EventListenerWrapper {
             }
             if(processor != null) {
                 processor.keyUp(code);
+            }
+
+            // prevent TAB-key propagation, i.e. we handle ourselves!
+            if (code == Keys.TAB) {
+                e.preventDefault();
+                e.stopPropagation();
             }
         }
     }
@@ -607,14 +625,12 @@ public class TeaInput implements Input, EventListenerWrapper {
 
     @Override
     public float getPressure() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getPressure(0);
     }
 
     @Override
     public float getPressure(int pointer) {
-        // TODO Auto-generated method stub
-        return 0;
+        return isTouched(pointer) ? 1 : 0;
     }
 
     @Override
