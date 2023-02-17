@@ -21,8 +21,8 @@ project.ext.mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
 // Change to your source asset directory
 project.ext.assetsDir = new File("D:\\Dev\\Projects\\java\\Libgdx\\tests\\gdx-tests-android\\assets\\");
 
-task runGdxTests(dependsOn: classes, type: JavaExec) {
-    setGroup("examples")
+task runGdxTestsDesktop(dependsOn: classes, type: JavaExec) {
+    setGroup("examples-desktop")
     setDescription("Run gdx tests example")
     mainClass.set(project.mainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)

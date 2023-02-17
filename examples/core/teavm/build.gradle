@@ -22,15 +22,6 @@ dependencies {
     implementation project(":extensions:gdx-freetype-teavm")
 }
 
-project.ext.mainClassName = "com.github.xpenatan.gdx.examples.teavm.Build"
-
-task buildExampleCore(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm core example")
-    mainClass.set(project.mainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
 project.ext.gearsMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGearsDemo"
 
 task buildExampleCoreGears(dependsOn: classes, type: JavaExec) {
@@ -45,102 +36,6 @@ task runCoreGearsDemo(dependsOn: [':examples:core:teavm:clean', ':examples:core:
 }
 
 runCoreGearsDemo.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.animationTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildAnimationTest"
-
-task buildExampleCoreAnimationTest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm AnimationTest example")
-    mainClass.set(project.animationTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreAnimationTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreAnimationTest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run AnimationTest example")
-}
-
-runCoreAnimationTest.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.helloTriangleMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildHelloTriangle"
-
-task buildExampleCoreHelloTriangle(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm Hello Triangle example")
-    mainClass.set(project.helloTriangleMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreHelloTriangle(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreHelloTriangle', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run Hello Triangle example")
-}
-
-runCoreHelloTriangle.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.uiTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildUITest"
-
-task buildExampleCoreUITest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm UITest example")
-    mainClass.set(project.uiTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreUITest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreUITest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run UITest example")
-}
-
-runCoreUITest.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.freeTypeTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildFreeTypeTest"
-
-task buildExampleCoreFreeTypeTest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm FreeTypeTest example")
-    mainClass.set(project.freeTypeTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreFreeTypeTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreFreeTypeTest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run FreeTypeTest example")
-}
-
-runCoreFreeTypeTest.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.reflectionTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildReflectionTest"
-
-task buildExampleCoreReflectionTest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm ReflectionTest example")
-    mainClass.set(project.reflectionTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreReflectionTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreReflectionTest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run ReflectionTest example")
-}
-
-runCoreReflectionTest.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.annotationTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildAnnotationTest"
-
-task buildExampleCoreAnnotationTest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm AnnotationTest example")
-    mainClass.set(project.annotationTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreAnnotationTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreAnnotationTest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run AnnotationTest example")
-}
-
-runCoreAnnotationTest.shouldRunAfter ":examples:core:teavm:clean"
 
 project.ext.aiTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildAITest"
 
@@ -157,20 +52,6 @@ task runCoreAITest(dependsOn: [':examples:core:teavm:clean', ':examples:core:tea
 }
 
 runCoreAITest.shouldRunAfter ":examples:core:teavm:clean"
-
-project.ext.soundTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildSoundTest"
-
-task buildExampleCoreSoundTest(dependsOn: classes, type: JavaExec) {
-    setGroup("teavm")
-    setDescription("Build teavm SoundTest example")
-    mainClass.set(project.soundTestMainClassName)
-    setClasspath(sourceSets.main.runtimeClasspath)
-}
-
-task runCoreSoundTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreSoundTest', ':examples:core:teavm:jettyRun']) {
-    setGroup("examples-teavm")
-    setDescription("Run SoundTest example")
-}
 
 project.ext.loadingTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildLoadingTest"
 
