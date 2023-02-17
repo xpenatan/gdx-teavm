@@ -10,6 +10,7 @@ project.ext {
 
     jDearImguiVersion = '1.0.0-SNAPSHOT'
     jDearImguiGdxVersion = "1.0.0-SNAPSHOT"
+    gdxFrameViewportVersion = "1.0.0-SNAPSHOT"
 
     reflectionVersion = "0.10.2"
 
