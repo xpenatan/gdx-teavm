@@ -28,6 +28,7 @@ public class Preloader {
     public ObjectMap<String, String> texts = new ObjectMap<String, String>();
     public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
     public Array<Asset> assets = new Array<>();
+    public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
 
@@ -89,6 +90,7 @@ public class Preloader {
                     }
                     assets.add(new Asset(tokens[1].trim(), type, size, tokens[3]));
                 }
+                assetTotal = assets.size;
 
                 if(loadAssets) {
                     for(int i = 0; i < assets.size; i++) {

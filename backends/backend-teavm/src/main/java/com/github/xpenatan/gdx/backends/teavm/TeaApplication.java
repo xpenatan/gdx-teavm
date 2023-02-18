@@ -194,9 +194,27 @@ public class TeaApplication implements Application, Runnable {
                         initState = AppState.APP_LOOP;
 
                         // remove loading indicator
-                        HTMLElement element = Window.current().getDocument().getElementById("loading-indicator");
+                        HTMLElement element = Window.current().getDocument().getElementById("progress");
                         if (element != null) {
                           element.getStyle().setProperty("display", "none");
+                        }
+                    }
+                    else {
+                        // update progress bar once we know the total number of assets that are loaded
+                        int total = preloader.assetTotal;
+                        if (total > 0) {
+                          // we have the actual total
+                          int minPercentage = 25;
+                          int percentage = minPercentage + (((100 - minPercentage) * (total - queue)) / total);
+
+                          HTMLElement progressTxt = Window.current().getDocument().getElementById("progress-txt");
+                          if (progressTxt != null) {
+                            progressTxt.setInnerHTML(percentage + "%");
+                          }
+                          HTMLElement progressBar = Window.current().getDocument().getElementById("progress-bar");
+                          if (progressBar != null) {
+                            progressBar.getStyle().setProperty("width", percentage + "%");
+                          }
                         }
                     }
                     break;
