@@ -190,8 +190,15 @@ public class TeaApplication implements Application, Runnable {
             switch(state) {
                 case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
-                    if(queue == 0)
+                    if(queue == 0) {
                         initState = AppState.APP_LOOP;
+
+                        // remove loading indicator
+                        HTMLElement element = Window.current().getDocument().getElementById("loading-indicator");
+                        if (element != null) {
+                          element.getStyle().setProperty("display", "none");
+                        }
+                    }
                     break;
                 case APP_LOOP:
                     if(queueAppListener != null) {
@@ -231,12 +238,6 @@ public class TeaApplication implements Application, Runnable {
             appListener.create();
             appListener.resume();
             resizeBypass = true;
-
-            // remove loading indicator
-            HTMLElement element = Window.current().getDocument().getElementById("loading-indicator");
-            if (element != null) {
-              element.getStyle().setProperty("display", "none");
-            }
         }
 
         if((width != lastWidth || height != lastHeight) || resizeBypass) {
