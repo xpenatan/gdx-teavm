@@ -3,11 +3,37 @@
 <head>
     <title>%TITLE%</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <script type="text/javascript" charset="utf-8" src="teavm/app.js"></script>
+    <style>
+        body {
+          background-color: black;
+        }
+        #overlay {
+          position: fixed;
+          display: block;
+          box-sizing: border-box;
+          position: absolute;
+          z-index: 1;
+          top: 50%;
+          left: 50%;
+          width: 40px;
+          height: 40px;
+          margin-top: -10px;
+          margin-left: -10px;
+          border-radius: 50%;
+          border: 5px solid #ccc;
+          border-top-color: #000;
+          animation: spinner .9s linear infinite;
+        }
+        @keyframes spinner {
+          to {transform: rotate(360deg);}
+        }
+    </style>
 </head>
 <body style="margin:0;padding:0;overflow: hidden" oncontextmenu="return false" onload="main(%ARGS%)">
 <div>
+    <div id="loading-indicator"></div>
     <canvas id="canvas" width="%WIDTH%" height="%HEIGHT%"></canvas>
 </div>
+<script type="text/javascript" charset="utf-8" src="teavm/app.js"></script>
 </body>
 </html>

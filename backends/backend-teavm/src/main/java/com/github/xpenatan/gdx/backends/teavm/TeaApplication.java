@@ -26,6 +26,8 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import org.teavm.jso.browser.Storage;
+import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.html.HTMLElement;
 
 import java.util.List;
 
@@ -229,6 +231,12 @@ public class TeaApplication implements Application, Runnable {
             appListener.create();
             appListener.resume();
             resizeBypass = true;
+
+            // remove loading indicator
+            HTMLElement element = Window.current().getDocument().getElementById("loading-indicator");
+            if (element != null) {
+              element.getStyle().setProperty("display", "none");
+            }
         }
 
         if((width != lastWidth || height != lastHeight) || resizeBypass) {
