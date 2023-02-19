@@ -6,7 +6,7 @@ on:
       - 'master'
 
 env:
-  RELEASE: false
+  RELEASE: true
 
 jobs:
   build_Linux:
