@@ -37,6 +37,10 @@ public class TeaBuildConfiguration {
     public String htmlTitle = "TeaVMCoreExample";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
+    /**
+     * If the logo is shown while the application is loading.
+     */
+    public boolean showLoadingLogo = true;
 
     public String getHtmlTitle() {
         return htmlTitle;
@@ -48,6 +52,10 @@ public class TeaBuildConfiguration {
 
     public String getHtmlHeight() {
         return String.valueOf(htmlHeight);
+    }
+
+    public boolean isShowLoadingLogo() {
+      return showLoadingLogo;
     }
 
     public String getMainClass() {
