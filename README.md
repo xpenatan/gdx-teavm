@@ -1,15 +1,15 @@
-# Gdx-teaVM
 ![Build](https://github.com/xpenatan/gdx-html5-tools/workflows/Build/badge.svg)
 
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/r/com.github.xpenatan.gdx-teavm/backend-teavm?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://repo.maven.apache.org/maven2/com/github/xpenatan/gdx-teavm/)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.xpenatan.gdx-teavm/backend-teavm?server=https%3A%2F%2Foss.sonatype.org&label=snapshot)](https://oss.sonatype.org/content/repositories/snapshots/com/github/xpenatan/gdx-teavm/)
 
-Gdx-teaVM is a solution to run [libgdx](https://github.com/libgdx/libgdx) games in a web browser. [TeaVM](https://github.com/konsoletyper/teavm) is tool to convert java/kotlin bytecode to javascript. It's a WIP so not everything will work.
+gdx-teaVM is a backend solution to run [libgdx](https://github.com/libgdx/libgdx) games in a web browser. It uses [TeaVM](https://github.com/konsoletyper/teavm) behind the scene to convert Java/Kotlin bytecode to Javascript.
 
 Note:
-* Reflection support is very small so only reflection used in [ReflectionTest](https://github.com/xpenatan/gdx-teavm/blob/master/examples/core/core/src/main/java/com/github/xpenatan/gdx/examples/tests/ReflectionTest.java) and teaVM [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
-* teaVM does not support every class methods from java package. For example, if your code or a lib call a method from Class that it is not [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib/java/lang/TClass.java), you will get errors. 
+* Reflection support is very small so only reflection used in [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
+* teaVM does not support every class methods from java package or JNI native methods. Check teaVM java classes [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib).
 * Kotlin [discussions](https://github.com/libktx/ktx/discussions/443).
+* Box2d, Bullet and freetype extension use [emscripten](https://emscripten.org/) to convert C++ to Javascript/WebAssembly. Box2d and Bullet use a custom parser ([jParser](https://github.com/xpenatan/jParser)) to help bind javascript code.
 
 ## TeaVM Examples:
 * [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
@@ -21,10 +21,10 @@ Note:
 * [micronaut-libgdx-teavm](https://github.com/hollingsworthd/micronaut-libgdx-teavm)
 * [6dof-vehicle](https://xpenatan.github.io/gdx-6dof-vehicle-demo/teavm/vehicle/) ([source](https://github.com/xpenatan/gdx-6dof-vehicle-demo))
 
-## How it works:
-Like GDX GWT backend, it uses the same solution to emulate classes. If the class contains JNI calls or a code that javascript can't handle, it needs to be emulated and have to be loaded first when compiling to javascript. Some backend code was ported from gdx-gwt-backend.
+## TeaVM Games:
+* [Age of Conquest](https://www.ageofconquest.com/webapp/) ([website](https://www.ageofconquest.com/))
+* [Retro Commander](https://www.retrocommander.com/webapp/) ([website](https://www.retrocommander.com/))
 
-Box2d, Bullet and freetype extension use emscripten to convert C++ to Javascript/WebAssembly. Box2d and Bullet use a custom parser ([jParser](https://github.com/xpenatan/jParser)) to generate java class to bind javascript code.
 
 ## Setup:
 ```groovy
@@ -65,8 +65,3 @@ A WIP standalone tool to convert your libgdx game in .jar or .class format to ja
 Note: The compiled jar game should not be obfuscated.
 
 Setup: TODO
-<br>
-
-## jParser
-[jParser](https://github.com/xpenatan/jParser) is a solution using [javaparser](https://github.com/javaparser/javaparser) to read a java source file and generate a new modified java source file.
-The main goal is to make it easy to add, modify or remove part of the original source code and create a new java source from it. It's possible to have c++ and javascript code in the same java file.
