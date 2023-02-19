@@ -1,4 +1,6 @@
 [1.0.0-SNAPSHOT]
+
+[1.0.0-b3]
 - Add gdx-bullet c++ module so desktop and web use the same c++ code/version
 - Update teaVM to 0.8.0-dev-1 and project Java version to 11
 - Add missing buffer in glBufferData
