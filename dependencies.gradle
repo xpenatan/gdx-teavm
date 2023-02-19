@@ -3,6 +3,11 @@ project.ext {
     gdxHtmlVersion = "1.0.0"
     gdxHtmlType = "-SNAPSHOT"
 
+    var isRelease = repoUser = System.getenv('RELEASE')
+    System.out.println(isRelease)
+    if(isRelease) {
+        System.out.println("isRelease")
+    }
     teaVMVersion = "0.8.0-dev-1"
 
     gdxVersion = "1.11.0"
