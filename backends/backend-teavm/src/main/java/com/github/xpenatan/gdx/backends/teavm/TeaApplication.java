@@ -271,7 +271,9 @@ public class TeaApplication implements Application, Runnable {
         }
         runnablesHelper.clear();
         graphics.frameId++;
-        appListener.render();
+        if(graphics.frameId > 60) { // A bit of delay before rendering so fps don't start with 0
+            appListener.render();
+        }
         input.reset();
     }
 
