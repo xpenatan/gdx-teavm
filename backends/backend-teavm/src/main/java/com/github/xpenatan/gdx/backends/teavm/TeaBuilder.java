@@ -386,6 +386,7 @@ public class TeaBuilder {
     }
 
     private static void scriptsDefault(ArrayList<String> filePath) {
+        filePath.add("startup-logo.png");
         filePath.add("soundmanager2-jsmin.js");
         filePath.add("freetype.js");
         filePath.add("bullet.js");

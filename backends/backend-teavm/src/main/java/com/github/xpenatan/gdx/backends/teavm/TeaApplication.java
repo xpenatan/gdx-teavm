@@ -203,14 +203,9 @@ public class TeaApplication implements Application, Runnable {
                         // update progress bar once we know the total number of assets that are loaded
                         int total = preloader.assetTotal;
                         if (total > 0) {
-                          // we have the actual total
+                          // we have the actual total and can update the progress bar
                           int minPercentage = 25;
                           int percentage = minPercentage + (((100 - minPercentage) * (total - queue)) / total);
-
-                          HTMLElement progressTxt = Window.current().getDocument().getElementById("progress-txt");
-                          if (progressTxt != null) {
-                            progressTxt.setInnerHTML(percentage + "%");
-                          }
                           HTMLElement progressBar = Window.current().getDocument().getElementById("progress-bar");
                           if (progressBar != null) {
                             progressBar.getStyle().setProperty("width", percentage + "%");

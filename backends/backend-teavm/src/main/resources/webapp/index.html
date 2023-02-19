@@ -24,15 +24,8 @@
         margin-top: -40px;
         margin-left: -250px;
       }
-      #progress-txt {
-        color: #fff;
-        font-size: 34px;
-        font-family: "Courier New", sans-serif;
-        font-weight: 800;
-        font-smooth: never;
-        -webkit-font-smoothing : none;
-        line-height: 36px;
-        float: right;
+      #progress-img {
+        padding-bottom: 5px;
       }
       #progress-box {
         background: rgba(255,255,255,0.1);
@@ -43,7 +36,7 @@
         padding: 0px 5px;
         display: flex;
         height: 30px;
-        width: 500px;
+        width: 487px;
         float: left;
         clear: both;
       }
@@ -59,7 +52,7 @@
 <body style="margin:0;padding:0;overflow: hidden" oncontextmenu="return false" onload="main(%ARGS%)">
 <div>
   <div id="progress">
-    <div id="progress-txt">0%</div>
+    <img id="progress-img" src="startup-logo.png">
     <div id="progress-box">
       <div id="progress-bar"></div>
     </div>
@@ -69,17 +62,18 @@
 <script>
   var maxPercentage = 25;
   var delay = 500;
-  var txt = document.getElementById("progress-txt");
-  var barStyle = document.getElementById("progress-bar").style;
-  barStyle.width = "0%";
-  function barUpdater() {
-    var percentage = parseInt(barStyle.width, 10);
-    if (percentage < maxPercentage) {
-      percentage++;
-      txt.innerHTML = percentage + "%";
-      barStyle.width = percentage + "%";
-      delay += 25;
-      setTimeout(barUpdater, delay);
+  var bar = document.getElementById("progress-bar");
+  if (bar) {
+    var barStyle = bar.style;
+    barStyle.width = "0%";
+    function barUpdater() {
+      var percentage = parseInt(barStyle.width, 10);
+      if (percentage < maxPercentage) {
+        percentage++;
+        barStyle.width = percentage + "%";
+        delay += 25;
+        setTimeout(barUpdater, delay);
+      }
     }
   }
   setTimeout(barUpdater, delay);
