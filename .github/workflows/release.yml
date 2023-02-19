@@ -35,7 +35,7 @@ jobs:
       - name: Upload to repository
         run: ./gradlew publish
         env:
-          RELEASE: "true"
+          RELEASE: true
           USER: ${{ secrets.USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
           signingKey: ${{ secrets.PGP_SECRET }}

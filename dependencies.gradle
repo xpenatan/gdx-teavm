@@ -4,9 +4,9 @@ project.ext {
     gdxHtmlType = "-SNAPSHOT"
 
     var isRelease = repoUser = System.getenv('RELEASE')
-    System.out.println(isRelease)
+    System.out.println("isRelease: " + isRelease)
     if(isRelease) {
-        System.out.println("isRelease")
+        System.out.println("Log Release")
     }
     teaVMVersion = "0.8.0-dev-1"
 
