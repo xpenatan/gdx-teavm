@@ -5,7 +5,7 @@ project.ext {
 
     var isRelease = repoUser = System.getenv('RELEASE')
     System.out.println("isRelease: " + isRelease)
-    if(isRelease) {
+    if(isRelease == true) {
         System.out.println("Log Release")
     }
     teaVMVersion = "0.8.0-dev-1"
