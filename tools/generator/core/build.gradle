@@ -20,11 +20,12 @@ dependencies {
     includeDep "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
     includeDep "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
 
-    includeDep project(":backends:backend-teavm:backend-teavm")
-    includeDep project(":backends:backend-web:backend-web")
+    includeDep project(":backends:backend-teavm")
     includeDep project(":extensions:gdx-freetype-teavm")
     includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
     includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
+    includeDep 'org.eclipse.jetty:jetty-server:11.0.13'
+    includeDep 'org.eclipse.jetty:jetty-webapp:11.0.13'
 }
 
 task fromClasses(type: Jar) {
@@ -54,8 +55,8 @@ artifacts {
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxHtmlVersion + project.gdxHtmlType
-            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            version project.gdxTeaVMVersion
+            project.version = project.gdxTeaVMVersion
             artifactId module_name
             artifact fromClasses
             artifact javadocJar

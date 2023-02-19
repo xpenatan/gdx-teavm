@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.Disposable;
  * @author xpenatan
  */
 public abstract class BulletBase implements Disposable {
+
+    public static final float [] FLOAT_4 = new float[4];
+
     protected long cPointer;
     protected boolean cMemOwn;
     private boolean disposed;

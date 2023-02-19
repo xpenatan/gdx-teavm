@@ -7,8 +7,10 @@ group = project.groupId
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
 
 dependencies {
+    implementation project(":extensions:gdx-bullet:gdx-bullet-base")
     implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
     implementation "com.github.xpenatan.jParser:jParser-teavm:$project.jParserVersion"
+    implementation "com.github.xpenatan.jParser:jParser-cpp:$project.jParserVersion"
 }
 
 task generateNativeProject(dependsOn: classes, type: JavaExec) {
@@ -16,4 +18,12 @@ task generateNativeProject(dependsOn: classes, type: JavaExec) {
     setDescription("Generate native project")
     mainClass.set(project.mainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)
+}
+
+
+clean.doFirst {
+    def buildPath = projectDir.toString() + "/jni/build/"
+    if(new File(buildPath).exists()) {
+        project.delete(files(buildPath))
+    }
 }

@@ -55,7 +55,6 @@ natives/
 **/jni/build
 ProguardMapping.txt
 local.properties
-**/dragome-resources
 **/webapp/**/*.js
 **/webapp/**/*.wasm
 *.ini
@@ -63,3 +62,4 @@ examples/**/*.xml
 examples/**/*.html
 **/gdx-bullet-teavm/src/**
 **/gdx-box2d-teavm/src/**
+**/gdx-bullet/src/**

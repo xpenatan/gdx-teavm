@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
  */
 public class btConeTwistConstraint extends btTypedConstraint {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletDynamicsCommon.h"
+    */
+
     public btConeTwistConstraint(btRigidBody rbA, btRigidBody rbB, Matrix4 rbAFrame, Matrix4 rbBFrame) {
         btTransform btframeInA = btTransform.TEMP_0;
         btTransform btframeInB = btTransform.TEMP_1;
@@ -22,16 +26,22 @@ public class btConeTwistConstraint extends btTypedConstraint {
         initObject(createNative(rbA.getCPointer(), btrbAFrame.getCPointer()), true);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btConeTwistConstraint(*((btRigidBody*)rbAAddr), *((btRigidBody*)rbBAddr), *((btTransform*)frameInAAddr), *((btTransform*)frameInBAddr));
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btConeTwistConstraint(rbAAddr, rbBAddr, frameInAAddr, frameInBAddr);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(long rbAAddr, long rbBAddr, long frameInAAddr, long frameInBAddr);
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btConeTwistConstraint(*((btRigidBody*)rbAAddr), *((btTransform*)rbAFrameAddr));
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = new Bullet.btConeTwistConstraint(rbAAddr, rbAFrameAddr);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(long rbAAddr, long rbAFrameAddr);
 
     @Override
@@ -39,9 +49,12 @@ public class btConeTwistConstraint extends btTypedConstraint {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        delete (btConeTwistConstraint*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btConeTwistConstraint);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }

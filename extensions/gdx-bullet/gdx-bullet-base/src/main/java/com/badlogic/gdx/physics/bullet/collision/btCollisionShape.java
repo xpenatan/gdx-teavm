@@ -9,6 +9,18 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btCollisionShape extends BulletBase {
 
+    /*[-C++;-NATIVE]
+        #include "BulletCollision/CollisionShapes/btCollisionShape.h"
+    */
+
+    public static btCollisionShape WRAPPER_GEN_01 = new btCollisionShape(false);
+
+    protected btCollisionShape(boolean cMemoryOwn) {
+    }
+
+    protected btCollisionShape() {
+    }
+
     public void calculateLocalInertia(float mass, Vector3 inertia) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(inertia, out);
@@ -16,10 +28,13 @@ public class btCollisionShape extends BulletBase {
         btVector3.convert(out, inertia);
     }
 
+    /*[-C++;-NATIVE]
+        ((btCollisionShape*)addr)->calculateLocalInertia(mass, *((btVector3*)inertiaAddr));
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btBoxShape);
         var inertiaJSObj = Bullet.wrapPointer(inertiaAddr, Bullet.btVector3);
         jsObj.calculateLocalInertia(mass, inertiaJSObj);
-     */
+    */
     private static native void calculateLocalInertia(long addr, float mass, long inertiaAddr);
 }

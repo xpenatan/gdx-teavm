@@ -6,5 +6,10 @@ group = project.groupId
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-bullet:$project.gdxVersion"
+
+    // teaVM Version
+    implementation project(":extensions:gdx-bullet:gdx-bullet")
+
+    //GDX Version
+//    implementation "com.badlogicgames.gdx:gdx-bullet:$project.gdxVersion"
 }

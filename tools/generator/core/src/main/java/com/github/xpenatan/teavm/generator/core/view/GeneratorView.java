@@ -54,10 +54,10 @@ public class GeneratorView {
         errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
         successColor = ImGui.ColorToIntBits(0, 255, 0, 255);
 
-        gameJarPath = new ImGuiString(200, "");
-        appClassName = new ImGuiString(200, "");
-        assetsDirectory = new ImGuiString(200, "");
-        webappDirectory = new ImGuiString(200, "");
+        gameJarPath = new ImGuiString();
+        appClassName = new ImGuiString();
+        assetsDirectory = new ImGuiString();
+        webappDirectory = new ImGuiString();
         obfuscateFlag = new ImGuiBoolean();
 
         loadPreference();

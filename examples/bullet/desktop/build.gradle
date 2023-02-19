@@ -10,7 +10,12 @@ dependencies {
     implementation project(":examples:bullet:core")
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
+
+    // teaVM Version
+    implementation files("../../../extensions/gdx-bullet/gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
+
+    //GDX Version
+//    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
 }
 
 task runBulletDesktop(dependsOn: classes, type: JavaExec) {

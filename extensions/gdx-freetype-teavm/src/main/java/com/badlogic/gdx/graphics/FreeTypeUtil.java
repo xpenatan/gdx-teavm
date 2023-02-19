@@ -1,8 +1,8 @@
 package com.badlogic.gdx.graphics;
 
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Uint8ClampedArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;

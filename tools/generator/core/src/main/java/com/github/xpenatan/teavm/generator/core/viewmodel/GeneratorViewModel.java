@@ -52,10 +52,10 @@ public class GeneratorViewModel {
                 if(!assetPath.isEmpty())
                     teaBuildConfiguration.assetsPath.add(new File(assetPath));
                 teaBuildConfiguration.webappPath = webappDestination;
-                teaBuildConfiguration.obfuscate = obfuscate;
                 teaBuildConfiguration.additionalClasspath.add(appJarAppUrl);
                 teaBuildConfiguration.setApplicationListener(appClassName);
                 TeaVMTool tool = config(teaBuildConfiguration);
+                tool.setObfuscated(obfuscate);
                 compile(tool, teaBuildConfiguration);
             }
             catch(MalformedURLException e) {

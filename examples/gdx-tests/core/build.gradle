@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+dependencies {
+    // Required
+    implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$project.gdxVersion"
+
+    implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
+    implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiVersion"
+
+    // Optional
+    implementation "com.github.xpenatan:gdx-frame-viewport:$project.gdxFrameViewportVersion"
+
+    api "com.badlogicgames.gdx:gdx-tests"
+
+}

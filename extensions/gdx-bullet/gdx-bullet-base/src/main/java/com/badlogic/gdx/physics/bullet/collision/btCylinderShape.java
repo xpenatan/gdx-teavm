@@ -8,6 +8,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
  */
 public class btCylinderShape extends btConvexInternalShape {
 
+    /*[-C++;-NATIVE]
+        #include "btBulletCollisionCommon.h"
+    */
+
     public btCylinderShape(Vector3 halfExtents) {
         btVector3 out = btVector3.TEMP_0;
         btVector3.convert(halfExtents, out);
@@ -19,16 +23,22 @@ public class btCylinderShape extends btConvexInternalShape {
         deleteNative(cPointer);
     }
 
+    /*[-C++;-NATIVE]
+        return (jlong)new btCylinderShape(*((btVector3*)halfExtentsAddr));
+    */
     /*[-teaVM;-NATIVE]
         var boxHalfExtentsJSObj = Bullet.wrapPointer(halfExtentsAddr, Bullet.btVector3);
         var jsObj = new Bullet.btCylinderShape(boxHalfExtentsJSObj);
         return Bullet.getPointer(jsObj);
-     */
+    */
     private static native long createNative(long halfExtentsAddr);
 
+    /*[-C++;-NATIVE]
+        delete (btCylinderShape*)addr;
+    */
     /*[-teaVM;-NATIVE]
         var jsObj = Bullet.wrapPointer(addr, Bullet.btCylinderShape);
         Bullet.destroy(jsObj);
-     */
+    */
     private static native void deleteNative(long addr);
 }

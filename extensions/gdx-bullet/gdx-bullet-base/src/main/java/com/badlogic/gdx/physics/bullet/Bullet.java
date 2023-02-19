@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.SharedLibraryLoader;
+import com.github.xpenatan.jparser.loader.JParserLibraryLoader;
 import java.util.Arrays;
 
 /**
@@ -39,7 +39,7 @@ public class Bullet {
     public static void init(boolean useRefCounting, boolean logging) {
         if(Bullet.bulletInit)
             return;
-//        new SharedLibraryLoader().load("bullet.wasm");
+        loadBullet();
         Bullet.bulletInit = true;
         Bullet.useRefCounting = useRefCounting;
         Bullet.enableLogging = logging;
@@ -47,6 +47,11 @@ public class Bullet {
         if(version != VERSION)
             throw new GdxRuntimeException("Bullet binaries version (" + version + ") does not match source version (" + VERSION
                     + ")");
+    }
+
+    private static void loadBullet() {
+        JParserLibraryLoader loader = new JParserLibraryLoader();
+        loader.load("gdx-bullet");
     }
 
     /**
@@ -161,5 +166,17 @@ public class Bullet {
             shape.release();
         }
         return result;
+    }
+
+    public static void set(byte[] in, boolean[] out) {
+        out[0] = in[0] == 0;
+        out[1] = in[1] == 0;
+        out[2] = in[2] == 0;
+    }
+
+    public static void set(boolean[] in, byte[] out) {
+        if(in[0]) out[0] = 1; else out[0] = 0;
+        if(in[1]) out[1] = 1; else out[1] = 0;
+        if(in[2]) out[2] = 1; else out[2] = 0;
     }
 }

@@ -27,12 +27,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.web.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.web.WebApplication;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.web.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.badlogic.gdx.graphics.PixmapEmu;
-import com.github.xpenatan.gdx.backends.web.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -867,7 +867,7 @@ public class FreeType {
 
     public static Library initFreeType() {
         if(!freeTypeInit) {
-            WebApplication app = (WebApplication)Gdx.app;
+            TeaApplication app = (TeaApplication)Gdx.app;
             Preloader preloader = app.getPreloader();
             preloader.loadScript(false, "freetype.js", new AssetLoaderListener<Object>() {
                 @Override
