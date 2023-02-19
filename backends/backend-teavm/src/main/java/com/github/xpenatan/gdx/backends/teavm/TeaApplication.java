@@ -104,6 +104,10 @@ public class TeaApplication implements Application, Runnable {
             hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
             hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
         }
+        int indexQM = hostPageBaseURL.indexOf('?');
+        if (indexQM >= 0) {
+          hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
+        }
         preloader = new Preloader(hostPageBaseURL);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
         preloader.preload(config.preloadAssets, "assets.txt");
