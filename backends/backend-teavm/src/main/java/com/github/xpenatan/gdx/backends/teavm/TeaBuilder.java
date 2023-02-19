@@ -386,7 +386,6 @@ public class TeaBuilder {
     }
 
     private static void scriptsDefault(ArrayList<String> filePath) {
-        filePath.add("startup-logo.png");
         filePath.add("soundmanager2-jsmin.js");
         filePath.add("freetype.js");
         filePath.add("bullet.js");
@@ -575,10 +574,15 @@ public class TeaBuilder {
         FileHandle handler = new FileHandle(indexFile);
         String indexHtmlStr = handler.readString();
 
+        String logo = "startup-logo.png";
         indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
         indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
         indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
         indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
+        indexHtmlStr = indexHtmlStr.replace("%LOGO%",
+            configuration.isShowLoadingLogo() ? "<img id=\"progress-img\" src=\"" + logo + "\">"
+                                              : ""
+        );
 
         handler.writeString(indexHtmlStr, false);
 
@@ -588,6 +592,9 @@ public class TeaBuilder {
         ArrayList<String> classPathScriptFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
         scriptsDefault(classPathScriptFiles);
+        if (configuration.isShowLoadingLogo()) {
+          classPathScriptFiles.add(logo);
+        }
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
