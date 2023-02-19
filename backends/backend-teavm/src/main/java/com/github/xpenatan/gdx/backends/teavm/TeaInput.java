@@ -21,6 +21,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TouchListWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TouchWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
+import org.teavm.jso.browser.Window;
 
 /**
  * @author xpenatan
@@ -116,6 +117,9 @@ public class TeaInput implements Input, EventListenerWrapper {
     private void handleMouseEvents(EventWrapper e) {
         String type = e.getType();
         if(type.equals("mousedown")) {
+            // makes sure the game has keyboard focus (e.g. when embedded in iFrame on itch.io)
+            Window.current().focus();
+
             MouseEventWrapper mouseEvent = (MouseEventWrapper)e;
             EventTargetWrapper target = e.getTarget();
             HTMLCanvasElementWrapper canvas2 = canvas;
