@@ -26,6 +26,8 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import org.teavm.jso.browser.Storage;
+import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.html.HTMLElement;
 
 import java.util.List;
 
@@ -188,8 +190,28 @@ public class TeaApplication implements Application, Runnable {
             switch(state) {
                 case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
-                    if(queue == 0)
+                    if(queue == 0) {
                         initState = AppState.APP_LOOP;
+
+                        // remove loading indicator
+                        HTMLElement element = Window.current().getDocument().getElementById("progress");
+                        if (element != null) {
+                          element.getStyle().setProperty("display", "none");
+                        }
+                    }
+                    else {
+                        // update progress bar once we know the total number of assets that are loaded
+                        int total = preloader.assetTotal;
+                        if (total > 0) {
+                          // we have the actual total and can update the progress bar
+                          int minPercentage = 25;
+                          int percentage = minPercentage + (((100 - minPercentage) * (total - queue)) / total);
+                          HTMLElement progressBar = Window.current().getDocument().getElementById("progress-bar");
+                          if (progressBar != null) {
+                            progressBar.getStyle().setProperty("width", percentage + "%");
+                          }
+                        }
+                    }
                     break;
                 case APP_LOOP:
                     if(queueAppListener != null) {
