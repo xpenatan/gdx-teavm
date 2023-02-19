@@ -5,6 +5,9 @@ on:
     branches:
       - 'release'
 
+env:
+  RELEASE: true
+
 jobs:
   build_Linux:
     name: Build Windows/Linux
@@ -35,7 +38,6 @@ jobs:
       - name: Upload to repository
         run: ./gradlew publish
         env:
-          RELEASE: true
           USER: ${{ secrets.USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
           signingKey: ${{ secrets.PGP_SECRET }}

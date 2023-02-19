@@ -6,6 +6,9 @@ on:
       - 'master'
       - 'release'
 
+env:
+  RELEASE: false
+
 jobs:
   pull_request:
     name: Pull Request
