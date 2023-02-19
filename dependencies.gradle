@@ -7,6 +7,8 @@ project.ext {
     else {
         gdxTeaVMVersion = "1.0.0-SNAPSHOT"
     }
+    System.out.println("Gdx-teaVM Version: " + gdxTeaVMVersion)
+
     teaVMVersion = "0.8.0-dev-1"
 
     gdxVersion = "1.11.0"
