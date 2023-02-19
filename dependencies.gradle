@@ -1,12 +1,11 @@
 project.ext {
     groupId = "com.github.xpenatan.gdx-teavm"
-    gdxHtmlVersion = "1.0.0"
-    gdxHtmlType = "-SNAPSHOT"
-
     var isRelease = repoUser = System.getenv('RELEASE')
-    System.out.println("isRelease: " + isRelease)
-    if(isRelease.toBoolean()) {
-        System.out.println("Log Release")
+    if(isRelease != null && isRelease.toBoolean()) {
+        gdxTeaVMVersion = "1.0.0-b3"
+    }
+    else {
+        gdxTeaVMVersion = "1.0.0-SNAPSHOT"
     }
     teaVMVersion = "0.8.0-dev-1"
 

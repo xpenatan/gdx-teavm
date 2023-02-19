@@ -42,8 +42,8 @@ artifacts {
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxHtmlVersion + project.gdxHtmlType
-            project.version = project.gdxHtmlVersion + project.gdxHtmlType
+            version project.gdxTeaVMVersion
+            project.version = project.gdxTeaVMVersion
             artifactId module_name
             artifact fromClasses
             artifact javadocJar
