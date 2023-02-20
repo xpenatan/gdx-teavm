@@ -86,74 +86,86 @@ public class AssetDownloadImpl implements AssetDownload {
     public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
         if(showLog)
             System.out.println("Loading asset : " + url);
-        final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
-        request.setOnreadystatechange(new EventHandlerWrapper() {
-            @Override
-            public void handleEvent(EventWrapper evt) {
-                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    if(request.getStatus() != 200) {
-                        if (request.getStatus() != 404) {
-                            // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                            loadText(async, url, listener);
-                        }
-                        else {
-                            listener.onFailure(url);
-                        }
-                    }
-                    else {
-                        if(showLog)
-                            System.out.println("Asset loaded: " + url);
-                        listener.onSuccess(url, request.getResponseText());
-                    }
-                    subtractQueue();
-                }
-            }
-        });
+
+        // don't load on main thread
         addQueue();
-        setOnProgress(request, listener);
-        request.open("GET", url, async);
-        request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
-        request.send();
+        new Thread() {
+            public void run() {
+                final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
+                request.setOnreadystatechange(new EventHandlerWrapper() {
+                    @Override
+                    public void handleEvent(EventWrapper evt) {
+                        if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                            if(request.getStatus() != 200) {
+                                if (request.getStatus() != 404) {
+                                    // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    loadText(async, url, listener);
+                                }
+                                else {
+                                    listener.onFailure(url);
+                                }
+                            }
+                            else {
+                                if(showLog)
+                                    System.out.println("Asset loaded: " + url);
+                                listener.onSuccess(url, request.getResponseText());
+                            }
+                            subtractQueue();
+                        }
+                    }
+                });
+                setOnProgress(request, listener);
+                request.open("GET", url, async);
+                request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
+                request.send();
+            }
+        }.start();
     }
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
         if(showLog)
             System.out.println("Loading script : " + url);
-        final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
-        request.setOnreadystatechange(new EventHandlerWrapper() {
-            @Override
-            public void handleEvent(EventWrapper evt) {
-                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    if(request.getStatus() != 200) {
-                        if (request.getStatus() != 404) {
-                            // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                            loadScript(async, url, listener);
-                        }
-                        else {
-                            listener.onFailure(url);
-                        }
-                    }
-                    else {
-                        if(showLog)
-                            System.out.println("Script loaded: " + url);
-                        NodeWrapper response = request.getResponse();
-                        TeaWindow currentWindow = TeaWindow.get();
-                        DocumentWrapper document = currentWindow.getDocument();
-                        HTMLElementWrapper scriptElement = document.createElement("script");
-                        scriptElement.appendChild(document.createTextNode(response));
-                        document.getBody().appendChild(scriptElement);
-                        listener.onSuccess(url, request.getResponseText());
-                    }
-                    subtractQueue();
-                }
-            }
-        });
+
+        // don't load on main thread
         addQueue();
-        setOnProgress(request, listener);
-        request.open("GET", url, async);
-        request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
-        request.send();
+        new Thread() {
+            public void run() {
+                final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
+                request.setOnreadystatechange(new EventHandlerWrapper() {
+                    @Override
+                    public void handleEvent(EventWrapper evt) {
+                        if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                            if(request.getStatus() != 200) {
+                                if (request.getStatus() != 404) {
+                                    // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    loadScript(async, url, listener);
+                                }
+                                else {
+                                    listener.onFailure(url);
+                                }
+                            }
+                            else {
+                                if(showLog)
+                                    System.out.println("Script loaded: " + url);
+                                NodeWrapper response = request.getResponse();
+                                TeaWindow currentWindow = TeaWindow.get();
+                                DocumentWrapper document = currentWindow.getDocument();
+                                HTMLElementWrapper scriptElement = document.createElement("script");
+                                scriptElement.appendChild(document.createTextNode(response));
+                                document.getBody().appendChild(scriptElement);
+                                listener.onSuccess(url, request.getResponseText());
+                            }
+                            subtractQueue();
+                        }
+                    }
+                });
+                setOnProgress(request, listener);
+                request.open("GET", url, async);
+                request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
+                request.send();
+            }
+        }.start();
     }
 
     public void loadAudio(boolean async, final String url, final AssetLoaderListener<Void> listener) {
@@ -178,40 +190,46 @@ public class AssetDownloadImpl implements AssetDownload {
     public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
         if(showLog)
             System.out.println("Loading asset : " + url);
-        XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
-        request.setOnreadystatechange(new EventHandlerWrapper() {
-            @Override
-            public void handleEvent(EventWrapper evt) {
-                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    if(request.getStatus() != 200) {
-                        if (request.getStatus() != 404) {
-                            // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                            loadBinary(async, url, listener);
-                        }
-                        else {
-                            listener.onFailure(url);
-                        }
-                    }
-                    else {
-                        if(showLog)
-                            System.out.println("Asset loaded: " + url);
 
-                        ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
-                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
-                        listener.onSuccess(url, new Blob(response, data));
-                    }
-                    subtractQueue();
-                }
-            }
-        });
-
+        // don't load on main thread
         addQueue();
-        setOnProgress(request, listener);
-        request.open("GET", url, async);
-        if(async) {
-            request.setResponseType("arraybuffer");
-        }
-        request.send();
+        new Thread() {
+            public void run() {
+                XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
+                request.setOnreadystatechange(new EventHandlerWrapper() {
+                    @Override
+                    public void handleEvent(EventWrapper evt) {
+                        if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                            if(request.getStatus() != 200) {
+                                if (request.getStatus() != 404) {
+                                    // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    loadBinary(async, url, listener);
+                                }
+                                else {
+                                    listener.onFailure(url);
+                                }
+                            }
+                            else {
+                                if(showLog)
+                                    System.out.println("Asset loaded: " + url);
+
+                                ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
+                                Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
+                                listener.onSuccess(url, new Blob(response, data));
+                            }
+                            subtractQueue();
+                        }
+                    }
+                });
+
+                setOnProgress(request, listener);
+                request.open("GET", url, async);
+                if(async) {
+                    request.setResponseType("arraybuffer");
+                }
+                request.send();
+            }
+        }.start();
     }
 
     public void loadImage(boolean async, final String url, final String mimeType,
