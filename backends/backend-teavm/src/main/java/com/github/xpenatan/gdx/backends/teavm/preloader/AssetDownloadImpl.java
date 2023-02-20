@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -22,9 +23,12 @@ import org.teavm.jso.browser.Window;
 
 public class AssetDownloadImpl implements AssetDownload {
 
+    /** Max. tries, in case we are too fast. Should limit error "ERR_HTTP2_SERVER_REFUSED_STREAM". */
+    private static final int MAX_TRIES = 3;
+
     private int queue;
-    private boolean useBrowserCache = true;
-    private boolean useInlineBase64;
+    private boolean useBrowserCache = false;
+    private boolean useInlineBase64 = false;
 
     private boolean showLog = true;
 
@@ -33,7 +37,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public boolean isUseBrowserCache() {
-        return false;
+        return useBrowserCache;
     }
 
     @Override
@@ -84,6 +88,10 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
+      loadText(async, url, listener, 0);
+    }
+
+    private void loadText(boolean async, String url, AssetLoaderListener<String> listener, int tries) {
         if(showLog)
             System.out.println("Loading asset : " + url);
         final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
@@ -92,7 +100,14 @@ public class AssetDownloadImpl implements AssetDownload {
             public void handleEvent(EventWrapper evt) {
                 if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                     if(request.getStatus() != 200) {
-                        listener.onFailure(url);
+                        System.err.println("Error loading \"" + url + "\" (tries: " + tries + ").");
+                        if (tries <= MAX_TRIES) {
+                          // we re-try: maybe too many requests, e.g. error "ERR_HTTP2_SERVER_REFUSED_STREAM"
+                          loadText(async, url, listener, tries + 1);
+                        }
+                        else {
+                          listener.onFailure(url);
+                        }
                     }
                     else {
                         if(showLog)
@@ -112,6 +127,10 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
+      loadScript(async, url, listener, 0);
+    }
+
+    private void loadScript(boolean async, String url, AssetLoaderListener<Object> listener, int tries) {
         if(showLog)
             System.out.println("Loading script : " + url);
         final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
@@ -119,9 +138,15 @@ public class AssetDownloadImpl implements AssetDownload {
             @Override
             public void handleEvent(EventWrapper evt) {
                 if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                    boolean subtractQueue = true;
                     if(request.getStatus() != 200) {
-                        listener.onFailure(url);
+                        System.err.println("Error loading \"" + url + "\" (tries: " + tries + ").");
+                        if (tries <= MAX_TRIES) {
+                          // we re-try: maybe too many requests, e.g. error "ERR_HTTP2_SERVER_REFUSED_STREAM"
+                          loadScript(async, url, listener, tries + 1);
+                        }
+                        else {
+                          listener.onFailure(url);
+                        }
                     }
                     else {
                         if(showLog)
@@ -165,6 +190,10 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
+      loadBinary(async, url, listener, 0);
+    }
+
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int tries) {
         if(showLog)
             System.out.println("Loading asset : " + url);
         XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
@@ -173,7 +202,14 @@ public class AssetDownloadImpl implements AssetDownload {
             public void handleEvent(EventWrapper evt) {
                 if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                     if(request.getStatus() != 200) {
-                        listener.onFailure(url);
+                        System.err.println("Error loading \"" + url + "\" (tries: " + tries + ").");
+                        if (tries <= MAX_TRIES) {
+                          // we re-try: maybe too many requests, e.g. error "ERR_HTTP2_SERVER_REFUSED_STREAM"
+                          loadBinary(async, url, listener, tries + 1);
+                        }
+                        else {
+                          listener.onFailure(url);
+                        }
                     }
                     else {
                         if(showLog)
@@ -204,7 +240,6 @@ public class AssetDownloadImpl implements AssetDownload {
 
     public void loadImage(boolean async, final String url, final String mimeType, final String crossOrigin,
                           final AssetLoaderListener<HTMLImageElementWrapper> listener) {
-        boolean isUseInlineBase64 = false;
         loadBinary(async, url, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
@@ -235,7 +270,7 @@ public class AssetDownloadImpl implements AssetDownload {
                         subtractQueue();
                     }
                 });
-                if(isUseInlineBase64) {
+                if(useInlineBase64) {
                     image.setSrc("data:" + mimeType + ";base64," + result.toBase64());
                 }
                 else {
