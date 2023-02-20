@@ -37,21 +37,21 @@ task runCoreGearsDemo(dependsOn: [':examples:core:teavm:clean', ':examples:core:
 
 runCoreGearsDemo.shouldRunAfter ":examples:core:teavm:clean"
 
-project.ext.aiTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildAITest"
+project.ext.artemisTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildArtemisTest"
 
-task buildExampleCoreAITest(dependsOn: classes, type: JavaExec) {
+task buildExampleCoreArtemisTest(dependsOn: classes, type: JavaExec) {
     setGroup("teavm")
-    setDescription("Build teavm AITest example")
-    mainClass.set(project.aiTestMainClassName)
+    setDescription("Build teavm ArtemisTest example")
+    mainClass.set(project.artemisTestMainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)
 }
 
-task runCoreAITest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreAITest', ':examples:core:teavm:jettyRun']) {
+task runCoreArtemisTest(dependsOn: [':examples:core:teavm:clean', ':examples:core:teavm:buildExampleCoreArtemisTest', ':examples:core:teavm:jettyRun']) {
     setGroup("examples-teavm")
-    setDescription("Run AITest example")
+    setDescription("Run ArtemisTest example")
 }
 
-runCoreAITest.shouldRunAfter ":examples:core:teavm:clean"
+runCoreArtemisTest.shouldRunAfter ":examples:core:teavm:clean"
 
 project.ext.loadingTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildLoadingTest"
 
