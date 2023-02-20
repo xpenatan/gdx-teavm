@@ -99,6 +99,12 @@ public class AssetDownloadImpl implements AssetDownload {
                             if(request.getStatus() != 200) {
                                 if (request.getStatus() != 404) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    try {
+                                        Thread.sleep(100);
+                                    }
+                                    catch (Throwable e) {
+                                        // ignored
+                                    }
                                     loadText(async, url, listener);
                                 }
                                 else {
@@ -139,6 +145,12 @@ public class AssetDownloadImpl implements AssetDownload {
                             if(request.getStatus() != 200) {
                                 if (request.getStatus() != 404) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    try {
+                                        Thread.sleep(100);
+                                    }
+                                    catch (Throwable e) {
+                                        // ignored
+                                    }
                                     loadScript(async, url, listener);
                                 }
                                 else {
@@ -203,6 +215,12 @@ public class AssetDownloadImpl implements AssetDownload {
                             if(request.getStatus() != 200) {
                                 if (request.getStatus() != 404) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                                    try {
+                                        Thread.sleep(100);
+                                    }
+                                    catch (Throwable e) {
+                                        // ignored
+                                    }
                                     loadBinary(async, url, listener);
                                 }
                                 else {
