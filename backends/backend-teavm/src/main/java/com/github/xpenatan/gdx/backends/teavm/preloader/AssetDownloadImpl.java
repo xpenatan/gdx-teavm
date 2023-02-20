@@ -1,7 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
