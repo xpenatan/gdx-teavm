@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassFilter;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
@@ -20,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import org.reflections.Reflections;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
@@ -198,13 +196,15 @@ public class TeaBuilder {
         return isSuccess;
     }
 
-    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration) {
+    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration, TeaClassLoader classLoader) {
         //Keep reflection classes
         List<String> classesToPreserve = tool.getClassesToPreserve();
         ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
         List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
         configClassesToPreserve.addAll(reflectionClasses);
-        classesToPreserve.addAll(configClassesToPreserve);
+        // Get classes or packages from reflection. When path is a package, get all classes from it.
+        ArrayList<String> preserveClasses = classLoader.getAllClasses(configClassesToPreserve);
+        classesToPreserve.addAll(preserveClasses);
     }
 
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
@@ -549,7 +549,7 @@ public class TeaBuilder {
                 return TeaVMProgressFeedback.CONTINUE;
             }
         });
-        preserveClasses(tool, configuration);
+        preserveClasses(tool, configuration, classLoader);
     }
 
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName) {
