@@ -54,6 +54,7 @@ public class TeaClassLoader extends URLClassLoader {
                     }
                 }
                 else {
+                    // This probably not working and need to remove.
                     ArrayList<String> allClasses = getAllFiles(path);
                     String resName = fixName.replace("\\", "/");
                     for(int j = 0; j < allClasses.size(); j++) {
