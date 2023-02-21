@@ -97,7 +97,8 @@ public class AssetDownloadImpl implements AssetDownload {
                     public void handleEvent(EventWrapper evt) {
                         if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                             if(request.getStatus() != 200) {
-                                if (request.getStatus() != 404) {
+                                if ((request.getStatus() != 404) &&
+                                    (request.getStatus() != 403)) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
                                     try {
                                         Thread.sleep(100);
@@ -143,7 +144,8 @@ public class AssetDownloadImpl implements AssetDownload {
                     public void handleEvent(EventWrapper evt) {
                         if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                             if(request.getStatus() != 200) {
-                                if (request.getStatus() != 404) {
+                                if ((request.getStatus() != 404) &&
+                                    (request.getStatus() != 403)) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
                                     try {
                                         Thread.sleep(100);
@@ -213,7 +215,8 @@ public class AssetDownloadImpl implements AssetDownload {
                     public void handleEvent(EventWrapper evt) {
                         if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
                             if(request.getStatus() != 200) {
-                                if (request.getStatus() != 404) {
+                                if ((request.getStatus() != 404) &&
+                                    (request.getStatus() != 403)) {
                                     // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
                                     try {
                                         Thread.sleep(100);
