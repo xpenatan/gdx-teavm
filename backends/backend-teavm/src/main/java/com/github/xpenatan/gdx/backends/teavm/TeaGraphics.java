@@ -186,13 +186,13 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public float getPpiX() {
-        return 96;
+    public float getPpiX () {
+        return 96f * (float)getNativeScreenDensity();
     }
 
     @Override
-    public float getPpiY() {
-        return 96;
+    public float getPpiY () {
+        return 96f * (float)getNativeScreenDensity();
     }
 
     @Override
@@ -206,8 +206,9 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public float getDensity() {
-        return 96.0f / 160;
+    public float getDensity () {
+      float ppiX = getPpiX();
+      return (ppiX > 0 && ppiX <= Float.MAX_VALUE) ? ppiX / 160f : 1f;
     }
 
     @Override
