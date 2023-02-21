@@ -29,68 +29,6 @@ public class TeaClassLoader extends URLClassLoader {
     }
 
     @Override
-    public URL getResource(String name) {
-        return getRes(name);
-    }
-
-    private URL getRes(String name) {
-        String fixName = name.replace(";.class", ".class");
-        fixName = fixName.replace("[L", "");
-        fixName = fixName.replace("[", "");
-
-        String toPackage = fixName.replace("/", ".");
-        if(containsSkipClass(toPackage)) {
-            return null;
-        }
-
-        URL resource = super.getResource(name);
-        for(int i = 0; i < jarFiles.length; i++) {
-            URL url = jarFiles[i];
-            String path = url.getPath();
-            String finalFile = "jar:file:" + path + "!/";
-            File file = new File(path);
-            if(file.exists()) {
-                if(!file.isDirectory()) {
-                    try {
-                        JarFile jarFile = new JarFile(file);
-                        Enumeration<JarEntry> entries = jarFile.entries();
-                        while(entries.hasMoreElements()) {
-                            JarEntry jarEntry = entries.nextElement();
-                            if(!jarEntry.isDirectory()) {
-                                String jarEntryName = jarEntry.getName();
-                                if(jarEntryName.equals(fixName)) {
-                                    String filee = finalFile + jarEntryName;
-                                    return new URL(filee);
-                                }
-                            }
-                        }
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    try {
-                        ArrayList<String> allClasses = getAllFiles(path);
-                        String resName = fixName.replace("\\", "/");
-                        for(int j = 0; j < allClasses.size(); j++) {
-                            String className = allClasses.get(j);
-                            if(className.contains(resName)) {
-                                String filee = path + className;
-                                return new File(filee).toURI().toURL();
-                            }
-                        }
-                    }
-                    catch(MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return resource;
-    }
-
-    @Override
     public InputStream getResourceAsStream(String name) {
         String fixName = name.replace(";.class", ".class");
         fixName = fixName.replace("[L", "");
@@ -131,11 +69,7 @@ public class TeaClassLoader extends URLClassLoader {
             }
         }
 
-        if(fixName.startsWith("org/teavm/")) {
-            return super.getResourceAsStream(name);
-        }
-
-        return null;
+        return super.getResourceAsStream(name);
     }
 
     private boolean containsSkipClass(String clazz) {
@@ -173,70 +107,6 @@ public class TeaClassLoader extends URLClassLoader {
                     String path = packageName + subFileStr;
                     path = path.replace("\\", "/");
                     out.add(path);
-                }
-            }
-        }
-    }
-
-    /**
-     * Convert packages to individual classes
-     */
-    public ArrayList<String> getPreserveClasses(ArrayList<String> classesToPreserve) {
-        // TeaVM only accept individual classes. We need to obtain all classes from package (if its set).
-        // If it's not a package just add the class.
-        ArrayList<String> array = new ArrayList<>();
-
-        for(int i = 0; i < classesToPreserve.size(); i++) {
-            String className = classesToPreserve.get(i);
-            String packagePath = className.replace(".", "/");
-            URL resource = getResource(packagePath + ".class");
-            if(resource == null) {
-                // Should be a package
-                addClasses(array, packagePath);
-            }
-            else {
-                array.add(className);
-            }
-        }
-        return array;
-    }
-
-    private void addClasses(ArrayList<String> array, String packagePath) {
-        for(int i = 0; i < jarFiles.length; i++) {
-            URL url = jarFiles[i];
-            String path = url.getPath();
-            File file = new File(path);
-            if(file.exists()) {
-                if(!file.isDirectory()) {
-                    try {
-                        JarFile jarFile = new JarFile(file);
-                        Enumeration<JarEntry> entries = jarFile.entries();
-                        while(entries.hasMoreElements()) {
-                            JarEntry jarEntry = entries.nextElement();
-                            String name = jarEntry.getName();
-                            if(name.startsWith(packagePath)) {
-                                if(name.endsWith(".class")) {
-                                    String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
-                                    array.add(className);
-                                }
-                            }
-                        }
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    ArrayList<String> allClasses = getAllFiles(path);
-                    for(int j = 0; j < allClasses.size(); j++) {
-                        String name = allClasses.get(j);
-                        if(name.startsWith(packagePath)) {
-                            if(name.endsWith(".class")) {
-                                String className = name.replace("\\", ".").replace("/", ".").replace(".class", "");
-                                array.add(className);
-                            }
-                        }
-                    }
                 }
             }
         }

@@ -198,14 +198,13 @@ public class TeaBuilder {
         return isSuccess;
     }
 
-    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration, TeaClassLoader classLoader) {
+    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration) {
         //Keep reflection classes
         List<String> classesToPreserve = tool.getClassesToPreserve();
         ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
         List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
         configClassesToPreserve.addAll(reflectionClasses);
-        ArrayList<String> preserveClasses = classLoader.getPreserveClasses(configClassesToPreserve);
-        classesToPreserve.addAll(preserveClasses);
+        classesToPreserve.addAll(configClassesToPreserve);
     }
 
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
@@ -550,13 +549,7 @@ public class TeaBuilder {
                 return TeaVMProgressFeedback.CONTINUE;
             }
         });
-        preserveClasses(tool, configuration, classLoader);
-
-        //TODO Remove
-//        Properties properties = tool.getProperties();
-//        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
-//        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
-
+        preserveClasses(tool, configuration);
     }
 
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName) {
