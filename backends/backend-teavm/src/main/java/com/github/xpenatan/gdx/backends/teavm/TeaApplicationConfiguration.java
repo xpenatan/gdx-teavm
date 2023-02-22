@@ -12,6 +12,11 @@ public class TeaApplicationConfiguration {
      */
     public boolean preloadAssets = true;
 
+    /**
+     * Show download logs.
+     */
+    public boolean showDownloadLogs = false;
+
     public String canvasID;
 
     /**

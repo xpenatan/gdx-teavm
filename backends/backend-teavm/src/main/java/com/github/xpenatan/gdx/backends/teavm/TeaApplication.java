@@ -93,7 +93,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl());
+        AssetDownloader.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
 
         AssetDownload instance = AssetDownloader.getInstance();
         hostPageBaseURL = instance.getHostPageBaseURL();
