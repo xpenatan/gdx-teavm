@@ -29,8 +29,6 @@ import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
 
-import java.util.List;
-
 /**
  * @author xpenatan
  */
@@ -62,7 +60,8 @@ public class TeaApplication implements Application, Runnable {
     private int lastWidth = -1;
     private int lastHeight = 1;
 
-    private TeaApplicationLogger logger;
+    private ApplicationLogger logger;
+    private int logLevel = LOG_ERROR;
 
     private Preloader preloader;
 
@@ -85,11 +84,11 @@ public class TeaApplication implements Application, Runnable {
     private void init() {
         TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
-        if(agentInfo.isWindows() == true)
+        if(agentInfo.isWindows())
             System.setProperty("os.name", "Windows");
-        else if(agentInfo.isMacOS() == true)
+        else if(agentInfo.isMacOS())
             System.setProperty("os.name", "OS X");
-        else if(agentInfo.isLinux() == true)
+        else if(agentInfo.isLinux())
             System.setProperty("os.name", "Linux");
         else
             System.setProperty("os.name", "no OS");
@@ -338,46 +337,47 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public void log(String tag, String message) {
-        logger.log(tag, message);
+        if(logLevel >= LOG_INFO) getApplicationLogger().log(tag, message);
     }
 
     @Override
     public void log(String tag, String message, Throwable exception) {
-        logger.log(tag, message, exception);
+        if(logLevel >= LOG_INFO) getApplicationLogger().log(tag, message, exception);
     }
 
     @Override
     public void error(String tag, String message) {
-        logger.error(tag, message);
+        if(logLevel >= LOG_ERROR) getApplicationLogger().error(tag, message);
     }
 
     @Override
     public void error(String tag, String message, Throwable exception) {
-        logger.error(tag, message, exception);
+        if(logLevel >= LOG_ERROR) getApplicationLogger().error(tag, message, exception);
     }
 
     @Override
     public void debug(String tag, String message) {
-        logger.debug(tag, message);
+        if(logLevel >= LOG_DEBUG) getApplicationLogger().debug(tag, message);
     }
 
     @Override
     public void debug(String tag, String message, Throwable exception) {
-        logger.debug(tag, message, exception);
+        if(logLevel >= LOG_DEBUG) getApplicationLogger().debug(tag, message, exception);
     }
 
     @Override
     public void setLogLevel(int logLevel) {
-        logger.setLogLevel(logLevel);
+        this.logLevel = logLevel;
     }
 
     @Override
     public int getLogLevel() {
-        return logger.getLogLevel();
+        return logLevel;
     }
 
     @Override
     public void setApplicationLogger(ApplicationLogger applicationLogger) {
+        this.logger = applicationLogger;
     }
 
     @Override
