@@ -21,24 +21,24 @@ dependencies {
     includeDep "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
 
     includeDep project(":backends:backend-teavm")
-    includeDep project(":extensions:gdx-freetype-teavm")
-    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
-    includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
+//    includeDep project(":extensions:gdx-freetype-teavm")
+//    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
+//    includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
     includeDep 'org.eclipse.jetty:jetty-server:11.0.13'
     includeDep 'org.eclipse.jetty:jetty-webapp:11.0.13'
 }
 
-task fromClasses(type: Jar) {
+tasks.register('fromClasses', Jar) {
     from(sourceSets.main.output) {
     }
 }
 
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
     archiveClassifier.set("javadoc")
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }

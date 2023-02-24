@@ -13,7 +13,8 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-box2d-platform:$project.gdxVersion:natives-desktop"
 }
 
-task runBox2DDesktop(dependsOn: classes, type: JavaExec) {
+tasks.register('runBox2DDesktop', JavaExec) {
+    dependsOn classes
     setGroup("examples-desktop")
     setDescription("Run Box2D example")
     mainClass.set(project.mainClassName)
@@ -25,7 +26,7 @@ task runBox2DDesktop(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task dist(type: Jar) {
+tasks.register('dist', Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }

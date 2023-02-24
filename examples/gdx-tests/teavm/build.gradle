@@ -21,14 +21,16 @@ dependencies {
 
 project.ext.gdxTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGdxTest"
 
-task buildGdxTest(dependsOn: classes, type: JavaExec) {
+tasks.register('buildGdxTest', JavaExec) {
+    dependsOn classes
     setGroup("teavm")
     setDescription("Build gdx-tests example")
     mainClass.set(project.gdxTestMainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)
 }
 
-task runGdxTest(dependsOn: [':examples:gdx-tests:teavm:clean', ':examples:gdx-tests:teavm:buildGdxTest', ':examples:gdx-tests:teavm:jettyRun']) {
+tasks.register('runGdxTest') {
+    dependsOn[':examples:gdx-tests:teavm:clean', ':examples:gdx-tests:teavm:buildGdxTest', ':examples:gdx-tests:teavm:jettyRun']
     setGroup("examples-teavm")
     setDescription("Run gdx-tests")
 }

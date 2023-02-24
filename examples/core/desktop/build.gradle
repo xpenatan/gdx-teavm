@@ -13,7 +13,8 @@ dependencies {
     implementation project(":examples:core:core")
 }
 
-task runCoreDesktop(dependsOn: classes, type: JavaExec) {
+tasks.register('runCoreDesktop', JavaExec) {
+    dependsOn classes
     setGroup("examples-desktop")
     setDescription("Run core example")
     mainClass.set(project.mainClassName)
@@ -26,7 +27,7 @@ task runCoreDesktop(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task dist(type: Jar) {
+tasks.register('dist', Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }

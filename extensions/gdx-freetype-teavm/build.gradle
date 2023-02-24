@@ -15,17 +15,17 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
-task fromClasses(type: Jar) {
+tasks.register('fromClasses', Jar) {
     from(sourceSets.main.output) {
     }
 }
 
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
     archiveClassifier.set("javadoc")
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }

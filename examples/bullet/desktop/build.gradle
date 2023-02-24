@@ -18,7 +18,8 @@ dependencies {
 //    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
 }
 
-task runBulletDesktop(dependsOn: classes, type: JavaExec) {
+tasks.register('runBulletDesktop', JavaExec) {
+    dependsOn classes
     setGroup("examples-desktop")
     setDescription("Run bullet example")
     mainClass.set(project.mainClassName)
@@ -30,7 +31,7 @@ task runBulletDesktop(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task dist(type: Jar) {
+tasks.register('dist', Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
