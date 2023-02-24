@@ -19,7 +19,6 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
-import org.teavm.jso.dom.xml.Document;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 
 /**
@@ -42,7 +41,6 @@ public class TeaGraphics implements Graphics {
 
     public TeaGraphics(TeaApplicationConfiguration config) {
         this.config = config;
-        HTMLCanvasElement a;
         TeaWindow window = new TeaWindow();
         DocumentWrapper document = window.getDocument();
         HTMLElementWrapper elementID = document.getElementById(config.canvasID);
@@ -66,6 +64,14 @@ public class TeaGraphics implements Graphics {
                 setCanvasSize((int)(density * width), (int)(density * height));
             }
         }
+
+        // listen to fullscreen changes
+        addFullscreenChangeListener(canvas, new FullscreenChanged() {
+          @Override
+          public void fullscreenChanged() {
+              // listening to fullscreen mode changes
+          }
+        });
     }
 
     public void update() {
@@ -180,13 +186,13 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public float getPpiX() {
-        return 96;
+    public float getPpiX () {
+        return 96f * (float)getNativeScreenDensity();
     }
 
     @Override
-    public float getPpiY() {
-        return 96;
+    public float getPpiY () {
+        return 96f * (float)getNativeScreenDensity();
     }
 
     @Override
@@ -200,8 +206,9 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public float getDensity() {
-        return 96.0f / 160;
+    public float getDensity () {
+      float ppiX = getPpiX();
+      return (ppiX > 0 && ppiX <= Float.MAX_VALUE) ? ppiX / 160f : 1f;
     }
 
     @Override
@@ -256,7 +263,7 @@ public class TeaGraphics implements Graphics {
     public boolean setFullscreenMode(DisplayMode displayMode) {
         DisplayMode supportedMode = getDisplayMode();
         if(displayMode.width != supportedMode.width && displayMode.height != supportedMode.height) return false;
-        return setFullscreenJSNI(this, canvas, displayMode.width, displayMode.height);
+        return enterFullscreen(canvas, displayMode.width, displayMode.height);
     }
 
     @Override
@@ -331,11 +338,6 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public boolean isFullscreen() {
-        return isFullscreenJSNI();
-    }
-
-    @Override
     public Cursor newCursor(Pixmap pixmap, int xHotspot, int yHotspot) {
         return new TeaCursor(pixmap, xHotspot, yHotspot);
     }
@@ -375,112 +377,107 @@ public class TeaGraphics implements Graphics {
     @JSBody(script = "return screen.height;")
     private static native int getScreenHeightNATIVE();
 
-    public boolean setFullscreenJSNI(TeaGraphics graphics, HTMLCanvasElementWrapper canvas, int screenWidth, int screenHeight) {
-        FullscreenChanged fullscreenChanged = new FullscreenChanged() {
-            @Override
-            public void fullscreenChanged() {
-            }
-        };
-        return setFullscreen(fullscreenChanged, canvas, screenWidth, screenHeight);
+    @JSBody(params = {"element", "fullscreenChanged"}, script = "" +
+            "if (element.requestFullscreen) {\n" +
+            "   document.addEventListener(\"fullscreenchange\", fullscreenChanged, false);\n" +
+            "}\n" +
+            "// Attempt to the vendor specific variants of the API\n" +
+            "if (element.webkitRequestFullScreen) {\n" +
+            "   document.addEventListener(\"webkitfullscreenchange\", fullscreenChanged, false);\n" +
+            "}\n" +
+            "if (element.mozRequestFullScreen) {\n" +
+            "   document.addEventListener(\"mozfullscreenchange\", fullscreenChanged, false);\n" +
+            "}\n" +
+            "if (element.msRequestFullscreen) {\n" +
+            "   document.addEventListener(\"msfullscreenchange\", fullscreenChanged, false);\n" +
+            "}")
+    private static native void addFullscreenChangeListener(HTMLCanvasElementWrapper element, FullscreenChanged fullscreenChanged);
+
+    @JSFunctor
+    public interface FullscreenChanged extends org.teavm.jso.JSObject {
+        void fullscreenChanged();
     }
 
-    @JSBody(params = {"fullscreenChanged", "element", "screenWidth", "screenHeight"}, script = "" +
-            "\t\t// Attempt to use the non-prefixed standard API (https://fullscreen.spec.whatwg.org)\n" +
-            "\t\tif (element.requestFullscreen) {\n" +
-            "\t\t\telement.width = screenWidth;\n" +
-            "\t\t\telement.height = screenHeight;\n" +
-            "\t\t\telement.requestFullscreen();\n" +
-            "\t\t\tdocument\n" +
-            "\t\t\t\t\t.addEventListener(\n" +
-            "\t\t\t\t\t\t\t\"fullscreenchange\",\n" +
-            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
-            "\t\t\treturn true;\n" +
-            "\t\t}\n" +
-            "\t\t// Attempt to the vendor specific variants of the API\n" +
-            "\t\tif (element.webkitRequestFullScreen) {\n" +
-            "\t\t\telement.width = screenWidth;\n" +
-            "\t\t\telement.height = screenHeight;\n" +
-            "\t\t\telement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);\n" +
-            "\t\t\tdocument\n" +
-            "\t\t\t\t\t.addEventListener(\n" +
-            "\t\t\t\t\t\t\t\"webkitfullscreenchange\",\n" +
-            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
-            "\t\t\treturn true;\n" +
-            "\t\t}\n" +
-            "\t\tif (element.mozRequestFullScreen) {\n" +
-            "\t\t\telement.width = screenWidth;\n" +
-            "\t\t\telement.height = screenHeight;\n" +
-            "\t\t\telement.mozRequestFullScreen();\n" +
-            "\t\t\tdocument\n" +
-            "\t\t\t\t\t.addEventListener(\n" +
-            "\t\t\t\t\t\t\t\"mozfullscreenchange\",\n" +
-            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
-            "\t\t\treturn true;\n" +
-            "\t\t}\n" +
-            "\t\tif (element.msRequestFullscreen) {\n" +
-            "\t\t\telement.width = screenWidth;\n" +
-            "\t\t\telement.height = screenHeight;\n" +
-            "\t\t\telement.msRequestFullscreen();\n" +
-            "\t\t\tdocument\n" +
-            "\t\t\t\t\t.addEventListener(\n" +
-            "\t\t\t\t\t\t\t\"msfullscreenchange\",\n" +
-            "\t\t\t\t\t\t\tfullscreenChanged, false);\n" +
-            "\t\t\treturn true;\n" +
-            "\t\t}\n" +
+    public boolean enterFullscreen(HTMLCanvasElementWrapper element, int screenWidth, int screenHeight) {
+        return enterFullscreenNATIVE(element, screenWidth, screenHeight);
+    }
+
+    @JSBody(params = {"element", "screenWidth", "screenHeight"}, script = "" +
+            "if (element.requestFullscreen) {\n" +
+            "   element.width = screenWidth;\n" +
+            "   element.height = screenHeight;\n" +
+            "   element.requestFullscreen();\n" +
+            "   return true;\n" +
+            "}\n" +
+            "// Attempt to the vendor specific variants of the API\n" +
+            "if (element.webkitRequestFullScreen) {\n" +
+            "   element.width = screenWidth;\n" +
+            "   element.height = screenHeight;\n" +
+            "   element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);\n" +
+            "   return true;\n" +
+            "}\n" +
+            "if (element.mozRequestFullScreen) {\n" +
+            "   element.width = screenWidth;\n" +
+            "   element.height = screenHeight;\n" +
+            "   element.mozRequestFullScreen();\n" +
+            "   return true;\n" +
+            "}\n" +
+            "if (element.msRequestFullscreen) {\n" +
+            "   element.width = screenWidth;\n" +
+            "   element.height = screenHeight;\n" +
+            "   element.msRequestFullscreen();\n" +
+            "   return true;\n" +
+            "}\n" +
             "\n" +
-            "\t\treturn false;")
-    private static native boolean setFullscreen(FullscreenChanged fullscreenChanged, HTMLCanvasElementWrapper element, int screenWidth, int screenHeight);
+            "return false;")
+    private static native boolean enterFullscreenNATIVE(HTMLCanvasElementWrapper element, int screenWidth, int screenHeight);
 
     public void exitFullscreen() {
-        exitFullscreenJS();
+        exitFullscreenNATIVE();
     }
 
     @JSBody(script = "" +
             "if (document.exitFullscreen)\n" +
-            "document.exitFullscreen();\n" +
+            "  document.exitFullscreen();\n" +
             "if (document.msExitFullscreen)\n" +
-            "document.msExitFullscreen();\n" +
+            "  document.msExitFullscreen();\n" +
             "if (document.webkitExitFullscreen)\n" +
-            "document.webkitExitFullscreen();\n" +
+            "  document.webkitExitFullscreen();\n" +
             "if (document.mozExitFullscreen)\n" +
-            "document.mozExitFullscreen();\n" +
+            "  document.mozExitFullscreen();\n" +
             "if (document.webkitCancelFullScreen) // Old WebKit\n" +
-            "document.webkitCancelFullScreen();")
-    private static native boolean exitFullscreenJS();
+            "  document.webkitCancelFullScreen();")
+    private static native boolean exitFullscreenNATIVE();
 
-    public boolean isFullscreenJSNI() {
+    @Override
+    public boolean isFullscreen() {
         return isFullscreenNATIVE();
     }
 
     @JSBody(script = "" +
             "// Standards compliant check for fullscreen\n" +
             "if (\"fullscreenElement\" in document) {\n" +
-            "return document.fullscreenElement != null;\n" +
+            "  return document.fullscreenElement != null;\n" +
             "}" +
             "// Vendor prefixed versions of standard check\n" +
             "if (\"msFullscreenElement\" in document) {\n" +
-            "return document.msFullscreenElement != null;\n" +
+            "  return document.msFullscreenElement != null;\n" +
             "}" +
             "if (\"webkitFullscreenElement\" in document) {\n" +
-            "return document.webkitFullscreenElement != null;\n" +
+            "  return document.webkitFullscreenElement != null;\n" +
             "}" +
             "if (\"mozFullScreenElement\" in document) { // Yes, with a capital 'S'\n" +
-            "return document.mozFullScreenElement != null;\n" +
+            "  return document.mozFullScreenElement != null;\n" +
             "}" +
             "// Older, non-standard ways of checking for fullscreen\n" +
             "if (\"webkitIsFullScreen\" in document) {\n" +
-            "return document.webkitIsFullScreen;\n" +
+            "  return document.webkitIsFullScreen;\n" +
             "}" +
             "if (\"mozFullScreen\" in document) {\n" +
-            "return document.mozFullScreen;\n" +
+            "  return document.mozFullScreen;\n" +
             "}" +
             "return false")
     private static native boolean isFullscreenNATIVE();
-
-    @JSFunctor
-    public interface FullscreenChanged extends org.teavm.jso.JSObject {
-        void fullscreenChanged();
-    }
 
     public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, TeaApplicationConfiguration config) {
         WebGLContextAttributes attr = WebGLContextAttributes.create();

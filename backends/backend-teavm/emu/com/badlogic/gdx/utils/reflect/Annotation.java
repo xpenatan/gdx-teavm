@@ -1,18 +1,15 @@
-package com.artemis.utils.reflect;
-
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+package com.badlogic.gdx.utils.reflect;
 
 /**
  * Provides information about, and access to, an annotation of a field, class or interface.
  *
  * @author dludwig
  */
-@Emulate(valueStr = "com.artemis.utils.reflect.Annotation")
-public final class AnnotationEmu {
+public final class Annotation {
 
     private java.lang.annotation.Annotation annotation;
 
-    AnnotationEmu(java.lang.annotation.Annotation annotation) {
+    Annotation(java.lang.annotation.Annotation annotation) {
         this.annotation = annotation;
     }
 

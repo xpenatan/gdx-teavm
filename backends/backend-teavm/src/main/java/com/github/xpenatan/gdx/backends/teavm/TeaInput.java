@@ -141,8 +141,8 @@ public class TeaInput implements Input, EventListenerWrapper {
             this.deltaX[0] = 0;
             this.deltaY[0] = 0;
             if(isCursorCatched()) {
-                this.touchX[0] += getMovementXJS(mouseEvent);
-                this.touchY[0] += getMovementYJS(mouseEvent);
+                this.touchX[0] += mouseEvent.getMovementX();
+                this.touchY[0] += mouseEvent.getMovementY();
             }
             else {
                 int relativeX = getRelativeX(mouseEvent, canvas);
@@ -163,9 +163,9 @@ public class TeaInput implements Input, EventListenerWrapper {
             this.pressedButtons.remove(KeyCodes.getButton(mouseEvent.getButton()));
             this.touched[0] = pressedButtons.size > 0;
             if(isCursorCatched()) {
-                setDelta(0, (int)getMovementXJS(mouseEvent), (int)getMovementYJS(mouseEvent));
-                this.touchX[0] += getMovementXJS(mouseEvent);
-                this.touchY[0] += getMovementYJS(mouseEvent);
+                setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
+                this.touchX[0] += mouseEvent.getMovementX();
+                this.touchY[0] += mouseEvent.getMovementY();
             }
             else {
                 setDelta(0, getRelativeX(mouseEvent, canvas) - touchX[0], getRelativeY(mouseEvent, canvas) - touchY[0]);
@@ -180,9 +180,9 @@ public class TeaInput implements Input, EventListenerWrapper {
         else if(type.equals("mousemove")) {
             MouseEventWrapper mouseEvent = (MouseEventWrapper)e;
             if(isCursorCatched()) {
-                setDelta(0, (int)getMovementXJS(mouseEvent), (int)getMovementYJS(mouseEvent));
-                this.touchX[0] += getMovementXJS(mouseEvent);
-                this.touchY[0] += getMovementYJS(mouseEvent);
+                setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
+                this.touchX[0] += mouseEvent.getMovementX();
+                this.touchY[0] += mouseEvent.getMovementY();
             }
             else {
                 int relativeX = getRelativeX(mouseEvent, canvas);
@@ -389,30 +389,6 @@ public class TeaInput implements Input, EventListenerWrapper {
         deltaX[touchId] = x;
         deltaY[touchId] = y;
     }
-
-    /**
-     * from https://github.com/toji/game-shim/blob/master/game-shim.js
-     *
-     * @param event JavaScript Mouse Event
-     * @return movement in x direction
-     */
-    private float getMovementXJS(MouseEventWrapper event) {
-        return event.getMovementX();
-    }
-
-    ;
-
-    /**
-     * from https://github.com/toji/game-shim/blob/master/game-shim.js
-     *
-     * @param event JavaScript Mouse Event
-     * @return movement in y direction
-     */
-    private float getMovementYJS(MouseEventWrapper event) {
-        return event.getMovementY();
-    }
-
-    ;
 
     private ElementWrapper getCompatMode(HTMLDocumentWrapper target) {
         String compatMode = target.getCompatMode();
@@ -813,8 +789,7 @@ public class TeaInput implements Input, EventListenerWrapper {
 
     @Override
     public void setCursorPosition(int x, int y) {
-        // TODO Auto-generated method stub
-
+        // not possible in a browser window
     }
 
     @Override

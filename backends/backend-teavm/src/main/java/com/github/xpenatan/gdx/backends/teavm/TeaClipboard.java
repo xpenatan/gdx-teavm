@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.utils.Clipboard;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import org.teavm.jso.JSBody;
 
 /**
@@ -31,7 +30,7 @@ public class TeaClipboard implements Clipboard {
   public void setContents (String content) {
     this.content = content;
     if (requestedWritePermissions || TeaApplication.getAgentInfo().isFirefox()) {
-      if (hasWritePermissions) setContentJSNI(content);
+      if (hasWritePermissions) setContentNATIVE(content);
     } else {
       TeaPermissions.queryPermission("clipboard-write", writeHandler);
       requestedWritePermissions = true;
@@ -42,13 +41,13 @@ public class TeaClipboard implements Clipboard {
           "if (\"clipboard\" in navigator) {\n" +
           "    navigator.clipboard.writeText(content);\n" +
           "}")
-  private static native void setContentJSNI (String content);
+  private static native void setContentNATIVE(String content);
 
   private class ClipboardWriteHandler implements TeaPermissions.TeaPermissionResult {
     @Override
     public void granted () {
       hasWritePermissions = true;
-      setContentJSNI(content);
+      setContentNATIVE(content);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class TeaClipboard implements Clipboard {
     @Override
     public void prompt () {
       hasWritePermissions = true;
-      setContentJSNI(content);
+      setContentNATIVE(content);
     }
   }
 }

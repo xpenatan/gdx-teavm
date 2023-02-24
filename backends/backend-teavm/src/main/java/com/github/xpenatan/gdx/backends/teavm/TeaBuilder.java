@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassFilter;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
@@ -20,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import org.reflections.Reflections;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
@@ -204,7 +202,8 @@ public class TeaBuilder {
         ArrayList<String> configClassesToPreserve = configuration.getClassesToPreserve();
         List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
         configClassesToPreserve.addAll(reflectionClasses);
-        ArrayList<String> preserveClasses = classLoader.getPreserveClasses(configClassesToPreserve);
+        // Get classes or packages from reflection. When path is a package, get all classes from it.
+        ArrayList<String> preserveClasses = classLoader.getAllClasses(configClassesToPreserve);
         classesToPreserve.addAll(preserveClasses);
     }
 
@@ -551,12 +550,6 @@ public class TeaBuilder {
             }
         });
         preserveClasses(tool, configuration, classLoader);
-
-        //TODO Remove
-//        Properties properties = tool.getProperties();
-//        properties.put("teavm.libgdx.fsJsonPath", webappDirectory + File.separator + webappName + File.separator + "filesystem.json");
-//        properties.put("teavm.libgdx.warAssetsDirectory", webappDirectory + File.separator + webappName + File.separator + "assets");
-
     }
 
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName) {

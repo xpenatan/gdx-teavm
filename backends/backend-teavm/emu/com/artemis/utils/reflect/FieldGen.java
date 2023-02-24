@@ -157,28 +157,30 @@ public class FieldGen {
         Value<Class> result = Metaprogramming.lazy(() -> null);
         for(ReflectField field : cls.getDeclaredFields()) {
             java.lang.reflect.Field javaField = genericTypeProvider.findField(field);
-            Type genericType = javaField.getGenericType();
-            if(genericType instanceof ParameterizedType) {
-                Type[] actualTypes = ((ParameterizedType)genericType).getActualTypeArguments();
+            if (javaField != null) {
+                Type genericType = javaField.getGenericType();
+                if (genericType instanceof ParameterizedType) {
+                    Type[] actualTypes = ((ParameterizedType) genericType).getActualTypeArguments();
 
-                if(actualTypes != null) {
-                    for(int i = 0; i < actualTypes.length; i++) {
-                        Class actualType = getActualType(actualTypes[i]);
-                        if(actualType == null)
-                            continue;
-                        found = true;
-                        final int index = i;
+                    if (actualTypes != null) {
+                        for (int i = 0; i < actualTypes.length; i++) {
+                            Class actualType = getActualType(actualTypes[i]);
+                            if (actualType == null)
+                                continue;
+                            found = true;
+                            final int index = i;
 
-                        String fieldName = field.getName();
-                        Value<Class> existing = result;
-                        result = Metaprogramming.lazy(() -> {
-                            if(index == indexValue.get()) {
-                                if(fieldName.equals(fieldNameValue.get())) {
-                                    return actualType;
+                            String fieldName = field.getName();
+                            Value<Class> existing = result;
+                            result = Metaprogramming.lazy(() -> {
+                                if (index == indexValue.get()) {
+                                    if (fieldName.equals(fieldNameValue.get())) {
+                                        return actualType;
+                                    }
                                 }
-                            }
-                            return existing.get();
-                        });
+                                return existing.get();
+                            });
+                        }
                     }
                 }
             }
@@ -201,7 +203,7 @@ public class FieldGen {
     }
 
     public <T extends java.lang.annotation.Annotation> T getAnnotation(Class<T> annotationClass) {
-        final AnnotationEmu declaredAnnotation = getDeclaredAnnotation(annotationClass);
+        final Annotation declaredAnnotation = getDeclaredAnnotation(annotationClass);
         return declaredAnnotation != null ? declaredAnnotation.getAnnotation(annotationClass) : null;
     }
 
@@ -212,23 +214,23 @@ public class FieldGen {
         return field.isAnnotationPresent(annotationType);
     }
 
-    public AnnotationEmu[] getDeclaredAnnotations() {
+    public Annotation[] getDeclaredAnnotations() {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
-        AnnotationEmu[] result = new AnnotationEmu[annotations.length];
+        Annotation[] result = new Annotation[annotations.length];
         for(int i = 0; i < annotations.length; i++) {
-            result[i] = new AnnotationEmu(annotations[i]);
+            result[i] = new Annotation(annotations[i]);
         }
         return result;
     }
 
-    public AnnotationEmu getDeclaredAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {
+    public Annotation getDeclaredAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
         if(annotations == null) {
             return null;
         }
         for(java.lang.annotation.Annotation annotation : annotations) {
             if(annotation.annotationType().equals(annotationType)) {
-                return new AnnotationEmu(annotation);
+                return new Annotation(annotation);
             }
         }
         return null;

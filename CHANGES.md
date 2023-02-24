@@ -1,4 +1,13 @@
 [1.0.0-SNAPSHOT]
+- Option in App config to show download logs. Default is set to false.
+- Implement setApplicationLogger method.
+
+[1.0.0-b4]
+- Fix an issue with TeaClassloader that was giving annotation error when building artemis games
+- Bugfix: Asset Loading should not re-Download 403 Errors
+- Bugfix for density calculation.
+- Bugfix: blank line on top of HTML body on mobile.
+- Bugfix: Asset Loading & Error "ERR_HTTP2_SERVER_REFUSED_STREAM
 
 [1.0.0-b3]
 - Add gdx-bullet c++ module so desktop and web use the same c++ code/version

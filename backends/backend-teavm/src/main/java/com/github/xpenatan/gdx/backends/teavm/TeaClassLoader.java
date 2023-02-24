@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -26,68 +25,6 @@ public class TeaClassLoader extends URLClassLoader {
         super(classPaths, parent);
         this.jarFiles = classPaths;
         this.skipClasses.addAll(skipClasses);
-    }
-
-    @Override
-    public URL getResource(String name) {
-        return getRes(name);
-    }
-
-    private URL getRes(String name) {
-        String fixName = name.replace(";.class", ".class");
-        fixName = fixName.replace("[L", "");
-        fixName = fixName.replace("[", "");
-
-        String toPackage = fixName.replace("/", ".");
-        if(containsSkipClass(toPackage)) {
-            return null;
-        }
-
-        URL resource = super.getResource(name);
-        for(int i = 0; i < jarFiles.length; i++) {
-            URL url = jarFiles[i];
-            String path = url.getPath();
-            String finalFile = "jar:file:" + path + "!/";
-            File file = new File(path);
-            if(file.exists()) {
-                if(!file.isDirectory()) {
-                    try {
-                        JarFile jarFile = new JarFile(file);
-                        Enumeration<JarEntry> entries = jarFile.entries();
-                        while(entries.hasMoreElements()) {
-                            JarEntry jarEntry = entries.nextElement();
-                            if(!jarEntry.isDirectory()) {
-                                String jarEntryName = jarEntry.getName();
-                                if(jarEntryName.equals(fixName)) {
-                                    String filee = finalFile + jarEntryName;
-                                    return new URL(filee);
-                                }
-                            }
-                        }
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    try {
-                        ArrayList<String> allClasses = getAllFiles(path);
-                        String resName = fixName.replace("\\", "/");
-                        for(int j = 0; j < allClasses.size(); j++) {
-                            String className = allClasses.get(j);
-                            if(className.contains(resName)) {
-                                String filee = path + className;
-                                return new File(filee).toURI().toURL();
-                            }
-                        }
-                    }
-                    catch(MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return resource;
     }
 
     @Override
@@ -119,6 +56,7 @@ public class TeaClassLoader extends URLClassLoader {
                     }
                 }
                 else {
+                    // This probably not working and need to remove.
                     ArrayList<String> allClasses = getAllFiles(path);
                     String resName = fixName.replace("\\", "/");
                     for(int j = 0; j < allClasses.size(); j++) {
@@ -131,11 +69,7 @@ public class TeaClassLoader extends URLClassLoader {
             }
         }
 
-        if(fixName.startsWith("org/teavm/")) {
-            return super.getResourceAsStream(name);
-        }
-
-        return null;
+        return super.getResourceAsStream(name);
     }
 
     private boolean containsSkipClass(String clazz) {
@@ -181,13 +115,13 @@ public class TeaClassLoader extends URLClassLoader {
     /**
      * Convert packages to individual classes
      */
-    public ArrayList<String> getPreserveClasses(ArrayList<String> classesToPreserve) {
+    public ArrayList<String> getAllClasses(ArrayList<String> classOrPackage) {
         // TeaVM only accept individual classes. We need to obtain all classes from package (if its set).
         // If it's not a package just add the class.
         ArrayList<String> array = new ArrayList<>();
 
-        for(int i = 0; i < classesToPreserve.size(); i++) {
-            String className = classesToPreserve.get(i);
+        for(int i = 0; i < classOrPackage.size(); i++) {
+            String className = classOrPackage.get(i);
             String packagePath = className.replace(".", "/");
             URL resource = getResource(packagePath + ".class");
             if(resource == null) {

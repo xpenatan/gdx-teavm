@@ -1,13 +1,5 @@
 apply from: 'dependencies.gradle'
 
-buildscript {
-    repositories {
-    }
-
-    dependencies {
-    }
-}
-
 allprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'java'
