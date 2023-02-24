@@ -12,7 +12,7 @@ configurations {
     implementation.extendsFrom provided
 }
 
-task fromClasses(type: Jar) {
+tasks.register('fromClasses', Jar) {
     from(sourceSets.main.output) {
     }
 }
@@ -23,7 +23,7 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
 }
 
-task runGenerator(dependsOn: classes, type: JavaExec) {
+tasks.register('runGenerator', JavaExec) {
     setGroup("teavm")
     setDescription("Run Generator")
     mainClass.set(project.mainClassName)
@@ -35,7 +35,7 @@ task runGenerator(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task copyDependencies(type: Copy) {
+tasks.register('copyDependencies', Copy) {
     from { configurations.default }
             {
                 exclude "core*.jar"
@@ -54,7 +54,8 @@ task copyDependencies(type: Copy) {
 
 def projectsToCollect = [':tools:generator:desktop', ':tools:generator:core']
 
-task dist(type: Jar, dependsOn: [copyDependencies, projectsToCollect.collect { it + ":compileJava" }]) {
+tasks.register('dist', Jar) {
+    dependsOn([copyDependencies, projectsToCollect.collect { it + ":compileJava" }])
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(

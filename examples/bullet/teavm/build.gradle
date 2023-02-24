@@ -23,14 +23,16 @@ dependencies {
     implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
 }
 
-task buildExampleBullet(dependsOn: classes, type: JavaExec) {
+tasks.register('buildExampleBullet', JavaExec) {
+    dependsOn classes
     setGroup("teavm")
     setDescription("Build Bullet example")
     mainClass.set(project.mainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)
 }
 
-task runBullet(dependsOn: [':examples:bullet:teavm:clean', ':examples:bullet:teavm:buildExampleBullet', ':examples:bullet:teavm:jettyRun']) {
+tasks.register('runBullet') {
+    dependsOn([':examples:bullet:teavm:clean', ':examples:bullet:teavm:buildExampleBullet', ':examples:bullet:teavm:jettyRun'])
     setGroup("examples-teavm")
     setDescription("Run Bullet example")
 }
