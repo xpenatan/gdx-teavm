@@ -70,4 +70,38 @@ configure(libProjects) {
             }
         }
     }
+
+    publishing.publications.configureEach { mav ->
+        pom {
+            name = "Gdx-teaVM"
+            description = "Tool to generate libgdx to javascript using teaVM"
+            url = "https://github.com/xpenatan/gdx-teavm"
+            developers {
+                developer {
+                    id = "Xpe"
+                    name = "Natan"
+                }
+            }
+            scm {
+                connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
+                developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
+                url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
+            }
+            licenses {
+                license {
+                    name = "The Apache License, Version 2.0"
+                    url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                }
+            }
+        }
+    }
+
+    signing {
+        def signingKey = System.getenv("signingKey")
+        def signingPassword = System.getenv("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        publishing.publications.configureEach { mav ->
+            sign mav.name
+        }
+    }
 }
