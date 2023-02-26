@@ -7,6 +7,10 @@ on:
 
 env:
   RELEASE: false
+  USER: ${{ secrets.USER }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  signingKey: ${{ secrets.PGP_SECRET }}
+  signingPassword: ${{ secrets.PGP_PASSPHRASE }}
 
 jobs:
   build_Linux:
@@ -37,8 +41,3 @@ jobs:
 
       - name: Upload to repository
         run: ./gradlew publish
-        env:
-          USER: ${{ secrets.USER }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          signingKey: ${{ secrets.PGP_SECRET }}
-          signingPassword: ${{ secrets.PGP_PASSPHRASE }}
