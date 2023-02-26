@@ -35,32 +35,19 @@ configure(libProjects) {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
-    ext {
-        repoUser = System.getenv('USER')
-        repoPass = System.getenv('PASSWORD')
-        repoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-        repoUrlSnapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
-
-        def localFile = project.rootProject.file("local.properties")
-        if (localFile.exists()) {
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file("local.properties").newDataInputStream())
-            repoUser = properties.getProperty("xUser")
-            repoPass = properties.getProperty("xPass")
-        }
-    }
-
     publishing {
         repositories {
             maven {
                 url {
                     def ver = project.version.toString()
                     def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+                    def repoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def repoUrlSnapshot = "https://oss.sonatype.org/content/repositories/snapshots/"
                     isSnapshot ? repoUrlSnapshot : repoUrl
                 }
                 credentials {
-                    username repoUser
-                    password repoPass
+                    username System.getenv('USER')
+                    password System.getenv('PASSWORD')
                 }
             }
         }
