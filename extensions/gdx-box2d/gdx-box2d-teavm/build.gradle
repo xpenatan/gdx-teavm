@@ -1,9 +1,5 @@
-plugins {
-    id 'java'
-    id 'signing'
-}
-
 group = project.groupId
+version = project.teaBox2dVersion
 
 def module_name = "gdx-box2d-teavm"
 
@@ -19,39 +15,16 @@ clean.doFirst {
     project.delete(files(srcPath))
 }
 
-tasks.register('fromClasses', Jar) {
-    from(sourceSets.main.output) {
-    }
-}
-
-tasks.register('javadocJar', Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
-tasks.register('sourcesJar', Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-javadoc {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name
-            artifact fromClasses
-            artifact javadocJar
-            artifact sourcesJar
+            artifactId = module_name
+            from components.java
 
             pom {
                 name = "Gdx-teaVM"

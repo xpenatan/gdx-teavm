@@ -1,9 +1,5 @@
-plugins {
-    id 'java'
-}
-
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.bullet.Main"
-sourceSets.main.java.srcDirs = ["src/main/java/"]
+
 sourceSets.main.resources.srcDirs = ["../desktop/assets"]
 
 dependencies {

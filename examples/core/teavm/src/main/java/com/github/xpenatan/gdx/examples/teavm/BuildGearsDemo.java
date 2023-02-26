@@ -17,8 +17,8 @@ public class BuildGearsDemo {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setObfuscated(false);
         tool.setMainClass(GearsTestLauncher.class.getName());
+        tool.setObfuscated(false);
         TeaBuilder.build(tool);
     }
 }

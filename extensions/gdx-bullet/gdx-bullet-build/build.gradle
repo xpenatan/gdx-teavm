@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 group = project.groupId
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"

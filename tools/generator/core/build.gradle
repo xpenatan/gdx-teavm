@@ -1,66 +1,34 @@
-plugins {
-    id 'java'
-    id 'signing'
-}
-
 group = project.groupId
+version = project.toolCoreVersion
 
 def module_name = "generator-core"
 
-sourceSets.main.java.srcDirs = ["src/main/java/"]
-
-configurations {
-    includeDep
-    implementation.extendsFrom includeDep
-}
-
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    includeDep "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
-    includeDep "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
-    includeDep "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
+    implementation project(":backends:backend-teavm")
 
-    includeDep project(":backends:backend-teavm")
-//    includeDep project(":extensions:gdx-freetype-teavm")
-//    includeDep project(":extensions:gdx-bullet:gdx-bullet-teavm")
-//    includeDep project(":extensions:gdx-box2d:gdx-box2d-teavm")
-    includeDep 'org.eclipse.jetty:jetty-server:11.0.13'
-    includeDep 'org.eclipse.jetty:jetty-webapp:11.0.13'
+    implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
+    implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiGdxVersion"
+    implementation "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
+
+    implementation project(":extensions:gdx-freetype-teavm")
+    implementation project(":extensions:gdx-bullet:gdx-bullet-teavm")
+    implementation project(":extensions:gdx-box2d:gdx-box2d-teavm")
+
+    implementation "org.eclipse.jetty:jetty-server:$project.jettyVersion"
+    implementation "org.eclipse.jetty:jetty-webapp:$project.jettyVersion"
 }
 
-tasks.register('fromClasses', Jar) {
-    from(sourceSets.main.output) {
-    }
-}
-
-tasks.register('javadocJar', Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
-tasks.register('sourcesJar', Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-javadoc {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name
-            artifact fromClasses
-            artifact javadocJar
-            artifact sourcesJar
+            artifactId = module_name
+            from components.java
 
             pom {
                 name = "gdx-teaVM"
@@ -81,15 +49,6 @@ publishing {
                     license {
                         name = "The Apache License, Version 2.0"
                         url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-                withXml {
-                    def dependencies = asNode().appendNode('dependencies')
-                    configurations.includeDep.allDependencies.each {
-                        def dependencyNode = dependencies.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
                     }
                 }
             }

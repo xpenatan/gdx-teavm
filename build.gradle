@@ -1,11 +1,44 @@
 apply from: 'dependencies.gradle'
 
-allprojects {
-    apply plugin: 'maven-publish'
+subprojects {
     apply plugin: 'java'
 
     sourceCompatibility = 11
     targetCompatibility = 11
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://teavm.org/maven/repository/" }
+        maven { url 'https://jitpack.io' }
+    }
+
+    configurations.configureEach {
+        // Check for updates every build
+        resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+    }
+}
+
+var libProjects = [
+        project(":backends:backend-teavm"),
+        project(":extensions:gdx-freetype-teavm"),
+        project(":extensions:gdx-bullet:gdx-bullet"),
+        project(":extensions:gdx-bullet:gdx-bullet-teavm"),
+        project(":extensions:gdx-box2d:gdx-box2d-teavm"),
+        project(":tools:generator:core")
+]
+
+configure(libProjects) {
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 
     ext {
         repoUser = System.getenv('USER')
@@ -22,16 +55,6 @@ allprojects {
         }
     }
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://teavm.org/maven/repository/" }
-        maven { url 'https://jitpack.io' }
-    }
-
     publishing {
         repositories {
             maven {
@@ -46,10 +69,5 @@ allprojects {
                 }
             }
         }
-    }
-
-    configurations.all {
-        // Check for updates every build
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
 }

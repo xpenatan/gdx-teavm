@@ -1,10 +1,5 @@
-plugins {
-    id 'java'
-    id 'java-library'
-    id 'signing'
-}
-
 group = project.groupId
+version = project.teaFreeTypeVersion
 
 def module_name = "gdx-freetype-teavm"
 
@@ -15,39 +10,16 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
 }
 
-tasks.register('fromClasses', Jar) {
-    from(sourceSets.main.output) {
-    }
-}
-
-tasks.register('javadocJar', Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
-tasks.register('sourcesJar', Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-javadoc {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name
-            artifact fromClasses
-            artifact javadocJar
-            artifact sourcesJar
+            artifactId = module_name
+            from components.java
 
             pom {
                 name = "Gdx-teaVM"

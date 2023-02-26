@@ -1,8 +1,5 @@
-plugins {
-    id 'java'
-}
-
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
+
 project.ext.assetsDir = new File("/assets");
 
 dependencies {

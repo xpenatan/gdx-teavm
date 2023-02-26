@@ -9,6 +9,11 @@ project.ext {
     }
     System.out.println("Gdx-teaVM Version: " + gdxTeaVMVersion)
 
+    teaBox2dVersion = gdxTeaVMVersion
+    teaBulletVersion = gdxTeaVMVersion
+    teaFreeTypeVersion = gdxTeaVMVersion
+    toolCoreVersion = gdxTeaVMVersion
+
     teaVMVersion = "0.8.0-dev-1"
 
     gdxVersion = "1.11.0"
@@ -19,6 +24,7 @@ project.ext {
     gdxFrameViewportVersion = "1.0.0-SNAPSHOT"
 
     reflectionVersion = "0.10.2"
+    jettyVersion = "11.0.13"
 
     aiVersion = "1.8.2"
 }

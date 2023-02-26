@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 import org.gradle.internal.os.OperatingSystem
 
 dependencies {

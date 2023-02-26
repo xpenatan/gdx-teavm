@@ -1,8 +1,5 @@
-apply plugin: 'java'
-apply plugin: 'java-library'
-
-group 'com.github.xpenatan.gdx-html5-tools'
-version '1.0.0'
+group = project.groupId
+version = project.toolCoreVersion
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.generator.Main"
 sourceSets.main.java.srcDirs = ["src/main/java/"]
@@ -53,6 +50,9 @@ tasks.register('copyDependencies', Copy) {
 }
 
 def projectsToCollect = [':tools:generator:desktop', ':tools:generator:core']
+
+
+//TODO fix dist
 
 tasks.register('dist', Jar) {
     dependsOn([copyDependencies, projectsToCollect.collect { it + ":compileJava" }])
