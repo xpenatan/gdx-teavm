@@ -15,11 +15,6 @@ clean.doFirst {
     project.delete(files(srcPath))
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {

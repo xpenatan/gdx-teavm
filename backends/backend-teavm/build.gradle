@@ -22,11 +22,6 @@ dependencies {
     api "org.teavm:teavm-jso-impl:$project.teaVMVersion"
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {

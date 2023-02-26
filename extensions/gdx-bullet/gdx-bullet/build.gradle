@@ -20,11 +20,6 @@ tasks.register('platformAll', Jar) {
     from zipTree(projectDir.toString() + "/../gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {

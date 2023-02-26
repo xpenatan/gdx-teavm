@@ -35,11 +35,6 @@ configure(libProjects) {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
-    javadoc {
-        options.encoding = 'UTF-8'
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
-
     ext {
         repoUser = System.getenv('USER')
         repoPass = System.getenv('PASSWORD')
@@ -69,6 +64,16 @@ configure(libProjects) {
                 }
             }
         }
+    }
+
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
     publishing.publications.configureEach { mav ->

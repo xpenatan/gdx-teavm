@@ -19,11 +19,6 @@ dependencies {
     implementation "org.eclipse.jetty:jetty-webapp:$project.jettyVersion"
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
