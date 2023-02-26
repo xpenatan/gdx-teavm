@@ -89,8 +89,8 @@ configure(libProjects) {
     }
 
     signing {
-        def signingKey = System.getenv("signingKey")
-        def signingPassword = System.getenv("signingPassword")
+        def signingKey = System.getenv("SIGNING_KEY")
+        def signingPassword = System.getenv("SIGNING_PASSWORD")
         useInMemoryPgpKeys(signingKey, signingPassword)
         publishing.publications.configureEach { mav ->
             sign mav.name
