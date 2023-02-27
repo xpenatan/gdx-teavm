@@ -21,23 +21,14 @@ public class FieldGen {
         this.field = field;
     }
 
-    /**
-     * Returns the name of the field.
-     */
     public String getName() {
         return field.getName();
     }
 
-    /**
-     * Returns a Class object that identifies the declared type for the field.
-     */
     public Class getType() {
         return field.getType();
     }
 
-    /**
-     * Returns the Class object representing the class or interface that declares the field.
-     */
     public Class getDeclaringClass() {
         return field.getDeclaringClass();
     }
@@ -49,79 +40,52 @@ public class FieldGen {
     public void setAccessible(boolean accessible) {
     }
 
-    /**
-     * Return true if the field does not include any of the {@code private}, {@code protected}, or {@code public} modifiers.
-     */
     public boolean isDefaultAccess() {
         return !isPrivate() && !isProtected() && !isPublic();
     }
 
-    /**
-     * Return true if the field includes the {@code final} modifier.
-     */
     public boolean isFinal() {
         // TODO
 //		return Modifier.isFinal(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code private} modifier.
-     */
     public boolean isPrivate() {
         // TODO
 //		return Modifier.isPrivate(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code protected} modifier.
-     */
     public boolean isProtected() {
         // TODO
 //		return Modifier.isProtected(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code public} modifier.
-     */
     public boolean isPublic() {
         // TODO
 //		return Modifier.isPublic(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code static} modifier.
-     */
     public boolean isStatic() {
         // TODO
 //		return Modifier.isStatic(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code transient} modifier.
-     */
     public boolean isTransient() {
         // TODO
 //		return Modifier.isTransient(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field includes the {@code volatile} modifier.
-     */
     public boolean isVolatile() {
         // TODO
 //		return Modifier.isVolatile(field.getModifiers());
         return false;
     }
 
-    /**
-     * Return true if the field is a synthetic field.
-     */
     public boolean isSynthetic() {
         return field.isSynthetic();
     }
@@ -191,26 +155,15 @@ public class FieldGen {
         Metaprogramming.exit(() -> type.get());
     }
 
-    /**
-     * If the type of the field is parameterized, returns the Class object representing the parameter type at the specified index,
-     * null otherwise.
-     */
     public Class getElementType(int index) {
         Class<?> declaringClass = field.getDeclaringClass();
         return getElementType(declaringClass, field.getName(), index);
     }
 
-    /**
-     * Returns true if the field includes an annotation of the provided class type.
-     */
     public boolean isAnnotationPresent(Class<? extends java.lang.annotation.Annotation> annotationType) {
         return field.isAnnotationPresent(annotationType);
     }
 
-    /**
-     * Returns an array of {@link Annotation} objects reflecting all annotations declared by this field,
-     * or an empty array if there are none. Does not include inherited annotations.
-     */
     public Annotation[] getDeclaredAnnotations() {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
         Annotation[] result = new Annotation[annotations.length];
@@ -220,11 +173,6 @@ public class FieldGen {
         return result;
     }
 
-    /**
-     * Returns an {@link Annotation} object reflecting the annotation provided, or null of this field doesn't
-     * have such an annotation. This is a convenience function if the caller knows already which annotation
-     * type he's looking for.
-     */
     public Annotation getDeclaredAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {
         java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
         if(annotations == null) {
@@ -238,12 +186,6 @@ public class FieldGen {
         return null;
     }
 
-    /**
-     * Returns the value of the field on the supplied object.
-     *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     */
     public Object get(Object obj) throws IllegalArgumentException, IllegalAccessException {
         return field.get(obj);
     }

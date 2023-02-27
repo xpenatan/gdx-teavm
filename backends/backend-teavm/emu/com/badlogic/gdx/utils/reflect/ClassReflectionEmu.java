@@ -249,27 +249,27 @@ public final class ClassReflectionEmu {
     }
 
     /**
-     * Returns an array of {@link Field} containing the public fields of the class represented by the supplied Class.
+     * Returns an array of {@link FieldEmu} containing the public fields of the class represented by the supplied Class.
      */
-    static public Field[] getFields(Class c) {
+    static public FieldEmu[] getFields(Class c) {
         // there is a bug in teavm that using just getFields the fields are not generated.
         c.getDeclaredFields();
 
         java.lang.reflect.Field[] fields = c.getFields();
-        Field[] result = new Field[fields.length];
+        FieldEmu[] result = new FieldEmu[fields.length];
         for(int i = 0, j = fields.length; i < j; i++) {
-            result[i] = new Field(fields[i]);
+            result[i] = new FieldEmu(fields[i]);
         }
         return result;
     }
 
     /**
-     * Returns a {@link Field} that represents the specified public member field for the supplied class.
+     * Returns a {@link FieldEmu} that represents the specified public member field for the supplied class.
      */
-    static public Field getField(Class c, String name) throws ReflectionException {
+    static public FieldEmu getField(Class c, String name) throws ReflectionException {
         try {
             java.lang.reflect.Field field = c.getField(name);
-            return new Field(field);
+            return new FieldEmu(field);
         }
         catch(Throwable e) {
             e.printStackTrace();
@@ -278,24 +278,24 @@ public final class ClassReflectionEmu {
     }
 
     /**
-     * Returns an array of {@link Field} objects reflecting all the fields declared by the supplied class.
+     * Returns an array of {@link FieldEmu} objects reflecting all the fields declared by the supplied class.
      */
-    static public Field[] getDeclaredFields(Class c) {
+    static public FieldEmu[] getDeclaredFields(Class c) {
         java.lang.reflect.Field[] fields = c.getDeclaredFields();
-        Field[] result = new Field[fields.length];
+        FieldEmu[] result = new FieldEmu[fields.length];
         for(int i = 0, j = fields.length; i < j; i++) {
-            result[i] = new Field(fields[i]);
+            result[i] = new FieldEmu(fields[i]);
         }
         return result;
     }
 
     /**
-     * Returns a {@link Field} that represents the specified declared field for the supplied class.
+     * Returns a {@link FieldEmu} that represents the specified declared field for the supplied class.
      */
-    static public Field getDeclaredField(Class c, String name) throws ReflectionException {
+    static public FieldEmu getDeclaredField(Class c, String name) throws ReflectionException {
         try {
             java.lang.reflect.Field declaredField = c.getDeclaredField(name);
-            return new Field(declaredField);
+            return new FieldEmu(declaredField);
         }
         catch(Throwable e) {
             e.printStackTrace();
