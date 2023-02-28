@@ -16,7 +16,6 @@ clean.doFirst {
 }
 
 tasks.register('platformAll', Jar) {
-    archiveClassifier.set("natives-desktop")
     from zipTree(projectDir.toString() + "/../gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
 }
 
@@ -29,7 +28,7 @@ publishing {
         natives(MavenPublication) {
             version project.gdxTeaVMVersion
             project.version = project.gdxTeaVMVersion
-            artifactId module_name + "-platform"
+            artifactId module_name + "-desktop"
             artifact platformAll
         }
     }

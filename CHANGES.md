@@ -1,6 +1,7 @@
 [1.0.0-SNAPSHOT]
 - Option in App config to show download logs. Default is set to false.
 - Implement setApplicationLogger method.
+- Rename bullet desktop lib from platform to desktop
 
 [1.0.0-b4]
 - Fix an issue with TeaClassloader that was giving annotation error when building artemis games
