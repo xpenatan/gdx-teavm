@@ -5,6 +5,8 @@ include ":extensions:gdx-bullet:gdx-bullet"
 include ":extensions:gdx-bullet:gdx-bullet-base"
 include ":extensions:gdx-bullet:gdx-bullet-build"
 include ":extensions:gdx-bullet:gdx-bullet-teavm"
+include ":extensions:gdx-bullet:gdx-bullet-desktop"
+
 include ":extensions:gdx-box2d:gdx-box2d-base"
 include ":extensions:gdx-box2d:gdx-box2d-build"
 include ":extensions:gdx-box2d:gdx-box2d-teavm"

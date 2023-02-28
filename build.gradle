@@ -27,6 +27,7 @@ var libProjects = [
         project(":extensions:gdx-freetype-teavm"),
         project(":extensions:gdx-bullet:gdx-bullet"),
         project(":extensions:gdx-bullet:gdx-bullet-teavm"),
+        project(":extensions:gdx-bullet:gdx-bullet-desktop"),
         project(":extensions:gdx-box2d:gdx-box2d-teavm"),
         project(":tools:generator:core")
 ]

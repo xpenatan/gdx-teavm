@@ -7,8 +7,8 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
 
-    // teaVM Version
-    implementation files("../../../extensions/gdx-bullet/gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
+    // gdx-teavm Version
+    implementation project(":extensions:gdx-bullet:gdx-bullet-desktop")
 
     //GDX Version
 //    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"

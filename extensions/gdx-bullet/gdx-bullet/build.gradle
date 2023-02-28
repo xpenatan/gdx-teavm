@@ -15,21 +15,11 @@ clean.doFirst {
     project.delete(files(srcPath))
 }
 
-tasks.register('platformAll', Jar) {
-    from zipTree(projectDir.toString() + "/../gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
             artifactId = module_name
             from components.java
-        }
-        natives(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name + "-desktop"
-            artifact platformAll
         }
     }
 }
