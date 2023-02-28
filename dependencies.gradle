@@ -19,8 +19,7 @@ project.ext {
     gdxVersion = "1.11.0"
     jParserVersion = "1.0.0-SNAPSHOT"
 
-    jDearImguiVersion = '1.0.0-SNAPSHOT'
-    jDearImguiGdxVersion = "1.0.0-SNAPSHOT"
+    gdxImGuiVersion = '1.0.0-SNAPSHOT'
     gdxFrameViewportVersion = "1.0.0-SNAPSHOT"
 
     reflectionVersion = "0.10.2"
