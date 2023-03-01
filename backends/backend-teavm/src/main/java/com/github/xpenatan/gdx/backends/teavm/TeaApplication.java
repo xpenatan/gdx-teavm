@@ -305,6 +305,10 @@ public class TeaApplication implements Application, Runnable {
         return preloader;
     }
 
+    public TeaApplicationConfiguration getConfig() {
+        return config;
+    }
+
     @Override
     public ApplicationListener getApplicationListener() {
         return appListener;
@@ -410,7 +414,7 @@ public class TeaApplication implements Application, Runnable {
         Preferences pref = prefs.get(name);
         if(pref == null) {
             Storage storage = Storage.getLocalStorage();;
-            pref = new TeaPreferences(storage, name);
+            pref = new TeaPreferences(storage, config.storagePrefix + name);
             prefs.put(name, pref);
         }
         return pref;

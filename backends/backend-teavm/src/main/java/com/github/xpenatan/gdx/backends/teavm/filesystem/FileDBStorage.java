@@ -30,10 +30,6 @@ final class FileDBStorage extends FileDB {
         this.store = store;
     }
 
-    Store storage() {
-        return store;
-    }
-
     @Override
     public InputStream read(TeaFileHandle file) {
         // we obtain the stored byte array
@@ -70,7 +66,7 @@ final class FileDBStorage extends FileDB {
         for(int i = 0; i < length; i++) {
             // cut the identifier for files and directories and add to path list
             String key = store.key(i);
-            if (key.startsWith(ID_FOR_DIR) || key.startsWith(ID_FOR_FILE)) {
+            if ((key != null) && ((key.startsWith(ID_FOR_DIR) || key.startsWith(ID_FOR_FILE)))) {
                 String path = key.substring(ID_LENGTH);
                 if(path.startsWith(dir)) {
                     paths.add(path);

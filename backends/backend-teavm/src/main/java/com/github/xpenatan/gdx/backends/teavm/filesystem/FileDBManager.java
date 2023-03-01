@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
+import com.badlogic.gdx.Gdx;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 
 import java.io.InputStream;
@@ -21,7 +23,7 @@ public final class FileDBManager extends FileDB {
     private final FileDBStorage memory;
 
     FileDBManager() {
-        localStorage = new FileDBStorage(new StoreLocal());
+        localStorage = new FileDBStorage(new StoreLocal(((TeaApplication)Gdx.app).getConfig().storagePrefix));
         memory = new FileDBStorage(new StoreMemory());
     }
 
