@@ -13,6 +13,17 @@ public class TeaApplicationConfiguration {
     public boolean preloadAssets = true;
 
     /**
+     * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the
+     * data separate for those applications, you will need to set unique prefixes. This is useful if you are
+     * e.g. uploading multiple webapps to itch.io and want to keep the data separate for each application.
+     * <p>
+     * For example use "app1_" for one, and "app2_" for the other application, so the data that is stored in the
+     * browser is not shared between the applications. If you leave the storage prefix at "", all the data
+     * and files stored will be shared between the applications.
+     */
+    public String storagePrefix = "";
+
+    /**
      * Show download logs.
      */
     public boolean showDownloadLogs = false;

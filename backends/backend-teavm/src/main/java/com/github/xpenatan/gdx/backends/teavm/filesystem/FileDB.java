@@ -1,8 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayOutputStream;
 import java.io.FileFilter;
@@ -82,7 +84,7 @@ public abstract class FileDB {
             if((path.length() > 0) && (path.charAt(path.length() - 1) == '/')) {
                 path = path.substring(0, path.length() - 1);
             }
-            files[i] = new TeaFileHandle(null, path, Files.FileType.Local);
+            files[i] = new TeaFileHandle(((TeaApplication)Gdx.app).getPreloader(), path, Files.FileType.Local);
         }
         return files;
     }
