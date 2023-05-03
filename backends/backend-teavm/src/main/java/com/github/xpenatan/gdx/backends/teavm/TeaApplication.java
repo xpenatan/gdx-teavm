@@ -107,11 +107,12 @@ public class TeaApplication implements Application, Runnable {
         if (indexQM >= 0) {
           hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
         }
-        preloader = new Preloader(hostPageBaseURL);
+        graphics = new TeaGraphics(config);
+
+        preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
         preloader.preload(config.preloadAssets, "assets.txt");
 
-        graphics = new TeaGraphics(config);
         input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);
         net = new TeaNet();

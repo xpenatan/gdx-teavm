@@ -8,8 +8,23 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.dom.DataTransferWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.DragEventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.FileListWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.FileReaderWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.FileWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -17,6 +32,7 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import org.teavm.jso.browser.Window;
 
 /**
  * @author xpenatan
@@ -52,8 +68,97 @@ public class Preloader {
 
     public final String baseUrl;
 
-    public Preloader(String newBaseURL) {
+    public Preloader(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
         baseUrl = newBaseURL;
+
+        setupFileDrop(canvas, teaApplication);
+    }
+
+    private void setupFileDrop(HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+        TeaApplicationConfiguration config = teaApplication.getConfig();
+        if(config.windowListener != null) {
+            HTMLDocumentWrapper document = canvas.getOwnerDocument();
+            document.addEventListener("dragenter", new EventListenerWrapper() {
+                @Override
+                public void handleEvent(EventWrapper evt) {
+                    evt.preventDefault();
+                }
+            }, false);
+            document.addEventListener("dragover", new EventListenerWrapper() {
+                @Override
+                public void handleEvent(EventWrapper evt) {
+                    evt.preventDefault();
+                }
+            }, false);
+            document.addEventListener("drop", new EventListenerWrapper() {
+                @Override
+                public void handleEvent(EventWrapper evt) {
+                    evt.preventDefault();
+                    DragEventWrapper event = (DragEventWrapper)evt;
+
+                    DataTransferWrapper dataTransfer = event.getDataTransfer();
+
+                    FileListWrapper files = dataTransfer.getFiles();
+
+                    int length = files.getLength();
+                    if(length > 0) {
+                        Array<String> droppedFiles = new Array<>();
+                        for(int i = 0; i < length; i++) {
+                            FileWrapper itemWrapper = files.get(i);
+                            String name = itemWrapper.getName();
+                            AssetType type = AssetFilter.getType(name);
+                            FileReaderWrapper fileReader = FileReaderWrapper.create();
+                            fileReader.addEventListener("load", new EventListenerWrapper() {
+                                @Override
+                                public void handleEvent(EventWrapper evt) {
+                                    FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
+                                    Object obj = null;
+
+                                    if(type == AssetType.Binary || type == AssetType.Audio) {
+                                        ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
+                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        obj = new Blob(arrayBuffer, data);
+                                    }
+                                    else if(type == AssetType.Image) {
+                                        DocumentWrapper document = (DocumentWrapper)Window.current().getDocument();
+                                        final HTMLImageElementWrapper image = (HTMLImageElementWrapper)document.createElement("img");
+                                        String baseUrl = target.getResultAsString();
+                                        image.setSrc(baseUrl);
+                                        obj = image;
+                                    }
+                                    else if(type == AssetType.Text) {
+                                        obj = target.getResultAsString();
+                                    }
+
+                                    if(obj != null) {
+                                        putAssetInMap(type, name, obj);
+                                        droppedFiles.add(name);
+                                        if(droppedFiles.size == length) {
+                                            teaApplication.postRunnable(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    String[] array = droppedFiles.toArray();
+                                                    config.windowListener.filesDropped(array);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                            if(type == AssetType.Binary || type == AssetType.Audio) {
+                                fileReader.readAsArrayBuffer(itemWrapper);
+                            }
+                            else if(type == AssetType.Image) {
+                                fileReader.readAsDataURL(itemWrapper);
+                            }
+                            else if(type == AssetType.Text) {
+                                fileReader.readAsText(itemWrapper);
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     public String getAssetUrl() {

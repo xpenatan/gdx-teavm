@@ -7,6 +7,9 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
  */
 public class TeaApplicationConfiguration {
 
+    /** Sets the {@link TeaWindowListener} which will be informed about teavm events. */
+    public TeaWindowListener windowListener;
+
     /**
      * Load assets before starting the game. For custom loading, change to false.
      */

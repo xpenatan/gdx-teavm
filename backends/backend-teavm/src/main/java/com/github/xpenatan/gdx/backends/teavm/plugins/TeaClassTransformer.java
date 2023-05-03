@@ -5,7 +5,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventTargetWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
@@ -258,9 +257,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "getOwnerDocument", null);
 
             classHolder = findClassHolder(cls, context, FloatArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, EventTargetWrapper.class);
             setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, EventListenerWrapper.class);
