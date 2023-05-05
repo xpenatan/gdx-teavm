@@ -118,6 +118,7 @@ public class TeaApplication implements Application, Runnable {
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
+        initGdx();
         initSound();
 
         //TODO remove script loading from application
@@ -281,27 +282,6 @@ public class TeaApplication implements Application, Runnable {
         this.queueAppListener = applicationListener;
     }
 
-    private void initSound() {
-        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                TeaSoundManager soundManager = new TeaSoundManager();
-                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
-                    @Override
-                    public void onready() {
-                        audio = new TeaAudio(soundManager);
-                        Gdx.audio = audio;
-                    }
-
-                    @Override
-                    public void ontimeout() {
-                    }
-                });
-                return true;
-            }
-        });
-    }
-
     public Preloader getPreloader() {
         return preloader;
     }
@@ -460,6 +440,36 @@ public class TeaApplication implements Application, Runnable {
     }
 
     // ##################### NATIVE CALLS #####################
+
+    private void initGdx() {
+        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+        });
+    }
+
+    private void initSound() {
+        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                TeaSoundManager soundManager = new TeaSoundManager();
+                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
+                    @Override
+                    public void onready() {
+                        audio = new TeaAudio(soundManager);
+                        Gdx.audio = audio;
+                    }
+
+                    @Override
+                    public void ontimeout() {
+                    }
+                });
+                return true;
+            }
+        });
+    }
 
     public void initBulletPhysics(TeaApplication application) {
         Preloader preloader = application.getPreloader();
