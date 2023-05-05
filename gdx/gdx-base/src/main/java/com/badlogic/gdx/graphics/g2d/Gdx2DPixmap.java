@@ -148,10 +148,10 @@ public class Gdx2DPixmap implements Disposable {
 //		this.width = pixmap.width;
 //	}
 //
-//	@Override
-//	public void dispose () {
+	@Override
+	public void dispose () {
 //		free(basePtr);
-//	}
+	}
 //
 //	public void clear (int color) {
 //		clear(basePtr, color);
