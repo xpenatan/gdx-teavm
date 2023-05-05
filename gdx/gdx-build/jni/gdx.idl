@@ -1,0 +1,24 @@
+interface gdx2d_pixmap {
+};
+
+interface Gdx {
+    gdx2d_pixmap gdx2d_load(any buffer, long len);
+    gdx2d_pixmap gdx2d_new(long width, long height, long format);
+    void gdx2d_free([Const] gdx2d_pixmap pixmap);
+    void gdx2d_set_blend(gdx2d_pixmap pixmap, long blend);
+    void gdx2d_set_scale(gdx2d_pixmap pixmap, long scale);
+    [Const]DOMString  gdx2d_get_failure_reason();
+    void gdx2d_clear([Const] gdx2d_pixmap pixmap, long col);
+    void gdx2d_set_pixel([Const] gdx2d_pixmap pixmap, long x, long y, long col);
+    long gdx2d_get_pixel([Const] gdx2d_pixmap pixmap, long x, long y);
+    void gdx2d_draw_line([Const] gdx2d_pixmap pixmap, long x, long y, long x2, long y2, long col);
+    void gdx2d_draw_rect([Const] gdx2d_pixmap pixmap, long x, long y, long width, long height, long col);
+    void gdx2d_draw_circle([Const] gdx2d_pixmap pixmap, long x, long y, long radius, long col);
+    void gdx2d_fill_rect([Const] gdx2d_pixmap pixmap, long x, long y, long width, long height, long col);
+    void gdx2d_fill_circle([Const] gdx2d_pixmap pixmap, long x, long y, long radius, long col);
+    void gdx2d_fill_triangle([Const] gdx2d_pixmap pixmap, long x1, long y1, long x2, long y2, long x3, long y3, long col);
+    void gdx2d_draw_pixmap([Const] gdx2d_pixmap src_pixmap, [Const] gdx2d_pixmap dst_pixmap,
+                            long src_x, long src_y, long src_width, long src_height,
+                            long dst_x, long dst_y, long dst_width, long dst_height);
+    long gdx2d_bytes_per_pixel(long format);
+};

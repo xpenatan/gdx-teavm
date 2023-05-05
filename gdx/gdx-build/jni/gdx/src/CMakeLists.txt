@@ -1,0 +1,1 @@
+SUBDIRS( GDX/gdx2d )

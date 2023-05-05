@@ -1,3 +1,7 @@
+include ":gdx:gdx-base"
+include ":gdx:gdx-build"
+include ":gdx:gdx-teavm"
+
 include ":backends:backend-teavm"
 
 include ":extensions:gdx-freetype-teavm"
