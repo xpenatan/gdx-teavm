@@ -1,7 +1,12 @@
 [1.0.0-SNAPSHOT]
 - Option in App config to show download logs. Default is set to false.
 - Implement setApplicationLogger method.
-- Rename bullet desktop lib from platform to desktop
+- Rename bullet desktop lib from platform to desktop.
+- Add file drag & drop using TeaWindowListener in App config.
+- Add WIP Gdx2DPixmap. Can toggle in App config.
+- Update teavm to 0.9.0-dev-4
+- Add userAgent system property
+- Add Storage prefix #94
 
 [1.0.0-b4]
 - Fix an issue with TeaClassloader that was giving annotation error when building artemis games
