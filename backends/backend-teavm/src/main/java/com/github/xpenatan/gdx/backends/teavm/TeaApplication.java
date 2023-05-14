@@ -118,7 +118,10 @@ public class TeaApplication implements Application, Runnable {
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
-        initGdx();
+
+        if(config.useNativePixmap) {
+            initGdx();
+        }
         initSound();
 
         //TODO remove script loading from application
