@@ -7,6 +7,11 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
  */
 public class TeaApplicationConfiguration {
 
+    /**
+     * Experimental webassembly pixmap
+     */
+    public boolean useNativePixmap = false;
+
     /** Sets the {@link TeaWindowListener} which will be informed about teavm events. */
     public TeaWindowListener windowListener;
 

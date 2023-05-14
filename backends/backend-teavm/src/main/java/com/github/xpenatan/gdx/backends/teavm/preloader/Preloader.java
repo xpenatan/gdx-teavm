@@ -38,11 +38,11 @@ import org.teavm.jso.browser.Window;
  * @author xpenatan
  */
 public class Preloader {
-    public ObjectMap<String, Void> directories = new ObjectMap<String, Void>();
-    public ObjectMap<String, HTMLImageElementWrapper> images = new ObjectMap<String, HTMLImageElementWrapper>();
-    public ObjectMap<String, Blob> audio = new ObjectMap<String, Blob>();
-    public ObjectMap<String, String> texts = new ObjectMap<String, String>();
-    public ObjectMap<String, Blob> binaries = new ObjectMap<String, Blob>();
+    public ObjectMap<String, Void> directories = new ObjectMap<>();
+    public ObjectMap<String, Blob> images = new ObjectMap<>();
+    public ObjectMap<String, Blob> audio = new ObjectMap<>();
+    public ObjectMap<String, String> texts = new ObjectMap<>();
+    public ObjectMap<String, Blob> binaries = new ObjectMap<>();
     public Array<Asset> assets = new Array<>();
     public int assetTotal = -1;
 
@@ -124,7 +124,12 @@ public class Preloader {
                                         final HTMLImageElementWrapper image = (HTMLImageElementWrapper)document.createElement("img");
                                         String baseUrl = target.getResultAsString();
                                         image.setSrc(baseUrl);
-                                        obj = image;
+
+                                        ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
+                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        Blob blob = new Blob(arrayBuffer, data);
+                                        blob.setImage(image);
+                                        obj = blob;
                                     }
                                     else if(type == AssetType.Text) {
                                         obj = target.getResultAsString();
@@ -319,7 +324,7 @@ public class Preloader {
                 texts.put(url, (String)result);
                 break;
             case Image:
-                images.put(url, (HTMLImageElementWrapper)result);
+                images.put(url, (Blob)result);
                 break;
             case Binary:
                 binaries.put(url, (Blob)result);
@@ -471,7 +476,6 @@ public class Preloader {
     }
 
     public void printLoadedAssets() {
-        Entries<String, HTMLImageElementWrapper> iterator = images.iterator();
         System.out.println("### Text Assets: ");
         printKeys(texts);
         System.out.println("##########");

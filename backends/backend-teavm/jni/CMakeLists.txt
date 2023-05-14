@@ -28,7 +28,7 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type")
 set(INITIAL_MEMORY 67108864 CACHE STRING "Total Memory")
 
 # Enable for resizable heap, with some amount of slowness
-set(ALLOW_MEMORY_GROWTH 0 CACHE STRING "Allow Memory Growth")
+set(ALLOW_MEMORY_GROWTH 1 CACHE STRING "Allow Memory Growth")
 
 set(EMCC_ARGS
   -O3
@@ -43,8 +43,8 @@ set(EMCC_ARGS
   -s MODULARIZE=1
   -s NO_FILESYSTEM=1
   -s INITIAL_MEMORY=${INITIAL_MEMORY}
-  -s EXPORTED_FUNCTIONS=["_free","_malloc"]
-  -s EXPORTED_RUNTIME_METHODS=["UTF8ToString"]
+  -s EXPORTED_FUNCTIONS=_free,_malloc
+  -s EXPORTED_RUNTIME_METHODS=UTF8ToString,writeArrayToMemory
 )
 
 #set(EMCC_JS_ARGS ${EMCC_ARGS}

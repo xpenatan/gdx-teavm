@@ -67,7 +67,7 @@ public class AssetDownloadImpl implements AssetDownload {
                 loadText(async, url, (AssetLoaderListener<String>)listener);
                 break;
             case Image:
-                loadImage(async, url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>)listener);
+                loadImage(async, url, mimeType, (AssetLoaderListener<Blob>)listener);
                 break;
             case Binary:
                 loadBinary(async, url, (AssetLoaderListener<Blob>)listener);
@@ -255,12 +255,12 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     public void loadImage(boolean async, final String url, final String mimeType,
-                          final AssetLoaderListener<HTMLImageElementWrapper> listener) {
+                          final AssetLoaderListener<Blob> listener) {
         loadImage(async, url, mimeType, null, listener);
     }
 
     public void loadImage(boolean async, final String url, final String mimeType, final String crossOrigin,
-                          final AssetLoaderListener<HTMLImageElementWrapper> listener) {
+                          final AssetLoaderListener<Blob> listener) {
         loadBinary(async, url, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
@@ -286,8 +286,10 @@ public class AssetDownloadImpl implements AssetDownload {
                     public void handleEvent(EventWrapper evt) {
                         if(evt.getType().equals("error"))
                             listener.onFailure(url);
-                        else
-                            listener.onSuccess(url, image);
+                        else {
+                            result.setImage(image);
+                            listener.onSuccess(url, result);
+                        }
                         subtractQueue();
                     }
                 });

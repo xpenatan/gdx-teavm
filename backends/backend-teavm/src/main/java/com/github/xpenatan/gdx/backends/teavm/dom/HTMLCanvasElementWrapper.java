@@ -1,21 +1,23 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSObject;
+
 /**
  * @author xpenatan
  */
-public interface HTMLCanvasElementWrapper extends HTMLElementWrapper, EventTargetWrapper {
+public interface HTMLCanvasElementWrapper extends HTMLElementWrapper, EventTargetWrapper, JSObject {
 
-    public HTMLDocumentWrapper getOwnerDocument();
+    HTMLDocumentWrapper getOwnerDocument();
 
-    public int getWidth();
+    int getWidth();
 
-    public void setWidth(int width);
+    void setWidth(int width);
 
-    public int getHeight();
+    int getHeight();
 
-    public void setHeight(int height);
+    void setHeight(int height);
 
-    public String toDataURL(String type);
+    String toDataURL(String type);
 
-    public WebJSObject getContext(String value);
+    WebJSObject getContext(String value);
 }

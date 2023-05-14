@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import java.io.IOException;
@@ -12,6 +13,7 @@ public final class Blob {
 
     private ArrayBufferWrapper response;
     private final Int8ArrayWrapper data;
+    private HTMLImageElementWrapper image;
 
     public Blob(ArrayBufferWrapper response, Int8ArrayWrapper data) {
         this.data = data;
@@ -24,6 +26,14 @@ public final class Blob {
 
     public ArrayBufferWrapper getResponse() {
         return response;
+    }
+
+    public HTMLImageElementWrapper getImage() {
+        return image;
+    }
+
+    public void setImage(HTMLImageElementWrapper image) {
+        this.image = image;
     }
 
     public int length() {
