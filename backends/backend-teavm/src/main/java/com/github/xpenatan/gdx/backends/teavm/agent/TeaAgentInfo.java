@@ -31,4 +31,7 @@ public interface TeaAgentInfo extends JSObject {
 
     @JSProperty
     boolean isWindows();
+
+    @JSProperty
+    String getUserAgent();
 }

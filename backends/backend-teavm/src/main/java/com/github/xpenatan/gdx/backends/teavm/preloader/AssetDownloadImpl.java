@@ -26,9 +26,10 @@ public class AssetDownloadImpl implements AssetDownload {
     private boolean useBrowserCache = false;
     private boolean useInlineBase64 = false;
 
-    private boolean showLog = true;
+    private boolean showLogs = true;
 
-    public AssetDownloadImpl() {
+    public AssetDownloadImpl(boolean showDownloadLogs) {
+        showLogs = showDownloadLogs;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class AssetDownloadImpl implements AssetDownload {
                 loadText(async, url, (AssetLoaderListener<String>)listener);
                 break;
             case Image:
-                loadImage(async, url, mimeType, (AssetLoaderListener<HTMLImageElementWrapper>)listener);
+                loadImage(async, url, mimeType, (AssetLoaderListener<Blob>)listener);
                 break;
             case Binary:
                 loadBinary(async, url, (AssetLoaderListener<Blob>)listener);
@@ -84,7 +85,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadText(boolean async, String url, AssetLoaderListener<String> listener) {
-        if(showLog)
+        if(showLogs)
             System.out.println("Loading asset : " + url);
 
         // don't load on main thread
@@ -113,7 +114,7 @@ public class AssetDownloadImpl implements AssetDownload {
                                 }
                             }
                             else {
-                                if(showLog)
+                                if(showLogs)
                                     System.out.println("Asset loaded: " + url);
                                 listener.onSuccess(url, request.getResponseText());
                             }
@@ -131,7 +132,7 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
-        if(showLog)
+        if(showLogs)
             System.out.println("Loading script : " + url);
 
         // don't load on main thread
@@ -160,7 +161,7 @@ public class AssetDownloadImpl implements AssetDownload {
                                 }
                             }
                             else {
-                                if(showLog)
+                                if(showLogs)
                                     System.out.println("Script loaded: " + url);
                                 NodeWrapper response = request.getResponse();
                                 TeaWindow currentWindow = TeaWindow.get();
@@ -202,7 +203,7 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
-        if(showLog)
+        if(showLogs)
             System.out.println("Loading asset : " + url);
 
         // don't load on main thread
@@ -231,7 +232,7 @@ public class AssetDownloadImpl implements AssetDownload {
                                 }
                             }
                             else {
-                                if(showLog)
+                                if(showLogs)
                                     System.out.println("Asset loaded: " + url);
 
                                 ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
@@ -254,12 +255,12 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     public void loadImage(boolean async, final String url, final String mimeType,
-                          final AssetLoaderListener<HTMLImageElementWrapper> listener) {
+                          final AssetLoaderListener<Blob> listener) {
         loadImage(async, url, mimeType, null, listener);
     }
 
     public void loadImage(boolean async, final String url, final String mimeType, final String crossOrigin,
-                          final AssetLoaderListener<HTMLImageElementWrapper> listener) {
+                          final AssetLoaderListener<Blob> listener) {
         loadBinary(async, url, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(double amount) {
@@ -285,8 +286,10 @@ public class AssetDownloadImpl implements AssetDownload {
                     public void handleEvent(EventWrapper evt) {
                         if(evt.getType().equals("error"))
                             listener.onFailure(url);
-                        else
-                            listener.onSuccess(url, image);
+                        else {
+                            result.setImage(image);
+                            listener.onSuccess(url, result);
+                        }
                         subtractQueue();
                     }
                 });

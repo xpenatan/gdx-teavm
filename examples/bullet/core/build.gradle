@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 group = project.groupId
 
 dependencies {

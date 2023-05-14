@@ -5,14 +5,11 @@ import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventHandlerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventTargetWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.KeyboardEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.MouseEventWrapper;
@@ -236,16 +233,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             classHolder = findClassHolder(cls, context, LongArrayWrapper.class);
             setClassInterface(classHolder, JSObject.class);
 
-            classHolder = findClassHolder(cls, context, ImageDataWrapper.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getData", null);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, HTMLImageElementWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "setSrc", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getHeight", null);
-
             classHolder = findClassHolder(cls, context, HTMLVideoElementWrapper.class);
             setClassInterface(classHolder, JSObject.class);
 
@@ -258,9 +245,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "getOwnerDocument", null);
 
             classHolder = findClassHolder(cls, context, FloatArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, EventTargetWrapper.class);
             setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, EventListenerWrapper.class);

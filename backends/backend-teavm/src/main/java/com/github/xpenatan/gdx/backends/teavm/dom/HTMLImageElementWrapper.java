@@ -1,13 +1,21 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
-public interface HTMLImageElementWrapper extends HTMLElementWrapper {
+public interface HTMLImageElementWrapper extends HTMLElementWrapper, JSObject {
+    @JSProperty
+    void setSrc(String src);
 
-    public void setSrc(String src);
+    @JSProperty
+    String getSrc();
 
-    public int getWidth();
+    @JSProperty
+    int getWidth();
 
-    public int getHeight();
+    @JSProperty
+    int getHeight();
 }

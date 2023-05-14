@@ -8,6 +8,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Float64Array;
@@ -15,6 +16,7 @@ import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
 import org.teavm.jso.typedarrays.Uint8Array;
+import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
 /**
  * @author xpenatan
@@ -134,9 +136,39 @@ public class TeaTypedArrays extends TypedArrays {
     }
 
     @Override
+    public Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint8ClampedArrayWrapper)Uint8ClampedArray.create(arrayBuffer);
+    }
+
+    @Override
+    public Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer, int offset) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint8ClampedArrayWrapper)Uint8ClampedArray.create(arrayBuffer, offset);
+    }
+
+    @Override
+    public Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer, int offset, int length) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint8ClampedArrayWrapper)Uint8ClampedArray.create(arrayBuffer, offset, length);
+    }
+
+    @Override
     public Uint8ArrayWrapper createUint8Array(int length) {
         Uint8Array create = Uint8Array.create(length);
         return (Uint8ArrayWrapper)create;
+    }
+
+    @Override
+    public Uint8ArrayWrapper createUint8Array(ArrayBufferWrapper buffer, int offset) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint8ArrayWrapper)Uint8Array.create(arrayBuffer, offset);
+    }
+
+    @Override
+    public Uint8ArrayWrapper createUint8Array(ArrayBufferWrapper buffer, int offset, int length) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint8ArrayWrapper)Uint8Array.create(arrayBuffer, offset, length);
     }
 
     @Override

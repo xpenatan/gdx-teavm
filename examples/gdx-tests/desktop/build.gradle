@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 import org.gradle.internal.os.OperatingSystem
 
 dependencies {
@@ -10,7 +6,7 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 
-    implementation "com.github.xpenatan.jDear-Imgui:core-platform:$project.jDearImguiVersion:natives-desktop"
+    implementation "com.github.xpenatan.gdx-imgui:core-desktop:$project.gdxImGuiVersion"
 
     implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-box2d-platform:$project.gdxVersion:natives-desktop"
@@ -21,7 +17,8 @@ project.ext.mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
 // Change to your source asset directory
 project.ext.assetsDir = new File("D:\\Dev\\Projects\\java\\Libgdx\\tests\\gdx-tests-android\\assets\\");
 
-task runGdxTestsDesktop(dependsOn: classes, type: JavaExec) {
+tasks.register('runGdxTestsDesktop', JavaExec) {
+    dependsOn classes
     setGroup("examples-desktop")
     setDescription("Run gdx tests example")
     mainClass.set(project.mainClassName)

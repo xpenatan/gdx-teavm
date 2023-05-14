@@ -1,9 +1,5 @@
-plugins {
-    id 'java'
-}
-
 project.ext.mainClassName = "com.github.xpenatan.gdx.examples.bullet.Main"
-sourceSets.main.java.srcDirs = ["src/main/java/"]
+
 sourceSets.main.resources.srcDirs = ["../desktop/assets"]
 
 dependencies {
@@ -11,14 +7,15 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
 
-    // teaVM Version
-    implementation files("../../../extensions/gdx-bullet/gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
+    // gdx-teavm Version
+    implementation project(":extensions:gdx-bullet:gdx-bullet-desktop")
 
     //GDX Version
 //    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$project.gdxVersion:natives-desktop"
 }
 
-task runBulletDesktop(dependsOn: classes, type: JavaExec) {
+tasks.register('runBulletDesktop', JavaExec) {
+    dependsOn classes
     setGroup("examples-desktop")
     setDescription("Run bullet example")
     mainClass.set(project.mainClassName)
@@ -30,7 +27,7 @@ task runBulletDesktop(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task dist(type: Jar) {
+tasks.register('dist', Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }

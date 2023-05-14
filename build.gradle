@@ -1,26 +1,10 @@
 apply from: 'dependencies.gradle'
 
-allprojects {
-    apply plugin: 'maven-publish'
+subprojects {
     apply plugin: 'java'
 
     sourceCompatibility = 11
     targetCompatibility = 11
-
-    ext {
-        repoUser = System.getenv('USER')
-        repoPass = System.getenv('PASSWORD')
-        repoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-        repoUrlSnapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
-
-        def localFile = project.rootProject.file("local.properties")
-        if (localFile.exists()) {
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file("local.properties").newDataInputStream())
-            repoUser = properties.getProperty("xUser")
-            repoPass = properties.getProperty("xPass")
-        }
-    }
 
     repositories {
         mavenLocal()
@@ -32,24 +16,87 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 
+    configurations.configureEach {
+        // Check for updates every build
+        resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+    }
+}
+
+var libProjects = [
+        project(":backends:backend-teavm"),
+        project(":extensions:gdx-freetype-teavm"),
+        project(":extensions:gdx-bullet:gdx-bullet"),
+        project(":extensions:gdx-bullet:gdx-bullet-teavm"),
+        project(":extensions:gdx-bullet:gdx-bullet-desktop"),
+        project(":extensions:gdx-box2d:gdx-box2d-teavm"),
+        project(":tools:generator:core")
+]
+
+configure(libProjects) {
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
     publishing {
         repositories {
             maven {
                 url {
                     def ver = project.version.toString()
                     def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
+                    def repoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def repoUrlSnapshot = "https://oss.sonatype.org/content/repositories/snapshots/"
                     isSnapshot ? repoUrlSnapshot : repoUrl
                 }
                 credentials {
-                    username repoUser
-                    password repoPass
+                    username System.getenv('USER')
+                    password System.getenv('PASSWORD')
                 }
             }
         }
     }
 
-    configurations.all {
-        // Check for updates every build
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    publishing.publications.configureEach { mav ->
+        pom {
+            name = "Gdx-teaVM"
+            description = "Tool to generate libgdx to javascript using teaVM"
+            url = "https://github.com/xpenatan/gdx-teavm"
+            developers {
+                developer {
+                    id = "Xpe"
+                    name = "Natan"
+                }
+            }
+            scm {
+                connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
+                developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
+                url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
+            }
+            licenses {
+                license {
+                    name = "The Apache License, Version 2.0"
+                    url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                }
+            }
+        }
+    }
+
+    def signingKey = System.getenv("SIGNING_KEY")
+    def signingPassword = System.getenv("SIGNING_PASSWORD")
+    if(signingKey != null && signingPassword != null) {
+        signing {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            publishing.publications.configureEach { pub ->
+                sign pub
+            }
+        }
     }
 }

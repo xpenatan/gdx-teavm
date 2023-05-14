@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
+
+PROJECT(GDX)
+SET(GDX_VERSION 1.00)
+
+SUBDIRS(src)

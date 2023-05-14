@@ -1,0 +1,56 @@
+name: Build and Upload
+
+on:
+  workflow_call:
+    inputs:
+      isRelease:
+        required: true
+        type: boolean
+      shouldUpload:
+        required: true
+        type: boolean
+
+env:
+  RELEASE: ${{ inputs.isRelease }}
+
+jobs:
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 11
+
+      - name: Check Ant
+        run: ant -version
+      - name: Set up MinGW
+        run: |
+          sudo apt install -y --force-yes mingw-w64 lib32z1
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Generate Native Project
+        run: ./gradlew generateNativeProject
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload to repository
+        if: ${{ inputs.shouldUpload }}
+        run: ./gradlew publish
+        env:
+          USER: ${{ secrets.USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          SIGNING_KEY: ${{ secrets.PGP_SECRET }}
+          SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}

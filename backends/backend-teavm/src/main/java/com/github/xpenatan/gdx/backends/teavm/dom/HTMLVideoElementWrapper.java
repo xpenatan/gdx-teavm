@@ -1,23 +1,25 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSObject;
+
 /**
  * @author xpenatan
  */
-public interface HTMLVideoElementWrapper {
+public interface HTMLVideoElementWrapper extends JSObject {
     // HTMLVideoElement
-    public int getWidth();
+    int getWidth();
 
-    public void setWidth(int width);
+    void setWidth(int width);
 
-    public int getHeight();
+    int getHeight();
 
-    public void setHeight(int height);
+    void setHeight(int height);
 
-    public int getVideoWidth();
+    int getVideoWidth();
 
-    public int getVideoHeight();
+    int getVideoHeight();
 
-    public String getPoster();
+    String getPoster();
 
-    public void setPoster(String poster);
+    void setPoster(String poster);
 }

@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
@@ -470,7 +471,10 @@ public class TeaGL20 implements GL20 {
                 int index = ((ByteBuffer)pixels).getInt(0);
                 PixmapEmu pixmap = PixmapEmu.pixmaps.get(index);
                 // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
-                if(pixmap.canUseImageElement()) {
+                if(pixmap.canUsePixmapData()) {
+                    gl.texImage2D(target, level, internalformat, width, height, border, format, type, pixmap.getPixmapData());
+                }
+                else if(pixmap.canUseImageElement()) {
                     gl.texImage2D(target, level, internalformat, format, type, pixmap.getImageElement());
                 }
                 else if(pixmap.canUseVideoElement()) {
@@ -505,7 +509,12 @@ public class TeaGL20 implements GL20 {
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
             PixmapEmu pixmap = PixmapEmu.pixmaps.get(index);
-            gl.texSubImage2D(target, level, xoffset, yoffset, format, type, pixmap.getCanvasElement());
+            if(pixmap.canUsePixmapData()) {
+                gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixmap.getPixmapData());
+            }
+            else {
+                gl.texSubImage2D(target, level, xoffset, yoffset, format, type, pixmap.getCanvasElement());
+            }
         }
     }
 

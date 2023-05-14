@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 group = project.groupId
 
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
@@ -13,7 +9,8 @@ dependencies {
     implementation "com.github.xpenatan.jParser:jParser-cpp:$project.jParserVersion"
 }
 
-task generateNativeProject(dependsOn: classes, type: JavaExec) {
+tasks.register('generateNativeProject', JavaExec) {
+    dependsOn classes
     setGroup("teavm")
     setDescription("Generate native project")
     mainClass.set(project.mainClassName)

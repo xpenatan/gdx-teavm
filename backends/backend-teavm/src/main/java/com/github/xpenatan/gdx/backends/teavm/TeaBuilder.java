@@ -385,6 +385,9 @@ public class TeaBuilder {
     }
 
     private static void scriptsDefault(ArrayList<String> filePath) {
+        filePath.add("gdx.js");
+        filePath.add("gdx.wasm.js");
+        filePath.add("gdx.wasm.wasm");
         filePath.add("soundmanager2-jsmin.js");
         filePath.add("freetype.js");
         filePath.add("bullet.js");

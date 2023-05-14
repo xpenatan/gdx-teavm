@@ -29,8 +29,6 @@ import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
 
-import java.util.List;
-
 /**
  * @author xpenatan
  */
@@ -62,7 +60,8 @@ public class TeaApplication implements Application, Runnable {
     private int lastWidth = -1;
     private int lastHeight = 1;
 
-    private TeaApplicationLogger logger;
+    private ApplicationLogger logger;
+    private int logLevel = LOG_ERROR;
 
     private Preloader preloader;
 
@@ -85,16 +84,17 @@ public class TeaApplication implements Application, Runnable {
     private void init() {
         TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
-        if(agentInfo.isWindows() == true)
+        System.setProperty("userAgent", TeaApplication.agentInfo.getUserAgent());
+        if(agentInfo.isWindows())
             System.setProperty("os.name", "Windows");
-        else if(agentInfo.isMacOS() == true)
+        else if(agentInfo.isMacOS())
             System.setProperty("os.name", "OS X");
-        else if(agentInfo.isLinux() == true)
+        else if(agentInfo.isLinux())
             System.setProperty("os.name", "Linux");
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl());
+        AssetDownloader.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
 
         AssetDownload instance = AssetDownloader.getInstance();
         hostPageBaseURL = instance.getHostPageBaseURL();
@@ -108,16 +108,21 @@ public class TeaApplication implements Application, Runnable {
         if (indexQM >= 0) {
           hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
         }
-        preloader = new Preloader(hostPageBaseURL);
+        graphics = new TeaGraphics(config);
+
+        preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
         preloader.preload(config.preloadAssets, "assets.txt");
 
-        graphics = new TeaGraphics(config);
         input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
+
+        if(config.useNativePixmap) {
+            initGdx();
+        }
         initSound();
 
         //TODO remove script loading from application
@@ -281,29 +286,12 @@ public class TeaApplication implements Application, Runnable {
         this.queueAppListener = applicationListener;
     }
 
-    private void initSound() {
-        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                TeaSoundManager soundManager = new TeaSoundManager();
-                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
-                    @Override
-                    public void onready() {
-                        audio = new TeaAudio(soundManager);
-                        Gdx.audio = audio;
-                    }
-
-                    @Override
-                    public void ontimeout() {
-                    }
-                });
-                return true;
-            }
-        });
-    }
-
     public Preloader getPreloader() {
         return preloader;
+    }
+
+    public TeaApplicationConfiguration getConfig() {
+        return config;
     }
 
     @Override
@@ -338,46 +326,47 @@ public class TeaApplication implements Application, Runnable {
 
     @Override
     public void log(String tag, String message) {
-        logger.log(tag, message);
+        if(logLevel >= LOG_INFO) getApplicationLogger().log(tag, message);
     }
 
     @Override
     public void log(String tag, String message, Throwable exception) {
-        logger.log(tag, message, exception);
+        if(logLevel >= LOG_INFO) getApplicationLogger().log(tag, message, exception);
     }
 
     @Override
     public void error(String tag, String message) {
-        logger.error(tag, message);
+        if(logLevel >= LOG_ERROR) getApplicationLogger().error(tag, message);
     }
 
     @Override
     public void error(String tag, String message, Throwable exception) {
-        logger.error(tag, message, exception);
+        if(logLevel >= LOG_ERROR) getApplicationLogger().error(tag, message, exception);
     }
 
     @Override
     public void debug(String tag, String message) {
-        logger.debug(tag, message);
+        if(logLevel >= LOG_DEBUG) getApplicationLogger().debug(tag, message);
     }
 
     @Override
     public void debug(String tag, String message, Throwable exception) {
-        logger.debug(tag, message, exception);
+        if(logLevel >= LOG_DEBUG) getApplicationLogger().debug(tag, message, exception);
     }
 
     @Override
     public void setLogLevel(int logLevel) {
-        logger.setLogLevel(logLevel);
+        this.logLevel = logLevel;
     }
 
     @Override
     public int getLogLevel() {
-        return logger.getLogLevel();
+        return logLevel;
     }
 
     @Override
     public void setApplicationLogger(ApplicationLogger applicationLogger) {
+        this.logger = applicationLogger;
     }
 
     @Override
@@ -410,7 +399,7 @@ public class TeaApplication implements Application, Runnable {
         Preferences pref = prefs.get(name);
         if(pref == null) {
             Storage storage = Storage.getLocalStorage();;
-            pref = new TeaPreferences(storage, name);
+            pref = new TeaPreferences(storage, config.storagePrefix + name);
             prefs.put(name, pref);
         }
         return pref;
@@ -455,6 +444,36 @@ public class TeaApplication implements Application, Runnable {
     }
 
     // ##################### NATIVE CALLS #####################
+
+    private void initGdx() {
+        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+        });
+    }
+
+    private void initSound() {
+        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                TeaSoundManager soundManager = new TeaSoundManager();
+                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
+                    @Override
+                    public void onready() {
+                        audio = new TeaAudio(soundManager);
+                        Gdx.audio = audio;
+                    }
+
+                    @Override
+                    public void ontimeout() {
+                    }
+                });
+                return true;
+            }
+        });
+    }
 
     public void initBulletPhysics(TeaApplication application) {
         Preloader preloader = application.getPreloader();

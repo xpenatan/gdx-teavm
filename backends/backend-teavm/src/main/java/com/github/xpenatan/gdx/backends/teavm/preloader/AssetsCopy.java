@@ -81,7 +81,7 @@ public class AssetsCopy {
                             dest.write(is, false);
                             String destPath = dest.path();
                             if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
-                                assets.add(new Asset(dest, defaultAssetFilter.getType(destPath)));
+                                assets.add(new Asset(dest, AssetFilter.getType(destPath)));
                             }
                             is.close();
                         }
@@ -221,7 +221,7 @@ public class AssetsCopy {
     private static void copyFile(FileWrapper source, FileWrapper dest, AssetFilter filter, ArrayList<Asset> assets) {
         if(!filter.accept(dest.path(), false)) return;
         try {
-            assets.add(new Asset(dest, filter.getType(dest.path())));
+            assets.add(new Asset(dest, AssetFilter.getType(dest.path())));
             InputStream read = source.read();
             dest.write(read, false);
             read.close();

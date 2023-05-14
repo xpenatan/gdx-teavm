@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'java-library'
 }
 
@@ -8,8 +7,8 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$project.gdxVersion"
 
-    implementation "com.github.xpenatan.jDear-Imgui:core:$project.jDearImguiVersion"
-    implementation "com.github.xpenatan.jDear-Imgui:gdx:$project.jDearImguiVersion"
+    implementation "com.github.xpenatan.gdx-imgui:core:$project.gdxImGuiVersion"
+    implementation "com.github.xpenatan.gdx-imgui:gdx:$project.gdxImGuiVersion"
 
     // Optional
     implementation "com.github.xpenatan:gdx-frame-viewport:$project.gdxFrameViewportVersion"

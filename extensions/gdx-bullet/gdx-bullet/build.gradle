@@ -1,22 +1,13 @@
-plugins {
-    id 'java'
-    id 'signing'
-}
-
 group = project.groupId
+version = project.teaBulletVersion
 
 def module_name = "gdx-bullet"
 
 sourceSets.main.resources.srcDirs = ["resources/"]
 
-configurations {
-    includeDep
-    implementation.extendsFrom includeDep
-}
-
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    includeDep "com.github.xpenatan.jParser:jParser-loader:$project.jParserVersion"
+    implementation "com.github.xpenatan.jParser:jParser-loader:$project.jParserVersion"
 }
 
 clean.doFirst {
@@ -24,117 +15,11 @@ clean.doFirst {
     project.delete(files(srcPath))
 }
 
-task platformAll(type: Jar) {
-    archiveClassifier.set("natives-desktop")
-    from zipTree(projectDir.toString() + "/../gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar")
-}
-
-task fromClasses(type: Jar) {
-    from(sourceSets.main.output) {
-    }
-}
-
-task javadocJar(type: Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-javadoc {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name
-            artifact fromClasses
-            artifact javadocJar
-            artifact sourcesJar
-
-            pom {
-                name = "Gdx-teaVM"
-                description = "Tool to generate libgdx to javascript using teaVM"
-                url = "https://github.com/xpenatan/gdx-teavm"
-                developers {
-                    developer {
-                        id = "Xpe"
-                        name = "Natan"
-                    }
-                }
-                scm {
-                    connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
-                    developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
-                    url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
-                }
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-                withXml {
-                    def dependencies = asNode().appendNode('dependencies')
-                    configurations.includeDep.allDependencies.each {
-                        def dependencyNode = dependencies.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
-                    }
-                }
-            }
+            artifactId = module_name
+            from components.java
         }
-        natives(MavenPublication) {
-            version project.gdxTeaVMVersion
-            project.version = project.gdxTeaVMVersion
-            artifactId module_name + "-platform"
-            artifact platformAll
-
-            pom {
-                name = "Gdx-teaVM"
-                description = "Tool to generate libgdx to javascript using teaVM"
-                url = "https://github.com/xpenatan/gdx-teavm"
-                developers {
-                    developer {
-                        id = "Xpe"
-                        name = "Natan"
-                    }
-                }
-                scm {
-                    connection = "scm:git:git://https://github.com/xpenatan/gdx-teavm.git"
-                    developerConnection = "scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git"
-                    url = "http://https://github.com/xpenatan/gdx-teavm/tree/master"
-                }
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-            }
-        }
-    }
-}
-
-signing {
-    def ver = project.version.toString()
-    def isSnapshot = ver.toUpperCase().contains("SNAPSHOT")
-    if(!isSnapshot) {
-        def signingKey = System.getenv("signingKey")
-        def signingPassword = System.getenv("signingPassword")
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.maven
-        sign publishing.publications.natives
     }
 }

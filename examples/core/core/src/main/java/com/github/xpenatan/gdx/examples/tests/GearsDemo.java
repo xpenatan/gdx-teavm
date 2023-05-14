@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.examples.tests;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -64,6 +65,16 @@ public class GearsDemo implements ApplicationListener {
 
     @Override
     public void create() {
+
+        String runtime = System.getProperty("java.runtime.name");
+        String osName = System.getProperty("os.name");
+        String userAgent = System.getProperty("userAgent");
+        Application.ApplicationType type = Gdx.app.getType();
+
+        System.out.println("Runtime: " + runtime);
+        System.out.println("Os Name: " + osName);
+        System.out.println("App type: " + type);
+        System.out.println("userAgent: " + userAgent);
 
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .2f, .2f, .2f, 2f));
