@@ -1,4 +1,7 @@
 [1.0.0-SNAPSHOT]
+-
+
+[1.0.0-b5]
 - Option in App config to show download logs. Default is set to false.
 - Implement setApplicationLogger method.
 - Rename bullet desktop lib from platform to desktop.
