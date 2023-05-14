@@ -84,6 +84,7 @@ public class TeaApplication implements Application, Runnable {
     private void init() {
         TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
+        System.setProperty("userAgent", TeaApplication.agentInfo.getUserAgent());
         if(agentInfo.isWindows())
             System.setProperty("os.name", "Windows");
         else if(agentInfo.isMacOS())

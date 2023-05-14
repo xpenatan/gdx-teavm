@@ -18,7 +18,8 @@ public class TeaWebAgent {
                     + "IE : userAgent.indexOf('msie') != -1,"
                     + "macOS : userAgent.indexOf('mac') != -1,"
                     + "linux : userAgent.indexOf('linux') != -1,"
-                    + "windows : userAgent.indexOf('win') != -1"
+                    + "windows : userAgent.indexOf('win') != -1,"
+                    + "userAgent : userAgent"
                     + "};")
     private static native JSObject createAgent();
 
