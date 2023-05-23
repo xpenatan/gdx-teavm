@@ -95,7 +95,7 @@ public class PixmapEmu implements Disposable {
     private HTMLVideoElementWrapper videoElement;
 
     private int color = 0;
-    private Gdx2DPixmapEmu pixmap;
+    private Gdx2DPixmapEmu nativePixmap;
     private boolean disposed;
 
     public static void downloadFromUrl(String url, final Pixmap.DownloadPixmapResponseListener responseListener) {
@@ -126,7 +126,7 @@ public class PixmapEmu implements Disposable {
         if(config.useNativePixmap) {
             Int8ArrayWrapper response = object.getData();
             byte[] bytes = Gdx2DPixmapEmu.get(response);
-            pixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
+            nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
             initPixmapEmu(-1, -1, null, null);
         }
         else {
@@ -149,7 +149,7 @@ public class PixmapEmu implements Disposable {
         TeaApplication app = (TeaApplication)Gdx.app;
         TeaApplicationConfiguration config = app.getConfig();
         if(config.useNativePixmap) {
-            pixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
+            nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
             initPixmapEmu(-1, -1, null, null);
         }
     }
@@ -234,11 +234,11 @@ public class PixmapEmu implements Disposable {
     }
 
     public boolean canUsePixmapData() {
-        return canvas == null && pixmap != null;
+        return canvas == null && nativePixmap != null;
     }
 
     public Uint8ArrayWrapper getPixmapData() {
-        return pixmap.getPixels();
+        return nativePixmap.getPixels();
     }
 
     public boolean canUseImageElement() {
@@ -263,7 +263,7 @@ public class PixmapEmu implements Disposable {
      * @param color the color, encoded as RGBA8888
      */
     public void setColor(int color) {
-        if(pixmap != null) {
+        if(nativePixmap != null) {
             this.color = color;
         }
         else {
@@ -287,7 +287,7 @@ public class PixmapEmu implements Disposable {
      * @param a The alpha component.
      */
     public void setColor(float r, float g, float b, float a) {
-        if(pixmap != null) {
+        if(nativePixmap != null) {
             this.color = Color.rgba8888(r, g, b, a);
         }
         else {
@@ -315,8 +315,8 @@ public class PixmapEmu implements Disposable {
      * Fills the complete bitmap with the currently set color.
      */
     public void fill() {
-        if(pixmap != null) {
-            pixmap.clear(color);
+        if(nativePixmap != null) {
+            nativePixmap.clear(color);
         }
         else {
             ensureCanvasExists();
@@ -341,8 +341,8 @@ public class PixmapEmu implements Disposable {
      * @param y2 The y-coordinate of the first point
      */
     public void drawLine(int x, int y, int x2, int y2) {
-        if(pixmap != null) {
-            pixmap.drawLine(x, y, x2, y2, color);
+        if(nativePixmap != null) {
+            nativePixmap.drawLine(x, y, x2, y2, color);
         }
         else {
             line(x, y, x2, y2, DrawType.STROKE);
@@ -359,8 +359,8 @@ public class PixmapEmu implements Disposable {
      * @param height The height in pixels
      */
     public void drawRectangle(int x, int y, int width, int height) {
-        if(pixmap != null) {
-            pixmap.drawRect(x, y, width, height, color);
+        if(nativePixmap != null) {
+            nativePixmap.drawRect(x, y, width, height, color);
         }
         else {
             rectangle(x, y, width, height, DrawType.STROKE);
@@ -375,7 +375,7 @@ public class PixmapEmu implements Disposable {
      * @param y      The target y-coordinate (top left corner)
      */
     public void drawPixmap(PixmapEmu pixmap, int x, int y) {
-        if(pixmap != null) {
+        if(nativePixmap != null) {
             drawPixmap(pixmap, x, y, 0, 0, pixmap.getWidth(), pixmap.getHeight());
         }
         else {
@@ -385,8 +385,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void drawPixmap(PixmapEmu pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
-        if(pixmap != null) {
-            this.pixmap.drawPixmap(pixmap.pixmap, srcx, srcy, x, y, srcWidth, srcHeight);
+        if(nativePixmap != null) {
+            this.nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, x, y, srcWidth, srcHeight);
         }
         else {
             HTMLCanvasElementWrapper image = pixmap.getCanvasElement();
@@ -395,8 +395,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void drawPixmap(PixmapEmu pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth, int dstHeight) {
-        if(pixmap != null) {
-            this.pixmap.drawPixmap(pixmap.pixmap, srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
+        if(nativePixmap != null) {
+            this.nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
         }
         else {
             image(pixmap.getCanvasElement(), srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
@@ -404,8 +404,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void fillRectangle(int x, int y, int width, int height) {
-        if(pixmap != null) {
-            pixmap.fillRect(x, y, width, height, color);
+        if(nativePixmap != null) {
+            nativePixmap.fillRect(x, y, width, height, color);
         }
         else {
             rectangle(x, y, width, height, DrawType.FILL);
@@ -413,8 +413,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void drawCircle(int x, int y, int radius) {
-        if(pixmap != null) {
-            pixmap.drawCircle(x, y, radius, color);
+        if(nativePixmap != null) {
+            nativePixmap.drawCircle(x, y, radius, color);
         }
         else {
             circle(x, y, radius, DrawType.STROKE);
@@ -422,8 +422,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void fillCircle(int x, int y, int radius) {
-        if(pixmap != null) {
-            pixmap.fillCircle(x, y, radius, color);
+        if(nativePixmap != null) {
+            nativePixmap.fillCircle(x, y, radius, color);
         }
         else {
             circle(x, y, radius, DrawType.FILL);
@@ -431,8 +431,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
-        if(pixmap != null) {
-            pixmap.fillTriangle(x1, y1, x2, y2, x3, y3, color);
+        if(nativePixmap != null) {
+            nativePixmap.fillTriangle(x1, y1, x2, y2, x3, y3, color);
         }
         else {
             triangle(x1, y1, x2, y2, x3, y3, DrawType.FILL);
@@ -440,8 +440,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public int getPixel(int x, int y) {
-        if(pixmap != null) {
-            return pixmap.getPixel(x, y);
+        if(nativePixmap != null) {
+            return nativePixmap.getPixel(x, y);
         }
         else {
             ensureCanvasExists();
@@ -456,8 +456,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public int getWidth() {
-        if(pixmap != null) {
-            return pixmap.getWidth();
+        if(nativePixmap != null) {
+            return nativePixmap.getWidth();
         }
         else {
             return width;
@@ -465,8 +465,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public int getHeight() {
-        if(pixmap != null) {
-            return pixmap.getHeight();
+        if(nativePixmap != null) {
+            return nativePixmap.getHeight();
         }
         else {
             return height;
@@ -477,8 +477,8 @@ public class PixmapEmu implements Disposable {
     public void dispose() {
         if (disposed) throw new GdxRuntimeException("Pixmap already disposed!");
         pixmaps.remove(id);
-        if(pixmap != null) {
-            pixmap.dispose();
+        if(nativePixmap != null) {
+            nativePixmap.dispose();
         }
         disposed = true;
     }
@@ -488,8 +488,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void drawPixel(int x, int y) {
-        if(pixmap != null) {
-            pixmap.setPixel(x, y, color);
+        if(nativePixmap != null) {
+            nativePixmap.setPixel(x, y, color);
         }
         else {
             rectangle(x, y, 1, 1, DrawType.FILL);
@@ -497,8 +497,8 @@ public class PixmapEmu implements Disposable {
     }
 
     public void drawPixel(int x, int y, int color) {
-        if(pixmap != null) {
-            pixmap.setPixel(x, y, color);
+        if(nativePixmap != null) {
+            nativePixmap.setPixel(x, y, color);
         }
         else {
             setColor(color);
@@ -507,22 +507,22 @@ public class PixmapEmu implements Disposable {
     }
 
     public int getGLFormat () {
-        if(pixmap != null) {
-            return pixmap.getGLFormat();
+        if(nativePixmap != null) {
+            return nativePixmap.getGLFormat();
         }
         return GL20.GL_RGBA;
     }
 
     public int getGLInternalFormat () {
-        if(pixmap != null) {
-            return pixmap.getGLInternalFormat();
+        if(nativePixmap != null) {
+            return nativePixmap.getGLInternalFormat();
         }
         return GL20.GL_RGBA;
     }
 
     public int getGLType () {
-        if(pixmap != null) {
-            return pixmap.getGLType();
+        if(nativePixmap != null) {
+            return nativePixmap.getGLType();
         }
         return GL20.GL_UNSIGNED_BYTE;
     }
@@ -532,9 +532,9 @@ public class PixmapEmu implements Disposable {
     }
 
     public void setPixels(ByteBuffer pixels) {
-        if(pixmap != null) {
+        if(nativePixmap != null) {
             if (!pixels.isDirect()) throw new GdxRuntimeException("Couldn't setPixels from non-direct ByteBuffer");
-            Uint8ArrayWrapper dst = pixmap.getPixels();
+            Uint8ArrayWrapper dst = nativePixmap.getPixels();
             //TODO find a way to use byteBuffer
 //            BufferUtils.copy(pixels, dst, dst.limit())
         }
@@ -552,16 +552,16 @@ public class PixmapEmu implements Disposable {
     }
 
     public Pixmap.Format getFormat () {
-        if(pixmap != null) {
-            return Pixmap.Format.fromGdx2DPixmapFormat(pixmap.getFormat());
+        if(nativePixmap != null) {
+            return Pixmap.Format.fromGdx2DPixmapFormat(nativePixmap.getFormat());
         }
         return Pixmap.Format.RGBA8888;
     }
 
     public void setFilter(Pixmap.Filter filter) {
         this.filter = filter;
-        if(pixmap != null) {
-            pixmap.setScale(filter == Pixmap.Filter.NearestNeighbour ? Gdx2DPixmapEmu.GDX2D_SCALE_NEAREST : Gdx2DPixmapEmu.GDX2D_SCALE_LINEAR);
+        if(nativePixmap != null) {
+            nativePixmap.setScale(filter == Pixmap.Filter.NearestNeighbour ? Gdx2DPixmapEmu.GDX2D_SCALE_NEAREST : Gdx2DPixmapEmu.GDX2D_SCALE_LINEAR);
         }
     }
 
@@ -571,8 +571,8 @@ public class PixmapEmu implements Disposable {
 
     public void setBlending(Pixmap.Blending blending) {
         this.blending = blending;
-        if(pixmap != null) {
-            pixmap.setBlend(blending == Pixmap.Blending.None ? 0 : 1);
+        if(nativePixmap != null) {
+            nativePixmap.setBlend(blending == Pixmap.Blending.None ? 0 : 1);
         }
         else {
             this.ensureCanvasExists();

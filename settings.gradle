@@ -23,6 +23,9 @@ include ":examples:bullet:teavm"
 include ":examples:box2d:core"
 include ":examples:box2d:desktop"
 include ":examples:box2d:teavm"
+include ":examples:freetype:core"
+include ":examples:freetype:desktop"
+include ":examples:freetype:teavm"
 
 // ######### Add libgdx tests to project
 // ######### Need to have libgdx source code tag 1.11.0. Change to your libgdx source directory.

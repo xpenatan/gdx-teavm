@@ -492,7 +492,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(false, "bullet.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "bullet.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
@@ -505,7 +505,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void initImGuiWasm(Preloader preloader) {
-        preloader.loadScript(false, "imgui.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "imgui.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
@@ -520,7 +520,7 @@ public class TeaApplication implements Application, Runnable {
     // Box2D
 
     private void initBox2DPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(false, "box2D.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "box2D.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
