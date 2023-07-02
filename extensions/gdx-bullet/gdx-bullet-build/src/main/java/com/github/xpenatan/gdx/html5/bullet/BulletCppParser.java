@@ -15,7 +15,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.jparser.core.JParserHelper;
-import com.github.xpenatan.jparser.core.idl.IDLFile;
+import com.github.xpenatan.jparser.idl.IDLFile;
 import com.github.xpenatan.jparser.cpp.CppCodeParser;
 
 public class BulletCppParser extends CppCodeParser {

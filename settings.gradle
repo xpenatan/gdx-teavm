@@ -44,12 +44,21 @@ include ":examples:freetype:teavm"
 
 //includeBuild("D:\\Dev\\Projects\\java\\teavm") {
 //    dependencySubstitution {
-//        substitute module('org.teavm:teavm-tooling') with project(':tools:core')
-//        substitute module('org.teavm:teavm-core') with project(':core')
-//        substitute module('org.teavm:teavm-classlib') with project(':classlib')
-//        substitute module('org.teavm:teavm-jso') with project(':jso:core')
-//        substitute module('org.teavm:teavm-jso-apis') with project(':jso:apis')
-//        substitute module('org.teavm:teavm-jso-impl') with project(':jso:impl')
+//        substitute module('org.teavm:teavm-tooling') using project(':tools:core')
+//        substitute module('org.teavm:teavm-core') using project(':core')
+//        substitute module('org.teavm:teavm-classlib') using project(':classlib')
+//        substitute module('org.teavm:teavm-jso') using project(':jso:core')
+//        substitute module('org.teavm:teavm-jso-apis') using project(':jso:apis')
+//        substitute module('org.teavm:teavm-jso-impl') using project(':jso:impl')
+//    }
+//}
+
+//includeBuild("E:\\Dev\\Projects\\java\\jParser") {
+//    dependencySubstitution {
+//        substitute module('com.github.xpenatan.jParser:jParser-core') using project(':jParser:core')
+//        substitute module('com.github.xpenatan.jParser:jParser-teavm') using project(':jParser:teavm')
+//        substitute module('com.github.xpenatan.jParser:jParser-cpp') using project(':jParser:cpp')
+//        substitute module('com.github.xpenatan.jParser:jParser-loader') using project(':jParser:loader')
 //    }
 //}
 

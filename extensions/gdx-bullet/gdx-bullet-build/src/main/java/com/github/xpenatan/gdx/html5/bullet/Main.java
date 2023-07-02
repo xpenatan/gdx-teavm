@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.html5.bullet;
 
 import com.github.xpenatan.jparser.core.JParser;
-import com.github.xpenatan.jparser.core.idl.IDLFile;
-import com.github.xpenatan.jparser.core.idl.IDLParser;
+import com.github.xpenatan.jparser.idl.IDLFile;
+import com.github.xpenatan.jparser.idl.IDLReader;
 import com.github.xpenatan.jparser.cpp.CPPBuildHelper;
 import com.github.xpenatan.jparser.cpp.CppCodeParser;
 import com.github.xpenatan.jparser.cpp.FileCopyHelper;
@@ -11,7 +11,7 @@ import java.io.File;
 public class Main {
     public static void main(String[] args) throws Exception {
         String path = "..\\..\\gdx-bullet\\gdx-bullet-build\\jni\\bullet.idl";
-        IDLFile idlFile = IDLParser.parseFile(path);
+        IDLFile idlFile = IDLReader.parseFile(path);
 
         String basePath = new File(".").getAbsolutePath();
         JParser.generate(new BulletCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);

@@ -15,9 +15,9 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.jparser.core.JParserHelper;
-import com.github.xpenatan.jparser.core.idl.IDLClass;
-import com.github.xpenatan.jparser.core.idl.IDLFile;
-import com.github.xpenatan.jparser.core.idl.IDLMethod;
+import com.github.xpenatan.jparser.idl.IDLClass;
+import com.github.xpenatan.jparser.idl.IDLFile;
+import com.github.xpenatan.jparser.idl.IDLMethod;
 import com.github.xpenatan.jparser.teavm.TeaVMCodeParser;
 
 /**
