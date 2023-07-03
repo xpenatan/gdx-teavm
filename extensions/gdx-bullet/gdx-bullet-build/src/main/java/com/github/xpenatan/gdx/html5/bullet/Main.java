@@ -11,15 +11,15 @@ import java.io.File;
 public class Main {
     public static void main(String[] args) throws Exception {
         String path = "..\\..\\gdx-bullet\\gdx-bullet-build\\jni\\bullet.idl";
-        IDLFile idlFile = IDLReader.parseFile(path);
+        IDLReader idlReader = IDLReader.readIDL(path);
 
         String basePath = new File(".").getAbsolutePath();
-        JParser.generate(new BulletCodeParser(idlFile), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
+        JParser.generate(new BulletCodeParser(idlReader), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
 
-        buildBulletCPP(idlFile);
+        buildBulletCPP(idlReader);
     }
 
-    private static void buildBulletCPP(IDLFile idlFile) throws Exception {
+    private static void buildBulletCPP(IDLReader idlReader) throws Exception {
         String libName = "gdx-bullet";
         String bulletPath = new File("../gdx-bullet/").getCanonicalPath();
         String genDir = bulletPath + "/src/main/java";
@@ -29,7 +29,7 @@ public class Main {
 
         String sourceDir = "../gdx-bullet-base/src/main/java/";
         String classPath = CppCodeParser.getClassPath("bullet-base", "gdx-1", "gdx-jnigen-loader", "jParser-loader");
-        BulletCppParser cppParser = new BulletCppParser(idlFile, classPath, buildPath);
+        BulletCppParser cppParser = new BulletCppParser(idlReader, classPath, buildPath);
         JParser.generate(cppParser, sourceDir, genDir);
 
         String [] flags = new String[1];

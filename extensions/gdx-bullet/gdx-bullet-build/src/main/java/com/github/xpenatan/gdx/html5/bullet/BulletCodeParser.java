@@ -16,8 +16,8 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.jparser.core.JParserHelper;
 import com.github.xpenatan.jparser.idl.IDLClass;
-import com.github.xpenatan.jparser.idl.IDLFile;
 import com.github.xpenatan.jparser.idl.IDLMethod;
+import com.github.xpenatan.jparser.idl.IDLReader;
 import com.github.xpenatan.jparser.teavm.TeaVMCodeParser;
 
 /**
@@ -29,8 +29,8 @@ import com.github.xpenatan.jparser.teavm.TeaVMCodeParser;
  */
 public class BulletCodeParser extends TeaVMCodeParser {
 
-    public BulletCodeParser(IDLFile idlFile) {
-        super("Bullet", idlFile);
+    public BulletCodeParser(IDLReader idlReader) {
+        super("Bullet", idlReader);
         enableAttributeParsing = false;
     }
 

@@ -15,8 +15,8 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.xpenatan.jparser.core.JParserHelper;
-import com.github.xpenatan.jparser.idl.IDLFile;
 import com.github.xpenatan.jparser.cpp.CppCodeParser;
+import com.github.xpenatan.jparser.idl.IDLReader;
 
 public class BulletCppParser extends CppCodeParser {
 
@@ -34,8 +34,8 @@ public class BulletCppParser extends CppCodeParser {
         this(null, classpath, jniDir);
     }
 
-    public BulletCppParser(IDLFile idlFile, String classpath, String jniDir) {
-        super(idlFile, classpath, jniDir);
+    public BulletCppParser(IDLReader idlReader, String classpath, String jniDir) {
+        super(idlReader, classpath, jniDir);
     }
 
     protected void generateGdxMethod(CompilationUnit unit, ClassOrInterfaceDeclaration classDeclaration, MethodDeclaration idlMethodDeclaration, MethodDeclaration nativeMethod, MethodCallExpr caller) {
