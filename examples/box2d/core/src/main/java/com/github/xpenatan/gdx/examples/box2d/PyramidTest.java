@@ -217,6 +217,11 @@ public class PyramidTest implements ApplicationListener, InputProcessor {
     }
 
     @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
     public boolean mouseMoved(int x, int y) {
         return false;
     }

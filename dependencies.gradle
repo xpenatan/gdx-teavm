@@ -16,7 +16,7 @@ project.ext {
 
     teaVMVersion = "0.9.0-dev-4"
 
-    gdxVersion = "1.11.0"
+    gdxVersion = "1.12.0"
     jParserVersion = "1.0.0-SNAPSHOT"
 
     gdxImGuiVersion = '1.0.0-SNAPSHOT'

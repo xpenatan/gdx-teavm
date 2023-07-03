@@ -36,4 +36,16 @@ public class TeaAudio implements Audio {
     public Music newMusic(FileHandle file) {
         return new TeaMusic(soundManager, file);
     }
+
+    @Override
+    public boolean switchOutputDevice(String deviceIdentifier) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String[] getAvailableOutputDevices() {
+        // TODO Auto-generated method stub
+        return new String[0];
+    }
 }
