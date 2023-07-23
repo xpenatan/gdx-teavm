@@ -25,6 +25,9 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDow
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
 import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
@@ -437,6 +440,18 @@ public class TeaApplication implements Application, Runnable {
         return preloader.getAssetUrl();
     }
 
+    /** @return {@code true} if application runs on a mobile device */
+    public static boolean isMobileDevice () {
+        // RegEx pattern from detectmobilebrowsers.com (public domain)
+        String pattern = "(android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec"
+                + "|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)"
+                + "i|palm( os)?|phone|p(ixi|re)\\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\\.(browser|link)"
+                + "|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(TeaNavigator.getUserAgent().toLowerCase());
+        return m.matches();
+    }
+
     public enum AppState {
         LOAD_ASSETS,
         APP_CREATE,
@@ -492,7 +507,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(false, "bullet.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "bullet.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
@@ -505,7 +520,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void initImGuiWasm(Preloader preloader) {
-        preloader.loadScript(false, "imgui.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "imgui.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
@@ -520,7 +535,7 @@ public class TeaApplication implements Application, Runnable {
     // Box2D
 
     private void initBox2DPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(false, "box2D.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "box2D.wasm.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;

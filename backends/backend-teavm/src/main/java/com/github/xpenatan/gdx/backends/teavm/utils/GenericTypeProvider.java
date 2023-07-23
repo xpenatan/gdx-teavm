@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.util;
+package com.github.xpenatan.gdx.backends.teavm.utils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

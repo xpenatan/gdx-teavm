@@ -137,50 +137,46 @@ public class AssetDownloadImpl implements AssetDownload {
 
         // don't load on main thread
         addQueue();
-        new Thread() {
-            public void run() {
-                final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
-                request.setOnreadystatechange(new EventHandlerWrapper() {
-                    @Override
-                    public void handleEvent(EventWrapper evt) {
-                        if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
-                            if(request.getStatus() != 200) {
-                                if ((request.getStatus() != 404) &&
-                                    (request.getStatus() != 403)) {
-                                    // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                                    try {
-                                        Thread.sleep(100);
-                                    }
-                                    catch (Throwable e) {
-                                        // ignored
-                                    }
-                                    loadScript(async, url, listener);
-                                }
-                                else {
-                                    listener.onFailure(url);
-                                }
+        final XMLHttpRequestWrapper request = (XMLHttpRequestWrapper)XMLHttpRequest.create();
+        request.setOnreadystatechange(new EventHandlerWrapper() {
+            @Override
+            public void handleEvent(EventWrapper evt) {
+                if(request.getReadyState() == XMLHttpRequestWrapper.DONE) {
+                    if(request.getStatus() != 200) {
+                        if ((request.getStatus() != 404) &&
+                            (request.getStatus() != 403)) {
+                            // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                            try {
+                                Thread.sleep(100);
                             }
-                            else {
-                                if(showLogs)
-                                    System.out.println("Script loaded: " + url);
-                                NodeWrapper response = request.getResponse();
-                                TeaWindow currentWindow = TeaWindow.get();
-                                DocumentWrapper document = currentWindow.getDocument();
-                                HTMLElementWrapper scriptElement = document.createElement("script");
-                                scriptElement.appendChild(document.createTextNode(response));
-                                document.getBody().appendChild(scriptElement);
-                                listener.onSuccess(url, request.getResponseText());
+                            catch (Throwable e) {
+                                // ignored
                             }
-                            subtractQueue();
+                            loadScript(async, url, listener);
+                        }
+                        else {
+                            listener.onFailure(url);
                         }
                     }
-                });
-                setOnProgress(request, listener);
-                request.open("GET", url, async);
-                request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
-                request.send();
+                    else {
+                        if(showLogs)
+                            System.out.println("Script loaded: " + url);
+                        NodeWrapper response = request.getResponse();
+                        TeaWindow currentWindow = TeaWindow.get();
+                        DocumentWrapper document = currentWindow.getDocument();
+                        HTMLElementWrapper scriptElement = document.createElement("script");
+                        scriptElement.appendChild(document.createTextNode(response));
+                        document.getBody().appendChild(scriptElement);
+                        listener.onSuccess(url, request.getResponseText());
+                    }
+                    subtractQueue();
+                }
             }
-        }.start();
+        });
+        setOnProgress(request, listener);
+        request.open("GET", url, async);
+        request.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
+        request.send();
     }
 
     public void loadAudio(boolean async, final String url, final AssetLoaderListener<Void> listener) {

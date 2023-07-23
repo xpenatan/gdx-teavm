@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.GL31;
+import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -93,6 +95,16 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
+    public boolean isGL31Available() {
+        return false;
+    }
+
+    @Override
+    public boolean isGL32Available() {
+        return false;
+    }
+
+    @Override
     public GL20 getGL20() {
         return gl;
     }
@@ -100,6 +112,16 @@ public class TeaGraphics implements Graphics {
     @Override
     public GL30 getGL30() {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public GL31 getGL31() {
+        return null;
+    }
+
+    @Override
+    public GL32 getGL32() {
         return null;
     }
 
@@ -113,6 +135,16 @@ public class TeaGraphics implements Graphics {
     @Override
     public void setGL30(GL30 gl30) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setGL31(GL31 gl31) {
+
+    }
+
+    @Override
+    public void setGL32(GL32 gl32) {
+
     }
 
     @Override

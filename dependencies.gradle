@@ -2,7 +2,7 @@ project.ext {
     groupId = "com.github.xpenatan.gdx-teavm"
     var isRelease = System.getenv('RELEASE')
     if(isRelease != null && isRelease.toBoolean()) {
-        gdxTeaVMVersion = "1.0.0-b5"
+        gdxTeaVMVersion = "1.0.0-b6"
     }
     else {
         gdxTeaVMVersion = "1.0.0-SNAPSHOT"
@@ -14,10 +14,10 @@ project.ext {
     teaFreeTypeVersion = gdxTeaVMVersion
     toolCoreVersion = gdxTeaVMVersion
 
-    teaVMVersion = "0.9.0-dev-4"
+    teaVMVersion = "0.9.0-dev-7"
 
-    gdxVersion = "1.11.0"
-    jParserVersion = "1.0.0-SNAPSHOT"
+    gdxVersion = "1.12.0"
+    jParserVersion = "1.0.0-b3"
 
     gdxImGuiVersion = '1.0.0-SNAPSHOT'
     gdxFrameViewportVersion = "1.0.0-SNAPSHOT"

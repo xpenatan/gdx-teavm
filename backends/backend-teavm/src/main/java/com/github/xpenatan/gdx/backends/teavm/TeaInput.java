@@ -663,15 +663,18 @@ public class TeaInput implements Input, EventListenerWrapper {
     }
 
     @Override
-    public void vibrate(long[] pattern, int repeat) {
+    public void vibrate(int milliseconds, boolean fallback) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void cancelVibrate() {
+    public void vibrate(int milliseconds, int amplitude, boolean fallback) {
         // TODO Auto-generated method stub
+    }
 
+    @Override
+    public void vibrate(VibrationType vibrationType) {
+        // TODO Auto-generated method stub
     }
 
     @Override

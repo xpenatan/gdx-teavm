@@ -7,6 +7,7 @@ dependencies {
     implementation "com.github.xpenatan.jParser:jParser-core:$project.jParserVersion"
     implementation "com.github.xpenatan.jParser:jParser-teavm:$project.jParserVersion"
     implementation "com.github.xpenatan.jParser:jParser-cpp:$project.jParserVersion"
+    implementation "com.github.xpenatan.jParser:jParser-idl:$project.jParserVersion"
 }
 
 tasks.register('generateNativeProject', JavaExec) {
