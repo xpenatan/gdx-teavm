@@ -1,6 +1,11 @@
 [1.0.0-SNAPSHOT]
 -
 
+[1.0.0-b6]
+- Update libgdx to version 1.12.0
+- Update jParser to version b3
+- Update teavm to version 0.9.0-dev-7
+
 [1.0.0-b5]
 - Option in App config to show download logs. Default is set to false.
 - Implement setApplicationLogger method.

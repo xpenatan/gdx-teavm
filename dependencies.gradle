@@ -2,7 +2,7 @@ project.ext {
     groupId = "com.github.xpenatan.gdx-teavm"
     var isRelease = System.getenv('RELEASE')
     if(isRelease != null && isRelease.toBoolean()) {
-        gdxTeaVMVersion = "1.0.0-b5"
+        gdxTeaVMVersion = "1.0.0-b6"
     }
     else {
         gdxTeaVMVersion = "1.0.0-SNAPSHOT"
