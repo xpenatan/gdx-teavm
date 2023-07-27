@@ -467,8 +467,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.slf4j"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jParser"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
 
         if(path.contains("backend-teavm"))
             isValid = ACCEPT_STATE.ACCEPT;
