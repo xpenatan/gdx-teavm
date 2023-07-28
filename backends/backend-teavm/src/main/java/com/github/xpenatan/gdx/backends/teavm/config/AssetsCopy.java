@@ -1,8 +1,11 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
+import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
+import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
+import com.github.xpenatan.gdx.backends.teavm.preloader.DefaultAssetFilter;
+import com.github.xpenatan.gdx.backends.teavm.preloader.FileWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

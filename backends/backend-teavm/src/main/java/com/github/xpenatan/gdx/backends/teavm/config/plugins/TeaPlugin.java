@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.plugins;
+package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
 import org.teavm.jso.impl.JSOPlugin;
 import org.teavm.vm.spi.Before;

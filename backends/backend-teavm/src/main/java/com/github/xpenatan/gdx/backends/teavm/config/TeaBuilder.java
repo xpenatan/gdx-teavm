@@ -1,11 +1,12 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaClassTransformer;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
+import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer;
+import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetsCopy;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -399,6 +400,8 @@ public class TeaBuilder {
         filePath.add("box2D.js");
         filePath.add("box2D.wasm.js");
         filePath.add("box2D.wasm.wasm");
+        filePath.add("exampleLib.js");
+        filePath.add("exampleLib.wasm.wasm");
     }
 
     private static ACCEPT_STATE acceptPath(String path) {

@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.plugins;
+package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;

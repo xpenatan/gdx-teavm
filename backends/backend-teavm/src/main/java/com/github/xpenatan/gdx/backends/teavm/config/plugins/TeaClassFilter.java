@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.plugins;
+package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
 import java.util.ArrayList;
 import org.teavm.model.FieldReference;
