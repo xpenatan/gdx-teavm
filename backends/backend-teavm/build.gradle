@@ -2,24 +2,21 @@ plugins {
     id 'java-library'
 }
 
-group = project.groupId
-version = project.gdxTeaVMVersion
-
 def module_name = "backend-teavm"
 
 sourceSets.main.java.srcDirs = [ "emu", "src/main/java/"]
 sourceSets.main.resources.srcDirs = ["src/main/resources/"]
 
 dependencies {
-    implementation "org.reflections:reflections:$project.reflectionVersion"
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation "org.reflections:reflections:$LibExt.reflectionVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
 
-    api "org.teavm:teavm-tooling:$project.teaVMVersion"
-    api "org.teavm:teavm-core:$project.teaVMVersion"
-    api "org.teavm:teavm-classlib:$project.teaVMVersion"
-    api "org.teavm:teavm-jso:$project.teaVMVersion"
-    api "org.teavm:teavm-jso-apis:$project.teaVMVersion"
-    api "org.teavm:teavm-jso-impl:$project.teaVMVersion"
+    api "org.teavm:teavm-tooling:$LibExt.teaVMVersion"
+    api "org.teavm:teavm-core:$LibExt.teaVMVersion"
+    api "org.teavm:teavm-classlib:$LibExt.teaVMVersion"
+    api "org.teavm:teavm-jso:$LibExt.teaVMVersion"
+    api "org.teavm:teavm-jso-apis:$LibExt.teaVMVersion"
+    api "org.teavm:teavm-jso-impl:$LibExt.teaVMVersion"
 }
 
 publishing {

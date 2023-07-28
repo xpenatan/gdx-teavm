@@ -1,13 +1,10 @@
-group = project.groupId
-version = project.teaBox2dVersion
-
 def module_name = "gdx-box2d-teavm"
 
 sourceSets.main.resources.srcDirs = ["resources/"]
 
 dependencies {
     implementation project(":backends:backend-teavm")
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
 }
 
 clean.doFirst {

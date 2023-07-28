@@ -4,8 +4,8 @@ sourceSets.main.resources.srcDirs = ["../desktop/assets"]
 
 dependencies {
     implementation project(":examples:bullet:core")
-    implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
-    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$LibExt.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$LibExt.gdxVersion"
 
     // gdx-teavm Version
     implementation project(":extensions:gdx-bullet:gdx-bullet-desktop")

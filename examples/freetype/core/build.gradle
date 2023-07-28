@@ -1,8 +1,8 @@
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-box2d:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-freetype:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-ai:$project.aiVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$LibExt.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$LibExt.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-ai:$LibExt.aiVersion"
 
     implementation "net.onedaybeard.artemis:artemis-odb:2.3.0"
 }

@@ -1,6 +1,3 @@
-group = project.groupId
-version = project.teaBulletVersion
-
 def module_name = "gdx-bullet-desktop"
 
 def jarFile = projectDir.toString() + "/../gdx-bullet-build/jni/build/c++/libs/gdx-bullet-natives.jar"

@@ -1,6 +1,5 @@
-group = project.groupId
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-box2d:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$LibExt.gdxVersion"
 }

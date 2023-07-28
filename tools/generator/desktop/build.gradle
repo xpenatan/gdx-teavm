@@ -1,6 +1,3 @@
-group = project.groupId
-version = project.toolCoreVersion
-
 project.ext.mainClassName = "com.github.xpenatan.gdx.html5.generator.Main"
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 
@@ -16,8 +13,8 @@ tasks.register('fromClasses', Jar) {
 
 dependencies {
     implementation project(":tools:generator:core")
-    implementation "com.badlogicgames.gdx:gdx-platform:$project.gdxVersion:natives-desktop"
-    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$LibExt.gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$LibExt.gdxVersion"
 }
 
 tasks.register('runGenerator', JavaExec) {

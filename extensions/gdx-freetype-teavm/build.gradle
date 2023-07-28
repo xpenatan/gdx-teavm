@@ -1,13 +1,10 @@
-group = project.groupId
-version = project.teaFreeTypeVersion
-
 def module_name = "gdx-freetype-teavm"
 
 sourceSets.main.resources.srcDirs = ["resources/"]
 
 dependencies {
     implementation project(":backends:backend-teavm")
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
 }
 
 publishing {

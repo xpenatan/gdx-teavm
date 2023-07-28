@@ -1,31 +1,31 @@
-include ":backends:backend-teavm"
+include(":backends:backend-teavm")
 
-include ":extensions:gdx-freetype-teavm"
-include ":extensions:gdx-bullet:gdx-bullet"
-include ":extensions:gdx-bullet:gdx-bullet-base"
-include ":extensions:gdx-bullet:gdx-bullet-build"
-include ":extensions:gdx-bullet:gdx-bullet-teavm"
-include ":extensions:gdx-bullet:gdx-bullet-desktop"
+include(":extensions:gdx-freetype-teavm")
+include(":extensions:gdx-bullet:gdx-bullet")
+include(":extensions:gdx-bullet:gdx-bullet-base")
+include(":extensions:gdx-bullet:gdx-bullet-build")
+include(":extensions:gdx-bullet:gdx-bullet-teavm")
+include(":extensions:gdx-bullet:gdx-bullet-desktop")
 
-include ":extensions:gdx-box2d:gdx-box2d-base"
-include ":extensions:gdx-box2d:gdx-box2d-build"
-include ":extensions:gdx-box2d:gdx-box2d-teavm"
+include(":extensions:gdx-box2d:gdx-box2d-base")
+include(":extensions:gdx-box2d:gdx-box2d-build")
+include(":extensions:gdx-box2d:gdx-box2d-teavm")
 
-include ":tools:generator:core"
-include ":tools:generator:desktop"
+include(":tools:generator:core")
+include(":tools:generator:desktop")
 
-include ":examples:core:core"
-include ":examples:core:desktop"
-include ":examples:core:teavm"
-include ":examples:bullet:core"
-include ":examples:bullet:desktop"
-include ":examples:bullet:teavm"
-include ":examples:box2d:core"
-include ":examples:box2d:desktop"
-include ":examples:box2d:teavm"
-include ":examples:freetype:core"
-include ":examples:freetype:desktop"
-include ":examples:freetype:teavm"
+include(":examples:core:core")
+include(":examples:core:desktop")
+include(":examples:core:teavm")
+include(":examples:bullet:core")
+include(":examples:bullet:desktop")
+include(":examples:bullet:teavm")
+include(":examples:box2d:core")
+include(":examples:box2d:desktop")
+include(":examples:box2d:teavm")
+include(":examples:freetype:core")
+include(":examples:freetype:desktop")
+include(":examples:freetype:teavm")
 
 // ######### Add libgdx tests to project
 // ######### Need to have libgdx source code tag 1.11.0. Change to your libgdx source directory.

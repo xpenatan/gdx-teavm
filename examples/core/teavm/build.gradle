@@ -10,7 +10,7 @@ gretty {
 sourceSets.main.java.srcDirs = ["src/main/java/"]
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:$project.gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$LibExt.gdxVersion"
     implementation project(":examples:core:core")
 
     // Use snapshots
