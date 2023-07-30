@@ -315,7 +315,7 @@ public class Preloader {
     }
 
     public void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().loadScript(async, baseUrl + url, listener);
+        AssetDownloader.getInstance().loadScript(async, getAssetUrl() + url, listener);
     }
 
     protected void putAssetInMap(AssetType type, String url, Object result) {

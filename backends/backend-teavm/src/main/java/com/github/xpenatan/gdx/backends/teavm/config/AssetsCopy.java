@@ -21,7 +21,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
@@ -43,7 +45,7 @@ public class AssetsCopy {
         copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile);
     }
 
-    public static void copy(TeaClassLoader classloader, ArrayList<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
+    public static void copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
         assetsOutputPath = assetsOutputPath.replace("\\", "/");
         FileWrapper target = new FileWrapper(assetsOutputPath);
         ArrayList<Asset> assets = new ArrayList<Asset>();
@@ -133,7 +135,7 @@ public class AssetsCopy {
         }
     }
 
-    private static void addDirectoryClassPathFiles(ArrayList<String> classPathFiles) {
+    private static void addDirectoryClassPathFiles(List<String> classPathFiles) {
         ArrayList<String> folderFilePaths = new ArrayList<>();
         for(int k = 0; k < classPathFiles.size(); k++) {
             String classpathFile = classPathFiles.get(k);
@@ -219,6 +221,11 @@ public class AssetsCopy {
             }
         }
         classPathFiles.addAll(folderFilePaths);
+        //Hack to remove duplicates.
+        // Fixme fix/improve asset copy
+        HashSet<String> set = new HashSet<>(folderFilePaths);
+        classPathFiles.clear();
+        classPathFiles.addAll(set);
     }
 
     private static void copyFile(FileWrapper source, FileWrapper dest, AssetFilter filter, ArrayList<Asset> assets) {

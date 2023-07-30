@@ -10,6 +10,6 @@ public class Main {
         IDLReader idlReader = IDLReader.readIDL(path);
 
         String basePath = new File(".").getAbsolutePath();
-        JParser.generate(new Box2dParser(idlReader), basePath + "./gdx-box2d-base/src", "../gdx-box2d-teavm/src", null);
+        JParser.generate(new Box2dParser(idlReader), basePath + "./gdx-box2d-base/src/main/java", "../gdx-box2d-teavm/src/main/java", null);
     }
 }

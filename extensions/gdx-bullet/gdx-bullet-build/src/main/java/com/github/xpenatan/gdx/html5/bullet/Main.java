@@ -14,7 +14,7 @@ public class Main {
         IDLReader idlReader = IDLReader.readIDL(path);
 
         String basePath = new File(".").getAbsolutePath();
-        JParser.generate(new BulletCodeParser(idlReader), basePath + "./gdx-bullet-base/src", "../gdx-bullet-teavm/src", null);
+        JParser.generate(new BulletCodeParser(idlReader), basePath + "./gdx-bullet-base/src/main/java", "../gdx-bullet-teavm/src/main/java", null);
 
         buildBulletCPP(idlReader);
     }
@@ -28,7 +28,7 @@ public class Main {
         FileCopyHelper.copyDir(cppPath + "/bullet/src/", buildPath + "/src");
 
         String sourceDir = "../gdx-bullet-base/src/main/java/";
-        String classPath = CppCodeParser.getClassPath("bullet-base", "gdx-1", "gdx-jnigen-loader", "jParser-loader");
+        String classPath = CppCodeParser.getClassPath("bullet-base", "gdx-1", "gdx-jnigen-loader", "jParser");
         BulletCppParser cppParser = new BulletCppParser(idlReader, classPath, buildPath);
         JParser.generate(cppParser, sourceDir, genDir);
 

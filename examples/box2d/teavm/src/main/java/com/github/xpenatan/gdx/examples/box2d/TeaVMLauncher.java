@@ -8,6 +8,7 @@ public class TeaVMLauncher {
         TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
+        config.showDownloadLogs = true;
         new TeaApplication(new PyramidTest(), config);
     }
 }

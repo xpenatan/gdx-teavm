@@ -55,10 +55,10 @@ include(":examples:freetype:teavm")
 
 //includeBuild("E:\\Dev\\Projects\\java\\jParser") {
 //    dependencySubstitution {
-//        substitute module('com.github.xpenatan.jParser:jParser-core') using project(':jParser:core')
-//        substitute module('com.github.xpenatan.jParser:jParser-teavm') using project(':jParser:teavm')
-//        substitute module('com.github.xpenatan.jParser:jParser-cpp') using project(':jParser:cpp')
-//        substitute module('com.github.xpenatan.jParser:jParser-loader') using project(':jParser:loader')
+//        substitute(module("com.github.xpenatan.jParser:jParser-core")).using(project(":jParser:core"))
+//        substitute(module("com.github.xpenatan.jParser:jParser-teavm")).using(project(":jParser:teavm"))
+//        substitute(module("com.github.xpenatan.jParser:jParser-cpp")).using(project(":jParser:cpp"))
+//        substitute(module("com.github.xpenatan.jParser:loader-core")).using(project(":jParser:loader:loader-core"))
 //    }
 //}
 

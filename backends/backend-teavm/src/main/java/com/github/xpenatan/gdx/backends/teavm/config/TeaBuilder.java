@@ -10,13 +10,22 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -121,7 +130,7 @@ public class TeaBuilder {
         TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
-        configAssets(classLoader, configuration, webappDirectory, webappName);
+        configAssets(classLoader, configuration, webappDirectory, webappName, acceptedURL);
 
         return tool;
     }
@@ -385,25 +394,6 @@ public class TeaBuilder {
         filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
     }
 
-    private static void scriptsDefault(ArrayList<String> filePath) {
-        filePath.add("gdx.js");
-        filePath.add("gdx.wasm.js");
-        filePath.add("gdx.wasm.wasm");
-        filePath.add("soundmanager2-jsmin.js");
-        filePath.add("freetype.js");
-        filePath.add("bullet.js");
-        filePath.add("bullet.wasm.js");
-        filePath.add("bullet.wasm.wasm");
-        filePath.add("imgui.js");
-        filePath.add("imgui.wasm.js");
-        filePath.add("imgui.wasm.wasm");
-        filePath.add("box2D.js");
-        filePath.add("box2D.wasm.js");
-        filePath.add("box2D.wasm.wasm");
-        filePath.add("exampleLib.js");
-        filePath.add("exampleLib.wasm.wasm");
-    }
-
     private static ACCEPT_STATE acceptPath(String path) {
         ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
         if(path.contains("junit"))
@@ -556,7 +546,7 @@ public class TeaBuilder {
         preserveClasses(tool, configuration, classLoader);
     }
 
-    public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName) {
+    public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, ArrayList<URL> acceptedURL) {
         ArrayList<String> webappAssetsFiles = new ArrayList<>();
         webappAssetsFiles.add(webappName);
         TeaBuilder.logHeader("COPYING ASSETS");
@@ -588,7 +578,6 @@ public class TeaBuilder {
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         ArrayList<String> classPathScriptFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
-        scriptsDefault(classPathScriptFiles);
         if (configuration.isShowLoadingLogo()) {
           classPathScriptFiles.add(logo);
         }
@@ -597,8 +586,85 @@ public class TeaBuilder {
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
         AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, filter, assetsOutputPath, generateAssetPaths);
 
-        // Copy Scripts
-        AssetsCopy.copy(classLoader, classPathScriptFiles, null, null, scriptsOutputPath, false);
+        // Copy assets from resources
+        List<String> pathsFromResource = getPathsFromResource(acceptedURL);
+        AssetsCopy.copy(classLoader, pathsFromResource, null, null, assetsOutputPath, false);
         TeaBuilder.log("");
+    }
+
+
+    private static ArrayList<String> getPathsFromResource(String folder) {
+        ArrayList<String> result = new ArrayList<>();
+
+        String jarPath = null;
+        try {
+            jarPath = TeaBuilder.class.getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .getPath();
+        } catch(URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("JAR Path :" + jarPath);
+        // file walks JAR
+        URI urii = URI.create("jar:file:" + jarPath);
+
+        return result;
+    }
+
+    private static ArrayList<String> getPathsFromResource(ArrayList<URL> acceptedURL) {
+        ArrayList<URI> filteredUrl = new ArrayList<>();
+        for(URL url : acceptedURL) {
+            String path = url.getPath();
+            boolean accept = !(
+                    !(path.endsWith(".jar")) ||
+                            path.contains("org.teavm"
+                            ));
+            if(accept) {
+                URI uri = URI.create("jar:file:" + path);
+                filteredUrl.add(uri);
+            }
+        }
+        ArrayList<String> result = new ArrayList<>();
+        for(URI uri : filteredUrl) {
+            ArrayList<String> pathsFromResource = getPathsFromResource(uri, ".");
+            result.addAll(pathsFromResource);
+        }
+        return result;
+    }
+
+    private static ArrayList<String> getPathsFromResource(URI uri, String folder) {
+        ArrayList<String> result = new ArrayList<>();
+        List<Path> resultPath = null;
+
+        try(FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
+            resultPath = Files.walk(fs.getPath(folder))
+                    .filter(Files::isRegularFile)
+                    .filter(new Predicate<Path>() {
+                        @Override
+                        public boolean test(Path path) {
+                            String pathStr = path.toString();
+                            boolean isValid = !(
+                                    pathStr.endsWith(".java") ||
+                                            pathStr.endsWith(".class") ||
+                                            pathStr.contains("META-INF") ||
+                                            pathStr.contains("WEB-INF") ||
+                                            pathStr.endsWith(".html")
+                            );
+                            return isValid;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        if(resultPath != null) {
+            for(Path path : resultPath) {
+                result.add(path.toString());
+            }
+        }
+
+        return result;
     }
 }
