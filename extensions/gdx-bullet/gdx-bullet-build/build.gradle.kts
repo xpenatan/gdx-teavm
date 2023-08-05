@@ -1,3 +1,7 @@
+plugins {
+    id("net.freudasoft.gradle-cmake-plugin") version("0.0.2")
+}
+
 val mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
 
 dependencies {
@@ -20,5 +24,32 @@ tasks.named("clean") {
     doFirst {
         val srcPath = "$projectDir/jni/build/"
         project.delete(files(srcPath))
+    }
+}
+
+cmake {
+    generator.set("MinGW Makefiles")
+
+    sourceFolder.set(file("$projectDir/jni"))
+
+    buildConfig.set("Release")
+    buildTarget.set("install")
+    buildClean.set(true)
+}
+
+tasks.register("build_Bullet_Emscripten") {
+    dependsOn("cmakeBuild")
+    mustRunAfter("cmakeBuild")
+    group = "gen"
+    description = "Generate javascript"
+
+    doLast {
+        copy{
+            from(
+                "$buildDir/cmake/bullet.js",
+                "$buildDir/cmake/bullet.wasm.js"
+            )
+            into("$projectDir/../gdx-bullet-teavm/src/main/resources")
+        }
     }
 }

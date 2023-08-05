@@ -13,15 +13,15 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        generateNew();
+        generate();
     }
 
-    public static void generateNew() throws Exception {
+    public static void generate() throws Exception {
         String basePackage = "com.badlogic.gdx.physics.bullet";
         String libName = "bullet";
-        String idlPath = "jni\\bullet.idl";
+        String idlPath = "src\\main\\cpp\\bullet.idl";
         String baseJavaDir = new File(".").getAbsolutePath() + "./gdx-bullet-base/src/main/java";
-        String cppSourceDir = new File("./jni/bullet/src/").getCanonicalPath();
+        String cppSourceDir = new File("./src/main/cpp/bullet/src/").getCanonicalPath();
 
         IDLReader idlReader = IDLReader.readIDL(idlPath, cppSourceDir);
 

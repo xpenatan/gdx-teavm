@@ -36,7 +36,7 @@ set(EMCC_ARGS
   -g0 -Wall
   --llvm-lto 1
   --post-js glue.js
-  --extern-post-js ../../post.js
+  --extern-post-js ../../jni/post.js
   --closure 1
   -s ALLOW_MEMORY_GROWTH=${ALLOW_MEMORY_GROWTH}
   -s ALLOW_TABLE_GROWTH=1
