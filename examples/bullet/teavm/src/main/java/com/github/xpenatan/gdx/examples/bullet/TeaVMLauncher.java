@@ -8,6 +8,6 @@ public class TeaVMLauncher {
         TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
-        new TeaApplication(new BulletTest(), config);
+        new TeaApplication(new BulletTestScreen(), config);
     }
 }

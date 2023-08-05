@@ -9,6 +9,6 @@ public class Main {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.vSyncEnabled = false;
         config.foregroundFPS = 500;
-        new LwjglApplication(new BulletTest(), config);
+        new LwjglApplication(new BulletGame(), config);
     }
 }

@@ -1,7 +1,7 @@
 import java.io.File
 
 val mainClassName = "com.github.xpenatan.gdx.examples.bullet.Main"
-val assetsDir = File("/assets");
+val assetsDir = File("$projectDir/assets");
 
 dependencies {
     implementation(project(":examples:bullet:core"))
@@ -18,6 +18,7 @@ tasks.register<JavaExec>("runBulletDesktop") {
     description = "Run bullet example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
+    workingDir = assetsDir
 
     if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
         // Required to run on macOS
