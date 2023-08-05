@@ -129,7 +129,6 @@ public class TeaApplication implements Application, Runnable {
         initSound();
 
         //TODO remove script loading from application
-        initBulletPhysics(this);
         initBox2dPhysics(this);
         initImGui(this);
 
@@ -490,11 +489,6 @@ public class TeaApplication implements Application, Runnable {
         });
     }
 
-    public void initBulletPhysics(TeaApplication application) {
-        Preloader preloader = application.getPreloader();
-        initBulletPhysicsWasm(preloader);
-    }
-
     public void initBox2dPhysics(TeaApplication application) {
         Preloader preloader = application.getPreloader();
         initBox2DPhysicsWasm(preloader);
@@ -504,19 +498,6 @@ public class TeaApplication implements Application, Runnable {
         //TODO script loading should be inside lib and not application
         Preloader preloader = application.getPreloader();
         initImGuiWasm(preloader);
-    }
-
-    private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(true, "bullet.wasm.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
-            }
-        });
     }
 
     private void initImGuiWasm(Preloader preloader) {
