@@ -1,5 +1,4 @@
-async function asyncCall() {
-	window.Bullet = await Bullet();
-}
-
-asyncCall();
+Bullet().then(function(r){
+    window.Bullet = r;
+    window.BulletOnInit();
+});
