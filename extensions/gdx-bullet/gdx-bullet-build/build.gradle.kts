@@ -30,7 +30,7 @@ tasks.named("clean") {
 cmake {
     generator.set("MinGW Makefiles")
 
-    sourceFolder.set(file("$projectDir/jni"))
+    sourceFolder.set(file("$projectDir/src/main/cpp"))
 
     buildConfig.set("Release")
     buildTarget.set("install")
