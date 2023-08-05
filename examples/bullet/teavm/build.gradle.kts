@@ -30,7 +30,7 @@ tasks.register<JavaExec>("buildExampleBullet") {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-tasks.register("runBullet") {
+tasks.register("runBulletTeavm") {
     group = "examples-teavm"
     description = "Run Bullet example"
     val list = arrayOf(
