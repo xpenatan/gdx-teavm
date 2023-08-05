@@ -12,12 +12,8 @@ val mainClassName = "com.github.xpenatan.gdx.examples.bullet.Build"
 dependencies {
     implementation(project(":examples:bullet:core"))
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation("com.github.xpenatan.jParser:loader-teavm:${LibExt.jParserVersion}")
 
-    // Use snapshots
-//    implementation("com.github.xpenatan.gdx-teavm:backend-teavm:1.0.0-SNAPSHOT")
-//    implementation("com.github.xpenatan.gdx-teavm:gdx-bullet-teavm:1.0.0-SNAPSHOT")
-
-    // Or source projects
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-bullet:gdx-bullet-teavm"))
 }
