@@ -1,4 +1,4 @@
 Bullet().then(function(r){
-    window.Bullet = r;
+    window.bullet = r;
     window.BulletOnInit();
 });
