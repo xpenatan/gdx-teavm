@@ -26,6 +26,15 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.btDefaultCollisionConstructionInfo;
+import com.badlogic.gdx.physics.bullet.bulletcollision.broadphasecollision.btDbvtBroadphase;
+import com.badlogic.gdx.physics.bullet.bulletcollision.collisiondispatch.btCollisionDispatcher;
+import com.badlogic.gdx.physics.bullet.bulletcollision.collisiondispatch.btDefaultCollisionConfiguration;
+import com.badlogic.gdx.physics.bullet.bulletcollision.collisionshapes.btBoxShape;
+import com.badlogic.gdx.physics.bullet.bulletdynamics.constraintsolver.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.bulletdynamics.dynamics.btDiscreteDynamicsWorld;
+import com.badlogic.gdx.physics.bullet.bulletdynamics.dynamics.btRigidBody;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -40,13 +49,13 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
     private SpriteBatch batch;
     private Environment environment;
 
-//    Array<btRigidBody> colObjs = new Array<>();
-//    btDiscreteDynamicsWorld world;
+    Array<btRigidBody> colObjs = new Array<>();
+    btDiscreteDynamicsWorld world;
 //    DebugDrawer debugDrawer;
-//    btDefaultCollisionConfiguration collisionConfiguration;
-//    btCollisionDispatcher dispatcher;
-//    btDbvtBroadphase broadphase;
-//    btSequentialImpulseConstraintSolver solver;
+    btDefaultCollisionConfiguration collisionConfiguration;
+    btCollisionDispatcher dispatcher;
+    btDbvtBroadphase broadphase;
+    btSequentialImpulseConstraintSolver solver;
 //    ClosestRayResultCallback raycast;
 
     private BitmapFont font;
@@ -65,13 +74,14 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
     public void show() {
 //        btVersion = LinearMath.btGetVersion();
 //
-//        collisionConfiguration = new btDefaultCollisionConfiguration();
-//        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-//        broadphase = new btDbvtBroadphase();
-//        solver = new btSequentialImpulseConstraintSolver();
-//        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-//        Vector3 gravity = new Vector3(0, -10, 0);
-//        world.setGravity(gravity);
+        btDefaultCollisionConstructionInfo info = new btDefaultCollisionConstructionInfo();
+        collisionConfiguration = new btDefaultCollisionConfiguration(info);
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        broadphase = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver();
+        world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+        btVector3 gravity = new btVector3(0, -10, 0);
+        world.setGravity(gravity);
 //
 //        debugDrawer = new DebugDrawer();
 //        world.setDebugDrawer(debugDrawer);
@@ -130,8 +140,6 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
         Gdx.input.setInputProcessor(new InputMultiplexer(this, cameraController));
     }
 
-    Vector3 tmp = new Vector3();
-
     public ModelInstance createBox(String userData, boolean add, float mass, float x, float y, float z, float axiX, float axiY, float axiZ, Model model, float x1, float y1, float z1, float colorR, float colorG, float colorB) {
         ModelInstance modelInstance = new ModelInstance(model);
 
@@ -144,26 +152,27 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
         modelInstance.transform.rotate(Vector3.Y, axiY);
         modelInstance.transform.rotate(Vector3.Z, axiZ);
 
-//        TestMotionState motionState = new TestMotionState(modelInstance.transform);
-//        btBoxShape shape = new btBoxShape(tmp.set(x1 / 2f, y1 / 2f, z1 / 2f));
-//        shape.calculateLocalInertia(mass, tmp.setZero());
-//        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
+        TestMotionState motionState = new TestMotionState(modelInstance.transform);
+        btBoxShape shape = new btBoxShape(new btVector3(x1 / 2f, y1 / 2f, z1 / 2f));
+        btVector3 tmp = new btVector3();
+        shape.calculateLocalInertia(mass, tmp);
+        btRigidBody body = new btRigidBody(mass, motionState, shape, tmp);
 //        body.setUserPointer(colObjs.size);
-//        if(add)
-//            colObjs.add(body);
-//        body.setRestitution(0.7f);
+        if(add)
+            colObjs.add(body);
+        body.setRestitution(0.7f);
 
-//        world.addRigidBody(body);
+        world.addRigidBody(body);
         return modelInstance;
     }
 
     public void resetBoxes() {
-//        for(int i = 0; i < colObjs.size; i++) {
-//            btRigidBody btCollisionObject = colObjs.get(i);
-//            world.removeRigidBody(btCollisionObject);
-//            btCollisionObject.dispose();
-//        }
-//        colObjs.clear();
+        for(int i = 0; i < colObjs.size; i++) {
+            btRigidBody btCollisionObject = colObjs.get(i);
+            world.removeRigidBody(btCollisionObject);
+            btCollisionObject.dispose();
+        }
+        colObjs.clear();
 
         boxes.clear();
         int count = 0;
@@ -203,7 +212,7 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
                 time = System.currentTimeMillis();
             }
 
-//            world.stepSimulation(Gdx.graphics.getDeltaTime());
+            world.stepSimulation(Gdx.graphics.getDeltaTime());
         }
 
         modelBatch.begin(camera);
