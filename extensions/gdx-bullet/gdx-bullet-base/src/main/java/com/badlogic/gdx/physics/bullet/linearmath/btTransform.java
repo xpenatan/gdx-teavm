@@ -11,7 +11,7 @@ public class btTransform extends IDLBase {
     }
 
     public void setFromOpenGLMatrix(float[] m) {
-        setFromOpenGLMatrix(cPointer, m);
+        setFromOpenGLMatrix(getCPointer(), m);
     }
 
     /*[-C++;-NATIVE]
@@ -26,7 +26,7 @@ public class btTransform extends IDLBase {
     private static native void setFromOpenGLMatrix(long addr, float[] array);
 
     public void getOpenGLMatrix(float[] m) {
-        getOpenGLMatrix(cPointer, m);
+        getOpenGLMatrix(getCPointer(), m);
     }
 
     /*[-C++;-NATIVE]

@@ -151,8 +151,8 @@ interface btTransform {
     [Ref]btVector3 getOrigin();
     [Value]btQuaternion getRotation();
     [Ref]btMatrix3x3 getBasis();
-//    void setFromOpenGLMatrix(float[] m);
-//    void getOpenGLMatrix(float[] m);
+    void setFromOpenGLMatrix(float[] m);
+    void getOpenGLMatrix(float[] m);
 };
 
 interface btMotionState {
