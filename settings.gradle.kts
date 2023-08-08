@@ -2,20 +2,12 @@ include(":backends:backend-teavm")
 
 include(":extensions:gdx-freetype-teavm")
 
-//include(":extensions:gdx-box2d:gdx-box2d-base")
-//include(":extensions:gdx-box2d:gdx-box2d-build")
-//include(":extensions:gdx-box2d:gdx-box2d-teavm")
-
 include(":tools:generator:core")
 include(":tools:generator:desktop")
 
 include(":examples:core:core")
 include(":examples:core:desktop")
 include(":examples:core:teavm")
-
-//include(":examples:box2d:core")
-//include(":examples:box2d:desktop")
-//include(":examples:box2d:teavm")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
