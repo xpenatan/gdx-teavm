@@ -2,7 +2,7 @@ plugins {
     id("net.freudasoft.gradle-cmake-plugin") version("0.0.2")
 }
 
-val mainClassName = "com.github.xpenatan.gdx.html5.bullet.Main"
+val mainClassName = "Main"
 
 dependencies {
     implementation(project(":extensions:gdx-bullet:gdx-bullet-base"))

@@ -1,5 +1,3 @@
-package com.github.xpenatan.gdx.html5.bullet;
-
 import com.github.xpenatan.jparser.core.JParser;
 import com.github.xpenatan.jparser.cpp.CppCodeParserV2;
 import com.github.xpenatan.jparser.cpp.CppGenerator;
