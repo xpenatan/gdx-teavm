@@ -40,9 +40,6 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Generate Native Project
-        run: ./gradlew generateNativeProject
-
       - name: Build
         run: ./gradlew build
 
