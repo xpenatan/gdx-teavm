@@ -17,7 +17,7 @@ public class Main {
     }
 
     public static void generate() throws Exception {
-        String basePackage = "com.badlogic.gdx.physics.bullet";
+        String basePackage = "bullet";
         String libName = "bullet";
         String idlPath = "src\\main\\cpp\\bullet.idl";
         String baseJavaDir = new File(".").getAbsolutePath() + "./gdx-bullet-base/src/main/java";

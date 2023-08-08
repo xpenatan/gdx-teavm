@@ -17,7 +17,7 @@ typedef btAlignedObjectArray<btVector3>	MyVector3Array;
 typedef btAlignedObjectArray<float>	MyScalarArray;
 typedef btAlignedObjectArray<const btCollisionObject *>	MyCollisionObjectArray;
 
-class MyClassHelper {
+class Bullet {
 	public: 
 		static int getBTVersion() {
 			return btGetVersion();

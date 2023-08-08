@@ -1,4 +1,4 @@
-package com.badlogic.gdx.physics.bullet.linearmath;
+package bullet.linearmath;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.github.xpenatan.jparser.base.IDLBase;
@@ -20,8 +20,8 @@ public class btTransform extends IDLBase {
         env->ReleasePrimitiveArrayCritical(array, m, 0);
     */
     /*[-teaVM;-NATIVE]
-        var jsObj = Bullet.wrapPointer(addr, Bullet.btTransform);
-        jsObj.setFromOpenGLMatrix(m);
+        var jsObj = bullet.wrapPointer(addr, bullet.btTransform);
+        jsObj.setFromOpenGLMatrix(array);
     */
     private static native void setFromOpenGLMatrix(long addr, float[] array);
 
@@ -57,12 +57,13 @@ public class btTransform extends IDLBase {
         env->ReleasePrimitiveArrayCritical(array, m, 0);
     */
     /*[-teaVM;-NATIVE]
-        var worldTrans = Bullet.wrapPointer(addr, Bullet.btTransform);
+        var worldTrans = bullet.wrapPointer(addr, bullet.btTransform);
         var origin = worldTrans.getOrigin();
         var matrix3x3 = worldTrans.getBasis();
         var row0 = matrix3x3.getRow(0);
         var row1 = matrix3x3.getRow(1);
         var row2 = matrix3x3.getRow(2);
+        var m = array;
         m[0] = row0.getX();
         m[1] = row1.getX();
         m[2] = row2.getX();

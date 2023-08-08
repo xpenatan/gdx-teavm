@@ -26,15 +26,16 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.btDefaultCollisionConstructionInfo;
-import com.badlogic.gdx.physics.bullet.bulletcollision.broadphasecollision.btDbvtBroadphase;
-import com.badlogic.gdx.physics.bullet.bulletcollision.collisiondispatch.btCollisionDispatcher;
-import com.badlogic.gdx.physics.bullet.bulletcollision.collisiondispatch.btDefaultCollisionConfiguration;
-import com.badlogic.gdx.physics.bullet.bulletcollision.collisionshapes.btBoxShape;
-import com.badlogic.gdx.physics.bullet.bulletdynamics.constraintsolver.btSequentialImpulseConstraintSolver;
-import com.badlogic.gdx.physics.bullet.bulletdynamics.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.bulletdynamics.dynamics.btRigidBody;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import bullet.Bullet;
+import bullet.btDefaultCollisionConstructionInfo;
+import bullet.bulletcollision.broadphasecollision.btDbvtBroadphase;
+import bullet.bulletcollision.collisiondispatch.btCollisionDispatcher;
+import bullet.bulletcollision.collisiondispatch.btDefaultCollisionConfiguration;
+import bullet.bulletcollision.collisionshapes.btBoxShape;
+import bullet.bulletdynamics.constraintsolver.btSequentialImpulseConstraintSolver;
+import bullet.bulletdynamics.dynamics.btDiscreteDynamicsWorld;
+import bullet.bulletdynamics.dynamics.btRigidBody;
+import bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -72,8 +73,8 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public void show() {
-//        btVersion = LinearMath.btGetVersion();
-//
+        btVersion = Bullet.btGetVersion();
+
         btDefaultCollisionConstructionInfo info = new btDefaultCollisionConstructionInfo();
         collisionConfiguration = new btDefaultCollisionConfiguration(info);
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -173,8 +174,8 @@ public class BulletTestScreen extends ScreenAdapter implements InputProcessor {
             btCollisionObject.dispose();
         }
         colObjs.clear();
-
         boxes.clear();
+
         int count = 0;
 
         int offsetY = 15;

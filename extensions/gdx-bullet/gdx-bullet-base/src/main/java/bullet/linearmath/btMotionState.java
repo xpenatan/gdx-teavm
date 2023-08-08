@@ -1,4 +1,4 @@
-package com.badlogic.gdx.physics.bullet.linearmath;
+package bullet.linearmath;
 
 
 import com.badlogic.gdx.math.Matrix4;
@@ -34,6 +34,41 @@ public class btMotionState extends IDLBase {
         };
     */
 
+    /*[-teaVM;-ADD]
+        @org.teavm.jso.JSFunctor
+        public interface SetWorldTransform extends org.teavm.jso.JSObject {
+            void setWorldTransformJS(int worldTrans);
+        }
+         */
+        /*[-teaVM;-ADD]
+        @org.teavm.jso.JSFunctor
+        public interface GetWorldTransform extends org.teavm.jso.JSObject {
+            void getWorldTransformJS(int worldTrans);
+        }
+    */
+
+    /*[-teaVM;-REPLACE]
+        public btMotionState() {
+           SetWorldTransform setWorldTransform = new SetWorldTransform() {
+                @Override
+                public void setWorldTransformJS (int worldTransAddr) {
+                    TEMP_GDX_01.idt();
+                    btTransform.convert(worldTransAddr, TEMP_GDX_01);
+                    setWorldTransform(TEMP_GDX_01);
+                }
+            };
+           GetWorldTransform getWorldTransform = new GetWorldTransform() {
+                @Override
+                public void getWorldTransformJS (int worldTransAddr) {
+                    TEMP_GDX_01.idt();
+                    getWorldTransform(TEMP_GDX_01);
+                    btTransform.convert(TEMP_GDX_01, worldTransAddr);
+                }
+            };
+            int pointer = createNative(setWorldTransform, getWorldTransform);
+            initObject(pointer, true);
+        }
+    */
     public btMotionState() {
         long addr = createNATIVE();
         initObject(addr, true);
@@ -46,6 +81,10 @@ public class btMotionState extends IDLBase {
             setWorldTransformID = env->GetMethodID(motionClass, "setWorldTransformCPP", "(J)V");
         }
         return (jlong)new CustomMotionState(env, env->NewGlobalRef(object));
+    */
+    /*[-teaVM;-REPLACE]
+        @org.teavm.jso.JSBody(params = { "setWorldTransform", "getWorldTransform" }, script = "var jsMotionState = new bullet.MotionStateImpl(); jsMotionState.setWorldTransform = setWorldTransform; jsMotionState.getWorldTransform = getWorldTransform; return bullet.getPointer(jsMotionState);")
+        private static native int createNative(SetWorldTransform setWorldTransform, GetWorldTransform getWorldTransform);
     */
     private native long createNATIVE();
 
@@ -66,14 +105,11 @@ public class btMotionState extends IDLBase {
     public void setWorldTransform(Matrix4 worldTrans) {
     }
 
-    /*[-IDL_SKIP]
-     */
+    /*[-IDL_SKIP]*/
     private void getWorldTransform(btTransform worldTrans) {
     }
 
-    /*[-IDL_SKIP]
-     */
+    /*[-IDL_SKIP]*/
     private void setWorldTransform(btTransform worldTrans) {
     }
-
 }

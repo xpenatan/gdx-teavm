@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.examples.bullet;
 
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.physics.bullet.Bullet;
+import bullet.Bullet;
 
 public class BulletInitScreen extends ScreenAdapter {
 

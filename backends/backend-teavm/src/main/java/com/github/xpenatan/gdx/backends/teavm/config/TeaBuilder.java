@@ -83,7 +83,6 @@ public class TeaBuilder {
     }
 
     private static final String EXTENSION_FREETYPE = "gdx-freetype-teavm";
-    private static final String EXTENSION_BULLET = "gdx-bullet-teavm";
     private static final String EXTENSION_BOX2D = "gdx-box2d-teavm";
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
     private static final String EXTENSION_IMGUI = "imgui-core-teavm";
@@ -225,7 +224,6 @@ public class TeaBuilder {
         // TODO make a better sort. Lazy to do it now
         // Move extensions to be first so native classes are replaced by the emulated classes
         makeClassPathFirst(acceptedURL, EXTENSION_FREETYPE);
-        makeClassPathFirst(acceptedURL, EXTENSION_BULLET);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
         makeClassPathFirst(acceptedURL, EXTENSION_IMGUI);
         // Move generic backend to be first
@@ -446,8 +444,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("generator/core/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gdx-bullet/"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("gdx-bullet-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("org.reflections"))
@@ -466,8 +462,6 @@ public class TeaBuilder {
         else if(path.contains(EXTENSION_BOX2D_GWT))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_FREETYPE))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains(EXTENSION_BULLET))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_BOX2D))
             isValid = ACCEPT_STATE.ACCEPT;

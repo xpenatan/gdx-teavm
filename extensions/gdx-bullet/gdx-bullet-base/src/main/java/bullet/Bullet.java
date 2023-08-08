@@ -1,10 +1,11 @@
-package com.badlogic.gdx.physics.bullet;
+package bullet;
 
 import com.github.xpenatan.jparser.loader.JParserLibraryLoader;
 
 /**
  * @author xpenatan
  */
+/*[-IDL_SKIP]*/
 public class Bullet {
 
     /*[-teaVM;-ADD]
@@ -39,4 +40,13 @@ public class Bullet {
     */
     /*[-C++;-REMOVE] */
     public static native void setOnLoadInit();
+
+
+    /* [-C++;-NATIVE]
+         return btGetVersion();
+    */
+    /* [-teaVM;-NATIVE]
+        return bullet.MyClassHelper.prototype.getBTVersion();
+    */
+    public static native int btGetVersion();
 }
