@@ -1,11 +1,6 @@
 include(":backends:backend-teavm")
 
 include(":extensions:gdx-freetype-teavm")
-include(":extensions:gdx-bullet:gdx-bullet-core")
-include(":extensions:gdx-bullet:gdx-bullet-base")
-include(":extensions:gdx-bullet:gdx-bullet-generator")
-include(":extensions:gdx-bullet:gdx-bullet-teavm")
-include(":extensions:gdx-bullet:gdx-bullet-desktop")
 
 include(":extensions:gdx-box2d:gdx-box2d-base")
 include(":extensions:gdx-box2d:gdx-box2d-build")
@@ -17,12 +12,11 @@ include(":tools:generator:desktop")
 include(":examples:core:core")
 include(":examples:core:desktop")
 include(":examples:core:teavm")
-include(":examples:bullet:core")
-include(":examples:bullet:desktop")
-include(":examples:bullet:teavm")
+
 include(":examples:box2d:core")
 include(":examples:box2d:desktop")
 include(":examples:box2d:teavm")
+
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")

@@ -34,9 +34,6 @@ subprojects {
 var libProjects = mutableSetOf(
         project(":backends:backend-teavm"),
         project(":extensions:gdx-freetype-teavm"),
-        project(":extensions:gdx-bullet:gdx-bullet-core"),
-        project(":extensions:gdx-bullet:gdx-bullet-teavm"),
-        project(":extensions:gdx-bullet:gdx-bullet-desktop"),
         project(":extensions:gdx-box2d:gdx-box2d-teavm"),
         project(":tools:generator:core")
 )

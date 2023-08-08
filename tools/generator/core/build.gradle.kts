@@ -9,7 +9,6 @@ dependencies {
     implementation("com.github.xpenatan.gdx-imgui:core-desktop:${LibExt.gdxImGuiVersion}")
 
     implementation(project(":extensions:gdx-freetype-teavm"))
-    implementation(project(":extensions:gdx-bullet:gdx-bullet-teavm"))
     implementation(project(":extensions:gdx-box2d:gdx-box2d-teavm"))
 
     implementation("org.eclipse.jetty:jetty-server:${LibExt.jettyVersion}")
