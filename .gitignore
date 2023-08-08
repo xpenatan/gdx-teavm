@@ -62,4 +62,4 @@ examples/**/*.xml
 examples/**/*.html
 **/gdx-bullet-teavm/src/main/java/**
 **/gdx-box2d-teavm/src/main/java/**
-**/gdx-bullet/src/main/java/**
+**/gdx-bullet-core/src/main/java/**

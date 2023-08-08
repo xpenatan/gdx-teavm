@@ -35,7 +35,7 @@ public class Main {
     ) throws Exception {
         IDLDefaultCodeParser idlParser = new IDLDefaultCodeParser(basePackage, "C++", idlReader);
         idlParser.generateClass = true;
-        String genDir = "../gdx-bullet/src/main/java";
+        String genDir = "../gdx-bullet-core/src/main/java";
         JParser.generate(idlParser, baseJavaDir, genDir);
     }
 
@@ -47,7 +47,7 @@ public class Main {
             String cppSourceDir
     ) throws Exception {
         String libsDir = new File("./build/c++/desktop/").getCanonicalPath();
-        String genDir = "../gdx-bullet/src/main/java";
+        String genDir = "../gdx-bullet-core/src/main/java";
         String libBuildPath = new File("./build/c++/").getCanonicalPath();
         String cppDestinationPath = libBuildPath + "/src";
 

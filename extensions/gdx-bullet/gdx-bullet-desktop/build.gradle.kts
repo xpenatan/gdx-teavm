@@ -1,6 +1,6 @@
 val moduleName = "gdx-bullet-desktop"
 
-val jarFile = "$projectDir/../gdx-bullet-build/build/c++/desktop/bullet-natives.jar"
+val jarFile = "$projectDir/../gdx-bullet-generator/build/c++/desktop/bullet-natives.jar"
 
 tasks.jar {
     from(zipTree(jarFile))

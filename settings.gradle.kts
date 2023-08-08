@@ -1,9 +1,9 @@
 include(":backends:backend-teavm")
 
 include(":extensions:gdx-freetype-teavm")
-include(":extensions:gdx-bullet:gdx-bullet")
+include(":extensions:gdx-bullet:gdx-bullet-core")
 include(":extensions:gdx-bullet:gdx-bullet-base")
-include(":extensions:gdx-bullet:gdx-bullet-build")
+include(":extensions:gdx-bullet:gdx-bullet-generator")
 include(":extensions:gdx-bullet:gdx-bullet-teavm")
 include(":extensions:gdx-bullet:gdx-bullet-desktop")
 
