@@ -18,10 +18,10 @@ include(":examples:freetype:teavm")
 // ######### Need to disable in libgdx settings :tests:gdx-tests-android, :tests:gdx-tests-gwt and :backends:gdx-backend-android because of some conflicts
 // ######### Need to update assets path in desktop gradle and teavm build class.
 
-include(":examples:gdx-tests:core")
-include(":examples:gdx-tests:desktop")
-include(":examples:gdx-tests:teavm")
-includeBuild("E:\\Dev\\Projects\\java\\libgdx")
+//include(":examples:gdx-tests:core")
+//include(":examples:gdx-tests:desktop")
+//include(":examples:gdx-tests:teavm")
+//includeBuild("E:\\Dev\\Projects\\java\\libgdx")
 
 // #########
 
