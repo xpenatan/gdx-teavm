@@ -2,6 +2,7 @@
 - Remove jParser
 - Remove/Move Bullet module to a standalone repository
 - Remove/Move Box2d module to a standalone repository
+- Remove hardcoded box2d, bullet and imgui load method.
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0

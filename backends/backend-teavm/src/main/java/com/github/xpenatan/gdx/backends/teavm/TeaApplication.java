@@ -128,10 +128,6 @@ public class TeaApplication implements Application, Runnable {
         }
         initSound();
 
-        //TODO remove script loading from application
-        initBox2dPhysics(this);
-        initImGui(this);
-
         Gdx.app = this;
         Gdx.graphics = graphics;
         Gdx.gl = graphics.getGL20();
@@ -485,45 +481,6 @@ public class TeaApplication implements Application, Runnable {
                     }
                 });
                 return true;
-            }
-        });
-    }
-
-    public void initBox2dPhysics(TeaApplication application) {
-        Preloader preloader = application.getPreloader();
-        initBox2DPhysicsWasm(preloader);
-    }
-
-    public void initImGui(TeaApplication application) {
-        //TODO script loading should be inside lib and not application
-        Preloader preloader = application.getPreloader();
-        initImGuiWasm(preloader);
-    }
-
-    private void initImGuiWasm(Preloader preloader) {
-        preloader.loadScript(true, "imgui.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
-            }
-        });
-    }
-
-    // Box2D
-
-    private void initBox2DPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(true, "box2D.wasm.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
             }
         });
     }
