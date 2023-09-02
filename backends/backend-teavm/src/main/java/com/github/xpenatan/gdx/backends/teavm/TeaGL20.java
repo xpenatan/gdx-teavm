@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PixmapEmu;
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
@@ -31,6 +30,7 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
+@Emulate(TeaGL20.class) // need emulate because its using PixmapEmu
 public class TeaGL20 implements GL20 {
 
     protected WebGLRenderingContextWrapper gl;
