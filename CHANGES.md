@@ -1,5 +1,7 @@
 [1.0.0-SNAPSHOT]
--
+- Remove jParser
+- Remove/Move Bullet module to a standalone repository
+- Remove/Move Box2d module to a standalone repository
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0
