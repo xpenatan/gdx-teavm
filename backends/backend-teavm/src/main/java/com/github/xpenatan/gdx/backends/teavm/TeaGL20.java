@@ -31,7 +31,6 @@ import java.util.Map;
 /**
  * @author xpenatan
  */
-@Emulate(TeaGL20.class)
 public class TeaGL20 implements GL20 {
 
     protected WebGLRenderingContextWrapper gl;
