@@ -13,6 +13,9 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.ajax.ReadyStateChangeHandler;
+import org.teavm.jso.ajax.XMLHttpRequest;
+import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
 /**
@@ -23,14 +26,12 @@ import org.teavm.jso.typedarrays.Int8Array;
 public class WebAudioAPIManager implements LifecycleListener {
     private final JSObject audioContext;
     private final JSObject globalVolumeNode;
-//    private final AssetDownloader assetDownloader;
     private final AudioControlGraphPool audioControlGraphPool;
     private static boolean soundUnlocked;
 
     public WebAudioAPIManager() {
-//        this.assetDownloader = new AssetDownloader();
         this.audioContext = createAudioContextJSNI();
-        this.globalVolumeNode = createGlobalVolumeNodeJSNI();
+        this.globalVolumeNode = createGlobalVolumeNodeJSNI(audioContext);
         this.audioControlGraphPool = new AudioControlGraphPool(audioContext, globalVolumeNode);
 
         // for automatically muting/unmuting on pause/resume
@@ -44,40 +45,41 @@ public class WebAudioAPIManager implements LifecycleListener {
          * necessary the effect should not be noticeable (i.e. we play silence). As soon as the attempt to unlock has been
          * performed, we remove all the event listeners.
          */
-        if(isAudioContextLocked(audioContext))
-            hookUpSoundUnlockers();
+        if(isAudioContextLocked(audioContext)) {
+            UnlockFunction unlockFunction = new UnlockFunction() {
+                @Override
+                public void unlockFunction() {
+                    setUnlocked();
+                }
+            };
+            hookUpSoundUnlockers(audioContext, unlockFunction);
+        }
         else
             setUnlocked();
     }
 
-    public native void hookUpSoundUnlockers() /*-{
-		var self = this;
-		var audioContext = self.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::audioContext;
-		
-		// An array of various user interaction events we should listen for
-		var userInputEventNames = [
-			'click', 'contextmenu', 'auxclick', 'dblclick', 'mousedown',
-			'mouseup', 'pointerup', 'touchend', 'keydown', 'keyup', 'touchstart'
-		];
+    @JSFunctor
+    public interface UnlockFunction extends JSObject {
+        void unlockFunction();
+    }
 
-		var unlock = function(e) {
-			
-			// resume audio context if it was suspended. It's only required for musics since sounds automatically resume
-			// audio context when started.
-			audioContext.resume();
-			
-			self.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::setUnlocked()();
-
-			userInputEventNames.forEach(function (eventName) {
-				$doc.removeEventListener(eventName, unlock);
-			});
-
-		};
-
-		userInputEventNames.forEach(function (eventName) {
-			$doc.addEventListener(eventName, unlock);
-		});
-	}-*/;
+    @JSBody(params = { "audioContext", "unlockFunction" }, script = "" +
+            "var userInputEventNames = [" +
+            "   'click', 'contextmenu', 'auxclick', 'dblclick', 'mousedown'," +
+            "   'mouseup', 'pointerup', 'touchend', 'keydown', 'keyup', 'touchstart'" +
+            "];" +
+            "var unlock = function(e) {" +
+            "   audioContext.resume();" +
+            "   unlockFunction();" +
+            "   userInputEventNames.forEach(function (eventName) {" +
+            "       $doc.removeEventListener(eventName, unlock);" +
+            "   });" +
+            "};" +
+            "userInputEventNames.forEach(function (eventName) {" +
+            "   $doc.addEventListener(eventName, unlock);" +
+            "});"
+    )
+    public static native void hookUpSoundUnlockers(JSObject audioContext, UnlockFunction unlockFunction);
 
     public void setUnlocked() {
         Gdx.app.log("Webaudio", "Audiocontext unlocked");
@@ -88,112 +90,98 @@ public class WebAudioAPIManager implements LifecycleListener {
         return soundUnlocked;
     }
 
-    static native boolean isAudioContextLocked(JSObject audioContext) /*-{
-		return audioContext.state !== 'running';
-	}-*/;
+    @JSBody(params = { "audioContext" }, script = "" +
+            "return audioContext.state !== 'running';"
+    )
+    static native boolean isAudioContextLocked(JSObject audioContext);
 
     /**
      * Older browsers do not support the Web Audio API. This is where we find out.
      *
      * @return is the WebAudioAPI available in this browser?
      */
-    public static native boolean isSupported() /*-{
-		return typeof (window.AudioContext || window.webkitAudioContext) != "undefined";
-	}-*/;
 
-    private static native JSObject createAudioContextJSNI() /*-{
-		var AudioContext = window.AudioContext || window.webkitAudioContext;
-		if (AudioContext) {
-			var audioContext = new AudioContext();
-			return audioContext;
-		}
-		return null;
-	}-*/;
+    @JSBody(script = "" +
+            "return typeof (window.AudioContext || window.webkitAudioContext) != \"undefined\";"
+    )
+    public static native boolean isSupported();
 
-    private native JSObject createGlobalVolumeNodeJSNI() /*-{
-		var audioContext = this.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::audioContext;
+    @JSBody(script = "" +
+            "var AudioContext = window.AudioContext || window.webkitAudioContext;" +
+            "if(AudioContext) {" +
+            "   var audioContext = new AudioContext();" +
+            "   return audioContext;" +
+            "}" +
+            "return null;"
+    )
+    private static native JSObject createAudioContextJSNI();
 
-		var gainNode = null;
-		if (audioContext.createGain)
-			// Standard compliant
-			gainNode = audioContext.createGain();
-		else
-			// Old WebKit/iOS
-			gainNode = audioContext.createGainNode();
+    @JSBody(params = { "audioContext" }, script = "" +
+            "var gainNode = null;" +
+            "if (audioContext.createGain)" +
+            "   gainNode = audioContext.createGain();" +
+            "else" +
+            "   gainNode = audioContext.createGainNode();" +
+            "gainNode.gain.value = 1.0;" +
+            "gainNode.connect(audioContext.destination);" +
+            "return gainNode;"
+    )
+    private static native JSObject createGlobalVolumeNodeJSNI(JSObject audioContext);
 
-		// Default to full, unmuted volume
-		gainNode.gain.value = 1.0;
+    @JSBody(params = { "audioContext", "gainNode" }, script = "" +
+            "gainNode.disconnect(audioContext.destination);"
+    )
+    private static native void disconnectJSNI(JSObject audioContext, JSObject gainNode);
 
-		// Connect the global volume to the speakers. This will be the last part of our audio graph.
-		gainNode.connect(audioContext.destination);
-
-		return gainNode;
-	}-*/;
-
-    private native void disconnectJSNI() /*-{
-		var audioContext = this.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::audioContext;
-		var gainNode = this.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::globalVolumeNode;
-
-		gainNode.disconnect(audioContext.destination);
-	}-*/;
-
-    private native void connectJSNI() /*-{
-		var audioContext = this.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::audioContext;
-		var gainNode = this.@com.badlogic.gdx.backends.gwt.webaudio.WebAudioAPIManager::globalVolumeNode;
-
-		gainNode.connect(audioContext.destination);
-	}-*/;
+    @JSBody(params = { "audioContext", "gainNode" }, script = "" +
+            "gainNode.connect(audioContext.destination);"
+    )
+    private static native void connectJSNI(JSObject audioContext, JSObject gainNode);
 
     public JSObject getAudioContext() {
         return audioContext;
     }
 
     public Sound createSound(FileHandle fileHandle) {
-
-        //TODO finish
-
         final WebAudioAPISound newSound = new WebAudioAPISound(audioContext, globalVolumeNode, audioControlGraphPool);
 
-//        String url = ((GwtFileHandle)fileHandle).getAssetUrl();
-//
-//        XMLHttpRequest request = XMLHttpRequest.create();
-//        request.setOnReadyStateChange(new ReadyStateChangeHandler() {
-//            @Override
-//            public void onReadyStateChange(XMLHttpRequest xhr) {
-//                if(xhr.getReadyState() == XMLHttpRequest.DONE) {
-//                    if(xhr.getStatus() != 200) {
-//                    }
-//                    else {
-//                        Int8ArrayWrapper data = TypedArrays.createInt8Array(xhr.getResponseArrayBuffer());
-//
-//                        /*
-//                         * Start decoding the sound data. This is an asynchronous process, which is a bad fit for the libGDX API, which
-//                         * expects sound creation to be synchronous. The result is that sound won't actually start playing until the
-//                         * decoding is done.
-//                         */
-//
-//                        DecodeAudioFunction audioFunction = new DecodeAudioFunction() {
-//                            @Override
-//                            public void decodeAudioFunction(JSObject jsObject) {
-//                                newSound.setAudioBuffer(jsObject);
-//                            }
-//                        };
-//                        decodeAudioData(getAudioContext(), data.getBuffer(), audioFunction);
-//                    }
-//                }
-//            }
-//        });
-//        request.open("GET", url);
-//        request.setResponseType(ResponseType.ArrayBuffer);
-//        request.send();
+        String url = ((TeaFileHandle)fileHandle).getAssetUrl();
 
+        XMLHttpRequest request = XMLHttpRequest.create();
+        request.setOnReadyStateChange(new ReadyStateChangeHandler() {
+            @Override
+            public void stateChanged() {
+                if(request.getReadyState() == XMLHttpRequest.DONE) {
+                    if(request.getStatus() != 200) {
+                    }
+                    else {
+                        Int8ArrayWrapper data = (Int8ArrayWrapper)Int8Array.create((ArrayBuffer)request.getResponse());
+
+                        /*
+                         * Start decoding the sound data. This is an asynchronous process, which is a bad fit for the libGDX API, which
+                         * expects sound creation to be synchronous. The result is that sound won't actually start playing until the
+                         * decoding is done.
+                         */
+
+                        DecodeAudioFunction audioFunction = new DecodeAudioFunction() {
+                            @Override
+                            public void decodeAudioFunction(JSObject jsObject) {
+                                newSound.setAudioBuffer(jsObject);
+                            }
+                        };
+                        decodeAudioData(getAudioContext(), data.getBuffer(), audioFunction);
+                    }
+                }
+            }
+        });
+        request.open("GET", url);
+        request.setResponseType("arraybuffer");
+        request.send();
         return newSound;
     }
 
     public Music createMusic(FileHandle fileHandle) {
-        //TODO finish
-        String url = "";
-//        String url = ((TeaFileHandle)fileHandle).getAssetUrl();
+        String url = ((TeaFileHandle)fileHandle).getAssetUrl();
 
         HTMLAudioElementWrapper audio = Audio.createIfSupported();
         audio.setSrc(url);
@@ -222,23 +210,23 @@ public class WebAudioAPIManager implements LifecycleListener {
     @Override
     public void pause() {
         // As the web application looses focus, we mute the sound
-        disconnectJSNI();
+        disconnectJSNI(audioContext, globalVolumeNode);
     }
 
     @Override
     public void resume() {
         // As the web application regains focus, we unmute the sound
-        connectJSNI();
+        connectJSNI(audioContext, globalVolumeNode);
     }
 
     public void setGlobalVolume(float volume) {
         setGlobalVolumeJSNI(volume, globalVolumeNode);
     }
 
-    @JSBody(params = { "volume", "globalVolumeNode" }, script = "" +
+    @JSBody(params = { "volume", "gainNode" }, script = "" +
             "gainNode.gain.value = volume;"
     )
-    public static native void setGlobalVolumeJSNI(float volume, JSObject globalVolumeNode);
+    public static native void setGlobalVolumeJSNI(float volume, JSObject gainNode);
 
     @Override
     public void dispose() {
