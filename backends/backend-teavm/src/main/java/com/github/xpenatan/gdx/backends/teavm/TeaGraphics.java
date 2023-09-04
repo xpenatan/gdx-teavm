@@ -159,7 +159,6 @@ public class TeaGraphics implements Graphics {
         this.gl30 = gl30;
         if (gl30 != null) {
             this.gl20 = gl30;
-
             Gdx.gl = gl20;
             Gdx.gl20 = gl20;
             Gdx.gl30 = gl30;
@@ -168,12 +167,10 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setGL31(GL31 gl31) {
-
     }
 
     @Override
     public void setGL32(GL32 gl32) {
-
     }
 
     @Override
@@ -257,19 +254,19 @@ public class TeaGraphics implements Graphics {
     }
 
     @Override
-    public float getPpcX() {
-        return 96 / 2.54f;
+    public float getPpcX () {
+        return getPpiX() / 2.54f;
     }
 
     @Override
-    public float getPpcY() {
-        return 96 / 2.54f;
+    public float getPpcY () {
+        return getPpiY() / 2.54f;
     }
 
     @Override
-    public float getDensity () {
-      float ppiX = getPpiX();
-      return (ppiX > 0 && ppiX <= Float.MAX_VALUE) ? ppiX / 160f : 1f;
+    public float getDensity() {
+        float ppiX = getPpiX();
+        return (ppiX > 0 && ppiX <= Float.MAX_VALUE) ? ppiX / 160f : 1f;
     }
 
     @Override

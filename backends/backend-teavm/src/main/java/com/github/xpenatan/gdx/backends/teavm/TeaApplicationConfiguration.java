@@ -83,7 +83,13 @@ public class TeaApplicationConfiguration {
      */
     public boolean useDebugGL = false;
 
-    public boolean usePhysicalPixels;
+    /** Whether to use physical device pixels or CSS pixels for scaling the canvas. Makes a difference on mobile devices and HDPI
+     * and Retina displays. Set to true for resizable and fullscreen games on mobile devices and for Desktops if you want to use
+     * the full resolution of HDPI/Retina displays.<br/>
+     * Setting to false mostly makes sense for fixed-size games or non-mobile games expecting performance issues on huge
+     * resolutions. If you target mobiles and desktops, consider using physical device pixels on mobile devices only by using the
+     * return value of {@link TeaApplication#isMobileDevice()} . */
+    public boolean usePhysicalPixels = true;
 
     public boolean isFixedSizeApplication() {
         return width != 0 && height != 0;
