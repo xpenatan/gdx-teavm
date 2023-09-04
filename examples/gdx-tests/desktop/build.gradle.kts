@@ -1,7 +1,7 @@
 dependencies {
     implementation(project(":examples:gdx-tests:core"))
     // need to use lwjgl2 because lwjgl3 call makeCurrent and replace Gdx.input used inside gdx wrapper.
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:${LibExt.gdxVersion}")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
 
     implementation("com.github.xpenatan.gdx-imgui:core-desktop:${LibExt.gdxImGuiVersion}")

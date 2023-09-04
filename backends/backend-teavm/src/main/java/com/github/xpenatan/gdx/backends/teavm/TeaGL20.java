@@ -1073,7 +1073,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type,
                                 Buffer pixels) {
-        if(pixels.limit() > 1) {
+        if(pixels.limit() > 4) {
             ArrayBufferViewWrapper buffer;
 
             if(pixels instanceof FloatBuffer) {

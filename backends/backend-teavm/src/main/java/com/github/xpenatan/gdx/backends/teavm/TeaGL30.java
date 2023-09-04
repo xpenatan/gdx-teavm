@@ -777,7 +777,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             return;
         }
 
-        if(pixels.limit() > 1) {
+        if(pixels.limit() > 4) {
 //            HasArrayBufferView arrayHolder = (HasArrayBufferView)pixels;
 //            ArrayBufferView webGLArray = arrayHolder.getTypedArray();
             ArrayBufferViewWrapper buffer;
@@ -802,9 +802,14 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, buffer);
         }
         else {
-            Pixmap pixmap = Pixmap.pixmaps.get(((IntBuffer)pixels).get(0));
+            int index = ((ByteBuffer)pixels).getInt(0);
+            Pixmap pixmap = Pixmap.pixmaps.get(index);
             // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
-            if(pixmap.canUseImageElement()) {
+
+            if(pixmap.canUsePixmapData()) {
+                gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getPixmapData());
+            }
+            else if(pixmap.canUseImageElement()) {
                 gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getImageElement());
             }
             else if(pixmap.canUseVideoElement()) {
@@ -829,10 +834,9 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     }
 
     @Override
-    public void glTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth,
-                                int format, int type, Buffer pixels) {
+    public void glTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, Buffer pixels) {
         // Taken from glTexSubImage2D
-        if(pixels.limit() > 1) {
+        if(pixels.limit() > 4) {
 //            HasArrayBufferView arrayHolder = (HasArrayBufferView)pixels;
 //            ArrayBufferView webGLArray = arrayHolder.getTypedArray();
             ArrayBufferViewWrapper buffer;
@@ -857,9 +861,15 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, buffer);
         }
         else {
-            Pixmap pixmap = Pixmap.pixmaps.get(((IntBuffer)pixels).get(0));
-            gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type,
-                    pixmap.getCanvasElement());
+            int index = ((ByteBuffer)pixels).getInt(0);
+            Pixmap pixmap = Pixmap.pixmaps.get(index);
+
+            if(pixmap.canUsePixmapData()) {
+                gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixmap.getPixmapData());
+            }
+            else {
+                gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixmap.getCanvasElement());
+            }
         }
     }
 
