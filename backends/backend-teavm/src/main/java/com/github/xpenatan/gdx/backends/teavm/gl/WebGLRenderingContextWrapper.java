@@ -178,6 +178,9 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     WebJSObject getFramebufferAttachmentParameter(int target, int attachment, int pname);
 
+    @JSMethod("getFramebufferAttachmentParameter")
+    int getFramebufferAttachmentParameteri(int target, int attachment, int pname);
+
     WebJSObject getProgramParameter(WebGLProgramWrapper program, int pname);
 
     @JSMethod("getProgramParameter")

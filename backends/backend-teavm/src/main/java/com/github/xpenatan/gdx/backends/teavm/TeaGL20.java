@@ -25,6 +25,7 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Iterator;
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
@@ -115,12 +116,24 @@ public class TeaGL20 implements GL20 {
     }
 
     @JSBody(params = {"o1", "o2"}, script = "return o1 === o2;")
-    private static native boolean compareObject(WebGLFramebufferWrapper o1, WebGLFramebufferWrapper o2);
+    private static native boolean compareObject(JSObject o1, JSObject o2);
 
     private int getKey(WebGLFramebufferWrapper value) {
         Iterator<IntMap.Entry<WebGLFramebufferWrapper>> iterator = frameBuffers.iterator();
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLFramebufferWrapper> next = iterator.next();
+            int key = next.key;
+            if(compareObject(value, next.value)) {
+                return key;
+            }
+        }
+        return -1;
+    }
+
+    private int getKey(WebGLTextureWrapper value) {
+        Iterator<IntMap.Entry<WebGLTextureWrapper>> iterator = textures.iterator();
+        while(iterator.hasNext()) {
+            IntMap.Entry<WebGLTextureWrapper> next = iterator.next();
             int key = next.key;
             if(compareObject(value, next.value)) {
                 return key;
@@ -681,8 +694,25 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glGetFramebufferAttachmentParameteriv(int target, int attachment, int pname, IntBuffer params) {
-        // FIXME
-        throw new GdxRuntimeException("not implemented");
+        switch (pname) {
+            case GL20.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            case GL20.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+            case GL20.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+                params.put(0, gl.getFramebufferAttachmentParameteri(target, attachment, pname));
+                break;
+            case GL20.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+                WebGLTextureWrapper tex = (WebGLTextureWrapper)gl.getParametero(pname);
+                if(tex == null) {
+                    params.put(0);
+                }
+                else {
+                    params.put(getKey(tex));
+                }
+                params.flip();
+                return;
+            default:
+                throw new GdxRuntimeException("glGetFramebufferAttachmentParameteriv Invalid enum for WebGL backend.");
+        }
     }
 
     @Override
