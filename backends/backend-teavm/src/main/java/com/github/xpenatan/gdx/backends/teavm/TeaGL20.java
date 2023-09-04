@@ -673,7 +673,6 @@ public class TeaGL20 implements GL20 {
         if(pname == GL20.GL_DEPTH_CLEAR_VALUE || pname == GL20.GL_LINE_WIDTH || pname == GL20.GL_POLYGON_OFFSET_FACTOR
                 || pname == GL20.GL_POLYGON_OFFSET_UNITS || pname == GL20.GL_SAMPLE_COVERAGE_VALUE) {
             params.put(0, gl.getParameterf(pname));
-            params.flip();
         }
         else
             throw new GdxRuntimeException("glGetFloat not supported by WebGL backend");
@@ -707,7 +706,6 @@ public class TeaGL20 implements GL20 {
                 || pname == GL20.GL_STENCIL_PASS_DEPTH_PASS || pname == GL20.GL_STENCIL_REF || pname == GL20.GL_STENCIL_VALUE_MASK
                 || pname == GL20.GL_STENCIL_WRITEMASK || pname == GL20.GL_SUBPIXEL_BITS || pname == GL20.GL_UNPACK_ALIGNMENT) {
             params.put(0, gl.getParameteri(pname));
-//            params.flip();
         }
         else if(pname == GL20.GL_VIEWPORT) {
             Int32ArrayWrapper array = (Int32ArrayWrapper)gl.getParameterv(pname);
@@ -715,7 +713,6 @@ public class TeaGL20 implements GL20 {
             params.put(1, array.get(1));
             params.put(2, array.get(2));
             params.put(3, array.get(3));
-            params.flip();
         }
         else if(pname == GL20.GL_FRAMEBUFFER_BINDING) {
             WebGLFramebufferWrapper fbo = (WebGLFramebufferWrapper)gl.getParametero(pname);
