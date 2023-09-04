@@ -72,11 +72,11 @@ public class WebAudioAPIManager implements LifecycleListener {
             "   audioContext.resume();" +
             "   unlockFunction();" +
             "   userInputEventNames.forEach(function (eventName) {" +
-            "       $doc.removeEventListener(eventName, unlock);" +
+            "       document.removeEventListener(eventName, unlock);" +
             "   });" +
             "};" +
             "userInputEventNames.forEach(function (eventName) {" +
-            "   $doc.addEventListener(eventName, unlock);" +
+            "   document.addEventListener(eventName, unlock);" +
             "});"
     )
     public static native void hookUpSoundUnlockers(JSObject audioContext, UnlockFunction unlockFunction);

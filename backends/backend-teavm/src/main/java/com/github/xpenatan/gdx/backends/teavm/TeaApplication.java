@@ -126,9 +126,6 @@ public class TeaApplication implements Application, Runnable {
         if(config.useNativePixmap) {
             initGdx();
         }
-        initSound();
-//        audio = new DefaultTeaAudio();
-//        Gdx.audio = audio;
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -137,6 +134,10 @@ public class TeaApplication implements Application, Runnable {
         Gdx.input = input;
         Gdx.files = files;
         Gdx.net = net;
+
+        //        initSound();
+        audio = new DefaultTeaAudio();
+        Gdx.audio = audio;
 
         window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
             @Override
@@ -466,24 +467,24 @@ public class TeaApplication implements Application, Runnable {
         });
     }
 
-    private void initSound() {
-        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                TeaSoundManager soundManager = new TeaSoundManager();
-                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
-                    @Override
-                    public void onready() {
-                        audio = new TeaOldAudio(soundManager);
-                        Gdx.audio = audio;
-                    }
-
-                    @Override
-                    public void ontimeout() {
-                    }
-                });
-                return true;
-            }
-        });
-    }
+//    private void initSound() {
+//        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
+//            @Override
+//            public boolean onSuccess(String url, Object result) {
+//                TeaSoundManager soundManager = new TeaSoundManager();
+//                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
+//                    @Override
+//                    public void onready() {
+//                        audio = new TeaOldAudio(soundManager);
+//                        Gdx.audio = audio;
+//                    }
+//
+//                    @Override
+//                    public void ontimeout() {
+//                    }
+//                });
+//                return true;
+//            }
+//        });
+//    }
 }

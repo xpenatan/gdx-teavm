@@ -136,7 +136,7 @@ public class WebAudioAPISound implements Sound {
             "   source.noteOn(audioContext.currentTime, startOffset);" +
             "return source;"
     )
-    public native JSObject playJSNI(JSObject source, int key, float startOffset, JSObject audioContext, EndedFunction endedFunction);
+    public static native JSObject playJSNI(JSObject source, int key, float startOffset, JSObject audioContext, EndedFunction endedFunction);
 
     @JSBody(params = { "audioBufferSourceNode" }, script = "" +
             "if(typeof (audioBufferSourceNode.stop) !== 'undefined')" +
@@ -327,7 +327,7 @@ public class WebAudioAPISound implements Sound {
     @JSBody(params = { "audioBufferSourceNode", "audioContext" }, script = "" +
             "audioBufferSourceNode.pauseTime = audioContext.currentTime;"
     )
-    public native void pauseJSNI(JSObject audioBufferSourceNode, JSObject audioContext);
+    public static native void pauseJSNI(JSObject audioBufferSourceNode, JSObject audioContext);
 
     @JSBody(params = { "audioBufferSourceNode" }, script = "" +
             "return audioBufferSourceNode.pauseTime - audioBufferSourceNode.startTime;"

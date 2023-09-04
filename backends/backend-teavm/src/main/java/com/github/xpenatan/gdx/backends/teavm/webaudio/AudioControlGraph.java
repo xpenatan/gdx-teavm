@@ -21,10 +21,10 @@ public class AudioControlGraph {
         this.destinationNode = destinationNode;
 
         panNode = setupPanNode(audioContext);
-        gainNode = setupAudioGraph(panNode, destinationNode);
+        gainNode = setupAudioGraph(audioContext, panNode, destinationNode);
     }
 
-    @JSBody(params = {"audioContext" }, script = "" +
+    @JSBody(params = { "audioContext" }, script = "" +
             "var panNode = null;" +
             "if (audioContext.createStereoPanner) {\n" +
             "   panNode = audioContext.createStereoPanner();\n" +
@@ -34,7 +34,7 @@ public class AudioControlGraph {
     )
     public static native JSObject setupPanNode(JSObject audioContext);
 
-    @JSBody(params = {"panNode", "destinationNode" }, script = "" +
+    @JSBody(params = { "audioContext", "panNode", "destinationNode" }, script = "" +
             "var gainNode = null;" +
             "if(audioContext.createGain)" +
             "   gainNode = audioContext.createGain();" +
@@ -47,7 +47,7 @@ public class AudioControlGraph {
             "gainNode.connect(destinationNode);" +
             "return gainNode;"
     )
-    public static native JSObject setupAudioGraph(JSObject panNode, JSObject destinationNode);
+    public static native JSObject setupAudioGraph(JSObject audioContext, JSObject panNode, JSObject destinationNode);
 
     @JSBody(params = { "sourceNode", "panNode", "gainNode" }, script = "" +
             "if (panNode) {" +
