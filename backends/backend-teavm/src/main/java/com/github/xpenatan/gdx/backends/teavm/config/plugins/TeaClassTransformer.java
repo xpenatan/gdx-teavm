@@ -23,7 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.WebJSObject;
 import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestEventTargetWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float64ArrayWrapper;
@@ -40,9 +39,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLContextAttributesWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLProgramWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderbufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
@@ -137,92 +134,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
                 classHolder = findClassHolder(cls, context, TeaClassTransformer.mainClass);
                 setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
             }
-
-            classHolder = findClassHolder(cls, context, Float32ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Int32ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Int16ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Uint8ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Uint8ClampedArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Int8ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-            setMethodAnnotation(classHolder, JSIndexer.class, "get", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, Float64ArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSIndexer.class, "set", null);
-
-            classHolder = findClassHolder(cls, context, WebGLTextureWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLUniformLocationWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLShaderWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLRenderbufferWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLProgramWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLFramebufferWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLContextAttributesWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLBufferWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, WebGLActiveInfoWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getSize", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getType", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getName", null);
-
-            classHolder = findClassHolder(cls, context, WebGLRenderingContextWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSMethod.class, "getParameterInt", "getParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getParameterFloat", "getParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getParameterString", "getParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getProgramParameterInt", "getProgramParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getProgramParameterBoolean", "getProgramParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getShaderParameterBoolean", "getShaderParameter");
-            setMethodAnnotation(classHolder, JSMethod.class, "getShaderParameterInt", "getShaderParameter");
-
-            classHolder = findClassHolder(cls, context, ArrayBufferViewWrapper.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getBuffer", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getByteOffset", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getByteLength", null);
-            setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, ArrayBufferWrapper.class);
             setClassInterface(classHolder, JSObject.class);

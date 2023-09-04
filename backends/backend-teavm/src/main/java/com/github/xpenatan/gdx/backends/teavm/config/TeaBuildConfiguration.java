@@ -1,6 +1,7 @@
-package com.github.xpenatan.gdx.backends.teavm;
+package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 import java.io.File;
 import java.net.URL;

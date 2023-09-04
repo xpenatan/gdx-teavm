@@ -1,16 +1,21 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import org.teavm.jso.JSIndexer;
+import org.teavm.jso.JSProperty;
+
 public interface Uint8ClampedArrayWrapper extends ArrayBufferViewWrapper {
+    @JSProperty
+    int getLength();
 
-    public int getLength();
+    @JSIndexer
+    byte get(int index);
 
-    public byte get(int index);
+    @JSIndexer
+    void set(int index, byte value);
 
-    public void set(int index, byte value);
+    void set(Uint8ClampedArrayWrapper array);
 
-    public void set(Uint8ClampedArrayWrapper array);
+    void set(Uint8ClampedArrayWrapper array, int offset);
 
-    public void set(Uint8ClampedArrayWrapper array, int offset);
-
-    public Uint8ClampedArrayWrapper subarray(int start, int end);
+    Uint8ClampedArrayWrapper subarray(int start, int end);
 }

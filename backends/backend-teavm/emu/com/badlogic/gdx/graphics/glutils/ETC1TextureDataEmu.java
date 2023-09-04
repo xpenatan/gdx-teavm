@@ -1,11 +1,10 @@
 package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.badlogic.gdx.graphics.TextureDataEmu;
-import com.badlogic.gdx.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.Pixmap;
 
 @Emulate(ETC1TextureData.class)
 public class ETC1TextureDataEmu implements TextureDataEmu {
@@ -32,7 +31,7 @@ public class ETC1TextureDataEmu implements TextureDataEmu {
     }
 
     @Override
-    public PixmapEmu consumePixmap() {
+    public Pixmap consumePixmap() {
         return null;
     }
 

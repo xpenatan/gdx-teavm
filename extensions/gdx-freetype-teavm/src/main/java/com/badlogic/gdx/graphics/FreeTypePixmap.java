@@ -8,7 +8,7 @@ import org.teavm.jso.JSBody;
 /**
  * @author Simon Gerst
  */
-public class FreeTypePixmap extends PixmapEmu {
+public class FreeTypePixmap extends Pixmap {
 
     ByteBuffer buffer;
 

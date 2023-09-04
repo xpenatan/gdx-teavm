@@ -1,25 +1,31 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import org.teavm.jso.JSIndexer;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface Float32ArrayWrapper extends ArrayBufferViewWrapper {
     // Float32Array
-    public static final int BYTES_PER_ELEMENT = 4;
+    static final int BYTES_PER_ELEMENT = 4;
 
-    public int getLength();
+    @JSProperty
+    int getLength();
 
-    public float get(int index);
+    @JSIndexer
+    float get(int index);
 
-    public void set(int index, float value);
+    @JSIndexer
+    void set(int index, float value);
 
-    public void set(Float32ArrayWrapper array);
+    void set(Float32ArrayWrapper array);
 
-    public void set(Float32ArrayWrapper array, int offset);
+    void set(Float32ArrayWrapper array, int offset);
 
-    public void set(FloatArrayWrapper array);
+    void set(FloatArrayWrapper array);
 
-    public void set(FloatArrayWrapper array, int offset);
+    void set(FloatArrayWrapper array, int offset);
 
-    public Float32ArrayWrapper subarray(int start, int end);
+    Float32ArrayWrapper subarray(int start, int end);
 }

@@ -3,6 +3,7 @@
 - Remove/Move Bullet module to a standalone repository
 - Remove/Move Box2d module to a standalone repository
 - Remove hardcoded box2d, bullet and imgui load method.
+- Update teavm to version 0.9.0-dev-12
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0

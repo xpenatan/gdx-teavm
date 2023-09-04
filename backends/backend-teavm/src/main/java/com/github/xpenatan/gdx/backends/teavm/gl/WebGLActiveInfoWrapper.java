@@ -1,12 +1,18 @@
 package com.github.xpenatan.gdx.backends.teavm.gl;
 
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
-public interface WebGLActiveInfoWrapper {
-    public int getSize();
+public interface WebGLActiveInfoWrapper extends JSObject {
+    @JSProperty()
+    int getSize();
 
-    public int getType();
+    @JSProperty()
+    int getType();
 
-    public String getName();
+    @JSProperty()
+    String getName();
 }

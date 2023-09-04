@@ -16,6 +16,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
@@ -31,7 +32,8 @@ public class TeaGraphics implements Graphics {
     private WebGLRenderingContextWrapper context;
     protected HTMLCanvasElementWrapper canvas;
     protected TeaApplicationConfiguration config;
-    protected GL20 gl;
+    protected GL20 gl20;
+    protected GL30 gl30;
     protected GLVersion glVersion;
 
     float fps = 0;
@@ -47,11 +49,32 @@ public class TeaGraphics implements Graphics {
         DocumentWrapper document = window.getDocument();
         HTMLElementWrapper elementID = document.getElementById(config.canvasID);
         this.canvas = (HTMLCanvasElementWrapper)elementID;
-        this.context = getGLContext(canvas, config);
-        gl = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
-        String versionString = gl.glGetString(GL20.GL_VERSION);
-        String vendorString = gl.glGetString(GL20.GL_VENDOR);
-        String rendererString = gl.glGetString(GL20.GL_RENDERER);
+
+        WebGLContextAttributes attr = WebGLContextAttributes.create();
+        attr.setAlpha(config.alpha);
+        attr.setAntialias(config.antialiasing);
+        attr.setStencil(config.stencil);
+        attr.setPremultipliedAlpha(config.premultipliedAlpha);
+        attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
+        HTMLCanvasElement canvas1 = (HTMLCanvasElement)canvas;
+
+        if (config.useGL30) {
+            context = (WebGLRenderingContextWrapper)canvas1.getContext("webgl2", attr);
+        }
+
+        if (config.useGL30 && context != null) {
+            // WebGL2 supported
+            this.gl30 = config.useDebugGL ? new TeaGL30Debug((WebGL2RenderingContextWrapper)context)
+                    : new TeaGL30((WebGL2RenderingContextWrapper)context);
+            this.gl20 = gl30;
+        } else {
+            context = (WebGLRenderingContextWrapper)canvas1.getContext("webgl", attr);
+            this.gl20 = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
+        }
+
+        String versionString = gl20.glGetString(GL20.GL_VERSION);
+        String vendorString = gl20.glGetString(GL20.GL_VENDOR);
+        String rendererString = gl20.glGetString(GL20.GL_RENDERER);
         glVersion = new GLVersion(Application.ApplicationType.WebGL, versionString, vendorString, rendererString);
 
         if(config.width >= 0 || config.height >= 0) {
@@ -91,7 +114,7 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public boolean isGL30Available() {
-        return false;
+        return gl30 != null;
     }
 
     @Override
@@ -106,13 +129,12 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public GL20 getGL20() {
-        return gl;
+        return gl20;
     }
 
     @Override
     public GL30 getGL30() {
-        // TODO Auto-generated method stub
-        return null;
+        return gl30;
     }
 
     @Override
@@ -127,14 +149,21 @@ public class TeaGraphics implements Graphics {
 
     @Override
     public void setGL20(GL20 gl20) {
-        this.gl = gl20;
+        this.gl20 = gl20;
         Gdx.gl = gl20;
         Gdx.gl20 = gl20;
     }
 
     @Override
     public void setGL30(GL30 gl30) {
-        // TODO Auto-generated method stub
+        this.gl30 = gl30;
+        if (gl30 != null) {
+            this.gl20 = gl30;
+
+            Gdx.gl = gl20;
+            Gdx.gl20 = gl20;
+            Gdx.gl30 = gl30;
+        }
     }
 
     @Override
@@ -510,16 +539,4 @@ public class TeaGraphics implements Graphics {
             "}" +
             "return false")
     private static native boolean isFullscreenNATIVE();
-
-    public WebGLRenderingContextWrapper getGLContext(HTMLCanvasElementWrapper canvasWrapper, TeaApplicationConfiguration config) {
-        WebGLContextAttributes attr = WebGLContextAttributes.create();
-        attr.setAlpha(config.alpha);
-        attr.setAntialias(config.antialiasing);
-        attr.setStencil(config.stencil);
-        attr.setPremultipliedAlpha(config.premultipliedAlpha);
-        attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
-        HTMLCanvasElement canvas = (HTMLCanvasElement)canvasWrapper;
-        WebGLRenderingContextWrapper context = (WebGLRenderingContextWrapper)canvas.getContext("webgl", attr);
-        return context;
-    }
 }

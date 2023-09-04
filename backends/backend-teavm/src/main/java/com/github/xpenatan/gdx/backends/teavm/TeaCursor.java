@@ -1,9 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.utils.PNG;
@@ -24,7 +22,7 @@ public class TeaCursor implements Cursor {
       return;
     }
 
-    if (pixmap.getFormat() != Pixmap.Format.RGBA8888) {
+    if (pixmap.getFormat() != com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888) {
       throw new GdxRuntimeException("Cursor image pixmap is not in RGBA8888 format.");
     }
 
@@ -49,7 +47,7 @@ public class TeaCursor implements Cursor {
     }
 
     int index = ((ByteBuffer)pixmap.getPixels()).getInt(0);
-    PixmapEmu pixmapEmu = PixmapEmu.pixmaps.get(index);
+    Pixmap pixmapEmu = Pixmap.pixmaps.get(index);
     String url;
     if (pixmapEmu != null) {
       // referenced cursor image via URL

@@ -18,7 +18,7 @@ public interface TextureDataEmu {
 
     public void prepare();
 
-    public PixmapEmu consumePixmap();
+    public Pixmap consumePixmap();
 
     public boolean disposePixmap();
 

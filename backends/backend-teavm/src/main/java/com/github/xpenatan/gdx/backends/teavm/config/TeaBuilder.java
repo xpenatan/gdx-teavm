@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer;
