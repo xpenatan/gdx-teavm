@@ -474,7 +474,7 @@ public class TeaApplication implements Application, Runnable {
                 soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
                     @Override
                     public void onready() {
-                        audio = new TeaAudio(soundManager);
+                        audio = new TeaOldAudio(soundManager);
                         Gdx.audio = audio;
                     }
 
