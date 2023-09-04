@@ -8,8 +8,9 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 
 /**
- * @author xpenatan
  * Port from GWT gdx 1.12.0
+ *
+ * @author xpenatan
  */
 public class TeaGL30Debug extends TeaGL30 {
 

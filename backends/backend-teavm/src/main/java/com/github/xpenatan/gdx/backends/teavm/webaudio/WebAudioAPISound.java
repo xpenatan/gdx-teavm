@@ -8,8 +8,9 @@ import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
 
 /**
- * @author xpenatan
  * Port from GWT gdx 1.12.0
+ *
+ * @author xpenatan
  */
 public class WebAudioAPISound implements Sound {
     // JavaScript object that is the base object of the Web Audio API

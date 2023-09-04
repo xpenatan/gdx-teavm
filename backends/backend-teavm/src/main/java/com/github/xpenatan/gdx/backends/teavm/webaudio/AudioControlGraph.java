@@ -5,8 +5,9 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 
 /**
- * @author xpenatan
  * Port from GWT gdx 1.12.0
+ *
+ * @author xpenatan
  */
 public class AudioControlGraph {
     private final JSObject audioContext;

@@ -16,8 +16,9 @@ import org.teavm.jso.JSObject;
 import org.teavm.jso.typedarrays.Int8Array;
 
 /**
- * @author xpenatan
  * Port from GWT gdx 1.12.0
+ *
+ * @author xpenatan
  */
 public class WebAudioAPIManager implements LifecycleListener {
     private final JSObject audioContext;

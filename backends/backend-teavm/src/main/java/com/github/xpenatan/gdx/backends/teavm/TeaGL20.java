@@ -31,8 +31,9 @@ import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Uint8Array;
 
 /**
- * @author xpenatan
  * Port from GWT gdx 1.12.0
+ *
+ * @author xpenatan
  */
 public class TeaGL20 implements GL20 {
 
