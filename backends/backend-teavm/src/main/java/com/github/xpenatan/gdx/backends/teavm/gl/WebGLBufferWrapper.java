@@ -6,5 +6,4 @@ import org.teavm.jso.JSObject;
  * @author xpenatan
  */
 public interface WebGLBufferWrapper extends JSObject {
-
 }

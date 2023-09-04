@@ -12,6 +12,7 @@ public class GdxTestLauncher {
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = true;
+        config.useGL30 = true;
 
 //        new TeaApplication(new ImGuiTestsApp(), config);
 //        new TeaApplication(new TeaVMTestWrapper(), config);

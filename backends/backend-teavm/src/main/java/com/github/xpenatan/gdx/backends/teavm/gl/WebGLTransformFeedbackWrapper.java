@@ -5,5 +5,5 @@ import org.teavm.jso.JSObject;
 /**
  * @author xpenatan
  */
-public interface WebGLRenderbufferWrapper extends JSObject {
+public interface WebGLTransformFeedbackWrapper extends JSObject {
 }

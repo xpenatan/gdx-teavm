@@ -18,6 +18,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGLVertexArrayObjectWrapper;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -48,12 +49,12 @@ public class TeaGL20 implements GL20 {
     private int nextTextureId = 1;
     private int nextUniformId = 1;
 
-    private final IntMap<WebGLProgramWrapper> programs = new IntMap<>();
+    protected final IntMap<WebGLProgramWrapper> programs = new IntMap<>();
     private final IntMap<WebGLShaderWrapper> shaders = new IntMap<>();
-    private final IntMap<WebGLBufferWrapper> buffers = new IntMap<>();
-    private final IntMap<WebGLFramebufferWrapper> frameBuffers = new IntMap<>();
+    protected final IntMap<WebGLBufferWrapper> buffers = new IntMap<>();
+    protected final IntMap<WebGLFramebufferWrapper> frameBuffers = new IntMap<>();
     private final IntMap<WebGLRenderbufferWrapper> renderBuffers = new IntMap<>();
-    private final IntMap<WebGLTextureWrapper> textures = new IntMap<>();
+    protected final IntMap<WebGLTextureWrapper> textures = new IntMap<>();
     private final IntMap<IntMap<WebGLUniformLocationWrapper>> uniforms = new IntMap<>();
     private int currProgram = 0;
 
@@ -116,9 +117,9 @@ public class TeaGL20 implements GL20 {
     }
 
     @JSBody(params = {"o1", "o2"}, script = "return o1 === o2;")
-    private static native boolean compareObject(JSObject o1, JSObject o2);
+    public static native boolean compareObject(JSObject o1, JSObject o2);
 
-    private int getKey(WebGLFramebufferWrapper value) {
+    protected int getKey(WebGLFramebufferWrapper value) {
         Iterator<IntMap.Entry<WebGLFramebufferWrapper>> iterator = frameBuffers.iterator();
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLFramebufferWrapper> next = iterator.next();
@@ -130,7 +131,7 @@ public class TeaGL20 implements GL20 {
         return -1;
     }
 
-    private int getKey(WebGLTextureWrapper value) {
+    protected int getKey(WebGLTextureWrapper value) {
         Iterator<IntMap.Entry<WebGLTextureWrapper>> iterator = textures.iterator();
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLTextureWrapper> next = iterator.next();
@@ -1075,15 +1076,15 @@ public class TeaGL20 implements GL20 {
                                 Buffer pixels) {
         if(pixels.limit() > 1) {
             ArrayBufferViewWrapper buffer;
-            Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
-            ArrayBufferViewWrapper webGLArray = arr;
 
             if(pixels instanceof FloatBuffer) {
+                Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+                ArrayBufferViewWrapper webGLArray = arr;
                 buffer = webGLArray;
             }
             else {
-                int remainingBytes = pixels.remaining() * 4;
-                int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
+//                int remainingBytes = pixels.remaining() * 4;
+//                int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
                 buffer = copyU((ByteBuffer)pixels);
             }
             gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);

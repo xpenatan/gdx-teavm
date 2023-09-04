@@ -131,6 +131,7 @@ public class TeaApplication implements Application, Runnable {
         Gdx.graphics = graphics;
         Gdx.gl = graphics.getGL20();
         Gdx.gl20 = graphics.getGL20();
+        Gdx.gl30 = graphics.getGL30();
         Gdx.input = input;
         Gdx.files = files;
         Gdx.net = net;
