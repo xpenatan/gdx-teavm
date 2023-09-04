@@ -707,7 +707,7 @@ public class TeaGL20 implements GL20 {
                 || pname == GL20.GL_STENCIL_PASS_DEPTH_PASS || pname == GL20.GL_STENCIL_REF || pname == GL20.GL_STENCIL_VALUE_MASK
                 || pname == GL20.GL_STENCIL_WRITEMASK || pname == GL20.GL_SUBPIXEL_BITS || pname == GL20.GL_UNPACK_ALIGNMENT) {
             params.put(0, gl.getParameteri(pname));
-            params.flip();
+//            params.flip();
         }
         else if(pname == GL20.GL_VIEWPORT) {
             Int32ArrayWrapper array = (Int32ArrayWrapper)gl.getParameterv(pname);
@@ -807,15 +807,9 @@ public class TeaGL20 implements GL20 {
     @Override
     public int glGetUniformLocation(int program, String name) {
         WebGLUniformLocationWrapper location = gl.getUniformLocation(programs.get(program), name);
-        if(location == null) return -1;
-        IntMap<WebGLUniformLocationWrapper> progUniforms = uniforms.get(program);
-        if(progUniforms == null) {
-            progUniforms = new IntMap<>();
-            uniforms.put(program, progUniforms);
-        }
-        int id = name.hashCode();
-        progUniforms.put(id, location);
-        return id;
+        if(location == null)
+            return -1;
+        return allocateUniformLocationId(program, location);
     }
 
     @Override
