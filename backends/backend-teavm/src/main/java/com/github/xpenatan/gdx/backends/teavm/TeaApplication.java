@@ -127,6 +127,8 @@ public class TeaApplication implements Application, Runnable {
             initGdx();
         }
         initSound();
+//        audio = new DefaultTeaAudio();
+//        Gdx.audio = audio;
 
         Gdx.app = this;
         Gdx.graphics = graphics;
