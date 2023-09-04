@@ -554,7 +554,7 @@ public class TeaBuilder {
         FileHandle handler = new FileHandle(indexFile);
         String indexHtmlStr = handler.readString();
 
-        String logo = "startup-logo.png";
+        String logo = "assets/startup-logo.png";
         indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
         indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
         indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
