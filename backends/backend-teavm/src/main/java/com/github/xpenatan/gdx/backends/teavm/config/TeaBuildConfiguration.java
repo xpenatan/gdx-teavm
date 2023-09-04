@@ -35,7 +35,7 @@ public class TeaBuildConfiguration {
     public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
 
-    public String htmlTitle = "TeaVMCoreExample";
+    public String htmlTitle = "gdx-teavm";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
     /**
