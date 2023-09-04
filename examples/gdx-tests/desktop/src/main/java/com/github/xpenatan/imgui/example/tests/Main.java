@@ -13,6 +13,6 @@ public class Main {
         config.setWindowedMode(1444, 800);
         config.setTitle("gdx-tests");
         config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 4, 3);
-        new Lwjgl3Application(new TextureArrayTest(), config);
+        new Lwjgl3Application(new MultipleRenderTargetTest(), config);
     }
 }

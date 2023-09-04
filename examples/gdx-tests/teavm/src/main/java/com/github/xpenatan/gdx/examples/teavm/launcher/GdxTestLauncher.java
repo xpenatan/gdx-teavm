@@ -24,6 +24,6 @@ public class GdxTestLauncher {
 //        new TeaApplication(new GL30Texture3DTest(), config);
 //        new TeaApplication(new InstancedRenderingTest(), config);
 //        new TeaApplication(new TextureArrayTest(), config);
-//        new TeaApplication(new MultipleRenderTargetTest(), config);
+        new TeaApplication(new MultipleRenderTargetTest(), config);
     }
 }
