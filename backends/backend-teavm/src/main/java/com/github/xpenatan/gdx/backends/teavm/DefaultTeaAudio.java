@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.Music;
@@ -22,12 +21,12 @@ public class DefaultTeaAudio implements TeaAudio {
 
     @Override
     public AudioDevice newAudioDevice(int samplingRate, boolean isMono) {
-        throw new GdxRuntimeException("AudioDevice not supported by GWT backend");
+        throw new GdxRuntimeException("AudioDevice not supported by teaVM backend");
     }
 
     @Override
     public AudioRecorder newAudioRecorder(int samplingRate, boolean isMono) {
-        throw new GdxRuntimeException("AudioRecorder not supported by GWT backend");
+        throw new GdxRuntimeException("AudioRecorder not supported by teaVM backend");
     }
 
     @Override
