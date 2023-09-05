@@ -443,7 +443,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         else {
             throw new GdxRuntimeException("Unsupported pname passed to glGetActiveUniformBlockiv");
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -470,7 +470,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 params.put(i, arr.get(i));
             }
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -488,7 +488,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         // Override GwtGL20 method to check if it's a pname introduced with GL30.
         if(pname == GL30.GL_MAX_TEXTURE_LOD_BIAS) {
             params.put(0, gl.getParameterf(pname));
-            params.flip();
+            params.clear();
         }
         else {
             super.glGetFloatv(pname, params);
@@ -546,7 +546,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_UNPACK_SKIP_PIXELS:
             case GL30.GL_UNPACK_SKIP_ROWS:
                 params.put(0, gl.getParameteri(pname));
-                params.flip();
+                params.clear();
                 return;
             case GL30.GL_DRAW_FRAMEBUFFER_BINDING:
             case GL30.GL_READ_FRAMEBUFFER_BINDING:
@@ -557,7 +557,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 else {
                     params.put(getKey(fbo));
                 }
-                params.flip();
+                params.clear();
                 return;
             case GL30.GL_TEXTURE_BINDING_2D_ARRAY:
             case GL30.GL_TEXTURE_BINDING_3D:
@@ -568,7 +568,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 else {
                     params.put(getKey(tex));
                 }
-                params.flip();
+                params.clear();
                 return;
             case GL30.GL_VERTEX_ARRAY_BINDING:
                 WebGLVertexArrayObjectWrapper obj = (WebGLVertexArrayObjectWrapper)gl.getParametero(pname);
@@ -578,7 +578,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 else {
                     params.put(getKey(obj));
                 }
-                params.flip();
+                params.clear();
                 return;
             default:
                 // Assume it is a GL20 pname
@@ -595,7 +595,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_MAX_SERVER_WAIT_TIMEOUT:
             case GL30.GL_MAX_UNIFORM_BLOCK_SIZE:
                 params.put(gl.getParameteri64(pname));
-                params.flip();
+                params.clear();
                 return;
             default:
                 throw new UnsupportedOperationException("Given glGetInteger64v enum not supported on WebGL2");
@@ -613,7 +613,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         else {
             params.put(getKey(query));
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -629,19 +629,19 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         else {
             throw new GdxRuntimeException("Unsupported pname passed to glGetQueryObjectuiv");
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
     public void glGetSamplerParameterfv(int sampler, int pname, FloatBuffer params) {
         params.put(gl.getSamplerParameterf(samplers.get(sampler), pname));
-        params.flip();
+        params.clear();
     }
 
     @Override
     public void glGetSamplerParameteriv(int sampler, int pname, IntBuffer params) {
         params.put(gl.getSamplerParameteri(samplers.get(sampler), pname));
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -660,7 +660,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         for(int i = 0; i < array.getLength(); i++) {
             uniformIndices.put(i, array.get(i));
         }
-        uniformIndices.flip();
+        uniformIndices.clear();
     }
 
     @Override
