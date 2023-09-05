@@ -34,11 +34,11 @@ public class FreeTypeUtil {
     }
 
     public static ArrayBufferViewWrapper getTypedArray(ByteBuffer buffer) {
-        return getTypedArray((JSObject)buffer);
+        byte[] array = buffer.array();
+        return getTypedArray(array);
     }
 
     @JSBody(params = {"buffer"}, script = "" +
-            "var typedArray = buffer.$array0.data;" +
-            "return typedArray;")
-    public static native ArrayBufferViewWrapper getTypedArray(JSObject buffer);
+            "return buffer;")
+    public static native ArrayBufferViewWrapper getTypedArray(byte[] buffer);
 }
