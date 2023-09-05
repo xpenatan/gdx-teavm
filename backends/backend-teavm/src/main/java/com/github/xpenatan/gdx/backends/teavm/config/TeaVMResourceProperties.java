@@ -179,7 +179,11 @@ public class TeaVMResourceProperties {
         }
         if(resultPath != null) {
             for(Path path : resultPath) {
-                result.add(path.toString());
+                String string = path.toString();
+                if(string.startsWith(".")) {
+                    string = string.replaceFirst("\\.", "");
+                }
+                result.add(string);
             }
         }
         return result;
