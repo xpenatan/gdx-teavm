@@ -578,7 +578,7 @@ public class TeaGL20 implements GL20 {
             int id = allocateBufferId(buffer);
             buffers.put(id);
         }
-        buffers.flip();
+        buffers.clear();
     }
 
     @Override
@@ -599,7 +599,7 @@ public class TeaGL20 implements GL20 {
             int id = allocateFrameBufferId(fb);
             framebuffers.put(id);
         }
-        framebuffers.flip();
+        framebuffers.clear();
     }
 
     @Override
@@ -615,7 +615,7 @@ public class TeaGL20 implements GL20 {
             int id = allocateRenderBufferId(rb);
             renderbuffers.put(id);
         }
-        renderbuffers.flip();
+        renderbuffers.clear();
     }
 
     @Override
@@ -631,16 +631,16 @@ public class TeaGL20 implements GL20 {
             int id = allocateTextureId(texture);
             textures.put(id);
         }
-        textures.flip();
+        textures.clear();
     }
 
     @Override
     public String glGetActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
         WebGLActiveInfoWrapper activeAttrib = gl.getActiveAttrib(programs.get(program), index);
         size.put(activeAttrib.getSize());
-        size.flip();
         type.put(activeAttrib.getType());
-        type.flip();
+        size.clear();
+        type.clear();
         return activeAttrib.getName();
     }
 
@@ -648,9 +648,9 @@ public class TeaGL20 implements GL20 {
     public String glGetActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
         WebGLActiveInfoWrapper activeUniform = gl.getActiveUniform(programs.get(program), index);
         size.put(activeUniform.getSize());
-        size.flip();
         type.put(activeUniform.getType());
-        type.flip();
+        size.clear();
+        type.clear();
         return activeUniform.getName();
     }
 
@@ -690,6 +690,7 @@ public class TeaGL20 implements GL20 {
         }
         else
             throw new GdxRuntimeException("glGetFloat not supported by WebGL backend");
+        params.clear();
     }
 
     @Override
@@ -708,11 +709,11 @@ public class TeaGL20 implements GL20 {
                 else {
                     params.put(getKey(tex));
                 }
-                params.flip();
                 return;
             default:
                 throw new GdxRuntimeException("glGetFramebufferAttachmentParameteriv Invalid enum for WebGL backend.");
         }
+        params.clear();
     }
 
     @Override
@@ -753,10 +754,10 @@ public class TeaGL20 implements GL20 {
             else {
                 params.put(getKey(fbo));
             }
-            params.flip();
         }
         else
             throw new GdxRuntimeException("glGetInteger not supported by WebGL backend");
+        params.clear();
     }
 
     @Override
@@ -773,7 +774,7 @@ public class TeaGL20 implements GL20 {
         else {
             params.put(gl.getProgramParameteri(programs.get(program), pname));
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -797,7 +798,7 @@ public class TeaGL20 implements GL20 {
             int result = gl.getShaderParameteri(shaders.get(shader), pname);
             params.put(result);
         }
-        params.flip();
+        params.clear();
     }
 
     @Override
@@ -942,7 +943,7 @@ public class TeaGL20 implements GL20 {
         buffer.put(arrayWrapper.get(2));
         buffer.put(arrayWrapper.get(3));
 
-        buffer.flip();
+        buffer.clear();
     }
 
     @Override
