@@ -28,4 +28,10 @@ public interface HTMLMediaElementWrapper extends HTMLElementWrapper {
 
     @JSProperty
     String getSrc();
+
+    @JSProperty
+    Boolean isMuted();
+
+    @JSProperty
+    void setMuted(boolean flag);
 }

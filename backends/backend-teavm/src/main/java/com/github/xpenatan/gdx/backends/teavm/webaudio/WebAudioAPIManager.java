@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.audio.Audio;
+import com.github.xpenatan.gdx.backends.teavm.dom.audio.AudioContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.audio.HTMLAudioElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
@@ -24,7 +25,7 @@ import org.teavm.jso.typedarrays.Int8Array;
  * @author xpenatan
  */
 public class WebAudioAPIManager implements LifecycleListener {
-    private final JSObject audioContext;
+    private final AudioContextWrapper audioContext;
     private final JSObject globalVolumeNode;
     private final AudioControlGraphPool audioControlGraphPool;
     private static boolean soundUnlocked;
@@ -82,7 +83,9 @@ public class WebAudioAPIManager implements LifecycleListener {
     public static native void hookUpSoundUnlockers(JSObject audioContext, UnlockFunction unlockFunction);
 
     public void setUnlocked() {
-        Gdx.app.log("Webaudio", "Audiocontext unlocked");
+        if(!soundUnlocked) {
+            Gdx.app.log("Webaudio", "Audiocontext unlocked");
+        }
         soundUnlocked = true;
     }
 
@@ -114,7 +117,7 @@ public class WebAudioAPIManager implements LifecycleListener {
             "}" +
             "return null;"
     )
-    private static native JSObject createAudioContextJSNI();
+    private static native AudioContextWrapper createAudioContextJSNI();
 
     @JSBody(params = { "audioContext" }, script = "" +
             "var gainNode = null;" +

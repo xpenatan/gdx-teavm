@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.webaudio;
 
 import com.badlogic.gdx.audio.Music;
+import com.github.xpenatan.gdx.backends.teavm.dom.audio.AudioContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.audio.HTMLAudioElementWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
@@ -23,7 +24,7 @@ public class WebAudioAPIMusic implements Music {
 
     private OnCompletionListener onCompletionListener;
 
-    public WebAudioAPIMusic(JSObject audioContext, HTMLAudioElementWrapper audio, AudioControlGraphPool audioControlGraphPool) {
+    public WebAudioAPIMusic(AudioContextWrapper audioContext, HTMLAudioElementWrapper audio, AudioControlGraphPool audioControlGraphPool) {
         this.audio = audio;
         this.audioControlGraphPool = audioControlGraphPool;
 
