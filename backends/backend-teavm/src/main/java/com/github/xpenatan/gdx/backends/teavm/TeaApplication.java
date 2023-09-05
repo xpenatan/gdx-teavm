@@ -23,8 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,7 +134,6 @@ public class TeaApplication implements Application, Runnable {
         Gdx.files = files;
         Gdx.net = net;
 
-        //        initSound();
         audio = new DefaultTeaAudio();
         Gdx.audio = audio;
 
@@ -467,25 +464,4 @@ public class TeaApplication implements Application, Runnable {
             }
         });
     }
-
-//    private void initSound() {
-//        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
-//            @Override
-//            public boolean onSuccess(String url, Object result) {
-//                TeaSoundManager soundManager = new TeaSoundManager();
-//                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
-//                    @Override
-//                    public void onready() {
-//                        audio = new TeaOldAudio(soundManager);
-//                        Gdx.audio = audio;
-//                    }
-//
-//                    @Override
-//                    public void ontimeout() {
-//                    }
-//                });
-//                return true;
-//            }
-//        });
-//    }
 }
