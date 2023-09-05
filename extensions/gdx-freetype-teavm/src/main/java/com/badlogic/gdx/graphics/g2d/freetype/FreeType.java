@@ -612,7 +612,7 @@ public class FreeType {
             int rowBytes = Math.abs(getPitch()); // We currently ignore negative pitch.
             if(color == Color.WHITE && pixelMode == FT_PIXEL_MODE_GRAY && rowBytes == width && gamma == 1) {
                 pixmap = new FreeTypePixmap(width, rows, com.badlogic.gdx.graphics.Pixmap.Format.Alpha);
-                changedPixels = pixmap.getRealPixels();
+                changedPixels = FreeTypePixmap.getRealPixels(pixmap);
                 BufferUtils.copy(src, changedPixels, changedPixels.capacity());
             }
             else {
@@ -620,7 +620,7 @@ public class FreeType {
                 int rgba = Color.rgba8888(color);
                 byte[] srcRow = new byte[rowBytes];
                 int[] dstRow = new int[width];
-                changedPixels = pixmap.getRealPixels();
+                changedPixels = FreeTypePixmap.getRealPixels(pixmap);
                 IntBuffer dst = changedPixels.asIntBuffer();
                 if(pixelMode == FT_PIXEL_MODE_MONO) {
                     // Use the specified color for each set bit.
@@ -661,7 +661,7 @@ public class FreeType {
                 }
             }
 
-            pixmap.putPixelsBack(changedPixels);
+            FreeTypePixmap.putPixelsBack(pixmap, changedPixels);
             pixmap.setPixelsNull();
 
             Pixmap converted = pixmap;

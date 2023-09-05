@@ -20,22 +20,22 @@ public class FreeTypePixmap extends Pixmap {
         pixels = null;
     }
 
-    public ByteBuffer getRealPixels() {
-        if(getWidth() == 0 || getHeight() == 0) {
+    public static ByteBuffer getRealPixels(Pixmap pixmap) {
+        if(pixmap.getWidth() == 0 || pixmap.getHeight() == 0) {
             return FreeTypeUtil.newDirectReadWriteByteBuffer();
         }
-        if(pixels == null) {
-            pixels = getContext().getImageData(0, 0, getWidth(), getHeight()).getData();
-            this.buffer = FreeTypeUtil.newDirectReadWriteByteBuffer(pixels);
-            return this.buffer;
+        if(pixmap.pixels == null) {
+            pixmap.pixels = pixmap.getContext().getImageData(0, 0, pixmap.getWidth(), pixmap.getHeight()).getData();
+            pixmap.buffer = FreeTypeUtil.newDirectReadWriteByteBuffer(pixmap.pixels);
+            return pixmap.buffer;
         }
-        return buffer;
+        return pixmap.buffer;
     }
 
-    public void putPixelsBack(ByteBuffer pixels) {
-        if(getWidth() == 0 || getHeight() == 0) return;
+    public static void putPixelsBack(Pixmap pixmap, ByteBuffer pixels) {
+        if(pixmap.getWidth() == 0 || pixmap.getHeight() == 0) return;
         ArrayBufferViewWrapper typedArray = FreeTypeUtil.getTypedArray(pixels);
-        putPixelsBack(typedArray, getWidth(), getHeight(), getContext());
+        putPixelsBack(typedArray, pixmap.getWidth(), pixmap.getHeight(), pixmap.getContext());
     }
 
     @JSBody(params = {"pixels", "width", "height", "ctx"}, script = "" +
