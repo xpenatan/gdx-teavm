@@ -119,7 +119,8 @@ public class AssetsCopy {
         for(Entry<String, ArrayList<Asset>> bundle : bundles.entrySet()) {
             StringBuffer buffer = new StringBuffer();
             for(Asset asset : bundle.getValue()) {
-                String path = asset.file.path().replace('\\', '/').replace(assetsOutputPath, "").replaceFirst("assets/", "");
+                String path = asset.file.path().replace('\\', '/');
+                path = path.replace(assetsOutputPath, "");
                 if(path.startsWith("/")) path = path.substring(1);
                 buffer.append(asset.type.code);
                 buffer.append(":");
