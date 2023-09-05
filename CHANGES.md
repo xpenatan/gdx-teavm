@@ -6,6 +6,8 @@
 - Update teavm to version 0.9.0-dev-12
 - Update GL20 from GWT gdx 1.12.0
 - Update Sound from GWT gdx 1.12.0
+- Add GL30 from GWT gdx 1.12.0
+- Add resources automatically when module contains META-INF/gdx-teavm.properties
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0
