@@ -426,13 +426,14 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             classes[classes.length - 1] = method.getReturnType();
             System.arraycopy(method.getParameterTypes(), 0, classes, 0, method.getParameterTypes().length);
             MethodDescriptor methodDescriptor = new MethodDescriptor(method.getName(), classes);
-            MethodHolder originalMethod = cls.getMethod(methodDescriptor);
-            if(originalMethod != null) {
-                cls.removeMethod(originalMethod);
-            }
             MethodReader emulatedMethodReader = emuCls.getMethod(methodDescriptor);
             MethodHolder methodHolderCopy = ModelUtils.copyMethod(emulatedMethodReader);
             MethodHolder methodRename = renamer.rename(methodHolderCopy);
+            MethodDescriptor descriptor = methodRename.getDescriptor();
+            MethodHolder originalMethod = cls.getMethod(descriptor);
+            if(originalMethod != null) {
+                cls.removeMethod(originalMethod);
+            }
             cls.addMethod(methodRename);
         }
     }
