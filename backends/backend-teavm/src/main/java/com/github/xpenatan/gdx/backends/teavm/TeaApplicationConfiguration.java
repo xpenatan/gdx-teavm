@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
 
 /**
  * @author xpenatan
@@ -12,6 +11,13 @@ public class TeaApplicationConfiguration {
      * @deprecated this option is currently experimental and not yet fully supported, expect issues. */
     @Deprecated
     public boolean useGL30 = false;
+
+    /**
+     * Speed up rendering when copying java Buffers to javascript ArrayBuffer.
+     * This option will be removed when it's stable and tested.
+     */
+    @Deprecated
+    public boolean useGLArrayBuffer = true;
 
     /**
      * Experimental webassembly pixmap
@@ -101,6 +107,5 @@ public class TeaApplicationConfiguration {
 
     public TeaApplicationConfiguration(String canvasID) {
         this.canvasID = canvasID;
-        new TeaTypedArrays();
     }
 }

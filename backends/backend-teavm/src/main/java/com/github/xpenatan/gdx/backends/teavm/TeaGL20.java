@@ -8,6 +8,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrap
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int16ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
@@ -18,6 +20,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
+import emu.java.nio.HasArrayBufferView;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -29,6 +32,7 @@ import org.teavm.jso.JSObject;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.typedarrays.Int8Array;
 import org.teavm.jso.typedarrays.Uint8Array;
 
 /**
@@ -60,8 +64,7 @@ public class TeaGL20 implements GL20 {
     private Float32ArrayWrapper floatBuffer = (Float32ArrayWrapper)Float32Array.create(2000 * 20);
     private Int32ArrayWrapper intBuffer = (Int32ArrayWrapper)Int32Array.create(2000 * 6);
     private Int16ArrayWrapper shortBuffer = (Int16ArrayWrapper)Int16Array.create(2000 * 6);
-    //    Int8ArrayWrapper byteBuffer = (Int8ArrayWrapper)Int8Array.create(2000 * 6);
-    private Uint8ArrayWrapper byteBufferU = (Uint8ArrayWrapper)Uint8Array.create(2000 * 6 * 20);
+    protected Int8ArrayWrapper byteBuffer = (Int8ArrayWrapper)Int8Array.create(2000 * 6);
 
     public TeaGL20(WebGLRenderingContextWrapper gl) {
         this.gl = gl;
@@ -142,89 +145,79 @@ public class TeaGL20 implements GL20 {
         return -1;
     }
 
-    public Float32ArrayWrapper copyF32(FloatBuffer buffer) {
-//        if (GWT.isProdMode()) {
-//            return ((Float32Array)((HasArrayBufferView)buffer).getTypedArray()).subarray(buffer.position(), buffer.remaining());
-//        } else {
-        ensureCapacity(buffer);
-        for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-            floatBuffer.set(j, buffer.get(i));
+    public Float32ArrayWrapper copy(FloatBuffer buffer) {
+        if(TeaTool.useGLArrayBuffer()) {
+            return ((Float32ArrayWrapper)((HasArrayBufferView)buffer).getTypedArray());
         }
-        return floatBuffer.subarray(0, buffer.remaining());
-//        }
+        else {
+            ensureCapacity(buffer);
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                floatBuffer.set(j, buffer.get(i));
+            }
+            return floatBuffer.subarray(0, buffer.remaining());
+        }
     }
 
-    public Int16ArrayWrapper copyI16(ShortBuffer buffer) {
-//        if (GWT.isProdMode()) {
-//            return ((Int16Array)((HasArrayBufferView)buffer).getTypedArray()).subarray(buffer.position(), buffer.remaining());
-//        } else {
-        ensureCapacity(buffer);
-        for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-            shortBuffer.set(j, (buffer.get(i)));
+    public Int16ArrayWrapper copy(ShortBuffer buffer) {
+        if(TeaTool.useGLArrayBuffer()) {
+            return ((Int16ArrayWrapper)((HasArrayBufferView)buffer).getTypedArray());
         }
-        return shortBuffer.subarray(0, buffer.remaining());
-//        }
+        else {
+            ensureCapacity(buffer);
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                shortBuffer.set(j, (buffer.get(i)));
+            }
+            return shortBuffer.subarray(0, buffer.remaining());
+        }
     }
 
-    public Int32ArrayWrapper copyI32(IntBuffer buffer) {
-//        if (GWT.isProdMode()) {
-//            return ((Int32Array)((HasArrayBufferView)buffer).getTypedArray()).subarray(buffer.position(), buffer.remaining());
-//        } else {
-        ensureCapacity(buffer);
-        for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-            intBuffer.set(j, buffer.get(i));
+    public Int32ArrayWrapper copy(IntBuffer buffer) {
+        if(TeaTool.useGLArrayBuffer()) {
+            return ((Int32ArrayWrapper)((HasArrayBufferView)buffer).getTypedArray());
         }
-        return intBuffer.subarray(0, buffer.remaining());
-//        }
+        else {
+            ensureCapacity(buffer);
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                intBuffer.set(j, buffer.get(i));
+            }
+            return intBuffer.subarray(0, buffer.remaining());
+        }
     }
 
-//    public Int8ArrayWrapper copy(ByteBuffer buffer) {
-////        if (GWT.isProdMode()) {
-////            return ((Int8Array)((HasArrayBufferView)buffer).getTypedArray()).subarray(buffer.position(), buffer.remaining());
-////        } else {
-//        ensureCapacity(buffer);
-//        for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-//            byteBuffer.set(j, buffer.get(i));
-//        }
-//        return byteBuffer.subarray(0, buffer.remaining());
-////        }
-//    }
-
-    public Uint8ArrayWrapper copyUI8(ByteBuffer buffer) {
-        ensureCapacityU(buffer);
-        for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-            byteBufferU.set(j, buffer.get(i));
+    public Int8ArrayWrapper copy(ByteBuffer buffer) {
+        if(TeaTool.useGLArrayBuffer()) {
+            return ((Int8ArrayWrapper)((HasArrayBufferView)buffer).getTypedArray());
         }
-        return byteBufferU.subarray(0, buffer.remaining());
+        else {
+            ensureCapacity(buffer);
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                byteBuffer.set(j, buffer.get(i));
+            }
+            return byteBuffer.subarray(0, buffer.remaining());
+        }
     }
 
     private void ensureCapacity(FloatBuffer buffer) {
         if(buffer.remaining() > floatBuffer.getLength()) {
-            floatBuffer = (Float32ArrayWrapper)Float32Array.create(buffer.remaining());
+            floatBuffer = TypedArrays.createFloat32Array(buffer.remaining());
         }
     }
 
     private void ensureCapacity(ShortBuffer buffer) {
         if(buffer.remaining() > shortBuffer.getLength()) {
-            shortBuffer = (Int16ArrayWrapper)Int16Array.create(buffer.remaining());
+            shortBuffer = TypedArrays.createInt16Array(buffer.remaining());
         }
     }
 
     protected void ensureCapacity(IntBuffer buffer) {
         if(buffer.remaining() > intBuffer.getLength()) {
-            intBuffer = (Int32ArrayWrapper)Int32Array.create(buffer.remaining());
+            intBuffer = TypedArrays.createInt32Array(buffer.remaining());
         }
     }
 
-//    private void ensureCapacity(ByteBuffer buffer) {
-//        if(buffer.remaining() > byteBuffer.getLength()) {
-//            byteBuffer = (Int8ArrayWrapper)Int8Array.create(buffer.remaining());
-//        }
-//    }
-
-    private void ensureCapacityU(ByteBuffer buffer) {
-        if(buffer.remaining() > byteBufferU.getLength()) {
-            byteBufferU = (Uint8ArrayWrapper)Uint8Array.create(buffer.remaining());
+    private void ensureCapacity(ByteBuffer buffer) {
+        if(buffer.remaining() > byteBuffer.getLength()) {
+            byteBuffer = TypedArrays.createInt8Array(buffer.remaining());
         }
     }
 
@@ -304,13 +297,13 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
         if(data instanceof FloatBuffer) {
-            gl.bufferData(target, copyF32((FloatBuffer)data), usage);
+            gl.bufferData(target, copy((FloatBuffer)data), usage);
         }
         else if(data instanceof ShortBuffer) {
-            gl.bufferData(target, copyI16((ShortBuffer)data), usage);
+            gl.bufferData(target, copy((ShortBuffer)data), usage);
         }
         else if(data instanceof ByteBuffer) {
-            gl.bufferData(target, copyUI8((ByteBuffer)data), usage);
+            gl.bufferData(target, copy((ByteBuffer)data), usage);
         }
         else if(data == null) {
             gl.bufferData(target, size, usage);
@@ -323,13 +316,13 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
         if(data instanceof FloatBuffer) {
-            gl.bufferSubData(target, offset, copyF32((FloatBuffer)data));
+            gl.bufferSubData(target, offset, copy((FloatBuffer)data));
         }
         else if(data instanceof ShortBuffer) {
-            gl.bufferSubData(target, offset, copyI16((ShortBuffer)data));
+            gl.bufferSubData(target, offset, copy((ShortBuffer)data));
         }
         else if(data instanceof ByteBuffer) {
-            gl.bufferSubData(target, offset, copyUI8((ByteBuffer)data));
+            gl.bufferSubData(target, offset, copy((ByteBuffer)data));
         }
         else {
             throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
@@ -1014,20 +1007,25 @@ public class TeaGL20 implements GL20 {
         else {
             if(pixels.limit() > 4) {
 //                HasArrayBufferView arrayHolder = (HasArrayBufferView)pixels;
-//                ArrayBufferView webGLArray = arrayHolder.getTypedArray();
+//                ArrayBufferViewWrapper webGLArray = arrayHolder.getTypedArray();
+//                ArrayBufferViewWrapper buffer;
+//                if(pixels instanceof FloatBuffer) {
+//                    buffer = webGLArray;
+//                }
+//                else {
+//                    int remainingBytes = pixels.remaining() * 4;
+//                    int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
+//                    buffer = (Uint8ArrayWrapper)Uint8Array.create((ArrayBuffer)webGLArray.getBuffer(), byteOffset, remainingBytes);
+//                }
+
                 ArrayBufferViewWrapper buffer;
                 if(pixels instanceof FloatBuffer) {
-                    Float32ArrayWrapper arr = copyF32((FloatBuffer)pixels);
+                    Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
                     ArrayBufferViewWrapper webGLArray = arr;
                     buffer = webGLArray;
                 }
                 else {
-                    Uint8ArrayWrapper copyU = copyUI8((ByteBuffer)pixels);
-                    buffer = copyU;
-//                    Int8ArrayWrapper copyU = copy((ByteBuffer)pixels);
-//                    int remainingBytes = pixels.remaining() * 4;
-//                    int byteOffset = pixels.arrayOffset() + pixels.position() * 4;
-//                    buffer = (ArrayBufferViewWrapper)Uint8Array.create((ArrayBuffer)copyU, byteOffset, remainingBytes);
+                    buffer = copy((ByteBuffer)pixels);
                 }
                 gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
             }
@@ -1072,36 +1070,29 @@ public class TeaGL20 implements GL20 {
     }
 
     @Override
-    public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type,
-                                Buffer pixels) {
+    public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
         if(pixels.limit() > 4) {
-            ArrayBufferViewWrapper buffer;
-
-            if(pixels instanceof FloatBuffer) {
-                Float32ArrayWrapper arr = copyF32((FloatBuffer)pixels);
-                ArrayBufferViewWrapper webGLArray = arr;
-                buffer = webGLArray;
-            }
-            else {
-//                int remainingBytes = pixels.remaining() * 4;
-//                int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
-                buffer = copyUI8((ByteBuffer)pixels);
-            }
-            gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
-
-
 //            HasArrayBufferView arrayHolder = (HasArrayBufferView)pixels;
-//            ArrayBufferView webGLArray = arrayHolder.getTypedArray();
-//            ArrayBufferView buffer;
+//            ArrayBufferViewWrapper webGLArray = arrayHolder.getTypedArray();
+//            ArrayBufferViewWrapper buffer;
 //            if(pixels instanceof FloatBuffer) {
 //                buffer = webGLArray;
 //            }
 //            else {
 //                int remainingBytes = pixels.remaining() * 4;
-//                int byteOffset = webGLArray.byteOffset() + pixels.position() * 4;
-//                buffer = Uint8ArrayNative.create(webGLArray.buffer(), byteOffset, remainingBytes);
+//                int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
+//                buffer = (Uint8ArrayWrapper)Uint8Array.create((ArrayBuffer)webGLArray.getBuffer(), byteOffset, remainingBytes);
 //            }
-//            gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
+            ArrayBufferViewWrapper buffer;
+            if(pixels instanceof FloatBuffer) {
+                Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+                ArrayBufferViewWrapper webGLArray = arr;
+                buffer = webGLArray;
+            }
+            else {
+                buffer = copy((ByteBuffer)pixels);
+            }
+            gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
@@ -1124,7 +1115,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform1fv(loc, copyF32(v));
+        gl.uniform1fv(loc, copy(v));
     }
 
     @Override
@@ -1142,7 +1133,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform1iv(loc, copyI32(v));
+        gl.uniform1iv(loc, copy(v));
     }
 
     @Override
@@ -1160,7 +1151,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform2fv(loc, copyF32(v));
+        gl.uniform2fv(loc, copy(v));
     }
 
     @Override
@@ -1178,7 +1169,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform2iv(loc, copyI32(v));
+        gl.uniform2iv(loc, copy(v));
     }
 
     @Override
@@ -1196,7 +1187,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform3fv(loc, copyF32(v));
+        gl.uniform3fv(loc, copy(v));
     }
 
     @Override
@@ -1214,7 +1205,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform3iv(loc, copyI32(v));
+        gl.uniform3iv(loc, copy(v));
     }
 
     @Override
@@ -1232,7 +1223,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform4fv(loc, copyF32(v));
+        gl.uniform4fv(loc, copy(v));
     }
 
     @Override
@@ -1250,7 +1241,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform4iv(loc, copyI32(v));
+        gl.uniform4iv(loc, copy(v));
     }
 
     @Override
@@ -1262,7 +1253,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix2fv(loc, transpose, copyF32(value));
+        gl.uniformMatrix2fv(loc, transpose, copy(value));
     }
 
     @Override
@@ -1274,7 +1265,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix3fv(loc, transpose, copyF32(value));
+        gl.uniformMatrix3fv(loc, transpose, copy(value));
     }
 
     @Override
@@ -1286,7 +1277,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix4fv(loc, transpose, copyF32(value));
+        gl.uniformMatrix4fv(loc, transpose, copy(value));
     }
 
     @Override
@@ -1313,7 +1304,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib1fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib1fv(indx, copyF32(values));
+        gl.vertexAttrib1fv(indx, copy(values));
     }
 
     @Override
@@ -1323,7 +1314,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib2fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib2fv(indx, copyF32(values));
+        gl.vertexAttrib2fv(indx, copy(values));
     }
 
     @Override
@@ -1333,7 +1324,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib3fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib3fv(indx, copyF32(values));
+        gl.vertexAttrib3fv(indx, copy(values));
     }
 
     @Override
@@ -1343,7 +1334,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib4fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib4fv(indx, copyF32(values));
+        gl.vertexAttrib4fv(indx, copy(values));
     }
 
     @Override

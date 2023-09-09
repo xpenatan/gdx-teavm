@@ -290,10 +290,10 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             Class<?> emulated = updateCode.get(className);
             ClassReader emulatedClassHolder = innerSource.get(emulated.getName());
             if(emulatedClassHolder != null) {
-                replaceClassCode(emulated, cls, emulatedClassHolder);
+                replaceClassCode(innerSource, emulated, cls, emulatedClassHolder);
 
                 // teavm makes bunch of classreader copies. We also need to update the original class
-                replaceClassCode(emulated, (ClassHolder)original, emulatedClassHolder);
+                replaceClassCode(innerSource, emulated, (ClassHolder)original, emulatedClassHolder);
             }
         }
         else if(emulations.containsKey(className)) {
@@ -394,7 +394,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         annotations.add(annotation);
     }
 
-    private void replaceClassCode(Class<?> emulated, final ClassHolder cls, final ClassReader emuCls) {
+    private void replaceClassCode(ClassReaderSource innerSource, Class<?> emulated, final ClassHolder cls, final ClassReader emuCls) {
         Predicate<AnnotatedElement> annotatedElementPredicate = ReflectionUtils.withAnnotation(Emulate.class);
         Set<Field> fields = ReflectionUtils.getFields(emulated, annotatedElementPredicate);
         Set<Method> methods = ReflectionUtils.getMethods(emulated, annotatedElementPredicate);
@@ -409,6 +409,34 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             }
         });
 
+        Set<String> interfaces = emuCls.getInterfaces();
+        Iterator<String> interfaceIt = interfaces.iterator();
+        while(interfaceIt.hasNext()) {
+            String interfaceStr = interfaceIt.next();
+            ClassReader interfaceClassHolder = innerSource.get(interfaceStr);
+            if(interfaceClassHolder != null) {
+                ClassHolder classHolder = ModelUtils.copyClass(interfaceClassHolder);
+                ClassHolder interfaceRename = renamer.rename(classHolder);
+                String name = interfaceRename.getName();
+                cls.getInterfaces().add(name);
+            }
+        }
+
+//
+//        if(emulatedClassName.contains("FloatBufferDirect")) {
+//
+//            String parent = emuCls.getParent();
+//            if(parent != null && !parent.isEmpty()) {
+//                ClassReader parentClassHolder = innerSource.get(parent);
+//                if(parentClassHolder != null) {
+//                    ClassHolder classHolder = ModelUtils.copyClass(parentClassHolder);
+//                    ClassHolder parentClassHolderRename = renamer.rename(classHolder);
+//                    String name = parentClassHolderRename.getName();
+//                    cls.setParent(name);
+//                }
+//            }
+//
+//        }
         for(Field field : fields) {
             String emuFieldName = field.getName();
             FieldReader emulatedField = emuCls.getField(emuFieldName);

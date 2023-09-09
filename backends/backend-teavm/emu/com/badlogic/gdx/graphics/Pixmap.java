@@ -11,7 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
+import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
@@ -20,13 +20,16 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
+import emu.java.nio.HasArrayBufferView;
 import java.nio.ByteBuffer;
+import org.teavm.jso.JSBody;
 
 public class Pixmap implements Disposable {
     static int nextId = 0;
@@ -537,16 +540,30 @@ public class Pixmap implements Disposable {
         }
         else {
             if(width == 0 || height == 0) return;
-            CanvasRenderingContext2DWrapper context = getContext();
-            ImageDataWrapper imgData = context.createImageData(width, height);
-            Uint8ClampedArrayWrapper data = imgData.getData();
-            byte[] pixelsArray = pixels.array();
-            for(int i = 0, len = width * height * 4; i < len; i++) {
-                data.set(i, (byte)(pixelsArray[i] & 0xff));
-            }
-            context.putImageData(imgData, 0, 0);
+//            if(TeaTool.isGLArrayBuffer()) {
+//                setImageData(((HasArrayBufferView)pixels).getTypedArray(), width, height, getContext());
+//            }
+//            else {
+                CanvasRenderingContext2DWrapper context = getContext();
+                ImageDataWrapper imgData = context.createImageData(width, height);
+                Uint8ClampedArrayWrapper data = imgData.getData();
+                byte[] pixelsArray = pixels.array();
+                for(int i = 0, len = width * height * 4; i < len; i++) {
+                    data.set(i, (byte)(pixelsArray[i] & 0xff));
+                }
+                context.putImageData(imgData, 0, 0);
+//            }
         }
     }
+
+    @JSBody(params = { "pixels", "width", "height", "ctx" }, script = "" +
+            "var imgData = ctx.createImageData(width, height);" +
+            "var data = imgData.data;" +
+            "for (var i = 0, len = width * height * 4; i < len; i++) {" +
+            "   data[i] = pixels[i] & 0xff;" +
+            "}" +
+            "ctx.putImageData(imgData, 0, 0);")
+    private static native void setImageData(ArrayBufferViewWrapper pixels, int width, int height, CanvasRenderingContext2DWrapper ctx);
 
     public Format getFormat () {
         if(nativePixmap != null) {

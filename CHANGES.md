@@ -8,6 +8,8 @@
 - Update Sound from GWT gdx 1.12.0
 - Add GL30 from GWT gdx 1.12.0
 - Add resources automatically when module contains META-INF/gdx-teavm.properties
+- Fix freetype shadow error
+- Improve rendering performance
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0

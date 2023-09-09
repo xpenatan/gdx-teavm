@@ -1,0 +1,49 @@
+package org.teavm.classlib.java.nio;
+
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+import emu.java.nio.HasArrayBufferView;
+import org.teavm.jso.JSObject;
+
+@Emulate(valueStr = "java.nio.ByteBufferImpl", updateCode = true)
+public abstract class ByteBufferImplEmu extends TByteBufferImpl implements HasArrayBufferView {
+
+    public ByteBufferImplEmu(int capacity, boolean direct) {
+        super(capacity, direct);
+    }
+
+    public ByteBufferImplEmu(int start, int capacity, byte[] array, int position, int limit, boolean direct, boolean readOnly) {
+        super(start, capacity, array, position, limit, direct, readOnly);
+    }
+
+    @Override
+    @Emulate
+    public ArrayBufferViewWrapper getTypedArray() {
+        Object array = array();
+        return ArrayBufferUtil.getArrayBufferView((JSObject)array);
+    }
+
+//    @Emulate
+//    public FloatBuffer asFloatBuffer() {
+//        Object byteBuf = this;
+//        ByteBuffer buffer = (ByteBuffer)byteBuf;
+//        Object o = new FloatBufferDirect(buffer);
+//        return (FloatBuffer)o;
+//    }
+//
+//    @Emulate
+//    public IntBuffer asIntBuffer() {
+//        Object byteBuf = this;
+//        ByteBuffer buffer = (ByteBuffer)byteBuf;
+//        Object o = new IntBufferDirect(buffer);
+//        return (IntBuffer)o;
+//    }
+//
+//    @Emulate
+//    public ShortBuffer asShortBuffer() {
+//        Object byteBuf = this;
+//        ByteBuffer buffer = (ByteBuffer)byteBuf;
+//        Object o = new ShortBufferDirect(buffer);
+//        return (ShortBuffer)o;
+//    }
+}

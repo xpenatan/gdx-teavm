@@ -117,7 +117,7 @@ public class Preloader {
 
                                     if(type == AssetType.Binary || type == AssetType.Audio) {
                                         ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
                                         obj = new Blob(arrayBuffer, data);
                                     }
                                     else if(type == AssetType.Image) {
@@ -127,7 +127,7 @@ public class Preloader {
                                         image.setSrc(baseUrl);
 
                                         ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
                                         Blob blob = new Blob(arrayBuffer, data);
                                         blob.setImage(image);
                                         obj = blob;
