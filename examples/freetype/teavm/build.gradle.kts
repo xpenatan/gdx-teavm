@@ -13,34 +13,29 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:freetype:core"))
 
-    // Use snapshots
-//  implementation("com.github.xpenatan.gdx-teavm:backend-teavm:1.0.0-SNAPSHOT")
-//  implementation("com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:1.0.0-SNAPSHOT")
-
-    // Or source projects
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildFreetypeTest"
 
-tasks.register<JavaExec>("buildExampleCoreFreeType") {
+tasks.register<JavaExec>("freetype-build") {
     dependsOn("classes")
-    group = "teavm"
+    group = "examples-teavm"
     description = "Build teavm FreeType example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-tasks.register("runCoreFreeTypeTest") {
+tasks.register("freetype-run-teavm") {
     group = "examples-teavm"
     description = "Run FreeType Demo example"
     val list = arrayOf(
         "clean",
-        "buildExampleCoreFreeType",
+        "freetype-build",
         "jettyRun"
     )
     dependsOn(list)
-    tasks.findByName("buildExampleCoreFreeType")?.mustRunAfter("clean")
-    tasks.findByName("jettyRun")?.mustRunAfter("buildExampleCoreFreeType")
+    tasks.findByName("freetype-build")?.mustRunAfter("clean")
+    tasks.findByName("jettyRun")?.mustRunAfter("freetype-build")
 }

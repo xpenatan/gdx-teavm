@@ -1,8 +1,7 @@
 package org.teavm.classlib.java.nio;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import emu.java.nio.HasArrayBufferView;
 
 @Emulate(valueStr = "java.nio.IntBufferOverByteBuffer", updateCode = true)
 public abstract class IntBufferOverByteBufferEmu extends TIntBufferOverByteBuffer implements HasArrayBufferView {
@@ -13,7 +12,7 @@ public abstract class IntBufferOverByteBufferEmu extends TIntBufferOverByteBuffe
 
     @Override
     @Emulate
-    public ArrayBufferViewWrapper getTypedArray() {
+    public Int8ArrayWrapper getTypedArray() {
         HasArrayBufferView buff = (HasArrayBufferView)byteByffer;
         return buff.getTypedArray();
     }

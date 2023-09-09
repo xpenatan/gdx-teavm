@@ -26,7 +26,7 @@ tasks.register<JavaExec>("gdx-tests-build") {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-tasks.register("gdx-tests-run") {
+tasks.register("gdx-tests-run-teavm") {
     group = "examples-teavm"
     description = "Run gdx-tests teavm app"
     val list = listOf("gdx-tests-build", "jettyRun")

@@ -27,8 +27,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWr
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
-import emu.java.nio.HasArrayBufferView;
 import java.nio.ByteBuffer;
+import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import org.teavm.jso.JSBody;
 
 public class Pixmap implements Disposable {
@@ -540,10 +540,11 @@ public class Pixmap implements Disposable {
         }
         else {
             if(width == 0 || height == 0) return;
-//            if(TeaTool.isGLArrayBuffer()) {
-//                setImageData(((HasArrayBufferView)pixels).getTypedArray(), width, height, getContext());
-//            }
-//            else {
+            if(TeaTool.useGLArrayBuffer()) {
+                Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(pixels);
+                setImageData(int8Array, width, height, getContext());
+            }
+            else {
                 CanvasRenderingContext2DWrapper context = getContext();
                 ImageDataWrapper imgData = context.createImageData(width, height);
                 Uint8ClampedArrayWrapper data = imgData.getData();
@@ -552,7 +553,7 @@ public class Pixmap implements Disposable {
                     data.set(i, (byte)(pixelsArray[i] & 0xff));
                 }
                 context.putImageData(imgData, 0, 0);
-//            }
+            }
         }
     }
 

@@ -1,8 +1,8 @@
 package org.teavm.classlib.java.nio;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import emu.java.nio.HasArrayBufferView;
 import org.teavm.jso.JSObject;
 
 @Emulate(valueStr = "java.nio.ByteBufferImpl", updateCode = true)
@@ -18,7 +18,7 @@ public abstract class ByteBufferImplEmu extends TByteBufferImpl implements HasAr
 
     @Override
     @Emulate
-    public ArrayBufferViewWrapper getTypedArray() {
+    public Int8ArrayWrapper getTypedArray() {
         Object array = array();
         return ArrayBufferUtil.getArrayBufferView((JSObject)array);
     }
