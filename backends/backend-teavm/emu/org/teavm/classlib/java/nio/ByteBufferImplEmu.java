@@ -23,27 +23,9 @@ public abstract class ByteBufferImplEmu extends TByteBufferImpl implements HasAr
         return ArrayBufferUtil.getArrayBufferView((JSObject)array);
     }
 
-//    @Emulate
-//    public FloatBuffer asFloatBuffer() {
-//        Object byteBuf = this;
-//        ByteBuffer buffer = (ByteBuffer)byteBuf;
-//        Object o = new FloatBufferDirect(buffer);
-//        return (FloatBuffer)o;
-//    }
-//
-//    @Emulate
-//    public IntBuffer asIntBuffer() {
-//        Object byteBuf = this;
-//        ByteBuffer buffer = (ByteBuffer)byteBuf;
-//        Object o = new IntBufferDirect(buffer);
-//        return (IntBuffer)o;
-//    }
-//
-//    @Emulate
-//    public ShortBuffer asShortBuffer() {
-//        Object byteBuf = this;
-//        ByteBuffer buffer = (ByteBuffer)byteBuf;
-//        Object o = new ShortBufferDirect(buffer);
-//        return (ShortBuffer)o;
-//    }
+    @Override
+    @Emulate
+    public int getElementSize() {
+        return 1;
+    }
 }

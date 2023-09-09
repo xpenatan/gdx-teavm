@@ -16,4 +16,10 @@ public abstract class IntBufferOverByteBufferEmu extends TIntBufferOverByteBuffe
         HasArrayBufferView buff = (HasArrayBufferView)byteByffer;
         return buff.getTypedArray();
     }
+
+    @Override
+    @Emulate
+    public int getElementSize() {
+        return 4;
+    }
 }

@@ -44,7 +44,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     private int nextFeedbackId = 1;
     private final IntMap<WebGLVertexArrayObjectWrapper> vertexArrays = new IntMap<>();
     private int nextVertexArrayId = 1;
-    protected Uint32ArrayWrapper uIntBuffer = Uint32ArrayWrapper.create(2000 * 6);
+    protected Uint32ArrayWrapper uIntBuffer = TypedArrays.createUint32Array(2000 * 6);
 
     public TeaGL30(WebGL2RenderingContextWrapper gl) {
         super(gl);
@@ -78,7 +78,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     private Uint32ArrayWrapper copyUnsigned(IntBuffer buffer) {
         if(TeaTool.useGLArrayBuffer()) {
             Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(buffer);
-            return (Uint32ArrayWrapper)int8Array;
+            return TypedArrays.createUint32Array(int8Array.getBuffer(), buffer.position(), buffer.remaining());
         }
         else {
             ensureCapacity(buffer);
@@ -780,7 +780,9 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             if(TeaTool.useGLArrayBuffer()) {
                 ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
                 if(pixels instanceof FloatBuffer) {
-                    buffer = webGLArray;
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                    buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
                 else {
                     int length = pixels.remaining();
@@ -846,7 +848,9 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             if(TeaTool.useGLArrayBuffer()) {
                 ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
                 if (pixels instanceof FloatBuffer) {
-                    buffer = webGLArray;
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                    buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 } else {
                     int length = pixels.remaining();
                     if (!(pixels instanceof ByteBuffer)) {

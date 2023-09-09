@@ -22,6 +22,13 @@ public class ArrayBufferUtil {
         return null;
     }
 
+    public static int getElementSize(Buffer buffer) {
+        if(buffer instanceof HasArrayBufferView) {
+            return ((HasArrayBufferView)buffer).getElementSize();
+        }
+        return 1;
+    }
+
     @JSBody(params = { "array" }, script = "return Float32Array.from(array);")
     public static native Float32ArrayWrapper fromF32(ArrayBufferViewWrapper array);
 

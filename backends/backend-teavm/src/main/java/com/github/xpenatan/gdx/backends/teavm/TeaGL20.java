@@ -148,7 +148,7 @@ public class TeaGL20 implements GL20 {
     public Float32ArrayWrapper copy(FloatBuffer buffer) {
         if(TeaTool.useGLArrayBuffer()) {
             Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(buffer);
-            return (Float32ArrayWrapper)int8Array;
+            return TypedArrays.createFloat32Array(int8Array.getBuffer(), buffer.position(), buffer.remaining());
         }
         else {
             ensureCapacity(buffer);
@@ -162,7 +162,7 @@ public class TeaGL20 implements GL20 {
     public Int16ArrayWrapper copy(ShortBuffer buffer) {
         if(TeaTool.useGLArrayBuffer()) {
             Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(buffer);
-            return (Int16ArrayWrapper)int8Array;
+            return TypedArrays.createInt16Array(int8Array.getBuffer(), buffer.position(), buffer.remaining());
         }
         else {
             ensureCapacity(buffer);
@@ -176,7 +176,7 @@ public class TeaGL20 implements GL20 {
     public Int32ArrayWrapper copy(IntBuffer buffer) {
         if(TeaTool.useGLArrayBuffer()) {
             Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(buffer);
-            return (Int32ArrayWrapper)int8Array;
+            return TypedArrays.createInt32Array(int8Array.getBuffer(), buffer.position(), buffer.remaining());
         }
         else {
             ensureCapacity(buffer);
@@ -189,8 +189,7 @@ public class TeaGL20 implements GL20 {
 
     public Int8ArrayWrapper copy(ByteBuffer buffer) {
         if(TeaTool.useGLArrayBuffer()) {
-            Int8ArrayWrapper int8Array = ArrayBufferUtil.getInt8Array(buffer);
-            return int8Array;
+            return ArrayBufferUtil.getInt8Array(buffer);
         }
         else {
             ensureCapacity(buffer);
@@ -1031,11 +1030,13 @@ public class TeaGL20 implements GL20 {
                 if(TeaTool.useGLArrayBuffer()) {
                     Int8ArrayWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
                     if(pixels instanceof FloatBuffer) {
-                        buffer = webGLArray;
-                    }
-                    else {
                         int remainingBytes = pixels.remaining();
                         int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                        buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
+                    }
+                    else {
+                        int remainingBytes = pixels.remaining() * 4;
+                        int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
                         buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                     }
                 }
@@ -1100,7 +1101,9 @@ public class TeaGL20 implements GL20 {
             if(TeaTool.useGLArrayBuffer()) {
                 ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
                 if(pixels instanceof FloatBuffer) {
-                    buffer = webGLArray;
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                    buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
                 else {
                     int remainingBytes = pixels.remaining() * 4;

@@ -136,8 +136,12 @@ public class TypedArrays {
         return (Uint8ArrayWrapper)Uint8Array.create(arrayBuffer, offset, length);
     }
 
-    public static Float64ArrayWrapper createFloat64Array(int length) {
-        Float64Array create = Float64Array.create(length);
-        return (Float64ArrayWrapper)create;
+    public static Uint32ArrayWrapper createUint32Array(int length) {
+        return Uint32ArrayWrapper.create(length);
+    }
+
+    public static Uint32ArrayWrapper createUint32Array(ArrayBufferWrapper buffer, int offset, int length) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return Uint32ArrayWrapper.create(arrayBuffer, offset, length);
     }
 }

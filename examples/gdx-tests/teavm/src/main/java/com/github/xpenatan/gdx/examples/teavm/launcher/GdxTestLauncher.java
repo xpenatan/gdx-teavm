@@ -19,16 +19,16 @@ public class GdxTestLauncher {
         config.height = 0;
         config.showDownloadLogs = true;
         config.useGL30 = true;
-        config.useGLArrayBuffer = false;
+        config.useGLArrayBuffer = true;
 //        new TeaApplication(new ImGuiTestsApp(), config);
 //        new TeaApplication(new TeaVMTestWrapper(), config);
 //        new TeaApplication(new SoundTest(), config);
 //        new TeaApplication(new TextureDataTest(), config);
-//        new TeaApplication(new FloatTextureTest(), config);
+        new TeaApplication(new FloatTextureTest(), config);
 //        new TeaApplication(new TextureRegion3DTest(), config);
 //        new TeaApplication(new GL30Texture3DTest(), config);
 //        new TeaApplication(new InstancedRenderingTest(), config);
 //        new TeaApplication(new TextureArrayTest(), config);
-        new TeaApplication(new MultipleRenderTargetTest(), config);
+//        new TeaApplication(new MultipleRenderTargetTest(), config);
     }
 }
