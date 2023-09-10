@@ -785,13 +785,9 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                     buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
                 else {
-                    int length = pixels.remaining();
-                    if(!(pixels instanceof ByteBuffer)) {
-                        // It seems for ByteBuffer we don't need this byte conversion
-                        length *= 4;
-                    }
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
-                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, length);
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
             }
             else {
@@ -852,13 +848,9 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                     int byteOffset = webGLArray.getByteOffset() + pixels.position();
                     buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 } else {
-                    int length = pixels.remaining();
-                    if (!(pixels instanceof ByteBuffer)) {
-                        // It seems for ByteBuffer we don't need this byte conversion
-                        length *= 4;
-                    }
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
-                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, length);
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
             }
             else {

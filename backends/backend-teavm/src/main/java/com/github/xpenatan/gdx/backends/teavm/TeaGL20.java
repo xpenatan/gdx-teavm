@@ -1035,8 +1035,8 @@ public class TeaGL20 implements GL20 {
                         buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                     }
                     else {
-                        int remainingBytes = pixels.remaining() * 4;
-                        int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
+                        int remainingBytes = pixels.remaining();
+                        int byteOffset = webGLArray.getByteOffset() + pixels.position();
                         buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                     }
                 }
@@ -1106,8 +1106,8 @@ public class TeaGL20 implements GL20 {
                     buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
                 else {
-                    int remainingBytes = pixels.remaining() * 4;
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position() * 4;
+                    int remainingBytes = pixels.remaining();
+                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
                     buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
                 }
             }
