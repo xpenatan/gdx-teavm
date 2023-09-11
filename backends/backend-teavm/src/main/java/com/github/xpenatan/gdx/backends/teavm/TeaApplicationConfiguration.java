@@ -1,11 +1,23 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.TeaTypedArrays;
 
 /**
  * @author xpenatan
  */
 public class TeaApplicationConfiguration {
+
+    /** Experimental, whether to enable OpenGL ES 30 (aka WebGL2) if supported. If not supported it will fall-back to OpenGL ES
+     * 2.0. When GL ES 30 is enabled, {@link com.badlogic.gdx.Gdx#gl30} can be used to access its functionality.
+     * @deprecated this option is currently experimental and not yet fully supported, expect issues. */
+    @Deprecated
+    public boolean useGL30 = false;
+
+    /**
+     * Speed up rendering when copying java Buffers to javascript ArrayBuffer.
+     * This option will be removed when it's stable and tested.
+     */
+    @Deprecated
+    public boolean useGLArrayBuffer = true;
 
     /**
      * Experimental webassembly pixmap
@@ -77,7 +89,13 @@ public class TeaApplicationConfiguration {
      */
     public boolean useDebugGL = false;
 
-    public boolean usePhysicalPixels;
+    /** Whether to use physical device pixels or CSS pixels for scaling the canvas. Makes a difference on mobile devices and HDPI
+     * and Retina displays. Set to true for resizable and fullscreen games on mobile devices and for Desktops if you want to use
+     * the full resolution of HDPI/Retina displays.<br/>
+     * Setting to false mostly makes sense for fixed-size games or non-mobile games expecting performance issues on huge
+     * resolutions. If you target mobiles and desktops, consider using physical device pixels on mobile devices only by using the
+     * return value of {@link TeaApplication#isMobileDevice()} . */
+    public boolean usePhysicalPixels = true;
 
     public boolean isFixedSizeApplication() {
         return width != 0 && height != 0;
@@ -89,6 +107,5 @@ public class TeaApplicationConfiguration {
 
     public TeaApplicationConfiguration(String canvasID) {
         this.canvasID = canvasID;
-        new TeaTypedArrays();
     }
 }

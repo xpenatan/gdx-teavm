@@ -23,8 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.SoundManagerCallback;
-import com.github.xpenatan.gdx.backends.teavm.soundmanager.TeaSoundManager;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,6 +109,8 @@ public class TeaApplication implements Application, Runnable {
         if (indexQM >= 0) {
           hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
         }
+
+        TeaTool.setGLArrayBuffer(config.useGLArrayBuffer);
         graphics = new TeaGraphics(config);
 
         preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
@@ -126,20 +126,18 @@ public class TeaApplication implements Application, Runnable {
         if(config.useNativePixmap) {
             initGdx();
         }
-        initSound();
-
-        //TODO remove script loading from application
-        initBulletPhysics(this);
-        initBox2dPhysics(this);
-        initImGui(this);
 
         Gdx.app = this;
         Gdx.graphics = graphics;
         Gdx.gl = graphics.getGL20();
         Gdx.gl20 = graphics.getGL20();
+        Gdx.gl30 = graphics.getGL30();
         Gdx.input = input;
         Gdx.files = files;
         Gdx.net = net;
+
+        audio = new DefaultTeaAudio();
+        Gdx.audio = audio;
 
         window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
             @Override
@@ -465,84 +463,6 @@ public class TeaApplication implements Application, Runnable {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
-            }
-        });
-    }
-
-    private void initSound() {
-        preloader.loadScript(true, "soundmanager2-jsmin.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                TeaSoundManager soundManager = new TeaSoundManager();
-                soundManager.setup(hostPageBaseURL, new SoundManagerCallback() {
-                    @Override
-                    public void onready() {
-                        audio = new TeaAudio(soundManager);
-                        Gdx.audio = audio;
-                    }
-
-                    @Override
-                    public void ontimeout() {
-                    }
-                });
-                return true;
-            }
-        });
-    }
-
-    public void initBulletPhysics(TeaApplication application) {
-        Preloader preloader = application.getPreloader();
-        initBulletPhysicsWasm(preloader);
-    }
-
-    public void initBox2dPhysics(TeaApplication application) {
-        Preloader preloader = application.getPreloader();
-        initBox2DPhysicsWasm(preloader);
-    }
-
-    public void initImGui(TeaApplication application) {
-        //TODO script loading should be inside lib and not application
-        Preloader preloader = application.getPreloader();
-        initImGuiWasm(preloader);
-    }
-
-    private void initBulletPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(true, "bullet.wasm.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
-            }
-        });
-    }
-
-    private void initImGuiWasm(Preloader preloader) {
-        preloader.loadScript(true, "imgui.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
-            }
-        });
-    }
-
-    // Box2D
-
-    private void initBox2DPhysicsWasm(Preloader preloader) {
-        preloader.loadScript(true, "box2D.wasm.js", new AssetLoaderListener<Object>() {
-            @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
-            }
-
-            @Override
-            public void onFailure(String url) {
             }
         });
     }

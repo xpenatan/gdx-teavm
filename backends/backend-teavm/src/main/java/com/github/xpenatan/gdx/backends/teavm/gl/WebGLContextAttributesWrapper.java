@@ -1,31 +1,33 @@
 package com.github.xpenatan.gdx.backends.teavm.gl;
 
+import org.teavm.jso.JSObject;
+
 /**
  * @author xpenatan
  */
-public interface WebGLContextAttributesWrapper {
+public interface WebGLContextAttributesWrapper extends JSObject {
     // WebGLContextAttributes
-    public boolean getAlpha();
+    boolean getAlpha();
 
-    public void setAlpha(boolean alpha);
+    void setAlpha(boolean alpha);
 
-    public boolean getDepth();
+    boolean getDepth();
 
-    public void setDepth(boolean depth);
+    void setDepth(boolean depth);
 
-    public boolean getStencil();
+    boolean getStencil();
 
-    public void setStencil(boolean stencil);
+    void setStencil(boolean stencil);
 
-    public boolean getAntialias();
+    boolean getAntialias();
 
-    public void setAntialias(boolean antialias);
+    void setAntialias(boolean antialias);
 
-    public boolean getPremultipliedAlpha();
+    boolean getPremultipliedAlpha();
 
-    public void setPremultipliedAlpha(boolean premultipliedAlpha);
+    void setPremultipliedAlpha(boolean premultipliedAlpha);
 
-    public boolean getPreserveDrawingBuffer();
+    boolean getPreserveDrawingBuffer();
 
-    public void setPreserveDrawingBuffer(boolean preserveDrawingBuffer);
+    void setPreserveDrawingBuffer(boolean preserveDrawingBuffer);
 }

@@ -232,7 +232,7 @@ public class AssetDownloadImpl implements AssetDownload {
                                     System.out.println("Asset loaded: " + url);
 
                                 ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
-                                Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(response);
+                                Int8ArrayWrapper data = TypedArrays.createInt8Array(response);
                                 listener.onSuccess(url, new Blob(response, data));
                             }
                             subtractQueue();

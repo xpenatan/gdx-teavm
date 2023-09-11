@@ -2,7 +2,7 @@ package com.artemis.utils.reflect;
 
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
-import com.github.xpenatan.gdx.backends.teavm.plugins.TeaReflectionSupplier;
+import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.utils.GenericTypeProvider;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;

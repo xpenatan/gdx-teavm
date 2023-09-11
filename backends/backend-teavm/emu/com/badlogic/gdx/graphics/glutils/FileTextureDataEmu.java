@@ -2,12 +2,11 @@ package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.badlogic.gdx.graphics.TextureDataEmu;
-import com.badlogic.gdx.graphics.PixmapEmu;
+import com.badlogic.gdx.graphics.Pixmap;
 
 @Emulate(FileTextureData.class)
 public class FileTextureDataEmu implements TextureDataEmu {
@@ -17,11 +16,11 @@ public class FileTextureDataEmu implements TextureDataEmu {
     int width = 0;
     int height = 0;
     Pixmap.Format format;
-    PixmapEmu pixmap;
+    Pixmap pixmap;
     boolean useMipMaps;
     boolean isPrepared = false;
 
-    public FileTextureDataEmu(FileHandle file, PixmapEmu preloadedPixmap, Pixmap.Format format, boolean useMipMaps) {
+    public FileTextureDataEmu(FileHandle file, Pixmap preloadedPixmap, Pixmap.Format format, boolean useMipMaps) {
         this.file = file;
         this.pixmap = preloadedPixmap;
         this.format = format;
@@ -43,7 +42,7 @@ public class FileTextureDataEmu implements TextureDataEmu {
     public void prepare() {
         if(isPrepared) throw new GdxRuntimeException("Already prepared");
         if(pixmap == null) {
-            pixmap = ensurePot(new PixmapEmu(file));
+            pixmap = ensurePot(new Pixmap(file));
             width = pixmap.getWidth();
             height = pixmap.getHeight();
             if(format == null) format = pixmap.getFormat();
@@ -51,14 +50,14 @@ public class FileTextureDataEmu implements TextureDataEmu {
         isPrepared = true;
     }
 
-    private PixmapEmu ensurePot(PixmapEmu pixmap) {
+    private Pixmap ensurePot(Pixmap pixmap) {
         if(Gdx.gl20 == null && copyToPOT) {
             int pixmapWidth = pixmap.getWidth();
             int pixmapHeight = pixmap.getHeight();
             int potWidth = MathUtils.nextPowerOfTwo(pixmapWidth);
             int potHeight = MathUtils.nextPowerOfTwo(pixmapHeight);
             if(pixmapWidth != potWidth || pixmapHeight != potHeight) {
-                PixmapEmu tmp = new PixmapEmu(potWidth, potHeight, pixmap.getFormat());
+                Pixmap tmp = new Pixmap(potWidth, potHeight, pixmap.getFormat());
                 tmp.drawPixmap(pixmap, 0, 0, 0, 0, pixmapWidth, pixmapHeight);
                 pixmap.dispose();
                 return tmp;
@@ -68,10 +67,10 @@ public class FileTextureDataEmu implements TextureDataEmu {
     }
 
     @Override
-    public PixmapEmu consumePixmap() {
+    public Pixmap consumePixmap() {
         if(!isPrepared) throw new GdxRuntimeException("Call prepare() before calling getPixmap()");
         isPrepared = false;
-        PixmapEmu pixmap = this.pixmap;
+        Pixmap pixmap = this.pixmap;
         this.pixmap = null;
         return pixmap;
     }

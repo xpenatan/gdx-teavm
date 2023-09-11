@@ -16,9 +16,9 @@ public class NumbersEmu {
         return wia.get(0);
     }
 
-    static Int8ArrayWrapper wba = TypedArrays.getInstance().createInt8Array(4);
-    static Int32ArrayWrapper wia = TypedArrays.getInstance().createInt32Array(wba.getBuffer(), 0, 1);
-    static Float32ArrayWrapper wfa = TypedArrays.getInstance().createFloat32Array(wba.getBuffer(), 0, 1);
+    static Int8ArrayWrapper wba = TypedArrays.createInt8Array(4);
+    static Int32ArrayWrapper wia = TypedArrays.createInt32Array(wba.getBuffer(), 0, 1);
+    static Float32ArrayWrapper wfa = TypedArrays.createFloat32Array(wba.getBuffer(), 0, 1);
 
     public static final float intBitsToFloat(int i) {
         wia.set(0, i);

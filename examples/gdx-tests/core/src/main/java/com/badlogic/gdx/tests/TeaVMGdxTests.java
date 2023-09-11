@@ -71,18 +71,18 @@ public class TeaVMGdxTests {
                 return new BlitTest();
             }
         }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new Box2DCharacterControllerTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new Box2DTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new Box2DTestCollection();
-            }
-        }, new TeaVMInstancer() {
+//            public GdxTest instance() {
+//                return new Box2DCharacterControllerTest();
+//            }
+//        }, new TeaVMInstancer() {
+//            public GdxTest instance() {
+//                return new Box2DTest();
+//            }
+//        }, new TeaVMInstancer() {
+//            public GdxTest instance() {
+//                return new Box2DTestCollection();
+//            }
+//        }, new TeaVMInstancer() {
             public GdxTest instance() {
                 return new BufferUtilsTest();
             }

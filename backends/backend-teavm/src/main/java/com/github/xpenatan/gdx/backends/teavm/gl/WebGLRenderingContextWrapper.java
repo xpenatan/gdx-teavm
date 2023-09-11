@@ -12,15 +12,16 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.FloatArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ObjectArrayWrapper;
+import org.teavm.jso.JSMethod;
+import org.teavm.jso.JSObject;
 
 /**
  * @author xpenatan
  */
-public interface WebGLRenderingContextWrapper {
-
-    static final int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
-    static final int RGBA = 0x1908;
-    static final int UNSIGNED_BYTE = 0x1401;
+public interface WebGLRenderingContextWrapper extends JSObject  {
+    final int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
+    final int RGBA = 0x1908;
+    final int UNSIGNED_BYTE = 0x1401;
 
     int getDrawingBufferWidth();
 
@@ -154,10 +155,19 @@ public interface WebGLRenderingContextWrapper {
 
     WebJSObject getParameter(int pname);
 
-    int getParameterInt(int pname);
+    @JSMethod("getParameter")
+    int getParameteri(int pname);
 
-    float getParameterFloat(int pname);
+    @JSMethod("getParameter")
+    float getParameterf(int pname);
 
+    @JSMethod("getParameter")
+    JSObject getParametero(int pname);
+
+    @JSMethod("getParameter")
+    ArrayBufferViewWrapper getParameterv(int pname);
+
+    @JSMethod("getParameter")
     public String getParameterString(int pname);
 
     WebJSObject getBufferParameter(int target, int pname);
@@ -166,11 +176,16 @@ public interface WebGLRenderingContextWrapper {
 
     WebJSObject getFramebufferAttachmentParameter(int target, int attachment, int pname);
 
+    @JSMethod("getFramebufferAttachmentParameter")
+    int getFramebufferAttachmentParameteri(int target, int attachment, int pname);
+
     WebJSObject getProgramParameter(WebGLProgramWrapper program, int pname);
 
-    int getProgramParameterInt(WebGLProgramWrapper program, int pname);
+    @JSMethod("getProgramParameter")
+    int getProgramParameteri(WebGLProgramWrapper program, int pname);
 
-    boolean getProgramParameterBoolean(WebGLProgramWrapper program, int pname);
+    @JSMethod("getProgramParameter")
+    boolean getProgramParameterb(WebGLProgramWrapper program, int pname);
 
     String getProgramInfoLog(WebGLProgramWrapper program);
 
@@ -178,9 +193,11 @@ public interface WebGLRenderingContextWrapper {
 
     WebJSObject getShaderParameter(WebGLShaderWrapper shader, int pname);
 
-    boolean getShaderParameterBoolean(WebGLShaderWrapper shader, int pname);
+    @JSMethod("getShaderParameter")
+    boolean getShaderParameterb(WebGLShaderWrapper shader, int pname);
 
-    int getShaderParameterInt(WebGLShaderWrapper shader, int pname);
+    @JSMethod("getShaderParameter")
+    int getShaderParameteri(WebGLShaderWrapper shader, int pname);
 
     String getShaderInfoLog(WebGLShaderWrapper shader);
 

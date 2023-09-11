@@ -1,25 +1,31 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import org.teavm.jso.JSIndexer;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface Int32ArrayWrapper extends ArrayBufferViewWrapper {
     // Int32Array
-    public static final int BYTES_PER_ELEMENT = 4;
+    static final int BYTES_PER_ELEMENT = 4;
 
-    public int getLength();
+    @JSProperty
+    int getLength();
 
-    public int get(int index);
+    @JSIndexer
+    int get(int index);
 
-    public void set(int index, int value);
+    @JSIndexer
+    void set(int index, int value);
 
-    public void set(Int32ArrayWrapper array);
+    void set(Int32ArrayWrapper array);
 
-    public void set(Int32ArrayWrapper array, int offset);
+    void set(Int32ArrayWrapper array, int offset);
 
-    public void set(LongArrayWrapper array);
+    void set(LongArrayWrapper array);
 
-    public void set(LongArrayWrapper array, int offset);
+    void set(LongArrayWrapper array, int offset);
 
-    public Int32ArrayWrapper subarray(int start, int end);
+    Int32ArrayWrapper subarray(int start, int end);
 }

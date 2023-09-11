@@ -43,6 +43,7 @@ public class Preloader {
     public ObjectMap<String, Blob> audio = new ObjectMap<>();
     public ObjectMap<String, String> texts = new ObjectMap<>();
     public ObjectMap<String, Blob> binaries = new ObjectMap<>();
+    public ObjectMap<String, String> assetNames = new ObjectMap<>();
     public Array<Asset> assets = new Array<>();
     public int assetTotal = -1;
 
@@ -116,7 +117,7 @@ public class Preloader {
 
                                     if(type == AssetType.Binary || type == AssetType.Audio) {
                                         ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
                                         obj = new Blob(arrayBuffer, data);
                                     }
                                     else if(type == AssetType.Image) {
@@ -126,7 +127,7 @@ public class Preloader {
                                         image.setSrc(baseUrl);
 
                                         ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.getInstance().createInt8Array(arrayBuffer);
+                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
                                         Blob blob = new Blob(arrayBuffer, data);
                                         blob.setImage(image);
                                         obj = blob;
@@ -189,16 +190,24 @@ public class Preloader {
                     if(tokens.length != 4) {
                         throw new GdxRuntimeException("Invalid assets description file.");
                     }
-                    AssetType type = AssetType.Text;
-                    if(tokens[0].equals("i")) type = AssetType.Image;
-                    if(tokens[0].equals("b")) type = AssetType.Binary;
-                    if(tokens[0].equals("a")) type = AssetType.Audio;
-                    if(tokens[0].equals("d")) type = AssetType.Directory;
+
+                    String fileType = tokens[0];
+                    String assetUrl = tokens[1].trim();
                     long size = Long.parseLong(tokens[2]);
+                    String mimeType = tokens[3];
+
+                    AssetType type = AssetType.Text;
+                    if(fileType.equals("i")) type = AssetType.Image;
+                    if(fileType.equals("b")) type = AssetType.Binary;
+                    if(fileType.equals("a")) type = AssetType.Audio;
+                    if(fileType.equals("d")) type = AssetType.Directory;
+
                     if(type == AssetType.Audio && !AssetDownloader.getInstance().isUseBrowserCache()) {
                         size = 0;
                     }
-                    assets.add(new Asset(tokens[1].trim(), type, size, tokens[3]));
+                    Asset asset = new Asset(assetUrl, type, size, mimeType);
+                    assetNames.put(asset.url, asset.url);
+                    assets.add(asset);
                 }
                 assetTotal = assets.size;
 
@@ -315,7 +324,7 @@ public class Preloader {
     }
 
     public void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().loadScript(async, baseUrl + url, listener);
+        AssetDownloader.getInstance().loadScript(async, getAssetUrl() + url, listener);
     }
 
     protected void putAssetInMap(AssetType type, String url, Object result) {

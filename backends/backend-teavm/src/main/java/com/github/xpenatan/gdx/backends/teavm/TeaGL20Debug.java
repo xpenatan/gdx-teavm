@@ -7,6 +7,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 /**
+ * Port from GWT gdx 1.12.0
+ *
  * @author xpenatan
  */
 public class TeaGL20Debug extends TeaGL20 {

@@ -1,13 +1,19 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
-public interface ArrayBufferViewWrapper {
+public interface ArrayBufferViewWrapper extends JSObject {
     // ArrayBufferView
-    public ArrayBufferWrapper getBuffer();
+    @JSProperty
+    ArrayBufferWrapper getBuffer();
 
-    public int getByteOffset();
+    @JSProperty
+    int getByteOffset();
 
-    public int getByteLength();
+    @JSProperty
+    int getByteLength();
 }
