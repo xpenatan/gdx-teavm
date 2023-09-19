@@ -11,6 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
 import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
@@ -24,6 +25,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrap
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
@@ -31,24 +33,25 @@ import java.nio.ByteBuffer;
 import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import org.teavm.jso.JSBody;
 
-public class Pixmap implements Disposable {
-    static int nextId = 0;
-    public static IntMap<Pixmap> pixmaps = new IntMap<>();
+@Emulate(Pixmap.class)
+public class PixmapEmu implements Disposable {
 
-    public static Pixmap createFromFrameBuffer(int x, int y, int w, int h) {
+
+    public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
 
-        final Pixmap pixmap = new Pixmap(w, h, Format.RGBA8888);
+        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
         ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
         pixmap.setPixels(pixels);
         return pixmap;
     }
 
-    public enum Format {
+    @Emulate(Pixmap.Format.class)
+    public enum FormatEmu {
         Alpha, Intensity, LuminanceAlpha, RGB565, RGBA4444, RGB888, RGBA8888;
 
-        public static int toGdx2DPixmapFormat (Format format) {
+        public static int toGdx2DPixmapFormat (FormatEmu format) {
             if (format == Alpha) return Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA;
             if (format == Intensity) return Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA;
             if (format == LuminanceAlpha) return Gdx2DPixmapEmu.GDX2D_FORMAT_LUMINANCE_ALPHA;
@@ -59,7 +62,7 @@ public class Pixmap implements Disposable {
             throw new GdxRuntimeException("Unknown Format: " + format);
         }
 
-        public static Format fromGdx2DPixmapFormat (int format) {
+        public static FormatEmu fromGdx2DPixmapFormat (int format) {
             if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA) return Alpha;
             if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_LUMINANCE_ALPHA) return LuminanceAlpha;
             if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_RGB565) return RGB565;
@@ -69,11 +72,11 @@ public class Pixmap implements Disposable {
             throw new GdxRuntimeException("Unknown Gdx2DPixmap Format: " + format);
         }
 
-        public static int toGlFormat (Format format) {
+        public static int toGlFormat (FormatEmu format) {
             return Gdx2DPixmapEmu.toGlFormat(toGdx2DPixmapFormat(format));
         }
 
-        public static int toGlType (Format format) {
+        public static int toGlType (FormatEmu format) {
             return Gdx2DPixmapEmu.toGlType(toGdx2DPixmapFormat(format));
         }
     }
@@ -88,8 +91,8 @@ public class Pixmap implements Disposable {
     float a;
     String colorStr = make(r, g, b, a);
     static String clearColor = make(255, 255, 255, 1.0f);
-    Blending blending = com.badlogic.gdx.graphics.Pixmap.Blending.SourceOver;
-    Filter filter = com.badlogic.gdx.graphics.Pixmap.Filter.BiLinear;
+    BlendingEmu blending = PixmapEmu.BlendingEmu.SourceOver;
+    FilterEmu filter = PixmapEmu.FilterEmu.BiLinear;
     public Uint8ClampedArrayWrapper pixels;
     private HTMLImageElementWrapper imageElement;
     private HTMLVideoElementWrapper videoElement;
@@ -108,15 +111,15 @@ public class Pixmap implements Disposable {
 
             @Override
             public boolean onSuccess(String url, Blob result) {
-                Object obj = new Pixmap(result.getImage());
-                responseListener.downloadComplete((Pixmap)obj);
+                Object obj = new PixmapEmu(result.getImage());
+                responseListener.downloadComplete((PixmapEmu)obj);
                 return false;
             }
         };
         AssetDownloader.getInstance().load(true, url, AssetType.Image, null, listener);
     }
 
-    public Pixmap(FileHandle file) {
+    public PixmapEmu(FileHandle file) {
         TeaFileHandle webFileHandler = (TeaFileHandle)file;
         String path = webFileHandler.path();
         Blob object = webFileHandler.preloader.images.get(path);
@@ -137,15 +140,15 @@ public class Pixmap implements Disposable {
         }
     }
 
-    public Pixmap(HTMLImageElementWrapper img) {
+    public PixmapEmu(HTMLImageElementWrapper img) {
         this(-1, -1, img);
     }
 
-    public Pixmap(HTMLVideoElementWrapper vid) {
+    public PixmapEmu(HTMLVideoElementWrapper vid) {
         this(-1, -1, vid);
     }
 
-    public Pixmap(byte[] encodedData, int offset, int len) {
+    public PixmapEmu(byte[] encodedData, int offset, int len) {
         TeaApplication app = (TeaApplication)Gdx.app;
         TeaApplicationConfiguration config = app.getConfig();
         if(config.useNativePixmap) {
@@ -154,15 +157,15 @@ public class Pixmap implements Disposable {
         }
     }
 
-    public Pixmap(int width, int height, Format format) {
+    public PixmapEmu(int width, int height, FormatEmu format) {
         initPixmapEmu(width, height, null, null);
     }
 
-    private Pixmap(int width, int height, HTMLImageElementWrapper imageElement) {
+    private PixmapEmu(int width, int height, HTMLImageElementWrapper imageElement) {
         initPixmapEmu(width, height, imageElement, null);
     }
 
-    private Pixmap(int width, int height, HTMLVideoElementWrapper videoElement) {
+    private PixmapEmu(int width, int height, HTMLVideoElementWrapper videoElement) {
         initPixmapEmu(width, height, null, videoElement);
     }
 
@@ -183,9 +186,9 @@ public class Pixmap implements Disposable {
         }
 
         buffer = BufferUtils.newByteBuffer(4);
-        id = nextId++;
+        id = TeaGraphics.nextId++;
         buffer.putInt(0, id);
-        pixmaps.put(id, this);
+        TeaGraphics.pixmaps.put(id, this);
     }
 
     private void create() {
@@ -374,7 +377,7 @@ public class Pixmap implements Disposable {
      * @param x      The target x-coordinate (top left corner)
      * @param y      The target y-coordinate (top left corner)
      */
-    public void drawPixmap(Pixmap pixmap, int x, int y) {
+    public void drawPixmap(PixmapEmu pixmap, int x, int y) {
         if(nativePixmap != null) {
             drawPixmap(pixmap, x, y, 0, 0, pixmap.getWidth(), pixmap.getHeight());
         }
@@ -384,7 +387,7 @@ public class Pixmap implements Disposable {
         }
     }
 
-    public void drawPixmap(Pixmap pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
+    public void drawPixmap(PixmapEmu pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
         if(nativePixmap != null) {
             this.nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, x, y, srcWidth, srcHeight);
         }
@@ -394,7 +397,7 @@ public class Pixmap implements Disposable {
         }
     }
 
-    public void drawPixmap(Pixmap pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth, int dstHeight) {
+    public void drawPixmap(PixmapEmu pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth, int dstHeight) {
         if(nativePixmap != null) {
             this.nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
         }
@@ -476,7 +479,7 @@ public class Pixmap implements Disposable {
     @Override
     public void dispose() {
         if (disposed) throw new GdxRuntimeException("Pixmap already disposed!");
-        pixmaps.remove(id);
+        TeaGraphics.pixmaps.remove(id);
         if(nativePixmap != null) {
             nativePixmap.dispose();
         }
@@ -566,28 +569,28 @@ public class Pixmap implements Disposable {
             "ctx.putImageData(imgData, 0, 0);")
     private static native void setImageData(ArrayBufferViewWrapper pixels, int width, int height, CanvasRenderingContext2DWrapper ctx);
 
-    public Format getFormat () {
+    public FormatEmu getFormat () {
         if(nativePixmap != null) {
-            return com.badlogic.gdx.graphics.Pixmap.Format.fromGdx2DPixmapFormat(nativePixmap.getFormat());
+            return FormatEmu.fromGdx2DPixmapFormat(nativePixmap.getFormat());
         }
-        return com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888;
+        return FormatEmu.RGBA8888;
     }
 
-    public void setFilter(Filter filter) {
+    public void setFilter(FilterEmu filter) {
         this.filter = filter;
         if(nativePixmap != null) {
-            nativePixmap.setScale(filter == com.badlogic.gdx.graphics.Pixmap.Filter.NearestNeighbour ? Gdx2DPixmapEmu.GDX2D_SCALE_NEAREST : Gdx2DPixmapEmu.GDX2D_SCALE_LINEAR);
+            nativePixmap.setScale(filter == PixmapEmu.FilterEmu.NearestNeighbour ? Gdx2DPixmapEmu.GDX2D_SCALE_NEAREST : Gdx2DPixmapEmu.GDX2D_SCALE_LINEAR);
         }
     }
 
-    public Filter getFilter() {
+    public FilterEmu getFilter() {
         return filter;
     }
 
-    public void setBlending(Blending blending) {
+    public void setBlending(BlendingEmu blending) {
         this.blending = blending;
         if(nativePixmap != null) {
-            nativePixmap.setBlend(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None ? 0 : 1);
+            nativePixmap.setBlend(blending == PixmapEmu.BlendingEmu.None ? 0 : 1);
         }
         else {
             this.ensureCanvasExists();
@@ -595,13 +598,13 @@ public class Pixmap implements Disposable {
         }
     }
 
-    public Blending getBlending () {
+    public BlendingEmu getBlending () {
         return blending;
     }
 
     private void circle(int x, int y, int radius, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None) {
+        if(blending == PixmapEmu.BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -622,7 +625,7 @@ public class Pixmap implements Disposable {
 
     private void line(int x, int y, int x2, int y2, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None) {
+        if(blending == PixmapEmu.BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -645,7 +648,7 @@ public class Pixmap implements Disposable {
 
     private void rectangle(int x, int y, int width, int height, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None) {
+        if(blending == PixmapEmu.BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -666,7 +669,7 @@ public class Pixmap implements Disposable {
 
     private void triangle(int x1, int y1, int x2, int y2, int x3, int y3, DrawType drawType) {
         ensureCanvasExists();
-        if(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None) {
+        if(blending == PixmapEmu.BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -693,7 +696,7 @@ public class Pixmap implements Disposable {
 
     private void image(HTMLCanvasElementWrapper image, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
         ensureCanvasExists();
-        if(blending == com.badlogic.gdx.graphics.Pixmap.Blending.None) {
+        if(blending == PixmapEmu.BlendingEmu.None) {
             context.setFillStyle(clearColor);
             context.setStrokeStyle(clearColor);
             context.setGlobalCompositeOperation("destination-out");
@@ -727,16 +730,18 @@ public class Pixmap implements Disposable {
         FILL, STROKE
     }
 
-    public enum Blending {
+    @Emulate(Pixmap.Blending.class)
+    public enum BlendingEmu {
         None, SourceOver
     }
 
-    public enum Filter {
+    @Emulate(Pixmap.Filter.class)
+    public enum FilterEmu {
         NearestNeighbour, BiLinear
     }
 
     public interface DownloadPixmapResponseListener {
-        void downloadComplete (Pixmap pixmap);
+        void downloadComplete (PixmapEmu pixmap);
         void downloadFailed (Throwable t);
     }
 }

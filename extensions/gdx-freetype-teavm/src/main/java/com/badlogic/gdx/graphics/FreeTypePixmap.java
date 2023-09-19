@@ -8,11 +8,11 @@ import org.teavm.jso.JSBody;
 /**
  * @author Simon Gerst
  */
-public class FreeTypePixmap extends Pixmap {
+public class FreeTypePixmap extends PixmapEmu {
 
     ByteBuffer buffer;
 
-    public FreeTypePixmap(int width, int height, Pixmap.Format format) {
+    public FreeTypePixmap(int width, int height, PixmapEmu.FormatEmu format) {
         super(width, height, format);
     }
 
@@ -20,7 +20,7 @@ public class FreeTypePixmap extends Pixmap {
         pixels = null;
     }
 
-    public static ByteBuffer getRealPixels(Pixmap pixmap) {
+    public static ByteBuffer getRealPixels(PixmapEmu pixmap) {
         if(pixmap.getWidth() == 0 || pixmap.getHeight() == 0) {
             return FreeTypeUtil.newDirectReadWriteByteBuffer();
         }
@@ -32,7 +32,7 @@ public class FreeTypePixmap extends Pixmap {
         return pixmap.buffer;
     }
 
-    public static void putPixelsBack(Pixmap pixmap, ByteBuffer pixels) {
+    public static void putPixelsBack(PixmapEmu pixmap, ByteBuffer pixels) {
         if(pixmap.getWidth() == 0 || pixmap.getHeight() == 0) return;
         ArrayBufferViewWrapper typedArray = FreeTypeUtil.getTypedArray(pixels);
         putPixelsBack(typedArray, pixmap.getWidth(), pixmap.getHeight(), pixmap.getContext());

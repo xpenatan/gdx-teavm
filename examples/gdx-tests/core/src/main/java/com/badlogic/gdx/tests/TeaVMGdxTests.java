@@ -2,425 +2,727 @@ package com.badlogic.gdx.tests;
 
 import com.badlogic.gdx.tests.conformance.DisplayModeTest;
 import com.badlogic.gdx.tests.g3d.ModelCacheTest;
+import com.badlogic.gdx.tests.g3d.MultipleRenderTargetTest;
 import com.badlogic.gdx.tests.g3d.ShadowMappingTest;
+import com.badlogic.gdx.tests.g3d.TextureArrayTest;
+import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
 import com.badlogic.gdx.tests.gles2.VertexArrayTest;
+import com.badlogic.gdx.tests.gles3.GL30Texture3DTest;
+import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.badlogic.gdx.tests.gwt.GwtInputTest;
 import com.badlogic.gdx.tests.gwt.GwtWindowModeTest;
 import com.badlogic.gdx.tests.math.OctreeTest;
 import com.badlogic.gdx.tests.net.OpenBrowserExample;
 import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
 import com.badlogic.gdx.tests.utils.GdxTest;
+import java.util.ArrayList;
 
 public class TeaVMGdxTests {
 
     public static TeaVMInstancer[] getTestList() {
-        TeaVMInstancer[] tests = {new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AccelerometerTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ActionTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ActionSequenceTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AlphaTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AnimationTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AnnotationTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AssetManagerTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new AtlasIssueTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BigMeshTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BitmapFontAlignmentTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BitmapFontFlipTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BitmapFontTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BitmapFontMetricsTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BlitTest();
-            }
-        }, new TeaVMInstancer() {
-//            public GdxTest instance() {
-//                return new Box2DCharacterControllerTest();
-//            }
-//        }, new TeaVMInstancer() {
-//            public GdxTest instance() {
-//                return new Box2DTest();
-//            }
-//        }, new TeaVMInstancer() {
-//            public GdxTest instance() {
-//                return new Box2DTestCollection();
-//            }
-//        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new BufferUtilsTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ClipboardTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ColorTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ComplexActionTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new CustomShaderSpriteBatchTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new DecalTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new DisplayModeTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new LabelScaleTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new EdgeDetectionTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new FilesTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new FilterPerformanceTest();
-            }
-        },
-// new GwtInstancer() {public GdxTest instance(){return new FlickScrollPaneTest();}}, // FIXME this messes up stuff, why?
-                new TeaVMInstancer() {
-                    public GdxTest instance() {
-                        return new FrameBufferTest();
-                    }
-                }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new DownloadTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new FramebufferToTextureTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GestureDetectorTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GLProfilerErrorTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GroupCullingTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GroupFadeTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GwtInputTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GwtWindowModeTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new I18NSimpleMessageTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ImageScaleTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ImageTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new IndexBufferObjectShaderTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new IntegerBitmapFontTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new InterpolationTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new InverseKinematicsTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new IsometricTileTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new KinematicBodyTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new LifeCycleTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new LabelTest();
-            }
-        },
-                // new GwtInstancer() {public GdxTest instance(){return new MatrixJNITest();}}, // No purpose
-                new TeaVMInstancer() {
-                    public GdxTest instance() {
-                        return new MeshShaderTest();
-                    }
-                }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new MeshWithCustomAttributesTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new MipMapTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ModelCacheTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new MultitouchTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new MusicTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new OctreeTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new OpenBrowserExample();
-            }
-// }, new GwtInstancer() { public GdxTest instance () { return new NoncontinuousRenderingTest(); } // FIXME doesn't compile due to
-// the use of Thread
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ParallaxTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ParticleEmitterTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new PixelsPerInchTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new PixmapPackerTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new PixmapTest();
-            }
-        },
-                // new GwtInstancer() {public GdxTest instance(){return new PixmapBlendingTest();}}, // FIXME no idea why this doesn't
-                // work
-                new TeaVMInstancer() {
-                    public GdxTest instance() {
-                        return new PreferencesTest();
-                    }
-                }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ProjectiveTextureTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new RotationTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ReflectionCorrectnessTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new Scene2dTest();
-            }
 
-// new GwtInstancer() {public GdxTest instance(){return new RunnablePostTest();}}, // Goes into infinite loop
-// new GwtInstancer() {public GdxTest instance(){return new ScrollPaneTest();}}, // FIXME this messes up stuff, why?
-// new GwtInstancer() {public GdxTest instance(){return new ShaderMultitextureTest();}}, // FIXME fucks up stuff
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ShadowMappingTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ShapeRendererTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SimpleAnimationTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SimpleDecalTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SimpleStageCullingTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SortedSpriteTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SpriteBatchShaderTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SpriteCacheOffsetTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SpriteCacheTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SoundTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new StageTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SystemCursorTest();
-            }
-        },
-                // new GwtInstancer() {public GdxTest instance(){return new StagePerformanceTest();}}, // FIXME borks out
+        ArrayList<TeaVMInstancer> test = new ArrayList<>();
+
+        // QUICK TEST ###################################
+        test.add(
                 new TeaVMInstancer() {
                     public GdxTest instance() {
-                        return new TableTest();
+                        return new SoundTest();
                     }
-                }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextButtonTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextButtonTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextureAtlasTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TiledMapObjectLoadingTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new UITest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new VertexBufferObjectShaderTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new YDownTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new SuperKoalio();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new ReflectionTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TiledMapAtlasAssetManagerTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TimeUtilsTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new GWTLossyPremultipliedAlphaTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new QuadTreeFloatTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new QuadTreeFloatNearestTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextAreaTest();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextAreaTest2();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new TextAreaTest3();
-            }
-        }, new TeaVMInstancer() {
-            public GdxTest instance() {
-                return new VertexArrayTest();
-            }
-        } // these may have issues with tab getting intercepted by the browser
-        };
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new MusicTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new TextureDataTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new FloatTextureTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new TextureRegion3DTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new GL30Texture3DTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new InstancedRenderingTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new TextureArrayTest();
+                    }
+                }
+        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new MultipleRenderTargetTest();
+                    }
+                }
+        );
+        // ###################################
 
-        return tests;
+
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AccelerometerTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ActionTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ActionSequenceTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AlphaTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AnimationTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AnnotationTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AssetManagerTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new AtlasIssueTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BigMeshTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BitmapFontAlignmentTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BitmapFontFlipTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BitmapFontTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BitmapFontMetricsTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BlitTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new BufferUtilsTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ClipboardTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ColorTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ComplexActionTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new CustomShaderSpriteBatchTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new DecalTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new DisplayModeTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new LabelScaleTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new EdgeDetectionTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new FilesTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new FilterPerformanceTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new FrameBufferTest();
+//                    }
+//                }
+//        );
+////        test.add(
+////                new TeaVMInstancer() {
+////                    public GdxTest instance() {
+////                        return new DownloadTest();
+////                    }
+////                }
+////        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new FramebufferToTextureTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GestureDetectorTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GLProfilerErrorTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GroupCullingTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GroupFadeTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GwtInputTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GwtWindowModeTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new I18NSimpleMessageTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ImageScaleTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new IndexBufferObjectShaderTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new IntegerBitmapFontTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new InterpolationTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new InverseKinematicsTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new IsometricTileTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new KinematicBodyTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new LifeCycleTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new LabelTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new MeshShaderTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new MeshWithCustomAttributesTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new MipMapTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ModelCacheTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new MultitouchTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new OctreeTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new OpenBrowserExample();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ParallaxTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ParticleEmitterTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new PixelsPerInchTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new PixmapPackerTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new PixmapTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new PreferencesTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ProjectiveTextureTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new RotationTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ReflectionCorrectnessTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new Scene2dTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ShadowMappingTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ShapeRendererTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SimpleAnimationTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SimpleDecalTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SimpleStageCullingTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SortedSpriteTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SpriteBatchShaderTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SpriteCacheOffsetTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SpriteCacheTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new StageTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SystemCursorTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TableTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TextButtonTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TextureAtlasTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TiledMapObjectLoadingTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new UITest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new VertexBufferObjectShaderTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new YDownTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new SuperKoalio();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new ReflectionTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TiledMapAtlasAssetManagerTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TimeUtilsTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new GWTLossyPremultipliedAlphaTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new QuadTreeFloatTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new QuadTreeFloatNearestTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TextAreaTest();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TextAreaTest2();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new TextAreaTest3();
+//                    }
+//                }
+//        );
+//        test.add(
+//                new TeaVMInstancer() {
+//                    public GdxTest instance() {
+//                        return new VertexArrayTest();
+//                    }
+//                }
+//        );
+
+        TeaVMInstancer[] t = new TeaVMInstancer[test.size()];
+        return test.toArray(t);
     }
 
     public abstract static class TeaVMInstancer implements AbstractTestWrapper.Instancer {

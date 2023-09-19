@@ -5,7 +5,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSObject;
 
 public class FreeTypeUtil {
 

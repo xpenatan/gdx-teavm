@@ -2,26 +2,27 @@ package com.github.xpenatan.imgui.example.tests.imgui;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.tests.InputTest;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.github.xpenatan.gdx.frame.viewport.EmuFrameBuffer;
-import com.github.xpenatan.imgui.core.ImDrawData;
-import com.github.xpenatan.imgui.core.ImGui;
-import com.github.xpenatan.imgui.core.ImGuiBoolean;
-import com.github.xpenatan.imgui.core.ImGuiIO;
-import com.github.xpenatan.imgui.core.enums.ImGuiConfigFlags;
 import com.badlogic.gdx.tests.TeaVMGdxTests;
 import com.github.xpenatan.imgui.example.tests.frame.GameFrame;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxInputMultiplexer;
+import imgui.ImDrawData;
+import imgui.ImGui;
+import imgui.ImGuiBoolean;
+import imgui.ImGuiIO;
+import imgui.ImVec2;
 
 /**
  * Requires Gdx-test
  */
-public class ImGuiTestsApp implements ApplicationListener {
+public class ImGuiTestsApp implements Screen {
 
     ImGuiGdxImpl impl;
 
@@ -38,8 +39,8 @@ public class ImGuiTestsApp implements ApplicationListener {
     TeaVMGdxTests.TeaVMInstancer[] testList;
 
     @Override
-    public void create() {
-        ImGui.init();
+    public void show() {
+        ImGui.CreateContext(true);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(true);
@@ -49,8 +50,8 @@ public class ImGuiTestsApp implements ApplicationListener {
 
         ImGuiIO io = ImGui.GetIO();
 
-        io.setIniFilename(null);
-        io.SetConfigFlags(ImGuiConfigFlags.DockingEnable);
+//        io.setIniFilename(null);
+//        io.SetConfigFlags(ImGuiConfigFlags.DockingEnable);
         io.SetDockingFlags(false, false, false, false);
 
         impl = new ImGuiGdxImpl();
@@ -71,11 +72,11 @@ public class ImGuiTestsApp implements ApplicationListener {
     private void drawTestListWindow() {
         if(!gdxTestInit) {
             gdxTestInit = true;
-            ImGui.SetNextWindowSize(200, 500);
-            ImGui.SetNextWindowPos(900, 20);
+            ImGui.SetNextWindowSize(ImVec2.TMP.set(200, 500));
+            ImGui.SetNextWindowPos(ImVec2.TMP.set(900, 20));
         }
         ImGui.Begin("GdxTests");
-        ImGui.BeginChildFrame(313, 0f, 0f);
+        ImGui.BeginChildFrame(313, ImVec2.TMP.set(0f, 0f));
         for(int i = 0; i < testList.length; i++) {
             String testName = testList[i].getSimpleName();
             boolean isSelected = selected == i;
@@ -92,7 +93,7 @@ public class ImGuiTestsApp implements ApplicationListener {
     }
 
     @Override
-    public void render() {
+    public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -128,9 +129,14 @@ public class ImGuiTestsApp implements ApplicationListener {
     }
 
     @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void dispose() {
         impl.dispose();
-        ImGui.dispose();
+        ImGui.disposeStatic();
         batch.dispose();
     }
 }

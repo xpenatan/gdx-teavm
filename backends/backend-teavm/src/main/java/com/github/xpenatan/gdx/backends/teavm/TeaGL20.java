@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
@@ -11,6 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
@@ -40,6 +41,7 @@ import org.teavm.jso.typedarrays.Uint8Array;
  *
  * @author xpenatan
  */
+@Emulate(TeaGL20.class)
 public class TeaGL20 implements GL20 {
 
     protected WebGLRenderingContextWrapper gl;
@@ -1055,7 +1057,7 @@ public class TeaGL20 implements GL20 {
             }
             else {
                 int index = ((ByteBuffer)pixels).getInt(0);
-                Pixmap pixmap = Pixmap.pixmaps.get(index);
+                PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
                 // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
                 if(pixmap.canUsePixmapData()) {
                     gl.texImage2D(target, level, internalformat, width, height, border, format, type, pixmap.getPixmapData());
@@ -1126,7 +1128,7 @@ public class TeaGL20 implements GL20 {
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
-            Pixmap pixmap = Pixmap.pixmaps.get(index);
+            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
             if(pixmap.canUsePixmapData()) {
                 gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixmap.getPixmapData());
             }
