@@ -3,6 +3,7 @@ include(":backends:backend-teavm")
 include(":extensions:gdx-freetype-teavm")
 
 include(":tools:generator:core")
+include(":tools:generator:ui")
 include(":tools:generator:desktop")
 
 include(":examples:core:core")

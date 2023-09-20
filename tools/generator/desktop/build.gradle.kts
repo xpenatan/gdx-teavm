@@ -1,9 +1,10 @@
 val mainClassName = "com.github.xpenatan.gdx.html5.generator.Main"
 
 dependencies {
-    implementation(project(":tools:generator:core"))
+    implementation(project(":tools:generator:ui"))
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:${LibExt.gdxVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:imgui-desktop:${LibExt.gdxImGuiVersion}")
 }
 
 tasks.register<JavaExec>("runGenerator") {

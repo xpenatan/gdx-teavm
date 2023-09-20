@@ -1,11 +1,11 @@
-package com.github.xpenatan.teavm.generator.core.view;
+package com.github.xpenatan.teavm.generator.ui.view;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.github.xpenatan.imgui.core.ImGui;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxInput;
+import imgui.ImGui;
 
 public class MainApplication implements ApplicationListener {
     ImGuiGdxImpl impl;
@@ -14,7 +14,6 @@ public class MainApplication implements ApplicationListener {
 
     @Override
     public void create() {
-        ImGui.init();
         impl = new ImGuiGdxImpl();
 
         ImGuiGdxInput input = new ImGuiGdxInput();
@@ -55,7 +54,7 @@ public class MainApplication implements ApplicationListener {
     @Override
     public void dispose() {
         impl.dispose();
-        ImGui.dispose();
+        ImGui.disposeStatic();
         window.dispose();
     }
 }
