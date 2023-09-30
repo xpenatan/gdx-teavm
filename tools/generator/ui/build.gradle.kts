@@ -1,3 +1,5 @@
+val moduleName = "generator-ui"
+
 dependencies {
     implementation(project(":tools:generator:core"))
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
@@ -10,4 +12,13 @@ dependencies {
 
     implementation("org.eclipse.jetty:jetty-server:${LibExt.jettyVersion}")
     implementation("org.eclipse.jetty:jetty-webapp:${LibExt.jettyVersion}")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = moduleName
+            from(components["java"])
+        }
+    }
 }
