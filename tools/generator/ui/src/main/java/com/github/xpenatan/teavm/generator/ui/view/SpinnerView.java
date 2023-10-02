@@ -35,8 +35,8 @@ public class SpinnerView {
         float pos2Y = posY + sizeY;
 
         if(itemAdd) {
-            ImGuiInternal.ItemSize_2(ImRect.TMP.set(posX, posY, pos2X, pos2Y), imGuiStyle.get_FramePadding().get_y());
-            if(!ImGuiInternal.ItemAdd(ImRect.TMP.set(posX, posY, pos2X, pos2Y), id.hashCode()))
+            ImGuiInternal.ItemSize_2(ImRect.TMP_1.set(posX, posY, pos2X, pos2Y), imGuiStyle.get_FramePadding().get_y());
+            if(!ImGuiInternal.ItemAdd(ImRect.TMP_1.set(posX, posY, pos2X, pos2Y), id.hashCode()))
                 return false;
         }
 
@@ -55,7 +55,7 @@ public class SpinnerView {
             float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
             float pathX = centerX + MathUtils.cos(a + gTime * 8) * radius;
             float pathY = centerY + MathUtils.sin(a + gTime * 8) * radius;
-            imDrawList.PathLineTo(ImVec2.TMP.set(pathX, pathY));
+            imDrawList.PathLineTo(ImVec2.TMP_1.set(pathX, pathY));
         }
         imDrawList.PathStroke(color, 0, thickness);
         return true;

@@ -88,8 +88,8 @@ public class GeneratorView {
 
     public void render() {
         int flags = ImGuiWindowFlags.ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags.ImGuiWindowFlags_NoMove | ImGuiWindowFlags.ImGuiWindowFlags_NoResize;
-        ImGui.SetNextWindowPos(ImVec2.TMP.set(0, 0));
-        ImGui.SetNextWindowSize(ImVec2.TMP.set(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        ImGui.SetNextWindowPos(ImVec2.TMP_1.set(0, 0));
+        ImGui.SetNextWindowSize(ImVec2.TMP_1.set(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         ImGui.Begin(STR_WINDOW_TITLE, null, flags);
         renderContent();
         ImGui.End();
@@ -131,10 +131,10 @@ public class GeneratorView {
         float posY1 = cursorPos.get_y();
 
         if(compiling) {
-            ImGui.Button("##COMPILE", ImVec2.TMP.set(BTN_BUILD_WIDTH, 0));
+            ImGui.Button("##COMPILE", ImVec2.TMP_1.set(BTN_BUILD_WIDTH, 0));
         }
         else {
-            if(ImGui.Button(STR_BTN_COMPILE, ImVec2.TMP.set(BTN_BUILD_WIDTH, 0))) {
+            if(ImGui.Button(STR_BTN_COMPILE, ImVec2.TMP_1.set(BTN_BUILD_WIDTH, 0))) {
                 viewModel.compile(
                         gameJarPath.getValue(),
                         appClassName.getValue(),
