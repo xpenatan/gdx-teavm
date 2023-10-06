@@ -304,6 +304,9 @@ public class TeaGL20 implements GL20 {
         if(data instanceof FloatBuffer) {
             gl.bufferData(target, copy((FloatBuffer)data), usage);
         }
+        else if(data instanceof IntBuffer) {
+            gl.bufferData(target, copy((IntBuffer)data), usage);
+        }
         else if(data instanceof ShortBuffer) {
             gl.bufferData(target, copy((ShortBuffer)data), usage);
         }
@@ -322,6 +325,9 @@ public class TeaGL20 implements GL20 {
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
         if(data instanceof FloatBuffer) {
             gl.bufferSubData(target, offset, copy((FloatBuffer)data));
+        }
+        else if(data instanceof IntBuffer) {
+            gl.bufferSubData(target, offset, copy((IntBuffer)data));
         }
         else if(data instanceof ShortBuffer) {
             gl.bufferSubData(target, offset, copy((ShortBuffer)data));
