@@ -9,7 +9,7 @@ Note:
 * Reflection support is very small so only reflection used in [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
 * TeaVM does not support every class methods from java package or JNI native methods. Check teaVM java classes [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib).
 * Kotlin [discussions](https://github.com/libktx/ktx/discussions/443).
-* Box2d, Bullet, ImGui and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
+* Box2d, Bullet, ImGui, Physx and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
 
 ## TeaVM Examples:
 * [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
