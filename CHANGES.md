@@ -1,4 +1,7 @@
 [1.0.0-SNAPSHOT]
+- Fix MMB code
+- Fix catch key
+- Support IntBuffer in GL20
 
 
 [1.0.0-b7]
