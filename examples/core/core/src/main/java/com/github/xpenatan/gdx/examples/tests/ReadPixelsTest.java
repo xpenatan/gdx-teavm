@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.examples.tests;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -24,6 +25,8 @@ public class ReadPixelsTest implements ApplicationListener {
 
     @Override
     public void create() {
+        Gdx.input.setCatchKey(Input.Keys.F1, true);
+
         batch = new SpriteBatch();
         badlogic = new Texture(Gdx.files.internal("data/badlogic.jpg"));
         camera = new OrthographicCamera();
