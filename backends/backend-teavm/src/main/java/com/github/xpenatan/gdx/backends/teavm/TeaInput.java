@@ -306,6 +306,10 @@ public class TeaInput implements Input, EventListenerWrapper {
                     break;
             }
 
+            if (isCatchKey(code)) {
+                e.preventDefault();
+            }
+
             if(code == Input.Keys.DEL || code == Keys.FORWARD_DEL) {
                 e.preventDefault();
                 if(processor != null) {
@@ -346,6 +350,11 @@ public class TeaInput implements Input, EventListenerWrapper {
         else if(type.equals("keyup") && hasFocus) {
             KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
             int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+
+            if (isCatchKey(code)) {
+                e.preventDefault();
+            }
+
             if(pressedKeys[code]) {
                 pressedKeyCount--;
                 pressedKeys[code] = false;
