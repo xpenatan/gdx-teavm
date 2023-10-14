@@ -9,7 +9,7 @@ Note:
 * Reflection support is very small so only reflection used in [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
 * TeaVM does not support every class methods from java package or JNI native methods. Check teaVM java classes [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib).
 * Kotlin [discussions](https://github.com/libktx/ktx/discussions/443).
-* Box2d, Bullet, ImGui, Physx and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
+* Box2d, Bullet, ImGui, PhysX and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
 
 ## TeaVM Examples:
 * [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
@@ -34,7 +34,7 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     maven { url "https://teavm.org/maven/repository/" }
     
-    // If there is an issue with teavm repository you can try using http
+    // If there is a problem with the teavm repository, you can try using http
     maven {
         url = uri("http://teavm.org/maven/repository/")
         isAllowInsecureProtocol = true
@@ -55,7 +55,7 @@ dependencies {
 ## Supported libraries:
 - [Box2d](https://github.com/xpenatan/gdx-box2d) (WIP). Use GWTBox2d for now.
 - [Bullet](https://github.com/xpenatan/gdx-bullet) (WIP)
-- [Physx](https://github.com/xpenatan/gdx-physx) (WIP)
+- [PhysX](https://github.com/xpenatan/gdx-physx) (WIP)
 - [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
 - FreeType
 
