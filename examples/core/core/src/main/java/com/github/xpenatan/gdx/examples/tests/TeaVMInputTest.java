@@ -18,6 +18,15 @@ public class TeaVMInputTest extends InputAdapter implements ApplicationListener 
 
     @Override
     public void create() {
+        Gdx.input.setCatchKey(Keys.F1, true);
+        Gdx.input.setCatchKey(Keys.F3, true);
+        Gdx.input.setCatchKey(Keys.F5, true);
+        Gdx.input.setCatchKey(Keys.F6, true);
+        Gdx.input.setCatchKey(Keys.F7, true);
+        Gdx.input.setCatchKey(Keys.F8, true);
+        Gdx.input.setCatchKey(Keys.F9, true);
+        Gdx.input.setCatchKey(Keys.F10, true);
+
         renderer = new ShapeRenderer();
         Gdx.input.setInputProcessor(this);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
