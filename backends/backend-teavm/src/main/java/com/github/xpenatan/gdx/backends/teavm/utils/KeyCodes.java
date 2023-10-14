@@ -11,11 +11,11 @@ public class KeyCodes {
     /**
      * The left JS mouse button.
      */
-    private static final int BUTTON_LEFT = 1;
+    private static final int BUTTON_LEFT = 0;
     /**
      * The middle JS mouse button.
      */
-    private static final int BUTTON_MIDDLE = 4;
+    private static final int BUTTON_MIDDLE = 1;
     /**
      * The right JS mouse button.
      */
