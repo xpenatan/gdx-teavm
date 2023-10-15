@@ -30,7 +30,7 @@ public class TeaVMInputTest extends InputAdapter implements ApplicationListener 
         renderer = new ShapeRenderer();
         Gdx.input.setInputProcessor(this);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.input.setCursorCatched(true);
+//        Gdx.input.setCursorCatched(true);
     }
 
     @Override
@@ -112,6 +112,11 @@ public class TeaVMInputTest extends InputAdapter implements ApplicationListener 
     @Override
     public boolean keyUp(int keycode) {
         Gdx.app.log("GdxInputTest", "key up: " + keycode);
+
+        if(keycode == Keys.F2) {
+            boolean isCursorCatched = Gdx.input.isCursorCatched();
+            Gdx.input.setCursorCatched(!isCursorCatched);
+        }
         return false;
     }
 }
