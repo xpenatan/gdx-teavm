@@ -3,6 +3,7 @@ package emu.java.lang;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.URL;
 
 @Emulate(value = Class.class, updateCode = true)
 public class ClassEmu {
@@ -19,6 +20,11 @@ public class ClassEmu {
 
     @Emulate
     public Constructor<?> getEnclosingConstructor() {
+        return null;
+    }
+
+    @Emulate
+    public URL getResource(String name) {
         return null;
     }
 }
