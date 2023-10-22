@@ -19,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTransformFeedbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLVertexArrayObjectWrapper;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaNativeHelper;
 import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -58,7 +59,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLVertexArrayObjectWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -70,7 +71,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLQueryWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }

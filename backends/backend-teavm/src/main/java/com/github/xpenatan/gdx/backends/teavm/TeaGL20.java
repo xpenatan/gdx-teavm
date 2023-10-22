@@ -21,6 +21,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaNativeHelper;
 import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -120,15 +121,12 @@ public class TeaGL20 implements GL20 {
         return id;
     }
 
-    @JSBody(params = {"o1", "o2"}, script = "return o1 === o2;")
-    public static native boolean compareObject(JSObject o1, JSObject o2);
-
     protected int getKey(WebGLFramebufferWrapper value) {
         Iterator<IntMap.Entry<WebGLFramebufferWrapper>> iterator = frameBuffers.iterator();
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLFramebufferWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -140,7 +138,7 @@ public class TeaGL20 implements GL20 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLTextureWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
