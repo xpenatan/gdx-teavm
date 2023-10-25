@@ -2,7 +2,7 @@
 - Fix MMB code
 - Fix catch key
 - Support IntBuffer in GL20
-- Update teavm to 0.9.0-dev-15
+- Update teavm to 0.9.0
 
 
 [1.0.0-b7]
