@@ -543,14 +543,16 @@ public class TeaBuilder {
         FileHandle handler = new FileHandle(indexFile);
         String indexHtmlStr = handler.readString();
 
-        String logo = "assets/startup-logo.png";
+        String logo = configuration.getLogoPath();
+        String htmlLogo = "assets/" + logo;
+        boolean showLoadingLogo = configuration.isShowLoadingLogo();
+
         indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
         indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
         indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
         indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
-        indexHtmlStr = indexHtmlStr.replace("%LOGO%",
-            configuration.isShowLoadingLogo() ? "<img id=\"progress-img\" src=\"" + logo + "\">"
-                                              : ""
+        indexHtmlStr = indexHtmlStr.replace(
+                "%LOGO%", showLoadingLogo ? "<img id=\"progress-img\" src=\"" + htmlLogo + "\">" : ""
         );
 
         handler.writeString(indexHtmlStr, false);
@@ -558,10 +560,9 @@ public class TeaBuilder {
         AssetFilter filter = configuration.assetFilter();
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
-        ArrayList<String> classPathScriptFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
-        if (configuration.isShowLoadingLogo()) {
-          classPathScriptFiles.add(logo);
+        if(showLoadingLogo) {
+            classPathAssetsFiles.add(logo);
         }
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);

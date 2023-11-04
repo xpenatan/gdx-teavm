@@ -40,6 +40,11 @@ public class TeaBuildConfiguration {
      */
     public boolean showLoadingLogo = true;
 
+    /**
+     * Logo asset path.
+     */
+    public String logo = "startup-logo.png";
+
     public String getHtmlTitle() {
         return htmlTitle;
     }
@@ -118,5 +123,9 @@ public class TeaBuildConfiguration {
 
     public boolean acceptClasspath(URL url) {
         return true;
+    }
+
+    public String getLogoPath() {
+        return logo;
     }
 }
