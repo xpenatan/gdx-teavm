@@ -3,6 +3,7 @@ include(":backends:backend-teavm")
 include(":extensions:gdx-freetype-teavm")
 
 include(":tools:generator:core")
+include(":tools:generator:ui")
 include(":tools:generator:desktop")
 
 include(":examples:core:core")
@@ -37,6 +38,18 @@ include(":examples:freetype:teavm")
 //        substitute module('org.teavm:teavm-jso') using project(':jso:core')
 //        substitute module('org.teavm:teavm-jso-apis') using project(':jso:apis')
 //        substitute module('org.teavm:teavm-jso-impl') using project(':jso:impl')
+//    }
+//}
+
+//includeBuild("E:\\Dev\\Projects\\java\\gdx-imgui") {
+//    dependencySubstitution {
+//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-core")).using(project(":imgui:core"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-desktop")).using(project(":imgui:desktop"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-teavm")).using(project(":imgui:teavm"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:gdx")).using(project(":extensions:gdx"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-core")).using(project(":extensions:imlayout:imlayout-core"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-desktop")).using(project(":extensions:imlayout:imlayout-desktop"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:gdx-frame-viewport")).using(project(":extensions:gdx-frame-viewport"))
 //    }
 //}
 

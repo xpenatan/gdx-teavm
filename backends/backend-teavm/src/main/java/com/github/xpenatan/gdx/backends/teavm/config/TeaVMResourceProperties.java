@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -20,10 +21,12 @@ import java.util.zip.ZipFile;
 
 public class TeaVMResourceProperties {
     private static final String OPTION_ADDITIONAL_RESOURCES = "resources";
+    private static final String OPTION_IGNORE_RESOURCES = "ignore-resources";
 
     public String path;
 
     public ArrayList<String> additionalPath = new ArrayList<>();
+    public ArrayList<String> ignorePath = new ArrayList<>();
 
     public TeaVMResourceProperties(String path, String content) {
         this.path = path;
@@ -47,15 +50,20 @@ public class TeaVMResourceProperties {
         if(option.equals(OPTION_ADDITIONAL_RESOURCES)) {
             additionalPath.add(value);
         }
+        if(option.equals(OPTION_IGNORE_RESOURCES)) {
+            ignorePath.add(value);
+        }
     }
     public static List<String> getResources(ArrayList<URL> acceptedURL) {
         // Get all resources
         ArrayList<TeaVMResourceProperties> propertiesList = getAllProperties(acceptedURL);
         ArrayList<URI> filteredUrl = new ArrayList<>();
+        HashSet<String> ignoreResources = new HashSet<>();
         for(URL url : acceptedURL) {
             String path = url.getPath();
             boolean accept = false;
             for(TeaVMResourceProperties properties : propertiesList) {
+                ignoreResources.addAll(properties.ignorePath);
                 if(path.contains(properties.path)) {
                     accept = true;
                     break;
@@ -81,9 +89,22 @@ public class TeaVMResourceProperties {
         ArrayList<String> result = new ArrayList<>();
         for(URI uri : filteredUrl) {
             ArrayList<String> pathsFromResource = getPathsFromResource(uri, ".");
-            result.addAll(pathsFromResource);
+            for(String resource : pathsFromResource) {
+                if(!containsResource(resource, ignoreResources)) {
+                    result.add(resource);
+                }
+            }
         }
         return result;
+    }
+
+    private static boolean containsResource(String resource, HashSet<String> ignoreResources) {
+        for(String ignore : ignoreResources) {
+            if(resource.contains(ignore)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ArrayList<TeaVMResourceProperties> getAllProperties(ArrayList<URL> acceptedURL) {

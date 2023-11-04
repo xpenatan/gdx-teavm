@@ -1,6 +1,7 @@
-val moduleName = "generator-core"
+val moduleName = "generator-ui"
 
 dependencies {
+    implementation(project(":tools:generator:core"))
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":backends:backend-teavm"))
 

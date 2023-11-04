@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
@@ -11,6 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
@@ -20,6 +21,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaNativeHelper;
 import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -40,6 +42,7 @@ import org.teavm.jso.typedarrays.Uint8Array;
  *
  * @author xpenatan
  */
+@Emulate(TeaGL20.class)
 public class TeaGL20 implements GL20 {
 
     protected WebGLRenderingContextWrapper gl;
@@ -118,15 +121,12 @@ public class TeaGL20 implements GL20 {
         return id;
     }
 
-    @JSBody(params = {"o1", "o2"}, script = "return o1 === o2;")
-    public static native boolean compareObject(JSObject o1, JSObject o2);
-
     protected int getKey(WebGLFramebufferWrapper value) {
         Iterator<IntMap.Entry<WebGLFramebufferWrapper>> iterator = frameBuffers.iterator();
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLFramebufferWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -138,7 +138,7 @@ public class TeaGL20 implements GL20 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLTextureWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -302,6 +302,9 @@ public class TeaGL20 implements GL20 {
         if(data instanceof FloatBuffer) {
             gl.bufferData(target, copy((FloatBuffer)data), usage);
         }
+        else if(data instanceof IntBuffer) {
+            gl.bufferData(target, copy((IntBuffer)data), usage);
+        }
         else if(data instanceof ShortBuffer) {
             gl.bufferData(target, copy((ShortBuffer)data), usage);
         }
@@ -320,6 +323,9 @@ public class TeaGL20 implements GL20 {
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
         if(data instanceof FloatBuffer) {
             gl.bufferSubData(target, offset, copy((FloatBuffer)data));
+        }
+        else if(data instanceof IntBuffer) {
+            gl.bufferSubData(target, offset, copy((IntBuffer)data));
         }
         else if(data instanceof ShortBuffer) {
             gl.bufferSubData(target, offset, copy((ShortBuffer)data));
@@ -1055,7 +1061,7 @@ public class TeaGL20 implements GL20 {
             }
             else {
                 int index = ((ByteBuffer)pixels).getInt(0);
-                Pixmap pixmap = Pixmap.pixmaps.get(index);
+                PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
                 // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
                 if(pixmap.canUsePixmapData()) {
                     gl.texImage2D(target, level, internalformat, width, height, border, format, type, pixmap.getPixmapData());
@@ -1126,7 +1132,7 @@ public class TeaGL20 implements GL20 {
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
-            Pixmap pixmap = Pixmap.pixmaps.get(index);
+            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
             if(pixmap.canUsePixmapData()) {
                 gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixmap.getPixmapData());
             }

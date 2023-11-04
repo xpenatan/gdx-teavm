@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FreeTypePixmap;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
@@ -525,7 +526,7 @@ public class FreeTypeFontGenerator implements Disposable {
             return null;
         }
         Bitmap mainBitmap = mainGlyph.getBitmap();
-        Pixmap mainPixmap = mainBitmap.getPixmap(com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888, parameter.color, parameter.gamma);
+        PixmapEmu mainPixmap = mainBitmap.getPixmap(PixmapEmu.FormatEmu.RGBA8888, parameter.color, parameter.gamma);
 
         if(mainBitmap.getWidth() != 0 && mainBitmap.getRows() != 0) {
             int offsetX = 0, offsetY = 0;
@@ -540,7 +541,7 @@ public class FreeTypeFontGenerator implements Disposable {
 
                 // Render border (pixmap is bigger than main).
                 Bitmap borderBitmap = borderGlyph.getBitmap();
-                Pixmap borderPixmap = borderBitmap.getPixmap(com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888, parameter.borderColor, parameter.borderGamma);
+                PixmapEmu borderPixmap = borderBitmap.getPixmap(PixmapEmu.FormatEmu.RGBA8888, parameter.borderColor, parameter.borderGamma);
 
                 // Draw main glyph on top of border.
                 for(int i = 0, n = parameter.renderCount; i < n; i++)
@@ -556,7 +557,7 @@ public class FreeTypeFontGenerator implements Disposable {
                 int mainW = mainPixmap.getWidth(), mainH = mainPixmap.getHeight();
                 int shadowOffsetX = Math.max(parameter.shadowOffsetX, 0), shadowOffsetY = Math.max(parameter.shadowOffsetY, 0);
                 int shadowW = mainW + Math.abs(parameter.shadowOffsetX), shadowH = mainH + Math.abs(parameter.shadowOffsetY);
-                Pixmap shadowPixmap = new Pixmap(shadowW, shadowH, mainPixmap.getFormat());
+                PixmapEmu shadowPixmap = new PixmapEmu(shadowW, shadowH, mainPixmap.getFormat());
 
                 Color shadowColor = parameter.shadowColor;
                 float a = shadowColor.a;
@@ -593,9 +594,9 @@ public class FreeTypeFontGenerator implements Disposable {
             }
 
             if(parameter.padTop > 0 || parameter.padLeft > 0 || parameter.padBottom > 0 || parameter.padRight > 0) {
-                Pixmap padPixmap = new Pixmap(mainPixmap.getWidth() + parameter.padLeft + parameter.padRight,
+                PixmapEmu padPixmap = new PixmapEmu(mainPixmap.getWidth() + parameter.padLeft + parameter.padRight,
                         mainPixmap.getHeight() + parameter.padTop + parameter.padBottom, mainPixmap.getFormat());
-                padPixmap.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
+                padPixmap.setBlending(PixmapEmu.BlendingEmu.None);
                 padPixmap.drawPixmap(mainPixmap, parameter.padLeft, parameter.padTop);
                 mainPixmap.dispose();
                 mainPixmap = padPixmap;

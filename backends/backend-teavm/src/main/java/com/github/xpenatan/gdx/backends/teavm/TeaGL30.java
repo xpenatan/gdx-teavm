@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
@@ -10,6 +10,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint32ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLQueryWrapper;
@@ -18,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTransformFeedbackWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLVertexArrayObjectWrapper;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaNativeHelper;
 import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -32,6 +34,7 @@ import org.teavm.jso.core.JSArray;
  *
  * @author xpenatan
  */
+@Emulate(TeaGL30.class)
 public class TeaGL30 extends TeaGL20 implements GL30 {
 
     protected WebGL2RenderingContextWrapper gl;
@@ -56,7 +59,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLVertexArrayObjectWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -68,7 +71,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         while(iterator.hasNext()) {
             IntMap.Entry<WebGLQueryWrapper> next = iterator.next();
             int key = next.key;
-            if(compareObject(value, next.value)) {
+            if(TeaNativeHelper.compareObject(value, next.value)) {
                 return key;
             }
         }
@@ -805,7 +808,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
-            Pixmap pixmap = Pixmap.pixmaps.get(index);
+            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
             // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
 
             if(pixmap.canUsePixmapData()) {
@@ -869,7 +872,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         }
         else {
             int index = ((ByteBuffer)pixels).getInt(0);
-            Pixmap pixmap = Pixmap.pixmaps.get(index);
+            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
 
             if(pixmap.canUsePixmapData()) {
                 gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixmap.getPixmapData());

@@ -1,5 +1,11 @@
 [1.0.0-SNAPSHOT]
-
+- Fix MMB code
+- Fix catch key
+- Support IntBuffer in GL20
+- Update teavm to 0.10.0-dev-1
+- Update libgdx to 1.12.1
+- Remove obfuscate from build config. Use TeaVMTool.
+- Add useDefaultHtmlIndex and logoPath config option.
 
 [1.0.0-b7]
 - Remove jParser
@@ -13,6 +19,7 @@
 - Add resources automatically when module contains META-INF/gdx-teavm.properties
 - Fix freetype shadow error
 - Improve rendering performance
+- Add mouse locking
 
 [1.0.0-b6]
 - Update libgdx to version 1.12.0

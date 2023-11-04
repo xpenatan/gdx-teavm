@@ -1,35 +1,42 @@
-package com.github.xpenatan.teavm.generator.core.view;
+package com.github.xpenatan.teavm.generator.ui.view;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.github.xpenatan.imgui.core.ImDrawList;
-import com.github.xpenatan.imgui.core.ImGui;
-import com.github.xpenatan.imgui.core.ImGuiStyle;
+import imgui.ImDrawList;
+import imgui.ImGui;
+import imgui.ImGuiInternal;
+import imgui.ImGuiStyle;
+import imgui.ImGuiWindow;
+import imgui.ImRect;
+import imgui.ImVec2;
 
 public class SpinnerView {
 
     public static boolean drawSpinner(String id, float radius, int thickness, int color, float gTime) {
-        float posX = ImGui.GetWindowDCCursorPosX();
-        float posY = ImGui.GetWindowDCCursorPosY();
+        ImGuiWindow imGuiWindow = ImGuiInternal.GetCurrentWindow();
+        ImVec2 cursorPos = imGuiWindow.get_DC().get_CursorPos();
+        float posX = cursorPos.get_x();
+        float posY = cursorPos.get_y();
         return drawSpinner(id, radius, thickness, color, gTime, posX, posY, true);
     }
 
     public static boolean drawSpinner(String id, float radius, int thickness, int color, float gTime, float posX, float posY, boolean itemAdd) {
-        if(ImGui.GetWindowSkipItem())
+        ImGuiWindow imGuiWindow = ImGuiInternal.GetCurrentWindow();
+        if(imGuiWindow.get_SkipItems())
             return false;
 
-        ImDrawList imDrawList = ImGui.GetWindowDrawList();
+        ImDrawList imDrawList = imGuiWindow.get_DrawList();
 
         ImGuiStyle imGuiStyle = ImGui.GetStyle();
 
         float sizeX = (radius) * 2;
-        float sizeY = (radius + imGuiStyle.getFramePadding().getY()) * 2;
+        float sizeY = (radius + imGuiStyle.get_FramePadding().get_y()) * 2;
 
         float pos2X = posX + sizeX;
         float pos2Y = posY + sizeY;
 
         if(itemAdd) {
-            ImGui.ItemSize(posX, posY, pos2X, pos2Y, imGuiStyle.getFramePadding().getY());
-            if(!ImGui.ItemAdd(posX, posY, pos2X, pos2Y, id))
+            ImGuiInternal.ItemSize_2(ImRect.TMP_1.set(posX, posY, pos2X, pos2Y), imGuiStyle.get_FramePadding().get_y());
+            if(!ImGuiInternal.ItemAdd(ImRect.TMP_1.set(posX, posY, pos2X, pos2Y), id.hashCode()))
                 return false;
         }
 
@@ -42,13 +49,13 @@ public class SpinnerView {
         float a_max = MathUtils.PI * 2.0f * ((float)num_segments - 3) / (float)num_segments;
 
         float centerX = posX + radius;
-        float centerY = posY + radius + imGuiStyle.getFramePadding().getY();
+        float centerY = posY + radius + imGuiStyle.get_FramePadding().get_y();
 
         for(int i = 0; i < num_segments; i++) {
             float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
             float pathX = centerX + MathUtils.cos(a + gTime * 8) * radius;
             float pathY = centerY + MathUtils.sin(a + gTime * 8) * radius;
-            imDrawList.PathLineTo(pathX, pathY);
+            imDrawList.PathLineTo(ImVec2.TMP_1.set(pathX, pathY));
         }
         imDrawList.PathStroke(color, 0, thickness);
         return true;

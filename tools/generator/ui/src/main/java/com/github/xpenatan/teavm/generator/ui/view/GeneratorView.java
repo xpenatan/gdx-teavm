@@ -1,15 +1,18 @@
-package com.github.xpenatan.teavm.generator.core.view;
+package com.github.xpenatan.teavm.generator.ui.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.github.xpenatan.imgui.core.ImGui;
-import com.github.xpenatan.imgui.core.ImGuiBoolean;
-import com.github.xpenatan.imgui.core.ImGuiString;
-import com.github.xpenatan.imgui.core.enums.ImGuiCol;
-import com.github.xpenatan.imgui.core.enums.ImGuiItemFlags;
-import com.github.xpenatan.imgui.core.enums.ImGuiStyleVar;
-import com.github.xpenatan.imgui.core.enums.ImGuiWindowFlags;
+import com.badlogic.gdx.graphics.Color;
 import com.github.xpenatan.teavm.generator.core.viewmodel.GeneratorViewModel;
+import imgui.ImGui;
+import imgui.ImGuiBoolean;
+import imgui.ImGuiCol;
+import imgui.ImGuiInternal;
+import imgui.ImGuiItemFlags;
+import imgui.ImGuiString;
+import imgui.ImGuiStyleVar;
+import imgui.ImGuiWindowFlags;
+import imgui.ImVec2;
 
 public class GeneratorView {
     private static final String PREF_JAR_PATH = "jarPath";
@@ -49,10 +52,9 @@ public class GeneratorView {
         preferences = Gdx.app.getPreferences("gdx-html5-generator");
 
         viewModel = new GeneratorViewModel();
-
-        loadingColor = ImGui.ColorToIntBits(255, 255, 255, 255);
-        errorColor = ImGui.ColorToIntBits(255, 0, 0, 255);
-        successColor = ImGui.ColorToIntBits(0, 255, 0, 255);
+        loadingColor = Color.toIntBits(255, 255, 255, 255);
+        errorColor = Color.toIntBits(255, 0, 0, 255);
+        successColor = Color.toIntBits(0, 255, 0, 255);
 
         gameJarPath = new ImGuiString();
         appClassName = new ImGuiString();
@@ -85,10 +87,10 @@ public class GeneratorView {
     }
 
     public void render() {
-        ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration.or(ImGuiWindowFlags.NoMove).or(ImGuiWindowFlags.NoResize);
-        ImGui.SetNextWindowPos(0, 0);
-        ImGui.SetNextWindowSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ImGui.Begin(STR_WINDOW_TITLE, flags);
+        int flags = ImGuiWindowFlags.ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags.ImGuiWindowFlags_NoMove | ImGuiWindowFlags.ImGuiWindowFlags_NoResize;
+        ImGui.SetNextWindowPos(ImVec2.TMP_1.set(0, 0));
+        ImGui.SetNextWindowSize(ImVec2.TMP_1.set(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        ImGui.Begin(STR_WINDOW_TITLE, null, flags);
         renderContent();
         ImGui.End();
     }
@@ -97,22 +99,22 @@ public class GeneratorView {
         ImGui.Text(STR_TXT_GAME_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##Path", gameJarPath);
+        ImGui.InputText("##Path", gameJarPath, gameJarPath.getSize());
 
         ImGui.Text(STR_TXT_APP_CLASS);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##ClassPath", appClassName);
+        ImGui.InputText("##ClassPath", appClassName, appClassName.getSize());
 
         ImGui.Text(STR_TXT_ASSET_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##AssetPath", assetsDirectory);
+        ImGui.InputText("##AssetPath", assetsDirectory, assetsDirectory.getSize());
 
         ImGui.Text(STR_TXT_WEBAPP_PATH);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(-1);
-        ImGui.InputText("##WebAppPath", webappDirectory);
+        ImGui.InputText("##WebAppPath", webappDirectory, webappDirectory.getSize());
 
         ImGui.Text(STR_CKB_OBFUSCATE);
         ImGui.SameLine();
@@ -120,18 +122,19 @@ public class GeneratorView {
 
         boolean compiling = viewModel.isCompiling();
         if(compiling) {
-            ImGui.PushItemFlag(ImGuiItemFlags.Disabled, true);
-            ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+            ImGuiInternal.PushItemFlag(ImGuiItemFlags.ImGuiItemFlags_Disabled, true);
+            ImGui.PushStyleVar(ImGuiStyleVar.ImGuiStyleVar_Alpha, 0.5f);
         }
 
-        float posX1 = ImGui.GetWindowDCCursorPosX();
-        float posY1 = ImGui.GetWindowDCCursorPosY();
+        ImVec2 cursorPos = ImGuiInternal.GetCurrentWindow().get_DC().get_CursorPos();
+        float posX1 = cursorPos.get_x();
+        float posY1 = cursorPos.get_y();
 
         if(compiling) {
-            ImGui.Button("##COMPILE", BTN_BUILD_WIDTH, 0);
+            ImGui.Button("##COMPILE", ImVec2.TMP_1.set(BTN_BUILD_WIDTH, 0));
         }
         else {
-            if(ImGui.Button(STR_BTN_COMPILE, BTN_BUILD_WIDTH, 0)) {
+            if(ImGui.Button(STR_BTN_COMPILE, ImVec2.TMP_1.set(BTN_BUILD_WIDTH, 0))) {
                 viewModel.compile(
                         gameJarPath.getValue(),
                         appClassName.getValue(),
@@ -143,13 +146,13 @@ public class GeneratorView {
         }
 
         if(compiling) {
-            ImGui.PopItemFlag();
+            ImGuiInternal.PopItemFlag();
             ImGui.PopStyleVar();
         }
         ImGui.SameLine();
 
         if(compiling) {
-            float gTime = (float)ImGui.GetContextTime();
+            float gTime = (float)ImGui.GetCurrentContext().get_Time();
             float posX = posX1 + BTN_BUILD_WIDTH / 2.5f;
             float posY = posY1 + 1;
             SpinnerView.drawSpinner("test", 6, 2, loadingColor, gTime, posX, posY, false);
@@ -165,7 +168,7 @@ public class GeneratorView {
             progressColor = successColor;
         }
 
-        ImGui.PushStyleColor(ImGuiCol.PlotHistogram, progressColor);
+        ImGui.PushStyleColor(ImGuiCol.ImGuiCol_PlotHistogram, progressColor);
 
         ImGui.ProgressBar(progress);
 
@@ -177,8 +180,8 @@ public class GeneratorView {
     private void renderServerView() {
         boolean compiling = viewModel.isCompiling();
         if(compiling) {
-            ImGui.PushItemFlag(ImGuiItemFlags.Disabled, true);
-            ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+            ImGuiInternal.PushItemFlag(ImGuiItemFlags.ImGuiItemFlags_Disabled, true);
+            ImGui.PushStyleVar(ImGuiStyleVar.ImGuiStyleVar_Alpha, 0.5f);
         }
 
         boolean serverRunning = viewModel.isServerRunning();
@@ -190,7 +193,7 @@ public class GeneratorView {
                 viewModel.startLocalServer(webappDirectory.getValue());
         }
         if(compiling) {
-            ImGui.PopItemFlag();
+            ImGuiInternal.PopItemFlag();
             ImGui.PopStyleVar();
         }
     }

@@ -17,20 +17,19 @@ dependencies {
     implementation project(":extensions:gdx-freetype-teavm")
 }
 
-project.ext.gearsMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGearsDemo"
+project.ext.teavmTestMainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
 
 tasks.register("core-build", JavaExec) {
     dependsOn classes
     setGroup("examples-teavm")
-    setDescription("Build teavm GearsDemo example")
-    mainClass.set(project.gearsMainClassName)
+    setDescription("Build teavm test example")
+    mainClass.set(project.teavmTestMainClassName)
     setClasspath(sourceSets.main.runtimeClasspath)
 }
 tasks.register("core-run-teavm") {
-    dependsOn(["clean", "core-build", "jettyRun"])
+    dependsOn(["core-build", "jettyRun"])
     setGroup("examples-teavm")
-    setDescription("Run Gears Demo example")
+    setDescription("Run Test Demo example")
 
-    tasks.findByName("core-build")?.mustRunAfter("clean")
     tasks.findByName("jettyRun")?.mustRunAfter("core-build")
 }

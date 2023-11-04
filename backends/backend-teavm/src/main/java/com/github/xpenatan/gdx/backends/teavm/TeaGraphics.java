@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
+import com.badlogic.gdx.utils.IntMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
@@ -28,6 +29,8 @@ import org.teavm.jso.webgl.WebGLContextAttributes;
  * @author xpenatan
  */
 public class TeaGraphics implements Graphics {
+    public static int nextId = 0;
+    public static IntMap<Object> pixmaps = new IntMap<>();
 
     private WebGLRenderingContextWrapper context;
     protected HTMLCanvasElementWrapper canvas;

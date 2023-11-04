@@ -21,6 +21,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.TouchListWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.TouchWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
+import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Window;
 
 /**
@@ -306,6 +307,10 @@ public class TeaInput implements Input, EventListenerWrapper {
                     break;
             }
 
+            if(isCatchKey(code)) {
+                e.preventDefault();
+            }
+
             if(code == Input.Keys.DEL || code == Keys.FORWARD_DEL) {
                 e.preventDefault();
                 if(processor != null) {
@@ -326,7 +331,7 @@ public class TeaInput implements Input, EventListenerWrapper {
             }
 
             // prevent TAB-key propagation, i.e. we handle ourselves!
-            if (code == Keys.TAB) {
+            if(code == Keys.TAB) {
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -337,7 +342,7 @@ public class TeaInput implements Input, EventListenerWrapper {
             if(processor != null) processor.keyTyped(c);
 
             // prevent TAB-key propagation, i.e. we handle ourselves!
-            if (c == '\t') {
+            if(c == '\t') {
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -346,6 +351,11 @@ public class TeaInput implements Input, EventListenerWrapper {
         else if(type.equals("keyup") && hasFocus) {
             KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
             int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+
+            if(isCatchKey(code)) {
+                e.preventDefault();
+            }
+
             if(pressedKeys[code]) {
                 pressedKeyCount--;
                 pressedKeys[code] = false;
@@ -355,7 +365,7 @@ public class TeaInput implements Input, EventListenerWrapper {
             }
 
             // prevent TAB-key propagation, i.e. we handle ourselves!
-            if (code == Keys.TAB) {
+            if(code == Keys.TAB) {
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -707,37 +717,38 @@ public class TeaInput implements Input, EventListenerWrapper {
     }
 
     @Override
-    public boolean isCatchBackKey () {
+    public boolean isCatchBackKey() {
         return keysToCatch.contains(Keys.BACK);
     }
 
     @Override
-    public void setCatchBackKey (boolean catchBack) {
+    public void setCatchBackKey(boolean catchBack) {
         setCatchKey(Keys.BACK, catchBack);
     }
 
     @Override
-    public boolean isCatchMenuKey () {
+    public boolean isCatchMenuKey() {
         return keysToCatch.contains(Keys.MENU);
     }
 
     @Override
-    public void setCatchMenuKey (boolean catchMenu) {
+    public void setCatchMenuKey(boolean catchMenu) {
         setCatchKey(Keys.MENU, catchMenu);
     }
 
     @Override
-    public void setCatchKey (int keycode, boolean catchKey) {
-        if (!catchKey) {
+    public void setCatchKey(int keycode, boolean catchKey) {
+        if(!catchKey) {
             keysToCatch.remove(keycode);
-        } else {
+        }
+        else {
             keysToCatch.add(keycode);
         }
     }
 
     @Override
-    public boolean isCatchKey (int keycode) {
-      return keysToCatch.contains(keycode);
+    public boolean isCatchKey(int keycode) {
+        return keysToCatch.contains(keycode);
     }
 
     @Override
@@ -780,14 +791,17 @@ public class TeaInput implements Input, EventListenerWrapper {
 
     @Override
     public void setCursorCatched(boolean catched) {
-        // TODO Auto-generated method stub
-
+        if(catched) {
+            setCursorCatchedJSNI(canvas);
+        }
+        else {
+            exitCursorCatchedJSNI();
+        }
     }
 
     @Override
     public boolean isCursorCatched() {
-        // TODO Auto-generated method stub
-        return false;
+        return isCursorCatchedJSNI(canvas);
     }
 
     @Override
@@ -806,4 +820,40 @@ public class TeaInput implements Input, EventListenerWrapper {
         // TODO Auto-generated method stub
 
     }
+
+    /**
+     * from https://github.com/toji/game-shim/blob/master/game-shim.js
+     *
+     * @param element Canvas
+     */
+    @JSBody(params = "element", script =
+            "if (!element.requestPointerLock) {\n" +
+            "   element.requestPointerLock = (function() {\n" +
+            "       return element.webkitRequestPointerLock || element.mozRequestPointerLock;" +
+            "   })();\n" +
+            "}\n" +
+            "element.requestPointerLock();"
+    )
+    private static native void setCursorCatchedJSNI(HTMLElementWrapper element);
+
+    /**
+     * from https://github.com/toji/game-shim/blob/master/game-shim.js
+     */
+    @JSBody(script =
+            "document.exitPointerLock();"
+    )
+    private static native void exitCursorCatchedJSNI();
+
+    /**
+     * from https://github.com/toji/game-shim/blob/master/game-shim.js
+     *
+     * @return is Cursor catched
+     */
+    @JSBody(params = "element", script =
+            "if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {\n" +
+            "   return true;\n" +
+            "}\n" +
+            "return false;"
+    )
+    private static native boolean isCursorCatchedJSNI(HTMLElementWrapper canvas);
 }
