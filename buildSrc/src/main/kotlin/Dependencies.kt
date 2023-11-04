@@ -2,8 +2,8 @@ object LibExt {
     const val groupId = "com.github.xpenatan.gdx-teavm"
     val libVersion: String = getVersion("1.0.0", "b7")
 
-    const val gdxVersion = "1.12.0"
-    const val teaVMVersion = "0.9.0"
+    const val gdxVersion = "1.12.1"
+    const val teaVMVersion = "0.10.0-dev-1"
 
     const val gdxImGuiVersion = "1.0.0-SNAPSHOT"
     const val gdxFrameViewportVersion = "1.0.0-SNAPSHOT"
