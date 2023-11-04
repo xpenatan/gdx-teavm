@@ -472,7 +472,6 @@ public class TeaBuilder {
 
         File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";
-        boolean setMinifying = configuration.minifying();
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
         boolean setIncremental = false;
@@ -483,7 +482,6 @@ public class TeaBuilder {
         tool.setSourceFilesCopied(setSourceFilesCopied);
         tool.setTargetDirectory(setTargetDirectory);
         tool.setTargetFileName(setTargetFileName);
-        tool.setObfuscated(setMinifying);
         tool.setFastDependencyAnalysis(false);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         String applicationListenerClass = configuration.getApplicationListenerClass();
