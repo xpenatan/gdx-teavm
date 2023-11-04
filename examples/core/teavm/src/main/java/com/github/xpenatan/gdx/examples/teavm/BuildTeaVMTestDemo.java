@@ -15,6 +15,7 @@ public class BuildTeaVMTestDemo {
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
         teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
+        teaBuildConfiguration.logoPath = "logo.png";
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());

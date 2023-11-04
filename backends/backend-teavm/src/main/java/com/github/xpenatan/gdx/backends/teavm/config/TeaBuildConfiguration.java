@@ -35,15 +35,15 @@ public class TeaBuildConfiguration {
     public String htmlTitle = "gdx-teavm";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
-    /**
-     * If the logo is shown while the application is loading.
-     */
+
+    /** True to use the default html index. False will stop overwriting html file. */
+    public boolean useDefaultHtmlIndex = true;
+
+    /** If the logo is shown while the application is loading. Requires showLoadingLogo true. */
     public boolean showLoadingLogo = true;
 
-    /**
-     * Logo asset path.
-     */
-    public String logo = "startup-logo.png";
+    /** Logo asset path. Requires showLoadingLogo true. */
+    public String logoPath = "startup-logo.png";
 
     public String getHtmlTitle() {
         return htmlTitle;
@@ -59,6 +59,10 @@ public class TeaBuildConfiguration {
 
     public boolean isShowLoadingLogo() {
       return showLoadingLogo;
+    }
+
+    public boolean shouldUseDefaultHtmlIndex() {
+      return useDefaultHtmlIndex;
     }
 
     public String getMainClass() {
@@ -126,6 +130,6 @@ public class TeaBuildConfiguration {
     }
 
     public String getLogoPath() {
-        return logo;
+        return logoPath;
     }
 }

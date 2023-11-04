@@ -27,10 +27,9 @@ tasks.register("core-build", JavaExec) {
     setClasspath(sourceSets.main.runtimeClasspath)
 }
 tasks.register("core-run-teavm") {
-    dependsOn(["clean", "core-build", "jettyRun"])
+    dependsOn(["core-build", "jettyRun"])
     setGroup("examples-teavm")
     setDescription("Run Test Demo example")
 
-    tasks.findByName("core-build")?.mustRunAfter("clean")
     tasks.findByName("jettyRun")?.mustRunAfter("core-build")
 }

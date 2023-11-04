@@ -533,36 +533,42 @@ public class TeaBuilder {
         webappAssetsFiles.add(webappName);
         TeaBuilder.logHeader("COPYING ASSETS");
 
-        AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false);
-        TeaBuilder.log("");
+        boolean shouldUseDefaultHtmlIndex = configuration.shouldUseDefaultHtmlIndex();
+        if(shouldUseDefaultHtmlIndex) {
+            AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false);
+            TeaBuilder.log("");
+        }
 
         String scriptsOutputPath = webappDirectory + File.separator + webappName;
         String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
-
-        File indexFile = new File(scriptsOutputPath + File.separator + "index.html");
-        FileHandle handler = new FileHandle(indexFile);
-        String indexHtmlStr = handler.readString();
-
-        String logo = configuration.getLogoPath();
-        String htmlLogo = "assets/" + logo;
-        boolean showLoadingLogo = configuration.isShowLoadingLogo();
-
-        indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
-        indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
-        indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
-        indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
-        indexHtmlStr = indexHtmlStr.replace(
-                "%LOGO%", showLoadingLogo ? "<img id=\"progress-img\" src=\"" + htmlLogo + "\">" : ""
-        );
-
-        handler.writeString(indexHtmlStr, false);
 
         AssetFilter filter = configuration.assetFilter();
         ArrayList<File> assetsPaths = new ArrayList<>();
         ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         assetsDefaultClasspath(classPathAssetsFiles);
-        if(showLoadingLogo) {
-            classPathAssetsFiles.add(logo);
+
+        if(shouldUseDefaultHtmlIndex) {
+            File indexFile = new File(scriptsOutputPath + File.separator + "index.html");
+            FileHandle handler = new FileHandle(indexFile);
+            String indexHtmlStr = handler.readString();
+
+            String logo = configuration.getLogoPath();
+            String htmlLogo = "assets/" + logo;
+            boolean showLoadingLogo = configuration.isShowLoadingLogo();
+
+            indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
+            indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
+            indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
+            indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
+            indexHtmlStr = indexHtmlStr.replace(
+                    "%LOGO%", showLoadingLogo ? "<img id=\"progress-img\" src=\"" + htmlLogo + "\">" : ""
+            );
+
+            handler.writeString(indexHtmlStr, false);
+
+            if(showLoadingLogo) {
+                classPathAssetsFiles.add(logo);
+            }
         }
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);

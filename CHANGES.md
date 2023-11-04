@@ -5,6 +5,7 @@
 - Update teavm to 0.10.0-dev-1
 - Update libgdx to 1.12.1
 - Remove obfuscate from build config. Use TeaVMTool.
+- Add useDefaultHtmlIndex and logoPath config option.
 
 [1.0.0-b7]
 - Remove jParser
