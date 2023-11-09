@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
+import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import org.teavm.model.MethodReader;
 public class TeaReflectionSupplier implements ReflectionSupplier {
 
     private static ArrayList<String> clazzList = new ArrayList();
+
+    private static HashSet<String> REFLECTION_CLASSES = new HashSet<>();
 
     public static void addReflectionClass(Class<?> type) {
         addReflectionClass(type.getName());
@@ -41,6 +44,17 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
         clazzList.add(className);
     }
 
+    /**
+     * Must be called after TeaBuilder.build
+     */
+    public static void printReflectionClasses() {
+        TeaBuilder.logHeader("REFLECTION CLASSES: " + REFLECTION_CLASSES.size());
+        for(String reflectionClass : REFLECTION_CLASSES) {
+            TeaBuilder.log(reflectionClass);
+        }
+        TeaBuilder.logEnd();
+    }
+
     public TeaReflectionSupplier() {
     }
 
@@ -54,6 +68,7 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
         if(cls != null) {
             if(canHaveReflection(className)) {
+                REFLECTION_CLASSES.add(className);
                 for(FieldReader field : cls.getFields()) {
                     String name = field.getName();
                     fields.add(name);
@@ -71,6 +86,7 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
         }
         Set<MethodDescriptor> methods = new HashSet<>();
         if(canHaveReflection(className)) {
+            REFLECTION_CLASSES.add(className);
             Collection<? extends MethodReader> methods2 = cls.getMethods();
             for(MethodReader method : methods2) {
                 MethodDescriptor descriptor = method.getDescriptor();

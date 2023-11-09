@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
+import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import java.util.ArrayList;
 import org.teavm.model.FieldReference;
 import org.teavm.model.MethodReference;
@@ -9,6 +10,10 @@ public class TeaClassFilter implements ElementFilter {
     private static final ArrayList<String> classesToExclude = new ArrayList<>();
     private static final ArrayList<Pair> methodsToExclude = new ArrayList<>();
     private static final ArrayList<Pair> fieldsToExclude = new ArrayList<>();
+
+    private static final ArrayList<String> ALLOWED_CLASSES = new ArrayList<>();
+    private static final ArrayList<String> EXCLUDED_CLASSES = new ArrayList<>();
+
 
     /**
      * my.package.ClassName or my.package
@@ -31,10 +36,32 @@ public class TeaClassFilter implements ElementFilter {
         fieldsToExclude.add(new Pair(className, fieldName));
     }
 
+    /**
+     * Must be called after TeaBuilder.build
+     */
+    public static void printAllowedClasses() {
+        TeaBuilder.logHeader("EXCLUDED CLASSES: " + ALLOWED_CLASSES.size());
+        for(String allowedClass : ALLOWED_CLASSES) {
+            TeaBuilder.log(allowedClass);
+        }
+        TeaBuilder.logEnd();
+    }
+
+    /**
+     * Must be called after TeaBuilder.build
+     */
+    public static void printExcludedClasses() {
+        TeaBuilder.logHeader("ALLOWED CLASES: " + EXCLUDED_CLASSES.size());
+        for(String excludedClass : EXCLUDED_CLASSES) {
+            TeaBuilder.log(excludedClass);
+        }
+        TeaBuilder.logEnd();
+    }
+
     private static boolean containsClass(ArrayList<String> list, String className) {
         for(int i = 0; i < list.size(); i++) {
             String excludedClass = list.get(i);
-            if(className.contains(excludedClass))
+            if(className.matches(excludedClass) || className.contains(excludedClass + "$") )
                 return true;
         }
         return false;
@@ -57,6 +84,12 @@ public class TeaClassFilter implements ElementFilter {
         boolean accceptClass = true;
         if(containsClass(classesToExclude, fullClassName)) {
             accceptClass = false;
+        }
+        if(accceptClass) {
+            ALLOWED_CLASSES.add(fullClassName);
+        }
+        else {
+            EXCLUDED_CLASSES.add(fullClassName);
         }
         return accceptClass;
     }

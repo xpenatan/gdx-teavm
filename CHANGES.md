@@ -1,4 +1,7 @@
 [1.0.0-SNAPSHOT]
+- add TeaClassFilter printAllowedClasses() and printExcludedClasses()
+- add TeaReflectionSupplier.printReflectionClasses()
+- Change exclude class comparison to regex
 
 [1.0.0-b8]
 - Fix MMB code
