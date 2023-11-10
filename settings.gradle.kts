@@ -43,9 +43,9 @@ include(":examples:freetype:teavm")
 
 //includeBuild("E:\\Dev\\Projects\\java\\gdx-imgui") {
 //    dependencySubstitution {
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui")).using(project(":imgui:core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-desktop")).using(project(":imgui:desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-teavm")).using(project(":imgui:teavm"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:core")).using(project(":imgui:core"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:desktop")).using(project(":imgui:desktop"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:teavm")).using(project(":imgui:teavm"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:gdx")).using(project(":extensions:gdx"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-core")).using(project(":extensions:imlayout:imlayout-core"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-desktop")).using(project(":extensions:imlayout:imlayout-desktop"))
