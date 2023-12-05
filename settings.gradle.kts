@@ -15,8 +15,8 @@ include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")
 
 // ######### Add libgdx tests to project
-// ######### Need to have libgdx project source code tag 1.12.0.
-// ######### Need to disable in libgdx settings :tests:gdx-tests-android, :tests:gdx-tests-gwt and :backends:gdx-backend-android because of some conflicts
+// ######### Need to have libgdx project source code tag 1.12.1.
+// ######### Need to disable in libgdx settings :tests:gdx-tests-gwt  because of some conflicts
 // ######### Need to update assets path in desktop gradle and teavm build class.
 
 //include(":examples:gdx-tests:core")

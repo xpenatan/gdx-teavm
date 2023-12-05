@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-freetype-teavm"))
 
-    implementation("com.github.xpenatan.gdx-imgui:core-teavm:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:teavm:${LibExt.gdxImGuiVersion}")
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGdxTest"

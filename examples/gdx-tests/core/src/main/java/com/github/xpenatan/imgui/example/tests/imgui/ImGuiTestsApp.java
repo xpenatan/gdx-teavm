@@ -1,6 +1,5 @@
 package com.github.xpenatan.imgui.example.tests.imgui;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -8,14 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.tests.InputTest;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.github.xpenatan.gdx.frame.viewport.EmuFrameBuffer;
 import com.badlogic.gdx.tests.TeaVMGdxTests;
+import com.github.xpenatan.gdx.multiview.EmuFrameBuffer;
 import com.github.xpenatan.imgui.example.tests.frame.GameFrame;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
 import com.github.xpenatan.imgui.gdx.ImGuiGdxInputMultiplexer;
 import imgui.ImDrawData;
 import imgui.ImGui;
-import imgui.ImGuiBoolean;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
 
@@ -28,7 +26,6 @@ public class ImGuiTestsApp implements Screen {
 
     boolean gdxTestInit = false;
 
-    ImGuiBoolean booleanFlag;
     int selected = -1;
 
     private GameFrame gameFrame;
@@ -45,8 +42,6 @@ public class ImGuiTestsApp implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(true);
         batch = new SpriteBatch();
-
-        booleanFlag = new ImGuiBoolean();
 
         ImGuiIO io = ImGui.GetIO();
 
@@ -65,18 +60,18 @@ public class ImGuiTestsApp implements Screen {
         gameFrame.emuWindow.setApplicationListener(new InputTest());
 
         ImGuiGdxInputMultiplexer multiplexer = new ImGuiGdxInputMultiplexer();
-        multiplexer.addProcessor(gameFrame.emuWindow.getInput());
+        multiplexer.addProcessor(gameFrame.emuWindow.getEmuInput());
         Gdx.input.setInputProcessor(multiplexer);
     }
 
     private void drawTestListWindow() {
         if(!gdxTestInit) {
             gdxTestInit = true;
-            ImGui.SetNextWindowSize(ImVec2.TMP.set(200, 500));
-            ImGui.SetNextWindowPos(ImVec2.TMP.set(900, 20));
+            ImGui.SetNextWindowSize(ImVec2.TMP_1.set(200, 500));
+            ImGui.SetNextWindowPos(ImVec2.TMP_1.set(900, 20));
         }
         ImGui.Begin("GdxTests");
-        ImGui.BeginChildFrame(313, ImVec2.TMP.set(0f, 0f));
+        ImGui.BeginChildFrame(313, ImVec2.TMP_1.set(0f, 0f));
         for(int i = 0; i < testList.length; i++) {
             String testName = testList[i].getSimpleName();
             boolean isSelected = selected == i;
