@@ -738,9 +738,4 @@ public class PixmapEmu implements Disposable {
     public enum FilterEmu {
         NearestNeighbour, BiLinear
     }
-
-    public interface DownloadPixmapResponseListener {
-        void downloadComplete (PixmapEmu pixmap);
-        void downloadFailed (Throwable t);
-    }
 }
