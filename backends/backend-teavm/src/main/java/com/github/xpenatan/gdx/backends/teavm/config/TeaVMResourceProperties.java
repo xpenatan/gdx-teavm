@@ -113,6 +113,7 @@ public class TeaVMResourceProperties {
         ArrayList<String> filteredUrl = new ArrayList<>();
         for(URL url : acceptedURL) {
             String path = url.getPath();
+            path = URLDecoder.decode(path, StandardCharsets.UTF_8);
             boolean accept = !(
                     !(path.endsWith(".jar")) ||
                             path.contains("org.teavm"
@@ -133,7 +134,7 @@ public class TeaVMResourceProperties {
 
     private static TeaVMResourceProperties getProperties(String path) {
         try {
-            try(ZipFile zipFile = new ZipFile(URLDecoder.decode(path, StandardCharsets.UTF_8))) {
+            try(ZipFile zipFile = new ZipFile(path)) {
                 ZipEntry propertyEntry = zipFile.getEntry("META-INF/gdx-teavm.properties");
                 if(propertyEntry != null) {
                     InputStream inputStream = zipFile.getInputStream(propertyEntry);
