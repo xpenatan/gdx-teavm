@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -131,7 +133,7 @@ public class TeaVMResourceProperties {
 
     private static TeaVMResourceProperties getProperties(String path) {
         try {
-            try(ZipFile zipFile = new ZipFile(path)) {
+            try(ZipFile zipFile = new ZipFile(URLDecoder.decode(path, StandardCharsets.UTF_8))) {
                 ZipEntry propertyEntry = zipFile.getEntry("META-INF/gdx-teavm.properties");
                 if(propertyEntry != null) {
                     InputStream inputStream = zipFile.getInputStream(propertyEntry);
@@ -141,6 +143,7 @@ public class TeaVMResourceProperties {
                 }
             }
         } catch(IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
