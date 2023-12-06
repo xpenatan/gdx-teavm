@@ -5,7 +5,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.github.xpenatan.teavm.generator.core.viewmodel.GeneratorViewModel;
 import imgui.ImGui;
-import imgui.ImGuiBoolean;
 import imgui.ImGuiCol;
 import imgui.ImGuiInternal;
 import imgui.ImGuiItemFlags;
@@ -13,6 +12,7 @@ import imgui.ImGuiString;
 import imgui.ImGuiStyleVar;
 import imgui.ImGuiWindowFlags;
 import imgui.ImVec2;
+import imgui.idl.helper.IDLBool;
 
 public class GeneratorView {
     private static final String PREF_JAR_PATH = "jarPath";
@@ -46,7 +46,7 @@ public class GeneratorView {
     private final ImGuiString appClassName;
     private final ImGuiString assetsDirectory;
     private final ImGuiString webappDirectory;
-    private final ImGuiBoolean obfuscateFlag;
+    private final IDLBool obfuscateFlag;
 
     public GeneratorView() {
         preferences = Gdx.app.getPreferences("gdx-html5-generator");
@@ -60,7 +60,7 @@ public class GeneratorView {
         appClassName = new ImGuiString();
         assetsDirectory = new ImGuiString();
         webappDirectory = new ImGuiString();
-        obfuscateFlag = new ImGuiBoolean();
+        obfuscateFlag = new IDLBool();
 
         loadPreference();
     }
@@ -72,7 +72,7 @@ public class GeneratorView {
         appClassName.setValue(preferences.getString(PREF_APP_CLASS_NAME, ""));
         assetsDirectory.setValue(preferences.getString(PREF_ASSET_PATH, ""));
         webappDirectory.setValue(preferences.getString(PREF_WEBAPP_PATH, ""));
-        obfuscateFlag.setValue(preferences.getBoolean(PREF_JAR_PATH, false));
+        obfuscateFlag.set(preferences.getBoolean(PREF_JAR_PATH, false));
     }
 
     private void savePreference() {
