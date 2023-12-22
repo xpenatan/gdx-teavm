@@ -2,6 +2,7 @@
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()
 - add TeaReflectionSupplier.printReflectionClasses()
 - Change exclude class comparison to regex
+- Downgrade teavm version to 9.0.0
 
 [1.0.0-b8]
 - Fix MMB code
