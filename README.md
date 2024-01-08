@@ -57,6 +57,7 @@ dependencies {
 - [Bullet](https://github.com/xpenatan/gdx-bullet) (WIP)
 - [PhysX](https://github.com/xpenatan/gdx-physx) (WIP)
 - [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
+- [Lua](https://github.com/xpenatan/gdx-lua) (WIP)
 - FreeType
 
 ## Generator:
