@@ -7,13 +7,21 @@ jobs:
   add-tag:
     runs-on: ubuntu-latest
     steps:
+      - uses: madhead/read-java-properties@latest
+        id: version
+        with:
+          file: gradle.properties
+          property: version
+          default: 0.0.1
+
       - name: Create Git tag
         uses: actions/github-script@v7
         with:
           script: |
+            const versionOutputs = ${{ toJSON(steps.version.outputs) }};
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/1.0.0-b9-test",
+              ref: "refs/tags/${versionOutputs.value}",
               sha: context.sha
             })
