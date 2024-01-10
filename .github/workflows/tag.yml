@@ -1,0 +1,19 @@
+name: Dispatch Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  add-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Git tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/1.0.0-b9-test",
+              sha: context.sha
+            })
