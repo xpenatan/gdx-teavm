@@ -5,8 +5,8 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":backends:backend-teavm"))
 
-    implementation("com.github.xpenatan.gdx-imgui:core:${LibExt.gdxImGuiVersion}")
-    implementation("com.github.xpenatan.gdx-imgui:gdx:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:imgui-core:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:gdx-impl:${LibExt.gdxImGuiVersion}")
 
     implementation(project(":extensions:gdx-freetype-teavm"))
 

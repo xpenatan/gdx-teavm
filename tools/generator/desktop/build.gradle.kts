@@ -5,9 +5,9 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:${LibExt.gdxVersion}")
 
-    implementation("com.github.xpenatan.gdx-imgui:core:${LibExt.gdxImGuiVersion}")
-    implementation("com.github.xpenatan.gdx-imgui:gdx:${LibExt.gdxImGuiVersion}")
-    implementation("com.github.xpenatan.gdx-imgui:desktop:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:imgui-core:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:imgui-desktop:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:gdx-impl:${LibExt.gdxImGuiVersion}")
 }
 
 tasks.register<JavaExec>("runGenerator") {
