@@ -1,4 +1,4 @@
-name: Dispatch Build
+name: Create Tag
 
 on:
   workflow_dispatch:
