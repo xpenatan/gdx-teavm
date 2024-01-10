@@ -13,7 +13,7 @@ jobs:
       - uses: madhead/read-java-properties@latest
         id: version
         with:
-          file: gradle.properties
+          file: "./gradle.properties"
           property: version
           default: 0.0.1
 
@@ -22,9 +22,15 @@ jobs:
         with:
           script: |
             const versionOutputs = ${{ toJSON(steps.version.outputs) }};
+            
+            var version = versionOutputs.value;
+            
+            console.log("Version: " + version);
+            
+            var ref = "refs/tags/" + version
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${versionOutputs.value}",
+              ref: ref,
               sha: context.sha
-            })
+            });
