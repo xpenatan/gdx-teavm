@@ -29,6 +29,6 @@ private fun getVersion(): String {
     if(isRelease != null && isRelease.toBoolean()) {
         libVersion = version
     }
-    System.out.println("gdx-teavm Version: $libVersion")
+    println("gdx-teavm Version: $libVersion")
     return libVersion
 }
