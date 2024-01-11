@@ -41,7 +41,10 @@ repositories {
     }
 }
 ```
-    gdxTeaVMVersion = "1.0.0-SNAPSHOT"
+    // SNAPSHOT:
+    gdxTeaVMVersion = "-SNAPSHOT"
+    // RELEASE:
+    gdxTeaVMVersion = "[LAST_TAG_VERSION]"
 ```groovy
 // In teaVM module
 dependencies {
