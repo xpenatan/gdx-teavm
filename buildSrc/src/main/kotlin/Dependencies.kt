@@ -36,6 +36,6 @@ private fun getVersion(): String {
             throw RuntimeException("properties should exist")
         }
     }
-    println("gdx-teavm Version: $libVersion")
+    println("Lib Version: $libVersion")
     return libVersion
 }
