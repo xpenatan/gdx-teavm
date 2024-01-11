@@ -3,6 +3,7 @@
 - add TeaReflectionSupplier.printReflectionClasses()
 - Change exclude class comparison to regex
 - Downgrade teavm dev 0.10.X version to 0.9.2 release version
+- Remove tool/generator from maven/snapshot.
 
 [1.0.0-b8]
 - Fix MMB code

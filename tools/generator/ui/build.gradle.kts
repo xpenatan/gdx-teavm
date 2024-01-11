@@ -14,11 +14,11 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-webapp:${LibExt.jettyVersion}")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = moduleName
-            from(components["java"])
-        }
-    }
-}
+//publishing {
+//    publications {
+//        create<MavenPublication>("maven") {
+//            artifactId = moduleName
+//            from(components["java"])
+//        }
+//    }
+//}
