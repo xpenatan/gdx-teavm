@@ -19,7 +19,7 @@ public class BuildTeaVMTestDemo {
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
-        tool.setObfuscated(false);
+        tool.setObfuscated(true);
         TeaBuilder.build(tool);
     }
 }

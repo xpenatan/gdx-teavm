@@ -3,10 +3,10 @@ package com.github.xpenatan.gdx.html5.generator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
-import com.github.xpenatan.imgui.gdx.ImGuiGdxInputMultiplexer;
 import imgui.ImDrawData;
 import imgui.ImGui;
+import imgui.gdx.ImGuiGdxImpl;
+import imgui.gdx.ImGuiGdxInputMultiplexer;
 
 public abstract class ImGuiRenderer extends ScreenAdapter {
 

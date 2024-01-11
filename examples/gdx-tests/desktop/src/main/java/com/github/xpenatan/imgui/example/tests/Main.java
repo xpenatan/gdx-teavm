@@ -1,23 +1,28 @@
 package com.github.xpenatan.imgui.example.tests;
 
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.tests.DownloadTest;
 import com.badlogic.gdx.tests.FloatTextureTest;
 import com.badlogic.gdx.tests.g3d.MultipleRenderTargetTest;
 import com.badlogic.gdx.tests.g3d.TextureArrayTest;
 import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
 import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.github.xpenatan.imgui.example.tests.imgui.ImGuiGame;
+import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class Main {
     public static void main(String[] args) {
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setWindowedMode(1444, 800);
-        config.setTitle("gdx-tests");
-        config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 4, 3);
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.width = 1444;
+        config.height = 800;
+        config.title = "gdx-tests";
+        config.gles30ContextMajorVersion = 4;
+        config.gles30ContextMinorVersion = 3;
+        config.useGL30 = true;
 //        new Lwjgl3Application(new MultipleRenderTargetTest(), config);
 //        new Lwjgl3Application(new FloatTextureTest(), config);
-        new Lwjgl3Application(new ImGuiGame(), config);
+        new LwjglApplication(new TeaVMTestWrapper(), config);
     }
 }

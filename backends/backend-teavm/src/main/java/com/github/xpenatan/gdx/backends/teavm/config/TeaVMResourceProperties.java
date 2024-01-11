@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -111,6 +113,7 @@ public class TeaVMResourceProperties {
         ArrayList<String> filteredUrl = new ArrayList<>();
         for(URL url : acceptedURL) {
             String path = url.getPath();
+            path = URLDecoder.decode(path, StandardCharsets.UTF_8);
             boolean accept = !(
                     !(path.endsWith(".jar")) ||
                             path.contains("org.teavm"

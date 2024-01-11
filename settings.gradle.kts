@@ -15,8 +15,8 @@ include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")
 
 // ######### Add libgdx tests to project
-// ######### Need to have libgdx project source code tag 1.12.0.
-// ######### Need to disable in libgdx settings :tests:gdx-tests-android, :tests:gdx-tests-gwt and :backends:gdx-backend-android because of some conflicts
+// ######### Need to have libgdx project source code tag 1.12.1.
+// ######### Need to disable in libgdx settings :tests:gdx-tests-gwt  because of some conflicts
 // ######### Need to update assets path in desktop gradle and teavm build class.
 
 //include(":examples:gdx-tests:core")
@@ -43,9 +43,9 @@ include(":examples:freetype:teavm")
 
 //includeBuild("E:\\Dev\\Projects\\java\\gdx-imgui") {
 //    dependencySubstitution {
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-core")).using(project(":imgui:core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-desktop")).using(project(":imgui:desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imgui-teavm")).using(project(":imgui:teavm"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:core")).using(project(":imgui:core"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:desktop")).using(project(":imgui:desktop"))
+//        substitute(module("com.github.xpenatan.gdx-imgui:teavm")).using(project(":imgui:teavm"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:gdx")).using(project(":extensions:gdx"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-core")).using(project(":extensions:imlayout:imlayout-core"))
 //        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-desktop")).using(project(":extensions:imlayout:imlayout-desktop"))

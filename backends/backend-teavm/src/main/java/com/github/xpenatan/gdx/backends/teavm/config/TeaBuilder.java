@@ -75,7 +75,6 @@ public class TeaBuilder {
     private static final String EXTENSION_FREETYPE = "gdx-freetype-teavm";
     private static final String EXTENSION_BOX2D = "gdx-box2d-teavm";
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
-    private static final String EXTENSION_IMGUI = "imgui-core-teavm";
 
     public static TeaVMTool config(TeaBuildConfiguration configuration) {
         TeaVMTool tool = new TeaVMTool();
@@ -215,7 +214,6 @@ public class TeaBuilder {
         // Move extensions to be first so native classes are replaced by the emulated classes
         makeClassPathFirst(acceptedURL, EXTENSION_FREETYPE);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
-        makeClassPathFirst(acceptedURL, EXTENSION_IMGUI);
         // Move generic backend to be first
         makeClassPathFirst(acceptedURL, "backend-teavm");
     }
@@ -430,8 +428,6 @@ public class TeaBuilder {
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("gdx-platform"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("imgui-core"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("generator/core/"))
             isValid = ACCEPT_STATE.NOT_ACCEPT;
         else if(path.contains("gdx-bullet-platform"))
@@ -454,8 +450,6 @@ public class TeaBuilder {
         else if(path.contains(EXTENSION_FREETYPE))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains(EXTENSION_BOX2D))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains(EXTENSION_IMGUI))
             isValid = ACCEPT_STATE.ACCEPT;
         else if(path.contains("jParser-loader"))
             isValid = ACCEPT_STATE.ACCEPT;

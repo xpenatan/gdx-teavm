@@ -272,13 +272,13 @@ public class TeaVMGdxTests {
 //                    }
 //                }
 //        );
-////        test.add(
-////                new TeaVMInstancer() {
-////                    public GdxTest instance() {
-////                        return new DownloadTest();
-////                    }
-////                }
-////        );
+        test.add(
+                new TeaVMInstancer() {
+                    public GdxTest instance() {
+                        return new DownloadTest();
+                    }
+                }
+        );
 //        test.add(
 //                new TeaVMInstancer() {
 //                    public GdxTest instance() {

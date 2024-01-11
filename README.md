@@ -41,7 +41,10 @@ repositories {
     }
 }
 ```
-    gdxTeaVMVersion = "1.0.0-SNAPSHOT"
+    // SNAPSHOT:
+    gdxTeaVMVersion = "-SNAPSHOT"
+    // RELEASE:
+    gdxTeaVMVersion = "[LAST_TAG_VERSION]"
 ```groovy
 // In teaVM module
 dependencies {
@@ -57,12 +60,5 @@ dependencies {
 - [Bullet](https://github.com/xpenatan/gdx-bullet) (WIP)
 - [PhysX](https://github.com/xpenatan/gdx-physx) (WIP)
 - [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
+- [Lua](https://github.com/xpenatan/gdx-lua) (WIP)
 - FreeType
-
-## Generator:
-A WIP standalone tool to convert your libgdx game in .jar or .class format to javascript.  [Example](https://youtu.be/BIL_5eaxg9w)
-<br>
-<br>
-Note: The compiled jar game should not be obfuscated.
-
-Setup: TODO

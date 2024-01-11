@@ -1,0 +1,38 @@
+name: Create Tag
+
+on:
+  push:
+    branches:
+      - 'release'
+
+jobs:
+  add-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: madhead/read-java-properties@latest
+        id: version
+        with:
+          file: "./gradle.properties"
+          property: version
+          default: 0.0.1
+
+      - name: Create Git tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const versionOutputs = ${{ toJSON(steps.version.outputs) }};
+            
+            var version = versionOutputs.value;
+            
+            console.log("Version: " + version);
+            
+            var ref = "refs/tags/" + version
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: ref,
+              sha: context.sha
+            });

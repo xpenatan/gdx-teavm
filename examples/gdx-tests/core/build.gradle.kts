@@ -8,10 +8,10 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
 
     implementation("com.github.xpenatan.gdx-imgui:imgui-core:${LibExt.gdxImGuiVersion}")
-    implementation("com.github.xpenatan.gdx-imgui:gdx:${LibExt.gdxImGuiVersion}")
+    implementation("com.github.xpenatan.gdx-imgui:gdx-impl:${LibExt.gdxImGuiVersion}")
 
     // Optional
-    implementation("com.github.xpenatan:gdx-frame-viewport:${LibExt.gdxFrameViewportVersion}")
+    implementation("com.github.xpenatan.gdx-multi-view:core:${LibExt.gdxMultiViewVersion}")
 
     api("com.badlogicgames.gdx:gdx-tests")
 
