@@ -19,15 +19,22 @@ object LibExt {
 }
 
 private fun getVersion(): String {
-    val file = File("gradle.properties")
-    val properties = Properties()
-    properties.load(file.inputStream())
-    val version = properties.getProperty("version")
-
-    val isRelease = System.getenv("RELEASE")
+    val isReleaseStr = System.getenv("RELEASE")
+    val isRelease = isReleaseStr != null && isReleaseStr.toBoolean()
     var libVersion = "-SNAPSHOT"
-    if(isRelease != null && isRelease.toBoolean()) {
-        libVersion = version
+    val file = File("gradle.properties")
+    if(file.exists()) {
+        val properties = Properties()
+        properties.load(file.inputStream())
+        val version = properties.getProperty("version")
+        if(isRelease) {
+            libVersion = version
+        }
+    }
+    else {
+        if(isRelease) {
+            throw RuntimeException("properties should exist")
+        }
     }
     println("gdx-teavm Version: $libVersion")
     return libVersion
