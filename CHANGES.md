@@ -1,4 +1,6 @@
 [1.0.0-SNAPSHOT]
+
+[1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()
 - add TeaReflectionSupplier.printReflectionClasses()
 - Change exclude class comparison to regex
