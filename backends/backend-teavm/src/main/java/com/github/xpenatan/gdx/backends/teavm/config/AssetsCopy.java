@@ -42,10 +42,10 @@ public class AssetsCopy {
     }
 
     public static void copy(ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
-        copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile);
+        copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile, false);
     }
 
-    public static void copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
+    public static void copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile, boolean append) {
         assetsOutputPath = assetsOutputPath.replace("\\", "/");
         FileWrapper target = new FileWrapper(assetsOutputPath);
         ArrayList<Asset> assets = new ArrayList<Asset>();
@@ -132,7 +132,7 @@ public class AssetsCopy {
                 buffer.append(mimetype == null ? "application/unknown" : mimetype);
                 buffer.append("\n");
             }
-            target.child(bundle.getKey() + ".txt").writeString(buffer.toString(), false);
+            target.child(bundle.getKey() + ".txt").writeString(buffer.toString(), append);
         }
     }
 

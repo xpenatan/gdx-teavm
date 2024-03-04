@@ -347,37 +347,38 @@ public class TeaBuilder {
     }
 
     private static void assetsDefaultClasspath(ArrayList<String> filePath) {
-        filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
-        filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
-        filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
-        filePath.add("com/badlogic/gdx/utils/arial-15.png");
+        //TODO remove if its working correctly without these assets
+//        filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
+//        filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
+//        filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
+//        filePath.add("com/badlogic/gdx/utils/arial-15.png");
+//
+//        filePath.add("com/badlogic/gdx/utils/lsans-15.fnt");
+//        filePath.add("com/badlogic/gdx/utils/lsans-15.png");
 
-        filePath.add("com/badlogic/gdx/utils/lsans-15.fnt");
-        filePath.add("com/badlogic/gdx/utils/lsans-15.png");
-
-        filePath.add("net/mgsx/gltf/shaders/brdfLUT.png");
-        filePath.add("net/mgsx/gltf/shaders/default.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/default.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/depth.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/depth.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/emissive-only.fs");
-        filePath.add("net/mgsx/gltf/shaders/ibl-sun.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/ibl-sun.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/skybox.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/skybox.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/compat.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/compat.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/env.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/functions.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/ibl.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/iridescence.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/lights.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/material.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.fs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.vs.glsl");
-        filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/brdfLUT.png");
+//        filePath.add("net/mgsx/gltf/shaders/default.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/default.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/depth.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/depth.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/emissive-only.fs");
+//        filePath.add("net/mgsx/gltf/shaders/ibl-sun.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/ibl-sun.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/skybox.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/skybox.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/compat.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/compat.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/env.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/functions.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/ibl.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/iridescence.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/lights.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/material.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.fs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.vs.glsl");
+//        filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
     }
 
     private static ACCEPT_STATE acceptPath(String path) {
@@ -529,7 +530,7 @@ public class TeaBuilder {
 
         boolean shouldUseDefaultHtmlIndex = configuration.shouldUseDefaultHtmlIndex();
         if(shouldUseDefaultHtmlIndex) {
-            AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false);
+            AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false, false);
             TeaBuilder.log("");
         }
 
@@ -567,11 +568,11 @@ public class TeaBuilder {
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
-        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, filter, assetsOutputPath, generateAssetPaths);
+        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, filter, assetsOutputPath, generateAssetPaths, false);
 
         // Copy assets from resources
         List<String> resources = TeaVMResourceProperties.getResources(acceptedURL);
-        AssetsCopy.copy(classLoader, resources, null, null, assetsOutputPath, false);
+        AssetsCopy.copy(classLoader, resources, null, null, assetsOutputPath, true, true);
         TeaBuilder.log("");
     }
 }
