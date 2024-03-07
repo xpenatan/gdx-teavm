@@ -18,6 +18,7 @@ public class PixelTest implements ApplicationListener {
 
             "void main() { \n" +
             "    gl_Position = u_projTrans * a_position; \n" +
+            "    gl_PointSize = 1.0; \n" + // This is required to make it work in angle graphics
             "} ";
 
     private static final String FRAGMENT = "" +
