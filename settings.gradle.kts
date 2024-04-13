@@ -27,29 +27,19 @@ include(":examples:freetype:teavm")
 // #########
 
 // ######### Replace teavm libs to use teavm sources
-// ######### Only use it if you want to test new teavm code.
-// ######### Change to your teavm source directory
+// ######### Only use it if you want to test teavm source code.
+// ######### Change 'teavmPath' to your teavm source directory
 
-//includeBuild("D:\\Dev\\Projects\\java\\teavm") {
-//    dependencySubstitution {
-//        substitute module('org.teavm:teavm-tooling') using project(':tools:core')
-//        substitute module('org.teavm:teavm-core') using project(':core')
-//        substitute module('org.teavm:teavm-classlib') using project(':classlib')
-//        substitute module('org.teavm:teavm-jso') using project(':jso:core')
-//        substitute module('org.teavm:teavm-jso-apis') using project(':jso:apis')
-//        substitute module('org.teavm:teavm-jso-impl') using project(':jso:impl')
-//    }
-//}
+//val teavmPath = "E:\\Dev\\Projects\\java\\teavm";
 
-//includeBuild("E:\\Dev\\Projects\\java\\gdx-imgui") {
+//includeBuild(teavmPath) {
 //    dependencySubstitution {
-//        substitute(module("com.github.xpenatan.gdx-imgui:core")).using(project(":imgui:core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:desktop")).using(project(":imgui:desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:teavm")).using(project(":imgui:teavm"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:gdx")).using(project(":extensions:gdx"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-core")).using(project(":extensions:imlayout:imlayout-core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-desktop")).using(project(":extensions:imlayout:imlayout-desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:gdx-frame-viewport")).using(project(":extensions:gdx-frame-viewport"))
+//        substitute(module("org.teavm:teavm-tooling")).using(project(":tools:core"))
+//        substitute(module("org.teavm:teavm-core")).using(project(":core"))
+//        substitute(module("org.teavm:teavm-classlib")).using(project(":classlib"))
+//        substitute(module("org.teavm:teavm-jso")).using(project(":jso:core"))
+//        substitute(module("org.teavm:teavm-jso-apis")).using(project(":jso:apis"))
+//        substitute(module("org.teavm:teavm-jso-impl")).using(project(":jso:impl"))
 //    }
 //}
 
