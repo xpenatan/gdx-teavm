@@ -90,8 +90,8 @@ public class TeaVMGdxTests {
         add(tests, OpenBrowserExample::new);
 
         // #### START BUILD ERRORS ####
-//        add(tests, Box2DTest::new);
 
+//        add(tests, Box2DTest::new);
 //        add(tests, Box2DTestCollection::new);
 //        add(tests, KinematicBodyTest::new);
 //        add(tests, BulletTestCollection::new);
