@@ -1,4 +1,6 @@
 [1.0.0-SNAPSHOT]
+- Update teavm to 0.10.0
+- Pixmap now use Gdx2DPixmap
 
 [1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()

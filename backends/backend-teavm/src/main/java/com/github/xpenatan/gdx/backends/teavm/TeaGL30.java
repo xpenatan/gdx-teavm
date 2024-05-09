@@ -777,53 +777,33 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             return;
         }
 
-        if(pixels.limit() > 4) {
-            //TODO not fully tested. Some conversion may be wrong.
-            ArrayBufferViewWrapper buffer;
-            if(TeaTool.useGLArrayBuffer()) {
-                ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
-                if(pixels instanceof FloatBuffer) {
-                    int remainingBytes = pixels.remaining();
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
-                    buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
-                }
-                else {
-                    int remainingBytes = pixels.remaining();
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
-                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
-                }
+        //TODO not fully tested. Some conversion may be wrong.
+        ArrayBufferViewWrapper buffer;
+        if(TeaTool.useGLArrayBuffer()) {
+            ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
+            if(pixels instanceof FloatBuffer) {
+                int remainingBytes = pixels.remaining();
+                int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
             }
             else {
-                if(pixels instanceof FloatBuffer) {
-                    Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
-                    ArrayBufferViewWrapper webGLArray = arr;
-                    buffer = webGLArray;
-                }
-                else {
-                    Int8ArrayWrapper copy = copy((ByteBuffer)pixels);
-                    buffer = ArrayBufferUtil.fromUI8(copy);
-                }
+                int remainingBytes = pixels.remaining();
+                int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
             }
-            gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, buffer);
         }
         else {
-            int index = ((ByteBuffer)pixels).getInt(0);
-            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
-            // Prefer to use the HTMLImageElement when possible, since reading from the CanvasElement can be lossy.
-
-            if(pixmap.canUsePixmapData()) {
-                gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getPixmapData());
-            }
-            else if(pixmap.canUseImageElement()) {
-                gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getImageElement());
-            }
-            else if(pixmap.canUseVideoElement()) {
-                gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getVideoElement());
+            if(pixels instanceof FloatBuffer) {
+                Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+                ArrayBufferViewWrapper webGLArray = arr;
+                buffer = webGLArray;
             }
             else {
-                gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixmap.getCanvasElement());
+                Int8ArrayWrapper copy = copy((ByteBuffer)pixels);
+                buffer = ArrayBufferUtil.fromUI8(copy);
             }
         }
+        gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, buffer);
     }
 
     @Override
@@ -841,46 +821,33 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, Buffer pixels) {
         // Taken from glTexSubImage2D
-        if(pixels.limit() > 4) {
-            //TODO not fully tested. Some conversion may be wrong.
-            ArrayBufferViewWrapper buffer;
-            if(TeaTool.useGLArrayBuffer()) {
-                ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
-                if (pixels instanceof FloatBuffer) {
-                    int remainingBytes = pixels.remaining();
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
-                    buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
-                } else {
-                    int remainingBytes = pixels.remaining();
-                    int byteOffset = webGLArray.getByteOffset() + pixels.position();
-                    buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
-                }
+        //TODO not fully tested. Some conversion may be wrong.
+        ArrayBufferViewWrapper buffer;
+        if(TeaTool.useGLArrayBuffer()) {
+            ArrayBufferViewWrapper webGLArray = ArrayBufferUtil.getInt8Array(pixels);
+            if (pixels instanceof FloatBuffer) {
+                int remainingBytes = pixels.remaining();
+                int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                buffer = TypedArrays.createFloat32Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
+            } else {
+                int remainingBytes = pixels.remaining();
+                int byteOffset = webGLArray.getByteOffset() + pixels.position();
+                buffer = TypedArrays.createUint8Array(webGLArray.getBuffer(), byteOffset, remainingBytes);
             }
-            else {
-                if(pixels instanceof FloatBuffer) {
-                    Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
-                    ArrayBufferViewWrapper webGLArray = arr;
-                    buffer = webGLArray;
-                }
-                else {
-                    Int8ArrayWrapper copy = copy((ByteBuffer)pixels);
-                    buffer = ArrayBufferUtil.fromUI8(copy);
-//                    buffer = copyUI8((ByteBuffer)pixels);
-                }
-            }
-            gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, buffer);
         }
         else {
-            int index = ((ByteBuffer)pixels).getInt(0);
-            PixmapEmu pixmap = (PixmapEmu)TeaGraphics.pixmaps.get(index);
-
-            if(pixmap.canUsePixmapData()) {
-                gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixmap.getPixmapData());
+            if(pixels instanceof FloatBuffer) {
+                Float32ArrayWrapper arr = copy((FloatBuffer)pixels);
+                ArrayBufferViewWrapper webGLArray = arr;
+                buffer = webGLArray;
             }
             else {
-                gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixmap.getCanvasElement());
+                Int8ArrayWrapper copy = copy((ByteBuffer)pixels);
+                buffer = ArrayBufferUtil.fromUI8(copy);
+//                    buffer = copyUI8((ByteBuffer)pixels);
             }
         }
+        gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, buffer);
     }
 
     @Override

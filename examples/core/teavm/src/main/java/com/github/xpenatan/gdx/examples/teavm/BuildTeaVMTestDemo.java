@@ -17,9 +17,10 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.logoPath = "logo.png";
 
+
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
-        tool.setObfuscated(true);
+        tool.setObfuscated(false);
         TeaBuilder.build(tool);
     }
 }

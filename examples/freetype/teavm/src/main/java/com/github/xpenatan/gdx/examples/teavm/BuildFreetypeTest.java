@@ -7,6 +7,7 @@ import com.github.xpenatan.gdx.examples.teavm.launcher.FreetypeTestLauncher;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.tooling.TeaVMTool;
+import org.teavm.vm.TeaVMOptimizationLevel;
 
 @SkipClass
 public class BuildFreetypeTest {
@@ -17,6 +18,7 @@ public class BuildFreetypeTest {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.FULL);
         tool.setMainClass(FreetypeTestLauncher.class.getName());
         tool.setObfuscated(false);
         TeaBuilder.build(tool);

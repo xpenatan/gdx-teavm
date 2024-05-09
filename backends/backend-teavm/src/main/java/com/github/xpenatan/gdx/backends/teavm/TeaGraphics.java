@@ -29,9 +29,6 @@ import org.teavm.jso.webgl.WebGLContextAttributes;
  * @author xpenatan
  */
 public class TeaGraphics implements Graphics {
-    public static int nextId = 0;
-    public static IntMap<Object> pixmaps = new IntMap<>();
-
     private WebGLRenderingContextWrapper context;
     protected HTMLCanvasElementWrapper canvas;
     protected TeaApplicationConfiguration config;

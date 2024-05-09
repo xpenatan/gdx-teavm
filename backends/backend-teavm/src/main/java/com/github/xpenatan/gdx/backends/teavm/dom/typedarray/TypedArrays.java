@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.ArrayBuffer;
+import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Float64Array;
 import org.teavm.jso.typedarrays.Int16Array;
@@ -143,5 +145,15 @@ public class TypedArrays {
     public static Uint32ArrayWrapper createUint32Array(ArrayBufferWrapper buffer, int offset, int length) {
         ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
         return Uint32ArrayWrapper.create(arrayBuffer, offset, length);
+    }
+
+    @JSBody(params = { "array" }, script = "return new $rt_byteArrayCls(array);")
+    private static native Object toByteArrayInternal(ArrayBufferViewWrapper array);
+
+    // Obtain the array reference from ArrayBufferView
+    public static byte[] toByteArray(ArrayBufferViewWrapper array) {
+        Object arrayObj = TypedArrays.toByteArrayInternal(array);
+        byte[] byteArray = (byte[])arrayObj;
+        return byteArray;
     }
 }

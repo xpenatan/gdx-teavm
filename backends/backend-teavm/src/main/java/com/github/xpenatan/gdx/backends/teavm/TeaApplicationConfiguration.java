@@ -19,11 +19,6 @@ public class TeaApplicationConfiguration {
     @Deprecated
     public boolean useGLArrayBuffer = true;
 
-    /**
-     * Experimental webassembly pixmap
-     */
-    public boolean useNativePixmap = false;
-
     /** Sets the {@link TeaWindowListener} which will be informed about teavm events. */
     public TeaWindowListener windowListener;
 

@@ -10,12 +10,12 @@ import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.TeaVMGdxTests;
 import com.github.xpenatan.gdx.multiview.EmuFrameBuffer;
 import com.github.xpenatan.imgui.example.tests.frame.GameFrame;
-import com.github.xpenatan.imgui.gdx.ImGuiGdxImpl;
-import com.github.xpenatan.imgui.gdx.ImGuiGdxInputMultiplexer;
 import imgui.ImDrawData;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
+import imgui.gdx.ImGuiGdxImpl;
+import imgui.gdx.ImGuiGdxInputMultiplexer;
 
 /**
  * Requires Gdx-test

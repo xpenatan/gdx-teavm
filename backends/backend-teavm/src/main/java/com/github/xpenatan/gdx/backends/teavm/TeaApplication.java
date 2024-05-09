@@ -123,9 +123,7 @@ public class TeaApplication implements Application, Runnable {
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
 
-        if(config.useNativePixmap) {
-            initGdx();
-        }
+        initGdx();
 
         Gdx.app = this;
         Gdx.graphics = graphics;
