@@ -5,9 +5,7 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
 
     implementation("com.github.xpenatan.gdx-imgui:imgui-desktop:${LibExt.gdxImGuiVersion}")
-
-    implementation("com.badlogicgames.gdx:gdx-bullet-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-box2d-platform:${LibExt.gdxVersion}:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-freetype-platform:${LibExt.gdxVersion}:natives-desktop")
 }
 
 val mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
