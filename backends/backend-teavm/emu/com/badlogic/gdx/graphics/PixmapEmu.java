@@ -2,37 +2,24 @@ package com.badlogic.gdx.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaGraphics;
-import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.teavm.classlib.java.nio.ArrayBufferUtil;
 import org.teavm.jso.JSBody;
 
 @Emulate(Pixmap.class)
@@ -83,9 +70,6 @@ public class PixmapEmu implements Disposable {
         }
     }
 
-    int width;
-    int height;
-    int id;
     ByteBuffer buffer;
     BlendingEmu blending = PixmapEmu.BlendingEmu.SourceOver;
     FilterEmu filter = PixmapEmu.FilterEmu.BiLinear;
@@ -118,44 +102,44 @@ public class PixmapEmu implements Disposable {
         Blob object = webFileHandler.preloader.images.get(path);
 
         Int8ArrayWrapper response = object.getData();
-        byte[] bytes = Gdx2DPixmapEmu.get(response);
+        byte[] bytes = TypedArrays.toByteArray(response);
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
-        initPixmapEmu(-1, -1, null, null);
+        initPixmapEmu();
     }
 
     public PixmapEmu(HTMLImageElementWrapper img) {
-        this(-1, -1, img);
+//        this(-1, -1, img);
+
+        throw new GdxRuntimeException("Pixmap img constructor not supported");
     }
 
     public PixmapEmu(byte[] encodedData, int offset, int len) {
         nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
-        initPixmapEmu(-1, -1, null, null);
+        initPixmapEmu();
     }
 
     public PixmapEmu(ByteBuffer encodedData, int offset, int len) {
-        if (!encodedData.isDirect()) throw new GdxRuntimeException("Couldn't load pixmap from non-direct ByteBuffer");
-        try {
-            nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
-            initPixmapEmu(-1, -1, null, null);
-        } catch (IOException e) {
-            throw new GdxRuntimeException("Couldn't load pixmap from image data", e);
-        }
+        throw new GdxRuntimeException("Pixmap constructor not supported");
+//        if (!encodedData.isDirect()) throw new GdxRuntimeException("Couldn't load pixmap from non-direct ByteBuffer");
+//        try {
+//            nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
+//            initPixmapEmu(-1, -1, null, null);
+//        } catch (IOException e) {
+//            throw new GdxRuntimeException("Couldn't load pixmap from image data", e);
+//        }
     }
 
     public PixmapEmu(int width, int height, FormatEmu format) {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
-        initPixmapEmu(width, height, null, null);
+        initPixmapEmu();
     }
 
     //TODO remove
     private PixmapEmu(int width, int height, HTMLImageElementWrapper imageElement) {
-        initPixmapEmu(width, height, imageElement, null);
+        initPixmapEmu();
     }
 
-    private void initPixmapEmu(int width, int height, HTMLImageElementWrapper imageElement, HTMLVideoElementWrapper videoElement) {
-        this.width = width;
-        this.height = height;
-
+    private void initPixmapEmu() {
         if(nativePixmap != null) {
             Uint8ArrayWrapper nativePixels = nativePixmap.getPixels();
             byte[] byteArray = TypedArrays.toByteArray(nativePixels);

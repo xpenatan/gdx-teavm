@@ -1,10 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.ArrayBuffer;
-import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
-import org.teavm.jso.typedarrays.Float64Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
@@ -156,4 +155,13 @@ public class TypedArrays {
         byte[] byteArray = (byte[])arrayObj;
         return byteArray;
     }
+
+    public static ArrayBufferViewWrapper getTypedArray(ByteBuffer buffer) {
+        byte[] array = buffer.array();
+        return getTypedArray(array);
+    }
+
+    @JSBody(params = {"buffer"}, script = "" +
+            "return buffer;")
+    private static native ArrayBufferViewWrapper getTypedArray(byte[] buffer);
 }
