@@ -8,10 +8,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
@@ -20,19 +16,17 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
 import java.nio.ByteBuffer;
-import org.teavm.jso.JSBody;
 
 @Emulate(Pixmap.class)
 public class PixmapEmu implements Disposable {
 
-
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
 
-        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
-        ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
+        final PixmapEmu pixmap = new PixmapEmu(w, h, PixmapEmu.FormatEmu.RGBA8888);
+        ByteBuffer pixels = pixmap.getPixels();
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
-        pixmap.setPixels(pixels);
+
         return pixmap;
     }
 
@@ -88,8 +82,10 @@ public class PixmapEmu implements Disposable {
 
             @Override
             public boolean onSuccess(String url, Blob result) {
-                Object obj = new PixmapEmu(result.getImage());
-                responseListener.downloadComplete((Pixmap)obj);
+                Int8ArrayWrapper data = result.getData();
+                byte[] byteArray = TypedArrays.toByteArray(data);
+                Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
+                responseListener.downloadComplete(pixmapEmu);
                 return false;
             }
         };
@@ -105,12 +101,6 @@ public class PixmapEmu implements Disposable {
         byte[] bytes = TypedArrays.toByteArray(response);
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
         initPixmapEmu();
-    }
-
-    public PixmapEmu(HTMLImageElementWrapper img) {
-//        this(-1, -1, img);
-
-        throw new GdxRuntimeException("Pixmap img constructor not supported");
     }
 
     public PixmapEmu(byte[] encodedData, int offset, int len) {
@@ -134,11 +124,6 @@ public class PixmapEmu implements Disposable {
         initPixmapEmu();
     }
 
-    //TODO remove
-    private PixmapEmu(int width, int height, HTMLImageElementWrapper imageElement) {
-        initPixmapEmu();
-    }
-
     private void initPixmapEmu() {
         if(nativePixmap != null) {
             Uint8ArrayWrapper nativePixels = nativePixmap.getPixels();
@@ -150,91 +135,30 @@ public class PixmapEmu implements Disposable {
         }
     }
 
-    public static String make(int r2, int g2, int b2, float a2) {
-        return "rgba(" + r2 + "," + g2 + "," + b2 + "," + a2 + ")";
-    }
-
-    public HTMLCanvasElementWrapper getCanvasElement() {
-        //TODO remove
-        return null;
-    }
-
-    /**
-     * Sets the color for the following drawing operations
-     *
-     * @param color the color, encoded as RGBA8888
-     */
     public void setColor(int color) {
         this.color = color;
     }
 
-    /**
-     * Sets the color for the following drawing operations.
-     *
-     * @param r The red component.
-     * @param g The green component.
-     * @param b The blue component.
-     * @param a The alpha component.
-     */
     public void setColor(float r, float g, float b, float a) {
         this.color = Color.rgba8888(r, g, b, a);
     }
 
-    /**
-     * Sets the color for the following drawing operations.
-     *
-     * @param color The color.
-     */
     public void setColor(Color color) {
         setColor(color.r, color.g, color.b, color.a);
     }
 
-    /**
-     * Fills the complete bitmap with the currently set color.
-     */
     public void fill() {
         nativePixmap.clear(color);
     }
 
-// /**
-// * Sets the width in pixels of strokes.
-// *
-// * @param width The stroke width in pixels.
-// */
-// public void setStrokeWidth (int width);
-
-    /**
-     * Draws a line between the given coordinates using the currently set color.
-     *
-     * @param x  The x-coodinate of the first point
-     * @param y  The y-coordinate of the first point
-     * @param x2 The x-coordinate of the first point
-     * @param y2 The y-coordinate of the first point
-     */
     public void drawLine(int x, int y, int x2, int y2) {
         nativePixmap.drawLine(x, y, x2, y2, color);
     }
 
-    /**
-     * Draws a rectangle outline starting at x, y extending by width to the right and by height downwards (y-axis points downwards)
-     * using the current color.
-     *
-     * @param x      The x coordinate
-     * @param y      The y coordinate
-     * @param width  The width in pixels
-     * @param height The height in pixels
-     */
     public void drawRectangle(int x, int y, int width, int height) {
         nativePixmap.drawRect(x, y, width, height, color);
     }
 
-    /**
-     * Draws an area form another Pixmap to this Pixmap.
-     *
-     * @param pixmap The other Pixmap
-     * @param x      The target x-coordinate (top left corner)
-     * @param y      The target y-coordinate (top left corner)
-     */
     public void drawPixmap(PixmapEmu pixmap, int x, int y) {
         drawPixmap(pixmap, x, y, 0, 0, pixmap.getWidth(), pixmap.getHeight());
     }
@@ -263,10 +187,6 @@ public class PixmapEmu implements Disposable {
         nativePixmap.fillTriangle(x1, y1, x2, y2, x3, y3, color);
     }
 
-    public int getPixel(int x, int y) {
-        return nativePixmap.getPixel(x, y);
-    }
-
     public int getWidth() {
         return nativePixmap.getWidth();
     }
@@ -286,14 +206,6 @@ public class PixmapEmu implements Disposable {
         return disposed;
     }
 
-    public void drawPixel(int x, int y) {
-        nativePixmap.setPixel(x, y, color);
-    }
-
-    public void drawPixel(int x, int y, int color) {
-        nativePixmap.setPixel(x, y, color);
-    }
-
     public int getGLFormat () {
         return nativePixmap.getGLFormat();
     }
@@ -310,24 +222,23 @@ public class PixmapEmu implements Disposable {
         return buffer;
     }
 
-    public Uint8ArrayWrapper getPixmapData() {
-        return nativePixmap.getPixels();
-    }
-
     public void setPixels(ByteBuffer pixels) {
-        if (!pixels.isDirect()) throw new GdxRuntimeException("Couldn't setPixels from non-direct ByteBuffer");
-        //TODO Need testing
+        if (!pixels.isDirect())
+            throw new GdxRuntimeException("Couldn't setPixels from non-direct ByteBuffer");
         BufferUtils.copy(pixels, buffer, buffer.limit());
     }
 
-    @JSBody(params = { "pixels", "width", "height", "ctx" }, script = "" +
-            "var imgData = ctx.createImageData(width, height);" +
-            "var data = imgData.data;" +
-            "for (var i = 0, len = width * height * 4; i < len; i++) {" +
-            "   data[i] = pixels[i] & 0xff;" +
-            "}" +
-            "ctx.putImageData(imgData, 0, 0);")
-    private static native void setImageData(ArrayBufferViewWrapper pixels, int width, int height, CanvasRenderingContext2DWrapper ctx);
+    public int getPixel(int x, int y) {
+        return nativePixmap.getPixel(x, y);
+    }
+
+    public void drawPixel(int x, int y) {
+        nativePixmap.setPixel(x, y, color);
+    }
+
+    public void drawPixel(int x, int y, int color) {
+        nativePixmap.setPixel(x, y, color);
+    }
 
     public FormatEmu getFormat () {
         return FormatEmu.fromGdx2DPixmapFormat(nativePixmap.getFormat());
@@ -349,10 +260,6 @@ public class PixmapEmu implements Disposable {
 
     public BlendingEmu getBlending () {
         return blending;
-    }
-
-    private enum DrawType {
-        FILL, STROKE
     }
 
     @Emulate(Pixmap.Blending.class)

@@ -59,10 +59,10 @@ public class FreetypeDemo implements ApplicationListener {
 
         batch.begin();
         font.setColor(Color.RED);
-        font.draw(batch, "This is a test\nAnd another line\n()����$%&/!12390#", 100, 112);
-        ftFont.draw(batch, "This is a test\nAnd another line\n()����$%&/!12390#", 100, 112);
+        font.draw(batch, "This is a test\nAnd another line\n()����$%&/!12390#", 100, 172);
+        ftFont.draw(batch, "This is a test\nAnd another line\n()����$%&/!12390#", 100, 102);
 // batch.disableBlending();
-        batch.draw(ftFont.getRegion(), 300, 0);
+        batch.draw(ftFont.getRegion(), 350, 0);
 // batch.enableBlending();
         batch.end();
     }

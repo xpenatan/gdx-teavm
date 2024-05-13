@@ -1,25 +1,8 @@
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-
 package com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FreeTypeUtil;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
@@ -30,6 +13,7 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import java.io.IOException;
@@ -40,15 +24,6 @@ import org.teavm.jso.JSBody;
 
 @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType")
 public class FreeTypeEmu {
-    // @off
-	/*JNI
-	#include <ft2build.h>
-	#include FT_FREETYPE_H
-	#include FT_STROKER_H
-
-	static jint lastError = 0;
-	 */
-
     @JSBody(params = {"address"}, script = "Module._free(address);")
     private static native void nativeFree(int address);
 
@@ -127,7 +102,7 @@ public class FreeTypeEmu {
         }
 
         public FaceEmu newMemoryFace(ByteBuffer buffer, int faceIndex) {
-            ArrayBufferViewWrapper buf = FreeTypeUtil.getTypedArray(buffer);
+            ArrayBufferViewWrapper buf = TypedArrays.getTypedArray(buffer);
             int[] addressToFree = new int[]{0}; // Hacky way to get two return values
 
             int face = newMemoryFace(address, buf, buffer.remaining(), faceIndex, addressToFree);
@@ -596,7 +571,9 @@ public class FreeTypeEmu {
             int offset = getBufferAddress(address);
             int length = getBufferSize(address);
             Int8ArrayWrapper int8ArrayWrapper = getBuffer(address, offset, length);
-            ByteBuffer buf = FreeTypeUtil.newDirectReadWriteByteBuffer(int8ArrayWrapper, length, 0);
+
+            byte[] byteArray = TypedArrays.toByteArray(int8ArrayWrapper);
+            ByteBuffer buf = ByteBuffer.wrap(byteArray, 0, length);
             return buf;
         }
 
@@ -899,34 +876,4 @@ public class FreeTypeEmu {
         return ((value + 63) & -64) >> 6;
     }
 
-//	public static void main (String[] args) throws Exception {
-//		FreetypeBuild.main(args);
-//		new SharedLibraryLoader("libs/gdx-freetype-natives.jar").load("gdx-freetype");
-//		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*�?�?�?�?�? ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿À�?ÂÃÄÅÆÇÈÉÊËÌ�?Î�?�?ÑÒÓÔÕÖ×ØÙÚÛÜ�?Þßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
-//
-//		Library library = FreeType.initFreeType();
-//		Face face = library.newFace(new FileHandle("arial.ttf"), 0);
-//		face.setPixelSizes(0, 15);
-//		SizeMetrics faceMetrics = face.getSize().getMetrics();
-//		System.out.println(toInt(faceMetrics.getAscender()) + ", " + toInt(faceMetrics.getDescender()) + ", " + toInt(faceMetrics.getHeight()));
-//
-//		for(int i = 0; i < chars.length(); i++) {
-//			if(!FreeType.loadGlyph(face, FreeType.getCharIndex(face, chars.charAt(i)), 0)) continue;
-//			if(!FreeType.renderGlyph(face.getGlyph(), FT_RENDER_MODE_NORMAL)) continue;
-//			Bitmap bitmap = face.getGlyph().getBitmap();
-//			GlyphMetrics glyphMetrics = face.getGlyph().getMetrics();
-//			System.out.println(toInt(glyphMetrics.getHoriBearingX()) + ", " + toInt(glyphMetrics.getHoriBearingY()));
-//			System.out.println(toInt(glyphMetrics.getWidth()) + ", " + toInt(glyphMetrics.getHeight()) + ", " + toInt(glyphMetrics.getHoriAdvance()));
-//			System.out.println(bitmap.getWidth() + ", " + bitmap.getRows() + ", " + bitmap.getPitch() + ", " + bitmap.getNumGray());
-//			for(int y = 0; y < bitmap.getRows(); y++) {
-//				for(int x = 0; x < bitmap.getWidth(); x++) {
-//					System.out.print(bitmap.getBuffer().get(x + bitmap.getPitch() * y) != 0? "X": " ");
-//				}
-//				System.out.println();
-//			}
-//		}
-//
-//		face.dispose();
-//		library.dispose();
-//	}
 }

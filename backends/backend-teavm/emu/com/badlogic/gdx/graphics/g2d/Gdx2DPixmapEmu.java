@@ -142,10 +142,10 @@ public class Gdx2DPixmapEmu implements Disposable {
         dispose();
         this.basePtr = pixmap.basePtr;
         this.format = pixmap.format;
+        this.width = pixmap.width;
         this.height = pixmap.height;
         this.nativeData = pixmap.nativeData;
         this.pixelPtr = pixmap.pixelPtr;
-        this.width = pixmap.width;
     }
 
     @Override
@@ -298,7 +298,7 @@ public class Gdx2DPixmapEmu implements Disposable {
             "var bytesSize = width * height * bytesPerPixel;" +
             "var startIndex = pixels;" +
             "var endIndex = startIndex + bytesSize;" +
-            "var newArray = Gdx.HEAPU8.slice(startIndex, endIndex);" +
+            "var newArray = Gdx.HEAPU8.subarray(startIndex, endIndex);" +
             "return newArray;"
     )
     private static native Uint8ArrayWrapper load(@JSByRef() int[] nativeData, @JSByRef() byte[] buffer, int offset, int len); /*MANUAL
@@ -335,7 +335,7 @@ public class Gdx2DPixmapEmu implements Disposable {
             "var bytesSize = width * height * bytesPerPixel;" +
             "var startIndex = pixels;" +
             "var endIndex = startIndex + bytesSize;" +
-            "var newArray = Gdx.HEAPU8.slice(startIndex, endIndex);" +
+            "var newArray = Gdx.HEAPU8.subarray(startIndex, endIndex);" +
             "return newArray;"
     )
     private static native Uint8ArrayWrapper newPixmap(@JSByRef() int[] nativeData, int width, int height, int format); /*MANUAL

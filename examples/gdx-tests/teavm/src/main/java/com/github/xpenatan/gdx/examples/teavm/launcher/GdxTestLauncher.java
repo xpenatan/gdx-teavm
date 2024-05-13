@@ -13,7 +13,6 @@ public class GdxTestLauncher {
         config.height = 0;
         config.showDownloadLogs = true;
         config.useGL30 = true;
-        config.useGLArrayBuffer = true;
         new TeaApplication(new ImGuiGame(), config);
 //        new TeaApplication(new TeaVMTestWrapper(), config);
     }

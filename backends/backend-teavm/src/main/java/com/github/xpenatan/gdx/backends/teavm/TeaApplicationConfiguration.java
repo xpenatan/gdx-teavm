@@ -12,13 +12,6 @@ public class TeaApplicationConfiguration {
     @Deprecated
     public boolean useGL30 = false;
 
-    /**
-     * Speed up rendering when copying java Buffers to javascript ArrayBuffer.
-     * This option will be removed when it's stable and tested.
-     */
-    @Deprecated
-    public boolean useGLArrayBuffer = true;
-
     /** Sets the {@link TeaWindowListener} which will be informed about teavm events. */
     public TeaWindowListener windowListener;
 

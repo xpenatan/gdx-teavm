@@ -74,6 +74,10 @@ public class TeaVMGdxTests {
         ArrayList<TeaVMInstancer> tests = new ArrayList<>();
 
         // QUICK TEST ###################################
+        add(tests, PixmapBlendingTest::new);
+        add(tests, PixmapPackerTest::new);
+        add(tests, PixmapPackerIOTest::new);
+        add(tests, PixmapTest::new);
         add(tests, SoundTest::new);
         add(tests, MusicTest::new);
         add(tests, TextureDataTest::new);
@@ -220,10 +224,6 @@ public class TeaVMGdxTests {
         add(tests, ParticleEmittersTest::new);
         add(tests, ParticleEmitterChangeSpriteTest::new);
         add(tests, PixelsPerInchTest::new);
-        add(tests, PixmapBlendingTest::new);
-        add(tests, PixmapPackerTest::new);
-        add(tests, PixmapPackerIOTest::new);
-        add(tests, PixmapTest::new);
         add(tests, PolarAccelerationTest::new);
         add(tests, PolygonRegionTest::new);
         add(tests, PolygonSpriteTest::new);

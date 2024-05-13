@@ -110,7 +110,6 @@ public class TeaApplication implements Application, Runnable {
           hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
         }
 
-        TeaTool.setGLArrayBuffer(config.useGLArrayBuffer);
         graphics = new TeaGraphics(config);
 
         preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
