@@ -79,18 +79,9 @@ public class TeaGL20 implements GL20 {
         return TypedArrays.createFloat32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
     }
 
-    public Int16ArrayWrapper copy(ShortBuffer buffer) {
-        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createInt16Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
-    }
-
     public Int32ArrayWrapper copy(IntBuffer buffer) {
         ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
         return TypedArrays.createInt32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
-    }
-
-    public Int8ArrayWrapper copy(ByteBuffer buffer) {
-        return (Int8ArrayWrapper)TypedArrays.getTypedArray(buffer);
     }
 
     protected WebGLUniformLocationWrapper getUniformLocation(int location) {
@@ -830,6 +821,8 @@ public class TeaGL20 implements GL20 {
         Uint8ArrayWrapper buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
 
         gl.readPixels(x, y, width, height, format, type, buffer);
+
+        pixels.limit(size);
     }
 
     @Override
