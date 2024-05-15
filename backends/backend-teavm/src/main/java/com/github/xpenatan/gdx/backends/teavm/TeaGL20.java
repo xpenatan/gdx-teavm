@@ -76,17 +76,17 @@ public class TeaGL20 implements GL20 {
 
     public Float32ArrayWrapper copy(FloatBuffer buffer) {
         ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createFloat32Array(typedArray.getBuffer(), 0);
+        return TypedArrays.createFloat32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
     }
 
     public Int16ArrayWrapper copy(ShortBuffer buffer) {
         ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createInt16Array(typedArray.getBuffer(), 0);
+        return TypedArrays.createInt16Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
     }
 
     public Int32ArrayWrapper copy(IntBuffer buffer) {
         ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createInt32Array(typedArray.getBuffer(), 0);
+        return TypedArrays.createInt32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
     }
 
     public Int8ArrayWrapper copy(ByteBuffer buffer) {
@@ -824,8 +824,12 @@ public class TeaGL20 implements GL20 {
         else {
             throw new GdxRuntimeException("Inputed pixels buffer not supported.");
         }
-        Uint8ArrayWrapper uint8Array = TypedArrays.createUint8Array(typedArray.getBuffer(), 0);
-        gl.readPixels(x, y, width, height, format, type, uint8Array);
+
+        // create new ArrayBufferView (4 bytes per pixel)
+        int size = 4 * width * height;
+        Uint8ArrayWrapper buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
+
+        gl.readPixels(x, y, width, height, format, type, buffer);
     }
 
     @Override
