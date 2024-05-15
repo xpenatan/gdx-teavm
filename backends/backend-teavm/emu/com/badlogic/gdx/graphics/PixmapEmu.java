@@ -22,11 +22,9 @@ public class PixmapEmu implements Disposable {
 
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
-
-        final PixmapEmu pixmap = new PixmapEmu(w, h, PixmapEmu.FormatEmu.RGBA8888);
+        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
         ByteBuffer pixels = pixmap.getPixels();
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
-
         return pixmap;
     }
 
@@ -63,7 +61,7 @@ public class PixmapEmu implements Disposable {
             return Gdx2DPixmapEmu.toGlType(toGdx2DPixmapFormat(format));
         }
     }
-
+    Uint8ArrayWrapper nativePixels;
     ByteBuffer buffer;
     BlendingEmu blending = PixmapEmu.BlendingEmu.SourceOver;
     FilterEmu filter = PixmapEmu.FilterEmu.BiLinear;
@@ -121,12 +119,14 @@ public class PixmapEmu implements Disposable {
 
     public PixmapEmu(int width, int height, FormatEmu format) {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
+        setColor(0, 0, 0, 0);
+        fill();
         initPixmapEmu();
     }
 
     private void initPixmapEmu() {
         if(nativePixmap != null) {
-            Uint8ArrayWrapper nativePixels = nativePixmap.getPixels();
+            nativePixels = nativePixmap.getPixels();
             byte[] byteArray = TypedArrays.toByteArray(nativePixels);
             buffer = ByteBuffer.wrap(byteArray);
         }

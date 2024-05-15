@@ -3,14 +3,13 @@ package com.badlogic.gdx.graphics.g2d;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
-import java.io.IOException;
+import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSByRef;
 
+@Emulate(Gdx2DPixmap.class)
 public class Gdx2DPixmapEmu implements Disposable {
     public static final int GDX2D_FORMAT_ALPHA = 1;
     public static final int GDX2D_FORMAT_LUMINANCE_ALPHA = 2;

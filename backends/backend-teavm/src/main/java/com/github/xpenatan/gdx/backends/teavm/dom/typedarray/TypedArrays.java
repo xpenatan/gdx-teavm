@@ -166,7 +166,6 @@ public class TypedArrays {
     public static ArrayBufferViewWrapper getTypedArray(ByteBuffer buffer) {
         ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
         if(bufferView != null) {
-//            return (ArrayBufferViewWrapper)Int8Array.create((ArrayBuffer)bufferView.getBuffer());
             return bufferView;
         }
         byte[] array = buffer.array();
@@ -177,7 +176,6 @@ public class TypedArrays {
     public static ArrayBufferViewWrapper getTypedArray(ShortBuffer buffer) {
         ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
         if(bufferView != null) {
-//            return (ArrayBufferViewWrapper)Int16Array.create((ArrayBuffer)bufferView.getBuffer());
             return bufferView;
         }
         short[] array = buffer.array();
@@ -188,7 +186,6 @@ public class TypedArrays {
     public static ArrayBufferViewWrapper getTypedArray(IntBuffer buffer) {
         ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
         if(bufferView != null) {
-//            return (ArrayBufferViewWrapper)Int32Array.create((ArrayBuffer)bufferView.getBuffer());
             return bufferView;
         }
         int[] array = buffer.array();
@@ -199,7 +196,6 @@ public class TypedArrays {
     public static ArrayBufferViewWrapper getTypedArray(FloatBuffer buffer) {
         ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
         if(bufferView != null) {
-//            return (ArrayBufferViewWrapper)Float32Array.create((ArrayBuffer)bufferView.getBuffer());
             return bufferView;
         }
         float[] array = buffer.array();

@@ -270,7 +270,6 @@ gdx2d_pixmap* gdx2d_new(uint32_t width, uint32_t height, uint32_t format) {
         free((void*)pixmap);
         return 0;
     }
-    memset(pixels, 0, size);
     return pixmap;
 }
 void gdx2d_free(const gdx2d_pixmap* pixmap) {
