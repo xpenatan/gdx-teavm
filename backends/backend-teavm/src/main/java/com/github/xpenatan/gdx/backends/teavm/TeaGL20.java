@@ -824,7 +824,8 @@ public class TeaGL20 implements GL20 {
         else {
             throw new GdxRuntimeException("Inputed pixels buffer not supported.");
         }
-        gl.readPixels(x, y, width, height, format, type, typedArray);
+        Uint8ArrayWrapper uint8Array = TypedArrays.createUint8Array(typedArray.getBuffer(), 0);
+        gl.readPixels(x, y, width, height, format, type, uint8Array);
     }
 
     @Override
