@@ -66,20 +66,21 @@ public class TeaVMResourceProperties {
             boolean accept = false;
             for(TeaVMResourceProperties properties : propertiesList) {
                 ignoreResources.addAll(properties.ignorePath);
+                // Accept if properties exist in current path
                 if(path.contains(properties.path)) {
                     accept = true;
                     break;
                 }
-                if(!accept) {
-                    for(String additionalPath : properties.additionalPath) {
-                        if(path.contains(additionalPath)) {
-                            accept = true;
-                            break;
-                        }
-                    }
-                    if(accept) {
+                for(String additionalPath : properties.additionalPath) {
+                    // Check if the jar path contains in properties
+                    if(path.contains(additionalPath)) {
+                        accept = true;
                         break;
                     }
+                }
+
+                if(accept) {
+                    break;
                 }
             }
             if(accept) {
