@@ -94,7 +94,10 @@ public class PixmapEmu implements Disposable {
         TeaFileHandle webFileHandler = (TeaFileHandle)file;
         String path = webFileHandler.path();
         Blob object = webFileHandler.preloader.images.get(path);
-
+        if(object == null) {
+            // Add a way to debug when assets was not loaded in preloader.
+            throw new GdxRuntimeException("File is null, it does not exist: " + path);
+        }
         Int8ArrayWrapper response = object.getData();
         byte[] bytes = TypedArrays.toByteArray(response);
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
