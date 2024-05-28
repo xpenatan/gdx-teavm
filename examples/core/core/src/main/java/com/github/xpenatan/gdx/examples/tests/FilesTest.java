@@ -85,25 +85,27 @@ public class FilesTest implements ApplicationListener {
             message += "External storage not available";
         }
         if(Gdx.files.isLocalStorageAvailable()) {
-            message += "Local storage available\n";
+            message += "\nLocal storage available\n";
             message += "Local storage path: " + Gdx.files.getLocalStoragePath() + "\n";
 
             BufferedWriter out = null;
+            boolean canDelete = false;
             try {
-                out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("test.txt").write(false)));
-                out.write("test");
-                message += "Write local success\n";
+                FileHandle testFile = Gdx.files.local("test.txt");
+                boolean exists = testFile.exists();
+                canDelete = exists;
+                message += "text.txt exists: " + exists + "\n";
+
+                testFile.writeString("test", false);
+
             } catch(GdxRuntimeException ex) {
                 message += "Couldn't open localstorage/test.txt\n";
-            } catch(IOException e) {
-                message += "Couldn't write localstorage/test.txt\n";
             } finally {
                 StreamUtils.closeQuietly(out);
             }
 
             try {
-                InputStream in = Gdx.files.local("test.txt").read();
-                StreamUtils.closeQuietly(in);
+                String s = Gdx.files.local("test.txt").readString();
                 message += "Open local success\n";
             } catch(Throwable e) {
                 message += "Couldn't open localstorage/test.txt\n" + e.getMessage() + "\n";
@@ -134,7 +136,11 @@ public class FilesTest implements ApplicationListener {
                 message += "Couldn't read localstorage/test.txt\n" + e.getMessage() + "\n";
             }
 
-            if(!Gdx.files.local("test.txt").delete()) message += "Couldn't delete localstorage/test.txt";
+            if(canDelete) {
+                if(!Gdx.files.local("test.txt").delete())  {
+                    message += "Couldn't delete localstorage/test.txt";
+                }
+            }
         }
         try {
             testClasspath();
