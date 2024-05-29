@@ -19,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
@@ -36,6 +37,8 @@ import org.teavm.jso.dom.html.HTMLElement;
 public class TeaApplication implements Application, Runnable {
 
     private static TeaAgentInfo agentInfo;
+
+    public int delayInitCount;
 
     public static TeaAgentInfo getAgentInfo() {
         return agentInfo;
@@ -56,7 +59,7 @@ public class TeaApplication implements Application, Runnable {
     private final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(4);
     private TeaWindow window;
 
-    private AppState initState = AppState.LOAD_ASSETS;
+    private AppState initState = AppState.INIT;
 
     private int lastWidth = -1;
     private int lastHeight = 1;
@@ -162,8 +165,6 @@ public class TeaApplication implements Application, Runnable {
             }
         });
 
-        window.requestAnimationFrame(this);
-
         if(config.isAutoSizeApplication()) {
             window.addEventListener("resize", new EventListenerWrapper() {
                 @Override
@@ -188,6 +189,10 @@ public class TeaApplication implements Application, Runnable {
                 }
             });
         }
+
+        // Init database
+        FileDB.getInstance();
+        window.requestAnimationFrame(this);
     }
 
     @Override
@@ -195,6 +200,10 @@ public class TeaApplication implements Application, Runnable {
         AppState state = initState;
         try {
             switch(state) {
+                case INIT:
+                    if(delayInitCount == 0) {
+                        initState = AppState.LOAD_ASSETS;
+                    }
                 case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
                     if(queue == 0) {
@@ -448,6 +457,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     public enum AppState {
+        INIT,
         LOAD_ASSETS,
         APP_CREATE,
         APP_LOOP
