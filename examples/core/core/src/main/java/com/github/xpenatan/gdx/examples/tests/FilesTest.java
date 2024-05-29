@@ -113,14 +113,16 @@ public class FilesTest implements ApplicationListener {
 
             BufferedReader in = null;
             try {
-                in = new BufferedReader(new InputStreamReader(Gdx.files.local("test.txt").read()));
+                FileHandle testFile = Gdx.files.local("test.txt");
+                InputStream read = testFile.read();
+                in = new BufferedReader(new InputStreamReader(read));
                 if(!in.readLine().equals("test"))
                     message += "Read result wrong\n";
                 else
                     message += "Read local success\n";
             } catch(GdxRuntimeException ex) {
                 message += "Couldn't open localstorage/test.txt\n";
-            } catch(IOException e) {
+            } catch(Throwable e) {
                 message += "Couldn't read localstorage/test.txt\n";
             } finally {
                 StreamUtils.closeQuietly(in);

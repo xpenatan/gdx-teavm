@@ -20,6 +20,8 @@ public class TeaApplicationConfiguration {
      */
     public boolean preloadAssets = true;
 
+    public boolean useIndexedDB = false;
+
     /**
      * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the
      * data separate for those applications, you will need to set unique prefixes. This is useful if you are
