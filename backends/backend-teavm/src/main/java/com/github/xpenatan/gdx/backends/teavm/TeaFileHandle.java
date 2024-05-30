@@ -274,6 +274,7 @@ public class TeaFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
+        //TODO remove fixed size
         return write(append, 4096);
     }
 
@@ -305,7 +306,8 @@ public class TeaFileHandle extends FileHandle {
     public void write(InputStream input, boolean append) {
         OutputStream output = null;
         try {
-            output = write(append, (int)length());
+            int available = input.available();
+            output = write(append, available);
             StreamUtils.copyStream(input, output);
         }
         catch(Exception ex) {
@@ -564,7 +566,7 @@ public class TeaFileHandle extends FileHandle {
      */
     public boolean deleteDirectory() {
         if(type == FileType.Local) {
-            return FileDB.getInstance().delete(this);
+            return FileDB.getInstance().deleteDirectory(this);
         }
         throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
@@ -614,13 +616,6 @@ public class TeaFileHandle extends FileHandle {
             case Absolute:
             case External:
             default:
-                if((type == FileType.Local) && (dest.type() == FileType.Local)) {
-                    // we can potentially rename directly?
-                    if(isDirectory() == dest.isDirectory()) {
-                        FileDB.getInstance().rename(this, (TeaFileHandle)dest);
-                        return;
-                    }
-                }
                 copyTo(dest);
                 delete();
                 if(exists() && isDirectory()) deleteDirectory();

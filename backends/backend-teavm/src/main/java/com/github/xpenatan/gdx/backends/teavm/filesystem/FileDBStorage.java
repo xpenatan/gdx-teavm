@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 
 import java.io.ByteArrayInputStream;
@@ -108,6 +108,11 @@ final class FileDBStorage extends FileDB {
         store.removeItem(ID_FOR_DIR + file.path());
         store.removeItem(ID_FOR_FILE + file.path());
         return true;
+    }
+
+    @Override
+    public boolean deleteDirectory(TeaFileHandle file) {
+        throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
 
     @Override

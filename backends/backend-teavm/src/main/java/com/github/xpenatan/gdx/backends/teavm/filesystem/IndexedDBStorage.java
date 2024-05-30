@@ -140,7 +140,6 @@ public class IndexedDBStorage extends FileDB {
     public void mkdirs(TeaFileHandle file) {
         String path = file.path();
         putFolder(path);
-
         FileHandle cur = file.parent();
         while(!cur.path().isEmpty()) {
             String parentPath = cur.path();
@@ -158,24 +157,42 @@ public class IndexedDBStorage extends FileDB {
     @Override
     public boolean delete(TeaFileHandle file) {
         String path = file.path();
-        IndexedDBFileData data = fileMap.remove(path);
+        IndexedDBFileData data = fileMap.get(path);
         if(data != null) {
-            boolean isDirectory = data.getType() == TYPE_DIRECTORY;
+            if(data.getType() != TYPE_FILE) {
+                return false;
+            }
+            if(fileMap.remove(path) != null) {
+                removeFileAsync(path);
+                return true;
+            }
+        }
+        return false;
+    }
 
-            removeFileAsync(path);
+    @Override
+    public boolean deleteDirectory(TeaFileHandle file) {
+        String path = file.path();
+        IndexedDBFileData data = fileMap.get(path);
+        if(data != null) {
+            if(data.getType() != TYPE_DIRECTORY) {
+                return false;
+            }
 
-            if(isDirectory) {
+            if(fileMap.remove(path) != null) {
+                removeFileAsync(path);
                 FileHandle[] list = file.list();
                 // Get all children paths and delete them all
                 String[] paths = getAllChildrenAndSiblings(file);
                 for(int i = 0; i < paths.length; i++) {
                     String childOrSiblingPath = paths[i];
-                    if(fileMap.remove(childOrSiblingPath) != null) {
+                    boolean rem = fileMap.remove(childOrSiblingPath) != null;
+                    if(rem) {
                         removeFileAsync(childOrSiblingPath);
                     }
                 }
+                return true;
             }
-            return true;
         }
         return false;
     }

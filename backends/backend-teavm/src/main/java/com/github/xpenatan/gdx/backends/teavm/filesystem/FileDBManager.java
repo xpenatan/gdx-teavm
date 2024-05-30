@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
@@ -133,6 +134,14 @@ public final class FileDBManager extends FileDB {
         else {
             return localStorage.delete(file);
         }
+    }
+
+    @Override
+    public boolean deleteDirectory(TeaFileHandle file) {
+        if(indexedDB != null) {
+            return indexedDB.deleteDirectory(file);
+        }
+        throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
 
     @Override
