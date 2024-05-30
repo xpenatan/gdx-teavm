@@ -126,4 +126,6 @@ public abstract class FileDB {
     public abstract long length(TeaFileHandle file);
 
     public abstract void rename(TeaFileHandle source, TeaFileHandle target);
+
+    public abstract String getLocalStoragePath();
 }

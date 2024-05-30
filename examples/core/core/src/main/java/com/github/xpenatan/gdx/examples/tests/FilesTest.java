@@ -86,9 +86,85 @@ public class FilesTest implements ApplicationListener {
         else {
             message += "External storage not available";
         }
+        testLocalPath();
+        try {
+            testClasspath();
+            testInternal();
+            if(!(Gdx.app.getType() == ApplicationType.WebGL)) {
+                testExternal();
+                testAbsolute();
+                testLocal();
+            }
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+
+    }
+
+    private void testLocalPath() {
         if(Gdx.files.isLocalStorageAvailable()) {
             message += "\nLocal storage available\n";
-            message += "Local storage path: " + Gdx.files.getLocalStoragePath() + "\n";
+            message += "Local storage path: " + Gdx.files.getLocalStoragePath() + "\n\n";
+
+            {
+                // Test multiple subfolder
+                FileHandle subFolder = Gdx.files.local("rootFolder/childFolder/subFolder/");
+                FileHandle childFolder1 = Gdx.files.local("rootFolder/childFolder/");
+                FileHandle childFolder2 = Gdx.files.local("rootFolder/childFolder");
+                FileHandle rootFolder1 = Gdx.files.local("rootFolder/");
+                FileHandle rootFolder2 = Gdx.files.local("rootFolder");
+
+                boolean exists = rootFolder1.exists();
+
+                message += "subFolder: " + subFolder +  " exists: " + subFolder.exists() + "\n";
+                message += "childFolder1: " + childFolder1 +  " exists: " + childFolder1.exists() + "\n";
+                message += "childFolder2: " + childFolder2 +  " exists: " + childFolder2.exists() + "\n";
+                message += "rootFolder1: " + rootFolder1 +  " exists: " + exists + "\n";
+                message += "rootFolder2: " + rootFolder2 +  " exists: " + rootFolder2.exists() + "\n";
+
+                subFolder.mkdirs();
+
+                if(exists) {
+                    FileHandle[] list = rootFolder1.list();
+                    for(int i = 0; i < list.length; i++) {
+                        FileHandle fileHandle = list[i];
+                        System.out.println("FOLDER LIST: " + fileHandle);
+                    }
+                    boolean delete = rootFolder1.deleteDirectory();
+                    System.out.println("Deleted: " + delete + " " + rootFolder1);
+                }
+
+            }
+            message += "\n";
+            {
+                // Test file in subfolder
+                FileHandle subFile = Gdx.files.local("rootFileFolder/childFileFolder/subFile.txt");
+                FileHandle childFileFolder1 = Gdx.files.local("rootFileFolder/childFileFolder/");
+                FileHandle childFileFolder2 = Gdx.files.local("rootFileFolder/childFileFolder");
+                FileHandle rootFileFolder1 = Gdx.files.local("rootFileFolder/");
+                FileHandle rootFileFolder2 = Gdx.files.local("rootFileFolder");
+
+                boolean exists = rootFileFolder1.exists();
+
+                message += "subFile: " + subFile +  " exists: " + subFile.exists() + "\n";
+                message += "childFileFolder1: " + childFileFolder1 +  " exists: " + childFileFolder1.exists() + "\n";
+                message += "childFileFolder2: " + childFileFolder2 +  " exists: " + childFileFolder2.exists() + "\n";
+                message += "rootFileFolder1: " + rootFileFolder1 +  " exists: " + exists + "\n";
+                message += "rootFileFolder2: " + rootFileFolder2 +  " exists: " + rootFileFolder2.exists() + "\n";
+
+                subFile.writeString("HELLO", false);
+
+                if(exists) {
+                    boolean delete = rootFileFolder1.deleteDirectory();
+                    System.out.println("Deleted: " + delete + " " + rootFileFolder1);
+                }
+            }
+
+            message += "\n";
 
             BufferedWriter out = null;
             boolean canDelete = false;
@@ -146,22 +222,6 @@ public class FilesTest implements ApplicationListener {
                 }
             }
         }
-        try {
-            testClasspath();
-            testInternal();
-            if(!(Gdx.app.getType() == ApplicationType.WebGL)) {
-                testExternal();
-                testAbsolute();
-                testLocal();
-            }
-        } catch(IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
     }
 
     private void testClasspath() throws IOException {
@@ -207,7 +267,6 @@ public class FilesTest implements ApplicationListener {
         if(handle.list().length != 0) fail("File length shouldn't be 0");
         if(Gdx.app.getType() != ApplicationType.Android) {
             FileHandle parent = handle.parent();
-            System.out.println("PATH: " + parent.path());
             boolean exists = parent.exists();
             if(!exists) fail("Parent doesn't exist");
         }

@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
@@ -26,12 +27,17 @@ import org.teavm.jso.indexeddb.IDBTransaction;
 
 public class IndexedDBStorage extends FileDB {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
+    private final static String ROOT_PATH = "db/assets";
     private IDBDatabase dataBase = null;
 
     private static final int TYPE_FILE = 1;
     private static final int TYPE_DIRECTORY = 2;
 
     private final ObjectMap<String, IndexedDBFileData> fileMap;
+
+    private Array<String> tmpPaths = new Array<>();
+
+    private String databaseName;
 
     public IndexedDBStorage() {
         fileMap = new ObjectMap<>();
@@ -44,7 +50,7 @@ public class IndexedDBStorage extends FileDB {
         teaApplication.delayInitCount++;
 
         IDBFactory instance = IDBFactory.getInstance();
-        String databaseName = getDatabaseName(config);
+        databaseName = getDatabaseName(config);
         IDBOpenDBRequest request = instance.open(databaseName, 1);
 
         request.setOnUpgradeNeeded(evt -> {
@@ -65,14 +71,20 @@ public class IndexedDBStorage extends FileDB {
     }
 
     private String getDatabaseName(TeaApplicationConfiguration config) {
-        String name = "home/assets";
-        if(config.storagePrefix.endsWith("/")) {
-            name = config.storagePrefix + name;
+        String path = ROOT_PATH;
+        String storagePrefix = config.storagePrefix.trim();
+        if(storagePrefix.endsWith("/")) {
+            path = storagePrefix + ROOT_PATH;
         }
         else {
-            name = config.storagePrefix + "/" + name;
+            if(storagePrefix.isEmpty()) {
+                path = ROOT_PATH;
+            }
+            else {
+                path = storagePrefix + "/" + ROOT_PATH;
+            }
         }
-        return name;
+        return path;
     }
 
     @Override
@@ -99,22 +111,18 @@ public class IndexedDBStorage extends FileDB {
         fileData.setContents(data);
         fileMap.put(path, fileData);
         putFileAsync(path, fileData);
+
+        FileHandle cur = file.parent();
+        while(!cur.path().isEmpty()) {
+            String parentPath = cur.path();
+            putFolder(parentPath);
+            cur = cur.parent();
+        }
     }
 
     @Override
     protected String[] paths(TeaFileHandle file) {
-        Array<String> paths = new Array<>(fileMap.size);
-        String dir = file.path() + "/";
-        ObjectMap.Entries<String, IndexedDBFileData> it = fileMap.iterator();
-        while(it.hasNext) {
-            ObjectMap.Entry<String, IndexedDBFileData> next = it.next();
-            String path = next.key;
-            if(path.startsWith(dir)) {
-                paths.add(path);
-            }
-        }
-        paths.sort();
-        return paths.items;
+        return getAllChildren(file);
     }
 
     @Override
@@ -131,9 +139,14 @@ public class IndexedDBStorage extends FileDB {
     @Override
     public void mkdirs(TeaFileHandle file) {
         String path = file.path();
-        IndexedDBFileData fileData = IndexedDBFileData.create(TYPE_DIRECTORY, new JSDate());
-        fileMap.put(path, fileData);
-        putFileAsync(path, fileData);
+        putFolder(path);
+
+        FileHandle cur = file.parent();
+        while(!cur.path().isEmpty()) {
+            String parentPath = cur.path();
+            putFolder(parentPath);
+            cur = cur.parent();
+        }
     }
 
     @Override
@@ -147,7 +160,21 @@ public class IndexedDBStorage extends FileDB {
         String path = file.path();
         IndexedDBFileData data = fileMap.remove(path);
         if(data != null) {
+            boolean isDirectory = data.getType() == TYPE_DIRECTORY;
+
             removeFileAsync(path);
+
+            if(isDirectory) {
+                FileHandle[] list = file.list();
+                // Get all children paths and delete them all
+                String[] paths = getAllChildrenAndSiblings(file);
+                for(int i = 0; i < paths.length; i++) {
+                    String childOrSiblingPath = paths[i];
+                    if(fileMap.remove(childOrSiblingPath) != null) {
+                        removeFileAsync(childOrSiblingPath);
+                    }
+                }
+            }
             return true;
         }
         return false;
@@ -175,6 +202,56 @@ public class IndexedDBStorage extends FileDB {
             removeFileAsync(sourcePath);
             putFileAsync(targetPath, data);
         }
+    }
+
+    @Override
+    public String getLocalStoragePath() {
+        return databaseName;
+    }
+
+    private String[] getAllChildrenAndSiblings(FileHandle file) {
+        return list(file, false);
+    }
+
+    private String[] getAllChildren(FileHandle file) {
+        return list(file, true);
+    }
+
+    private String[] list(FileHandle file, boolean equals) {
+        String dir = file.path();
+        ObjectMap.Entries<String, IndexedDBFileData> it = fileMap.iterator();
+        while(it.hasNext) {
+            ObjectMap.Entry<String, IndexedDBFileData> next = it.next();
+            String path = next.key;
+            String parentPath = Gdx.files.local(path).parent().path();
+            // Only add path if parent is dir
+            if(!parentPath.isEmpty()) {
+                if(equals) {
+                    if(parentPath.equals(dir)) {
+                        tmpPaths.add(path);
+                    }
+                }
+                else {
+                    if(parentPath.startsWith(dir)) {
+                        tmpPaths.add(path);
+                    }
+                }
+            }
+        }
+        tmpPaths.sort();
+        String[] str = new String[tmpPaths.size];
+        for(int i = 0; i < tmpPaths.size; i++) {
+            String s = tmpPaths.get(i);
+            str[i] = s;
+        }
+        tmpPaths.clear();
+        return str;
+    }
+
+    private void putFolder(String path) {
+        IndexedDBFileData fileData = IndexedDBFileData.create(TYPE_DIRECTORY, new JSDate());
+        fileMap.put(path, fileData);
+        putFileAsync(path, fileData);
     }
 
     private void putFileAsync(String key, IndexedDBFileData data) {
@@ -206,6 +283,7 @@ public class IndexedDBStorage extends FileDB {
                 JSObject value = cursor.getValue();
                 IndexedDBFileData fileData = getFileData(value);
                 fileMap.put(key, fileData);
+                cursor.doContinue();
             }
             teaApplication.delayInitCount--;
         });

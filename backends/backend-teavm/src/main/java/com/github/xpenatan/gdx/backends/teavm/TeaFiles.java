@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
 /**
@@ -57,7 +58,7 @@ public class TeaFiles implements Files {
 
     @Override
     public String getLocalStoragePath() {
-        return null;
+        return FileDB.getInstance().getLocalStoragePath();
     }
 
     @Override

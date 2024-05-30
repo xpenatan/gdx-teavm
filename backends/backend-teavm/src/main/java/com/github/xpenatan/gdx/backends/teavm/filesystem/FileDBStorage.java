@@ -131,4 +131,9 @@ final class FileDBStorage extends FileDB {
         store.removeItem(ID_FOR_FILE + source.path());
         store.setItem(ID_FOR_FILE + target.path(), data);
     }
+
+    @Override
+    public String getLocalStoragePath() {
+        return null;
+    }
 }

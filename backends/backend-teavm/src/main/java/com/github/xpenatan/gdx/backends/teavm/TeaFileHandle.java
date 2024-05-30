@@ -563,6 +563,9 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public boolean deleteDirectory() {
+        if(type == FileType.Local) {
+            return FileDB.getInstance().delete(this);
+        }
         throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
     }
 

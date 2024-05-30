@@ -163,4 +163,12 @@ public final class FileDBManager extends FileDB {
             localStorage.rename(source, target);
         }
     }
+
+    @Override
+    public String getLocalStoragePath() {
+        if(indexedDB != null) {
+            return indexedDB.getLocalStoragePath();
+        }
+        return null;
+    }
 }
