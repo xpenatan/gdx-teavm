@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.examples.tests;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,6 +29,7 @@ public class FilesTest implements ApplicationListener {
 
     @Override
     public void create() {
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
         batch = new SpriteBatch();
 
