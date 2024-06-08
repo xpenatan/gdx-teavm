@@ -102,7 +102,6 @@ public class FilesTest implements ApplicationListener {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     private void testLocalPath() {
@@ -169,7 +168,6 @@ public class FilesTest implements ApplicationListener {
                     helloFolder.deleteDirectory();
                 }
             }
-
             message += "\n";
 
             BufferedWriter out = null;
@@ -225,6 +223,21 @@ public class FilesTest implements ApplicationListener {
             if(canDelete) {
                 if(!Gdx.files.local("test.txt").delete())  {
                     message += "Couldn't delete localstorage/test.txt";
+                }
+            }
+            message += "\n";
+            {
+                FileHandle root1 = Gdx.files.local("");
+                FileHandle root2 = Gdx.files.local("./");
+                FileHandle root3 = Gdx.files.local(".");
+
+                message += "root1: " + root1 +  " exists: " + root1.exists() + " Root size: " + root1.list().length + "\n";
+                message += "root2: " + root2 +  " exists: " + root2.exists() + " Root size: " + root2.list().length + "\n";
+                message += "root3: " + root3 +  " exists: " + root3.exists() + " Root size: " + root3.list().length + "\n";
+                message += "root2 length: " + root2.length() + "\n";
+                FileHandle[] list = root1.list();
+                for(int i = 0; i < list.length; i++) {
+                    System.out.println("Files: " + list[i]);
                 }
             }
         }
