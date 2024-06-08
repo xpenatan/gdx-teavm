@@ -40,9 +40,7 @@ public class TeaFileHandle extends FileHandle {
     }
 
     public TeaFileHandle(String path) {
-        this.type = FileType.Internal;
-        this.preloader = ((TeaApplication)Gdx.app).getPreloader();
-        this.file = fixSlashes(path);
+        this(((TeaApplication)Gdx.app).getPreloader(), path, FileType.Internal);
     }
 
     /** @return The full url to an asset, e.g. http://localhost:8080/assets/data/shotgun.ogg */
