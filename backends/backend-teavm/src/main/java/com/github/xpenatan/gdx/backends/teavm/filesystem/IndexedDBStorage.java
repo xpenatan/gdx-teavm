@@ -147,12 +147,6 @@ public class IndexedDBStorage extends FileDB {
     @Override
     public void mkdirs(TeaFileHandle file) {
         String path = file.path();
-        if(path.startsWith(".")) {
-            path = path.replaceFirst(".", "");
-        }
-        if(path.startsWith("/")) {
-            path = path.replaceFirst("/", "");
-        }
         putFolder(path);
         FileHandle cur = file.parent();
         while(!isRootFolder(cur)) {
@@ -320,7 +314,7 @@ public class IndexedDBStorage extends FileDB {
     }
 
     private void putFileAsync(String key1, IndexedDBFileData data) {
-        String key = getPath(key1);
+        String key = fixPath(key1);
         if(debug) {
             System.out.println("putFileAsync: " + key);
         }
@@ -333,7 +327,7 @@ public class IndexedDBStorage extends FileDB {
     }
 
     private void removeFileAsync(String key1) {
-        String key = getPath(key1);
+        String key = fixPath(key1);
         if(debug) {
             System.out.println("removeFileAsync: " + key);
         }
@@ -353,9 +347,6 @@ public class IndexedDBStorage extends FileDB {
             IDBCursor cursor = cursorRequest.getResult();
             if(cursor != null) {
                 String key = getJavaString(cursor.getKey());
-                if(key.startsWith("/")) {
-                    key = key.replaceFirst("/", "");
-                }
                 JSObject value = cursor.getValue();
                 IndexedDBFileData fileData = getFileData(value);
                 put(key, fileData);
@@ -369,24 +360,46 @@ public class IndexedDBStorage extends FileDB {
     }
 
     private IndexedDBFileData get(String path) {
+        path = fixPath(path);
+
+        if(debug) {
+            System.out.println("file get: " + path);
+        }
         return fileMap.get(path);
     }
 
     private void put(String path, IndexedDBFileData fileData) {
+        path = fixPath(path);
+        if(debug) {
+            System.out.println("file put: " + path);
+        }
         fileMap.put(path, fileData);
     }
 
     private IndexedDBFileData remove(String path) {
+        path = fixPath(path);
+        if(debug) {
+            System.out.println("file remove: " + path);
+        }
         return fileMap.remove(path);
     }
 
     private boolean containsKey(String path) {
+        path = fixPath(path);
+
+        if(debug) {
+            System.out.println("file containsKey: " + path);
+        }
         return fileMap.containsKey(path);
     }
 
-    private String getPath(String path) {
+    private String fixPath(String path) {
         if(path.startsWith("./")) {
             path = path.replace("./", "");
+        }
+
+        if(path.startsWith(".")) {
+            path = path.replaceFirst(".", "");
         }
 
         if(!path.startsWith("/")) {
