@@ -155,16 +155,13 @@ public class FilesTest implements ApplicationListener {
                 message += "rootFileFolder1: " + rootFileFolder1 +  " exists: " + exists + "\n";
                 message += "rootFileFolder2: " + rootFileFolder2 +  " exists: " + rootFileFolder2.exists() + "\n";
 
-                subFile.writeString("HELLO", false);
                 FileHandle helloFolder = Gdx.files.local("HELLO");
                 if(exists) {
                     System.out.println("================");
                     rootFileFolder1.moveTo(helloFolder);
-
-                    boolean delete = rootFileFolder1.deleteDirectory();
-                    System.out.println("Deleted: " + delete + " " + rootFileFolder1);
                 }
                 else {
+                    subFile.writeString("HELLO", false);
                     helloFolder.deleteDirectory();
                 }
             }

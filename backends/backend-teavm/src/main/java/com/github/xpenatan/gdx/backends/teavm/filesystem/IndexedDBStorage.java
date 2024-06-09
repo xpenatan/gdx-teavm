@@ -267,13 +267,13 @@ public class IndexedDBStorage extends FileDB {
 
         boolean isRoot = isRootFolder(file);
 
-        String dir = dirPath;
+        String dir = fixPath(dirPath);
         ObjectMap.Entries<String, IndexedDBFileData> it = fileMap.iterator();
         while(it.hasNext) {
             ObjectMap.Entry<String, IndexedDBFileData> next = it.next();
-            String path = next.key;
+            String path = fixPath(next.key);
             FileHandle parent = Gdx.files.local(path).parent();
-            String parentPath = parent.path();
+            String parentPath = fixPath(parent.path());
 
             boolean isChildParentRoot = isRootFolder(parent);
 
@@ -361,11 +361,11 @@ public class IndexedDBStorage extends FileDB {
 
     private IndexedDBFileData get(String path) {
         path = fixPath(path);
-
+        IndexedDBFileData data = fileMap.get(path);
         if(debug) {
-            System.out.println("file get: " + path);
+            System.out.println("file get: " + (data != null) + " Path: " + path);
         }
-        return fileMap.get(path);
+        return data;
     }
 
     private void put(String path, IndexedDBFileData fileData) {
@@ -378,19 +378,20 @@ public class IndexedDBStorage extends FileDB {
 
     private IndexedDBFileData remove(String path) {
         path = fixPath(path);
+        IndexedDBFileData data = fileMap.remove(path);
         if(debug) {
-            System.out.println("file remove: " + path);
+            System.out.println("file remove: " + (data != null) + " Path: " + path);
         }
-        return fileMap.remove(path);
+        return data;
     }
 
     private boolean containsKey(String path) {
         path = fixPath(path);
-
+        boolean flag = fileMap.containsKey(path);
         if(debug) {
-            System.out.println("file containsKey: " + path);
+            System.out.println("file containsKey: " + flag + " Path: " + path);
         }
-        return fileMap.containsKey(path);
+        return flag;
     }
 
     private String fixPath(String path) {
