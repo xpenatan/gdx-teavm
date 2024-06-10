@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
+import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -16,6 +18,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
 import java.nio.ByteBuffer;
+import org.teavm.jso.JSBody;
 
 @Emulate(Pixmap.class)
 public class PixmapEmu implements Disposable {
@@ -93,13 +96,25 @@ public class PixmapEmu implements Disposable {
     public PixmapEmu(FileHandle file) {
         TeaFileHandle webFileHandler = (TeaFileHandle)file;
         String path = webFileHandler.path();
-        Blob object = webFileHandler.preloader.images.get(path);
-        if(object == null) {
-            // Add a way to debug when assets was not loaded in preloader.
-            throw new GdxRuntimeException("File is null, it does not exist: " + path);
+
+        TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
+        byte[] bytes = null;
+        if(config.useNewExperimentalAssets) {
+            if(!file.exists()) {
+                // Add a way to debug when assets was not loaded in preloader.
+                throw new GdxRuntimeException("File is null, it does not exist: " + path);
+            }
+            bytes = file.readBytes();
         }
-        Int8ArrayWrapper response = object.getData();
-        byte[] bytes = TypedArrays.toByteArray(response);
+        else {
+            Blob object = webFileHandler.preloader.images.get(path);
+            if(object == null) {
+                // Add a way to debug when assets was not loaded in preloader.
+                throw new GdxRuntimeException("File is null, it does not exist: " + path);
+            }
+            Int8ArrayWrapper response = object.getData();
+            bytes = TypedArrays.toByteArray(response);
+        }
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
         initPixmapEmu();
     }

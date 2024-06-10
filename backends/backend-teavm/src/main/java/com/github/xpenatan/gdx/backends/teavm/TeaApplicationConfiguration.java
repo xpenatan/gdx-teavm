@@ -26,6 +26,12 @@ public class TeaApplicationConfiguration {
     public boolean useIndexedDB = true;
 
     /**
+     * Experimental feature
+     */
+    @Deprecated
+    public boolean useNewExperimentalAssets = false;
+
+    /**
      * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the
      * data separate for those applications, you will need to set unique prefixes. This is useful if you are
      * e.g. uploading multiple webapps to itch.io and want to keep the data separate for each application.

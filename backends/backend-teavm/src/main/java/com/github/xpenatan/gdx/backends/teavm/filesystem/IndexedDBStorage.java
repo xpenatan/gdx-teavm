@@ -108,6 +108,18 @@ public class IndexedDBStorage extends FileDB {
     }
 
     @Override
+    public byte[] readBytes(TeaFileHandle file) {
+        String path = file.path();
+        IndexedDBFileData data = get(path);
+        if(data != null) {
+            Int8ArrayWrapper array = data.getContents();
+            byte[] byteArray = TypedArrays.toByteArray(array);
+            return byteArray;
+        }
+        return new byte[0];
+    }
+
+    @Override
     protected void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
         String path = file.path();
         IndexedDBFileData fileData = IndexedDBFileData.create(TYPE_FILE, new JSDate());

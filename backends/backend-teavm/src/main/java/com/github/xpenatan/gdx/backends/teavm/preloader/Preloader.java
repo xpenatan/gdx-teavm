@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -12,7 +13,6 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.DataTransferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DragEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
@@ -21,7 +21,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.FileReaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.FileWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -32,7 +31,9 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSArray;
+import org.teavm.jso.core.JSArrayReader;
+import org.teavm.jso.core.JSPromise;
 
 /**
  * @author xpenatan
@@ -96,73 +97,65 @@ public class Preloader {
                 public void handleEvent(EventWrapper evt) {
                     evt.preventDefault();
                     DragEventWrapper event = (DragEventWrapper)evt;
-
                     DataTransferWrapper dataTransfer = event.getDataTransfer();
-
                     FileListWrapper files = dataTransfer.getFiles();
-
-                    int length = files.getLength();
-                    if(length > 0) {
-                        Array<String> droppedFiles = new Array<>();
-                        for(int i = 0; i < length; i++) {
-                            FileWrapper itemWrapper = files.get(i);
-                            String name = itemWrapper.getName();
-                            AssetType type = AssetFilter.getType(name);
-                            FileReaderWrapper fileReader = FileReaderWrapper.create();
-                            fileReader.addEventListener("load", new EventListenerWrapper() {
-                                @Override
-                                public void handleEvent(EventWrapper evt) {
-                                    FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
-                                    Object obj = null;
-
-                                    if(type == AssetType.Binary || type == AssetType.Audio) {
-                                        ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
-                                        obj = new Blob(arrayBuffer, data);
-                                    }
-                                    else if(type == AssetType.Image) {
-                                        DocumentWrapper document = (DocumentWrapper)Window.current().getDocument();
-                                        final HTMLImageElementWrapper image = (HTMLImageElementWrapper)document.createElement("img");
-                                        String baseUrl = target.getResultAsString();
-                                        image.setSrc(baseUrl);
-
-                                        ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                                        Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
-                                        Blob blob = new Blob(arrayBuffer, data);
-                                        blob.setImage(image);
-                                        obj = blob;
-                                    }
-                                    else if(type == AssetType.Text) {
-                                        obj = target.getResultAsString();
-                                    }
-
-                                    if(obj != null) {
-                                        putAssetInMap(type, name, obj);
-                                        droppedFiles.add(name);
-                                        if(droppedFiles.size == length) {
-                                            teaApplication.postRunnable(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    String[] array = droppedFiles.toArray();
-                                                    config.windowListener.filesDropped(array);
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-                            });
-                            if(type == AssetType.Binary || type == AssetType.Audio) {
-                                fileReader.readAsArrayBuffer(itemWrapper);
-                            }
-                            else if(type == AssetType.Image) {
-                                fileReader.readAsDataURL(itemWrapper);
-                            }
-                            else if(type == AssetType.Text) {
-                                fileReader.readAsText(itemWrapper);
-                            }
-                        }
-                    }
+                    downloadDroppedFile(config, files);
                 }
+            });
+        }
+    }
+
+    private JSPromise<FileData> getFile(String name, FileWrapper fileWrapper) {
+        JSPromise<FileData> success = new JSPromise<>((resolve, reject) -> {
+            FileReaderWrapper fileReader = FileReaderWrapper.create();
+            fileReader.readAsArrayBuffer(fileWrapper);
+
+            AssetType type = AssetFilter.getType(name);
+
+            fileReader.addEventListener("load", new EventListenerWrapper() {
+                @Override
+                public void handleEvent(EventWrapper evt) {
+                    FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
+                    ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
+                    Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
+                    FileData fielData = new FileData(name, data);
+                    resolve.accept(fielData);
+                }
+            });
+        });
+
+        return success;
+    }
+
+    private void downloadDroppedFile(TeaApplicationConfiguration config, FileListWrapper files) {
+        int totalDraggedFiles = files.getLength();
+        if(totalDraggedFiles > 0) {
+            Array<String> droppedFiles = new Array<>();
+            var promises = new JSArray<JSPromise<FileData>>();
+            for(int i = 0; i < totalDraggedFiles; i++) {
+                FileWrapper fileWrapper = files.get(i);
+                String name = fileWrapper.getName();
+
+                if(config.windowListener.acceptFileDropped(name)) {
+                    JSPromise<FileData> promiss = getFile(name, fileWrapper);
+                    promises.push(promiss);
+                }
+            }
+
+            JSPromise<JSArrayReader<FileData>> all = JSPromise.all(promises);
+            all.then(array -> {
+                int length = array.getLength();
+                FileData [] arr = new FileData[length];
+                for(int i = 0; i < length; i++) {
+                    FileData fileData = array.get(i);
+                    arr[i] = fileData;
+                }
+                config.windowListener.filesDropped(arr);
+                return "success";
+            }, reason -> {
+                return "failure";
+            }).onSettled(() -> {
+                return null;
             });
         }
     }
@@ -171,7 +164,7 @@ public class Preloader {
         return baseUrl + ASSET_FOLDER;
     }
 
-    public void preload(boolean loadAssets, final String assetFileUrl) {
+    public void preload(TeaApplicationConfiguration config, final String assetFileUrl) {
         AssetDownloader.getInstance().loadText(true, getAssetUrl() + assetFileUrl, new AssetLoaderListener<String>() {
             @Override
             public void onProgress(double amount) {
@@ -185,6 +178,40 @@ public class Preloader {
             @Override
             public boolean onSuccess(String url, String result) {
                 String[] lines = result.split("\n");
+
+                if(config.useNewExperimentalAssets) {
+                    assetTotal = lines.length;
+
+                    for(String line : lines) {
+                        String[] tokens = line.split(":");
+
+                        String assetUrl = tokens[1].trim();
+
+                        AssetDownloader.getInstance().load(true, getAssetUrl() + assetUrl, AssetType.Binary, null, new AssetLoaderListener<Object>() {
+                            @Override
+                            public void onProgress(double amount) {
+                            }
+
+                            @Override
+                            public void onFailure(String urll) {
+                            }
+
+                            @Override
+                            public boolean onSuccess(String urll, Object result) {
+                                Blob blob = (Blob)result;
+
+                                Int8ArrayWrapper data = blob.getData();
+                                byte[] byteArray = TypedArrays.toByteArray(data);
+                                FileHandle local = Gdx.files.local(assetUrl);
+                                local.writeBytes(byteArray, false);
+
+                                return false;
+                            }
+                        });
+                    }
+                    return false;
+                }
+
                 for(String line : lines) {
                     String[] tokens = line.split(":");
                     if(tokens.length != 4) {
@@ -211,7 +238,7 @@ public class Preloader {
                 }
                 assetTotal = assets.size;
 
-                if(loadAssets) {
+                if(config.preloadAssets) {
                     for(int i = 0; i < assets.size; i++) {
                         final Asset asset = assets.get(i);
                         loadSingleAsset(asset);
@@ -281,28 +308,7 @@ public class Preloader {
         return null;
     }
 
-    public void loadBinaryAsset(boolean async, final String url, AssetLoaderListener<Blob> listener) {
-        AssetDownloader.getInstance().load(async, getAssetUrl() + url, AssetType.Binary, null, new AssetLoaderListener<Blob>() {
-            @Override
-            public void onProgress(double amount) {
-                listener.onProgress(amount);
-            }
-
-            @Override
-            public void onFailure(String urll) {
-                listener.onFailure(urll);
-            }
-
-            @Override
-            public boolean onSuccess(String urll, Blob result) {
-                putAssetInMap(AssetType.Binary, url, result);
-                listener.onSuccess(urll, result);
-                return false;
-            }
-        });
-    }
-
-    public void loadAsset(boolean async, final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
+    private void loadAsset(boolean async, final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
         AssetDownloader.getInstance().load(async, getAssetUrl() + url, type, mimeType, new AssetLoaderListener<Object>() {
             @Override
             public void onProgress(double amount) {

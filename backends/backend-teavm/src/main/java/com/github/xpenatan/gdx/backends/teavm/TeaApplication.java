@@ -117,7 +117,7 @@ public class TeaApplication implements Application, Runnable {
 
         preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
-        preloader.preload(config.preloadAssets, "assets.txt");
+        preloader.preload(config, "assets.txt");
 
         input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);

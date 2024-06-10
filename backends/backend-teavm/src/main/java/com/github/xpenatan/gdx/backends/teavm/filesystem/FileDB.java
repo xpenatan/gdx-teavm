@@ -40,6 +40,8 @@ public abstract class FileDB {
 
     public abstract InputStream read(TeaFileHandle file);
 
+    public abstract byte[] readBytes(TeaFileHandle file);
+
     public final OutputStream write(TeaFileHandle file, boolean append, int bufferSize) {
         // buffer for writing
         ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.max(512, Math.min(bufferSize, 8192)));

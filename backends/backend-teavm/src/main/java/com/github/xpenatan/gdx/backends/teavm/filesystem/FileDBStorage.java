@@ -45,6 +45,11 @@ final class FileDBStorage extends FileDB {
     }
 
     @Override
+    public byte[] readBytes(TeaFileHandle file) {
+        return new byte[0];
+    }
+
+    @Override
     public void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
         String value = HEXCoder.encode(data);
 

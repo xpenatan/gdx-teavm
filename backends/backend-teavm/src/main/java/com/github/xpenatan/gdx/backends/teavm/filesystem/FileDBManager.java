@@ -35,7 +35,7 @@ public final class FileDBManager extends FileDB {
         localStorage = new FileDBStorage(new StoreLocal(storagePrefix));
         memory = new FileDBStorage(new StoreMemory());
 
-        if(config.useIndexedDB) {
+        if(config.useIndexedDB || config.useNewExperimentalAssets) {
             indexedDB = new IndexedDBStorage();
         }
     }
@@ -52,6 +52,14 @@ public final class FileDBManager extends FileDB {
         else {
             return localStorage.read(file);
         }
+    }
+
+    @Override
+    public byte[] readBytes(TeaFileHandle file) {
+        if(indexedDB != null) {
+            return indexedDB.readBytes(file);
+        }
+        return new byte[0];
     }
 
     @Override
