@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.preloader.FileData;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 
 public interface TeaWindowListener {
     /**

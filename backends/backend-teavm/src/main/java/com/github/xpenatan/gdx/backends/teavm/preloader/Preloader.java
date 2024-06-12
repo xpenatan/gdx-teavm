@@ -24,6 +24,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -118,7 +119,8 @@ public class Preloader {
                     FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
                     ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
                     Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
-                    FileData fielData = new FileData(name, data);
+                    byte[] bytes = TypedArrays.toByteArray(data);
+                    FileData fielData = new FileData(name, bytes);
                     resolve.accept(fielData);
                 }
             });

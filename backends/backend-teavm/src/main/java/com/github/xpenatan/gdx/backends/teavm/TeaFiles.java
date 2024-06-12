@@ -58,7 +58,7 @@ public class TeaFiles implements Files {
 
     @Override
     public String getLocalStoragePath() {
-        return FileDB.getInstance().getLocalStoragePath();
+        return FileDB.getInstance().getPath();
     }
 
     @Override

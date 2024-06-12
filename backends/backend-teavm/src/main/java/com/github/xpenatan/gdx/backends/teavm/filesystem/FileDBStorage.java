@@ -143,7 +143,7 @@ final class FileDBStorage extends FileDB {
     }
 
     @Override
-    public String getLocalStoragePath() {
+    public String getPath() {
         return null;
     }
 }

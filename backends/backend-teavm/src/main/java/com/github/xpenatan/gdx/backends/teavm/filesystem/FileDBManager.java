@@ -182,9 +182,9 @@ public final class FileDBManager extends FileDB {
     }
 
     @Override
-    public String getLocalStoragePath() {
+    public String getPath() {
         if(indexedDB != null) {
-            return indexedDB.getLocalStoragePath();
+            return indexedDB.getPath();
         }
         return null;
     }

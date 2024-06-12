@@ -131,5 +131,5 @@ public abstract class FileDB {
 
     public abstract void rename(TeaFileHandle source, TeaFileHandle target);
 
-    public abstract String getLocalStoragePath();
+    public abstract String getPath();
 }
