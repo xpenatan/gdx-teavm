@@ -1,7 +1,7 @@
 [1.0.0-SNAPSHOT]
 - Update teavm to 0.10.0
 - Pixmap now use Gdx2DPixmap
-- Add Gdx.files.local support using IndexedDB
+- Add useNewFileHandle as default with new Gdx.files.internal/classpath and Gdx.files.local support using IndexedDB 
 
 [1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()

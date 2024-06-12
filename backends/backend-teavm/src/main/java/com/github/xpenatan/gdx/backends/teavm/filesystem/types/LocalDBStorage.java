@@ -1,10 +1,13 @@
-package com.github.xpenatan.gdx.backends.teavm.filesystem;
+package com.github.xpenatan.gdx.backends.teavm.filesystem.types;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.MemoryFileStorage;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.indexeddb.IndexedDBFileData;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
@@ -19,14 +22,14 @@ import org.teavm.jso.indexeddb.IDBOpenDBRequest;
 import org.teavm.jso.indexeddb.IDBRequest;
 import org.teavm.jso.indexeddb.IDBTransaction;
 
-public class IndexedDBStorage extends MemoryFileStorage {
+public class LocalDBStorage extends MemoryFileStorage {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
     private final static String ROOT_PATH = "db/assets";
     private IDBDatabase dataBase = null;
 
     private String databaseName;
 
-    public IndexedDBStorage() {
+    public LocalDBStorage() {
         setupIndexedDB();
     }
 
@@ -79,6 +82,11 @@ public class IndexedDBStorage extends MemoryFileStorage {
     }
 
     @Override
+    protected FileHandle getFilePath(String path) {
+        return Gdx.files.local(path);
+    }
+
+    @Override
     protected void renameFile(String sourcePath, String targetPath, FileData data) {
         removeFile(sourcePath);
         putFile(targetPath, data);
@@ -87,7 +95,7 @@ public class IndexedDBStorage extends MemoryFileStorage {
     @Override
     protected void putFile(String key, FileData data) {
         if(debug) {
-            System.out.println("putFileAsync: " + key);
+            System.out.println("PUT FILE DB: " + key);
         }
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readwrite");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
@@ -105,7 +113,7 @@ public class IndexedDBStorage extends MemoryFileStorage {
     @Override
     protected void removeFile(String key) {
         if(debug) {
-            System.out.println("removeFileAsync: " + key);
+            System.out.println("REMOVE FILE DB: " + key);
         }
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readwrite");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);

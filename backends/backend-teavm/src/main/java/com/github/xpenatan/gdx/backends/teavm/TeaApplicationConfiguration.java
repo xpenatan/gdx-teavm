@@ -21,15 +21,10 @@ public class TeaApplicationConfiguration {
     public boolean preloadAssets = true;
 
     /**
-     * Use IndexedDB for local storage instead of Storage/Memory.
-     */
-    public boolean useIndexedDB = true;
-
-    /**
-     * Experimental feature
+     * Experimental LocalHandle feature
      */
     @Deprecated
-    public boolean useNewExperimentalAssets = false;
+    public boolean useNewFileHandle = true;
 
     /**
      * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the

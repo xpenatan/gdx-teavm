@@ -18,7 +18,6 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
 import java.nio.ByteBuffer;
-import org.teavm.jso.JSBody;
 
 @Emulate(Pixmap.class)
 public class PixmapEmu implements Disposable {
@@ -99,7 +98,7 @@ public class PixmapEmu implements Disposable {
 
         TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
         byte[] bytes = null;
-        if(config.useNewExperimentalAssets) {
+        if(config.useNewFileHandle) {
             if(!file.exists()) {
                 // Add a way to debug when assets was not loaded in preloader.
                 throw new GdxRuntimeException("File is null, it does not exist: " + path);

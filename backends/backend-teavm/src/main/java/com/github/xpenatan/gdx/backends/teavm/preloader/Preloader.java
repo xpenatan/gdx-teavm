@@ -181,7 +181,7 @@ public class Preloader {
             public boolean onSuccess(String url, String result) {
                 String[] lines = result.split("\n");
 
-                if(config.useNewExperimentalAssets) {
+                if(config.useNewFileHandle) {
                     assetTotal = lines.length;
 
                     for(String line : lines) {
@@ -204,7 +204,7 @@ public class Preloader {
 
                                 Int8ArrayWrapper data = blob.getData();
                                 byte[] byteArray = TypedArrays.toByteArray(data);
-                                FileHandle local = Gdx.files.local(assetUrl);
+                                FileHandle local = Gdx.files.internal(assetUrl);
                                 local.writeBytes(byteArray, false);
 
                                 return false;

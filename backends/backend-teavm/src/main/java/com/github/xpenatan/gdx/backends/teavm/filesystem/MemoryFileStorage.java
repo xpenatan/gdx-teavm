@@ -17,7 +17,7 @@ public class MemoryFileStorage extends FileDB {
 
     private final Array<String> tmpPaths = new Array<>();
 
-    protected boolean debug = false;
+    public boolean debug = false;
 
     public MemoryFileStorage() {
         fileMap = new OrderedMap<>();
@@ -218,7 +218,8 @@ public class MemoryFileStorage extends FileDB {
         while(it.hasNext) {
             ObjectMap.Entry<String, FileData> next = it.next();
             String path = fixPath(next.key);
-            FileHandle parent = Gdx.files.local(path).parent();
+
+            FileHandle parent = getFilePath(path).parent();
             String parentPath = fixPath(parent.path());
 
             boolean isChildParentRoot = isRootFolder(parent);
@@ -245,7 +246,7 @@ public class MemoryFileStorage extends FileDB {
         for(int i = 0; i < tmpPaths.size; i++) {
             String s = tmpPaths.get(i);
             if(debug) {
-                System.out.println("Listh[" + i + "]: " + s);
+                System.out.println(getClass().getSimpleName() + " LIST[" + i + "]: " + s);
             }
             str[i] = s;
         }
@@ -257,6 +258,10 @@ public class MemoryFileStorage extends FileDB {
         FileData fileData = new FileData(path);
         put(path, fileData);
         putFile(path, fileData);
+    }
+
+    protected FileHandle getFilePath(String path) {
+        return Gdx.files.internal(path);
     }
 
     protected void renameFile(String sourcePath, String targetPath, FileData data) {
@@ -273,14 +278,14 @@ public class MemoryFileStorage extends FileDB {
     final protected FileData get(String path) {
         FileData data = fileMap.get(path);
         if(debug) {
-            System.out.println("file get: " + (data != null) + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + " GET FILE: " + (data != null) + " Path: " + path);
         }
         return data;
     }
 
     final protected void put(String path, FileData fileData) {
         if(debug) {
-            System.out.println("file put: " + path);
+            System.out.println(getClass().getSimpleName() + " PUT FILE: " + path);
         }
         if(path.isEmpty()  || path.equals(".") || path.equals("/") || path.equals("./")) {
             throw new GdxRuntimeException("Cannot put an empty folder name");
@@ -291,7 +296,7 @@ public class MemoryFileStorage extends FileDB {
     final protected FileData remove(String path) {
         FileData data = fileMap.remove(path);
         if(debug) {
-            System.out.println("file remove: " + (data != null) + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + " REMOVE FILE: " + (data != null) + " Path: " + path);
         }
         return data;
     }
@@ -299,7 +304,7 @@ public class MemoryFileStorage extends FileDB {
     final protected boolean containsKey(String path) {
         boolean flag = fileMap.containsKey(path);
         if(debug) {
-            System.out.println("file containsKey: " + flag + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + " CONTAINS FILE: " + flag + " Path: " + path);
         }
         return flag;
     }

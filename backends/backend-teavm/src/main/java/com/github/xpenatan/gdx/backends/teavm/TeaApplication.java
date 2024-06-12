@@ -19,7 +19,6 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
@@ -117,7 +116,6 @@ public class TeaApplication implements Application, Runnable {
 
         preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
-        preloader.preload(config, "assets.txt");
 
         input = new TeaInput(graphics.canvas);
         files = new TeaFiles(preloader);
@@ -191,7 +189,9 @@ public class TeaApplication implements Application, Runnable {
         }
 
         // Init database
-        FileDB.getInstance();
+        TeaFileHandle.initHandle(config);
+        preloader.preload(config, "assets.txt");
+
         window.requestAnimationFrame(this);
     }
 
