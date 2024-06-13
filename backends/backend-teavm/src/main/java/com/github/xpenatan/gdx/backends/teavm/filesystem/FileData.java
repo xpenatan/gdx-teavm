@@ -6,8 +6,12 @@ public class FileData {
     public static final int TYPE_FILE = 2;
 
     private final String name;
-    private byte[] bytes;
-    private int type;
+    private final byte[] bytes;
+    private final int type;
+
+    public FileData(String name) {
+        this(name, TYPE_DIRECTORY, null);
+    }
 
     public FileData(String name, byte[] bytes) {
         this(name, TYPE_FILE, bytes);
@@ -19,10 +23,6 @@ public class FileData {
         this.type = type;
     }
 
-    public FileData(String name) {
-        this.name = name;
-        this.type = TYPE_DIRECTORY;
-    }
 
     public String getName() {
         return name;
