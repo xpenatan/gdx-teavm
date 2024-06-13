@@ -21,7 +21,7 @@ public class TeaApplicationConfiguration {
     public boolean preloadAssets = true;
 
     /**
-     * Experimental LocalHandle feature
+     * Experimental new Gdx.files.internal and Gdx.files.local implementation
      */
     @Deprecated
     public boolean useNewFileHandle = true;
