@@ -54,7 +54,7 @@ public class TeaFileHandle extends FileHandle {
         TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
         if(config.useNewFileHandle) {
             if(type == FileType.Local) {
-                fileDB = internalStorage;
+                fileDB = localStorage;
             }
             else {
                 // Internal and Classpath share the same storage
