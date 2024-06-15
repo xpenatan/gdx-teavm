@@ -280,7 +280,8 @@ public class TeaFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public OutputStream write(boolean append) {
-        //TODO remove fixed size
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot write to a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot write to an internal file: " + file);
         return write(append, 4096);
     }
 
@@ -348,6 +349,8 @@ public class TeaFileHandle extends FileHandle {
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
     public Writer writer(boolean append, String charset) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot write to a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot write to an internal file: " + file);
         try {
             return new BufferedWriter(new OutputStreamWriter(write(append), "UTF-8"));
         }
@@ -437,6 +440,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list() {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
         if(fileDB != null) {
             return fileDB.list(this);
         }
@@ -456,6 +460,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(FileFilter filter) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
         if(fileDB != null) {
             return fileDB.list(this, filter);
         }
@@ -475,6 +480,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(FilenameFilter filter) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
         if(fileDB != null) {
             return fileDB.list(this, filter);
         }
@@ -494,6 +500,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
     public FileHandle[] list(String suffix) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
         if(fileDB != null) {
             return fileDB.list(this, suffix);
         }
@@ -511,6 +518,7 @@ public class TeaFileHandle extends FileHandle {
      * handle to a directory on the classpath will return false.
      */
     public boolean isDirectory() {
+        if (type == FileType.Classpath) return false;
         if(fileDB != null) {
             return fileDB.isDirectory(this);
         }
@@ -548,6 +556,8 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public void mkdirs() {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot mkdirs with a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot mkdirs with an internal file: " + file);
         if(fileDB != null) {
             fileDB.mkdirs(this);
         }
@@ -557,6 +567,10 @@ public class TeaFileHandle extends FileHandle {
         else {
             throw new GdxRuntimeException("Cannot mkdirs for non-local file: " + file);
         }
+    }
+
+    public void mkdirsInternal() {
+        fileDB.mkdirs(this);
     }
 
     /**
@@ -581,6 +595,8 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public boolean delete() {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot delete a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot delete an internal file: " + file);
         if(fileDB != null) {
             return fileDB.delete(this);
         }
@@ -598,6 +614,8 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
     public boolean deleteDirectory() {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot delete a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot delete an internal file: " + file);
         if(fileDB != null) {
             return fileDB.deleteDirectory(this);
         }

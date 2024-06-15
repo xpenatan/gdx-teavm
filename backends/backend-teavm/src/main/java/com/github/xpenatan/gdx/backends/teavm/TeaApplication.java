@@ -139,7 +139,7 @@ public class TeaApplication implements Application, Runnable {
         audio = new DefaultTeaAudio();
         Gdx.audio = audio;
 
-        window.addEventListener("beforeunload", new EventListenerWrapper() {
+        window.addEventListener("pagehide", new EventListenerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
                 if(appListener != null) {

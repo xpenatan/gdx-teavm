@@ -8,10 +8,12 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.StreamUtils;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
+import com.github.xpenatan.gdx.backends.teavm.TeaFiles;
 import com.github.xpenatan.gdx.backends.teavm.dom.DataTransferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DragEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
@@ -29,7 +31,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import org.teavm.jso.core.JSArray;
@@ -186,8 +190,12 @@ public class Preloader {
 
                     for(String line : lines) {
                         String[] tokens = line.split(":");
-
                         String assetUrl = tokens[1].trim();
+                        if(assetUrl.trim().isEmpty()) {
+                            continue;
+                        }
+
+                        TeaFiles files = (TeaFiles)Gdx.files;
 
                         AssetDownloader.getInstance().load(true, getAssetUrl() + assetUrl, AssetType.Binary, null, new AssetLoaderListener<Object>() {
                             @Override
@@ -201,12 +209,27 @@ public class Preloader {
                             @Override
                             public boolean onSuccess(String urll, Object result) {
                                 Blob blob = (Blob)result;
-
-                                Int8ArrayWrapper data = blob.getData();
-                                byte[] byteArray = TypedArrays.toByteArray(data);
-                                FileHandle local = Gdx.files.internal(assetUrl);
-                                local.writeBytes(byteArray, false);
-
+                                String fileType = tokens[0];
+                                boolean isDirectory = fileType.equals("d");
+                                if(isDirectory) {
+                                    TeaFileHandle internalFile = (TeaFileHandle)Gdx.files.internal(assetUrl);
+                                    internalFile.mkdirsInternal();
+                                }
+                                else {
+                                    Int8ArrayWrapper data = blob.getData();
+                                    byte[] byteArray = TypedArrays.toByteArray(data);
+                                    FileHandle internalFile = Gdx.files.internal(assetUrl);
+                                    OutputStream output = internalFile.write(false, 4096);
+                                    try {
+                                        output.write(byteArray);
+                                    }
+                                    catch(IOException ex) {
+                                        throw new GdxRuntimeException("Error writing file: " + internalFile + " (" + internalFile.type() + ")", ex);
+                                    }
+                                    finally {
+                                        StreamUtils.closeQuietly(output);
+                                    }
+                                }
                                 return false;
                             }
                         });
