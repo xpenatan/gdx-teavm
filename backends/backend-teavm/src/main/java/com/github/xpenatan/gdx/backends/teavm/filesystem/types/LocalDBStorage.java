@@ -29,12 +29,11 @@ public class LocalDBStorage extends MemoryFileStorage {
 
     private String databaseName;
 
-    public LocalDBStorage() {
-        setupIndexedDB();
+    public LocalDBStorage(TeaApplication teaApplication) {
+        setupIndexedDB(teaApplication);
     }
 
-    private void setupIndexedDB() {
-        TeaApplication teaApplication = (TeaApplication)Gdx.app;
+    private void setupIndexedDB(TeaApplication teaApplication) {
         if(teaApplication == null) {
             return;
         }

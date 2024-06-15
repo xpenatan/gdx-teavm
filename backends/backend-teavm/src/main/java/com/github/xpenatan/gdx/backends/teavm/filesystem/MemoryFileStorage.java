@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Comparator;
 
 public class MemoryFileStorage extends FileDB {
     private final OrderedMap<String, FileData> fileMap;
@@ -249,7 +250,7 @@ public class MemoryFileStorage extends FileDB {
         if(debug) {
             System.out.println("### START LIST ### " + isRoot + " DIR: " + dir);
         }
-//        if(file.exists()) {
+        if(file.exists()) {
             ObjectMap.Entries<String, FileData> it = fileMap.iterator();
             while(it.hasNext) {
                 ObjectMap.Entry<String, FileData> next = it.next();
@@ -290,12 +291,10 @@ public class MemoryFileStorage extends FileDB {
                     }
                 }
             }
-//        }
+        }
         if(debug) {
             System.out.println("### END LIST ###");
         }
-
-        tmpPaths.sort();
         String[] str = new String[tmpPaths.size];
         for(int i = 0; i < tmpPaths.size; i++) {
             String s = tmpPaths.get(i);

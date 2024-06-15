@@ -17,7 +17,7 @@ public class MemoryFileStorageTest {
     @Before
     public void setUp() {
         TeaApplicationConfiguration config = new TeaApplicationConfiguration("");
-        TeaFiles teaFiles = new TeaFiles(config, null) {
+        TeaFiles teaFiles = new TeaFiles(config, null, null) {
             @Override
             public FileHandle local(String path) {
                 return new TeaFileHandle(null, internalStorage, path, FileType.Local);
@@ -37,9 +37,12 @@ public class MemoryFileStorageTest {
         FileHandle B = Gdx.files.local("New folder(2)");
         FileHandle BA = B.child("New folder(2)/New folder");
 
+
         A.mkdirs();
         B.mkdirs();
         BA.mkdirs();
+
+        FileHandle[] list = Gdx.files.local(".").list();
 
         System.out.println("FILES BEFORE: ");
         internalStorage.printAllFiles();

@@ -17,11 +17,11 @@ public class TeaFiles implements Files {
     public InternalDBStorage internalStorage;
     public LocalDBStorage localStorage;
 
-    public TeaFiles(TeaApplicationConfiguration config, Preloader preloader) {
+    public TeaFiles(TeaApplicationConfiguration config, TeaApplication teaApplication, Preloader preloader) {
         this.preloader = preloader;
         if(config.useNewFileHandle) {
             this.internalStorage = new InternalDBStorage();
-            this.localStorage = new LocalDBStorage();
+            this.localStorage = new LocalDBStorage(teaApplication);
         }
     }
 
