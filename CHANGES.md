@@ -2,6 +2,7 @@
 - Update teavm to 0.10.0
 - Pixmap now use Gdx2DPixmap
 - Add useNewFileHandle as default with new Gdx.files.internal/classpath and Gdx.files.local support using IndexedDB 
+- Call dispose when browser closes
 
 [1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()

@@ -1,19 +1,25 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSMethod;
+
 /**
  * @author xpenatan
  */
 public interface ElementWrapper extends NodeWrapper {
 
-    public int getScrollTop();
+    int getScrollTop();
 
-    public int getScrollLeft();
+    int getScrollLeft();
 
-    public int getClientWidth();
+    int getClientWidth();
 
-    public int getClientHeight();
+    int getClientHeight();
 
-    public void setAttribute(String qualifiedName, String value);
+    void setAttribute(String qualifiedName, String value);
 
-    public StyleWrapper getStyle();
+    StyleWrapper getStyle();
+
+
+    @JSMethod
+    void remove();
 }

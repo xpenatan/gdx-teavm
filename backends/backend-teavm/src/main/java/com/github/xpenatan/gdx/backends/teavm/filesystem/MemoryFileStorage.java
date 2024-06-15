@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Comparator;
 
 public class MemoryFileStorage extends FileDB {
     private final OrderedMap<String, FileData> fileMap;

@@ -16,8 +16,10 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
+import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
@@ -117,7 +119,7 @@ public class TeaApplication implements Application, Runnable {
         preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
-        input = new TeaInput(graphics.canvas);
+        input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this, preloader);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
@@ -136,6 +138,17 @@ public class TeaApplication implements Application, Runnable {
 
         audio = new DefaultTeaAudio();
         Gdx.audio = audio;
+
+        window.addEventListener("beforeunload", new EventListenerWrapper() {
+            @Override
+            public void handleEvent(EventWrapper evt) {
+                if(appListener != null) {
+                    appListener.pause();
+                    appListener.dispose();
+                    appListener = null;
+                }
+            }
+        });
 
         window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
             @Override
@@ -241,7 +254,9 @@ public class TeaApplication implements Application, Runnable {
                         initState = AppState.APP_CREATE;
                         graphics.frameId  = 0;
                     }
-                    step(appListener);
+                    if(appListener != null) {
+                        step(appListener);
+                    }
                     break;
             }
         }
