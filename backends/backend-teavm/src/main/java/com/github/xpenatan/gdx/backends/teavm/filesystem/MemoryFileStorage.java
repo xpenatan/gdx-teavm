@@ -320,7 +320,7 @@ public class MemoryFileStorage extends FileDB {
         FileData fileData = fileMap.get(path);
         if(debug) {
             String type = fileData != null && fileData.isDirectory() ? " GET FOLDER: " : " GET FILE: ";
-            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Size: " + fileData.getBytesSize() + " Path: " + path);
         }
         return fileData;
     }
