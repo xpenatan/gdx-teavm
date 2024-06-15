@@ -25,7 +25,7 @@ public class MemoryFileStorageTest {
         };
         Gdx.files = teaFiles;
         internalStorage = teaFiles.internalStorage;
-        internalStorage.debug = false;
+//        internalStorage.debug = true;
     }
 
     @Test
@@ -106,13 +106,16 @@ public class MemoryFileStorageTest {
         Truth.assertThat(ABAX.exists()).isTrue();
         Truth.assertThat(AC.exists()).isTrue();
 
-        System.out.println("FILES BEFORE: ");
+        System.out.println("\n####################### FILES BEFORE: ");
         internalStorage.printAllFiles();
+        System.out.println("####################### FILES BEFORE END");
 
+        System.out.println("####################### MOVE TO: \n");
         A.moveTo(B);
 
-        System.out.println("FILES AFTER: ");
+        System.out.println("\n####################### FILES AFTER: ");
         internalStorage.printAllFiles();
+        System.out.println("####################### FILES AFTER END");
 
         Truth.assertThat(A.exists()).isFalse();
         Truth.assertThat(B.exists()).isTrue();
