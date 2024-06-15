@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.HEXCoder;
 import java.util.HashMap;
 import java.util.Map;
 import org.teavm.jso.browser.Storage;
@@ -28,14 +29,19 @@ public class TeaPreferences implements Preferences {
         int prefixLength = this.prefix.length();
         try {
             for(int i = 0; i < storage.getLength(); i++) {
-                String key = storage.key(i);
-                if(key.startsWith(this.prefix)) {
-                    String value = storage.getItem(key);
-                    values.put(key.substring(prefixLength, key.length() - 1), toObject(key, value));
+                String keyEncoded = storage.key(i);
+                String key = new String(HEXCoder.decode(keyEncoded));
+                boolean flag = key.startsWith(this.prefix);
+                if(flag) {
+                    String value = storage.getItem(keyEncoded);
+                    String keyStr = key.substring(prefixLength, key.length() - 1);
+                    Object object = toObject(key, new String(HEXCoder.decode(value)));
+                    values.put(keyStr, object);
                 }
             }
         }
         catch(Exception e) {
+            e.printStackTrace();
             values.clear();
         }
     }
@@ -61,15 +67,18 @@ public class TeaPreferences implements Preferences {
         try {
             // remove all old values
             for(int i = 0; i < storage.getLength(); i++) {
-                String key = storage.key(i);
-                if(key.startsWith(prefix)) storage.removeItem(key);
+                String keyEncoded = storage.key(i);
+                String key = new String(HEXCoder.decode(keyEncoded));
+                if(key.startsWith(prefix)) {
+                    storage.removeItem(key);
+                }
             }
 
             // push new values to LocalStorage
             for(String key : values.keys()) {
                 String storageKey = toStorageKey(key, values.get(key));
                 String storageValue = "" + values.get(key).toString();
-                storage.setItem(storageKey, storageValue);
+                storage.setItem(HEXCoder.encode(storageKey.getBytes()), HEXCoder.encode(storageValue.getBytes()));
             }
         }
         catch(Exception e) {
