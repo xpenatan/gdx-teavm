@@ -35,6 +35,9 @@ public class LocalDBStorage extends MemoryFileStorage {
 
     private void setupIndexedDB() {
         TeaApplication teaApplication = (TeaApplication)Gdx.app;
+        if(teaApplication == null) {
+            return;
+        }
         TeaApplicationConfiguration config = teaApplication.getConfig();
         teaApplication.delayInitCount++;
 
@@ -87,22 +90,17 @@ public class LocalDBStorage extends MemoryFileStorage {
     }
 
     @Override
-    protected void renameFile(String sourcePath, String targetPath, FileData data) {
-        removeFile(sourcePath);
-        putFile(targetPath, data);
-    }
-
-    @Override
-    protected void putFile(String key, FileData data) {
+    protected void putFile(String key, FileData fileData) {
         if(debug) {
-            System.out.println("PUT FILE DB: " + key);
+            String type = fileData != null && fileData.isDirectory() ? "PUT FOLDER DB: " : "PUT FILE DB: ";
+            System.out.println(type + key);
         }
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readwrite");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
 
-        IndexedDBFileData dbFileData = IndexedDBFileData.create(data.getType(), new JSDate());
-        if(!data.isDirectory()) {
-            dbFileData.setContents(data.getBytes());
+        IndexedDBFileData dbFileData = IndexedDBFileData.create(fileData.getType(), new JSDate());
+        if(!fileData.isDirectory()) {
+            dbFileData.setContents(fileData.getBytes());
         }
         IDBRequest request = objectStore.put(dbFileData, getJSString(key));
         request.setOnError(() -> {
@@ -134,17 +132,16 @@ public class LocalDBStorage extends MemoryFileStorage {
                 JSObject value = cursor.getValue();
                 IndexedDBFileData dbFileData = getFileData(value);
                 int type = dbFileData.getType();
-                FileData fileData = null;
 
                 if(type == FileData.TYPE_DIRECTORY) {
-                    fileData = new FileData(key);
+                    putFolderInternal(key);
                 }
                 else {
                     Int8ArrayWrapper contents = dbFileData.getContents();
                     byte[] bytes = TypedArrays.toByteArray(contents);
-                    fileData = new FileData(key, type, bytes);
+                    putFileInternal(key, bytes);
                 }
-                put(key, fileData);
+
                 cursor.doContinue();
             }
             teaApplication.delayInitCount--;

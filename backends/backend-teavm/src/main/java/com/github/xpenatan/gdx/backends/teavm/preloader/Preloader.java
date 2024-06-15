@@ -465,22 +465,22 @@ public class Preloader {
         Array<FileHandle> files = new Array<>();
         for(String file : texts.keys()) {
             if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
             }
         }
         for(String file : images.keys()) {
             if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
             }
         }
         for(String file : binaries.keys()) {
             if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
             }
         }
         for(String file : audio.keys()) {
             if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, file, FileType.Internal));
+                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
             }
         }
         FileHandle[] filesArray = new FileHandle[files.size];

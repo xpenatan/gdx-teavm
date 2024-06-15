@@ -6,8 +6,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,12 +19,6 @@ public class MemoryFileStorage extends FileDB {
 
     public MemoryFileStorage() {
         fileMap = new OrderedMap<>();
-        setupIndexedDB();
-    }
-
-    private void setupIndexedDB() {
-        TeaApplication teaApplication = (TeaApplication)Gdx.app;
-        TeaApplicationConfiguration config = teaApplication.getConfig();
     }
 
     @Override
@@ -40,7 +32,6 @@ public class MemoryFileStorage extends FileDB {
         catch(RuntimeException e) {
             // Something corrupted: we remove it & re-throw the error
             remove(path);
-            removeFile(path);
             throw e;
         }
     }
@@ -60,14 +51,36 @@ public class MemoryFileStorage extends FileDB {
     protected void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
         String path = fixPath(file.path());
 
-        FileData fileData = new FileData(path, data);
-        put(path, fileData);
-        putFile(path, fileData);
+        byte[] newBytes = null;
+        FileData oldData = fileMap.get(path);
+        if(append) {
+            if(oldData == null) {
+                newBytes = data;
+            }
+            else {
+                byte[] oldBytes = oldData.getBytes();
+                int newSize = data.length + oldBytes.length;
+                newBytes = new byte[newSize];
+                for(int i = 0; i < oldBytes.length; i++) {
+                    newBytes[i] = oldBytes[i];
+                }
+                for(int i = oldBytes.length, j = 0; i < newSize; i++, j++) {
+                    newBytes[i] = data[j];
+                }
+            }
+        }
+        else {
+            newBytes = data;
+        }
+
+        putFileInternal(path, newBytes);
 
         FileHandle cur = file.parent();
         while(!isRootFolder(cur)) {
             String parentPath = fixPath(cur.path());
-            putFolder(parentPath);
+            if(!fileMap.containsKey(parentPath)) {
+                putFolderInternal(parentPath);
+            }
             cur = cur.parent();
         }
     }
@@ -95,11 +108,13 @@ public class MemoryFileStorage extends FileDB {
     @Override
     public void mkdirs(TeaFileHandle file) {
         String path = fixPath(file.path());
-        putFolder(path);
+        putFolderInternal(path);
         FileHandle cur = file.parent();
         while(!isRootFolder(cur)) {
             String parentPath = fixPath(cur.path());
-            putFolder(parentPath);
+            if(!fileMap.containsKey(parentPath)) {
+                putFolderInternal(parentPath);
+            }
             cur = cur.parent();
         }
     }
@@ -126,7 +141,6 @@ public class MemoryFileStorage extends FileDB {
                 return false;
             }
             if(remove(path) != null) {
-                removeFile(path);
                 return true;
             }
         }
@@ -146,16 +160,11 @@ public class MemoryFileStorage extends FileDB {
             }
 
             if(remove(path) != null) {
-                removeFile(path);
-                FileHandle[] list = file.list();
                 // Get all children paths and delete them all
                 String[] paths = getAllChildrenAndSiblings(file);
                 for(int i = 0; i < paths.length; i++) {
                     String childOrSiblingPath = fixPath(paths[i]);
                     boolean rem = remove(childOrSiblingPath) != null;
-                    if(rem) {
-                        removeFile(childOrSiblingPath);
-                    }
                 }
                 return true;
             }
@@ -180,14 +189,40 @@ public class MemoryFileStorage extends FileDB {
         String targetPath = fixPath(target.path());
         FileData data = remove(sourcePath);
         if(data != null) {
-            put(targetPath, data);
-            renameFile(sourcePath, targetPath, data);
+            putFileInternal(targetPath, data.getBytes());
         }
     }
 
     @Override
     public String getPath() {
         return "";
+    }
+
+    public String debugAllFiles() {
+        String text = "";
+        text += println("####### Start File: " + fileMap.size + "\n");
+        ObjectMap.Entries<String, FileData> it = fileMap.iterator();
+        while(it.hasNext) {
+            ObjectMap.Entry<String, FileData> next = it.next();
+            FileData value = next.value;
+            String name = "";
+            String key = next.key;
+            key = "\"" + key + "\"";
+            if(!value.getPath().equals(next.key)) {
+                name = " Name: " + value.getPath();
+            }
+            text += println("Key: " + key + name + " Type: " + value.getType() + " Bytes: " + value.getBytesSize()+ "\n");
+        }
+        text += println("####### End File");
+        return text;
+    }
+
+    public void printAllFiles() {
+        System.out.println(debugAllFiles());
+    }
+
+    private String println(String value) {
+        return value;
     }
 
     private boolean isRootFolder(FileHandle cur) {
@@ -209,38 +244,57 @@ public class MemoryFileStorage extends FileDB {
     }
 
     private String[] list(FileHandle file, boolean equals) {
-        String dirPath = fixPath(file.path());
-
+        String dir = fixPath(file.path());
         boolean isRoot = isRootFolder(file);
+        if(debug) {
+            System.out.println("### START LIST ### " + isRoot + " DIR: " + dir);
+        }
+//        if(file.exists()) {
+            ObjectMap.Entries<String, FileData> it = fileMap.iterator();
+            while(it.hasNext) {
+                ObjectMap.Entry<String, FileData> next = it.next();
+                String path = fixPath(next.key);
 
-        String dir = fixPath(dirPath);
-        ObjectMap.Entries<String, FileData> it = fileMap.iterator();
-        while(it.hasNext) {
-            ObjectMap.Entry<String, FileData> next = it.next();
-            String path = fixPath(next.key);
+                FileHandle parent = getFilePath(path).parent();
+                String parentPath = fixPath(parent.path());
 
-            FileHandle parent = getFilePath(path).parent();
-            String parentPath = fixPath(parent.path());
+                boolean isChildParentRoot = isRootFolder(parent);
 
-            boolean isChildParentRoot = isRootFolder(parent);
-
-            // Only add path if parent is dir
-            if(isChildParentRoot && isRoot) {
-                tmpPaths.add(path);
-            }
-            else {
-                if(equals) {
-                    if(parentPath.equals(dir)) {
+                // Only add path if parent is dir
+                if(isRoot) {
+                    if(isChildParentRoot) {
+                        if(debug) {
+                            System.out.println("LIST ROOD ADD: " + path);
+                        }
                         tmpPaths.add(path);
                     }
                 }
                 else {
-                    if(parentPath.startsWith(dir)) {
-                        tmpPaths.add(path);
+                    if(equals) {
+                        if(parentPath.equals(dir)) {
+                            if(debug) {
+                                System.out.println("LIST EQUAL ADD: PARENT PATH: " + parentPath);
+                                System.out.println("LIST EQUAL ADD: PATH: " + path);
+                            }
+                            tmpPaths.add(path);
+                        }
+                    }
+                    else {
+                        if(parentPath.startsWith(dir)) {
+                            if(debug) {
+                                System.out.println("LIST STARTWITH ADD: PARENT PATH: " + parentPath);
+                                System.out.println("LIST STARTWITH ADD: PATH: " + path);
+                            }
+                            tmpPaths.add(path);
+                        }
                     }
                 }
             }
+//        }
+        if(debug) {
+            System.out.println("### END LIST ###");
         }
+
         tmpPaths.sort();
         String[] str = new String[tmpPaths.size];
         for(int i = 0; i < tmpPaths.size; i++) {
@@ -254,19 +308,8 @@ public class MemoryFileStorage extends FileDB {
         return str;
     }
 
-    private void putFolder(String path) {
-        FileData fileData = new FileData(path);
-        put(path, fileData);
-        putFile(path, fileData);
-    }
-
     protected FileHandle getFilePath(String path) {
         return Gdx.files.internal(path);
-    }
-
-    protected void renameFile(String sourcePath, String targetPath, FileData data) {
-        removeFile(sourcePath);
-        putFile(targetPath, data);
     }
 
     protected void putFile(String key, FileData data) {
@@ -276,35 +319,56 @@ public class MemoryFileStorage extends FileDB {
     }
 
     final protected FileData get(String path) {
-        FileData data = fileMap.get(path);
+        FileData fileData = fileMap.get(path);
         if(debug) {
-            System.out.println(getClass().getSimpleName() + " GET FILE: " + (data != null) + " Path: " + path);
+            String type = fileData != null && fileData.isDirectory() ? " GET FOLDER: " : " GET FILE: ";
+            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Path: " + path);
         }
-        return data;
+        return fileData;
     }
 
-    final protected void put(String path, FileData fileData) {
+    final public void putFileInternal(String path, byte[] bytes) {
         if(debug) {
             System.out.println(getClass().getSimpleName() + " PUT FILE: " + path);
         }
         if(path.isEmpty()  || path.equals(".") || path.equals("/") || path.equals("./")) {
             throw new GdxRuntimeException("Cannot put an empty folder name");
         }
+        FileData fileData = new FileData(path, bytes);
         fileMap.put(path, fileData);
+        putFile(path, fileData);
     }
 
-    final protected FileData remove(String path) {
-        FileData data = fileMap.remove(path);
+    final public void putFolderInternal(String path) {
         if(debug) {
-            System.out.println(getClass().getSimpleName() + " REMOVE FILE: " + (data != null) + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + " PUT FOLDER: " + path);
         }
-        return data;
+        if(path.isEmpty()  || path.equals(".") || path.equals("/") || path.equals("./")) {
+            throw new GdxRuntimeException("Cannot put an empty folder name");
+        }
+        FileData fileData = new FileData(path);
+        fileMap.put(path, new FileData(path));
+        putFile(path, fileData);
     }
 
-    final protected boolean containsKey(String path) {
-        boolean flag = fileMap.containsKey(path);
+    final public FileData remove(String path) {
+        FileData fileData = fileMap.remove(path);
         if(debug) {
-            System.out.println(getClass().getSimpleName() + " CONTAINS FILE: " + flag + " Path: " + path);
+            String type = fileData != null && fileData.isDirectory() ? " REMOVE FOLDER: " : " REMOVE FILE: ";
+            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Path: " + path);
+        }
+        if(fileData != null) {
+            removeFile(path);
+        }
+        return fileData;
+    }
+
+    final public boolean containsKey(String path) {
+        FileData fileData = fileMap.get(path);
+        boolean flag = fileData != null;
+        if(debug) {
+            String type = fileData != null && fileData.isDirectory() ? " CONTAINS FOLDER: " : " CONTAINS FILE: ";
+            System.out.println(getClass().getSimpleName() + type + flag + " Path: " + path);
         }
         return flag;
     }
@@ -321,6 +385,9 @@ public class MemoryFileStorage extends FileDB {
 
         if(!path.startsWith("/")) {
             path = "/" + path;
+        }
+        if(!path.endsWith("/")) {
+            path = path +  "/";
         }
         return path;
     }

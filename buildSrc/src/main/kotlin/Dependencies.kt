@@ -16,6 +16,8 @@ object LibExt {
     const val jettyVersion = "11.0.13"
 
     const val aiVersion = "1.8.2"
+
+    const val truthVersion = "1.4.2"
 }
 
 private fun getVersion(): String {

@@ -1,13 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.types.InternalDBStorage;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.types.LocalDBStorage;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -28,43 +25,20 @@ import java.io.Writer;
  * @author xpenatan
  */
 public class TeaFileHandle extends FileHandle {
-    private static InternalDBStorage internalStorage;
-    private static LocalDBStorage localStorage;
-
     public final Preloader preloader;
     private final String file;
     private final FileType type;
 
     private FileDB fileDB;
 
-    public static void initHandle(TeaApplicationConfiguration config) {
-        if(config.useNewFileHandle) {
-            internalStorage = new InternalDBStorage();
-            localStorage = new LocalDBStorage();
-        }
-    }
-
-    public TeaFileHandle(Preloader preloader, String fileName, FileType type) {
+    public TeaFileHandle(Preloader preloader, FileDB fileDB, String fileName, FileType type) {
         if((type != FileType.Internal) && (type != FileType.Classpath) && (type != FileType.Local)) {
             throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
         }
         this.preloader = preloader;
         this.file = fixSlashes(fileName);
         this.type = type;
-        TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
-        if(config.useNewFileHandle) {
-            if(type == FileType.Local) {
-                fileDB = localStorage;
-            }
-            else {
-                // Internal and Classpath share the same storage
-                fileDB = internalStorage;
-            }
-        }
-    }
-
-    public TeaFileHandle(String path) {
-        this(((TeaApplication)Gdx.app).getPreloader(), path, FileType.Internal);
+        this.fileDB = fileDB;
     }
 
     /** @return The full url to an asset, e.g. http://localhost:8080/assets/data/shotgun.ogg */
@@ -555,7 +529,7 @@ public class TeaFileHandle extends FileHandle {
      *                             doesn't exist.
      */
     public FileHandle child(String name) {
-        return new TeaFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
+        return new TeaFileHandle(preloader, fileDB, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
                 type);
     }
 
@@ -563,7 +537,7 @@ public class TeaFileHandle extends FileHandle {
         int index = file.lastIndexOf("/");
         String dir = "";
         if(index > 0) dir = file.substring(0, index);
-        return new TeaFileHandle(preloader, dir, type);
+        return new TeaFileHandle(preloader, fileDB, dir, type);
     }
 
     public FileHandle sibling(String name) {

@@ -5,27 +5,26 @@ public class FileData {
     public static final int TYPE_DIRECTORY = 1;
     public static final int TYPE_FILE = 2;
 
-    private final String name;
+    private final String path;
     private final byte[] bytes;
     private final int type;
 
-    public FileData(String name) {
-        this(name, TYPE_DIRECTORY, null);
+    public FileData(String path) {
+        this(path, TYPE_DIRECTORY, null);
     }
 
-    public FileData(String name, byte[] bytes) {
-        this(name, TYPE_FILE, bytes);
+    public FileData(String path, byte[] bytes) {
+        this(path, TYPE_FILE, bytes);
     }
 
     public FileData(String name, int type, byte[] bytes) {
-        this.name = name;
+        this.path = name;
         this.bytes = bytes;
         this.type = type;
     }
 
-
-    public String getName() {
-        return name;
+    public String getPath() {
+        return path;
     }
 
     public byte[] getBytes() {
@@ -38,5 +37,9 @@ public class FileData {
 
     public int getType() {
         return type;
+    }
+
+    public int getBytesSize() {
+        return bytes != null ? bytes.length : 0;
     }
 }

@@ -118,7 +118,7 @@ public class TeaApplication implements Application, Runnable {
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(graphics.canvas);
-        files = new TeaFiles(preloader);
+        files = new TeaFiles(config, preloader);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
@@ -188,8 +188,6 @@ public class TeaApplication implements Application, Runnable {
             });
         }
 
-        // Init database
-        TeaFileHandle.initHandle(config);
         preloader.preload(config, "assets.txt");
 
         window.requestAnimationFrame(this);
