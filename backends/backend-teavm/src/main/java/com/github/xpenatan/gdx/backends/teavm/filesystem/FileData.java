@@ -17,8 +17,12 @@ public class FileData {
         this(path, TYPE_FILE, bytes);
     }
 
-    public FileData(String name, int type, byte[] bytes) {
-        this.path = name;
+    public FileData(String path, int type, byte[] bytes) {
+        if(bytes != null && path.endsWith("/")) {
+            int length = path.length();
+            path = path.substring(0, length-1);
+        }
+        this.path = path;
         this.bytes = bytes;
         this.type = type;
     }

@@ -207,11 +207,11 @@ public class MemoryFileStorage extends FileDB {
             FileData value = next.value;
             String name = "";
             String key = next.key;
-            key = "\"" + key + "\"";
+            key = key + "\"";
             if(!value.getPath().equals(next.key)) {
-                name = " Name: " + value.getPath();
+                name = " Path: \"" + value.getPath() + "\"";
             }
-            text += println("Key: " + key + name + " Type: " + value.getType() + " Bytes: " + value.getBytesSize()+ "\n");
+            text += println("Key: \"" + key + name + " Type: " + value.getType() + " Bytes: " + value.getBytesSize()+ "\n");
         }
         text += println("####### End File");
         return text;
