@@ -204,6 +204,68 @@ public class MemoryFileStorageTest {
     }
 
     @Test
+    public void test_move_folder_A_to_B() {
+
+        FileHandle Root = Gdx.files.local("root");
+        FileHandle A = Root.child("A");
+        FileHandle B = A.sibling("B");
+        FileHandle BA = B.child("A");
+
+        A.mkdirs();
+        B.mkdirs();
+
+        Truth.assertThat(A.exists()).isTrue();
+        Truth.assertThat(B.exists()).isTrue();
+        Truth.assertThat(BA.exists()).isFalse();
+
+        System.out.println("\n####################### FILES BEFORE: ");
+        internalStorage.printAllFiles();
+        System.out.println("####################### FILES BEFORE END");
+
+        System.out.println("####################### MOVE TO: \n");
+        A.moveTo(B);
+
+        System.out.println("\n####################### FILES AFTER: ");
+        internalStorage.printAllFiles();
+        System.out.println("####################### FILES AFTER END");
+
+        Truth.assertThat(B.exists()).isTrue();
+        Truth.assertThat(A.exists()).isFalse();
+        Truth.assertThat(BA.exists()).isTrue();
+    }
+
+    @Test
+    public void test_move_file_A_to_B() {
+
+        FileHandle Root = Gdx.files.local("root");
+        FileHandle A = Root.child("A.txt");
+        FileHandle B = A.sibling("B");
+        FileHandle BA = B.child("A.txt");
+
+        A.writeString("Hello", false);
+        B.mkdirs();
+
+        Truth.assertThat(A.exists()).isTrue();
+        Truth.assertThat(B.exists()).isTrue();
+        Truth.assertThat(BA.exists()).isFalse();
+
+        System.out.println("\n####################### FILES BEFORE: ");
+        internalStorage.printAllFiles();
+        System.out.println("####################### FILES BEFORE END");
+
+        System.out.println("####################### MOVE TO: \n");
+        A.moveTo(B);
+
+        System.out.println("\n####################### FILES AFTER: ");
+        internalStorage.printAllFiles();
+        System.out.println("####################### FILES AFTER END");
+
+        Truth.assertThat(B.exists()).isTrue();
+        Truth.assertThat(A.exists()).isFalse();
+        Truth.assertThat(BA.exists()).isTrue();
+    }
+
+    @Test
     public void test_rename_folder_child() {
 
         FileHandle Root = Gdx.files.local("root");
