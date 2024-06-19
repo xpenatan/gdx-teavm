@@ -85,7 +85,9 @@ public abstract class FileDB {
 
         Preloader preloader = null;
         if(Gdx.app != null) {
-            preloader = ((TeaApplication)Gdx.app).getPreloader();
+            if(Gdx.app instanceof TeaApplication) {
+                preloader = ((TeaApplication)Gdx.app).getPreloader();
+            }
         }
         for(int i = 0; i < paths.length; i++) {
             String path = paths[i];

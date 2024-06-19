@@ -667,7 +667,7 @@ public class TeaFileHandle extends FileHandle {
                 throw new GdxRuntimeException("Cannot move an internal file: " + file);
             }
         }
-        if(fileDB != null) {
+        if(fileDB != null && !dest.exists()) {
             FileHandle destParent = dest.parent();
             FileHandle thisParent = parent();
             if(thisParent.equals(destParent)) {
