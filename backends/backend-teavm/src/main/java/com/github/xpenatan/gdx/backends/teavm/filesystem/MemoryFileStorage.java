@@ -187,9 +187,20 @@ public class MemoryFileStorage extends FileDB {
     public void rename(TeaFileHandle source, TeaFileHandle target) {
         String sourcePath = fixPath(source.path());
         String targetPath = fixPath(target.path());
-        FileData data = removeInternal(sourcePath);
-        if(data != null) {
-            putFileInternal(targetPath, data.getBytes());
+
+        if(source.isDirectory()) {
+            target.mkdirs();
+            FileHandle[] list = source.list();
+            for(int i = 0; i < list.length; i++) {
+                FileHandle fileHandle = list[i];
+                fileHandle.moveTo(target);
+            }
+            source.deleteDirectory();
+        }
+        else {
+            byte[] bytes = source.readBytes();
+            target.writeBytes(bytes, false);
+            source.delete();
         }
     }
 

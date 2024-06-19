@@ -666,14 +666,20 @@ public class TeaFileHandle extends FileHandle {
             case Internal: {
                 throw new GdxRuntimeException("Cannot move an internal file: " + file);
             }
-            case Local:
-            case Absolute:
-            case External:
-            default:
-                copyTo(dest);
-                delete();
-                if(exists() && isDirectory()) deleteDirectory();
         }
+        if(fileDB != null) {
+            FileHandle destParent = dest.parent();
+            FileHandle thisParent = parent();
+            if(thisParent.equals(destParent)) {
+                // Rename if same parent. Similar to absolute from desktop
+                fileDB.rename(this, (TeaFileHandle)dest);
+                return;
+            }
+        }
+
+        copyTo(dest);
+        delete();
+        if(exists() && isDirectory()) deleteDirectory();
     }
 
     /**
