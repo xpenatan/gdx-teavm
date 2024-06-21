@@ -133,17 +133,17 @@ public class LocalDBStorage extends MemoryFileStorage {
                 int type = dbFileData.getType();
 
                 if(type == FileData.TYPE_DIRECTORY) {
-                    putFolderInternal(key);
+                    putFolderInternal(key, false);
                 }
                 else {
                     Int8ArrayWrapper contents = dbFileData.getContents();
                     byte[] bytes = TypedArrays.toByteArray(contents);
-                    putFileInternal(key, bytes);
+                    putFileInternal(key, bytes, false);
                 }
 
                 cursor.doContinue();
+                teaApplication.delayInitCount--;
             }
-            teaApplication.delayInitCount--;
         });
         cursorRequest.setOnError(() -> {
             teaApplication.delayInitCount--;

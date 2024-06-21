@@ -334,6 +334,10 @@ public class MemoryFileStorage extends FileDB {
     }
 
     final public void putFileInternal(String path, byte[] bytes) {
+        putFileInternal(path, bytes, true);
+    }
+
+    final public void putFileInternal(String path, byte[] bytes, boolean callMethod) {
         if(debug) {
             String pathStr = "\"" + path + "\"";
             System.out.println(getClass().getSimpleName() + " PUT FILE: " + pathStr + " Bytes: " + bytes.length);
@@ -343,10 +347,16 @@ public class MemoryFileStorage extends FileDB {
         }
         FileData fileData = new FileData(path, bytes);
         fileMap.put(path, fileData);
-        putFile(path, fileData);
+        if(callMethod) {
+            putFile(path, fileData);
+        }
     }
 
     final public void putFolderInternal(String path) {
+        putFolderInternal(path, true);
+    }
+
+    final public void putFolderInternal(String path, boolean callMethod) {
         if(debug) {
             String pathStr = "\"" + path + "\"";
             System.out.println(getClass().getSimpleName() + " PUT FOLDER: " + pathStr);
@@ -356,17 +366,23 @@ public class MemoryFileStorage extends FileDB {
         }
         FileData fileData = new FileData(path);
         fileMap.put(path, new FileData(path));
-        putFile(path, fileData);
+        if(callMethod) {
+            putFile(path, fileData);
+        }
     }
 
     final public FileData removeInternal(String path) {
+        return removeInternal(path, true);
+    }
+
+    final public FileData removeInternal(String path, boolean callMethod) {
         FileData fileData = fileMap.remove(path);
         if(debug) {
             String pathStr = "\"" + path + "\"";
             String type = fileData != null && fileData.isDirectory() ? " REMOVE FOLDER: " : " REMOVE FILE: ";
             System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Path: " + pathStr);
         }
-        if(fileData != null) {
+        if(fileData != null && callMethod) {
             removeFile(path);
         }
         return fileData;

@@ -215,6 +215,7 @@ public class TeaApplication implements Application, Runnable {
                     if(delayInitCount == 0) {
                         initState = AppState.LOAD_ASSETS;
                     }
+                    break;
                 case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
                     if(queue == 0) {
