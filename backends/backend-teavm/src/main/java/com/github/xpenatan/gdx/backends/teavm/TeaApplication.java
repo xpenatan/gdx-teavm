@@ -214,7 +214,6 @@ public class TeaApplication implements Application, Runnable {
         try {
             switch(state) {
                 case INIT:
-                    System.out.println("delayInitCount: " + delayInitCount);
                     if(delayInitCount == 0) {
                         initState = AppState.LOAD_ASSETS;
                     }
