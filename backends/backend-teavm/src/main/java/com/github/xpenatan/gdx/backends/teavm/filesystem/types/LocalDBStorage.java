@@ -143,6 +143,9 @@ public class LocalDBStorage extends MemoryFileStorage {
 
                 cursor.doContinue();
             }
+        });
+
+        transaction.setOnComplete(() -> {
             teaApplication.delayInitCount--;
         });
 
