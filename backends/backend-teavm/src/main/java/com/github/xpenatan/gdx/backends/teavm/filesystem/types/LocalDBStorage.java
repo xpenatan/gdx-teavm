@@ -56,7 +56,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         });
 
         request.setOnError(() -> {
-            Gdx.app.error("IndexedDB", "Error opening database: " + databaseName);
+            System.err.println("IndexedDB" + " Error opening database: " + databaseName);
             teaApplication.delayInitCount--;
         });
     }
@@ -103,7 +103,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         }
         IDBRequest request = objectStore.put(dbFileData, getJSString(key));
         request.setOnError(() -> {
-            Gdx.app.error("IndexedDB", "Error putting file: " + key);
+            System.err.println("IndexedDB" + " Error putting file: " + key);
         });
     }
 
@@ -116,7 +116,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
         IDBRequest request = objectStore.delete(getJSString(key));
         request.setOnError(() -> {
-            Gdx.app.error("IndexedDB", "Error removing file: " + key);
+            System.err.println("IndexedDB" + " Error removing file: " + key);
         });
     }
 
@@ -142,10 +142,12 @@ public class LocalDBStorage extends MemoryFileStorage {
                 }
 
                 cursor.doContinue();
-                teaApplication.delayInitCount--;
             }
+            teaApplication.delayInitCount--;
         });
+
         cursorRequest.setOnError(() -> {
+            System.err.println("IndexedDB" + " Error cursor");
             teaApplication.delayInitCount--;
         });
     }
