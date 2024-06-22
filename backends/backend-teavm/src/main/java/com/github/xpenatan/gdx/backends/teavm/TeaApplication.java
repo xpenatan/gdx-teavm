@@ -154,24 +154,26 @@ public class TeaApplication implements Application, Runnable {
             @Override
             public void handleEvent(EventWrapper evt) {
                 // notify of state change
-                String state = window.getDocument().getVisibilityState();
-                if ("hidden".equals(state)) {
-                    // hidden: i.e. we are paused
-                    synchronized (lifecycleListeners) {
-                        for (LifecycleListener listener : lifecycleListeners) {
-                            listener.pause();
+                if(initState == AppState.APP_LOOP) {
+                    String state = window.getDocument().getVisibilityState();
+                    if (state.equals("hidden")) {
+                        // hidden: i.e. we are paused
+                        synchronized (lifecycleListeners) {
+                            for (LifecycleListener listener : lifecycleListeners) {
+                                listener.pause();
+                            }
                         }
+                        appListener.pause();
                     }
-                    appListener.pause();
-                }
-                else {
-                    // visible: i.e. we resume
-                    synchronized (lifecycleListeners) {
-                        for (LifecycleListener listener : lifecycleListeners) {
-                            listener.resume();
+                    else if(state.equals("visible")){
+                        // visible: i.e. we resume
+                        synchronized (lifecycleListeners) {
+                            for (LifecycleListener listener : lifecycleListeners) {
+                                listener.resume();
+                            }
                         }
+                        appListener.resume();
                     }
-                    appListener.resume();
                 }
             }
         });
@@ -212,6 +214,7 @@ public class TeaApplication implements Application, Runnable {
         try {
             switch(state) {
                 case INIT:
+                    System.out.println("delayInitCount: " + delayInitCount);
                     if(delayInitCount == 0) {
                         initState = AppState.LOAD_ASSETS;
                     }
