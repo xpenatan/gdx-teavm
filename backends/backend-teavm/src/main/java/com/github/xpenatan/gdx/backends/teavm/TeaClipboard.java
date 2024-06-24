@@ -19,26 +19,25 @@ public class TeaClipboard implements Clipboard {
     private String content = "";
 
     public TeaClipboard() {
+        TeaWindow.get().getDocument().addEventListener("copy", evt -> {
+            ClipboardEventWrapper event = (ClipboardEventWrapper)evt;
+            DataTransferWrapper clipboardData = event.getClipboardData();
+            if(clipboardData != null) {
+    //            System.out.println("COPY DATA: " + content);
+                clipboardData.setData("text/plain", content);
+            }
+            evt.preventDefault();
+        });
 
-    TeaWindow.get().getDocument().addEventListener("copy", evt -> {
-        ClipboardEventWrapper event = (ClipboardEventWrapper)evt;
-        DataTransferWrapper clipboardData = event.getClipboardData();
-        if(clipboardData != null) {
-//            System.out.println("COPY DATA: " + content);
-            clipboardData.setData("text/plain", content);
-        }
-        evt.preventDefault();
-    });
-
-    TeaWindow.get().getDocument().addEventListener("cut", evt -> {
-        ClipboardEventWrapper event = (ClipboardEventWrapper)evt;
-        DataTransferWrapper clipboardData = event.getClipboardData();
-        if(clipboardData != null) {
-//            System.out.println("CUT DATA: " + content);
-            clipboardData.setData("text/plain", content);
-        }
-        evt.preventDefault();
-    });
+        TeaWindow.get().getDocument().addEventListener("cut", evt -> {
+            ClipboardEventWrapper event = (ClipboardEventWrapper)evt;
+            DataTransferWrapper clipboardData = event.getClipboardData();
+            if(clipboardData != null) {
+    //            System.out.println("CUT DATA: " + content);
+                clipboardData.setData("text/plain", content);
+            }
+            evt.preventDefault();
+        });
 
         TeaWindow.get().getDocument().addEventListener("paste", evt -> {
             ClipboardEventWrapper event = (ClipboardEventWrapper)evt;
