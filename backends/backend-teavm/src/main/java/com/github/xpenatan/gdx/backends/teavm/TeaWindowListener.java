@@ -6,10 +6,8 @@ public interface TeaWindowListener {
     /**
      * Called when external files are dropped into the html canvas, e.g from the Desktop.
      *
-     * @param files array with absolute paths to the files
+     * @param files array with absolute paths to the files.
      */
-    default void filesDropped(String[] files) {}
-
     default void filesDropped(FileData[] files) {}
 
     /**
