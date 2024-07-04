@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
+import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
@@ -16,11 +17,8 @@ public class BuildGdxTest {
         String reflectionPackage = "com.badlogic.gdx.math";
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
-        // Change to your source asset directory
-        String libgdxTestAssetsPath = "E:\\Dev\\Projects\\java\\libgdx\\tests\\gdx-tests-android\\assets\\";
-
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new File(libgdxTestAssetsPath));
+        teaBuildConfiguration.assetsPath.add(new AssetFileHandle(args[0]));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);

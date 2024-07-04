@@ -10,8 +10,7 @@ dependencies {
 
 val mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
 
-// Change to your source asset directory
-val assetsDir = File("E:\\Dev\\Projects\\java\\libgdx\\tests\\gdx-tests-android\\assets\\");
+val assetsDir = File(LibExt.gdxTestsAssetsPath)
 
 tasks.register<JavaExec>("gdx-tests-run-desktop") {
     dependsOn("classes")
