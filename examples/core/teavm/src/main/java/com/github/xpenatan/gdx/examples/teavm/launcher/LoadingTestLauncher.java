@@ -111,8 +111,8 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     }
 
     private void preloadScene2dAssets() {
-        preloader.loadSingleAsset(preloader.getAsset("data/loading/loading.pack"));
-        preloader.loadSingleAsset(preloader.getAsset("data/loading/loading.png"));
+//        preloader.loadSingleAsset(preloader.getAsset("data/loading/loading.pack"));
+//        preloader.loadSingleAsset(preloader.getAsset("data/loading/loading.png"));
     }
 
     private void loadScene2dAssets() {
@@ -125,7 +125,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     }
 
     private void loadGameAssets() {
-        assetsCount = preloader.loadAssets();
+//        assetsCount = preloader.loadAssets();
         System.out.println("AssetsCount: " + assetsCount);
     }
 

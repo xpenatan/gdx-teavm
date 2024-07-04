@@ -2,27 +2,41 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.types.InternalDBStorage;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.MemoryFileStorage;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.types.ClasspathStorage;
+import com.github.xpenatan.gdx.backends.teavm.filesystem.types.InternalStorage;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.types.LocalDBStorage;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 
 /**
  * @author xpenatan
  */
 public class TeaFiles implements Files {
 
-    final Preloader preloader;
+    public MemoryFileStorage internalStorage;
+    public MemoryFileStorage classpathStorage;
+    public MemoryFileStorage localStorage;
+    public String storagePath;
 
-    public InternalDBStorage internalStorage;
-    public LocalDBStorage localStorage;
+    public TeaFiles(TeaApplicationConfiguration config, TeaApplication teaApplication) {
+        this.internalStorage = new InternalStorage();
+        this.classpathStorage = new ClasspathStorage();
+        this.localStorage = new LocalDBStorage(teaApplication);
+        storagePath = config.storagePrefix;
+    }
 
-    public TeaFiles(TeaApplicationConfiguration config, TeaApplication teaApplication, Preloader preloader) {
-        this.preloader = preloader;
-        if(config.useNewFileHandle) {
-            this.internalStorage = new InternalDBStorage();
-            this.localStorage = new LocalDBStorage(teaApplication);
+    public FileDB getFileDB(FileType type) {
+        if(type == FileType.Internal) {
+            return internalStorage;
         }
+        else if(type == FileType.Classpath) {
+            return classpathStorage;
+        }
+        else if(type == FileType.Local) {
+            return localStorage;
+        }
+        return null;
     }
 
     @Override
@@ -37,32 +51,32 @@ public class TeaFiles implements Files {
         else if(type == FileType.Local) {
             return local(path);
         }
-        return new TeaFileHandle(preloader, null, path, type);
+        throw new GdxRuntimeException("Type " + type + " is not supported");
     }
 
     @Override
     public FileHandle classpath(String path) {
-        return new TeaFileHandle(preloader, internalStorage, path, FileType.Classpath);
+        return new TeaFileHandle(this, path, FileType.Classpath);
     }
 
     @Override
     public FileHandle internal(String path) {
-        return new TeaFileHandle(preloader, internalStorage, path, FileType.Internal);
-    }
-
-    @Override
-    public FileHandle external(String path) {
-        return new TeaFileHandle(preloader, null, path, FileType.External);
-    }
-
-    @Override
-    public FileHandle absolute(String path) {
-        return new TeaFileHandle(preloader, null, path, FileType.Absolute);
+        return new TeaFileHandle(this, path, FileType.Internal);
     }
 
     @Override
     public FileHandle local(String path) {
-        return new TeaFileHandle(preloader, localStorage, path, FileType.Local);
+        return new TeaFileHandle(this, path, FileType.Local);
+    }
+
+    @Override
+    public FileHandle external(String path) {
+        throw new GdxRuntimeException("Type external is not supported");
+    }
+
+    @Override
+    public FileHandle absolute(String path) {
+        throw new GdxRuntimeException("Type absolute is not supported");
     }
 
     @Override
@@ -77,7 +91,7 @@ public class TeaFiles implements Files {
 
     @Override
     public String getLocalStoragePath() {
-        return FileDB.getInstance().getPath();
+        return storagePath;
     }
 
     @Override

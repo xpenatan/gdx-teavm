@@ -3,28 +3,22 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaFiles;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.types.InternalDBStorage;
 import com.google.common.truth.Truth;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MemoryFileStorageTest {
 
-    private InternalDBStorage internalStorage;
+    private MemoryFileStorage internalStorage;
 
     @Before
     public void setUp() {
         TeaApplicationConfiguration config = new TeaApplicationConfiguration("");
-        TeaFiles teaFiles = new TeaFiles(config, null, null) {
-            @Override
-            public FileHandle local(String path) {
-                return new TeaFileHandle(null, internalStorage, path, FileType.Local);
-            }
-        };
+        TeaFiles teaFiles = new TeaFiles(config, null);
+        internalStorage= new MemoryFileStorage();
+        teaFiles.localStorage = internalStorage;
         Gdx.files = teaFiles;
-        internalStorage = teaFiles.internalStorage;
 //        internalStorage.debug = true;
     }
 

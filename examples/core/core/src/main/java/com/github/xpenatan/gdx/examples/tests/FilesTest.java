@@ -109,35 +109,35 @@ public class FilesTest implements ApplicationListener {
             message += "\nLocal storage available\n";
             message += "Local storage path: " + Gdx.files.getLocalStoragePath() + "\n\n";
 
-//            {
-//                // Test multiple subfolder
-//                FileHandle subFolder = Gdx.files.local("rootFolder/childFolder/subFolder/");
-//                FileHandle childFolder1 = Gdx.files.local("rootFolder/childFolder/");
-//                FileHandle childFolder2 = Gdx.files.local("rootFolder/childFolder");
-//                FileHandle rootFolder1 = Gdx.files.local("rootFolder/");
-//                FileHandle rootFolder2 = Gdx.files.local("rootFolder");
-//
-//                boolean exists = rootFolder1.exists();
-//
-//                message += "subFolder: " + subFolder +  " exists: " + subFolder.exists() + "\n";
-//                message += "childFolder1: " + childFolder1 +  " exists: " + childFolder1.exists() + "\n";
-//                message += "childFolder2: " + childFolder2 +  " exists: " + childFolder2.exists() + "\n";
-//                message += "rootFolder1: " + rootFolder1 +  " exists: " + exists + "\n";
-//                message += "rootFolder2: " + rootFolder2 +  " exists: " + rootFolder2.exists() + "\n";
-//
-//                subFolder.mkdirs();
-//
-//                if(exists) {
-//                    FileHandle[] list = rootFolder1.list();
-//                    for(int i = 0; i < list.length; i++) {
-//                        FileHandle fileHandle = list[i];
-//                        System.out.println("FOLDER LIST: " + fileHandle);
-//                    }
-//                    boolean delete = rootFolder1.deleteDirectory();
-//                    System.out.println("Deleted: " + delete + " " + rootFolder1);
-//                }
-//
-//            }
+            {
+                // Test multiple subfolder
+                FileHandle subFolder = Gdx.files.local("rootFolder/childFolder/subFolder/");
+                FileHandle childFolder1 = Gdx.files.local("rootFolder/childFolder/");
+                FileHandle childFolder2 = Gdx.files.local("rootFolder/childFolder");
+                FileHandle rootFolder1 = Gdx.files.local("rootFolder/");
+                FileHandle rootFolder2 = Gdx.files.local("rootFolder");
+
+                boolean exists = rootFolder1.exists();
+
+                message += "subFolder: " + subFolder +  " exists: " + subFolder.exists() + "\n";
+                message += "childFolder1: " + childFolder1 +  " exists: " + childFolder1.exists() + "\n";
+                message += "childFolder2: " + childFolder2 +  " exists: " + childFolder2.exists() + "\n";
+                message += "rootFolder1: " + rootFolder1 +  " exists: " + exists + "\n";
+                message += "rootFolder2: " + rootFolder2 +  " exists: " + rootFolder2.exists() + "\n";
+
+                subFolder.mkdirs();
+
+                if(exists) {
+                    FileHandle[] list = rootFolder1.list();
+                    for(int i = 0; i < list.length; i++) {
+                        FileHandle fileHandle = list[i];
+                        System.out.println("FOLDER LIST: " + fileHandle);
+                    }
+                    boolean delete = rootFolder1.deleteDirectory();
+                    System.out.println("Deleted: " + delete + " " + rootFolder1);
+                }
+
+            }
             message += "\n";
             {
                 // Test file in subfolder
@@ -167,76 +167,76 @@ public class FilesTest implements ApplicationListener {
             }
             message += "\n";
 
-//            BufferedWriter out = null;
-//            boolean canDelete = false;
-//            try {
-//                FileHandle testFile = Gdx.files.local("test.txt");
-//                boolean exists = testFile.exists();
-//                canDelete = exists;
-//                message += "text.txt exists: " + exists + "\n";
-//
-//                testFile.writeString("test", false);
-//
-//            } catch(GdxRuntimeException ex) {
-//                message += "Couldn't open localstorage/test.txt\n";
-//            } finally {
-//                StreamUtils.closeQuietly(out);
-//            }
-//
-//            try {
-//                String s = Gdx.files.local("test.txt").readString();
-//                message += "Open local success\n";
-//            } catch(Throwable e) {
-//                message += "Couldn't open localstorage/test.txt\n" + e.getMessage() + "\n";
-//            }
-//
-//            BufferedReader in = null;
-//            try {
-//                FileHandle testFile = Gdx.files.local("test.txt");
-//                InputStream read = testFile.read();
-//                in = new BufferedReader(new InputStreamReader(read));
-//                if(!in.readLine().equals("test"))
-//                    message += "Read result wrong\n";
-//                else
-//                    message += "Read local success\n";
-//            } catch(GdxRuntimeException ex) {
-//                message += "Couldn't open localstorage/test.txt\n";
-//            } catch(Throwable e) {
-//                message += "Couldn't read localstorage/test.txt\n";
-//            } finally {
-//                StreamUtils.closeQuietly(in);
-//            }
-//
-//            try {
-//                byte[] testBytes = Gdx.files.local("test.txt").readBytes();
-//                if(Arrays.equals("test".getBytes(), testBytes))
-//                    message += "Read into byte array success\n";
-//                else
-//                    fail();
-//            } catch(Throwable e) {
-//                message += "Couldn't read localstorage/test.txt\n" + e.getMessage() + "\n";
-//            }
-//
-//            if(canDelete) {
-//                if(!Gdx.files.local("test.txt").delete())  {
-//                    message += "Couldn't delete localstorage/test.txt";
-//                }
-//            }
-//            message += "\n";
-//            {
-//                FileHandle root1 = Gdx.files.local("");
-//                FileHandle root2 = Gdx.files.local("./");
-//                FileHandle root3 = Gdx.files.local(".");
-//
-//                message += "root1: " + root1 +  " exists: " + root1.exists() + " Root size: " + root1.list().length + "\n";
-//                message += "root2: " + root2 +  " exists: " + root2.exists() + " Root size: " + root2.list().length + "\n";
-//                message += "root3: " + root3 +  " exists: " + root3.exists() + " Root size: " + root3.list().length + "\n";
-//                message += "root2 length: " + root2.length() + "\n";
-//                FileHandle[] list = root1.list();
-//                for(int i = 0; i < list.length; i++) {
-//                    System.out.println("Files: " + list[i]);
-//                }
-//            }
+            BufferedWriter out = null;
+            boolean canDelete = false;
+            try {
+                FileHandle testFile = Gdx.files.local("test.txt");
+                boolean exists = testFile.exists();
+                canDelete = exists;
+                message += "text.txt exists: " + exists + "\n";
+
+                testFile.writeString("test", false);
+
+            } catch(GdxRuntimeException ex) {
+                message += "Couldn't open localstorage/test.txt\n";
+            } finally {
+                StreamUtils.closeQuietly(out);
+            }
+
+            try {
+                String s = Gdx.files.local("test.txt").readString();
+                message += "Open local success\n";
+            } catch(Throwable e) {
+                message += "Couldn't open localstorage/test.txt\n" + e.getMessage() + "\n";
+            }
+
+            BufferedReader in = null;
+            try {
+                FileHandle testFile = Gdx.files.local("test.txt");
+                InputStream read = testFile.read();
+                in = new BufferedReader(new InputStreamReader(read));
+                if(!in.readLine().equals("test"))
+                    message += "Read result wrong\n";
+                else
+                    message += "Read local success\n";
+            } catch(GdxRuntimeException ex) {
+                message += "Couldn't open localstorage/test.txt\n";
+            } catch(Throwable e) {
+                message += "Couldn't read localstorage/test.txt\n";
+            } finally {
+                StreamUtils.closeQuietly(in);
+            }
+
+            try {
+                byte[] testBytes = Gdx.files.local("test.txt").readBytes();
+                if(Arrays.equals("test".getBytes(), testBytes))
+                    message += "Read into byte array success\n";
+                else
+                    fail();
+            } catch(Throwable e) {
+                message += "Couldn't read localstorage/test.txt\n" + e.getMessage() + "\n";
+            }
+
+            if(canDelete) {
+                if(!Gdx.files.local("test.txt").delete())  {
+                    message += "Couldn't delete localstorage/test.txt";
+                }
+            }
+            message += "\n";
+            {
+                FileHandle root1 = Gdx.files.local("");
+                FileHandle root2 = Gdx.files.local("./");
+                FileHandle root3 = Gdx.files.local(".");
+
+                message += "root1: " + root1 +  " exists: " + root1.exists() + " Root size: " + root1.list().length + "\n";
+                message += "root2: " + root2 +  " exists: " + root2.exists() + " Root size: " + root2.list().length + "\n";
+                message += "root3: " + root3 +  " exists: " + root3.exists() + " Root size: " + root3.list().length + "\n";
+                message += "root2 length: " + root2.length() + "\n";
+                FileHandle[] list = root1.list();
+                for(int i = 0; i < list.length; i++) {
+                    System.out.println("Files: " + list[i]);
+                }
+            }
         }
     }
 

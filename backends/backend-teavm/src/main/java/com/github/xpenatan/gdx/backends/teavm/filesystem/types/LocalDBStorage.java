@@ -24,10 +24,7 @@ import org.teavm.jso.indexeddb.IDBTransaction;
 
 public class LocalDBStorage extends MemoryFileStorage {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
-    private final static String ROOT_PATH = "db/assets";
     private IDBDatabase dataBase = null;
-
-    private String databaseName;
 
     public LocalDBStorage(TeaApplication teaApplication) {
         setupIndexedDB(teaApplication);
@@ -41,7 +38,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         teaApplication.delayInitCount++;
 
         IDBFactory instance = IDBFactory.getInstance();
-        databaseName = getDatabaseName(config);
+        String databaseName = config.storagePrefix;
         IDBOpenDBRequest request = instance.open(databaseName, 1);
 
         request.setOnUpgradeNeeded(evt -> {
@@ -59,28 +56,6 @@ public class LocalDBStorage extends MemoryFileStorage {
             System.err.println("IndexedDB" + " Error opening database: " + databaseName);
             teaApplication.delayInitCount--;
         });
-    }
-
-    private String getDatabaseName(TeaApplicationConfiguration config) {
-        String path = ROOT_PATH;
-        String storagePrefix = config.storagePrefix.trim();
-        if(storagePrefix.endsWith("/")) {
-            path = storagePrefix + ROOT_PATH;
-        }
-        else {
-            if(storagePrefix.isEmpty()) {
-                path = ROOT_PATH;
-            }
-            else {
-                path = storagePrefix + "/" + ROOT_PATH;
-            }
-        }
-        return path;
-    }
-
-    @Override
-    public String getPath() {
-        return databaseName;
     }
 
     @Override

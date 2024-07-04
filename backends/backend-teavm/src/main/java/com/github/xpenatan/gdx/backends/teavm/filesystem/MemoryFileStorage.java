@@ -15,7 +15,7 @@ public class MemoryFileStorage extends FileDB {
 
     private final Array<String> tmpPaths = new Array<>();
 
-    public boolean debug = false;
+    public boolean debug = true;
 
     public MemoryFileStorage() {
         fileMap = new OrderedMap<>();
@@ -204,11 +204,6 @@ public class MemoryFileStorage extends FileDB {
         }
     }
 
-    @Override
-    public String getPath() {
-        return "";
-    }
-
     public String debugAllFiles() {
         String text = "";
         text += println("####### START DEBUG FILE: " + fileMap.size + "\n");
@@ -328,7 +323,7 @@ public class MemoryFileStorage extends FileDB {
         if(debug) {
             path = "\"" + path + "\"";
             String type = fileData != null && fileData.isDirectory() ? " GET FOLDER: " : " GET FILE: ";
-            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Size: " + fileData.getBytesSize() + " Path: " + path);
+            System.out.println(getClass().getSimpleName() + type + (fileData != null) + " Size: " + (fileData != null ? fileData.getBytesSize() : 0) + " Path: " + path);
         }
         return fileData;
     }

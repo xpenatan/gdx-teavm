@@ -89,7 +89,7 @@ public class PixmapEmu implements Disposable {
                 return false;
             }
         };
-        AssetDownloader.getInstance().load(true, url, AssetType.Image, null, listener);
+        AssetDownloader.getInstance().load(true, url, AssetType.Binary, null, listener);
     }
 
     public PixmapEmu(FileHandle file) {
@@ -97,23 +97,11 @@ public class PixmapEmu implements Disposable {
         String path = webFileHandler.path();
 
         TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
-        byte[] bytes = null;
-        if(config.useNewFileHandle) {
-            if(!file.exists()) {
-                // Add a way to debug when assets was not loaded in preloader.
-                throw new GdxRuntimeException("File is null, it does not exist: " + path);
-            }
-            bytes = file.readBytes();
+        if(!file.exists()) {
+            // Add a way to debug when assets was not loaded in preloader.
+            throw new GdxRuntimeException("File is null, it does not exist: " + path);
         }
-        else {
-            Blob object = webFileHandler.preloader.images.get(path);
-            if(object == null) {
-                // Add a way to debug when assets was not loaded in preloader.
-                throw new GdxRuntimeException("File is null, it does not exist: " + path);
-            }
-            Int8ArrayWrapper response = object.getData();
-            bytes = TypedArrays.toByteArray(response);
-        }
+        byte[] bytes = file.readBytes();
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
         initPixmapEmu();
     }

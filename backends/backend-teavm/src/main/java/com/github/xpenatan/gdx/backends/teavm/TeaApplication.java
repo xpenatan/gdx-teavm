@@ -120,7 +120,7 @@ public class TeaApplication implements Application, Runnable {
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
-        files = new TeaFiles(config, this, preloader);
+        files = new TeaFiles(config, this);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
@@ -454,10 +454,6 @@ public class TeaApplication implements Application, Runnable {
         synchronized (lifecycleListeners) {
             lifecycleListeners.removeValue(listener, true);
         }
-    }
-
-    public String getAssetUrl() {
-        return preloader.getAssetUrl();
     }
 
     /** @return {@code true} if application runs on a mobile device */

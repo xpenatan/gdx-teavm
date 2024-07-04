@@ -346,41 +346,6 @@ public class TeaBuilder {
         }
     }
 
-    private static void assetsDefaultClasspath(ArrayList<String> filePath) {
-        //TODO remove if its working correctly without these assets
-//        filePath.add("com/badlogic/gdx/graphics/g3d/particles/");
-//        filePath.add("com/badlogic/gdx/graphics/g3d/shaders/");
-//        filePath.add("com/badlogic/gdx/utils/arial-15.fnt"); // Cannot be utils folder for now because its trying to copy from emu folder and not core gdx classpath
-//        filePath.add("com/badlogic/gdx/utils/arial-15.png");
-//
-//        filePath.add("com/badlogic/gdx/utils/lsans-15.fnt");
-//        filePath.add("com/badlogic/gdx/utils/lsans-15.png");
-
-//        filePath.add("net/mgsx/gltf/shaders/brdfLUT.png");
-//        filePath.add("net/mgsx/gltf/shaders/default.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/default.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/gdx-pbr.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/depth.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/depth.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/emissive-only.fs");
-//        filePath.add("net/mgsx/gltf/shaders/ibl-sun.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/ibl-sun.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/skybox.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/skybox.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/compat.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/compat.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/env.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/functions.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/ibl.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/iridescence.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/lights.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/material.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.fs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/pbr.vs.glsl");
-//        filePath.add("net/mgsx/gltf/shaders/pbr/shadows.glsl");
-    }
-
     private static ACCEPT_STATE acceptPath(String path) {
         ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
         if(path.contains("junit"))
@@ -524,47 +489,20 @@ public class TeaBuilder {
     }
 
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, ArrayList<URL> acceptedURL) {
-        ArrayList<String> webappAssetsFiles = new ArrayList<>();
-        webappAssetsFiles.add(webappName);
         TeaBuilder.logHeader("COPYING ASSETS");
+
+        String webappOutputPath = webappDirectory + File.separator + webappName;
+        String assetsOutputPath = webappOutputPath + File.separator + "assets";
+
+        ArrayList<AssetFileHandle> assetsPaths = new ArrayList<>();
+        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
+        AssetFilter filter = configuration.assetFilter();
 
         boolean shouldUseDefaultHtmlIndex = configuration.shouldUseDefaultHtmlIndex();
         if(shouldUseDefaultHtmlIndex) {
-            AssetsCopy.copy(classLoader, webappAssetsFiles, new ArrayList<>(), null, webappDirectory, false, false);
-            TeaBuilder.log("");
+            useDefaultHTMLIndexFile(classLoader, configuration, webappDirectory, webappName, webappOutputPath);
         }
 
-        String scriptsOutputPath = webappDirectory + File.separator + webappName;
-        String assetsOutputPath = scriptsOutputPath + File.separator + "assets";
-
-        AssetFilter filter = configuration.assetFilter();
-        ArrayList<File> assetsPaths = new ArrayList<>();
-        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
-        assetsDefaultClasspath(classPathAssetsFiles);
-
-        if(shouldUseDefaultHtmlIndex) {
-            File indexFile = new File(scriptsOutputPath + File.separator + "index.html");
-            FileHandle handler = new FileHandle(indexFile);
-            String indexHtmlStr = handler.readString();
-
-            String logo = configuration.getLogoPath();
-            String htmlLogo = "assets/" + logo;
-            boolean showLoadingLogo = configuration.isShowLoadingLogo();
-
-            indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
-            indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
-            indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
-            indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
-            indexHtmlStr = indexHtmlStr.replace(
-                    "%LOGO%", showLoadingLogo ? "<img id=\"progress-img\" src=\"" + htmlLogo + "\">" : ""
-            );
-
-            handler.writeString(indexHtmlStr, false);
-
-            if(showLoadingLogo) {
-                classPathAssetsFiles.add(logo);
-            }
-        }
         ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
         classPathAssetsFiles.addAll(additionalAssetClasspath);
         boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
@@ -572,7 +510,39 @@ public class TeaBuilder {
 
         // Copy assets from resources
         List<String> resources = TeaVMResourceProperties.getResources(acceptedURL);
-        AssetsCopy.copy(classLoader, resources, null, null, assetsOutputPath, true, true);
+        AssetsCopy.copyResources(classLoader, resources, assetsOutputPath, true, true);
         TeaBuilder.log("");
+    }
+
+    private static void useDefaultHTMLIndexFile(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, String webappOutputPath) {
+        ArrayList<String> webappAssetsFiles = new ArrayList<>();
+        webappAssetsFiles.add(webappName);
+        // Copy webapp folder from resources to destination
+        AssetsCopy.copyResources(classLoader, webappAssetsFiles, webappDirectory, false, false);
+        TeaBuilder.log("");
+
+        File indexFile = new File(webappOutputPath + File.separator + "index.html");
+        FileHandle handler = new FileHandle(indexFile);
+        String indexHtmlStr = handler.readString();
+
+        String logo = configuration.getLogoPath();
+        String htmlLogo = logo;
+        boolean showLoadingLogo = configuration.isShowLoadingLogo();
+
+        indexHtmlStr = indexHtmlStr.replace("%TITLE%", configuration.getHtmlTitle());
+        indexHtmlStr = indexHtmlStr.replace("%WIDTH%", configuration.getHtmlWidth());
+        indexHtmlStr = indexHtmlStr.replace("%HEIGHT%", configuration.getHtmlHeight());
+        indexHtmlStr = indexHtmlStr.replace("%ARGS%", configuration.getMainClassArgs());
+        indexHtmlStr = indexHtmlStr.replace(
+                "%LOGO%", showLoadingLogo ? "<img id=\"progress-img\" src=\"" + htmlLogo + "\">" : ""
+        );
+
+        handler.writeString(indexHtmlStr, false);
+
+        if(showLoadingLogo) {
+            ArrayList<String> logoAsset = new ArrayList<>();
+            logoAsset.add(logo);
+            AssetsCopy.copyResources(classLoader, logoAsset, webappOutputPath, false, false);
+        }
     }
 }
