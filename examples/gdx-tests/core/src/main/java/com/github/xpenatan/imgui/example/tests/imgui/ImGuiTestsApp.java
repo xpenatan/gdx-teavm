@@ -43,13 +43,7 @@ public class ImGuiTestsApp implements Screen {
     @Override
     public void show() {
         testList = TeaVMGdxTests.getTestList();
-        if(Gdx.app.getType() == Application.ApplicationType.WebGL) {
-            // Not possible to have ini filename with webgl
-            ImGui.CreateContext(false);
-        }
-        else {
-            ImGui.CreateContext(true);
-        }
+        ImGui.CreateContext();
 
         ImGuiIO io = ImGui.GetIO();
         io.ConfigFlags(ImGuiConfigFlags.ImGuiConfigFlags_DockingEnable);
