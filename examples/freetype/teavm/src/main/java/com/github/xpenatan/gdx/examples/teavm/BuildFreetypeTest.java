@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
+import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
@@ -14,7 +15,7 @@ public class BuildFreetypeTest {
 
     public static void main(String[] args) throws IOException {
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
+        teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
