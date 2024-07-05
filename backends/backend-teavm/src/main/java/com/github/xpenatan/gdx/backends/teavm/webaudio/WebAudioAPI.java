@@ -155,8 +155,10 @@ public class WebAudioAPI {
 
             audioSourceData.pauseTime = audioContext.getCurrentTime();
             // Remove ended listener when pausing
-            audioSourceData.node.setOnEnded(evt -> {});
-            audioSourceData.node.stop();
+            if(audioSourceData.node != null) {
+                audioSourceData.node.setOnEnded(evt -> {});
+                audioSourceData.node.stop();
+            }
         }
     }
 
@@ -232,9 +234,8 @@ public class WebAudioAPI {
         int soundKey = (int)soundId;
         if(activeSounds.containsKey(soundKey)) {
             AudioSourceData audioSourceData = activeSounds.get(soundKey);
-            float playbackPosition = audioSourceData.node.getPlaybackPosition();
-
-            System.out.println("playbackPosition: " + playbackPosition);
+            float playbackPosition = audioSourceData.node.getPlaybackDuration();
+            return playbackPosition;
 
 
 //            if(audioSourceData.pauseTime == audioSourceData.startTime) {
@@ -296,7 +297,7 @@ public class WebAudioAPI {
     private static class AudioSourceData {
         public final int soundId;
 
-        public AudioBufferSourceNodeWrapper node;
+        private AudioBufferSourceNodeWrapper node;
         public AudioControlGraph audioControlGraph;
         public double startTime;
         public double pauseTime;
@@ -307,6 +308,10 @@ public class WebAudioAPI {
         public float pan;
         public boolean loop;
         public boolean delayedPlay = false;
+
+        public AudioBufferSourceNodeWrapper getNode() {
+            return node;
+        }
 
         public AudioSourceData(int soundId) {
             this.soundId = soundId;

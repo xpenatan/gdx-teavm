@@ -13,20 +13,24 @@ import org.teavm.jso.webaudio.MediaEvent;
 
 /**
  * Ported https://github.com/WebAudio/web-audio-api/issues/2397#issuecomment-1262583050
+ * SourceNode is duplicated because there is sound glitch when trying the original code,
  * @author xpenatan
  */
 public class AudioBufferSourceNodeWrapper {
 
-    private AudioContext audioContext;
     public AudioBufferSourceNode _bufferSource;
-    ChannelSplitterNode _splitter;
-    ChannelMergerNode _out;
-    Float32Array _sampleHolder;
-    AnalyserNode _analyser;
+    private AudioContext audioContext;
+//    private AudioBufferSourceNode _bufferPositionSource;
+    private ChannelSplitterNode _splitter;
+    private ChannelMergerNode _out;
+    private Float32Array _sampleHolder;
+    private AnalyserNode _analyser;
+    private float duration;
 
     public AudioBufferSourceNodeWrapper(AudioContext audioContext) {
         this.audioContext = audioContext;
         _bufferSource = audioContext.createBufferSource();
+//        _bufferPositionSource = audioContext.createBufferSource();
         _splitter = audioContext.createChannelSplitter();
         _out = audioContext.createChannelMerger();
         _sampleHolder = new Float32Array(1);
@@ -37,41 +41,42 @@ public class AudioBufferSourceNodeWrapper {
     }
 
     public void setBuffer(AudioBuffer audioBuffer) {
+//        _bufferSource.setBuffer(audioBuffer);
+        duration = (float)audioBuffer.getDuration();
 
-        AudioBuffer buffer2 = audioContext.createBuffer(audioBuffer.getNumberOfChannels() + 1, audioBuffer.getLength(), audioBuffer.getSampleRate());
+        int numberOfChannels = audioBuffer.getNumberOfChannels();
+        int length = audioBuffer.getLength();
+        float sampleRate = audioBuffer.getSampleRate();
 
-        _bufferSource.setBuffer(buffer2);
+        AudioBuffer newBuffer = audioContext.createBuffer(numberOfChannels + 1, length, sampleRate);
 
         // copy data from the audioBuffer arg to our new AudioBuffer
-        for (int index = 0; index < audioBuffer.getNumberOfChannels(); index++) {
-            _bufferSource.getBuffer().copyToChannel(audioBuffer.getChannelData(index), index);
+        for (int index = 0; index < numberOfChannels; index++) {
+            newBuffer.copyToChannel(audioBuffer.getChannelData(index), index);
         }
 
         // fill up the position channel with numbers from 0 to 1
-
-        int length = audioBuffer.getLength();
         Float32Array timeDataArray = new Float32Array(length);
         for (int i = 0; i < length; i++) {
-            timeDataArray.set(i, (float)i / length);
+            float val = i / (float)length;
+            timeDataArray.set(i, val);
         }
-        _bufferSource.getBuffer().copyToChannel(timeDataArray, audioBuffer.getNumberOfChannels());
+        newBuffer.copyToChannel(timeDataArray, numberOfChannels);
 
-//        for (int index = 0; index < audioBuffer.getLength(); index++) {
-//            Float32Array channelData = _bufferSource.getBuffer().getChannelData(audioBuffer.getNumberOfChannels());
-//            channelData.set(index, (float)(index / audioBuffer.getLength()));
-//        }
+        // Set buffer need to be after copy channel so timer works on firefox
+        _bufferSource.setBuffer(newBuffer);
 
         // split the channels
         _bufferSource.connect(_splitter);
 
         // connect all the audio channels to the line out
-        for (int index = 0; index < audioBuffer.getNumberOfChannels(); index++) {
+        for (int index = 0; index < numberOfChannels; index++) {
             _splitter.connect(_out, index, index);
         }
 
         // connect the position channel to an analyzer so we can extract position data
         _analyser = audioContext.createAnalyser();
-        _splitter.connect(_analyser, audioBuffer.getNumberOfChannels());
+        _splitter.connect(_analyser, numberOfChannels+1);
     }
 
     public AudioParam getPlaybackRate() {
@@ -88,6 +93,7 @@ public class AudioBufferSourceNodeWrapper {
 
     public void setLoop(boolean loop) {
         _bufferSource.setLoop(loop);
+//        _bufferPositionSource.setLoop(loop);
     }
 
     public double getLoopStart() {
@@ -96,6 +102,7 @@ public class AudioBufferSourceNodeWrapper {
 
     public void setLoopStart(double start) {
         _bufferSource.setLoopStart(start);
+//        _bufferPositionSource.setLoopStart(start);
     }
 
     public double getLoopEnd() {
@@ -104,6 +111,7 @@ public class AudioBufferSourceNodeWrapper {
 
     public void setLoopEnd(double end) {
         _bufferSource.setLoopEnd(end);
+//        _bufferPositionSource.setLoopEnd(end);
     }
 
     public void setOnEnded(EventListener<MediaEvent> ent) {
@@ -112,30 +120,42 @@ public class AudioBufferSourceNodeWrapper {
 
     public void start(double when, double offset, double duration) {
         _bufferSource.start(when, offset, duration);
+//        _bufferPositionSource.start(when, offset, duration);
     }
 
     public void start(double when, double offset) {
         _bufferSource.start(when, offset);
+//        _bufferPositionSource.start(when, offset);
     }
 
     public void start(double when) {
         _bufferSource.start(when);
+//        _bufferPositionSource.start(when);
     }
 
     public void start() {
         _bufferSource.start();
+//        _bufferPositionSource.start();
     }
 
     public void stop(double when) {
         _bufferSource.stop(when);
+//        _bufferPositionSource.stop(when);
     }
 
     public void stop() {
         _bufferSource.stop();
+//        _bufferPositionSource.stop();
     }
 
+    /** return position 0f - 1f */
     public float getPlaybackPosition() {
         _analyser.getFloatTimeDomainData(_sampleHolder);
         return _sampleHolder.get(0);
+    }
+
+    /** return position 0f - 1f */
+    public float getPlaybackDuration() {
+        return getPlaybackPosition() * duration;
     }
 }
