@@ -9,16 +9,16 @@ import org.teavm.jso.JSObject;
  * @author xpenatan
  */
 public class AudioControlGraphPool extends Pool<AudioControlGraph> {
-	public JSObject audioContext;
-	public JSObject destinationNode;
+    public JSObject audioContext;
+    public JSObject destinationNode;
 
-	public AudioControlGraphPool(JSObject audioContext, JSObject destinationNode) {
-		this.audioContext = audioContext;
-		this.destinationNode = destinationNode;
-	}
+    public AudioControlGraphPool(JSObject audioContext, JSObject destinationNode) {
+        this.audioContext = audioContext;
+        this.destinationNode = destinationNode;
+    }
 
-	@Override
-	protected AudioControlGraph newObject () {
-		return new AudioControlGraph(audioContext, destinationNode);
-	}
+    @Override
+    protected AudioControlGraph newObject() {
+        return new AudioControlGraph(audioContext, destinationNode);
+    }
 }

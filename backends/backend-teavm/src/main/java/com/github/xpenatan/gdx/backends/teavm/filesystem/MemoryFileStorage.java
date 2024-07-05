@@ -15,7 +15,7 @@ public class MemoryFileStorage extends FileDB {
 
     private final Array<String> tmpPaths = new Array<>();
 
-    public boolean debug = true;
+    public boolean debug = false;
 
     public MemoryFileStorage() {
         fileMap = new OrderedMap<>();

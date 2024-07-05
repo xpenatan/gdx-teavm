@@ -5,19 +5,12 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.audio.Audio;
-import com.github.xpenatan.gdx.backends.teavm.dom.audio.AudioContextWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.audio.HTMLAudioElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
-import org.teavm.jso.ajax.ReadyStateChangeHandler;
-import org.teavm.jso.ajax.XMLHttpRequest;
-import org.teavm.jso.typedarrays.ArrayBuffer;
-import org.teavm.jso.typedarrays.Int8Array;
+import org.teavm.jso.webaudio.AudioContext;
+import org.teavm.jso.webaudio.AudioDestinationNode;
+import org.teavm.jso.webaudio.GainNode;
 
 /**
  * Port from GWT gdx 1.12.0
@@ -25,8 +18,8 @@ import org.teavm.jso.typedarrays.Int8Array;
  * @author xpenatan
  */
 public class WebAudioAPIManager implements LifecycleListener {
-    private final AudioContextWrapper audioContext;
-    private final JSObject globalVolumeNode;
+    private final AudioContext audioContext;
+    private final GainNode globalVolumeNode;
     private final AudioControlGraphPool audioControlGraphPool;
     private static boolean soundUnlocked;
 
@@ -117,7 +110,7 @@ public class WebAudioAPIManager implements LifecycleListener {
             "}" +
             "return null;"
     )
-    private static native AudioContextWrapper createAudioContextJSNI();
+    private static native AudioContext createAudioContextJSNI();
 
     @JSBody(params = { "audioContext" }, script = "" +
             "var gainNode = null;" +
@@ -129,7 +122,7 @@ public class WebAudioAPIManager implements LifecycleListener {
             "gainNode.connect(audioContext.destination);" +
             "return gainNode;"
     )
-    private static native JSObject createGlobalVolumeNodeJSNI(JSObject audioContext);
+    private static native GainNode createGlobalVolumeNodeJSNI(JSObject audioContext);
 
     @JSBody(params = { "audioContext", "gainNode" }, script = "" +
             "gainNode.disconnect(audioContext.destination);"
@@ -146,69 +139,12 @@ public class WebAudioAPIManager implements LifecycleListener {
     }
 
     public Sound createSound(FileHandle fileHandle) {
-        final WebAudioAPISound newSound = new WebAudioAPISound(audioContext, globalVolumeNode, audioControlGraphPool);
-
-        String url = ((TeaFileHandle)fileHandle).getAssetUrl();
-
-        XMLHttpRequest request = XMLHttpRequest.create();
-        request.setOnReadyStateChange(new ReadyStateChangeHandler() {
-            @Override
-            public void stateChanged() {
-                if(request.getReadyState() == XMLHttpRequest.DONE) {
-                    if(request.getStatus() != 200) {
-                    }
-                    else {
-                        Int8ArrayWrapper data = (Int8ArrayWrapper)Int8Array.create((ArrayBuffer)request.getResponse());
-
-                        /*
-                         * Start decoding the sound data. This is an asynchronous process, which is a bad fit for the libGDX API, which
-                         * expects sound creation to be synchronous. The result is that sound won't actually start playing until the
-                         * decoding is done.
-                         */
-
-                        DecodeAudioFunction audioFunction = new DecodeAudioFunction() {
-                            @Override
-                            public void decodeAudioFunction(JSObject jsObject) {
-                                newSound.setAudioBuffer(jsObject);
-                            }
-                        };
-                        decodeAudioData(getAudioContext(), data.getBuffer(), audioFunction);
-                    }
-                }
-            }
-        });
-        request.open("GET", url);
-        request.setResponseType("arraybuffer");
-        request.send();
-        return newSound;
+        return new WebAudioSound(fileHandle, audioContext, globalVolumeNode, audioControlGraphPool);
     }
 
     public Music createMusic(FileHandle fileHandle) {
-        String url = ((TeaFileHandle)fileHandle).getAssetUrl();
-
-        HTMLAudioElementWrapper audio = Audio.createIfSupported();
-        audio.setSrc(url);
-
-        WebAudioAPIMusic music = new WebAudioAPIMusic(audioContext, audio, audioControlGraphPool);
-
-        return music;
+        return new WebAudioMusic(fileHandle, audioContext, globalVolumeNode, audioControlGraphPool);
     }
-
-    @JSFunctor
-    public interface DecodeAudioFunction extends JSObject {
-        void decodeAudioFunction(JSObject jsObject);
-    }
-
-    @JSBody(params = { "audioContextIn", "audioData", "decodeFunction" }, script = "" +
-            "audioContextIn.decodeAudioData(" +
-            "   audioData, " +
-            "   decodeFunction," +
-            "   function() {" +
-            "      console.log(\"Error: decodeAudioData\");" +
-            "   }" +
-            ");"
-    )
-    public static native void decodeAudioData(JSObject audioContextIn, ArrayBufferWrapper audioData, DecodeAudioFunction decodeFunction);
 
     @Override
     public void pause() {
