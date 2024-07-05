@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
@@ -18,7 +17,7 @@ public class BuildGdxTest {
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new AssetFileHandle(args[0]));
+        teaBuildConfiguration.assetsPath.add(new File(args[0]));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
