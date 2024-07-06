@@ -1,9 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class TeaBuildConfiguration {
 
     public AssetFilter assetFilter = null;
-    public ArrayList<File> assetsPath = new ArrayList<>();
+    public ArrayList<AssetFileHandle> assetsPath = new ArrayList<>();
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
 
     private String mainApplicationClass;
@@ -89,7 +89,7 @@ public class TeaBuildConfiguration {
         return webappPath;
     }
 
-    public boolean assetsPath(ArrayList<File> paths) {
+    public boolean assetsPath(ArrayList<AssetFileHandle> paths) {
         paths.addAll(assetsPath);
         return true;
     }

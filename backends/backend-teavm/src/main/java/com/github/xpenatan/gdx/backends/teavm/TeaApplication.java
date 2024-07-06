@@ -120,12 +120,13 @@ public class TeaApplication implements Application, Runnable {
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
-        files = new TeaFiles(config, this, preloader);
+        files = new TeaFiles(config, this);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
 
         initGdx();
+        initSound();
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -456,10 +457,6 @@ public class TeaApplication implements Application, Runnable {
         }
     }
 
-    public String getAssetUrl() {
-        return preloader.getAssetUrl();
-    }
-
     /** @return {@code true} if application runs on a mobile device */
     public static boolean isMobileDevice () {
         // RegEx pattern from detectmobilebrowsers.com (public domain)
@@ -483,6 +480,15 @@ public class TeaApplication implements Application, Runnable {
 
     private void initGdx() {
         preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+        });
+    }
+
+    private void initSound() {
+        preloader.loadScript(true, "howler.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;

@@ -205,7 +205,7 @@ public class TypedArrays {
 
     @JSBody(params = {"buffer"}, script = "" +
             "return buffer;")
-    private static native ArrayBufferViewWrapper getTypedArray(@JSByRef() byte[] buffer);
+    public static native ArrayBufferViewWrapper getTypedArray(@JSByRef() byte[] buffer);
 
     @JSBody(params = {"buffer"}, script = "" +
             "return buffer;")

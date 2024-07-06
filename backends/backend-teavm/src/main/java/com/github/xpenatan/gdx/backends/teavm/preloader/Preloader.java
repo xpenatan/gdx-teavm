@@ -5,9 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entries;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
@@ -27,15 +24,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.core.JSPromise;
@@ -44,34 +34,9 @@ import org.teavm.jso.core.JSPromise;
  * @author xpenatan
  */
 public class Preloader {
-    public ObjectMap<String, Void> directories = new ObjectMap<>();
-    public ObjectMap<String, Blob> images = new ObjectMap<>();
-    public ObjectMap<String, Blob> audio = new ObjectMap<>();
-    public ObjectMap<String, String> texts = new ObjectMap<>();
-    public ObjectMap<String, Blob> binaries = new ObjectMap<>();
-    public ObjectMap<String, String> assetNames = new ObjectMap<>();
-    public Array<Asset> assets = new Array<>();
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
-
-    public static class Asset {
-        public Asset(String url, AssetType type, long size, String mimeType) {
-            this.url = url;
-            this.type = type;
-            this.size = size;
-            this.mimeType = mimeType;
-        }
-
-        public boolean succeed;
-        public boolean failed;
-        public boolean isLoading;
-        public long loaded;
-        public final String url;
-        public final AssetType type;
-        public final long size;
-        public final String mimeType;
-    }
 
     public final String baseUrl;
 
@@ -166,7 +131,7 @@ public class Preloader {
         }
     }
 
-    public String getAssetUrl() {
+    private String getAssetUrl() {
         return baseUrl + ASSET_FOLDER;
     }
 
@@ -185,57 +150,7 @@ public class Preloader {
             public boolean onSuccess(String url, String result) {
                 String[] lines = result.split("\n");
 
-                if(config.useNewFileHandle) {
-                    assetTotal = lines.length;
-
-                    for(String line : lines) {
-                        String[] tokens = line.split(":");
-                        String assetUrl = tokens[1].trim();
-                        if(assetUrl.trim().isEmpty()) {
-                            continue;
-                        }
-
-                        TeaFiles files = (TeaFiles)Gdx.files;
-
-                        AssetDownloader.getInstance().load(true, getAssetUrl() + assetUrl, AssetType.Binary, null, new AssetLoaderListener<Object>() {
-                            @Override
-                            public void onProgress(double amount) {
-                            }
-
-                            @Override
-                            public void onFailure(String urll) {
-                            }
-
-                            @Override
-                            public boolean onSuccess(String urll, Object result) {
-                                Blob blob = (Blob)result;
-                                String fileType = tokens[0];
-                                boolean isDirectory = fileType.equals("d");
-                                if(isDirectory) {
-                                    TeaFileHandle internalFile = (TeaFileHandle)Gdx.files.internal(assetUrl);
-                                    internalFile.mkdirsInternal();
-                                }
-                                else {
-                                    Int8ArrayWrapper data = blob.getData();
-                                    byte[] byteArray = TypedArrays.toByteArray(data);
-                                    FileHandle internalFile = Gdx.files.internal(assetUrl);
-                                    OutputStream output = internalFile.write(false, 4096);
-                                    try {
-                                        output.write(byteArray);
-                                    }
-                                    catch(IOException ex) {
-                                        throw new GdxRuntimeException("Error writing file: " + internalFile + " (" + internalFile.type() + ")", ex);
-                                    }
-                                    finally {
-                                        StreamUtils.closeQuietly(output);
-                                    }
-                                }
-                                return false;
-                            }
-                        });
-                    }
-                    return false;
-                }
+                assetTotal = lines.length;
 
                 for(String line : lines) {
                     String[] tokens = line.split(":");
@@ -243,112 +158,71 @@ public class Preloader {
                         throw new GdxRuntimeException("Invalid assets description file.");
                     }
 
-                    String fileType = tokens[0];
-                    String assetUrl = tokens[1].trim();
-                    long size = Long.parseLong(tokens[2]);
-                    String mimeType = tokens[3];
-
-                    AssetType type = AssetType.Text;
-                    if(fileType.equals("i")) type = AssetType.Image;
-                    if(fileType.equals("b")) type = AssetType.Binary;
-                    if(fileType.equals("a")) type = AssetType.Audio;
-                    if(fileType.equals("d")) type = AssetType.Directory;
-
-                    if(type == AssetType.Audio && !AssetDownloader.getInstance().isUseBrowserCache()) {
-                        size = 0;
+                    String assetUrl = tokens[2].trim();
+                    assetUrl = assetUrl.trim();
+                    if(assetUrl.isEmpty()) {
+                        continue;
                     }
-                    Asset asset = new Asset(assetUrl, type, size, mimeType);
-                    assetNames.put(asset.url, asset.url);
-                    assets.add(asset);
-                }
-                assetTotal = assets.size;
+                    String fileTypeStr = tokens[0];
+                    String assetTypeStr = tokens[1];
 
-                if(config.preloadAssets) {
-                    for(int i = 0; i < assets.size; i++) {
-                        final Asset asset = assets.get(i);
-                        loadSingleAsset(asset);
+                    FileType fileType = FileType.Internal;
+                    if(fileTypeStr.equals("c")) {
+                        fileType = FileType.Classpath;
                     }
+                    else if(fileTypeStr.equals("l")) {
+                        fileType = FileType.Local;
+                    }
+                    AssetType assetType = AssetType.Binary;
+                    if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
+
+                    loadAsset(assetType, fileType, assetUrl);
                 }
                 return false;
             }
         });
     }
 
-    public int loadAssets() {
-        int assetsToDownload = 0;
-        for(int i = 0; i < assets.size; i++) {
-            final Asset asset = assets.get(i);
-            if(loadSingleAsset(asset)) {
-                assetsToDownload++;
-            }
+    public void loadAsset(AssetType assetType, FileType fileType, String path1) {
+        path1 = path1.trim().replace("\\", "/");
+        if(path1.startsWith("/")) {
+            path1 = path1.substring(1);
         }
-        return assetsToDownload;
-    }
-
-    public boolean loadSingleAsset(Asset asset) {
-        if(contains(asset.url)) {
-            asset.loaded = asset.size;
-            asset.succeed = true;
-            asset.failed = false;
-            asset.isLoading = false;
-            return false;
+        if(path1.isEmpty()) {
+            return;
         }
-
-        if(!asset.isLoading) {
-            asset.failed = false;
-            asset.succeed = false;
-            asset.isLoading = true;
-            loadAsset(true, asset.url, asset.type, asset.mimeType, new AssetLoaderListener<Object>() {
-                @Override
-                public void onProgress(double amount) {
-                    asset.loaded = (long)amount;
-                }
-
-                @Override
-                public void onFailure(String url) {
-                    asset.failed = true;
-                    asset.isLoading = false;
-                }
-
-                @Override
-                public boolean onSuccess(String url, Object result) {
-                    asset.succeed = true;
-                    asset.isLoading = false;
-                    return false;
-                }
-            });
-            return true;
-        }
-        return false;
-    }
-
-    public Asset getAsset(String path) {
-        for(int i = 0; i < assets.size; i++) {
-            final Asset asset = assets.get(i);
-            String url = asset.url;
-            if(path.equals(url)) {
-                return asset;
-            }
-        }
-        return null;
-    }
-
-    private void loadAsset(boolean async, final String url, final AssetType type, final String mimeType, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().load(async, getAssetUrl() + url, type, mimeType, new AssetLoaderListener<Object>() {
+        String path = path1;
+        AssetDownloader.getInstance().load(true, getAssetUrl() + path, AssetType.Binary, null, new AssetLoaderListener<>() {
             @Override
             public void onProgress(double amount) {
-                listener.onProgress(amount);
             }
 
             @Override
-            public void onFailure(String urll) {
-                listener.onFailure(urll);
+            public void onFailure(String url) {
             }
 
             @Override
-            public boolean onSuccess(String urll, Object result) {
-                putAssetInMap(type, url, result);
-                listener.onSuccess(urll, result);
+            public boolean onSuccess(String url, Object result) {
+                Blob blob = (Blob)result;
+                AssetType type = AssetType.Binary;
+                TeaFileHandle internalFile = (TeaFileHandle)Gdx.files.getFileHandle(path, fileType);
+                if(assetType == AssetType.Directory) {
+                    internalFile.mkdirsInternal();
+                }
+                else {
+                    Int8ArrayWrapper data = blob.getData();
+                    byte[] byteArray = TypedArrays.toByteArray(data);
+                    OutputStream output = internalFile.write(false, 4096);
+                    try {
+                        output.write(byteArray);
+                    }
+                    catch(IOException ex) {
+                        throw new GdxRuntimeException("Error writing file: " + internalFile + " (" + internalFile.type() + ")", ex);
+                    }
+                    finally {
+                        StreamUtils.closeQuietly(output);
+                    }
+                }
                 return false;
             }
         });
@@ -358,179 +232,7 @@ public class Preloader {
         AssetDownloader.getInstance().loadScript(async, getAssetUrl() + url, listener);
     }
 
-    protected void putAssetInMap(AssetType type, String url, Object result) {
-        switch(type) {
-            case Text:
-                texts.put(url, (String)result);
-                break;
-            case Image:
-                images.put(url, (Blob)result);
-                break;
-            case Binary:
-                binaries.put(url, (Blob)result);
-                break;
-            case Audio:
-                audio.put(url, (Blob)result);
-                break;
-            case Directory:
-                directories.put(url, null);
-                break;
-        }
-    }
-
-    public InputStream read(String url) {
-        if(texts.containsKey(url)) {
-            try {
-                return new ByteArrayInputStream(texts.get(url).getBytes("UTF-8"));
-            }
-            catch(UnsupportedEncodingException e) {
-                return null;
-            }
-        }
-        if(images.containsKey(url)) {
-            return new ByteArrayInputStream(new byte[1]); // FIXME, sensible?
-        }
-        if(binaries.containsKey(url)) {
-            return binaries.get(url).read();
-        }
-        if(audio.containsKey(url)) {
-            return new ByteArrayInputStream(new byte[1]); // FIXME, sensible?
-        }
-        return null;
-    }
-
-    public boolean contains(String file) {
-        return texts.containsKey(file) || images.containsKey(file) || binaries.containsKey(file) || audio.containsKey(file)
-                || directories.containsKey(file);
-    }
-
-    public boolean isText(String url) {
-        return texts.containsKey(url);
-    }
-
-    public boolean isImage(String url) {
-        return images.containsKey(url);
-    }
-
-    public boolean isBinary(String url) {
-        return binaries.containsKey(url);
-    }
-
-    public boolean isAudio(String url) {
-        return audio.containsKey(url);
-    }
-
-    public boolean isDirectory(String url) {
-        return directories.containsKey(url);
-    }
-
-    private boolean isChild(String filePath, String directory) {
-        return filePath.startsWith(directory + "/");
-    }
-
-    public FileHandle[] list(final String file) {
-        return getMatchedAssetFiles(new FilePathFilter() {
-            @Override
-            public boolean accept(String path) {
-                return isChild(path, file);
-            }
-        });
-    }
-
-    public FileHandle[] list(final String file, final FileFilter filter) {
-        return getMatchedAssetFiles(new FilePathFilter() {
-            @Override
-            public boolean accept(String path) {
-                return isChild(path, file) && filter.accept(new File(path));
-            }
-        });
-    }
-
-    public FileHandle[] list(final String file, final FilenameFilter filter) {
-        return getMatchedAssetFiles(new FilePathFilter() {
-            @Override
-            public boolean accept(String path) {
-                return isChild(path, file) && filter.accept(new File(file), path.substring(file.length() + 1));
-            }
-        });
-    }
-
-    public FileHandle[] list(final String file, final String suffix) {
-        return getMatchedAssetFiles(new FilePathFilter() {
-            @Override
-            public boolean accept(String path) {
-                return isChild(path, file) && path.endsWith(suffix);
-            }
-        });
-    }
-
-    public long length(String file) {
-        if(texts.containsKey(file)) {
-            return texts.get(file).getBytes(StandardCharsets.UTF_8).length;
-        }
-        if(images.containsKey(file)) {
-            return 1; // FIXME, sensible?
-        }
-        if(binaries.containsKey(file)) {
-            return binaries.get(file).length();
-        }
-        if(audio.containsKey(file)) {
-            return audio.get(file).length();
-        }
-        return 0;
-    }
-
-    private interface FilePathFilter {
-        boolean accept(String path);
-    }
-
-    private FileHandle[] getMatchedAssetFiles(FilePathFilter filter) {
-        Array<FileHandle> files = new Array<>();
-        for(String file : texts.keys()) {
-            if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
-            }
-        }
-        for(String file : images.keys()) {
-            if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
-            }
-        }
-        for(String file : binaries.keys()) {
-            if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
-            }
-        }
-        for(String file : audio.keys()) {
-            if(filter.accept(file)) {
-                files.add(new TeaFileHandle(this, null, file, FileType.Internal));
-            }
-        }
-        FileHandle[] filesArray = new FileHandle[files.size];
-        System.arraycopy(files.items, 0, filesArray, 0, filesArray.length);
-        return filesArray;
-    }
-
     public int getQueue() {
         return AssetDownloader.getInstance().getQueue();
-    }
-
-    public void printLoadedAssets() {
-        System.out.println("### Text Assets: ");
-        printKeys(texts);
-        System.out.println("##########");
-        System.out.println("### Image Assets: ");
-        printKeys(images);
-        System.out.println("##########");
-    }
-
-    private void printKeys(ObjectMap<String, ?> map) {
-        Entries<String, ?> iterator = map.iterator();
-
-        while(iterator.hasNext) {
-            Entry<String, ?> next = iterator.next();
-            String key = next.key;
-            System.out.println("Key: " + key);
-        }
     }
 }

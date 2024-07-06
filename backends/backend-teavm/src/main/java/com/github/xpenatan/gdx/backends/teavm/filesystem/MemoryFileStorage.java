@@ -204,11 +204,6 @@ public class MemoryFileStorage extends FileDB {
         }
     }
 
-    @Override
-    public String getPath() {
-        return "";
-    }
-
     public String debugAllFiles() {
         String text = "";
         text += println("####### START DEBUG FILE: " + fileMap.size + "\n");

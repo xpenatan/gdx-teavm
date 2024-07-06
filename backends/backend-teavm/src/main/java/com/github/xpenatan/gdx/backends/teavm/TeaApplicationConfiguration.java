@@ -21,12 +21,6 @@ public class TeaApplicationConfiguration {
     public boolean preloadAssets = true;
 
     /**
-     * Experimental new Gdx.files.internal and Gdx.files.local implementation
-     */
-    @Deprecated
-    public boolean useNewFileHandle = true;
-
-    /**
      * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the
      * data separate for those applications, you will need to set unique prefixes. This is useful if you are
      * e.g. uploading multiple webapps to itch.io and want to keep the data separate for each application.
@@ -35,7 +29,7 @@ public class TeaApplicationConfiguration {
      * browser is not shared between the applications. If you leave the storage prefix at "", all the data
      * and files stored will be shared between the applications.
      */
-    public String storagePrefix = "";
+    public String storagePrefix = "db/assets";
 
     /**
      * Show download logs.
