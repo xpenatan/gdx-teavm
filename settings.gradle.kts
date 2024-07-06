@@ -17,8 +17,11 @@ include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")
 
 val file = File("gradle.properties")
+
 val properties = Properties()
-properties.load(file.inputStream())
+if(file.exists()) {
+    properties.load(file.inputStream())
+}
 
 val gdxSourcePath = properties.getOrDefault("gdxSourcePath", "") as String
 val teavmPath = properties.getOrDefault("teavmPath", "") as String

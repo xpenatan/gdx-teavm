@@ -51,8 +51,5 @@ private fun getProperties(): Properties {
     if(file.exists()) {
         properties.load(file.inputStream())
     }
-    else {
-        throw RuntimeException("properties should exist")
-    }
     return properties
 }
