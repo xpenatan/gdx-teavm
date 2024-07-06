@@ -41,8 +41,8 @@ public class AssetsCopy {
         }
     }
 
-    public static void copyResources(TeaClassLoader classLoader, List<String> classPathAssetsFiles, String assetsOutputPath, boolean generateTextFile, boolean append) {
-        copy(classLoader, classPathAssetsFiles, true, null, null, assetsOutputPath, generateTextFile, append);
+    public static void copyResources(TeaClassLoader classLoader, List<String> classPathAssetsFiles, String assetsOutputPath, AssetFilter filter, boolean generateTextFile, boolean append) {
+        copy(classLoader, classPathAssetsFiles, true, null, filter, assetsOutputPath, generateTextFile, append);
     }
 
     public static void copy(TeaClassLoader classLoader, List<String> classPathAssetsFiles, ArrayList<AssetFileHandle> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile, boolean append) {

@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
@@ -10,7 +9,6 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaFiles;
 import com.github.xpenatan.gdx.backends.teavm.dom.DataTransferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DragEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
@@ -37,6 +35,7 @@ public class Preloader {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
+    private static final String SCRIPTS_FOLDER = "scripts/";
 
     public final String baseUrl;
 
@@ -135,6 +134,10 @@ public class Preloader {
         return baseUrl + ASSET_FOLDER;
     }
 
+    private String getScriptUrl() {
+        return baseUrl + SCRIPTS_FOLDER;
+    }
+
     public void preload(TeaApplicationConfiguration config, final String assetFileUrl) {
         AssetDownloader.getInstance().loadText(true, getAssetUrl() + assetFileUrl, new AssetLoaderListener<String>() {
             @Override
@@ -229,7 +232,7 @@ public class Preloader {
     }
 
     public void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener) {
-        AssetDownloader.getInstance().loadScript(async, getAssetUrl() + url, listener);
+        AssetDownloader.getInstance().loadScript(async, getScriptUrl() + url, listener);
     }
 
     public int getQueue() {
