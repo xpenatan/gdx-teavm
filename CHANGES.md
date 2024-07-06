@@ -4,6 +4,7 @@
 - New Gdx.files.internal, classpath and local implementation. Local files uses IndexedDB.  
 - Call dispose when browser closes
 - Improve clipboard text copy/paste.
+- Change default sound/music api to howler.js
 
 [1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()

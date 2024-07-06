@@ -126,6 +126,7 @@ public class TeaApplication implements Application, Runnable {
         clipboard = new TeaClipboard();
 
         initGdx();
+        initSound();
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -479,6 +480,15 @@ public class TeaApplication implements Application, Runnable {
 
     private void initGdx() {
         preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+            @Override
+            public boolean onSuccess(String url, Object result) {
+                return true;
+            }
+        });
+    }
+
+    private void initSound() {
+        preloader.loadScript(true, "howler.js", new AssetLoaderListener<Object>() {
             @Override
             public boolean onSuccess(String url, Object result) {
                 return true;
