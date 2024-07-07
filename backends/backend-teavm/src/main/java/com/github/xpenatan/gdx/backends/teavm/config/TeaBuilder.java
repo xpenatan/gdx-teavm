@@ -6,7 +6,6 @@ import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
-import com.github.xpenatan.gdx.backends.teavm.preloader.DefaultAssetFilter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -492,29 +491,40 @@ public class TeaBuilder {
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, ArrayList<URL> acceptedURL) {
         TeaBuilder.logHeader("COPYING ASSETS");
 
-        String webappOutputPath = webappDirectory + File.separator + webappName;
-        String assetsOutputPath = webappOutputPath + File.separator + "assets";
-        String scriptsOutputPath = webappOutputPath + File.separator + "scripts";
+        FileHandle webappDistFolder = new FileHandle(webappDirectory);
+        FileHandle webappFolder = webappDistFolder.child(webappName);
+        FileHandle assetsFolder = webappFolder.child("assets");
+        FileHandle scriptsFolder = webappFolder.child("scripts");
+        FileHandle assetFile = assetsFolder.child("assets.txt");
 
-        ArrayList<AssetFileHandle> assetsPaths = new ArrayList<>();
-        ArrayList<String> classPathAssetsFiles = new ArrayList<>();
         AssetFilter filter = configuration.assetFilter();
 
         boolean shouldUseDefaultHtmlIndex = configuration.shouldUseDefaultHtmlIndex();
         if(shouldUseDefaultHtmlIndex) {
-            useDefaultHTMLIndexFile(classLoader, configuration, webappDirectory, webappName, webappOutputPath);
+            useDefaultHTMLIndexFile(classLoader, configuration, webappDistFolder, webappName, webappFolder);
         }
 
-        ArrayList<String> additionalAssetClasspath = configuration.getAdditionalAssetClasspath();
-        classPathAssetsFiles.addAll(additionalAssetClasspath);
-        boolean generateAssetPaths = configuration.assetsPath(assetsPaths);
-        AssetsCopy.copy(classLoader, classPathAssetsFiles, assetsPaths, filter, assetsOutputPath, generateAssetPaths, false);
+        if(assetFile.exists()) {
+            assetFile.delete();
+        }
+
+        boolean generateAssetPaths = configuration.shouldGenerateAssetFile();
+
+        // Copy Assets files
+        ArrayList<AssetFileHandle> assetsPaths = configuration.assetsPath();
+        for(int i = 0; i < assetsPaths.size(); i++) {
+            AssetFileHandle assetFileHandle = assetsPaths.get(i);
+            ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, filter, assetsFolder);
+            if(generateAssetPaths) {
+                AssetsCopy.generateAssetsFile(assets, assetsFolder, assetFile);
+            }
+        }
 
         // Copy assets from resources
         List<String> resources = TeaVMResourceProperties.getResources(acceptedURL);
 
         List<String> scripts = new ArrayList<>();
-        // Filter out scripts
+        // Filter out javascript
         for(int i = 0; i < resources.size(); i++) {
             String asset = resources.get(i);
             if(asset.endsWith(".js") || asset.endsWith(".wasm")) {
@@ -523,24 +533,32 @@ public class TeaBuilder {
                 i--;
             }
         }
+        // Copy additional classpath files
+        ArrayList<String> classPathAssetsFiles = configuration.getAdditionalAssetClasspath();
+        ArrayList<AssetsCopy.Asset> classpathAssets = AssetsCopy.copyResources(classLoader, classPathAssetsFiles, filter, assetsFolder);
+
         // Copy resources
-        AssetsCopy.copyResources(classLoader, resources, assetsOutputPath, null, true, true);
+        ArrayList<AssetsCopy.Asset> resourceAssets = AssetsCopy.copyResources(classLoader, resources, filter, assetsFolder);
 
         // Copy scripts
-        AssetsCopy.copyResources(classLoader, scripts, scriptsOutputPath, null, false, false);
+        ArrayList<AssetsCopy.Asset> scriptsAssets = AssetsCopy.copyScripts(classLoader, scripts, scriptsFolder);
+
+        if(generateAssetPaths) {
+            AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
+            AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
+        }
 
         TeaBuilder.log("");
     }
 
-    private static void useDefaultHTMLIndexFile(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, String webappOutputPath) {
+    private static void useDefaultHTMLIndexFile(TeaClassLoader classLoader, TeaBuildConfiguration configuration, FileHandle webappDistFolder, String webappName, FileHandle webappFolder) {
         ArrayList<String> webappAssetsFiles = new ArrayList<>();
         webappAssetsFiles.add(webappName);
         // Copy webapp folder from resources to destination
-        AssetsCopy.copyResources(classLoader, webappAssetsFiles, webappDirectory, null, false, false);
+        AssetsCopy.copyResources(classLoader, webappAssetsFiles, null, webappDistFolder);
         TeaBuilder.log("");
 
-        File indexFile = new File(webappOutputPath + File.separator + "index.html");
-        FileHandle handler = new FileHandle(indexFile);
+        FileHandle handler = webappFolder.child("index.html");
         String indexHtmlStr = handler.readString();
 
         String logo = configuration.getLogoPath();
@@ -560,7 +578,7 @@ public class TeaBuilder {
         if(showLoadingLogo) {
             ArrayList<String> logoAsset = new ArrayList<>();
             logoAsset.add(logo);
-            AssetsCopy.copyResources(classLoader, logoAsset, webappOutputPath, null, false, false);
+            AssetsCopy.copyResources(classLoader, logoAsset, null, webappFolder);
         }
     }
 }

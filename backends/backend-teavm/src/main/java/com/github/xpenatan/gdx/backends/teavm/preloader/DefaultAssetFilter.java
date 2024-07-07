@@ -10,9 +10,4 @@ public class DefaultAssetFilter implements AssetFilter {
         if(file.endsWith(".jar")) return false;
         return true;
     }
-
-    @Override
-    public String getBundleName(String file) {
-        return "assets";
-    }
 }

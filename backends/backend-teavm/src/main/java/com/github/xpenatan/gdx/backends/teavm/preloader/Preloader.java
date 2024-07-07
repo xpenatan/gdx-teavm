@@ -79,8 +79,6 @@ public class Preloader {
             FileReaderWrapper fileReader = FileReaderWrapper.create();
             fileReader.readAsArrayBuffer(fileWrapper);
 
-            AssetType type = AssetFilter.getType(name);
-
             fileReader.addEventListener("load", new EventListenerWrapper() {
                 @Override
                 public void handleEvent(EventWrapper evt) {

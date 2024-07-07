@@ -15,6 +15,7 @@ public class TeaBuildConfiguration {
     public AssetFilter assetFilter = null;
     public ArrayList<AssetFileHandle> assetsPath = new ArrayList<>();
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
+    public boolean shouldGenerateAssetFile = true;
 
     private String mainApplicationClass;
 
@@ -89,9 +90,12 @@ public class TeaBuildConfiguration {
         return webappPath;
     }
 
-    public boolean assetsPath(ArrayList<AssetFileHandle> paths) {
-        paths.addAll(assetsPath);
-        return true;
+    public ArrayList<AssetFileHandle> assetsPath() {
+        return assetsPath;
+    }
+
+    public boolean shouldGenerateAssetFile() {
+        return shouldGenerateAssetFile;
     }
 
     public AssetFilter assetFilter() {
@@ -112,9 +116,6 @@ public class TeaBuildConfiguration {
 
     public ArrayList<String> getSkipClasses() {
         return classesToSkip;
-    }
-
-    public void assetsClasspath(ArrayList<String> classPaths) {
     }
 
     public void setApplicationListener(Class<? extends ApplicationListener> applicationListener) {
