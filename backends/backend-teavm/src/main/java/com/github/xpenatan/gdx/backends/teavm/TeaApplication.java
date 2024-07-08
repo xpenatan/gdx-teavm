@@ -19,11 +19,11 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.PreloadImpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadmpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +67,7 @@ public class TeaApplication implements Application, Runnable {
     private ApplicationLogger logger;
     private int logLevel = LOG_ERROR;
 
-    private PreloadImpl preloader;
+    private AssetLoadmpl assetLoader;
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
@@ -115,8 +115,8 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        preloader = new PreloadImpl(hostPageBaseURL, graphics.canvas, this);
-        Preloader.setInstance(preloader);
+        assetLoader = new AssetLoadmpl(hostPageBaseURL, graphics.canvas, this);
+        AssetLoader.setInstance(assetLoader);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
@@ -204,7 +204,7 @@ public class TeaApplication implements Application, Runnable {
             });
         }
 
-        preloader.preload(config, "assets.txt");
+        assetLoader.preload(config, "assets.txt");
 
         window.requestAnimationFrame(this);
     }
@@ -232,7 +232,7 @@ public class TeaApplication implements Application, Runnable {
                     }
                     else {
                         // update progress bar once we know the total number of assets that are loaded
-                        int total = preloader.assetTotal;
+                        int total = assetLoader.assetTotal;
                         if (total > 0) {
                           // we have the actual total and can update the progress bar
                           int minPercentage = 25;
@@ -308,10 +308,6 @@ public class TeaApplication implements Application, Runnable {
 
     public void setApplicationListener(ApplicationListener applicationListener) {
         this.queueAppListener = applicationListener;
-    }
-
-    public Preloader.Preload getPreloader() {
-        return preloader;
     }
 
     public TeaApplicationConfiguration getConfig() {
@@ -479,7 +475,7 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {
+        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, String result) {
             }
@@ -487,7 +483,7 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void initSound() {
-        preloader.loadScript(true, "howler.js", new AssetLoaderListener<>() {
+        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, String result) {
             }

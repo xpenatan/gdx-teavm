@@ -1,9 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetFilter;
 import java.net.URL;
 import java.util.ArrayList;
 

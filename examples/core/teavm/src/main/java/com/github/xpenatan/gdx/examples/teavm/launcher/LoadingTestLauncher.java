@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.examples.tests.LoadingTest;
 import com.github.xpenatan.gdx.examples.utils.LoadingBar;
 
@@ -50,7 +50,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     private Actor loadingBar;
 
     private TeaApplication teaApplication;
-    private Preloader preloader;
+    private AssetLoader.AssetLoad assetLoader;
 
     // Using manager just to load scene2d assets after downloading.
     private AssetManager manager;
@@ -60,7 +60,8 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     @Override
     public void create() {
         teaApplication = TeaApplication.get();
-        preloader = teaApplication.getPreloader();
+
+        assetLoader = AssetLoader.getInstance();
 
         stage = new Stage();
         stage.setViewport(new ScreenViewport());
@@ -83,7 +84,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        int queue = preloader.getQueue();
+        int queue = assetLoader.getQueue();
 
         if(steps == STEPS.LOADING_GAME_ASSETS) {
             float progress = (assetsCount - queue) / assetsCount;

@@ -1,6 +1,5 @@
 package com.badlogic.gdx.graphics.g2d.freetype;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -10,12 +9,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -846,8 +844,8 @@ public class FreeTypeEmu {
 
     public static LibraryEmu initFreeType() {
         if(!freeTypeInit) {
-            Preloader.Preload preloader = Preloader.getInstance();
-            preloader.loadScript(false, "freetype.js", new AssetLoaderListener<>() {
+            AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
+            assetLoader.loadScript(false, "freetype.js", new AssetLoaderListener<>() {
                 @Override
                 public void onSuccess(String url, String result) {
                     freeTypeInit = true;

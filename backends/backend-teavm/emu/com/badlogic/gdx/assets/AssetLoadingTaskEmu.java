@@ -1,8 +1,6 @@
 package com.badlogic.gdx.assets;
 
 import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.AssetLoader;
 import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.SynchronousAssetLoader;
 import com.badlogic.gdx.files.FileHandle;
@@ -13,16 +11,15 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncResult;
 import com.badlogic.gdx.utils.async.AsyncTask;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 
 @Emulate(AssetLoadingTask.class)
 class AssetLoadingTaskEmu implements AsyncTask<Void> {
     AssetManager manager;
     final AssetDescriptor assetDesc;
-    final AssetLoader loader;
+    final com.badlogic.gdx.assets.loaders.AssetLoader loader;
     final AsyncExecutor executor;
     final long startTime;
 
@@ -36,7 +33,7 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
     int ticks = 0;
     volatile boolean cancel;
 
-    public AssetLoadingTaskEmu(AssetManager manager, AssetDescriptor assetDesc, AssetLoader loader, AsyncExecutor threadPool) {
+    public AssetLoadingTaskEmu(AssetManager manager, AssetDescriptor assetDesc, com.badlogic.gdx.assets.loaders.AssetLoader loader, AsyncExecutor threadPool) {
         this.manager = manager;
         this.assetDesc = assetDesc;
         this.loader = loader;
@@ -83,10 +80,10 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
         ticks++;
 
         // GTW: check if we have a file that was not preloaded and is not done loading yet
-        Preloader.Preload preloader = Preloader.getInstance();
-        if(!preloader.isAssetLoaded(Files.FileType.Internal, assetDesc.fileName)) {
-            preloader.loadAsset(true, assetDesc.fileName, AssetType.Binary, Files.FileType.Internal, null);
-            boolean assetInQueue = preloader.isAssetInQueue(assetDesc.fileName);
+        AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
+        if(!assetLoader.isAssetLoaded(Files.FileType.Internal, assetDesc.fileName)) {
+            assetLoader.loadAsset(true, assetDesc.fileName, AssetType.Binary, Files.FileType.Internal, null);
+            boolean assetInQueue = assetLoader.isAssetInQueue(assetDesc.fileName);
             // Loader.finishLoading breaks everything
             if(!assetInQueue && ticks > 100000)
                 throw new GdxRuntimeException("File not prefetched, but finishLoading was probably called: " + assetDesc.fileName);
@@ -154,7 +151,7 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
             ((AsynchronousAssetLoader)loader).unloadAsync(manager, assetDesc.fileName, resolve(loader, assetDesc), assetDesc.params);
     }
 
-    private FileHandle resolve(AssetLoader loader, AssetDescriptor assetDesc) {
+    private FileHandle resolve(com.badlogic.gdx.assets.loaders.AssetLoader loader, AssetDescriptor assetDesc) {
         if(assetDesc.file == null) assetDesc.file = loader.resolve(assetDesc.fileName);
         return assetDesc.file;
     }

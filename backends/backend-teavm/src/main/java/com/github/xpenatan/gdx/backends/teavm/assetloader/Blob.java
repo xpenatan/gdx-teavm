@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetFilter;
 import java.io.File;
 
 public class AssetFileHandle extends FileHandle {

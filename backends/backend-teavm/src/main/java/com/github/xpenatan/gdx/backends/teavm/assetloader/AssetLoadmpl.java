@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
@@ -33,7 +33,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class PreloadImpl implements Preloader.Preload {
+public class AssetLoadmpl implements AssetLoader.AssetLoad {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
@@ -43,7 +43,7 @@ public class PreloadImpl implements Preloader.Preload {
 
     private HashSet<String> assetInQueue;
 
-    public PreloadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    public AssetLoadmpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);

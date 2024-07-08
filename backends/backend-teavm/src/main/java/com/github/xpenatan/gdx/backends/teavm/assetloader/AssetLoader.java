@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
@@ -6,22 +6,22 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 /**
  * @author xpenatan
  */
-public class Preloader {
+public class AssetLoader {
 
-    private static Preload instance;
+    private static AssetLoad instance;
 
-    private Preloader() {
+    private AssetLoader() {
     }
 
-    public static Preload getInstance() {
-        return Preloader.instance;
+    public static AssetLoad getInstance() {
+        return AssetLoader.instance;
     }
 
-    public static void setInstance(Preload instance) {
-        Preloader.instance = instance;
+    public static void setInstance(AssetLoad instance) {
+        AssetLoader.instance = instance;
     }
 
-    public interface Preload {
+    public interface AssetLoad {
         String getAssetUrl();
 
         String getScriptUrl();

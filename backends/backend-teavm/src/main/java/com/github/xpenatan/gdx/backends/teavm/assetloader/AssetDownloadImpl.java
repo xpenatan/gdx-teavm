@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
@@ -7,7 +7,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;

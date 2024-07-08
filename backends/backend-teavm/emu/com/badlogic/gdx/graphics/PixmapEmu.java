@@ -14,9 +14,9 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Blob;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
 import java.nio.ByteBuffer;
 
 @Emulate(Pixmap.class)
