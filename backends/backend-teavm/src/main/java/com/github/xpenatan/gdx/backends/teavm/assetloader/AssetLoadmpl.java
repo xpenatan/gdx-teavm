@@ -6,7 +6,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;

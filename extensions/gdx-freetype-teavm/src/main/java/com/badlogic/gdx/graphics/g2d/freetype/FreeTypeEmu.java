@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;

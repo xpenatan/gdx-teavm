@@ -1,7 +1,7 @@
 package com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.Gdx;
-import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;

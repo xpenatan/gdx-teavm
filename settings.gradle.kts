@@ -2,6 +2,7 @@ import java.util.*
 
 include(":backends:backend-teavm")
 
+include(":extensions:asset-loader")
 include(":extensions:gdx-freetype-teavm")
 
 //include(":tools:generator:core")

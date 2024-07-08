@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;

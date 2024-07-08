@@ -1,7 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
-import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
-
 /**
  * @author xpenatan
  */
@@ -20,7 +18,6 @@ public class AssetDownloader {
     }
 
     public interface AssetDownload {
-
         void load(boolean async, final String url, AssetType type, AssetLoaderListener<?> listener);
 
         void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);

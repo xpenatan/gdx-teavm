@@ -33,7 +33,8 @@ subprojects {
 
 var libProjects = mutableSetOf(
         project(":backends:backend-teavm"),
-        project(":extensions:gdx-freetype-teavm")
+        project(":extensions:gdx-freetype-teavm"),
+        project(":extensions:asset-loader")
 )
 
 configure(libProjects) {

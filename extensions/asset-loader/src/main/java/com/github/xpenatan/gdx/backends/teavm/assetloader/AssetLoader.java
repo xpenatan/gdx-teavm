@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.Files.FileType;
-import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 
 /**
  * @author xpenatan

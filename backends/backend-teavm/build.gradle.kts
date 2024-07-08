@@ -18,6 +18,7 @@ compileJavaTask.mustRunAfter("clean")
 dependencies {
     implementation("org.reflections:reflections:${LibExt.reflectionVersion}")
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    api(project(":extensions:asset-loader"))
 
     api("org.teavm:teavm-tooling:${LibExt.teaVMVersion}")
     api("org.teavm:teavm-core:${LibExt.teaVMVersion}")
