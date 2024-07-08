@@ -5,7 +5,6 @@ import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetFilter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

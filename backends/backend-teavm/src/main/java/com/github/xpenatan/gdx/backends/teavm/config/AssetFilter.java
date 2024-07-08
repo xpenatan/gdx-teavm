@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.backends.teavm.assetloader;
+package com.github.xpenatan.gdx.backends.teavm.config;
 
 /**
  * @author xpenatan
