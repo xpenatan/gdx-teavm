@@ -7,6 +7,7 @@
 - Change default sound/music api to howler.js
 - add shouldEncodePreference config
 - add localStoragePrefix config
+- AssetManager can now download assets
 
 [1.0.0-b9]
 - add TeaClassFilter printAllowedClasses() and printExcludedClasses()
