@@ -16,15 +16,14 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.preloader.PreloaderImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,7 +67,7 @@ public class TeaApplication implements Application, Runnable {
     private ApplicationLogger logger;
     private int logLevel = LOG_ERROR;
 
-    private Preloader preloader;
+    private PreloaderImpl preloader;
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
@@ -116,7 +115,7 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
+        preloader = new PreloaderImpl(hostPageBaseURL, graphics.canvas, this);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
@@ -479,17 +478,17 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Object result) {
+            public void onSuccess(String url, String result) {
             }
         });
     }
 
     private void initSound() {
-        preloader.loadScript(true, "howler.js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(true, "howler.js", new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Object result) {
+            public void onSuccess(String url, String result) {
             }
         });
     }

@@ -82,7 +82,7 @@ public class PixmapEmu implements Disposable {
 
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = result.getData();
+                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
                 responseListener.downloadComplete(pixmapEmu);

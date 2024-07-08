@@ -12,9 +12,9 @@ public class SharedLibraryLoaderEmu {
     public void load (String libraryName) {
         TeaApplication app = (TeaApplication)Gdx.app;
         Preloader preloader = app.getPreloader();
-        preloader.loadScript(false, libraryName + ".js", new AssetLoaderListener<Object>() {
+        preloader.loadScript(false, libraryName + ".js", new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Object result) {
+            public void onSuccess(String url, String result) {
             }
 
             @Override

@@ -1,39 +1,29 @@
 package com.github.xpenatan.gdx.backends.teavm.preloader;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import java.io.IOException;
 import java.io.InputStream;
+import org.teavm.jso.typedarrays.ArrayBuffer;
+import org.teavm.jso.typedarrays.Int8Array;
 
 /**
  * @author xpenatan
  */
 public final class Blob {
 
-    private ArrayBufferWrapper response;
-    private final Int8ArrayWrapper data;
-    private HTMLImageElementWrapper image;
+    private ArrayBuffer response;
+    private final Int8Array data;
 
-    public Blob(ArrayBufferWrapper response, Int8ArrayWrapper data) {
+    public Blob(ArrayBuffer response, Int8Array data) {
         this.data = data;
         this.response = response;
     }
 
-    public Int8ArrayWrapper getData() {
+    public Int8Array getData() {
         return data;
     }
 
-    public ArrayBufferWrapper getResponse() {
+    public ArrayBuffer getResponse() {
         return response;
-    }
-
-    public HTMLImageElementWrapper getImage() {
-        return image;
-    }
-
-    public void setImage(HTMLImageElementWrapper image) {
-        this.image = image;
     }
 
     public int length() {
@@ -60,34 +50,5 @@ public final class Blob {
 
             int pos;
         };
-    }
-
-    public String toBase64() {
-        int length = data.getLength();
-        String base64code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        StringBuilder encoded = new StringBuilder(length * 4 / 3 + 2);
-        for(int i = 0; i < length; i += 3) {
-            if(length - i >= 3) {
-                int j = ((data.get(i) & 0xff) << 16) + ((data.get(i + 1) & 0xff) << 8) + (data.get(i + 2) & 0xff);
-                encoded.append(base64code.charAt((j >> 18) & 0x3f));
-                encoded.append(base64code.charAt((j >> 12) & 0x3f));
-                encoded.append(base64code.charAt((j >> 6) & 0x3f));
-                encoded.append(base64code.charAt(j & 0x3f));
-            }
-            else if(length - i >= 2) {
-                int j = ((data.get(i) & 0xff) << 16) + ((data.get(i + 1) & 0xff) << 8);
-                encoded.append(base64code.charAt((j >> 18) & 0x3f));
-                encoded.append(base64code.charAt((j >> 12) & 0x3f));
-                encoded.append(base64code.charAt((j >> 6) & 0x3f));
-                encoded.append("=");
-            }
-            else {
-                int j = ((data.get(i) & 0xff) << 16);
-                encoded.append(base64code.charAt((j >> 18) & 0x3f));
-                encoded.append(base64code.charAt((j >> 12) & 0x3f));
-                encoded.append("==");
-            }
-        }
-        return encoded.toString();
     }
 }

@@ -23,7 +23,7 @@ public class AssetDownloader {
 
         void load(boolean async, final String url, AssetType type, AssetLoaderListener<?> listener);
 
-        void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener);
+        void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);
 
         String getHostPageBaseURL();
 

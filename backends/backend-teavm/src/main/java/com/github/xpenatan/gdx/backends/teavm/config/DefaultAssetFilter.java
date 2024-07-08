@@ -1,4 +1,6 @@
-package com.github.xpenatan.gdx.backends.teavm.preloader;
+package com.github.xpenatan.gdx.backends.teavm.config;
+
+import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 
 /**
  * @author xpenatan

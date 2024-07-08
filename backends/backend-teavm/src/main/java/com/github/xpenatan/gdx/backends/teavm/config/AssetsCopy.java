@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.preloader.DefaultAssetFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;

@@ -848,9 +848,9 @@ public class FreeTypeEmu {
         if(!freeTypeInit) {
             TeaApplication app = (TeaApplication)Gdx.app;
             Preloader preloader = app.getPreloader();
-            preloader.loadScript(false, "freetype.js", new AssetLoaderListener<Object>() {
+            preloader.loadScript(false, "freetype.js", new AssetLoaderListener<>() {
                 @Override
-                public void onSuccess(String url, Object result) {
+                public void onSuccess(String url, String result) {
                     freeTypeInit = true;
                 }
 

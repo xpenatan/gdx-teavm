@@ -12,6 +12,8 @@ import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLScriptElement;
+import org.teavm.jso.typedarrays.ArrayBuffer;
+import org.teavm.jso.typedarrays.Int8Array;
 
 public class AssetDownloadImpl implements AssetDownload {
 
@@ -61,14 +63,14 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public void loadScript(boolean async, String url, AssetLoaderListener<Object> listener) {
+    public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
         if(showLogs)
             System.out.println("Loading script : " + url);
 
         loadBinary(async, url, new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = result.getData();
+                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String script = new String(byteArray);
                 Window current = Window.current();
@@ -121,8 +123,8 @@ public class AssetDownloadImpl implements AssetDownload {
                                 System.out.println("Asset loaded: " + url);
 
                             ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
-                            Int8ArrayWrapper data = TypedArrays.createInt8Array(response);
-                            listener.onSuccess(url, new Blob(response, data));
+                            Int8Array data = (Int8Array)TypedArrays.createInt8Array(response);
+                            listener.onSuccess(url, new Blob((ArrayBuffer)response, data));
                         }
                         subtractQueue();
                     }
