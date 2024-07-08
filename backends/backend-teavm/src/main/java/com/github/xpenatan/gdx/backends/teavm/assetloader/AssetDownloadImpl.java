@@ -51,7 +51,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void load(boolean async, String url, AssetType type, AssetLoaderListener<?> listener) {
         switch(type) {
             case Binary:
-                loadBinary(async, url, (AssetLoaderListener<Blob>)listener);
+                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, true);
                 break;
             case Directory:
                 listener.onSuccess(url, null);
@@ -63,8 +63,9 @@ public class AssetDownloadImpl implements AssetDownload {
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
-        if(showLogs)
+        if(showLogs) {
             System.out.println("Loading script : " + url);
+        }
 
         loadBinary(async, url, new AssetLoaderListener<>() {
             @Override
@@ -77,6 +78,10 @@ public class AssetDownloadImpl implements AssetDownload {
                 HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
                 scriptElement.setText(script);
                 document.getBody().appendChild(scriptElement);
+
+                if(showLogs) {
+                    System.out.println("Script loaded: " + url);
+                }
                 listener.onSuccess(url, script);
             }
 
@@ -84,12 +89,13 @@ public class AssetDownloadImpl implements AssetDownload {
             public void onFailure(String url) {
                 listener.onFailure(url);
             }
-        });
+        }, false);
     }
 
-    public void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener) {
-        if(showLogs)
-            System.out.println("Loading asset : " + url);
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, boolean showLogs) {
+        if(showLogs) {
+            System.out.println("Loading asset: " + url);
+        }
 
         // don't load on main thread
         addQueue();
@@ -111,15 +117,16 @@ public class AssetDownloadImpl implements AssetDownload {
                                 catch (Throwable e) {
                                     // ignored
                                 }
-                                loadBinary(async, url, listener);
+                                loadBinary(async, url, listener, showLogs);
                             }
                             else {
                                 listener.onFailure(url);
                             }
                         }
                         else {
-                            if(showLogs)
+                            if(showLogs) {
                                 System.out.println("Asset loaded: " + url);
+                            }
 
                             ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
                             Int8Array data = (Int8Array)TypedArrays.createInt8Array(response);
