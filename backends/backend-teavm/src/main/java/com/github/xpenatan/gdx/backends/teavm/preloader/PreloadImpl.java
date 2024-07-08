@@ -33,7 +33,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class PreloaderImpl implements Preloader {
+public class PreloadImpl implements Preloader.Preload {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
@@ -43,7 +43,7 @@ public class PreloaderImpl implements Preloader {
 
     private HashSet<String> assetInQueue;
 
-    public PreloaderImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    public PreloadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);

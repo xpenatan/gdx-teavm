@@ -23,7 +23,7 @@ import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.PreloaderImpl;
+import com.github.xpenatan.gdx.backends.teavm.preloader.PreloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +67,7 @@ public class TeaApplication implements Application, Runnable {
     private ApplicationLogger logger;
     private int logLevel = LOG_ERROR;
 
-    private PreloaderImpl preloader;
+    private PreloadImpl preloader;
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
@@ -115,7 +115,8 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        preloader = new PreloaderImpl(hostPageBaseURL, graphics.canvas, this);
+        preloader = new PreloadImpl(hostPageBaseURL, graphics.canvas, this);
+        Preloader.setInstance(preloader);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
@@ -309,7 +310,7 @@ public class TeaApplication implements Application, Runnable {
         this.queueAppListener = applicationListener;
     }
 
-    public Preloader getPreloader() {
+    public Preloader.Preload getPreloader() {
         return preloader;
     }
 

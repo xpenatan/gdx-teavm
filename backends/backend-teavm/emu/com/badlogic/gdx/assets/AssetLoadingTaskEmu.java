@@ -83,7 +83,7 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
         ticks++;
 
         // GTW: check if we have a file that was not preloaded and is not done loading yet
-        Preloader preloader = ((TeaApplication)Gdx.app).getPreloader();
+        Preloader.Preload preloader = Preloader.getInstance();
         if(!preloader.isAssetLoaded(Files.FileType.Internal, assetDesc.fileName)) {
             preloader.loadAsset(true, assetDesc.fileName, AssetType.Binary, Files.FileType.Internal, null);
             boolean assetInQueue = preloader.isAssetInQueue(assetDesc.fileName);

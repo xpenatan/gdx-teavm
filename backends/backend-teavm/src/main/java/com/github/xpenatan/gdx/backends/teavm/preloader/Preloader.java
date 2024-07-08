@@ -6,25 +6,40 @@ import com.github.xpenatan.gdx.backends.teavm.AssetLoaderListener;
 /**
  * @author xpenatan
  */
-public interface Preloader {
+public class Preloader {
 
-    String getAssetUrl();
+    private static Preload instance;
 
-    String getScriptUrl();
+    private Preloader() {
+    }
 
-    boolean isAssetInQueue(String path);
+    public static Preload getInstance() {
+        return Preloader.instance;
+    }
 
-    boolean isAssetLoaded(FileType fileType, String path);
+    public static void setInstance(Preload instance) {
+        Preloader.instance = instance;
+    }
 
-    /**
-     * Load asset and add to FileHandle system
-     */
-    void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener);
+    public interface Preload {
+        String getAssetUrl();
 
-    /**
-     * Load script and attach to html document
-     */
-    void loadScript(boolean async, String path, AssetLoaderListener<String> listener);
+        String getScriptUrl();
 
-    int getQueue();
+        boolean isAssetInQueue(String path);
+
+        boolean isAssetLoaded(FileType fileType, String path);
+
+        /**
+         * Load asset and add to FileHandle system
+         */
+        void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener);
+
+        /**
+         * Load script and attach to html document
+         */
+        void loadScript(boolean async, String path, AssetLoaderListener<String> listener);
+
+        int getQueue();
+    }
 }
