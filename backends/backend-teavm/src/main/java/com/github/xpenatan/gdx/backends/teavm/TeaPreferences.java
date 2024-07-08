@@ -23,19 +23,31 @@ public class TeaPreferences implements Preferences {
 
     private Storage storage;
 
-    public TeaPreferences(Storage storage, String prefix) {
+    private boolean shouldEncode;
+
+    public TeaPreferences(Storage storage, String prefix, boolean shouldEncode) {
         this.storage = storage;
         this.prefix = ID_FOR_PREF + prefix + ":";
+        this.shouldEncode = shouldEncode;
         int prefixLength = this.prefix.length();
         try {
             for(int i = 0; i < storage.getLength(); i++) {
                 String keyEncoded = storage.key(i);
-                String key = new String(HEXCoder.decode(keyEncoded));
+                String key = keyEncoded;
+                if(shouldEncode) {
+                    key = new String(HEXCoder.decode(keyEncoded));
+                }
                 boolean flag = key.startsWith(this.prefix);
                 if(flag) {
                     String value = storage.getItem(keyEncoded);
                     String keyStr = key.substring(prefixLength, key.length() - 1);
-                    Object object = toObject(key, new String(HEXCoder.decode(value)));
+                    Object object;
+                    if(shouldEncode) {
+                        object = toObject(key, new String(HEXCoder.decode(value)));
+                    }
+                    else {
+                        object = toObject(key, value);
+                    }
                     values.put(keyStr, object);
                 }
             }
@@ -68,9 +80,12 @@ public class TeaPreferences implements Preferences {
             // remove all old values
             for(int i = 0; i < storage.getLength(); i++) {
                 String keyEncoded = storage.key(i);
-                String key = new String(HEXCoder.decode(keyEncoded));
+                String key = keyEncoded;
+                if(shouldEncode) {
+                    key = new String(HEXCoder.decode(keyEncoded));
+                }
                 if(key.startsWith(prefix)) {
-                    storage.removeItem(key);
+                    storage.removeItem(keyEncoded);
                 }
             }
 
@@ -78,7 +93,12 @@ public class TeaPreferences implements Preferences {
             for(String key : values.keys()) {
                 String storageKey = toStorageKey(key, values.get(key));
                 String storageValue = "" + values.get(key).toString();
-                storage.setItem(HEXCoder.encode(storageKey.getBytes()), HEXCoder.encode(storageValue.getBytes()));
+                if(shouldEncode) {
+                    storage.setItem(HEXCoder.encode(storageKey.getBytes()), HEXCoder.encode(storageValue.getBytes()));
+                }
+                else {
+                    storage.setItem(storageKey, storageValue);
+                }
             }
         }
         catch(Exception e) {

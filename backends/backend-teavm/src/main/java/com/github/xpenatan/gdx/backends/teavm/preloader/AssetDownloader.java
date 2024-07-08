@@ -19,21 +19,18 @@ public class AssetDownloader {
         AssetDownloader.instance = instance;
     }
 
-    static public interface AssetDownload {
-        public void load(boolean async, final String url, AssetType type, String mimeType, AssetLoaderListener<?> listener);
+    public interface AssetDownload {
 
-        public void loadText(boolean async, final String url, final AssetLoaderListener<String> listener);
+        void load(boolean async, final String url, AssetType type, AssetLoaderListener<?> listener);
 
-        public void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener);
+        void loadScript(boolean async, final String url, final AssetLoaderListener<Object> listener);
 
-        public boolean isUseBrowserCache();
+        String getHostPageBaseURL();
 
-        public String getHostPageBaseURL();
+        int getQueue();
 
-        public int getQueue();
+        void subtractQueue();
 
-        public void subtractQueue();
-
-        public void addQueue();
+        void addQueue();
     }
 }

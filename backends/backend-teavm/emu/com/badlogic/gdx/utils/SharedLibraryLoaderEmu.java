@@ -14,8 +14,7 @@ public class SharedLibraryLoaderEmu {
         Preloader preloader = app.getPreloader();
         preloader.loadScript(false, libraryName + ".js", new AssetLoaderListener<Object>() {
             @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
+            public void onSuccess(String url, Object result) {
             }
 
             @Override

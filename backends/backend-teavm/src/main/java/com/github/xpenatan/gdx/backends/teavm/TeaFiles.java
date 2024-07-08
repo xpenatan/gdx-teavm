@@ -17,13 +17,13 @@ public class TeaFiles implements Files {
     public MemoryFileStorage internalStorage;
     public MemoryFileStorage classpathStorage;
     public MemoryFileStorage localStorage;
-    public String storagePath;
+    public String localStoragePrefix;
 
     public TeaFiles(TeaApplicationConfiguration config, TeaApplication teaApplication) {
         this.internalStorage = new InternalStorage();
         this.classpathStorage = new ClasspathStorage();
         this.localStorage = new LocalDBStorage(teaApplication);
-        storagePath = config.storagePrefix;
+        localStoragePrefix = config.localStoragePrefix;
     }
 
     public FileDB getFileDB(FileType type) {
@@ -91,7 +91,7 @@ public class TeaFiles implements Files {
 
     @Override
     public String getLocalStoragePath() {
-        return storagePath;
+        return localStoragePrefix;
     }
 
     @Override
