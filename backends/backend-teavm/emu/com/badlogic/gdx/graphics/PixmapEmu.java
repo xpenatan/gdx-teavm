@@ -81,15 +81,14 @@ public class PixmapEmu implements Disposable {
             }
 
             @Override
-            public boolean onSuccess(String url, Blob result) {
+            public void onSuccess(String url, Blob result) {
                 Int8ArrayWrapper data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
                 responseListener.downloadComplete(pixmapEmu);
-                return false;
             }
         };
-        AssetDownloader.getInstance().load(true, url, AssetType.Binary, null, listener);
+        AssetDownloader.getInstance().load(true, url, AssetType.Binary, listener);
     }
 
     public PixmapEmu(FileHandle file) {

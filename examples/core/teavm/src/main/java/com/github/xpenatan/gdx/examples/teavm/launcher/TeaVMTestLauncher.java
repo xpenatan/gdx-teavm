@@ -20,7 +20,7 @@ public class TeaVMTestLauncher {
             @Override
             public void create() {
                 TeaFiles files  = (TeaFiles)Gdx.files;
-                files.localStorage.debug = true;
+                files.localStorage.debug = false;
                 super.create();
             }
 

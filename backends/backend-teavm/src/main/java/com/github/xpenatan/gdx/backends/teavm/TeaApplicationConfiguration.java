@@ -29,7 +29,11 @@ public class TeaApplicationConfiguration {
      * browser is not shared between the applications. If you leave the storage prefix at "", all the data
      * and files stored will be shared between the applications.
      */
-    public String storagePrefix = "db/assets";
+    public String storagePrefix = "app";
+
+    public String localStoragePrefix = "db/assets";
+
+    public boolean shouldEncodePreference = false;
 
     /**
      * Show download logs.

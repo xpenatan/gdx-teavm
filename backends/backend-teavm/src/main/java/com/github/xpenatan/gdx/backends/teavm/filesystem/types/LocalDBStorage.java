@@ -38,7 +38,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         teaApplication.delayInitCount++;
 
         IDBFactory instance = IDBFactory.getInstance();
-        String databaseName = config.storagePrefix;
+        String databaseName = config.localStoragePrefix;
         IDBOpenDBRequest request = instance.open(databaseName, 1);
 
         request.setOnUpgradeNeeded(evt -> {

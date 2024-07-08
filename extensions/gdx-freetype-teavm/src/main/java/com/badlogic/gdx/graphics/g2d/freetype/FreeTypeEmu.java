@@ -850,9 +850,8 @@ public class FreeTypeEmu {
             Preloader preloader = app.getPreloader();
             preloader.loadScript(false, "freetype.js", new AssetLoaderListener<Object>() {
                 @Override
-                public boolean onSuccess(String url, Object result) {
+                public void onSuccess(String url, Object result) {
                     freeTypeInit = true;
-                    return true;
                 }
 
                 @Override

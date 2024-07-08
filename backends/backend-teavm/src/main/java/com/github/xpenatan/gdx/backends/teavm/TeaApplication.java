@@ -423,7 +423,7 @@ public class TeaApplication implements Application, Runnable {
         Preferences pref = prefs.get(name);
         if(pref == null) {
             Storage storage = Storage.getLocalStorage();;
-            pref = new TeaPreferences(storage, config.storagePrefix + name);
+            pref = new TeaPreferences(storage, config.storagePrefix + ":" + name, config.shouldEncodePreference);
             prefs.put(name, pref);
         }
         return pref;
@@ -481,8 +481,7 @@ public class TeaApplication implements Application, Runnable {
     private void initGdx() {
         preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
             @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
+            public void onSuccess(String url, Object result) {
             }
         });
     }
@@ -490,8 +489,7 @@ public class TeaApplication implements Application, Runnable {
     private void initSound() {
         preloader.loadScript(true, "howler.js", new AssetLoaderListener<Object>() {
             @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
+            public void onSuccess(String url, Object result) {
             }
         });
     }

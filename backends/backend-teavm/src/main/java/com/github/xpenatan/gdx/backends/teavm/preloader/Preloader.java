@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.preloader;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
@@ -24,6 +25,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.core.JSPromise;
@@ -39,9 +41,11 @@ public class Preloader {
 
     public final String baseUrl;
 
+    private HashSet<String> assetInQueue;
+
     public Preloader(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
         baseUrl = newBaseURL;
-
+        assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);
     }
 
@@ -137,19 +141,13 @@ public class Preloader {
     }
 
     public void preload(TeaApplicationConfiguration config, final String assetFileUrl) {
-        AssetDownloader.getInstance().loadText(true, getAssetUrl() + assetFileUrl, new AssetLoaderListener<String>() {
+        AssetLoaderListener<Blob> listener = new AssetLoaderListener<>() {
             @Override
-            public void onProgress(double amount) {
-            }
-
-            @Override
-            public void onFailure(String url) {
-                System.out.println("ErrorLoading: " + assetFileUrl);
-            }
-
-            @Override
-            public boolean onSuccess(String url, String result) {
-                String[] lines = result.split("\n");
+            public void onSuccess(String url, Blob result) {
+                Int8ArrayWrapper data = result.getData();
+                byte[] byteArray = TypedArrays.toByteArray(data);
+                String assets = new String(byteArray);
+                String[] lines = assets.split("\n");
 
                 assetTotal = lines.length;
 
@@ -179,34 +177,62 @@ public class Preloader {
 
                     loadAsset(assetType, fileType, assetUrl);
                 }
-                return false;
             }
-        });
+
+            @Override
+            public void onFailure(String url) {
+                System.out.println("ErrorLoading: " + assetFileUrl);
+            }
+        };
+
+        AssetDownloader.getInstance().load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
     }
 
-    public void loadAsset(AssetType assetType, FileType fileType, String path1) {
-        path1 = path1.trim().replace("\\", "/");
-        if(path1.startsWith("/")) {
-            path1 = path1.substring(1);
-        }
+    public boolean isAssetInQueue(String path) {
+        String path1 = fixPath(path);
+        return assetInQueue.contains(path1);
+    }
+
+    public boolean isAssetLoaded(FileType fileType, String path) {
+        String path1 = fixPath(path);
+        FileHandle fileHandle = Gdx.files.getFileHandle(path1, fileType);
+        return fileHandle.exists();
+    }
+
+    public void loadAsset(AssetType assetType, FileType fileType, String path) {
+        String path1 = fixPath(path);
+
         if(path1.isEmpty()) {
             return;
         }
-        String path = path1;
-        AssetDownloader.getInstance().load(true, getAssetUrl() + path, AssetType.Binary, null, new AssetLoaderListener<>() {
+
+        if(assetInQueue.contains(path1)) {
+            return;
+        }
+
+        FileHandle fileHandle = Gdx.files.getFileHandle(path1, fileType);
+        if(fileHandle.exists()) {
+            // File already exist, don't download it again.
+            return;
+        }
+
+        assetInQueue.add(path1);
+        AssetDownloader.getInstance().load(true, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<>() {
             @Override
             public void onProgress(double amount) {
             }
 
             @Override
             public void onFailure(String url) {
+                assetInQueue.remove(path1);
             }
 
             @Override
-            public boolean onSuccess(String url, Object result) {
+            public void onSuccess(String url, Object result) {
+                assetInQueue.remove(path1);
                 Blob blob = (Blob)result;
                 AssetType type = AssetType.Binary;
-                TeaFileHandle internalFile = (TeaFileHandle)Gdx.files.getFileHandle(path, fileType);
+                TeaFileHandle internalFile = (TeaFileHandle)Gdx.files.getFileHandle(path1, fileType);
                 if(assetType == AssetType.Directory) {
                     internalFile.mkdirsInternal();
                 }
@@ -224,7 +250,6 @@ public class Preloader {
                         StreamUtils.closeQuietly(output);
                     }
                 }
-                return false;
             }
         });
     }
@@ -235,5 +260,13 @@ public class Preloader {
 
     public int getQueue() {
         return AssetDownloader.getInstance().getQueue();
+    }
+
+    private String fixPath(String path1) {
+        path1 = path1.trim().replace("\\", "/");
+        if(path1.startsWith("/")) {
+            path1 = path1.substring(1);
+        }
+        return path1;
     }
 }

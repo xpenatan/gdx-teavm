@@ -10,7 +10,6 @@ public class AssetLoaderListener<T> {
     public void onFailure(String url) {
     }
 
-    public boolean onSuccess(String url, T result) {
-        return false;
+    public void onSuccess(String url, T result) {
     }
 }

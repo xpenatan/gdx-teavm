@@ -2,6 +2,7 @@ package com.github.xpenatan.imgui.example.tests.imgui;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,8 +17,10 @@ import com.github.xpenatan.gdx.multiview.EmuFrameBuffer;
 import com.github.xpenatan.imgui.example.tests.frame.GameFrame;
 import imgui.ImDrawData;
 import imgui.ImGui;
+import imgui.ImGuiCond;
 import imgui.ImGuiConfigFlags;
 import imgui.ImGuiIO;
+import imgui.ImGuiInternal;
 import imgui.ImVec2;
 import imgui.gdx.ImGuiGdxImpl;
 import imgui.gdx.ImGuiGdxInputMultiplexer;
@@ -32,9 +35,8 @@ public class ImGuiTestsApp implements Screen {
     private ImGuiGdxImpl impl;
     private ImGuiGdxInputMultiplexer input;
 
-    private boolean gdxTestInit = false;
-
     private int selected = -1;
+    private boolean scrollTo = false;
 
     private TeaVMGdxTests.TeaVMInstancer[] testList;
 
@@ -74,17 +76,23 @@ public class ImGuiTestsApp implements Screen {
             }
         };
         ((TeaVMInputWrapper)Gdx.input).multiplexer.addProcessor(input);
+
+        Preferences gdxTests = Gdx.app.getPreferences("gdxTests");
+        selected = gdxTests.getInteger("selected", selected);
+        if(selected != -1) {
+            scrollTo = true;
+        }
     }
 
     private void drawTestListWindow() {
-        if(!gdxTestInit) {
-            gdxTestInit = true;
-            ImGui.SetNextWindowSize(ImVec2.TMP_1.set(250, 500));
-            ImGui.SetNextWindowPos(ImVec2.TMP_1.set(20, 20));
-        }
+        ImGui.SetNextWindowSize(ImVec2.TMP_1.set(250, 500), ImGuiCond.ImGuiCond_FirstUseEver);
+        ImGui.SetNextWindowPos(ImVec2.TMP_1.set(20, 20), ImGuiCond.ImGuiCond_FirstUseEver);
         ImGui.Begin("GdxTests");
         if(ImGui.Button("Start Test")) {
             if(selected >= 0 && selected < testList.length) {
+                Preferences gdxTests = Gdx.app.getPreferences("gdxTests");
+                gdxTests.putInteger("selected", selected);
+                gdxTests.flush();
                 ((TeaVMInputWrapper)Gdx.input).multiplexer.removeProcessor(input);
                 test = testList[selected].instance();
                 Gdx.app.log("GdxTest", "Clicked on " + test.getClass().getName());
@@ -101,6 +109,10 @@ public class ImGuiTestsApp implements Screen {
                 if(selected != i) {
                     selected = i;
                 }
+            }
+            if(isSelected && scrollTo) {
+                scrollTo = false;
+                ImGuiInternal.ScrollToItem();
             }
         }
         ImGui.EndChild();
