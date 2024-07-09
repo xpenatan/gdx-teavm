@@ -17,6 +17,7 @@ object LibExt {
     const val reflectionVersion = "0.10.2"
     const val jettyVersion = "11.0.13"
 
+    const val gdxGltfVersion = "2.2.1"
     const val aiVersion = "1.8.2"
 
     const val truthVersion = "1.4.2"
