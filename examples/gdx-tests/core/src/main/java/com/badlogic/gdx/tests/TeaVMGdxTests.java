@@ -1,5 +1,6 @@
 package com.badlogic.gdx.tests;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.tests.bench.TiledMapBench;
 import com.badlogic.gdx.tests.conformance.AudioSoundAndMusicIsolationTest;
 import com.badlogic.gdx.tests.conformance.DisplayModeTest;
@@ -65,15 +66,26 @@ import com.badlogic.gdx.tests.net.OpenBrowserExample;
 import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.utils.IssueTest;
+import com.github.xpenatan.gdx.examples.tests.GearsDemo;
+import com.github.xpenatan.gdx.examples.tests.PixelTest;
+import com.github.xpenatan.gdx.examples.tests.ReadPixelsTest;
+import com.github.xpenatan.gdx.examples.tests.TeaVMInputTest;
 import java.util.ArrayList;
 
 public class TeaVMGdxTests {
 
     public static TeaVMInstancer[] getTestList() {
-
         ArrayList<TeaVMInstancer> tests = new ArrayList<>();
 
-        // QUICK TEST ###################################
+        // TEAVM TESTS ###################################
+        add(tests, GearsDemo::new);
+        add(tests, PixelTest::new);
+        add(tests, ReadPixelsTest::new);
+        add(tests, ReflectionTest::new);
+        add(tests, TeaVMInputTest::new);
+        add(tests, FilesTest::new);
+
+        // QUICK TESTS ###################################
         add(tests, PixmapBlendingTest::new);
         add(tests, PixmapPackerTest::new);
         add(tests, PixmapPackerIOTest::new);
@@ -323,21 +335,69 @@ public class TeaVMGdxTests {
     }
 
     private static void add(ArrayList<TeaVMInstancer> tests, GdxRunnable instance) {
-        tests.add(new TeaVMInstancer() {
+        add(tests, false, instance);
+    }
+
+    private static void add(ArrayList<TeaVMInstancer> tests, boolean isTeaVMTest, GdxRunnable instance) {
+        TeaVMInstancer teaVMInstancer = new TeaVMInstancer() {
             public GdxTest instance() {
-                return instance.run();
+                return new GdxTestWrapper(instance.run());
             }
-        });
+        };
+        tests.add(teaVMInstancer);
     }
 
     public interface GdxRunnable {
-        GdxTest run();
+        ApplicationListener run();
     }
 
     public abstract static class TeaVMInstancer implements AbstractTestWrapper.Instancer {
+        private String name = null;
 
         public String getSimpleName() {
-            return instance().getClass().getSimpleName();
+            if(name == null) {
+                name = instance().toString();
+            }
+            return name;
+        }
+    }
+
+    public static class GdxTestWrapper extends GdxTest {
+        private ApplicationListener applicationListener;
+        String className;
+
+        public GdxTestWrapper(ApplicationListener applicationListener) {
+            this.applicationListener = applicationListener;
+            className = applicationListener.getClass().getSimpleName();
+        }
+
+        public void create() {
+            applicationListener.create();
+        }
+
+        public void resume() {
+            applicationListener.resume();
+        }
+
+        public void render() {
+            applicationListener.render();
+        }
+
+        public void resize(int width, int height) {
+            applicationListener.resize(width, height);
+        }
+
+        public void pause() {
+            applicationListener.pause();
+        }
+
+        public void dispose() {
+            applicationListener.dispose();
+        }
+
+        @Override
+        public String toString() {
+            return className;
         }
     }
 }
