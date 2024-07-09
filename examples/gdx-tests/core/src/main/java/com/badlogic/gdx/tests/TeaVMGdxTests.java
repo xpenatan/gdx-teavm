@@ -66,6 +66,7 @@ import com.badlogic.gdx.tests.net.OpenBrowserExample;
 import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.utils.IssueTest;
+import com.github.xpenatan.gdx.examples.tests.GLTFQuickStartExample;
 import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import com.github.xpenatan.gdx.examples.tests.PixelTest;
 import com.github.xpenatan.gdx.examples.tests.ReadPixelsTest;
@@ -84,6 +85,7 @@ public class TeaVMGdxTests {
         add(tests, ReflectionTest::new);
         add(tests, TeaVMInputTest::new);
         add(tests, FilesTest::new);
+        add(tests, GLTFQuickStartExample::new);
 
         // QUICK TESTS ###################################
         add(tests, PixmapBlendingTest::new);
