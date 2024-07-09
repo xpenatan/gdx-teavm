@@ -84,12 +84,16 @@ public class AssetDownloadImpl implements AssetDownload {
                 if(showLogs) {
                     System.out.println("Script loaded: " + url);
                 }
-                listener.onSuccess(url, script);
+                if(listener != null) {
+                    listener.onSuccess(url, script);
+                }
             }
 
             @Override
             public void onFailure(String url) {
-                listener.onFailure(url);
+                if(listener != null) {
+                    listener.onFailure(url);
+                }
             }
         }, 0, false);
     }
