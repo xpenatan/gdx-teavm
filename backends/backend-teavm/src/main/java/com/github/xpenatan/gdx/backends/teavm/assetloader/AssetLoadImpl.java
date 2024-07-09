@@ -176,7 +176,9 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
                     AssetType assetType = AssetType.Binary;
                     if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
 
-                    loadAsset(true, assetUrl, assetType, fileType, null);
+                    if(config.preloadAssets || fileType == FileType.Classpath) {
+                        loadAsset(true, assetUrl, assetType, fileType, null);
+                    }
                 }
             }
 

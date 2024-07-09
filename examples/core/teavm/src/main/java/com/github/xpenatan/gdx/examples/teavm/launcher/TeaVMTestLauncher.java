@@ -11,6 +11,7 @@ public class TeaVMTestLauncher {
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = true;
+        config.preloadAssets = false;
         new TeaApplication(new LoadingTest(), config);
     }
 }

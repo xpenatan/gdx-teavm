@@ -542,10 +542,8 @@ public class TeaBuilder {
         // Copy scripts
         ArrayList<AssetsCopy.Asset> scriptsAssets = AssetsCopy.copyScripts(classLoader, scripts, scriptsFolder);
 
-        if(generateAssetPaths) {
-            AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
-            AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
-        }
+        AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
+        AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
 
         TeaBuilder.log("");
     }

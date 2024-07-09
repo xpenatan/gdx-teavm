@@ -18,6 +18,8 @@ public class LoadingTest extends Game {
 
     GameScreen gameScreen;
 
+    public static String ASSET_SHIP = "custom/g3d/ship/ship.obj";
+
     @Override
     public void create() {
         manager = new AssetManager();
@@ -62,11 +64,8 @@ public class LoadingTest extends Game {
             viewport = new ScreenViewport(camera);
             cameraControl = new CameraInputController(camera);
 
-            game.manager.load("custom/g3d/ship/ship.obj", Model.class);
-            game.manager.finishLoading();
-
-            shipModel = game.manager.get("custom/g3d/ship/ship.obj", Model.class);
-            shipModelInstance = new ModelInstance(shipModel);
+            game.manager.load(ASSET_SHIP, Model.class);
+//            game.manager.finishLoading();
 
             Gdx.input.setInputProcessor(new InputMultiplexer(cameraControl));
         }
@@ -75,6 +74,17 @@ public class LoadingTest extends Game {
         public void render(float delta) {
             Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+            game.manager.update();
+
+            if(shipModel == null && game.manager.isLoaded(ASSET_SHIP)) {
+                shipModel = game.manager.get(ASSET_SHIP, Model.class);
+                shipModelInstance = new ModelInstance(shipModel);
+            }
+
+            if(shipModel == null) {
+                return;
+            }
 
             if(cameraControl != null){
                 cameraControl.update();
