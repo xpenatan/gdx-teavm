@@ -43,8 +43,17 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Get version
+        uses: madhead/read-java-properties@latest
+        id: version
+        with:
+          file: "./gradle.properties"
+          property: version
+          default: 0.0.1
+
       - name: Upload to repository
         uses: nick-fields/retry@v3
+        if: ${{ success() && inputs.shouldUpload == 'true' }}
         with:
           max_attempts: 3
           timeout_minutes: 10
@@ -55,3 +64,22 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           SIGNING_KEY: ${{ secrets.PGP_SECRET }}
           SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
+
+      - name: Create Git tag
+        uses: actions/github-script@v7
+        if: ${{ success() && inputs.isRelease == 'true' }}
+        with:
+          script: |
+            const versionOutputs = ${{ toJSON(steps.version.outputs) }};
+            
+            var version = versionOutputs.value;
+            
+            console.log("Version: " + version);
+            
+            var ref = "refs/tags/" + version
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: ref,
+              sha: context.sha
+            });
