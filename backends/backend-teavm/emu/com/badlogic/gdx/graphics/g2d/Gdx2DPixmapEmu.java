@@ -297,7 +297,8 @@ public class Gdx2DPixmapEmu implements Disposable {
             "var bytesSize = width * height * bytesPerPixel;" +
             "var startIndex = pixels;" +
             "var endIndex = startIndex + bytesSize;" +
-            "var newArray = Gdx.HEAPU8.subarray(startIndex, endIndex);" +
+            "var heapArray = Gdx.HEAPU8.subarray(startIndex, endIndex);" +
+            "var newArray = new Uint8Array(heapArray);" +
             "return newArray;"
     )
     private static native Uint8ArrayWrapper load(@JSByRef() int[] nativeData, @JSByRef() byte[] buffer, int offset, int len); /*MANUAL
