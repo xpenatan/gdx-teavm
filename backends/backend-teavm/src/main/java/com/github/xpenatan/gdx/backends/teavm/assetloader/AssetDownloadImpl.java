@@ -53,7 +53,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void load(boolean async, String url, AssetType type, AssetLoaderListener<?> listener) {
         switch(type) {
             case Binary:
-                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, 0, true);
+                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, 0, showLogs);
                 break;
             case Directory:
                 listener.onSuccess(url, null);
