@@ -1,4 +1,6 @@
-[1.0.0-SNAPSHOT]
+[-SNAPSHOT]
+
+[1.0.0]
 - Update teavm to 0.10.0
 - Pixmap now use Gdx2DPixmap
 - New Gdx.files.internal, classpath and local implementation. Local files uses IndexedDB.  
