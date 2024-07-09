@@ -216,9 +216,14 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
             return;
         }
 
-        FileHandle fileHandle = Gdx.files.getFileHandle(path1, fileType);
+        TeaFileHandle fileHandle = (TeaFileHandle)Gdx.files.getFileHandle(path1, fileType);
         if(fileHandle.exists()) {
             // File already exist, don't download it again.
+            return;
+        }
+
+        if(assetType == AssetType.Directory) {
+            fileHandle.mkdirsInternal();
             return;
         }
 
@@ -243,7 +248,6 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
             public void onSuccess(String url, Blob result) {
                 assetInQueue.remove(path1);
                 AssetType type = AssetType.Binary;
-                TeaFileHandle fileHandle = (TeaFileHandle)Gdx.files.getFileHandle(path1, fileType);
                 if(assetType == AssetType.Directory) {
                     fileHandle.mkdirsInternal();
                 }
