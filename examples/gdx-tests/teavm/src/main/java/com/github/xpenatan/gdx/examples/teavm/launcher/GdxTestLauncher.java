@@ -11,7 +11,7 @@ public class GdxTestLauncher {
         TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
-        config.showDownloadLogs = true;
+        config.showDownloadLogs = false;
         config.useGL30 = true;
         new TeaApplication(new ImGuiGame(), config);
 //        new TeaApplication(new TeaVMTestWrapper(), config);

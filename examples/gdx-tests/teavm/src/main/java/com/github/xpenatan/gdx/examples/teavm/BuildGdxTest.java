@@ -9,6 +9,7 @@ import com.github.xpenatan.gdx.examples.teavm.launcher.GdxTestLauncher;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.tooling.TeaVMTool;
+import org.teavm.vm.TeaVMOptimizationLevel;
 
 @SkipClass
 public class BuildGdxTest {
@@ -23,7 +24,8 @@ public class BuildGdxTest {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setObfuscated(false);
+        tool.setObfuscated(true);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.FULL);
         tool.setMainClass(GdxTestLauncher.class.getName());
         TeaBuilder.build(tool);
     }
