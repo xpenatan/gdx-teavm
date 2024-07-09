@@ -28,6 +28,7 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadmpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
@@ -472,6 +473,10 @@ public class TeaApplication implements Application, Runnable {
         APP_CREATE,
         APP_LOOP
     }
+
+    // Testing code only
+    @JSBody(params = "text", script = "console.log(text);" )
+    public static native void print(String text);
 
     // ##################### NATIVE CALLS #####################
 

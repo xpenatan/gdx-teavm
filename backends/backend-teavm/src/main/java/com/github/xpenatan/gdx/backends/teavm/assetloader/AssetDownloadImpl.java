@@ -1,12 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
@@ -15,6 +15,8 @@ import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
 public class AssetDownloadImpl implements AssetDownload {
+
+    private static final int MAX_DOWNLOAD_ATTEMPT = 3;
 
     private int queue;
     private final boolean showLogs;
@@ -51,7 +53,7 @@ public class AssetDownloadImpl implements AssetDownload {
     public void load(boolean async, String url, AssetType type, AssetLoaderListener<?> listener) {
         switch(type) {
             case Binary:
-                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, true);
+                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, 0, true);
                 break;
             case Directory:
                 listener.onSuccess(url, null);
@@ -89,12 +91,18 @@ public class AssetDownloadImpl implements AssetDownload {
             public void onFailure(String url) {
                 listener.onFailure(url);
             }
-        }, false);
+        }, 0, false);
     }
 
-    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, boolean showLogs) {
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count, boolean showLogs) {
         if(showLogs) {
             System.out.println("Loading asset: " + url);
+        }
+        if(count == MAX_DOWNLOAD_ATTEMPT) {
+            if(listener != null) {
+                listener.onFailure(url);
+            }
+            return;
         }
 
         // don't load on main thread
@@ -106,7 +114,9 @@ public class AssetDownloadImpl implements AssetDownload {
                     if(request.getReadyState() == XMLHttpRequest.DONE) {
                         int status = request.getStatus();
                         if(status == 0) {
-                            listener.onFailure(url);
+                            if(listener != null) {
+                                listener.onFailure(url);
+                            }
                         }
                         else if(status != 200) {
                             if ((status != 404) && (status != 403)) {
@@ -117,10 +127,13 @@ public class AssetDownloadImpl implements AssetDownload {
                                 catch (Throwable e) {
                                     // ignored
                                 }
-                                loadBinary(async, url, listener, showLogs);
+                                int newCount = count + 1;
+                                loadBinary(async, url, listener, newCount, showLogs);
                             }
                             else {
-                                listener.onFailure(url);
+                                if(listener != null) {
+                                    listener.onFailure(url);
+                                }
                             }
                         }
                         else {
@@ -130,7 +143,9 @@ public class AssetDownloadImpl implements AssetDownload {
 
                             ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
                             Int8Array data = (Int8Array)TypedArrays.createInt8Array(response);
-                            listener.onSuccess(url, new Blob((ArrayBuffer)response, data));
+                            if(listener != null) {
+                                listener.onSuccess(url, new Blob((ArrayBuffer)response, data));
+                            }
                         }
                         subtractQueue();
                     }
@@ -154,7 +169,9 @@ public class AssetDownloadImpl implements AssetDownload {
             if(showDownloadProgress) {
                 System.out.println("Total: " + total + " loaded: " + loaded + " URL: " + url);
             }
-            listener.onProgress(loaded);
+            if(listener != null) {
+                listener.onProgress(loaded);
+            }
         });
     }
 }

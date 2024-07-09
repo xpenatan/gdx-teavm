@@ -30,8 +30,9 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
     volatile AsyncResult<Void> loadFuture;
     volatile Object asset;
 
-    int ticks = 0;
     volatile boolean cancel;
+
+    int count = 0;
 
     public AssetLoadingTaskEmu(AssetManager manager, AssetDescriptor assetDesc, com.badlogic.gdx.assets.loaders.AssetLoader loader, AsyncExecutor threadPool) {
         this.manager = manager;
@@ -77,16 +78,21 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
      * @throws GdxRuntimeException
      */
     public boolean update() {
-        ticks++;
-
         // GTW: check if we have a file that was not preloaded and is not done loading yet
         AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
-        if(!assetLoader.isAssetLoaded(Files.FileType.Internal, assetDesc.fileName)) {
-            assetLoader.loadAsset(true, assetDesc.fileName, AssetType.Binary, Files.FileType.Internal, null);
-            boolean assetInQueue = assetLoader.isAssetInQueue(assetDesc.fileName);
-            // Loader.finishLoading breaks everything
-            if(!assetInQueue && ticks > 100000)
-                throw new GdxRuntimeException("File not prefetched, but finishLoading was probably called: " + assetDesc.fileName);
+
+        String path = resolve(loader, assetDesc).path();
+
+        if(!assetLoader.isAssetLoaded(Files.FileType.Internal, path)) {
+            if(!assetLoader.isAssetInQueue(path)) {
+                count++;
+                if(count == 2) {
+                    cancel = true;
+                }
+                else {
+                    assetLoader.loadAsset(true, path, AssetType.Binary, Files.FileType.Internal, null);
+                }
+            }
         }
         else {
             if(loader instanceof SynchronousAssetLoader)
