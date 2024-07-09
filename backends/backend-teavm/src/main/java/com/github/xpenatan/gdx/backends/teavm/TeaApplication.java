@@ -24,7 +24,7 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadmpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,7 +69,7 @@ public class TeaApplication implements Application, Runnable {
     private ApplicationLogger logger;
     private int logLevel = LOG_ERROR;
 
-    private AssetLoadmpl assetLoader;
+    private AssetLoadImpl assetLoader;
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
@@ -117,7 +117,7 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        assetLoader = new AssetLoadmpl(hostPageBaseURL, graphics.canvas, this);
+        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
         AssetLoader.setInstance(assetLoader);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 

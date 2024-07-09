@@ -32,7 +32,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class AssetLoadmpl implements AssetLoader.AssetLoad {
+public class AssetLoadImpl implements AssetLoader.AssetLoad {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
@@ -42,7 +42,7 @@ public class AssetLoadmpl implements AssetLoader.AssetLoad {
 
     private HashSet<String> assetInQueue;
 
-    public AssetLoadmpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);
