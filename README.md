@@ -1,4 +1,4 @@
-## gdx-teavm
+# gdx-teavm
 
 ![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/release.yml/badge.svg)
 ![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/snapshot.yml/badge.svg)
