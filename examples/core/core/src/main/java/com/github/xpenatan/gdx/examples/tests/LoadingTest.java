@@ -62,10 +62,10 @@ public class LoadingTest extends Game {
             viewport = new ScreenViewport(camera);
             cameraControl = new CameraInputController(camera);
 
-            game.manager.load("data/g3d/ship/ship.obj", Model.class);
+            game.manager.load("custom/g3d/ship/ship.obj", Model.class);
             game.manager.finishLoading();
 
-            shipModel = game.manager.get("data/g3d/ship/ship.obj", Model.class);
+            shipModel = game.manager.get("custom/g3d/ship/ship.obj", Model.class);
             shipModelInstance = new ModelInstance(shipModel);
 
             Gdx.input.setInputProcessor(new InputMultiplexer(cameraControl));

@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
@@ -19,7 +18,8 @@ public class BuildTeaVMTestDemo {
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
+        teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
+        teaBuildConfiguration.shouldGenerateAssetFile = false;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.logoPath = "logo.png";
 

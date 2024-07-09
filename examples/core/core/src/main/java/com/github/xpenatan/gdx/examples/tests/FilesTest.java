@@ -30,7 +30,7 @@ public class FilesTest implements ApplicationListener {
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
+        font = new BitmapFont(Gdx.files.internal("custom/lsans-15.fnt"), false);
         batch = new SpriteBatch();
 
         if(Gdx.files.isExternalStorageAvailable()) {
@@ -38,11 +38,11 @@ public class FilesTest implements ApplicationListener {
             message += "External storage path: " + Gdx.files.getExternalStoragePath() + "\n";
 
             try {
-                InputStream in = Gdx.files.internal("data/cube.obj").read();
+                InputStream in = Gdx.files.internal("custom/cube.obj").read();
                 StreamUtils.closeQuietly(in);
                 message += "Open internal success\n";
             } catch(Throwable e) {
-                message += "Couldn't open internal data/cube.obj\n" + e.getMessage() + "\n";
+                message += "Couldn't open internal custom/cube.obj\n" + e.getMessage() + "\n";
             }
 
             BufferedWriter out = null;
@@ -272,7 +272,7 @@ public class FilesTest implements ApplicationListener {
     }
 
     private void testInternal() throws IOException {
-        FileHandle handle = Gdx.files.internal("data/badlogic.jpg");
+        FileHandle handle = Gdx.files.internal("custom/badlogic.jpg");
         if(!handle.exists()) fail("Couldn't find internal file");
         if(handle.isDirectory()) fail("Internal file shouldn't be a directory");
         try {
@@ -291,7 +291,7 @@ public class FilesTest implements ApplicationListener {
             fail();
         } catch(Exception ignored) {
         }
-        FileHandle dir = Gdx.files.internal("data");
+        FileHandle dir = Gdx.files.internal("custom");
         if(Gdx.app.getType() != ApplicationType.Android) {
             if(!dir.exists()) fail();
         }
