@@ -6,17 +6,17 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.webaudio.WebAudioAPIManager;
+import com.github.xpenatan.gdx.backends.teavm.webaudio.howler.HowlerAudioManager;
 
 /**
  * @author xpenatan
  * Port from GWT gdx 1.12.0
  */
 public class DefaultTeaAudio implements TeaAudio {
-    private WebAudioAPIManager webAudioAPIManager = null;
+    private HowlerAudioManager webAudioAPIManager = null;
 
     public DefaultTeaAudio() {
-        webAudioAPIManager = new WebAudioAPIManager();
+        webAudioAPIManager = new HowlerAudioManager();
     }
 
     @Override

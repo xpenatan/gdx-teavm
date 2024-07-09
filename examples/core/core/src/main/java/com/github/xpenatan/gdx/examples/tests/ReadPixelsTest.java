@@ -28,7 +28,7 @@ public class ReadPixelsTest implements ApplicationListener {
         Gdx.input.setCatchKey(Input.Keys.F1, true);
 
         batch = new SpriteBatch();
-        badlogic = new Texture(Gdx.files.internal("data/badlogic.jpg"));
+        badlogic = new Texture(Gdx.files.internal("custom/badlogic.jpg"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
     }

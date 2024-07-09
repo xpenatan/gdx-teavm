@@ -18,6 +18,7 @@ compileJavaTask.mustRunAfter("clean")
 dependencies {
     implementation("org.reflections:reflections:${LibExt.reflectionVersion}")
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    api(project(":extensions:asset-loader"))
 
     api("org.teavm:teavm-tooling:${LibExt.teaVMVersion}")
     api("org.teavm:teavm-core:${LibExt.teaVMVersion}")
@@ -25,6 +26,8 @@ dependencies {
     api("org.teavm:teavm-jso:${LibExt.teaVMVersion}")
     api("org.teavm:teavm-jso-apis:${LibExt.teaVMVersion}")
     api("org.teavm:teavm-jso-impl:${LibExt.teaVMVersion}")
+
+    testImplementation("com.google.truth:truth:${LibExt.truthVersion}")
 }
 
 publishing {

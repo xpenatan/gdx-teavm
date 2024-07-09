@@ -23,6 +23,7 @@ tasks.register<JavaExec>("gdx-tests-build") {
     group = "examples-teavm"
     description = "Build gdx-tests example"
     mainClass.set(mainClassName)
+    args = mutableListOf(LibExt.gdxTestsAssetsPath)
     classpath = sourceSets["main"].runtimeClasspath
 }
 

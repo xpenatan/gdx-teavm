@@ -2,12 +2,9 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapEmu;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.utils.PNG;
-
-import java.nio.ByteBuffer;
 
 /**
  * Cursor functionality ported for libGDX/GWT. This implementation also supports dynamically created cursor
@@ -47,43 +44,35 @@ public class TeaCursor implements Cursor {
          "yHotspot coordinate of " + yHotspot + " is not within image height bounds: [0, " + pixmap.getHeight() + ").");
     }
 
-    int index = ((ByteBuffer)pixmap.getPixels()).getInt(0);
-    PixmapEmu pixmapEmu = (PixmapEmu)TeaGraphics.pixmaps.get(index);
     String url;
-    if (pixmapEmu != null) {
-      // referenced cursor image via URL
-      url = "'" + pixmapEmu.getCanvasElement().toDataURL("image/png") + "'";
+    // create custom cursor image from raw-data, e.g. when a cursor was created via Pixmap.drawPixels(...) or so
+    int w = pixmap.getWidth();
+    int h = pixmap.getHeight();
+    byte[] rawBytes = new byte[4 * w * h];
+    for (int y = 0; y < h; y++) {
+      int offLine = 4 * y * w;
+      for (int x = 0; x < w; x++) {
+        int pixel = pixmap.getPixel(x, y);
+        int off = offLine + (4 * x);
+        rawBytes[off    ] = (byte)((pixel >>> 24) & 0xff);
+        rawBytes[off + 1] = (byte)((pixel >>> 16) & 0xff);
+        rawBytes[off + 2] = (byte)((pixel >>>  8) & 0xff);
+        rawBytes[off + 3] = (byte)((pixel      ) & 0xff);
+      }
     }
-    else {
-      // create custom cursor image from raw-data, e.g. when a cursor was created via Pixmap.drawPixels(...) or so
-      int w = pixmap.getWidth();
-      int h = pixmap.getHeight();
-      byte[] rawBytes = new byte[4 * w * h];
-      for (int y = 0; y < h; y++) {
-        int offLine = 4 * y * w;
-        for (int x = 0; x < w; x++) {
-          int pixel = pixmap.getPixel(x, y);
-          int off = offLine + (4 * x);
-          rawBytes[off    ] = (byte)((pixel >>> 24) & 0xff);
-          rawBytes[off + 1] = (byte)((pixel >>> 16) & 0xff);
-          rawBytes[off + 2] = (byte)((pixel >>>  8) & 0xff);
-          rawBytes[off + 3] = (byte)((pixel      ) & 0xff);
-        }
-      }
 
-      // convert to uncompressed PNG byte-array
-      byte[] pngBytes;
-      try {
-        pngBytes = PNG.encode(w, h, rawBytes);
-      }
-      catch (Exception e) {
-        throw new GdxRuntimeException("Error encoding bytes as PNG.", e);
-      }
-
-      // we pass the images as base64 via CSS
-      String base64 = String.valueOf(Base64Coder.encode(pngBytes));
-      url = "data:image/png;base64," + base64;
+    // convert to uncompressed PNG byte-array
+    byte[] pngBytes;
+    try {
+      pngBytes = PNG.encode(w, h, rawBytes);
     }
+    catch (Exception e) {
+      throw new GdxRuntimeException("Error encoding bytes as PNG.", e);
+    }
+
+    // we pass the images as base64 via CSS
+    String base64 = String.valueOf(Base64Coder.encode(pngBytes));
+    url = "data:image/png;base64," + base64;
     cssCursorProperty = "url(";
     cssCursorProperty += url;
     cssCursorProperty += ")";

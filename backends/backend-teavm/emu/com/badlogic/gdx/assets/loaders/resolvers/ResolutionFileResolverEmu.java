@@ -49,7 +49,7 @@ public class ResolutionFileResolverEmu implements FileHandleResolver {
     @Override
     public FileHandle resolve(String fileName) {
         ResolutionFileResolver.Resolution bestDesc = choose(descriptors);
-        FileHandle originalHandle = new TeaFileHandle(fileName);
+        FileHandle originalHandle = Gdx.files.internal(fileName);
         FileHandle handle = baseResolver.resolve(resolve(originalHandle, bestDesc.folder));
         if(!handle.exists()) handle = baseResolver.resolve(fileName);
         return handle;

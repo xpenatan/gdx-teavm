@@ -87,7 +87,10 @@ public class TeaInput implements Input, EventListenerWrapper {
     long currentEventTimeStamp;
     boolean hasFocus = true;
 
-    public TeaInput(HTMLCanvasElementWrapper canvas) {
+    private TeaApplication application;
+
+    public TeaInput(TeaApplication application, HTMLCanvasElementWrapper canvas) {
+        this.application = application;
         this.canvas = canvas;
         hookEvents();
     }
@@ -111,8 +114,10 @@ public class TeaInput implements Input, EventListenerWrapper {
 
     @Override
     public void handleEvent(EventWrapper e) {
-        handleMouseEvents(e);
-        handleKeyboardEvents(e);
+        if(application.getApplicationListener() != null) {
+            handleMouseEvents(e);
+            handleKeyboardEvents(e);
+        }
     }
 
     private void handleMouseEvents(EventWrapper e) {

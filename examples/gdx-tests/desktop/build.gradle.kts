@@ -5,15 +5,14 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
 
     implementation("com.github.xpenatan.gdx-imgui:imgui-desktop:${LibExt.gdxImGuiVersion}")
-
-    implementation("com.badlogicgames.gdx:gdx-bullet-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-box2d-platform:${LibExt.gdxVersion}:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-freetype-platform:${LibExt.gdxVersion}:natives-desktop")
 }
 
 val mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
 
-// Change to your source asset directory
-val assetsDir = File("E:\\Dev\\Projects\\java\\libgdx\\tests\\gdx-tests-android\\assets\\");
+val assetsDir = File(LibExt.gdxTestsAssetsPath)
+
+sourceSets["main"].resources.srcDirs(File("../../core/assets"))
 
 tasks.register<JavaExec>("gdx-tests-run-desktop") {
     dependsOn("classes")

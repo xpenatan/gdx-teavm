@@ -23,26 +23,10 @@ import com.github.xpenatan.gdx.backends.teavm.dom.WebJSObject;
 import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestEventTargetWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float64ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.FloatArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int16ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.LongArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ObjectArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ClampedArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLContextAttributesWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderbufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -55,8 +39,6 @@ import java.util.function.Predicate;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.teavm.jso.JSFunctor;
-import org.teavm.jso.JSIndexer;
-import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
 import org.teavm.model.AnnotationContainer;
@@ -134,9 +116,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
                 classHolder = findClassHolder(cls, context, TeaClassTransformer.mainClass);
                 setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
             }
-
-            classHolder = findClassHolder(cls, context, ArrayBufferWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, ObjectArrayWrapper.class);
             setClassInterface(classHolder, JSObject.class);

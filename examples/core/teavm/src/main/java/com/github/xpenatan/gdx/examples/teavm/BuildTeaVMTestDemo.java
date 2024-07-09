@@ -1,7 +1,9 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
+import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher;
 import java.io.File;
@@ -12,14 +14,18 @@ import org.teavm.tooling.TeaVMTool;
 public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) throws IOException {
+        String reflectionPackage = "com.badlogic.gdx.math";
+        TeaReflectionSupplier.addReflectionClass(reflectionPackage);
+
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new File("../desktop/assets"));
+        teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
+        teaBuildConfiguration.shouldGenerateAssetFile = false;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.logoPath = "logo.png";
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
-        tool.setObfuscated(true);
+        tool.setObfuscated(false);
         TeaBuilder.build(tool);
     }
 }

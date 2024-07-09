@@ -17,8 +17,12 @@ subprojects {
         mavenCentral()
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/releases/") }
-        maven { url = uri("https://oss.sonatype.org/content/repositories/releases/") }
         maven { url = uri("https://jitpack.io") }
+
+        maven {
+            url = uri("http://teavm.org/maven/repository/")
+            setAllowInsecureProtocol(true)
+        }
     }
 
     configurations.configureEach {
@@ -29,7 +33,8 @@ subprojects {
 
 var libProjects = mutableSetOf(
         project(":backends:backend-teavm"),
-        project(":extensions:gdx-freetype-teavm")
+        project(":extensions:gdx-freetype-teavm"),
+        project(":extensions:asset-loader")
 )
 
 configure(libProjects) {

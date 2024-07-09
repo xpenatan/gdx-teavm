@@ -16,16 +16,19 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloadImpl;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetDownloader.AssetDownload;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
@@ -36,6 +39,8 @@ import org.teavm.jso.dom.html.HTMLElement;
 public class TeaApplication implements Application, Runnable {
 
     private static TeaAgentInfo agentInfo;
+
+    public int delayInitCount;
 
     public static TeaAgentInfo getAgentInfo() {
         return agentInfo;
@@ -56,7 +61,7 @@ public class TeaApplication implements Application, Runnable {
     private final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(4);
     private TeaWindow window;
 
-    private AppState initState = AppState.LOAD_ASSETS;
+    private AppState initState = AppState.INIT;
 
     private int lastWidth = -1;
     private int lastHeight = 1;
@@ -64,7 +69,7 @@ public class TeaApplication implements Application, Runnable {
     private ApplicationLogger logger;
     private int logLevel = LOG_ERROR;
 
-    private Preloader preloader;
+    private AssetLoadImpl assetLoader;
 
     private ObjectMap<String, Preferences> prefs = new ObjectMap<>();
 
@@ -110,22 +115,20 @@ public class TeaApplication implements Application, Runnable {
           hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
         }
 
-        TeaTool.setGLArrayBuffer(config.useGLArrayBuffer);
         graphics = new TeaGraphics(config);
 
-        preloader = new Preloader(hostPageBaseURL, graphics.canvas, this);
+        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
+        AssetLoader.setInstance(assetLoader);
         AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
-        preloader.preload(config.preloadAssets, "assets.txt");
 
-        input = new TeaInput(graphics.canvas);
-        files = new TeaFiles(preloader);
+        input = new TeaInput(this, graphics.canvas);
+        files = new TeaFiles(config, this);
         net = new TeaNet();
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
 
-        if(config.useNativePixmap) {
-            initGdx();
-        }
+        initGdx();
+        initSound();
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -139,33 +142,44 @@ public class TeaApplication implements Application, Runnable {
         audio = new DefaultTeaAudio();
         Gdx.audio = audio;
 
-        window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
+        window.addEventListener("pagehide", new EventListenerWrapper() {
             @Override
             public void handleEvent(EventWrapper evt) {
-                // notify of state change
-                String state = window.getDocument().getVisibilityState();
-                if ("hidden".equals(state)) {
-                    // hidden: i.e. we are paused
-                    synchronized (lifecycleListeners) {
-                        for (LifecycleListener listener : lifecycleListeners) {
-                            listener.pause();
-                        }
-                    }
+                if(appListener != null) {
                     appListener.pause();
-                }
-                else {
-                    // visible: i.e. we resume
-                    synchronized (lifecycleListeners) {
-                        for (LifecycleListener listener : lifecycleListeners) {
-                            listener.resume();
-                        }
-                    }
-                    appListener.resume();
+                    appListener.dispose();
+                    appListener = null;
                 }
             }
         });
 
-        window.requestAnimationFrame(this);
+        window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
+            @Override
+            public void handleEvent(EventWrapper evt) {
+                // notify of state change
+                if(initState == AppState.APP_LOOP) {
+                    String state = window.getDocument().getVisibilityState();
+                    if (state.equals("hidden")) {
+                        // hidden: i.e. we are paused
+                        synchronized (lifecycleListeners) {
+                            for (LifecycleListener listener : lifecycleListeners) {
+                                listener.pause();
+                            }
+                        }
+                        appListener.pause();
+                    }
+                    else if(state.equals("visible")){
+                        // visible: i.e. we resume
+                        synchronized (lifecycleListeners) {
+                            for (LifecycleListener listener : lifecycleListeners) {
+                                listener.resume();
+                            }
+                        }
+                        appListener.resume();
+                    }
+                }
+            }
+        });
 
         if(config.isAutoSizeApplication()) {
             window.addEventListener("resize", new EventListenerWrapper() {
@@ -191,6 +205,10 @@ public class TeaApplication implements Application, Runnable {
                 }
             });
         }
+
+        assetLoader.preload(config, "assets.txt");
+
+        window.requestAnimationFrame(this);
     }
 
     @Override
@@ -198,6 +216,11 @@ public class TeaApplication implements Application, Runnable {
         AppState state = initState;
         try {
             switch(state) {
+                case INIT:
+                    if(delayInitCount == 0) {
+                        initState = AppState.LOAD_ASSETS;
+                    }
+                    break;
                 case LOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
                     if(queue == 0) {
@@ -211,7 +234,7 @@ public class TeaApplication implements Application, Runnable {
                     }
                     else {
                         // update progress bar once we know the total number of assets that are loaded
-                        int total = preloader.assetTotal;
+                        int total = assetLoader.assetTotal;
                         if (total > 0) {
                           // we have the actual total and can update the progress bar
                           int minPercentage = 25;
@@ -237,7 +260,9 @@ public class TeaApplication implements Application, Runnable {
                         initState = AppState.APP_CREATE;
                         graphics.frameId  = 0;
                     }
-                    step(appListener);
+                    if(appListener != null) {
+                        step(appListener);
+                    }
                     break;
             }
         }
@@ -285,10 +310,6 @@ public class TeaApplication implements Application, Runnable {
 
     public void setApplicationListener(ApplicationListener applicationListener) {
         this.queueAppListener = applicationListener;
-    }
-
-    public Preloader getPreloader() {
-        return preloader;
     }
 
     public TeaApplicationConfiguration getConfig() {
@@ -400,7 +421,7 @@ public class TeaApplication implements Application, Runnable {
         Preferences pref = prefs.get(name);
         if(pref == null) {
             Storage storage = Storage.getLocalStorage();;
-            pref = new TeaPreferences(storage, config.storagePrefix + name);
+            pref = new TeaPreferences(storage, config.storagePrefix + ":" + name, config.shouldEncodePreference);
             prefs.put(name, pref);
         }
         return pref;
@@ -434,10 +455,6 @@ public class TeaApplication implements Application, Runnable {
         }
     }
 
-    public String getAssetUrl() {
-        return preloader.getAssetUrl();
-    }
-
     /** @return {@code true} if application runs on a mobile device */
     public static boolean isMobileDevice () {
         // RegEx pattern from detectmobilebrowsers.com (public domain)
@@ -451,18 +468,30 @@ public class TeaApplication implements Application, Runnable {
     }
 
     public enum AppState {
+        INIT,
         LOAD_ASSETS,
         APP_CREATE,
         APP_LOOP
     }
 
+    // Testing code only
+    @JSBody(params = "text", script = "console.log(text);" )
+    public static native void print(String text);
+
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        preloader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<Object>() {
+        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {
             @Override
-            public boolean onSuccess(String url, Object result) {
-                return true;
+            public void onSuccess(String url, String result) {
+            }
+        });
+    }
+
+    private void initSound() {
+        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, String result) {
             }
         });
     }

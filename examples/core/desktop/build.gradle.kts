@@ -1,5 +1,5 @@
 val mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
-val assetsDir = File("/assets");
+val assetsDir = File("../assets")
 
 dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")

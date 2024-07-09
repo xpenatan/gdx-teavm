@@ -1,18 +1,14 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetFilter;
-import com.github.xpenatan.gdx.backends.teavm.preloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.preloader.DefaultAssetFilter;
-import com.github.xpenatan.gdx.backends.teavm.preloader.FileWrapper;
-import java.io.File;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -20,52 +16,77 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
+import com.badlogic.gdx.Files.FileType;
 
 /**
  * @author xpenatan
  */
 public class AssetsCopy {
-    private static class Asset {
-        FileWrapper file;
+
+    public static class Asset {
+        FileHandle file;
         AssetType type;
 
-        public Asset(FileWrapper file, AssetType type) {
+        public Asset(FileHandle file, AssetType type) {
             this.file = file;
             this.type = type;
         }
     }
 
-    public static void copy(ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
-        copy(null, null, assetsPaths, null, assetsOutputPath, generateTextFile);
+    public static ArrayList<Asset> copyResources(TeaClassLoader classLoader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle assetsOutputPath) {
+        return copy(classLoader, classPathAssetsFiles, filter, assetsOutputPath);
     }
 
-    public static void copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, ArrayList<File> assetsPaths, AssetFilter filter, String assetsOutputPath, boolean generateTextFile) {
-        assetsOutputPath = assetsOutputPath.replace("\\", "/");
-        FileWrapper target = new FileWrapper(assetsOutputPath);
+    public static ArrayList<Asset> copyScripts(TeaClassLoader classLoader, List<String> classPathAssetsFiles, FileHandle assetsOutputPath) {
+        return copy(classLoader, classPathAssetsFiles, null, assetsOutputPath);
+    }
+
+    public static ArrayList<Asset> copyAssets(AssetFileHandle fileHandle, AssetFilter filter, FileHandle assetsOutputPath) {
+        return copy(fileHandle, filter, assetsOutputPath);
+    }
+
+    /**
+     * Copy assets
+     */
+    private static ArrayList<Asset> copy(AssetFileHandle assetsPath, AssetFilter filter, FileHandle target) {
+        String assetsOutputPath = target.path();
         ArrayList<Asset> assets = new ArrayList<Asset>();
+        if(assetsPath.filter != null) {
+            //Override global filter with the handle filter
+            filter = assetsPath.filter;
+        }
         AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
-        if(assetsPaths != null && assetsPaths.size() > 0) {
+        if(assetsPath != null && assetsPath.exists() && assetsPath.isDirectory()) {
             TeaBuilder.log("Copying assets from:");
-            for(int i = 0; i < assetsPaths.size(); i++) {
-                String path = assetsPaths.get(i).getAbsolutePath();
-                FileWrapper source = new FileWrapper(path);
-                TeaBuilder.log(path);
-                copyDirectory(source, target, defaultAssetFilter, assets);
-            }
+            FileHandle source = assetsPath;
+            String path = source.path();
+            TeaBuilder.log(path);
+            copyDirectory(source, assetsPath.assetsChildDir, target, defaultAssetFilter, assets);
 
             TeaBuilder.log("to:");
             TeaBuilder.log(assetsOutputPath);
         }
 
+        TeaBuilder.log("to:");
+        TeaBuilder.log(assetsOutputPath);
+
+        return assets;
+    }
+
+    /**
+     * Copy resources
+     */
+    private static ArrayList<Asset> copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle target) {
+        String assetsOutputPath = target.path();
+        ArrayList<Asset> assets = new ArrayList<Asset>();
+        AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
+
         if(classloader != null && classPathAssetsFiles != null) {
             // Copy assets from class package directory
-
             addDirectoryClassPathFiles(classPathAssetsFiles);
             TeaBuilder.log("");
             TeaBuilder.log("Copying assets from:");
@@ -82,11 +103,12 @@ public class AssetsCopy {
                         TeaBuilder.log(classpathFile);
                         InputStream is = classloader.getResourceAsStream(classpathFile);
                         if(is != null) {
-                            FileWrapper dest = target.child(classpathFile);
+                            FileHandle dest = target.child(classpathFile);
                             dest.write(is, false);
                             String destPath = dest.path();
                             if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
-                                assets.add(new Asset(dest, AssetFilter.getType(destPath)));
+                                AssetFileHandle dest2 = AssetFileHandle.createCopyHandle(dest.file(), FileType.Classpath);
+                                assets.add(new Asset(dest2, getType(destPath)));
                             }
                             is.close();
                         }
@@ -100,40 +122,41 @@ public class AssetsCopy {
 
         TeaBuilder.log("to:");
         TeaBuilder.log(assetsOutputPath);
-        if(generateTextFile == false) return;
 
-        HashMap<String, ArrayList<Asset>> bundles = new HashMap<String, ArrayList<Asset>>();
-        for(Asset asset : assets) {
-            String bundleName = defaultAssetFilter.getBundleName(asset.file.path());
-            if(bundleName == null) {
-                bundleName = "assets";
-            }
-            ArrayList<Asset> bundleAssets = bundles.get(bundleName);
-            if(bundleAssets == null) {
-                bundleAssets = new ArrayList<Asset>();
-                bundles.put(bundleName, bundleAssets);
-            }
-            bundleAssets.add(asset);
+        return assets;
+    }
+
+    public static void generateAssetsFile(ArrayList<Asset> assets, FileHandle location, FileHandle assetFile) {
+        StringBuffer buffer = new StringBuffer();
+        String assetsOutputPath = location.path();
+        for(int i = 0; i < assets.size(); i++) {
+            Asset asset = assets.get(i);
+            setupPreloadAssetFileFormat(asset, buffer, assetsOutputPath);
+        }
+        assetFile.writeString(buffer.toString(), true);
+    }
+
+    private static void setupPreloadAssetFileFormat(Asset asset, StringBuffer buffer, String assetsOutputPath) {
+        FileHandle fileHandle = asset.file;
+        FileType type = fileHandle.type();
+        String path = fileHandle.path();
+        path = path.replace(assetsOutputPath, "");
+        String fileTypeStr = "i";
+        if(type == FileType.Local) {
+            fileTypeStr = "l";
+        }
+        else if(type == FileType.Classpath) {
+            fileTypeStr = "c";
         }
 
-        for(Entry<String, ArrayList<Asset>> bundle : bundles.entrySet()) {
-            StringBuffer buffer = new StringBuffer();
-            for(Asset asset : bundle.getValue()) {
-                String path = asset.file.path().replace('\\', '/');
-                path = path.replace(assetsOutputPath, "");
-                if(path.startsWith("/")) path = path.substring(1);
-                buffer.append(asset.type.code);
-                buffer.append(":");
-                buffer.append(path);
-                buffer.append(":");
-                buffer.append(asset.file.isDirectory() ? 0 : asset.file.length());
-                buffer.append(":");
-                String mimetype = URLConnection.guessContentTypeFromName(asset.file.name());
-                buffer.append(mimetype == null ? "application/unknown" : mimetype);
-                buffer.append("\n");
-            }
-            target.child(bundle.getKey() + ".txt").writeString(buffer.toString(), false);
-        }
+        buffer.append(fileTypeStr);
+        buffer.append(":");
+        buffer.append(asset.type.code);
+        buffer.append(":");
+        buffer.append(path);
+        buffer.append(":");
+        buffer.append(asset.file.isDirectory() ? 0 : asset.file.length());
+        buffer.append("\n");
     }
 
     private static void addDirectoryClassPathFiles(List<String> classPathFiles) {
@@ -229,10 +252,17 @@ public class AssetsCopy {
         classPathFiles.addAll(set);
     }
 
-    private static void copyFile(FileWrapper source, FileWrapper dest, AssetFilter filter, ArrayList<Asset> assets) {
+    private static void copyDirectory(FileHandle sourceDir, String assetsChildDir, FileHandle destDir, AssetFilter filter, ArrayList<Asset> assets) {
+        if(!assetsChildDir.isEmpty()) {
+            destDir = destDir.child(assetsChildDir);
+        }
+        copyDirectory(sourceDir, destDir, filter, assets);
+    }
+
+    private static void copyFile(FileHandle source, FileHandle dest, AssetFilter filter, ArrayList<Asset> assets) {
         if(!filter.accept(dest.path(), false)) return;
         try {
-            assets.add(new Asset(dest, AssetFilter.getType(dest.path())));
+            assets.add(new Asset(dest, getType(dest.path())));
             InputStream read = source.read();
             dest.write(read, false);
             read.close();
@@ -243,18 +273,39 @@ public class AssetsCopy {
         }
     }
 
-    private static void copyDirectory(FileWrapper sourceDir, FileWrapper destDir, AssetFilter filter, ArrayList<Asset> assets) {
-        if(!filter.accept(destDir.path(), true)) return;
-        // assets.add(new Asset(destDir, AssetType.Directory));
+    private static void copyDirectory(FileHandle sourceDir, FileHandle destDir, AssetFilter filter, ArrayList<Asset> assets) {
+        String destPath = destDir.path();
+        if(!filter.accept(destPath, true)) return;
         destDir.mkdirs();
-        FileWrapper[] files = sourceDir.list();
+        FileHandle[] files = sourceDir.list();
         for(int i = 0, n = files.length; i < n; i++) {
-            FileWrapper srcFile = files[i];
-            FileWrapper destFile = destDir.child(srcFile.name());
-            if(srcFile.isDirectory())
+            FileHandle srcFile = files[i];
+            FileHandle destFile1 = destDir.child(srcFile.name());
+            // Destination type is copied from source type
+            FileHandle destFile = AssetFileHandle.createCopyHandle(destFile1.file(), srcFile.type());
+            if(srcFile.isDirectory()) {
+                assets.add(new Asset(destFile, AssetType.Directory));
                 copyDirectory(srcFile, destFile, filter, assets);
+            }
             else
                 copyFile(srcFile, destFile, filter, assets);
         }
+    }
+
+    /**
+     * @param file the file to get the type for
+     * @return the type of the file, one of {@link AssetType}
+     */
+    @Deprecated
+    public static AssetType getType(String file) {
+        String extension = extension(file).toLowerCase();
+        return AssetType.Binary;
+    }
+
+    private static String extension(String file) {
+        String name = file;
+        int dotIndex = name.lastIndexOf('.');
+        if(dotIndex == -1) return "";
+        return name.substring(dotIndex + 1);
     }
 }

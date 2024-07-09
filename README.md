@@ -1,7 +1,9 @@
-![Build](https://github.com/xpenatan/gdx-html5-tools/workflows/Build/badge.svg)
+# gdx-teavm
 
-[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/r/com.github.xpenatan.gdx-teavm/backend-teavm?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://repo.maven.apache.org/maven2/com/github/xpenatan/gdx-teavm/)
-[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.xpenatan.gdx-teavm/backend-teavm?server=https%3A%2F%2Foss.sonatype.org&label=snapshot)](https://oss.sonatype.org/content/repositories/snapshots/com/github/xpenatan/gdx-teavm/)
+![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/release.yml/badge.svg)
+![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/snapshot.yml/badge.svg)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/releases/com.github.xpenatan.gdx-teavm/backend-teavm?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://repo.maven.apache.org/maven2/com/github/xpenatan/gdx-teavm/)
+[![Static Badge](https://img.shields.io/badge/snapshot---SNAPSHOT-red)](https://oss.sonatype.org/content/repositories/snapshots/com/github/xpenatan/gdx-teavm/)
 
 gdx-teavm is a backend solution for running [libgdx](https://github.com/libgdx/libgdx) games in a web browser. It uses [TeaVM](https://github.com/konsoletyper/teavm) behind the scene to convert Java/Kotlin bytecode to Javascript.
 
@@ -12,7 +14,7 @@ Note:
 * Box2d, Bullet, ImGui, PhysX and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
 
 ## TeaVM Examples:
-* [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
+* [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/) (Updated 07/09/2024)
 * [demo-cubocy](https://xpenatan.github.io/gdx-teavm/teavm/demo-cubocy/)
 * [demo-superjumper](https://xpenatan.github.io/gdx-teavm/teavm/demo-superjumper/)
 * [test-freetype](https://xpenatan.github.io/gdx-teavm/teavm/test-freetype-packtest/)

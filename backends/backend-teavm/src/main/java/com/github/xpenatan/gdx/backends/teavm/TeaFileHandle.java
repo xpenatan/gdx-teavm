@@ -1,17 +1,15 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.filesystem.FileDB;
-import com.github.xpenatan.gdx.backends.teavm.preloader.Preloader;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,40 +24,33 @@ import java.io.Writer;
  * @author xpenatan
  */
 public class TeaFileHandle extends FileHandle {
-    public final Preloader preloader;
     private final String file;
     private final FileType type;
 
-    public TeaFileHandle(Preloader preloader, String fileName, FileType type) {
+    private TeaFiles teaFiles;
+
+    public TeaFileHandle(TeaFiles teaFiles, String fileName, FileType type) {
         if((type != FileType.Internal) && (type != FileType.Classpath) && (type != FileType.Local)) {
             throw new GdxRuntimeException("FileType '" + type + "' Not supported in web backend");
         }
-        this.preloader = preloader;
         this.file = fixSlashes(fileName);
         this.type = type;
+        this.teaFiles = teaFiles;
     }
 
-    public TeaFileHandle(String path) {
-        this.type = FileType.Internal;
-        this.preloader = ((TeaApplication)Gdx.app).getPreloader();
-        this.file = fixSlashes(path);
-    }
-
-    /** @return The full url to an asset, e.g. http://localhost:8080/assets/data/shotgun.ogg */
-    public String getAssetUrl () {
-        return preloader.getAssetUrl() + preloader.assetNames.get(file, file);
-    }
-
+    @Override
     public String path() {
         return file;
     }
 
+    @Override
     public String name() {
         int index = file.lastIndexOf('/');
         if(index < 0) return file;
         return file.substring(index + 1);
     }
 
+    @Override
     public String extension() {
         String name = name();
         int dotIndex = name.lastIndexOf('.');
@@ -67,6 +58,7 @@ public class TeaFileHandle extends FileHandle {
         return name.substring(dotIndex + 1);
     }
 
+    @Override
     public String nameWithoutExtension() {
         String name = name();
         int dotIndex = name.lastIndexOf('.');
@@ -77,6 +69,7 @@ public class TeaFileHandle extends FileHandle {
     /**
      * @return the path and filename without the extension, e.g. dir/dir2/file.png -> dir/dir2/file
      */
+    @Override
     public String pathWithoutExtension() {
         String path = file;
         int dotIndex = path.lastIndexOf('.');
@@ -84,6 +77,7 @@ public class TeaFileHandle extends FileHandle {
         return path.substring(0, dotIndex);
     }
 
+    @Override
     public FileType type() {
         return type;
     }
@@ -92,6 +86,7 @@ public class TeaFileHandle extends FileHandle {
      * Returns a java.io.File that represents this file handle. Note the returned file will only be usable for
      * {@link FileType#Absolute} and {@link FileType#External} file handles.
      */
+    @Override
     public File file() {
         throw new GdxRuntimeException("Not supported in web backend");
     }
@@ -101,15 +96,15 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public InputStream read() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().read(this);
+        boolean exists = teaFiles.getFileDB(type).exists(this);
+        if (type == FileType.Classpath || (type == FileType.Internal && !exists) || (type == FileType.Local && !exists)) {
+            InputStream input = teaFiles.getFileDB(FileType.Classpath).read(this);
+            if (input == null) throw new GdxRuntimeException("File not found: " + file + " (" + type + ")");
+            return input;
         }
-        else {
-            InputStream in = preloader.read(file);
-            if(in == null) throw new GdxRuntimeException(file + " does not exist");
-            return in;
-        }
+        return teaFiles.getFileDB(type).read(this);
     }
 
     /**
@@ -117,6 +112,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public BufferedInputStream read(int bufferSize) {
         return new BufferedInputStream(read(), bufferSize);
     }
@@ -126,6 +122,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public Reader reader() {
         return new InputStreamReader(read());
     }
@@ -135,6 +132,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public Reader reader(String charset) {
         try {
             return new InputStreamReader(read(), charset);
@@ -149,6 +147,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public BufferedReader reader(int bufferSize) {
         return new BufferedReader(reader(), bufferSize);
     }
@@ -158,6 +157,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public BufferedReader reader(int bufferSize, String charset) {
         return new BufferedReader(reader(charset), bufferSize);
     }
@@ -167,6 +167,7 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public String readString() {
         return readString(null);
     }
@@ -176,63 +177,9 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
      */
+    @Override
     public String readString(String charset) {
-        if(type == FileType.Local) {
-            // obtain via reader
-            return super.readString(charset);
-        }
-        else {
-            if(preloader.isText(file)) return preloader.texts.get(file);
-            try {
-                return new String(readBytes(), "UTF-8");
-            }
-            catch(UnsupportedEncodingException e) {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Reads the entire file into a byte array.
-     *
-     * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read.
-     */
-    public byte[] readBytes() {
-        int length = (int)length();
-        if(length == 0) length = 512;
-        byte[] buffer = new byte[length];
-        int position = 0;
-        InputStream input = read();
-        try {
-            while(true) {
-                int count = input.read(buffer, position, buffer.length - position);
-                if(count == -1) break;
-                position += count;
-                if(position == buffer.length) {
-                    // Grow buffer.
-                    byte[] newBuffer = new byte[buffer.length * 2];
-                    System.arraycopy(buffer, 0, newBuffer, 0, position);
-                    buffer = newBuffer;
-                }
-            }
-        }
-        catch(IOException ex) {
-            throw new GdxRuntimeException("Error reading file: " + this, ex);
-        }
-        finally {
-            try {
-                if(input != null) input.close();
-            }
-            catch(IOException ignored) {
-            }
-        }
-        if(position < buffer.length) {
-            // Shrink buffer.
-            byte[] newBuffer = new byte[position];
-            System.arraycopy(buffer, 0, newBuffer, 0, position);
-            buffer = newBuffer;
-        }
-        return buffer;
+        return super.readString(charset);
     }
 
     /**
@@ -243,6 +190,7 @@ public class TeaFileHandle extends FileHandle {
      * @param size   the number of bytes to read, see {@link #length()}
      * @return the number of read bytes
      */
+    @Override
     public int readBytes(byte[] bytes, int offset, int size) {
         InputStream input = read();
         int position = 0;
@@ -273,7 +221,10 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public OutputStream write(boolean append) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot write to a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot write to an internal file: " + file);
         return write(append, 4096);
     }
 
@@ -285,13 +236,9 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public OutputStream write(boolean append, int bufferSize) {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().write(this, append, bufferSize);
-        }
-        else {
-            throw new GdxRuntimeException("Cannot write to the given file.");
-        }
+        return teaFiles.getFileDB(type).write(this, append, bufferSize);
     }
 
     /**
@@ -302,10 +249,12 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public void write(InputStream input, boolean append) {
         OutputStream output = null;
         try {
-            output = write(append, (int)length());
+            int available = input.available();
+            output = write(append, available);
             StreamUtils.copyStream(input, output);
         }
         catch(Exception ex) {
@@ -324,6 +273,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public Writer writer(boolean append) {
         return writer(append, null);
     }
@@ -336,7 +286,10 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public Writer writer(boolean append, String charset) {
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot write to a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot write to an internal file: " + file);
         try {
             return new BufferedWriter(new OutputStreamWriter(write(append), "UTF-8"));
         }
@@ -352,6 +305,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public void writeString(String string, boolean append) {
         writeString(string, append, null);
     }
@@ -364,6 +318,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public void writeString(String string, boolean append, String charset) {
         Writer writer = null;
         try {
@@ -385,6 +340,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public void writeBytes(byte[] bytes, boolean append) {
         OutputStream output = write(append);
         try {
@@ -405,6 +361,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle represents a directory, if it is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file, or if it could not be written.
      */
+    @Override
     public void writeBytes(byte[] bytes, int offset, int length, boolean append) {
         OutputStream output = write(append);
         try {
@@ -425,13 +382,10 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
+    @Override
     public FileHandle[] list() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().list(this);
-        }
-        else {
-            return preloader.list(file);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
+        return teaFiles.getFileDB(type).list(this);
     }
 
     /**
@@ -441,13 +395,10 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
+    @Override
     public FileHandle[] list(FileFilter filter) {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().list(this, filter);
-        }
-        else {
-            return preloader.list(file);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
+        return teaFiles.getFileDB(type).list(this, filter);
     }
 
     /**
@@ -457,13 +408,10 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
+    @Override
     public FileHandle[] list(FilenameFilter filter) {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().list(this, filter);
-        }
-        else {
-            return preloader.list(file, filter);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
+        return teaFiles.getFileDB(type).list(this, filter);
     }
 
     /**
@@ -473,13 +421,10 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file is an {@link FileType#Classpath} file.
      */
+    @Override
     public FileHandle[] list(String suffix) {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().list(this, suffix);
-        }
-        else {
-            return preloader.list(file, suffix);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot list a classpath directory: " + file);
+        return teaFiles.getFileDB(type).list(this, suffix);
     }
 
     /**
@@ -487,13 +432,10 @@ public class TeaFileHandle extends FileHandle {
      * {@link FileType#Internal} handle to an empty directory will return false. On the desktop, an {@link FileType#Internal}
      * handle to a directory on the classpath will return false.
      */
+    @Override
     public boolean isDirectory() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().isDirectory(this);
-        }
-        else {
-            return preloader.isDirectory(file);
-        }
+        if (type == FileType.Classpath) return false;
+        return teaFiles.getFileDB(type).isDirectory(this);
     }
 
     /**
@@ -502,18 +444,21 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} and the child
      *                             doesn't exist.
      */
+    @Override
     public FileHandle child(String name) {
-        return new TeaFileHandle(preloader, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
+        return new TeaFileHandle(teaFiles, (file.isEmpty() ? "" : (file + (file.endsWith("/") ? "" : "/"))) + name,
                 type);
     }
 
+    @Override
     public FileHandle parent() {
         int index = file.lastIndexOf("/");
         String dir = "";
         if(index > 0) dir = file.substring(0, index);
-        return new TeaFileHandle(preloader, dir, type);
+        return new TeaFileHandle(teaFiles, dir, type);
     }
 
+    @Override
     public FileHandle sibling(String name) {
         return parent().child(fixSlashes(name));
     }
@@ -521,26 +466,32 @@ public class TeaFileHandle extends FileHandle {
     /**
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
+    @Override
     public void mkdirs() {
-        if(type == FileType.Local) {
-            FileDB.getInstance().mkdirs(this);
-        }
-        else {
-            throw new GdxRuntimeException("Cannot mkdirs for non-local file: " + file);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot mkdirs with a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot mkdirs with an internal file: " + file);
+        teaFiles.getFileDB(type).mkdirs(this);
+    }
+
+    public void mkdirsInternal() {
+        teaFiles.getFileDB(type).mkdirs(this);
     }
 
     /**
      * Returns true if the file exists. On Android, a {@link FileType#Classpath} or {@link FileType#Internal} handle to a
      * directory will always return false.
      */
+    @Override
     public boolean exists() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().exists(this);
+        boolean exists = teaFiles.getFileDB(type).exists(this);
+        switch (type) {
+            case Internal:
+                if (exists) return true;
+                // Fall through.
+            case Classpath:
+                return teaFiles.getFileDB(FileType.Classpath).exists(this);
         }
-        else {
-            return preloader.contains(file);
-        }
+        return exists;
     }
 
     /**
@@ -548,13 +499,11 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
+    @Override
     public boolean delete() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().delete(this);
-        }
-        else {
-            throw new GdxRuntimeException("Cannot delete a non-local file: " + file);
-        }
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot delete a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot delete an internal file: " + file);
+        return teaFiles.getFileDB(type).delete(this);
     }
 
     /**
@@ -562,8 +511,11 @@ public class TeaFileHandle extends FileHandle {
      *
      * @throws GdxRuntimeException if this file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file.
      */
+    @Override
     public boolean deleteDirectory() {
-        throw new GdxRuntimeException("Cannot delete directory (missing implementation): " + file);
+        if(type == FileType.Classpath) throw new GdxRuntimeException("Cannot delete a classpath file: " + file);
+        if(type == FileType.Internal) throw new GdxRuntimeException("Cannot delete an internal file: " + file);
+        return teaFiles.getFileDB(type).deleteDirectory(this);
     }
 
     /**
@@ -577,6 +529,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if the destination file handle is a {@link FileType#Classpath} or {@link FileType#Internal} file,
      *                             or copying failed.
      */
+    @Override
     public void copyTo(FileHandle dest) {
         if(!isDirectory()) {
             if(dest.isDirectory()) dest = dest.child(name());
@@ -599,6 +552,7 @@ public class TeaFileHandle extends FileHandle {
      * @throws GdxRuntimeException if the source or destination file handle is a {@link FileType#Classpath} or
      *                             {@link FileType#Internal} file.
      */
+    @Override
     public void moveTo(FileHandle dest) {
         switch(type) {
             case Classpath: {
@@ -607,34 +561,29 @@ public class TeaFileHandle extends FileHandle {
             case Internal: {
                 throw new GdxRuntimeException("Cannot move an internal file: " + file);
             }
-            case Local:
-            case Absolute:
-            case External:
-            default:
-                if((type == FileType.Local) && (dest.type() == FileType.Local)) {
-                    // we can potentially rename directly?
-                    if(isDirectory() == dest.isDirectory()) {
-                        FileDB.getInstance().rename(this, (TeaFileHandle)dest);
-                        return;
-                    }
-                }
-                copyTo(dest);
-                delete();
-                if(exists() && isDirectory()) deleteDirectory();
         }
+        if(!dest.exists()) {
+            FileHandle destParent = dest.parent();
+            FileHandle thisParent = parent();
+            if(thisParent.equals(destParent)) {
+                // Rename if same parent. Similar to absolute from desktop
+                teaFiles.getFileDB(type).rename(this, (TeaFileHandle)dest);
+                return;
+            }
+        }
+
+        copyTo(dest);
+        delete();
+        if(exists() && isDirectory()) deleteDirectory();
     }
 
     /**
      * Returns the length in bytes of this file, or 0 if this file is a directory, does not exist, or the size cannot otherwise be
      * determined.
      */
+    @Override
     public long length() {
-        if(type == FileType.Local) {
-            return FileDB.getInstance().length(this);
-        }
-        else {
-            return preloader.length(file);
-        }
+        return teaFiles.getFileDB(type).length(this);
     }
 
     /**
@@ -642,10 +591,12 @@ public class TeaFileHandle extends FileHandle {
      * for {@link FileType#Classpath} files. On Android, zero is returned for {@link FileType#Internal} files. On the desktop, zero
      * is returned for {@link FileType#Internal} files on the classpath.
      */
+    @Override
     public long lastModified() {
         return 0;
     }
 
+    @Override
     public String toString() {
         return file;
     }

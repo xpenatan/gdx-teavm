@@ -12,18 +12,6 @@ public class TeaApplicationConfiguration {
     @Deprecated
     public boolean useGL30 = false;
 
-    /**
-     * Speed up rendering when copying java Buffers to javascript ArrayBuffer.
-     * This option will be removed when it's stable and tested.
-     */
-    @Deprecated
-    public boolean useGLArrayBuffer = true;
-
-    /**
-     * Experimental webassembly pixmap
-     */
-    public boolean useNativePixmap = false;
-
     /** Sets the {@link TeaWindowListener} which will be informed about teavm events. */
     public TeaWindowListener windowListener;
 
@@ -41,7 +29,11 @@ public class TeaApplicationConfiguration {
      * browser is not shared between the applications. If you leave the storage prefix at "", all the data
      * and files stored will be shared between the applications.
      */
-    public String storagePrefix = "";
+    public String storagePrefix = "app";
+
+    public String localStoragePrefix = "db/assets";
+
+    public boolean shouldEncodePreference = false;
 
     /**
      * Show download logs.

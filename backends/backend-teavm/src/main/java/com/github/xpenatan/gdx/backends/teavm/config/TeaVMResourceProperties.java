@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import com.badlogic.gdx.Files.FileType;
 
 public class TeaVMResourceProperties {
     private static final String OPTION_ADDITIONAL_RESOURCES = "resources";
@@ -66,20 +68,21 @@ public class TeaVMResourceProperties {
             boolean accept = false;
             for(TeaVMResourceProperties properties : propertiesList) {
                 ignoreResources.addAll(properties.ignorePath);
+                // Accept if properties exist in current path
                 if(path.contains(properties.path)) {
                     accept = true;
                     break;
                 }
-                if(!accept) {
-                    for(String additionalPath : properties.additionalPath) {
-                        if(path.contains(additionalPath)) {
-                            accept = true;
-                            break;
-                        }
-                    }
-                    if(accept) {
+                for(String additionalPath : properties.additionalPath) {
+                    // Check if the jar path contains in properties
+                    if(path.contains(additionalPath)) {
+                        accept = true;
                         break;
                     }
+                }
+
+                if(accept) {
+                    break;
                 }
             }
             if(accept) {

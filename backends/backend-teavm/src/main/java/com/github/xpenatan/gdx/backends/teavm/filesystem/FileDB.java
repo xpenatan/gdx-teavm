@@ -1,10 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayOutputStream;
 import java.io.FileFilter;
@@ -22,23 +20,9 @@ import java.util.List;
  */
 public abstract class FileDB {
 
-    /**
-     * The singleton instance as we only have one file system DB.
-     */
-    private static FileDB INSTANCE = null;
-
-    protected FileDB() {
-        // hiding the constructor
-    }
-
-    public static FileDB getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new FileDBManager();
-        }
-        return INSTANCE;
-    }
-
     public abstract InputStream read(TeaFileHandle file);
+
+    public abstract byte[] readBytes(TeaFileHandle file);
 
     public final OutputStream write(TeaFileHandle file, boolean append, int bufferSize) {
         // buffer for writing
@@ -78,13 +62,15 @@ public abstract class FileDB {
     public final FileHandle[] list(TeaFileHandle file) {
         // convert paths to file handles
         String[] paths = paths(file);
-        FileHandle[] files = new FileHandle[paths.length];
+        FileHandle[] files = new TeaFileHandle[paths.length];
+
         for(int i = 0; i < paths.length; i++) {
             String path = paths[i];
             if((path.length() > 0) && (path.charAt(path.length() - 1) == '/')) {
                 path = path.substring(0, path.length() - 1);
             }
-            files[i] = new TeaFileHandle(((TeaApplication)Gdx.app).getPreloader(), path, Files.FileType.Local);
+
+            files[i] = Gdx.files.getFileHandle(path, file.type());
         }
         return files;
     }
@@ -122,6 +108,8 @@ public abstract class FileDB {
     public abstract boolean exists(TeaFileHandle file);
 
     public abstract boolean delete(TeaFileHandle file);
+
+    public abstract boolean deleteDirectory(TeaFileHandle file);
 
     public abstract long length(TeaFileHandle file);
 

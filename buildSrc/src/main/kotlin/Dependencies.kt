@@ -4,31 +4,53 @@ import java.util.*
 object LibExt {
     const val groupId = "com.github.xpenatan.gdx-teavm"
 
-    val libVersion: String = getVersion()
+    val properties = getProperties();
+
+    val libVersion: String = getVersion(properties)
 
     const val gdxVersion = "1.12.1"
-    const val teaVMVersion = "0.9.2"
+    const val teaVMVersion = "0.10.0"
 
-    const val gdxImGuiVersion = "1.0.0-SNAPSHOT"
-    const val gdxMultiViewVersion = "1.0.0-SNAPSHOT"
+    const val gdxImGuiVersion = "-SNAPSHOT"
+    const val gdxMultiViewVersion = "-SNAPSHOT"
 
     const val reflectionVersion = "0.10.2"
     const val jettyVersion = "11.0.13"
 
+    const val gdxGltfVersion = "2.2.1"
     const val aiVersion = "1.8.2"
+
+    const val truthVersion = "1.4.2"
+
+
+    // ######### Add libgdx tests to project
+    // ######### Need to have libgdx project source code tag 1.12.1.
+    // ######### Need to disable in libgdx settings :tests:gdx-tests-gwt because of some conflicts
+    // ######### Need to update gradle properties.
+    val gdxSourcePath = properties.getOrDefault("gdxSourcePath", "") as String
+    val gdxTestsAssetsPath = "${gdxSourcePath}/tests/gdx-tests-android/assets/"
+    val teavmPath = properties.getOrDefault("teavmPath", "") as String
+    val includeLibgdxSource = (properties.getOrDefault("includeLibgdxSource", "false") as String).toBoolean()
+    val includeTeaVMSource = (properties.getOrDefault("includeTeaVMSource", "false") as String).toBoolean()
 }
 
-private fun getVersion(): String {
-    val file = File("gradle.properties")
-    val properties = Properties()
-    properties.load(file.inputStream())
-    val version = properties.getProperty("version")
-
-    val isRelease = System.getenv("RELEASE")
+private fun getVersion(properties: Properties): String {
+    val isReleaseStr = System.getenv("RELEASE")
+    val isRelease = isReleaseStr != null && isReleaseStr.toBoolean()
     var libVersion = "-SNAPSHOT"
-    if(isRelease != null && isRelease.toBoolean()) {
+    val version = properties.getProperty("version")
+    if(isRelease) {
         libVersion = version
     }
-    println("gdx-teavm Version: $libVersion")
+    println("Lib Version: $libVersion")
     return libVersion
+}
+
+private fun getProperties(): Properties {
+    val file = File("gradle.properties")
+    val properties = Properties()
+    if(file.exists()) {
+        properties.load(file.inputStream())
+    }
+    return properties
 }

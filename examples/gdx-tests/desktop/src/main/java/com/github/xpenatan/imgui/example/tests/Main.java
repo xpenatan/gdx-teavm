@@ -21,8 +21,7 @@ public class Main {
         config.gles30ContextMajorVersion = 4;
         config.gles30ContextMinorVersion = 3;
         config.useGL30 = true;
-//        new Lwjgl3Application(new MultipleRenderTargetTest(), config);
-//        new Lwjgl3Application(new FloatTextureTest(), config);
-        new LwjglApplication(new TeaVMTestWrapper(), config);
+//        new LwjglApplication(new TeaVMTestWrapper(), config);
+        new LwjglApplication(new ImGuiGame(), config);
     }
 }

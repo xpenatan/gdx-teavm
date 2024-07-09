@@ -1,10 +1,13 @@
+import java.util.*
+
 include(":backends:backend-teavm")
 
+include(":extensions:asset-loader")
 include(":extensions:gdx-freetype-teavm")
 
-include(":tools:generator:core")
-include(":tools:generator:ui")
-include(":tools:generator:desktop")
+//include(":tools:generator:core")
+//include(":tools:generator:ui")
+//include(":tools:generator:desktop")
 
 include(":examples:core:core")
 include(":examples:core:desktop")
@@ -14,43 +17,34 @@ include(":examples:freetype:core")
 include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")
 
-// ######### Add libgdx tests to project
-// ######### Need to have libgdx project source code tag 1.12.1.
-// ######### Need to disable in libgdx settings :tests:gdx-tests-gwt  because of some conflicts
-// ######### Need to update assets path in desktop gradle and teavm build class.
+val file = File("gradle.properties")
 
-//include(":examples:gdx-tests:core")
-//include(":examples:gdx-tests:desktop")
-//include(":examples:gdx-tests:teavm")
-//includeBuild("E:\\Dev\\Projects\\java\\libgdx")
+val properties = Properties()
+if(file.exists()) {
+    properties.load(file.inputStream())
+}
 
-// #########
+val gdxSourcePath = properties.getOrDefault("gdxSourcePath", "") as String
+val teavmPath = properties.getOrDefault("teavmPath", "") as String
+val includeLibgdxSource = (properties.getOrDefault("includeLibgdxSource", "false") as String).toBoolean()
+val includeTeaVMSource = (properties.getOrDefault("includeTeaVMSource", "false") as String).toBoolean()
 
-// ######### Replace teavm libs to use teavm sources
-// ######### Only use it if you want to test new teavm code.
-// ######### Change to your teavm source directory
+if(includeLibgdxSource) {
+    include(":examples:gdx-tests:core")
+    include(":examples:gdx-tests:desktop")
+    include(":examples:gdx-tests:teavm")
+    includeBuild(gdxSourcePath)
+}
 
-//includeBuild("D:\\Dev\\Projects\\java\\teavm") {
-//    dependencySubstitution {
-//        substitute module('org.teavm:teavm-tooling') using project(':tools:core')
-//        substitute module('org.teavm:teavm-core') using project(':core')
-//        substitute module('org.teavm:teavm-classlib') using project(':classlib')
-//        substitute module('org.teavm:teavm-jso') using project(':jso:core')
-//        substitute module('org.teavm:teavm-jso-apis') using project(':jso:apis')
-//        substitute module('org.teavm:teavm-jso-impl') using project(':jso:impl')
-//    }
-//}
-
-//includeBuild("E:\\Dev\\Projects\\java\\gdx-imgui") {
-//    dependencySubstitution {
-//        substitute(module("com.github.xpenatan.gdx-imgui:core")).using(project(":imgui:core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:desktop")).using(project(":imgui:desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:teavm")).using(project(":imgui:teavm"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:gdx")).using(project(":extensions:gdx"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-core")).using(project(":extensions:imlayout:imlayout-core"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:imlayout-desktop")).using(project(":extensions:imlayout:imlayout-desktop"))
-//        substitute(module("com.github.xpenatan.gdx-imgui:gdx-frame-viewport")).using(project(":extensions:gdx-frame-viewport"))
-//    }
-//}
-
-// #########
+if(includeTeaVMSource) {
+    includeBuild(teavmPath) {
+        dependencySubstitution {
+            substitute(module("org.teavm:teavm-tooling")).using(project(":tools:core"))
+            substitute(module("org.teavm:teavm-core")).using(project(":core"))
+            substitute(module("org.teavm:teavm-classlib")).using(project(":classlib"))
+            substitute(module("org.teavm:teavm-jso")).using(project(":jso:core"))
+            substitute(module("org.teavm:teavm-jso-apis")).using(project(":jso:apis"))
+            substitute(module("org.teavm:teavm-jso-impl")).using(project(":jso:impl"))
+        }
+    }
+}

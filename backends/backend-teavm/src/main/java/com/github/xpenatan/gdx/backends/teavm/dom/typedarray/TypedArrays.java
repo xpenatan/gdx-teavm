@@ -1,8 +1,16 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+import org.teavm.classlib.java.nio.HasArrayBufferView;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSByRef;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Float32Array;
-import org.teavm.jso.typedarrays.Float64Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
@@ -143,5 +151,82 @@ public class TypedArrays {
     public static Uint32ArrayWrapper createUint32Array(ArrayBufferWrapper buffer, int offset, int length) {
         ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
         return Uint32ArrayWrapper.create(arrayBuffer, offset, length);
+    }
+
+    @JSBody(params = { "array" }, script = "return new $rt_byteArrayCls(array);")
+    private static native Object toByteArrayInternal(ArrayBufferViewWrapper array);
+
+    // Obtain the array reference from ArrayBufferView
+    public static byte[] toByteArray(ArrayBufferViewWrapper array) {
+        Object arrayObj = TypedArrays.toByteArrayInternal(array);
+        byte[] byteArray = (byte[])arrayObj;
+        return byteArray;
+    }
+
+    public static ArrayBufferViewWrapper getTypedArray(ByteBuffer buffer) {
+        ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
+        if(bufferView != null) {
+            return bufferView;
+        }
+        byte[] array = buffer.array();
+        ArrayBufferViewWrapper arrayBuffer = getTypedArray(array);
+        return arrayBuffer;
+    }
+
+    public static ArrayBufferViewWrapper getTypedArray(ShortBuffer buffer) {
+        ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
+        if(bufferView != null) {
+            return bufferView;
+        }
+        short[] array = buffer.array();
+        ArrayBufferViewWrapper arrayBuffer = getTypedArray(array);
+        return arrayBuffer;
+    }
+
+    public static ArrayBufferViewWrapper getTypedArray(IntBuffer buffer) {
+        ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
+        if(bufferView != null) {
+            return bufferView;
+        }
+        int[] array = buffer.array();
+        ArrayBufferViewWrapper arrayBuffer = getTypedArray(array);
+        return arrayBuffer;
+    }
+
+    public static ArrayBufferViewWrapper getTypedArray(FloatBuffer buffer) {
+        ArrayBufferViewWrapper bufferView = getInt8Array(buffer);
+        if(bufferView != null) {
+            return bufferView;
+        }
+        float[] array = buffer.array();
+        ArrayBufferViewWrapper arrayBuffer = getTypedArray(array);
+        return arrayBuffer;
+    }
+
+    @JSBody(params = {"buffer"}, script = "" +
+            "return buffer;")
+    public static native ArrayBufferViewWrapper getTypedArray(@JSByRef() byte[] buffer);
+
+    @JSBody(params = {"buffer"}, script = "" +
+            "return buffer;")
+    private static native ArrayBufferViewWrapper getTypedArray(@JSByRef() int[] buffer);
+
+    @JSBody(params = {"buffer"}, script = "" +
+            "return buffer;")
+    private static native ArrayBufferViewWrapper getTypedArray(@JSByRef() float[] buffer);
+
+    @JSBody(params = {"buffer"}, script = "" +
+            "return buffer;")
+    private static native ArrayBufferViewWrapper getTypedArray(@JSByRef() short[] buffer);
+
+    @org.teavm.jso.JSBody(params = {"array"}, script = "" +
+            "return array.data;")
+    public static native Int8ArrayWrapper getArrayBufferView(JSObject array);
+
+    public static Int8ArrayWrapper getInt8Array(Buffer buffer) {
+        if(buffer instanceof HasArrayBufferView) {
+            return ((HasArrayBufferView)buffer).getTypedArray();
+        }
+        return null;
     }
 }

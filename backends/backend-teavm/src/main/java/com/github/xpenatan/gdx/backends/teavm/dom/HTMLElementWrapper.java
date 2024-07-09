@@ -5,9 +5,9 @@ package com.github.xpenatan.gdx.backends.teavm.dom;
  */
 public interface HTMLElementWrapper extends ElementWrapper {
 
-    public HTMLElementWrapper getOffsetParent();
+    HTMLElementWrapper getOffsetParent();
 
-    public int getOffsetTop();
+    int getOffsetTop();
 
-    public int getOffsetLeft();
+    int getOffsetLeft();
 }
