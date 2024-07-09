@@ -14,7 +14,7 @@ Note:
 * Box2d, Bullet, ImGui, PhysX and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
 
 ## TeaVM Examples:
-* [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/)
+* [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/) (Updated 07/09/2024)
 * [demo-cubocy](https://xpenatan.github.io/gdx-teavm/teavm/demo-cubocy/)
 * [demo-superjumper](https://xpenatan.github.io/gdx-teavm/teavm/demo-superjumper/)
 * [test-freetype](https://xpenatan.github.io/gdx-teavm/teavm/test-freetype-packtest/)
