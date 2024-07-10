@@ -1,5 +1,9 @@
 [-SNAPSHOT]
 
+[1.0.1]
+- Fix an issue when creating database and trying to load assets.
+- Quick fix to filter out assets.txt file and to delete it before adding new files
+
 [1.0.0]
 - Update teavm to 0.10.0
 - Pixmap now use Gdx2DPixmap
