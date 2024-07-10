@@ -503,20 +503,25 @@ public class TeaBuilder {
             useDefaultHTMLIndexFile(classLoader, configuration, webappDistFolder, webappName, webappFolder);
         }
 
-        if(assetFile.exists()) {
-            assetFile.delete();
-        }
 
         boolean generateAssetPaths = configuration.shouldGenerateAssetFile();
 
+        ArrayList<AssetsCopy.Asset> alLAssets = new ArrayList<>();
         // Copy Assets files
         ArrayList<AssetFileHandle> assetsPaths = configuration.assetsPath();
         for(int i = 0; i < assetsPaths.size(); i++) {
             AssetFileHandle assetFileHandle = assetsPaths.get(i);
             ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, filter, assetsFolder);
-            if(generateAssetPaths) {
-                AssetsCopy.generateAssetsFile(assets, assetsFolder, assetFile);
-            }
+            alLAssets.addAll(assets);
+        }
+
+        if(assetFile.exists()) {
+            // Delete assets.txt before adding the updated list.
+            assetFile.delete();
+        }
+
+        if(generateAssetPaths) {
+            AssetsCopy.generateAssetsFile(alLAssets, assetsFolder, assetFile);
         }
 
         // Copy assets from resources
