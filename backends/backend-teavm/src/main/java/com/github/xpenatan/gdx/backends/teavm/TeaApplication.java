@@ -206,8 +206,6 @@ public class TeaApplication implements Application, Runnable {
             });
         }
 
-        assetLoader.preload(config, "assets.txt");
-
         window.requestAnimationFrame(this);
     }
 
@@ -218,10 +216,14 @@ public class TeaApplication implements Application, Runnable {
             switch(state) {
                 case INIT:
                     if(delayInitCount == 0) {
-                        initState = AppState.LOAD_ASSETS;
+                        initState = AppState.PRELOAD_ASSETS;
                     }
                     break;
-                case LOAD_ASSETS:
+                case PRELOAD_ASSETS:
+                    assetLoader.preload(config, "assets.txt");
+                    initState = AppState.DOWNLOAD_ASSETS;
+                    break;
+                case DOWNLOAD_ASSETS:
                     int queue = AssetDownloader.getInstance().getQueue();
                     if(queue == 0) {
                         initState = AppState.APP_LOOP;
@@ -469,7 +471,8 @@ public class TeaApplication implements Application, Runnable {
 
     public enum AppState {
         INIT,
-        LOAD_ASSETS,
+        PRELOAD_ASSETS,
+        DOWNLOAD_ASSETS,
         APP_CREATE,
         APP_LOOP
     }
