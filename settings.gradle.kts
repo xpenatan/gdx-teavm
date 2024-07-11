@@ -17,7 +17,7 @@ include(":examples:freetype:core")
 include(":examples:freetype:desktop")
 include(":examples:freetype:teavm")
 
-val file = File("gradle.properties")
+val file = File(settingsDir, "gradle.properties")
 
 val properties = Properties()
 if(file.exists()) {
