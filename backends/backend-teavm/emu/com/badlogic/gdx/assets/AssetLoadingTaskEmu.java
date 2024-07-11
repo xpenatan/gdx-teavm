@@ -80,17 +80,17 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
     public boolean update() {
         // GTW: check if we have a file that was not preloaded and is not done loading yet
         AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
-
-        String path = resolve(loader, assetDesc).path();
-
-        if(!assetLoader.isAssetLoaded(Files.FileType.Internal, path)) {
+        FileHandle fileHandle = resolve(loader, assetDesc);
+        String path = fileHandle.path();
+        Files.FileType type = fileHandle.type();
+        if(!assetLoader.isAssetLoaded(type, path)) {
             if(!assetLoader.isAssetInQueue(path)) {
                 count++;
                 if(count == 2) {
                     cancel = true;
                 }
                 else {
-                    assetLoader.loadAsset(true, path, AssetType.Binary, Files.FileType.Internal, null);
+                    assetLoader.loadAsset(true, path, AssetType.Binary, type, null);
                 }
             }
         }
