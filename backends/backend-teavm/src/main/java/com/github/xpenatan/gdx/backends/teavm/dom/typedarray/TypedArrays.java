@@ -15,6 +15,7 @@ import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
+import org.teavm.jso.typedarrays.Uint16Array;
 import org.teavm.jso.typedarrays.Uint8Array;
 import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
@@ -143,6 +144,11 @@ public class TypedArrays {
     public static Uint8ArrayWrapper createUint8Array(ArrayBufferWrapper buffer, int offset, int length) {
         ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
         return (Uint8ArrayWrapper)Uint8Array.create(arrayBuffer, offset, length);
+    }
+
+    public static Uint16ArrayWrapper createUint16Array(ArrayBufferWrapper buffer, int offset, int length) {
+        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
+        return (Uint16ArrayWrapper)Uint16Array.create(arrayBuffer, offset, length);
     }
 
     public static Uint32ArrayWrapper createUint32Array(int length) {

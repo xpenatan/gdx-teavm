@@ -19,10 +19,6 @@ import org.teavm.jso.JSObject;
  * @author xpenatan
  */
 public interface WebGLRenderingContextWrapper extends JSObject  {
-    final int UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
-    final int RGBA = 0x1908;
-    final int UNSIGNED_BYTE = 0x1401;
-
     int getDrawingBufferWidth();
 
     int getDrawingBufferHeight();

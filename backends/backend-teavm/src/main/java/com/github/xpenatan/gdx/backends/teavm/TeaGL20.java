@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
@@ -18,14 +17,12 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLShaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSClass;
 import org.teavm.jso.JSObject;
-import org.teavm.jso.typedarrays.Uint8Array;
+import org.teavm.jso.webgl.WebGLRenderingContext;
 
 /**
  * Port from GWT gdx 1.12.0
@@ -69,7 +66,7 @@ public class TeaGL20 implements GL20 {
 
     public TeaGL20(WebGLRenderingContextWrapper gl) {
         this.gl = gl;
-        this.gl.pixelStorei(WebGLRenderingContextWrapper.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+        this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
     }
 
     protected WebGLUniformLocationWrapper getUniformLocation(int location) {
@@ -751,7 +748,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer pixels) {
         // verify request
-        if((format != WebGLRenderingContextWrapper.RGBA) || (type != WebGLRenderingContextWrapper.UNSIGNED_BYTE)) {
+        if((format != WebGLRenderingContext.RGBA) || (type != WebGLRenderingContext.UNSIGNED_BYTE)) {
             throw new GdxRuntimeException(
                     "Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...). Create an issue when you need other formats.");
         }
@@ -829,46 +826,30 @@ public class TeaGL20 implements GL20 {
             return;
         }
 
-        ArrayBufferViewWrapper buffer;
-        if(pixels instanceof ByteBuffer) {
-            ArrayBufferViewWrapper typedArrayBuffer = TypedArrays.getTypedArray((ByteBuffer)pixels);
-            int remainingBytes = pixels.remaining();
-            int byteOffset = typedArrayBuffer.getByteOffset() + pixels.position();
-            buffer = TypedArrays.createUint8Array(typedArrayBuffer.getBuffer(), byteOffset, remainingBytes);
-            gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
+        ArrayBufferViewWrapper arrayBuffer = TypedArrays.getTypedArray(pixels);
+        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
-        else if(pixels instanceof FloatBuffer) {
-            ArrayBufferViewWrapper typedArrayBuffer = TypedArrays.getTypedArray((FloatBuffer)pixels);
-            int remainingBytes = pixels.remaining();
-            int byteOffset = typedArrayBuffer.getByteOffset() + pixels.position();
-            buffer = TypedArrays.createFloat32Array(typedArrayBuffer.getBuffer(), byteOffset, remainingBytes);
-            gl.texImage2D(target, level, internalformat, width, height, border, format, type, buffer);
+        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
-        else {
-            throw new GdxRuntimeException("Not supported buffer");
-        }
+        gl.texImage2D(target, level, internalformat, width, height, border, format, type, arrayBuffer);
     }
 
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-        ArrayBufferViewWrapper buffer;
-        if(pixels instanceof ByteBuffer) {
-            ArrayBufferViewWrapper typedArrayBuffer = TypedArrays.getTypedArray((ByteBuffer)pixels);
-            int remainingBytes = pixels.remaining();
-            int byteOffset = typedArrayBuffer.getByteOffset() + pixels.position();
-            buffer = TypedArrays.createUint8Array(typedArrayBuffer.getBuffer(), byteOffset, remainingBytes);
-            gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
+        ArrayBufferViewWrapper arrayBuffer = TypedArrays.getTypedArray(pixels);
+        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
-        else if(pixels instanceof FloatBuffer) {
-            ArrayBufferViewWrapper typedArrayBuffer = TypedArrays.getTypedArray((FloatBuffer)pixels);
-            int remainingBytes = pixels.remaining();
-            int byteOffset = typedArrayBuffer.getByteOffset() + pixels.position();
-            buffer = TypedArrays.createFloat32Array(typedArrayBuffer.getBuffer(), byteOffset, remainingBytes);
-            gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer);
+        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
-        else {
-            throw new GdxRuntimeException("Not supported buffer");
-        }
+        gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, arrayBuffer);
     }
 
     @Override
