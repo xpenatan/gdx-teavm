@@ -72,16 +72,6 @@ public class TeaGL20 implements GL20 {
         this.gl.pixelStorei(WebGLRenderingContextWrapper.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
     }
 
-    public Float32ArrayWrapper copy(FloatBuffer buffer) {
-        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createFloat32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
-    }
-
-    public Int32ArrayWrapper copy(IntBuffer buffer) {
-        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createInt32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
-    }
-
     protected WebGLUniformLocationWrapper getUniformLocation(int location) {
         return uniforms.get(currProgram).get(location);
     }
@@ -151,51 +141,19 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
-        if(data instanceof FloatBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((FloatBuffer)data);
-            gl.bufferData(target, typedArray, usage);
-        }
-        else if(data instanceof IntBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((IntBuffer)data);
-            gl.bufferData(target, typedArray, usage);
-        }
-        else if(data instanceof ShortBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((ShortBuffer)data);
-            gl.bufferData(target, typedArray, usage);
-        }
-        else if(data instanceof ByteBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((ByteBuffer)data);
-            gl.bufferData(target, typedArray, usage);
-        }
-        else if(data == null) {
+        if(data == null) {
             gl.bufferData(target, size, usage);
         }
         else {
-            throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
+            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(data);
+            gl.bufferData(target, typedArray, usage);
         }
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        if(data instanceof FloatBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((FloatBuffer)data);
-            gl.bufferSubData(target, offset, typedArray);
-        }
-        else if(data instanceof IntBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((IntBuffer)data);
-            gl.bufferSubData(target, offset, typedArray);
-        }
-        else if(data instanceof ShortBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((ShortBuffer)data);
-            gl.bufferSubData(target, offset, typedArray);
-        }
-        else if(data instanceof ByteBuffer) {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray((ByteBuffer)data);
-            gl.bufferSubData(target, offset, typedArray);
-        }
-        else {
-            throw new GdxRuntimeException("Can only cope with FloatBuffer and ShortBuffer at the moment");
-        }
+        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(data);
+        gl.bufferSubData(target, offset, typedArray);
     }
 
     @Override
@@ -797,29 +755,10 @@ public class TeaGL20 implements GL20 {
             throw new GdxRuntimeException(
                     "Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...). Create an issue when you need other formats.");
         }
-        ArrayBufferViewWrapper typedArray = null;
-        if(pixels instanceof ByteBuffer) {
-            typedArray = TypedArrays.getTypedArray((ByteBuffer)pixels);
-        }
-        else if(pixels instanceof FloatBuffer) {
-            typedArray = TypedArrays.getTypedArray((FloatBuffer)pixels);
-        }
-        else if(pixels instanceof ShortBuffer) {
-            typedArray = TypedArrays.getTypedArray((ShortBuffer)pixels);
-        }
-        else if(pixels instanceof IntBuffer) {
-            typedArray = TypedArrays.getTypedArray((IntBuffer)pixels);
-        }
-        else {
-            throw new GdxRuntimeException("Inputed pixels buffer not supported.");
-        }
-
-        // create new ArrayBufferView (4 bytes per pixel)
+        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(pixels);
         int size = 4 * width * height;
         Uint8ArrayWrapper buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
-
         gl.readPixels(x, y, width, height, format, type, buffer);
-
         pixels.limit(size);
     }
 
@@ -961,7 +900,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform1fv(loc, copy(v));
+        gl.uniform1fv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -979,7 +918,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform1iv(loc, copy(v));
+        gl.uniform1iv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -997,7 +936,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform2fv(loc, copy(v));
+        gl.uniform2fv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1015,7 +954,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform2iv(loc, copy(v));
+        gl.uniform2iv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1033,7 +972,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform3fv(loc, copy(v));
+        gl.uniform3fv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1051,7 +990,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform3iv(loc, copy(v));
+        gl.uniform3iv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1069,7 +1008,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform4fv(loc, copy(v));
+        gl.uniform4fv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1087,7 +1026,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4iv(int location, int count, IntBuffer v) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniform4iv(loc, copy(v));
+        gl.uniform4iv(loc, TypedArrays.getTypedArray(v));
     }
 
     @Override
@@ -1099,7 +1038,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix2fv(loc, transpose, copy(value));
+        gl.uniformMatrix2fv(loc, transpose, TypedArrays.getTypedArray(value));
     }
 
     @Override
@@ -1111,7 +1050,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix3fv(loc, transpose, copy(value));
+        gl.uniformMatrix3fv(loc, transpose, TypedArrays.getTypedArray(value));
     }
 
     @Override
@@ -1123,7 +1062,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix4fv(loc, transpose, copy(value));
+        gl.uniformMatrix4fv(loc, transpose, TypedArrays.getTypedArray(value));
     }
 
     @Override
@@ -1150,7 +1089,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib1fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib1fv(indx, copy(values));
+        gl.vertexAttrib1fv(indx, TypedArrays.getTypedArray(values));
     }
 
     @Override
@@ -1160,7 +1099,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib2fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib2fv(indx, copy(values));
+        gl.vertexAttrib2fv(indx, TypedArrays.getTypedArray(values));
     }
 
     @Override
@@ -1170,7 +1109,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib3fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib3fv(indx, copy(values));
+        gl.vertexAttrib3fv(indx, TypedArrays.getTypedArray(values));
     }
 
     @Override
@@ -1180,7 +1119,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib4fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib4fv(indx, copy(values));
+        gl.vertexAttrib4fv(indx, TypedArrays.getTypedArray(values));
     }
 
     @Override

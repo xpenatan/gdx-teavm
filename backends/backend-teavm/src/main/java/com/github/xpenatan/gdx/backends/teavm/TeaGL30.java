@@ -111,17 +111,17 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glClearBufferfv(int buffer, int drawbuffer, FloatBuffer value) {
-        gl.clearBufferfv(buffer, drawbuffer, copy(value));
+        gl.clearBufferfv(buffer, drawbuffer, TypedArrays.getTypedArray(value));
     }
 
     @Override
     public void glClearBufferiv(int buffer, int drawbuffer, IntBuffer value) {
-        gl.clearBufferiv(buffer, drawbuffer, copy(value));
+        gl.clearBufferiv(buffer, drawbuffer, TypedArrays.getTypedArray(value));
     }
 
     @Override
     public void glClearBufferuiv(int buffer, int drawbuffer, IntBuffer value) {
-        gl.clearBufferuiv(buffer, drawbuffer, copy(value));
+        gl.clearBufferuiv(buffer, drawbuffer, TypedArrays.getTypedArray(value));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glDrawBuffers(int n, IntBuffer bufs) {
         int startPosition = bufs.position();
-        gl.drawBuffers(copy((IntBuffer)bufs).subarray(0, n));
+        gl.drawBuffers(TypedArrays.getTypedArray(bufs).subarray(0, n));
         bufs.position(startPosition);
     }
 
@@ -389,15 +389,15 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     }
 
     @Override
-    public void glGetActiveUniformsiv(int program, int uniformCount, IntBuffer uniformIndices, int pname, IntBuffer params) {
+        public void glGetActiveUniformsiv(int program, int uniformCount, IntBuffer uniformIndices, int pname, IntBuffer params) {
         if(pname == GL30.GL_UNIFORM_IS_ROW_MAJOR) {
-            JSArray<Boolean> arr = gl.getActiveUniformsb(programs.get(program), copy(uniformIndices).subarray(0, uniformCount), pname);
+            JSArray<Boolean> arr = gl.getActiveUniformsb(programs.get(program), TypedArrays.getTypedArray(uniformIndices).subarray(0, uniformCount), pname);
             for(int i = 0; i < uniformCount; i++) {
                 params.put(i, arr.get(i) ? GL20.GL_TRUE : GL20.GL_FALSE);
             }
         }
         else {
-            JSArray<Integer> arr = gl.getActiveUniformsi(programs.get(program), copy(uniformIndices).subarray(0, uniformCount), pname);
+            JSArray<Integer> arr = gl.getActiveUniformsi(programs.get(program), TypedArrays.getTypedArray(uniformIndices).subarray(0, uniformCount), pname);
             for(int i = 0; i < uniformCount; i++) {
                 params.put(i, arr.get(i));
             }
@@ -638,7 +638,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glInvalidateFramebuffer(int target, int numAttachments, IntBuffer attachments) {
         int startPosition = attachments.position();
-        gl.invalidateFramebuffer(target, copy((IntBuffer)attachments).subarray(0, numAttachments));
+        gl.invalidateFramebuffer(target, TypedArrays.getTypedArray(attachments).subarray(0, numAttachments));
         attachments.position(startPosition);
     }
 
@@ -646,7 +646,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glInvalidateSubFramebuffer(int target, int numAttachments, IntBuffer attachments, int x, int y, int width,
                                            int height) {
         int startPosition = attachments.position();
-        gl.invalidateSubFramebuffer(target, copy((IntBuffer)attachments).subarray(0, numAttachments), x, y, width, height);
+        gl.invalidateSubFramebuffer(target, TypedArrays.getTypedArray(attachments).subarray(0, numAttachments), x, y, width, height);
         attachments.position(startPosition);
     }
 
@@ -817,37 +817,37 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glUniformMatrix2x3fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix2x3fv(loc, transpose, copy(value));
+        gl.uniformMatrix2x3fv(loc, transpose, TypedArrays.getTypedArray(value));
     }
 
     @Override
     public void glUniformMatrix2x4fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix2x4fv(loc, transpose, copy(value), 0, count);
+        gl.uniformMatrix2x4fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix3x2fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix3x2fv(loc, transpose, copy(value), 0, count);
+        gl.uniformMatrix3x2fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix3x4fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix3x4fv(loc, transpose, copy(value), 0, count);
+        gl.uniformMatrix3x4fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix4x2fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix4x2fv(loc, transpose, copy(value), 0, count);
+        gl.uniformMatrix4x2fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix4x3fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocationWrapper loc = getUniformLocation(location);
-        gl.uniformMatrix4x3fv(loc, transpose, copy(value), 0, count);
+        gl.uniformMatrix4x3fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
