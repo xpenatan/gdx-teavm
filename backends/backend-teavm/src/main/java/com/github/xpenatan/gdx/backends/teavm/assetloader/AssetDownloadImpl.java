@@ -7,6 +7,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
@@ -95,7 +97,7 @@ public class AssetDownloadImpl implements AssetDownload {
                     listener.onFailure(url);
                 }
             }
-        }, 0, false);
+        }, 0, showLogs);
     }
 
     private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count, boolean showLogs) {
@@ -111,58 +113,81 @@ public class AssetDownloadImpl implements AssetDownload {
 
         // don't load on main thread
         addQueue();
-        new Thread() {
-            public void run() {
-                XMLHttpRequest request = new XMLHttpRequest();
-                request.setOnReadyStateChange(evt -> {
-                    if(request.getReadyState() == XMLHttpRequest.DONE) {
-                        int status = request.getStatus();
-                        if(status == 0) {
-                            if(listener != null) {
-                                listener.onFailure(url);
-                            }
-                        }
-                        else if(status != 200) {
-                            if ((status != 404) && (status != 403)) {
-                                // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                                try {
-                                    Thread.sleep(100);
-                                }
-                                catch (Throwable e) {
-                                    // ignored
-                                }
-                                int newCount = count + 1;
-                                loadBinary(async, url, listener, newCount, showLogs);
-                            }
-                            else {
-                                if(listener != null) {
-                                    listener.onFailure(url);
-                                }
-                            }
-                        }
-                        else {
-                            if(showLogs) {
-                                System.out.println("Asset loaded: " + url);
-                            }
-
-                            ArrayBufferWrapper response = (ArrayBufferWrapper)request.getResponse();
-                            Int8Array data = (Int8Array)TypedArrays.createInt8Array(response);
-                            if(listener != null) {
-                                listener.onSuccess(url, new Blob((ArrayBuffer)response, data));
-                            }
-                        }
-                        subtractQueue();
-                    }
-                });
-
-                setOnProgress(request, url, listener);
-                request.open("GET", url, async);
-                if(async) {
-                    request.setResponseType("arraybuffer");
+        if(async) {
+            new Thread() {
+                public void run() {
+                    loadBinaryInternally(true, url, listener, count, showLogs);
                 }
-                request.send();
+            }.start();
+        }
+        else {
+            loadBinaryInternally(false, url, listener, count, showLogs);
+        }
+    }
+
+    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count, boolean showLogs) {
+        XMLHttpRequest request = new XMLHttpRequest();
+        request.setOnReadyStateChange(evt -> {
+            if(request.getReadyState() == XMLHttpRequest.DONE) {
+                int status = request.getStatus();
+                if(status == 0) {
+                    if(listener != null) {
+                        listener.onFailure(url);
+                    }
+                }
+                else if(status != 200) {
+                    if ((status != 404) && (status != 403)) {
+                        // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
+                        try {
+                            Thread.sleep(100);
+                        }
+                        catch (Throwable e) {
+                            // ignored
+                        }
+                        int newCount = count + 1;
+                        loadBinary(async, url, listener, newCount, showLogs);
+                    }
+                    else {
+                        if(listener != null) {
+                            listener.onFailure(url);
+                        }
+                    }
+                }
+                else {
+                    if(showLogs) {
+                        System.out.println("Asset loaded: " + url);
+                    }
+                    JSObject jsResponse = request.getResponse();
+
+                    Int8Array data = null;
+                    ArrayBuffer arrayBuffer = null;
+                    if(isString(jsResponse)) {
+                        // sync downloading is always string
+                        String responseStr = toString(jsResponse);
+                        Int8ArrayWrapper typedArray = TypedArrays.getTypedArray(responseStr.getBytes());
+                        data = (Int8Array)typedArray;
+                        arrayBuffer = data.getBuffer();
+                    }
+                    else {
+                        ArrayBufferWrapper response = (ArrayBufferWrapper)jsResponse;
+                        data = (Int8Array)TypedArrays.createInt8Array(response);
+                        arrayBuffer = (ArrayBuffer)response;
+                    }
+
+                    if(listener != null) {
+                        listener.onSuccess(url, new Blob(arrayBuffer, data));
+                    }
+                }
+                subtractQueue();
             }
-        }.start();
+        });
+
+        setOnProgress(request, url, listener);
+        request.open("GET", url, async);
+        if(async) {
+            request.setResponseType("arraybuffer");
+        }
+        request.send();
     }
 
     private void setOnProgress(XMLHttpRequest req, String url, final AssetLoaderListener<?> listener) {
@@ -178,4 +203,10 @@ public class AssetDownloadImpl implements AssetDownload {
             }
         });
     }
+
+    @JSBody(params = "jsObject", script = "return typeof jsObject == 'string';")
+    private static native boolean isString(JSObject jsObject);
+
+    @JSBody(params = "jsObject", script = "return jsObject;")
+    private static native String toString(JSObject jsObject);
 }

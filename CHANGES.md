@@ -5,6 +5,7 @@
 - Use file type for checking if asset is loaded
 - Improve arraybuffer performance
 - Improve texture opengl method
+- Fix sync loading (FreeType)
 
 [1.0.1]
 - Fix an issue when creating database and trying to load assets.
