@@ -1,8 +1,9 @@
 package org.teavm.classlib.java.nio;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 
 public interface HasArrayBufferView {
-    Int8ArrayWrapper getTypedArray();
+    ArrayBufferViewWrapper getArrayBufferView();
+    ArrayBufferViewWrapper getOriginalArrayBufferView();
     int getElementSize();
 }
