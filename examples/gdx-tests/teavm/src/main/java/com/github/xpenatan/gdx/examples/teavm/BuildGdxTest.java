@@ -19,7 +19,9 @@ public class BuildGdxTest {
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new AssetFileHandle(args[0]));
+        String gdxAssetsPath = args[0];
+        System.out.println("gdxAssetsPath: " + gdxAssetsPath);
+        teaBuildConfiguration.assetsPath.add(new AssetFileHandle(gdxAssetsPath));
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../../core/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 

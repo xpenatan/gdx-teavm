@@ -10,8 +10,6 @@ dependencies {
 
 val mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
 
-val assetsDir = File(LibExt.gdxTestsAssetsPath)
-
 sourceSets["main"].resources.srcDirs(File("../../core/assets"))
 
 tasks.register<JavaExec>("gdx-tests-run-desktop") {
@@ -20,5 +18,5 @@ tasks.register<JavaExec>("gdx-tests-run-desktop") {
     description = "Run gdx tests example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    workingDir = assetsDir
+    workingDir = File(LibExt.gdxTestsAssetsPath)
 }

@@ -1,5 +1,12 @@
 [-SNAPSHOT]
 
+[1.0.2]
+- Small file storage improvement
+- Use file type for checking if asset is loaded
+- Improve arraybuffer performance
+- Improve texture opengl method
+- Fix sync loading (FreeType)
+
 [1.0.1]
 - Fix an issue when creating database and trying to load assets.
 - Quick fix to filter out assets.txt file and to delete it before adding new files

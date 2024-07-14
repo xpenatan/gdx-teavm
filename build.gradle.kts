@@ -4,6 +4,8 @@ plugins {
     id("signing")
 }
 
+LibExt.initProperties(rootDir)
+
 subprojects {
     apply {
         plugin("java")
@@ -43,6 +45,10 @@ configure(libProjects) {
 
     group = LibExt.groupId
     version = LibExt.libVersion
+
+    if(LibExt.libVersion.isEmpty()) {
+        throw RuntimeException("Version cannot be empty")
+    }
 
     publishing {
         repositories {

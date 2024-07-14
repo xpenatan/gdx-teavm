@@ -25,6 +25,9 @@ public class MemoryFileStorage extends FileDB {
     public InputStream read(TeaFileHandle file) {
         String path = fixPath(file.path());
         FileData data = getInternal(path);
+        if(data == null) {
+            return null;
+        }
         byte[] byteArray = data.getBytes();
         try {
             return new ByteArrayInputStream(byteArray);
@@ -32,7 +35,7 @@ public class MemoryFileStorage extends FileDB {
         catch(RuntimeException e) {
             // Something corrupted: we remove it & re-throw the error
             removeInternal(path);
-            throw e;
+            throw new GdxRuntimeException(getClass().getSimpleName() + " Error: " + path, e);
         }
     }
 
@@ -299,6 +302,9 @@ public class MemoryFileStorage extends FileDB {
         String[] str = new String[tmpPaths.size];
         for(int i = 0; i < tmpPaths.size; i++) {
             String s = tmpPaths.get(i);
+            if(s.startsWith("/")) {
+                s = s.substring(1);
+            }
             if(debug) {
                 System.out.println(getClass().getSimpleName() + " LIST[" + i + "]: " + s);
             }
