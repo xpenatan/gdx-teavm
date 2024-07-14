@@ -18,7 +18,7 @@ public class AssetDownloader {
     }
 
     public interface AssetDownload {
-        void load(boolean async, final String url, AssetType type, AssetLoaderListener<?> listener);
+        void load(boolean async, final String url, AssetType type, AssetLoaderListener<Blob> listener);
 
         void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);
 

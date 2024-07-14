@@ -230,9 +230,9 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
         assetInQueue.add(path1);
         AssetDownloader.getInstance().load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
             @Override
-            public void onProgress(double amount) {
+            public void onProgress(int total, int loaded) {
                 if(listener != null) {
-                    listener.onProgress(amount);
+                    listener.onProgress(total, loaded);
                 }
             }
 

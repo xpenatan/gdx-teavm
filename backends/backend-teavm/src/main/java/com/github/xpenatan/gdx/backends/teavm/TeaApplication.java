@@ -119,7 +119,6 @@ public class TeaApplication implements Application, Runnable {
 
         assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
         AssetLoader.setInstance(assetLoader);
-        AssetLoaderListener<Object> assetListener = new AssetLoaderListener();
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
@@ -484,18 +483,10 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {
-            @Override
-            public void onSuccess(String url, String result) {
-            }
-        });
+        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {});
     }
 
     private void initSound() {
-        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {
-            @Override
-            public void onSuccess(String url, String result) {
-            }
-        });
+        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {});
     }
 }
