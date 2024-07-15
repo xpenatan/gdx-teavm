@@ -30,9 +30,14 @@ public class AssetLoader {
         boolean isAssetLoaded(FileType fileType, String path);
 
         /**
-         * Load asset and add to FileHandle system
+         * Load asset and add to FileHandle system. Skip downloading if file already exists
          */
         void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener);
+
+        /**
+         * Load asset and add to FileHandle system. Overwrite true will update the file.
+         */
+        void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite);
 
         /**
          * Load script and attach to html document

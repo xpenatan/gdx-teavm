@@ -154,17 +154,18 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
 
                 for(String line : lines) {
                     String[] tokens = line.split(":");
-                    if(tokens.length != 4) {
+                    if(tokens.length != 5) {
                         throw new GdxRuntimeException("Invalid assets description file.");
                     }
-
+                    String fileTypeStr = tokens[0];
+                    String assetTypeStr = tokens[1];
                     String assetUrl = tokens[2].trim();
+                    String fileLength = tokens[3];
+                    boolean shouldOverwriteLocalData = tokens[4].equals("1");
                     assetUrl = assetUrl.trim();
                     if(assetUrl.isEmpty()) {
                         continue;
                     }
-                    String fileTypeStr = tokens[0];
-                    String assetTypeStr = tokens[1];
 
                     FileType fileType = FileType.Internal;
                     if(fileTypeStr.equals("c")) {
@@ -177,7 +178,7 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
                     if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
 
                     if(config.preloadAssets || fileType == FileType.Classpath) {
-                        loadAsset(true, assetUrl, assetType, fileType, null);
+                        loadAsset(true, assetUrl, assetType, fileType, null, shouldOverwriteLocalData);
                     }
                 }
             }
@@ -206,6 +207,11 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
 
     @Override
     public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
+        loadAsset(async, path, assetType, fileType, listener, false);
+    }
+
+    @Override
+    public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -217,13 +223,15 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
         }
 
         TeaFileHandle fileHandle = (TeaFileHandle)Gdx.files.getFileHandle(path1, fileType);
-        if(fileHandle.exists()) {
-            // File already exist, don't download it again.
+        boolean exists = fileHandle.exists();
+        if(!overwrite && exists) {
             return;
         }
 
         if(assetType == AssetType.Directory) {
-            fileHandle.mkdirsInternal();
+            if(!exists) {
+                fileHandle.mkdirsInternal();
+            }
             return;
         }
 
@@ -248,22 +256,17 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
             public void onSuccess(String url, Blob result) {
                 assetInQueue.remove(path1);
                 AssetType type = AssetType.Binary;
-                if(assetType == AssetType.Directory) {
-                    fileHandle.mkdirsInternal();
+                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                byte[] byteArray = TypedArrays.toByteArray(data);
+                OutputStream output = fileHandle.write(false, 4096);
+                try {
+                    output.write(byteArray);
                 }
-                else {
-                    Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
-                    byte[] byteArray = TypedArrays.toByteArray(data);
-                    OutputStream output = fileHandle.write(false, 4096);
-                    try {
-                        output.write(byteArray);
-                    }
-                    catch(IOException ex) {
-                        throw new GdxRuntimeException("Error writing file: " + fileHandle + " (" + fileHandle.type() + ")", ex);
-                    }
-                    finally {
-                        StreamUtils.closeQuietly(output);
-                    }
+                catch(IOException ex) {
+                    throw new GdxRuntimeException("Error writing file: " + fileHandle + " (" + fileHandle.type() + ")", ex);
+                }
+                finally {
+                    StreamUtils.closeQuietly(output);
                 }
                 if(listener != null) {
                     listener.onSuccess(path1, result);
