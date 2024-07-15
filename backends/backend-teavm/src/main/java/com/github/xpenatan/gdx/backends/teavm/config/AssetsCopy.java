@@ -110,7 +110,7 @@ public class AssetsCopy {
                             dest.write(is, false);
                             String destPath = dest.path();
                             if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
-                                AssetFileHandle dest2 = AssetFileHandle.createCopyHandle(dest.file(), FileType.Classpath);
+                                AssetFileHandle dest2 = AssetFileHandle.createHandle(dest.file(), FileType.Classpath);
                                 assets.add(new Asset(dest2, getType(destPath), op));
                             }
                             is.close();
@@ -287,7 +287,7 @@ public class AssetsCopy {
             FileHandle srcFile = files[i];
             FileHandle destFile1 = destDir.child(srcFile.name());
             // Destination type is copied from source type
-            FileHandle destFile = AssetFileHandle.createCopyHandle(destFile1.file(), srcFile.type());
+            FileHandle destFile = AssetFileHandle.createHandle(destFile1.file(), srcFile.type());
             if(srcFile.isDirectory()) {
                 AssetFilterOption op = new AssetFilterOption();
                 if(!filter.accept(destPath, true, op)) continue;
