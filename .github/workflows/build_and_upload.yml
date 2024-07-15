@@ -55,7 +55,7 @@ jobs:
         uses: nick-fields/retry@v3
         if: ${{ inputs.shouldUpload }}
         with:
-          max_attempts: 3
+          max_attempts: 6
           timeout_minutes: 10
           retry_on: error
           command: ./gradlew publish
