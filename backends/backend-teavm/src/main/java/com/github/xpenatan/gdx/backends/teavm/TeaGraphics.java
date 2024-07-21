@@ -18,6 +18,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGLContextAttributesWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
@@ -50,12 +51,13 @@ public class TeaGraphics implements Graphics {
         HTMLElementWrapper elementID = document.getElementById(config.canvasID);
         this.canvas = (HTMLCanvasElementWrapper)elementID;
 
-        WebGLContextAttributes attr = WebGLContextAttributes.create();
+        WebGLContextAttributesWrapper attr = WebGLContextAttributesWrapper.create();
         attr.setAlpha(config.alpha);
         attr.setAntialias(config.antialiasing);
         attr.setStencil(config.stencil);
         attr.setPremultipliedAlpha(config.premultipliedAlpha);
         attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
+        attr.setPowerPreference(config.powerPreference);
         HTMLCanvasElement canvas1 = (HTMLCanvasElement)canvas;
 
         if (config.useGL30) {

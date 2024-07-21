@@ -89,6 +89,11 @@ public class TeaApplicationConfiguration {
      * return value of {@link TeaApplication#isMobileDevice()} . */
     public boolean usePhysicalPixels = true;
 
+    /**
+     * default, low-power or high-performance
+     */
+    public String powerPreference = "high-performance";
+
     public boolean isFixedSizeApplication() {
         return width != 0 && height != 0;
     }
