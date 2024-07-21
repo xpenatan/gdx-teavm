@@ -7,7 +7,7 @@ object LibExt {
     var libVersion = ""
 
     const val gdxVersion = "1.12.1"
-    const val teaVMVersion = "0.10.0"
+    const val teaVMVersion = "0.10.1"
 
     const val gdxImGuiVersion = "-SNAPSHOT"
     const val gdxMultiViewVersion = "-SNAPSHOT"
