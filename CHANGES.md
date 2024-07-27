@@ -1,5 +1,14 @@
 [-SNAPSHOT]
 
+[1.0.3]
+- Don't download assets if preload assets is true
+- add PowerPreference option
+- update teavm to 0.10.1
+- update upload attempt
+- Small file handle fix
+- Add option to overwrite saved file
+- Improve download logs and progress method
+
 [1.0.2]
 - Small file storage improvement
 - Use file type for checking if asset is loaded
