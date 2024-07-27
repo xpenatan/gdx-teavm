@@ -1,33 +1,52 @@
 package com.github.xpenatan.gdx.backends.teavm.gl;
 
+import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
 
 /**
  * @author xpenatan
  */
-public interface WebGLContextAttributesWrapper extends JSObject {
-    // WebGLContextAttributes
-    boolean getAlpha();
+public abstract class WebGLContextAttributesWrapper implements JSObject {
+    @JSProperty
+    public abstract boolean isAlpha();
 
-    void setAlpha(boolean alpha);
+    @JSProperty
+    public abstract void setAlpha(boolean alpha);
 
-    boolean getDepth();
+    @JSProperty
+    public abstract boolean isDepth();
 
-    void setDepth(boolean depth);
+    @JSProperty
+    public abstract void setDepth(boolean depth);
 
-    boolean getStencil();
+    @JSProperty
+    public abstract boolean isScencil();
 
-    void setStencil(boolean stencil);
+    @JSProperty
+    public abstract void setStencil(boolean stencil);
 
-    boolean getAntialias();
+    @JSProperty
+    public abstract boolean isAntialias();
 
-    void setAntialias(boolean antialias);
+    @JSProperty
+    public abstract void setAntialias(boolean antialias);
 
-    boolean getPremultipliedAlpha();
+    @JSProperty
+    public abstract boolean isPremultipliedAlpha();
 
-    void setPremultipliedAlpha(boolean premultipliedAlpha);
+    @JSProperty
+    public abstract void setPremultipliedAlpha(boolean premultipliedAlpha);
 
-    boolean getPreserveDrawingBuffer();
+    @JSProperty
+    public abstract boolean isPreserveDrawingBuffer();
 
-    void setPreserveDrawingBuffer(boolean preserveDrawingBuffer);
+    @JSProperty
+    public abstract void setPreserveDrawingBuffer(boolean preserveDrawingBuffer);
+
+    @JSProperty
+    public abstract void setPowerPreference(String powerPreference);
+
+    @JSBody(script = "return {};")
+    public static native WebGLContextAttributesWrapper create();
 }

@@ -52,13 +52,41 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public void load(boolean async, String url, AssetType type, AssetLoaderListener<?> listener) {
+    public void load(boolean async, String url, AssetType type, AssetLoaderListener<Blob> listener) {
+        AssetLoaderListener<Blob> internalListener = new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, Blob result) {
+                if(showLogs) {
+                    System.out.println("Asset download success: " + url);
+                }
+                listener.onSuccess(url, result);
+            }
+
+            @Override
+            public void onFailure(String url) {
+                if(showLogs) {
+                    System.err.println("Asset download failed: " + url);
+                }
+            }
+
+            @Override
+            public void onProgress(int total, int loaded) {
+                if(listener != null) {
+                    listener.onProgress(total, loaded);
+                }
+            }
+        };
+
+        if(showLogs) {
+            System.out.println("Loading asset: " + url);
+        }
+
         switch(type) {
             case Binary:
-                loadBinary(async, url, (AssetLoaderListener<Blob>)listener, 0, showLogs);
+                loadBinary(async, url, internalListener, 0);
                 break;
             case Directory:
-                listener.onSuccess(url, null);
+                internalListener.onSuccess(url, null);
                 break;
             default:
                 throw new GdxRuntimeException("Unsupported asset type " + type);
@@ -68,7 +96,7 @@ public class AssetDownloadImpl implements AssetDownload {
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
         if(showLogs) {
-            System.out.println("Loading script : " + url);
+            System.out.println("Loading script: " + url);
         }
 
         loadBinary(async, url, new AssetLoaderListener<>() {
@@ -84,7 +112,7 @@ public class AssetDownloadImpl implements AssetDownload {
                 document.getBody().appendChild(scriptElement);
 
                 if(showLogs) {
-                    System.out.println("Script loaded: " + url);
+                    System.out.println("Script download success: " + url);
                 }
                 if(listener != null) {
                     listener.onSuccess(url, script);
@@ -93,17 +121,27 @@ public class AssetDownloadImpl implements AssetDownload {
 
             @Override
             public void onFailure(String url) {
+                if(showLogs) {
+                    System.err.println("Script download failed: " + url);
+                }
                 if(listener != null) {
                     listener.onFailure(url);
                 }
             }
-        }, 0, showLogs);
+
+            @Override
+            public void onProgress(int total, int loaded) {
+                if(showDownloadProgress) {
+                    System.out.println("Total: " + total + " loaded: " + loaded + " URL: " + url);
+                }
+                if(listener != null) {
+                    listener.onProgress(total, loaded);
+                }
+            }
+        }, 0);
     }
 
-    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count, boolean showLogs) {
-        if(showLogs) {
-            System.out.println("Loading asset: " + url);
-        }
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
         if(count == MAX_DOWNLOAD_ATTEMPT) {
             if(listener != null) {
                 listener.onFailure(url);
@@ -116,16 +154,16 @@ public class AssetDownloadImpl implements AssetDownload {
         if(async) {
             new Thread() {
                 public void run() {
-                    loadBinaryInternally(true, url, listener, count, showLogs);
+                    loadBinaryInternally(true, url, listener, count);
                 }
             }.start();
         }
         else {
-            loadBinaryInternally(false, url, listener, count, showLogs);
+            loadBinaryInternally(false, url, listener, count);
         }
     }
 
-    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count, boolean showLogs) {
+    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
         XMLHttpRequest request = new XMLHttpRequest();
         request.setOnReadyStateChange(evt -> {
             if(request.getReadyState() == XMLHttpRequest.DONE) {
@@ -145,7 +183,7 @@ public class AssetDownloadImpl implements AssetDownload {
                             // ignored
                         }
                         int newCount = count + 1;
-                        loadBinary(async, url, listener, newCount, showLogs);
+                        loadBinary(async, url, listener, newCount);
                     }
                     else {
                         if(listener != null) {
@@ -154,9 +192,6 @@ public class AssetDownloadImpl implements AssetDownload {
                     }
                 }
                 else {
-                    if(showLogs) {
-                        System.out.println("Asset loaded: " + url);
-                    }
                     JSObject jsResponse = request.getResponse();
 
                     Int8Array data = null;
@@ -195,11 +230,8 @@ public class AssetDownloadImpl implements AssetDownload {
             int loaded = evt.getLoaded();
             int total = evt.getTotal();
             double percent = (double)loaded / total;
-            if(showDownloadProgress) {
-                System.out.println("Total: " + total + " loaded: " + loaded + " URL: " + url);
-            }
             if(listener != null) {
-                listener.onProgress(loaded);
+                listener.onProgress(total, loaded);
             }
         });
     }

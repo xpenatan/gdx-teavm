@@ -12,15 +12,11 @@ public class AssetFileHandle extends FileHandle {
     public AssetFilter filter;
 
     public static AssetFileHandle createHandle(String fileName, FileType type) {
-        return new AssetFileHandle(fileName, type, type);
-    }
-
-    public static AssetFileHandle createCopyHandle(File file, FileType type) {
-        return new AssetFileHandle(file, FileType.Absolute, type);
-    }
-
-    public static AssetFileHandle createCopyHandle(String fileName, FileType type) {
         return new AssetFileHandle(fileName, FileType.Absolute, type);
+    }
+
+    public static AssetFileHandle createHandle(File file, FileType type) {
+        return new AssetFileHandle(file, FileType.Absolute, type);
     }
 
     public static AssetFileHandle createCopyHandle(String fileName, FileType type, String assetsChildDir) {

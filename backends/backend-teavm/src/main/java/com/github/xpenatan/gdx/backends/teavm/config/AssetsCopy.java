@@ -30,10 +30,12 @@ public class AssetsCopy {
     public static class Asset {
         FileHandle file;
         AssetType type;
+        AssetFilterOption op;
 
-        public Asset(FileHandle file, AssetType type) {
+        public Asset(FileHandle file, AssetType type, AssetFilterOption op) {
             this.file = file;
             this.type = type;
+            this.op = op;
         }
     }
 
@@ -98,7 +100,8 @@ public class AssetsCopy {
                 else {
                     classpathFile = classpathFile.replaceFirst("/", "");
                 }
-                if(defaultAssetFilter.accept(path, false)) {
+                AssetFilterOption op = new AssetFilterOption();
+                if(defaultAssetFilter.accept(path, false, op)) {
                     try {
                         TeaBuilder.log(classpathFile);
                         InputStream is = classloader.getResourceAsStream(classpathFile);
@@ -107,8 +110,8 @@ public class AssetsCopy {
                             dest.write(is, false);
                             String destPath = dest.path();
                             if(!destPath.endsWith(".js") && !destPath.endsWith(".wasm")) {
-                                AssetFileHandle dest2 = AssetFileHandle.createCopyHandle(dest.file(), FileType.Classpath);
-                                assets.add(new Asset(dest2, getType(destPath)));
+                                AssetFileHandle dest2 = AssetFileHandle.createHandle(dest.file(), FileType.Classpath);
+                                assets.add(new Asset(dest2, getType(destPath), op));
                             }
                             is.close();
                         }
@@ -156,6 +159,8 @@ public class AssetsCopy {
         buffer.append(path);
         buffer.append(":");
         buffer.append(asset.file.isDirectory() ? 0 : asset.file.length());
+        buffer.append(":");
+        buffer.append(asset.op.shouldOverwriteLocalData ? 1 : 0);
         buffer.append("\n");
     }
 
@@ -260,9 +265,10 @@ public class AssetsCopy {
     }
 
     private static void copyFile(FileHandle source, FileHandle dest, AssetFilter filter, ArrayList<Asset> assets) {
-        if(!filter.accept(dest.path(), false)) return;
+        AssetFilterOption op = new AssetFilterOption();
+        if(!filter.accept(dest.path(), false, op)) return;
         try {
-            assets.add(new Asset(dest, getType(dest.path())));
+            assets.add(new Asset(dest, getType(dest.path()), op));
             InputStream read = source.read();
             dest.write(read, false);
             read.close();
@@ -275,16 +281,17 @@ public class AssetsCopy {
 
     private static void copyDirectory(FileHandle sourceDir, FileHandle destDir, AssetFilter filter, ArrayList<Asset> assets) {
         String destPath = destDir.path();
-        if(!filter.accept(destPath, true)) return;
         destDir.mkdirs();
         FileHandle[] files = sourceDir.list();
         for(int i = 0, n = files.length; i < n; i++) {
             FileHandle srcFile = files[i];
             FileHandle destFile1 = destDir.child(srcFile.name());
             // Destination type is copied from source type
-            FileHandle destFile = AssetFileHandle.createCopyHandle(destFile1.file(), srcFile.type());
+            FileHandle destFile = AssetFileHandle.createHandle(destFile1.file(), srcFile.type());
             if(srcFile.isDirectory()) {
-                assets.add(new Asset(destFile, AssetType.Directory));
+                AssetFilterOption op = new AssetFilterOption();
+                if(!filter.accept(destPath, true, op)) continue;
+                assets.add(new Asset(destFile, AssetType.Directory, op));
                 copyDirectory(srcFile, destFile, filter, assets);
             }
             else
