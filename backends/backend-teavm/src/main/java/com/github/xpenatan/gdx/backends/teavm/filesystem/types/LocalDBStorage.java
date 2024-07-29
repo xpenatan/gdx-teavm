@@ -59,11 +59,6 @@ public class LocalDBStorage extends MemoryFileStorage {
     }
 
     @Override
-    protected FileHandle getFilePath(String path) {
-        return Gdx.files.local(path);
-    }
-
-    @Override
     protected void putFile(String key, FileData fileData) {
         if(debug) {
             String type = fileData != null && fileData.isDirectory() ? "PUT FOLDER DB: " : "PUT FILE DB: ";

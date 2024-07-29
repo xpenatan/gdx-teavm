@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -254,6 +255,8 @@ public class MemoryFileStorage extends FileDB {
 
     private String[] list(FileHandle file, boolean equals) {
         String dir = fixPath(file.path());
+
+        Files.FileType type = file.type();
         boolean isRoot = isRootFolder(file);
         if(debug) {
             System.out.println("########## START LIST ### isRoot: " + isRoot + " DIR: " + dir);
@@ -263,7 +266,8 @@ public class MemoryFileStorage extends FileDB {
             ObjectMap.Entry<String, FileData> next = it.next();
             String path = fixPath(next.key);
 
-            FileHandle parent = getFilePath(path).parent();
+            FileHandle pathFileHandle = Gdx.files.getFileHandle(path, type);
+            FileHandle parent = pathFileHandle.parent();
             String parentPath = fixPath(parent.path());
 
             boolean isChildParentRoot = isRootFolder(parent);
@@ -312,10 +316,6 @@ public class MemoryFileStorage extends FileDB {
         }
         tmpPaths.clear();
         return str;
-    }
-
-    protected FileHandle getFilePath(String path) {
-        return Gdx.files.internal(path);
     }
 
     protected void putFile(String key, FileData data) {
