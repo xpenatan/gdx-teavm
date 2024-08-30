@@ -155,7 +155,7 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
                 for(String line : lines) {
                     String[] tokens = line.split(":");
                     if(tokens.length != 5) {
-                        throw new GdxRuntimeException("Invalid assets description file.");
+                        throw new GdxRuntimeException("Invalid assets description file. " + tokens.length + " " + line);
                     }
                     String fileTypeStr = tokens[0];
                     String assetTypeStr = tokens[1];
