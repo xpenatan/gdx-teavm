@@ -48,7 +48,7 @@ public class ImGuiTestsApp implements Screen {
         ImGui.CreateContext();
 
         ImGuiIO io = ImGui.GetIO();
-        io.ConfigFlags(ImGuiConfigFlags.ImGuiConfigFlags_DockingEnable);
+        io.set_ConfigFlags(ImGuiConfigFlags.ImGuiConfigFlags_DockingEnable);
 
         input = new ImGuiGdxInputMultiplexer();
         impl = new ImGuiGdxImpl();
@@ -125,7 +125,7 @@ public class ImGuiTestsApp implements Screen {
             Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            impl.update();
+            impl.newFrame();
 
             drawTestListWindow();
 
