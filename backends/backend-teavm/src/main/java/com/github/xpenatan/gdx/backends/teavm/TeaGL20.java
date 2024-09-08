@@ -49,7 +49,7 @@ public class TeaGL20 implements GL20 {
         @JSBody(params = { "key" }, script = "var value = this[key]; delete this[key]; return value;")
         public native T remove (int key);
 
-        @JSBody(params = { "value" }, script = "for (i = 0; i < this.length; i++) { if (value === this[i]) { return i; } }")
+        @JSBody(params = { "value" }, script = "for (var i = 0; i < this.length; i++) { if (value === this[i]) { return i; } }")
         public native int getKey (T value);
     }
 
@@ -393,9 +393,8 @@ public class TeaGL20 implements GL20 {
         for(int i = 0; i < n; i++) {
             WebGLBufferWrapper buffer = gl.createBuffer();
             int id = this.buffers.add(buffer);
-            buffers.put(id);
+            buffers.put(i, id);
         }
-        buffers.limit(n);
     }
 
     @Override
@@ -414,9 +413,8 @@ public class TeaGL20 implements GL20 {
         for(int i = 0; i < n; i++) {
             WebGLFramebufferWrapper fb = gl.createFramebuffer();
             int id = this.frameBuffers.add(fb);
-            framebuffers.put(id);
+            framebuffers.put(i, id);
         }
-        framebuffers.limit(n);
     }
 
     @Override
@@ -430,9 +428,8 @@ public class TeaGL20 implements GL20 {
         for(int i = 0; i < n; i++) {
             WebGLRenderbufferWrapper rb = gl.createRenderbuffer();
             int id = this.renderBuffers.add(rb);
-            renderbuffers.put(id);
+            renderbuffers.put(i, id);
         }
-        renderbuffers.limit(n);
     }
 
     @Override
@@ -446,28 +443,23 @@ public class TeaGL20 implements GL20 {
         for(int i = 0; i < n; i++) {
             WebGLTextureWrapper texture = gl.createTexture();
             int id = this.textures.add(texture);
-            textures.put(id);
+            textures.put(i, id);
         }
-        textures.limit(n);
     }
 
     @Override
     public String glGetActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
         WebGLActiveInfoWrapper activeUniform = gl.getActiveAttrib(programs.get(program), index);
-        size.put(activeUniform.getSize());
-        size.flip();
-        type.put(activeUniform.getType());
-        type.flip();
+        size.put(0, activeUniform.getSize());
+        type.put(0, activeUniform.getType());
         return activeUniform.getName();
     }
 
     @Override
     public String glGetActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
         WebGLActiveInfoWrapper activeUniform = gl.getActiveUniform(programs.get(program), index);
-        size.put(activeUniform.getSize());
-        size.flip();
-        type.put(activeUniform.getType());
-        type.flip();
+        size.put(0, activeUniform.getSize());
+        type.put(0, activeUniform.getType());
         return activeUniform.getName();
     }
 
@@ -504,7 +496,6 @@ public class TeaGL20 implements GL20 {
         if(pname == GL20.GL_DEPTH_CLEAR_VALUE || pname == GL20.GL_LINE_WIDTH || pname == GL20.GL_POLYGON_OFFSET_FACTOR
                 || pname == GL20.GL_POLYGON_OFFSET_UNITS || pname == GL20.GL_SAMPLE_COVERAGE_VALUE) {
             params.put(0, gl.getParameterf(pname));
-            params.limit(1);
         }
         else
             throw new GdxRuntimeException("glGetFloat not supported by WebGL backend");
@@ -517,17 +508,15 @@ public class TeaGL20 implements GL20 {
             case GL20.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
             case GL20.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
                 params.put(0, gl.getFramebufferAttachmentParameteri(target, attachment, pname));
-                params.limit(1);
                 break;
             case GL20.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
                 WebGLTextureWrapper tex = (WebGLTextureWrapper)gl.getParametero(pname);
                 if(tex == null) {
-                    params.put(0);
+                    params.put(0, 0);
                 }
                 else {
-                    params.put(textures.getKey(tex));
+                    params.put(0, textures.getKey(tex));
                 }
-                params.flip();
                 return;
             default:
                 throw new GdxRuntimeException("glGetFramebufferAttachmentParameteriv Invalid enum for WebGL backend.");
@@ -556,7 +545,6 @@ public class TeaGL20 implements GL20 {
                 || pname == GL20.GL_STENCIL_PASS_DEPTH_PASS || pname == GL20.GL_STENCIL_REF || pname == GL20.GL_STENCIL_VALUE_MASK
                 || pname == GL20.GL_STENCIL_WRITEMASK || pname == GL20.GL_SUBPIXEL_BITS || pname == GL20.GL_UNPACK_ALIGNMENT) {
             params.put(0, gl.getParameteri(pname));
-            params.limit(1);
         }
         else if(pname == GL20.GL_VIEWPORT) {
             Int32ArrayWrapper array = (Int32ArrayWrapper)gl.getParameterv(pname);
@@ -564,17 +552,15 @@ public class TeaGL20 implements GL20 {
             params.put(1, array.get(1));
             params.put(2, array.get(2));
             params.put(3, array.get(3));
-            params.limit(4);
         }
         else if(pname == GL20.GL_FRAMEBUFFER_BINDING) {
             WebGLFramebufferWrapper fbo = (WebGLFramebufferWrapper)gl.getParametero(pname);
             if(fbo == null) {
-                params.put(0);
+                params.put(0, 0);
             }
             else {
-                params.put(frameBuffers.getKey(fbo));
+                params.put(0, frameBuffers.getKey(fbo));
             }
-            params.flip();
         }
         else
             throw new GdxRuntimeException("glGetInteger not supported by WebGL backend");
@@ -589,12 +575,11 @@ public class TeaGL20 implements GL20 {
     public void glGetProgramiv(int program, int pname, IntBuffer params) {
         if(pname == GL20.GL_DELETE_STATUS || pname == GL20.GL_LINK_STATUS || pname == GL20.GL_VALIDATE_STATUS) {
             boolean result = gl.getProgramParameterb(programs.get(program), pname);
-            params.put(result ? GL20.GL_TRUE : GL20.GL_FALSE);
+            params.put(0, result ? GL20.GL_TRUE : GL20.GL_FALSE);
         }
         else {
-            params.put(gl.getProgramParameteri(programs.get(program), pname));
+            params.put(0, gl.getProgramParameteri(programs.get(program), pname));
         }
-        params.flip();
     }
 
     @Override
@@ -612,13 +597,12 @@ public class TeaGL20 implements GL20 {
     public void glGetShaderiv(int shader, int pname, IntBuffer params) {
         if(pname == GL20.GL_COMPILE_STATUS || pname == GL20.GL_DELETE_STATUS) {
             boolean result = gl.getShaderParameterb(shaders.get(shader), pname);
-            params.put(result ? GL20.GL_TRUE : GL20.GL_FALSE);
+            params.put(0, result ? GL20.GL_TRUE : GL20.GL_FALSE);
         }
         else {
             int result = gl.getShaderParameteri(shaders.get(shader), pname);
-            params.put(result);
+            params.put(0, result);
         }
-        params.flip();
     }
 
     @Override
@@ -756,7 +740,6 @@ public class TeaGL20 implements GL20 {
         int size = 4 * width * height;
         Uint8ArrayWrapper buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
         gl.readPixels(x, y, width, height, format, type, buffer);
-        pixels.limit(size);
     }
 
     @Override

@@ -286,13 +286,11 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glGenQueries(int n, IntBuffer ids) {
-        int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             WebGLQueryWrapper query = gl.createQuery();
             int id = queries.add(query);
-            ids.put(id);
+            ids.put(i, id);
         }
-        ids.position(startPosition);
     }
 
     @Override
@@ -306,13 +304,11 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glGenSamplers(int n, IntBuffer ids) {
-        int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             WebGLSamplerWrapper sampler = gl.createSampler();
             int id = samplers.add(sampler);
-            ids.put(id);
+            ids.put(i, id);
         }
-        ids.position(startPosition);
     }
 
     @Override
@@ -326,13 +322,11 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glGenTransformFeedbacks(int n, IntBuffer ids) {
-        int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             WebGLTransformFeedbackWrapper feedback = gl.createTransformFeedback();
             int id = feedbacks.add(feedback);
-            ids.put(id);
+            ids.put(i, id);
         }
-        ids.position(startPosition);
     }
 
     @Override
@@ -346,36 +340,33 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glGenVertexArrays(int n, IntBuffer ids) {
-        int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             WebGLVertexArrayObjectWrapper vArray = gl.createVertexArray();
             int id = vertexArrays.add(vArray);
-            ids.put(id);
+            ids.put(i, id);
         }
-        ids.position(startPosition);
     }
 
     @Override
     public void glGetActiveUniformBlockiv(int program, int uniformBlockIndex, int pname, IntBuffer params) {
         if(pname == GL30.GL_UNIFORM_BLOCK_BINDING || pname == GL30.GL_UNIFORM_BLOCK_DATA_SIZE
                 || pname == GL30.GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS) {
-            params.put(gl.getActiveUniformBlockParameteri(programs.get(program), uniformBlockIndex, pname));
+            params.put(0, gl.getActiveUniformBlockParameteri(programs.get(program), uniformBlockIndex, pname));
         }
         else if(pname == GL30.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES) {
             Uint32ArrayWrapper array = gl.getActiveUniformBlockParameterv(programs.get(program), uniformBlockIndex, pname);
             for(int i = 0; i < array.getLength(); i++) {
-                params.put(i, (int)array.get(i));
+                params.put(i, array.get(i));
             }
         }
         else if(pname == GL30.GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER
                 || pname == GL30.GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER) {
             boolean result = gl.getActiveUniformBlockParameterb(programs.get(program), uniformBlockIndex, pname);
-            params.put(result ? GL20.GL_TRUE : GL20.GL_FALSE);
+            params.put(0, result ? GL20.GL_TRUE : GL20.GL_FALSE);
         }
         else {
             throw new GdxRuntimeException("Unsupported pname passed to glGetActiveUniformBlockiv");
         }
-        params.flip();
     }
 
     @Override
@@ -402,7 +393,6 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 params.put(i, arr.get(i));
             }
         }
-        params.limit(uniformCount);
     }
 
     @Override
@@ -420,7 +410,6 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         // Override GwtGL20 method to check if it's a pname introduced with GL30.
         if(pname == GL30.GL_MAX_TEXTURE_LOD_BIAS) {
             params.put(0, gl.getParameterf(pname));
-            params.limit(1);
         }
         else {
             super.glGetFloatv(pname, params);
@@ -478,39 +467,35 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_UNPACK_SKIP_PIXELS:
             case GL30.GL_UNPACK_SKIP_ROWS:
                 params.put(0, gl.getParameteri(pname));
-                params.limit(1);
                 return;
             case GL30.GL_DRAW_FRAMEBUFFER_BINDING:
             case GL30.GL_READ_FRAMEBUFFER_BINDING:
                 WebGLFramebufferWrapper fbo = (WebGLFramebufferWrapper)gl.getParametero(pname);
                 if(fbo == null) {
-                    params.put(0);
+                    params.put(0, 0);
                 }
                 else {
-                    params.put(frameBuffers.getKey(fbo));
+                    params.put(0, frameBuffers.getKey(fbo));
                 }
-                params.flip();
                 return;
             case GL30.GL_TEXTURE_BINDING_2D_ARRAY:
             case GL30.GL_TEXTURE_BINDING_3D:
                 WebGLTextureWrapper tex = (WebGLTextureWrapper)gl.getParametero(pname);
                 if(tex == null) {
-                    params.put(0);
+                    params.put(0, 0);
                 }
                 else {
-                    params.put(textures.getKey(tex));
+                    params.put(0, textures.getKey(tex));
                 }
-                params.flip();
                 return;
             case GL30.GL_VERTEX_ARRAY_BINDING:
                 WebGLVertexArrayObjectWrapper obj = (WebGLVertexArrayObjectWrapper)gl.getParametero(pname);
                 if(obj == null) {
-                    params.put(0);
+                    params.put(0, 0);
                 }
                 else {
-                    params.put(vertexArrays.getKey(obj));
+                    params.put(0, vertexArrays.getKey(obj));
                 }
-                params.flip();
                 return;
             default:
                 // Assume it is a GL20 pname
@@ -526,8 +511,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_MAX_ELEMENT_INDEX:
             case GL30.GL_MAX_SERVER_WAIT_TIMEOUT:
             case GL30.GL_MAX_UNIFORM_BLOCK_SIZE:
-                params.put(gl.getParameteri64(pname));
-                params.flip();
+                params.put(0, gl.getParameteri64(pname));
                 return;
             default:
                 throw new UnsupportedOperationException("Given glGetInteger64v enum not supported on WebGL2");
@@ -547,7 +531,6 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
             case GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
                 params.put(0, gl.getFramebufferAttachmentParameteri(target, attachment, pname));
-                params.limit(1);
                 break;
             default:
                 // Assume it is a GL20 pname
@@ -561,40 +544,36 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         // Similar to how GwtGL20 handles FBO in glGetIntegerv
         WebGLQueryWrapper query = gl.getQuery(target, pname);
         if(query == null) {
-            params.put(0);
+            params.put(0, 0);
         }
         else {
-            params.put(queries.getKey(query));
+            params.put(0, queries.getKey(query));
         }
-        params.flip();
     }
 
     @Override
     public void glGetQueryObjectuiv(int id, int pname, IntBuffer params) {
         // In WebGL2 getQueryObject was renamed to getQueryParameter
         if(pname == GL30.GL_QUERY_RESULT) {
-            params.put(gl.getQueryParameteri(queries.get(id), pname));
+            params.put(0, gl.getQueryParameteri(queries.get(id), pname));
         }
         else if(pname == GL30.GL_QUERY_RESULT_AVAILABLE) {
             boolean result = gl.getQueryParameterb(queries.get(id), pname);
-            params.put(result ? GL20.GL_TRUE : GL20.GL_FALSE);
+            params.put(0, result ? GL20.GL_TRUE : GL20.GL_FALSE);
         }
         else {
             throw new GdxRuntimeException("Unsupported pname passed to glGetQueryObjectuiv");
         }
-        params.flip();
     }
 
     @Override
     public void glGetSamplerParameterfv(int sampler, int pname, FloatBuffer params) {
-        params.put(gl.getSamplerParameterf(samplers.get(sampler), pname));
-        params.flip();
+        params.put(0, gl.getSamplerParameterf(samplers.get(sampler), pname));
     }
 
     @Override
     public void glGetSamplerParameteriv(int sampler, int pname, IntBuffer params) {
-        params.put(gl.getSamplerParameteri(samplers.get(sampler), pname));
-        params.flip();
+        params.put(0, gl.getSamplerParameteri(samplers.get(sampler), pname));
     }
 
     @Override
@@ -614,7 +593,6 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         for(int i = 0; i < length; i++) {
             uniformIndices.put(i, array.get(i));
         }
-        uniformIndices.limit(length);
     }
 
     @Override
