@@ -81,16 +81,17 @@ public class TeaGraphics implements Graphics {
 
         if(config.width >= 0 || config.height >= 0) {
             if(config.isFixedSizeApplication()) {
-                setCanvasSize(config.width, config.height);
+                setCanvasSize(config.width, config.height, false);
             }
             else {
                 TeaWindow currentWindow = TeaWindow.get();
                 int width = currentWindow.getClientWidth() - config.padHorizontal;
                 int height = currentWindow.getClientHeight() - config.padVertical;
-                double density = config.usePhysicalPixels ? getNativeScreenDensity() : 1;
-                setCanvasSize((int)(density * width), (int)(density * height));
+                setCanvasSize(width, height, config.usePhysicalPixels);
             }
         }
+
+        context.viewport(0, 0, getWidth(), getHeight());
 
         // listen to fullscreen changes
         addFullscreenChangeListener(canvas, new FullscreenChanged() {
@@ -331,20 +332,26 @@ public class TeaGraphics implements Graphics {
         if(isFullscreen()) exitFullscreen();
         // don't set canvas for resizable applications, resize handler will do it
         if(!config.isAutoSizeApplication()) {
-            setCanvasSize(width, height);
+            setCanvasSize(width, height, config.usePhysicalPixels);
         }
         return true;
     }
 
-    void setCanvasSize(int width, int height) {
-        canvas.setWidth(width);
-        canvas.setHeight(height);
-        if(config.usePhysicalPixels) {
-            //TODO Not tested
-            double density = getNativeScreenDensity();
+    void setCanvasSize(int width, int height, boolean usePhysicalPixels) {
+        // event calls us with logical pixel size, so if we use physical pixels internally,
+        // we need to convert them
+        double density = 1;
+        if(usePhysicalPixels) {
+            density = getNativeScreenDensity();
+        }
+        int w = (int)(width * density);
+        int h = (int)(height * density);
+        canvas.setWidth(w);
+        canvas.setHeight(h);
+        if(usePhysicalPixels) {
             StyleWrapper style = canvas.getStyle();
-            style.setProperty("width", width / density + StyleWrapper.Unit.PX.getType());
-            style.setProperty("height", height / density + StyleWrapper.Unit.PX.getType());
+            style.setProperty("width", width + StyleWrapper.Unit.PX.getType());
+            style.setProperty("height", height + StyleWrapper.Unit.PX.getType());
         }
     }
 
