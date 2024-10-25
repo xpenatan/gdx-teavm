@@ -10,13 +10,13 @@ import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 public abstract class FloatBufferOverByteBufferEmu extends TFloatBufferOverByteBuffer implements HasArrayBufferView {
 
     @Emulate
-    Float32ArrayWrapper backupArray;
-    @Emulate
     Float32ArrayWrapper floatArray;
     @Emulate
     int positionCache;
     @Emulate
     int remainingCache;
+    @Emulate
+    int capacityCache;
 
     public FloatBufferOverByteBufferEmu(int start, int capacity, TByteBufferImpl byteBuffer, int position, int limit, boolean readOnly) {
         super(start, capacity, byteBuffer, position, limit, readOnly);
@@ -27,18 +27,15 @@ public abstract class FloatBufferOverByteBufferEmu extends TFloatBufferOverByteB
     public ArrayBufferViewWrapper getArrayBufferView() {
         // Int8Array
         Int8ArrayWrapper int8Array = (Int8ArrayWrapper)getOriginalArrayBufferView();
-        if(floatArray == null) {
-            floatArray = TypedArrays.createFloat32Array(int8Array.getBuffer());
-        }
-
         int position1 = position();
         int remaining1 = remaining();
-        if(backupArray == null || positionCache != position1 || remaining1 != remainingCache) {
+        int capacity1 = capacity();
+        if(positionCache != position1 || remainingCache != remaining1 || capacityCache != capacity1) {
+            floatArray = TypedArrays.createFloat32Array(int8Array.getBuffer());
             positionCache = position1;
             remainingCache = remaining1;
-            backupArray = floatArray.subarray(position1, remaining1);
         }
-        return backupArray;
+        return floatArray;
     }
 
     @Override

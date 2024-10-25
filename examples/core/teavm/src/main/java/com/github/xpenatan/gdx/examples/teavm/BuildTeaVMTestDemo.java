@@ -19,7 +19,7 @@ public class BuildTeaVMTestDemo {
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
-        teaBuildConfiguration.shouldGenerateAssetFile = false;
+        teaBuildConfiguration.shouldGenerateAssetFile = true;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.logoPath = "logo.png";
 

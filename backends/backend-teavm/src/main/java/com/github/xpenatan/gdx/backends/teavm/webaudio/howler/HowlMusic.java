@@ -14,6 +14,7 @@ public class HowlMusic implements Music {
         byte[] bytes = fileHandle.readBytes();
         ArrayBufferViewWrapper data = TypedArrays.getTypedArray(bytes);
         howl = Howl.create(data);
+        soundId = -1;
     }
 
     @Override
@@ -28,7 +29,9 @@ public class HowlMusic implements Music {
 
     @Override
     public void pause() {
-        howl.pause(soundId);
+        if(soundId != -1) {
+            howl.pause(soundId);
+        }
     }
 
     @Override
@@ -39,38 +42,55 @@ public class HowlMusic implements Music {
 
     @Override
     public boolean isPlaying() {
-        return howl.isPlaying(soundId);
+        if(soundId != -1) {
+            return howl.isPlaying(soundId);
+        }
+        return false;
     }
 
     @Override
     public void setLooping(boolean isLooping) {
-        howl.setLoop(isLooping, soundId);
+        if(soundId != -1) {
+            howl.setLoop(isLooping, soundId);
+        }
     }
 
     @Override
     public boolean isLooping() {
-        return howl.getLoop(soundId);
+        if(soundId != -1) {
+            return howl.getLoop(soundId);
+        }
+        return false;
     }
 
     @Override
     public void setVolume(float volume) {
-        howl.setVolume(volume, soundId);
+        if(soundId != -1) {
+            howl.setVolume(volume, soundId);
+        }
     }
 
     @Override
     public float getVolume() {
-        return howl.getVolume(soundId);
+        if(soundId != -1) {
+            return howl.getVolume(soundId);
+        }
+        return 0f;
     }
 
     @Override
     public void setPan(float pan, float volume) {
-        howl.setStereo(pan, soundId);
-        howl.setVolume(volume, soundId);
+        if(soundId != -1) {
+            howl.setStereo(pan, soundId);
+            howl.setVolume(volume, soundId);
+        }
     }
 
     @Override
     public void setPosition(float position) {
-        howl.setSeek(position, soundId);
+        if(soundId != -1) {
+            howl.setSeek(position, soundId);
+        }
     }
 
     @Override

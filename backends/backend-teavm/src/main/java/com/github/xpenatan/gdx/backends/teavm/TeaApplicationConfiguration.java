@@ -87,7 +87,7 @@ public class TeaApplicationConfiguration {
      * Setting to false mostly makes sense for fixed-size games or non-mobile games expecting performance issues on huge
      * resolutions. If you target mobiles and desktops, consider using physical device pixels on mobile devices only by using the
      * return value of {@link TeaApplication#isMobileDevice()} . */
-    public boolean usePhysicalPixels = true;
+    public boolean usePhysicalPixels = false;
 
     /**
      * default, low-power or high-performance

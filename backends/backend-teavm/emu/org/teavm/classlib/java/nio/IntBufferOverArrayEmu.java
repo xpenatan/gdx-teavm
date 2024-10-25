@@ -8,13 +8,6 @@ import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 @Emulate(valueStr = "java.nio.TIntBufferOverArray", updateCode = true)
 public abstract class IntBufferOverArrayEmu extends TIntBufferOverArray implements HasArrayBufferView {
 
-    @Emulate
-    Int32ArrayWrapper backupArray;
-    @Emulate
-    int positionCache;
-    @Emulate
-    int remainingCache;
-
     public IntBufferOverArrayEmu(int start, int capacity, int[] array, int position, int limit, boolean readOnly) {
         super(start, capacity, array, position, limit, readOnly);
     }
@@ -23,14 +16,7 @@ public abstract class IntBufferOverArrayEmu extends TIntBufferOverArray implemen
     @Emulate
     public ArrayBufferViewWrapper getArrayBufferView() {
         Int32ArrayWrapper originalBuffer = (Int32ArrayWrapper)getOriginalArrayBufferView();
-        int position1 = position();
-        int remaining1 = remaining();
-        if(backupArray == null || positionCache != position1 || remaining1 != remainingCache) {
-            positionCache = position1;
-            remainingCache = remaining1;
-            backupArray = originalBuffer.subarray(position1, remaining1);
-        }
-        return backupArray;
+        return originalBuffer;
     }
 
     @Override

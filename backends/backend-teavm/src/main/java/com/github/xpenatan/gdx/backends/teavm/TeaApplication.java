@@ -192,14 +192,7 @@ public class TeaApplication implements Application, Runnable {
                     }
 
                     if(graphics != null) {
-                        // event calls us with logical pixel size, so if we use physical pixels internally,
-                        // we need to convert them
-                        if(config.usePhysicalPixels) {
-                            double density = graphics.getNativeScreenDensity();
-                            width = (int)(width * density);
-                            height = (int)(height * density);
-                        }
-                        graphics.setCanvasSize(width, height);
+                        graphics.setCanvasSize(width, height, config.usePhysicalPixels);
                     }
                 }
             });

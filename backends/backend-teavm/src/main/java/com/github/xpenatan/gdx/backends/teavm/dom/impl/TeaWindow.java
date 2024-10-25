@@ -54,12 +54,12 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
 
     @Override
     public int getClientWidth() {
-        return window.getDocument().getDocumentElement().getClientWidth();
+        return window.getInnerWidth();
     }
 
     @Override
     public int getClientHeight() {
-        return window.getDocument().getDocumentElement().getClientHeight();
+        return window.getInnerHeight();
     }
 
     @Override

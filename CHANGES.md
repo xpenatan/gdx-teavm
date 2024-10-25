@@ -1,5 +1,13 @@
 [-SNAPSHOT]
 
+[1.0.4]
+- Fix music id
+- add custom gltf resource path
+- Code improvement when using physical pixels
+- Fix file handle list returning wrong path
+- UsePhysicalPixels is set to false by default
+- Fix webgl buffers
+
 [1.0.3]
 - Don't download assets if preload assets is true
 - add PowerPreference option
