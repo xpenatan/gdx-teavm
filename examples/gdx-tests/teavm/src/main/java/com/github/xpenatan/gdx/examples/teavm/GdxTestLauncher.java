@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm.launcher;
+package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
@@ -13,6 +13,11 @@ public class GdxTestLauncher {
         config.height = 0;
         config.showDownloadLogs = false;
         config.useGL30 = true;
+
+        config.preloadListener = assetLoader -> {
+            assetLoader.loadScript("freetype.js", null);
+        };
+
         new TeaApplication(new ImGuiGame(), config);
 //        new TeaApplication(new TeaVMTestWrapper(), config);
     }
