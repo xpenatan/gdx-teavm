@@ -32,7 +32,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class  AssetLoadImpl implements AssetLoader {
+public class AssetLoadImpl implements AssetLoader {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
@@ -209,8 +209,18 @@ public class  AssetLoadImpl implements AssetLoader {
     }
 
     @Override
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
+        loadAsset(true, path, assetType, fileType, listener, false);
+    }
+
+    @Override
     public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
         loadAsset(async, path, assetType, fileType, listener, false);
+    }
+
+    @Override
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+        loadAsset(true, path, assetType, fileType, listener, overwrite);
     }
 
     @Override
@@ -279,8 +289,13 @@ public class  AssetLoadImpl implements AssetLoader {
     }
 
     @Override
-    public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
-        assetDownloader.loadScript(async, getScriptUrl() + url, listener);
+    public void loadScript(String path, AssetLoaderListener<String> listener) {
+        assetDownloader.loadScript(true, getScriptUrl() + path, listener);
+    }
+
+    @Override
+    public void loadScript(boolean async, String path, AssetLoaderListener<String> listener) {
+        assetDownloader.loadScript(async, getScriptUrl() + path, listener);
     }
 
     @Override
