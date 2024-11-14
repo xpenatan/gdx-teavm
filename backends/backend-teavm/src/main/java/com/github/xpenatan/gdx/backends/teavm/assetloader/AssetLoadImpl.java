@@ -42,7 +42,10 @@ public class  AssetLoadImpl implements AssetLoader {
 
     private HashSet<String> assetInQueue;
 
-    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    private AssetDownloader assetDownloader;
+
+    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+        this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);
@@ -189,7 +192,7 @@ public class  AssetLoadImpl implements AssetLoader {
             }
         };
 
-        AssetDownloader.getInstance().load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
+        assetDownloader.load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
     }
 
     @Override
@@ -236,7 +239,7 @@ public class  AssetLoadImpl implements AssetLoader {
         }
 
         assetInQueue.add(path1);
-        AssetDownloader.getInstance().load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
+        assetDownloader.load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(int total, int loaded) {
                 if(listener != null) {
@@ -277,12 +280,12 @@ public class  AssetLoadImpl implements AssetLoader {
 
     @Override
     public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
-        AssetDownloader.getInstance().loadScript(async, getScriptUrl() + url, listener);
+        assetDownloader.loadScript(async, getScriptUrl() + url, listener);
     }
 
     @Override
     public int getQueue() {
-        return AssetDownloader.getInstance().getQueue();
+        return assetDownloader.getQueue();
     }
 
     private String fixPath(String path1) {

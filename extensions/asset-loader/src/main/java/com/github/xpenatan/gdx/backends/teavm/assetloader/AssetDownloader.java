@@ -8,11 +8,6 @@ package com.github.xpenatan.gdx.backends.teavm.assetloader;
  * @author xpenatan
  */
 public interface AssetDownloader {
-
-    static AssetDownloader getInstance() {
-        return AssetInstance.downloaderInstance;
-    }
-
     void load(boolean async, final String url, AssetType type, AssetLoaderListener<Blob> listener);
     void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);
     int getQueue();

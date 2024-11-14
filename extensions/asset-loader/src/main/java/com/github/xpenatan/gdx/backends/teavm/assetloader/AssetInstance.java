@@ -12,4 +12,12 @@ public class AssetInstance {
     public static void setInstance(AssetDownloader instance) {
         AssetInstance.downloaderInstance = instance;
     }
+
+    public static AssetLoader getLoaderInstance() {
+        return AssetInstance.instance;
+    }
+
+    public static AssetDownloader getDownloaderInstance() {
+        return AssetInstance.downloaderInstance;
+    }
 }

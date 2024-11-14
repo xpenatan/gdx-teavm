@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
@@ -88,7 +89,7 @@ public class PixmapEmu implements Disposable {
                 responseListener.downloadComplete(pixmapEmu);
             }
         };
-        AssetDownloader.getInstance().load(true, url, AssetType.Binary, listener);
+        AssetInstance.getDownloaderInstance().load(true, url, AssetType.Binary, listener);
     }
 
     public PixmapEmu(FileHandle file) {

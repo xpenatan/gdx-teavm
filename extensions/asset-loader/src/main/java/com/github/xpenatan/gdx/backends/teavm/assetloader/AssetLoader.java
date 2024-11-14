@@ -10,10 +10,6 @@ import com.badlogic.gdx.Files.FileType;
  */
 public interface AssetLoader {
 
-    static AssetLoader getInstance() {
-        return AssetInstance.instance;
-    }
-
     String getAssetUrl();
 
     String getScriptUrl();

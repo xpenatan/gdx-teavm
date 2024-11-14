@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm.launcher;
+package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
@@ -11,6 +11,11 @@ public class FreetypeTestLauncher {
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = true;
+
+        config.preloadListener = assetLoader -> {
+            assetLoader.loadScript(true, "freetype.js", null);
+        };
+
         new TeaApplication(new FreetypeDemo(), config);
     }
 }

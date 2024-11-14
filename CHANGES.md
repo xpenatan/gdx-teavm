@@ -1,5 +1,6 @@
 [-SNAPSHOT]
 - Add Config Asset preloadListener
+- Add AssetInstance to obtain AssetLoader or AssetDownloader
 
 [1.0.4]
 - Fix music id

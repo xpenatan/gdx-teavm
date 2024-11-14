@@ -101,7 +101,8 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetInstance.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
+        AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
+        AssetInstance.setInstance(assetDownload);
 
         TeaWindow currentWindow = TeaWindow.get();
         LocationWrapper location = currentWindow.getLocation();
@@ -119,7 +120,7 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
+        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this, assetDownload);
         AssetInstance.setInstance(assetLoader);
 
         input = new TeaInput(this, graphics.canvas);
@@ -222,7 +223,7 @@ public class TeaApplication implements Application, Runnable {
                     initState = AppState.DOWNLOAD_ASSETS;
                     break;
                 case DOWNLOAD_ASSETS:
-                    int queue = AssetDownloader.getInstance().getQueue();
+                    int queue = assetLoader.getQueue();
                     if(queue == 0) {
                         initState = AppState.APP_LOOP;
 

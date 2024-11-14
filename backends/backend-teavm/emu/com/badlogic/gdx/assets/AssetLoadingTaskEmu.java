@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncResult;
 import com.badlogic.gdx.utils.async.AsyncTask;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
@@ -86,7 +87,7 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
      */
     public boolean update() {
         // GTW: check if we have a file that was not preloaded and is not done loading yet
-        AssetLoader assetLoader = AssetLoader.getInstance();
+        AssetLoader assetLoader = AssetInstance.getLoaderInstance();
         FileHandle fileHandle = resolve(loader, assetDesc);
         String path = fileHandle.path();
         Files.FileType type = fileHandle.type();
