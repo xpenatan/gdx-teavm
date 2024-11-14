@@ -11,7 +11,7 @@ public class SharedLibraryLoaderEmu {
 
     public void load (String libraryName) {
         TeaApplication app = (TeaApplication)Gdx.app;
-        AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
+        AssetLoader assetLoader = AssetLoader.getInstance();
         assetLoader.loadScript(false, libraryName + ".js", new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, String result) {

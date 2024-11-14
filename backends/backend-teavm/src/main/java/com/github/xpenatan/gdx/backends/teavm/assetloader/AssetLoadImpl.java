@@ -32,7 +32,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class AssetLoadImpl implements AssetLoader.AssetLoad {
+public class  AssetLoadImpl implements AssetLoader {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";

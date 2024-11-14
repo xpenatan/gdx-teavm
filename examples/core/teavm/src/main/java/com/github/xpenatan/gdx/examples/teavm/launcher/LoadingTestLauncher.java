@@ -50,7 +50,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     private Actor loadingBar;
 
     private TeaApplication teaApplication;
-    private AssetLoader.AssetLoad assetLoader;
+    private AssetLoader assetLoader;
 
     // Using manager just to load scene2d assets after downloading.
     private AssetManager manager;

@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
@@ -100,7 +101,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
+        AssetInstance.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
 
         TeaWindow currentWindow = TeaWindow.get();
         LocationWrapper location = currentWindow.getLocation();
@@ -119,7 +120,7 @@ public class TeaApplication implements Application, Runnable {
         graphics = new TeaGraphics(config);
 
         assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
-        AssetLoader.setInstance(assetLoader);
+        AssetInstance.setInstance(assetLoader);
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
