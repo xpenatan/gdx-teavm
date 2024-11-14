@@ -131,6 +131,10 @@ public class TeaApplication implements Application, Runnable {
         initGdx();
         initSound();
 
+        if(config.preloadListener != null) {
+            config.preloadListener.onPreload(assetLoader);
+        }
+
         Gdx.app = this;
         Gdx.graphics = graphics;
         Gdx.gl = graphics.getGL20();

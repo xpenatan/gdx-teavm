@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+
 /**
  * @author xpenatan
  */
@@ -93,6 +95,11 @@ public class TeaApplicationConfiguration {
      * default, low-power or high-performance
      */
     public String powerPreference = "high-performance";
+
+    /**
+     * Used for preloading asset and libraries
+     */
+    public TeaAssetPreloadListener preloadListener;
 
     public boolean isFixedSizeApplication() {
         return width != 0 && height != 0;

@@ -1,4 +1,5 @@
 [-SNAPSHOT]
+- Add Config Asset preloadListener
 
 [1.0.4]
 - Fix music id
