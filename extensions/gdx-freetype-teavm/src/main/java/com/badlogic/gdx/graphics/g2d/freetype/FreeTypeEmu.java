@@ -840,23 +840,8 @@ public class FreeTypeEmu {
     public static int FT_STROKER_LINEJOIN_MITER = FT_STROKER_LINEJOIN_MITER_VARIABLE;
     public static int FT_STROKER_LINEJOIN_MITER_FIXED = 3;
 
-    private static boolean freeTypeInit;
-
     public static LibraryEmu initFreeType() {
-        if(!freeTypeInit) {
-            AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
-            assetLoader.loadScript(false, "freetype.js", new AssetLoaderListener<>() {
-                @Override
-                public void onSuccess(String url, String result) {
-                    freeTypeInit = true;
-                }
-
-                @Override
-                public void onFailure(String url) {
-                    freeTypeInit = true;
-                }
-            });
-        }
+        // Javascript library should be already loaded when calling this
 
         int address = initFreeTypeJni();
         if(address == 0)
