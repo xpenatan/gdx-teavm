@@ -29,14 +29,6 @@ public class AssetDownloadImpl implements AssetDownload {
     }
 
     @Override
-    public String getHostPageBaseURL() {
-        TeaWindow currentWindow = TeaWindow.get();
-        LocationWrapper location = currentWindow.getLocation();
-        String href = location.getHref();
-        return href;
-    }
-
-    @Override
     public int getQueue() {
         return queue;
     }

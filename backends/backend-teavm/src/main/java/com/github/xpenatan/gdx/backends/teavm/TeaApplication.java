@@ -19,6 +19,7 @@ import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
@@ -102,8 +103,9 @@ public class TeaApplication implements Application, Runnable {
 
         AssetDownloader.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
 
-        AssetDownload instance = AssetDownloader.getInstance();
-        hostPageBaseURL = instance.getHostPageBaseURL();
+        TeaWindow currentWindow = TeaWindow.get();
+        LocationWrapper location = currentWindow.getLocation();
+        hostPageBaseURL = location.getHref();
 
         if(hostPageBaseURL.contains(".html")) {
             // TODO use regex

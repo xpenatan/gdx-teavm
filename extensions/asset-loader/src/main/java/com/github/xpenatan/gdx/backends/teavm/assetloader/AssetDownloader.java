@@ -22,8 +22,6 @@ public class AssetDownloader {
 
         void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);
 
-        String getHostPageBaseURL();
-
         int getQueue();
 
         void subtractQueue();
