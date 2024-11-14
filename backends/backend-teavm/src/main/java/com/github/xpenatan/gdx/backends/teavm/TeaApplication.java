@@ -23,7 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
