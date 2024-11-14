@@ -209,6 +209,11 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
+    public void loadAsset(String path, AssetType assetType, FileType fileType) {
+        loadAsset(true, path, assetType, fileType, null, false);
+    }
+
+    @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
         loadAsset(true, path, assetType, fileType, listener, false);
     }
@@ -216,6 +221,21 @@ public class AssetLoadImpl implements AssetLoader {
     @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
         loadAsset(true, path, assetType, fileType, listener, overwrite);
+    }
+
+    @Override
+    public void loadScript(String path) {
+        assetDownloader.loadScript(true, getScriptUrl() + path, null);
+    }
+
+    @Override
+    public void loadScript(String path, AssetLoaderListener<String> listener) {
+        assetDownloader.loadScript(true, getScriptUrl() + path, listener);
+    }
+
+    @Override
+    public int getQueue() {
+        return assetDownloader.getQueue();
     }
 
     private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
@@ -279,16 +299,6 @@ public class AssetLoadImpl implements AssetLoader {
                 }
             }
         });
-    }
-
-    @Override
-    public void loadScript(String path, AssetLoaderListener<String> listener) {
-        assetDownloader.loadScript(true, getScriptUrl() + path, listener);
-    }
-
-    @Override
-    public int getQueue() {
-        return assetDownloader.getQueue();
     }
 
     private String fixPath(String path1) {
