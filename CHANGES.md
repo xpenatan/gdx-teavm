@@ -1,5 +1,6 @@
 [-SNAPSHOT]
 - Add Config Asset preloadListener
+- Update AssetLoader and AssetDownloader
 - Add AssetInstance to obtain AssetLoader or AssetDownloader
 
 [1.0.4]
