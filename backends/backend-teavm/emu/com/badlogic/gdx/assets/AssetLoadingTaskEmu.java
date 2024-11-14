@@ -98,7 +98,7 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
                     cancel = true;
                 }
                 else {
-                    assetLoader.loadAsset(true, path, AssetType.Binary, type, null);
+                    assetLoader.loadAsset(path, AssetType.Binary, type, null);
                 }
             }
         }

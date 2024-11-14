@@ -13,7 +13,7 @@ public class FreetypeTestLauncher {
         config.showDownloadLogs = true;
 
         config.preloadListener = assetLoader -> {
-            assetLoader.loadScript(true, "freetype.js", null);
+            assetLoader.loadScript("freetype.js", null);
         };
 
         new TeaApplication(new FreetypeDemo(), config);

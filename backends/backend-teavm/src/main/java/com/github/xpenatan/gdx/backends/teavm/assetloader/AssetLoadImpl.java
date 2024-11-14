@@ -214,17 +214,11 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
-    public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
-        loadAsset(async, path, assetType, fileType, listener, false);
-    }
-
-    @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
         loadAsset(true, path, assetType, fileType, listener, overwrite);
     }
 
-    @Override
-    public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+    private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -268,7 +262,6 @@ public class AssetLoadImpl implements AssetLoader {
             @Override
             public void onSuccess(String url, Blob result) {
                 assetInQueue.remove(path1);
-                AssetType type = AssetType.Binary;
                 Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 OutputStream output = fileHandle.write(false, 4096);
@@ -291,11 +284,6 @@ public class AssetLoadImpl implements AssetLoader {
     @Override
     public void loadScript(String path, AssetLoaderListener<String> listener) {
         assetDownloader.loadScript(true, getScriptUrl() + path, listener);
-    }
-
-    @Override
-    public void loadScript(boolean async, String path, AssetLoaderListener<String> listener) {
-        assetDownloader.loadScript(async, getScriptUrl() + path, listener);
     }
 
     @Override

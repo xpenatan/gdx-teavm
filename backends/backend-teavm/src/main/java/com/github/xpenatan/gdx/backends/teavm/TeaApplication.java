@@ -23,8 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
@@ -483,10 +481,10 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {});
+        assetLoader.loadScript("gdx.wasm.js", new AssetLoaderListener<>() {});
     }
 
     private void initSound() {
-        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {});
+        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {});
     }
 }
