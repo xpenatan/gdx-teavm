@@ -22,14 +22,6 @@ import org.teavm.jso.JSBody;
 
 @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType")
 public class FreeTypeEmu {
-    @JSBody(params = {"address"}, script = "Module._free(address);")
-    private static native void nativeFree(int address);
-
-    /**
-     * @return returns the last error code FreeType reported
-     */
-    @JSBody(script = "return Module._c_FreeType_getLastErrorCode();")
-    static native int getLastErrorCode();
 
     @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Pointer")
     private static class PointerEmu {
@@ -42,6 +34,15 @@ public class FreeTypeEmu {
 
     @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Library")
     public static class LibraryEmu extends PointerEmu implements Disposable {
+        @JSBody(params = {"address"}, script = "Module._free(address);")
+        private static native void nativeFree(int address);
+
+        /**
+         * @return returns the last error code FreeType reported
+         */
+        @JSBody(script = "return Module._c_FreeType_getLastErrorCode();")
+        static native int getLastErrorCode();
+
         LongMap<Integer> fontData = new LongMap<Integer>();
 
         LibraryEmu(int address) {
@@ -137,6 +138,9 @@ public class FreeTypeEmu {
 
     @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Face")
     public static class FaceEmu extends PointerEmu implements Disposable {
+        @JSBody(params = {"address"}, script = "Module._free(address);")
+        private static native void nativeFree(int address);
+
         LibraryEmu library;
 
         public FaceEmu(int address, LibraryEmu library) {
@@ -385,6 +389,13 @@ public class FreeTypeEmu {
             return new GlyphMetricsEmu(getMetrics(address));
         }
 
+        /**
+         * @return returns the last error code FreeType reported
+         */
+        @JSBody(script = "return Module._c_FreeType_getLastErrorCode();")
+        static native int getLastErrorCode();
+
+
         @JSBody(params = {"slot"}, script = "return Module._c_GlyphSlot_getMetrics(slot);")
         private static native int getMetrics(int slot);
 
@@ -469,6 +480,12 @@ public class FreeTypeEmu {
         GlyphEmu(int address) {
             super(address);
         }
+
+        /**
+         * @return returns the last error code FreeType reported
+         */
+        @JSBody(script = "return Module._c_FreeType_getLastErrorCode();")
+        static native int getLastErrorCode();
 
         @Override
         public void dispose() {
