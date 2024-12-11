@@ -298,8 +298,7 @@ public class Gdx2DPixmapEmu implements Disposable {
             "var startIndex = pixels;" +
             "var endIndex = startIndex + bytesSize;" +
             "var heapArray = Gdx.HEAPU8.subarray(startIndex, endIndex);" +
-            "var newArray = new Uint8Array(heapArray);" +
-            "return newArray;"
+            "return heapArray;"
     )
     private static native Uint8ArrayWrapper load(@JSByRef() int[] nativeData, @JSByRef() byte[] buffer, int offset, int len); /*MANUAL
         const unsigned char* p_buffer = (const unsigned char*)env->GetPrimitiveArrayCritical(buffer, 0);
