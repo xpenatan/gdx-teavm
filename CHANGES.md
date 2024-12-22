@@ -4,6 +4,7 @@
 - Add Config Asset preloadListener
 - Update AssetLoader and AssetDownloader
 - Add AssetInstance to obtain AssetLoader or AssetDownloader
+- Fix drawing to Gdx2DPixmapEmu
 - Update Freetype emulation to fix build errors and script loading solution
 
 [1.0.4]
