@@ -6,6 +6,7 @@
 - Add AssetInstance to obtain AssetLoader or AssetDownloader
 - Fix drawing to Gdx2DPixmapEmu
 - Update Freetype emulation to fix build errors and script loading solution
+- Update TeaVM to 0.11.0
 
 [1.0.4]
 - Fix music id
