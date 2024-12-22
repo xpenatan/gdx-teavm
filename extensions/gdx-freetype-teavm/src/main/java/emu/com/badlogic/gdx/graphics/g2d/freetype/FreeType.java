@@ -1,4 +1,4 @@
-package com.badlogic.gdx.graphics.g2d.freetype;
+package emu.com.badlogic.gdx.graphics.g2d.freetype;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -8,22 +8,22 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import org.teavm.jso.JSBody;
 
-@Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType")
-public class FreeTypeEmu {
+public class FreeType {
+    private static void nativeFree(int address) {
+        nativeFreeInternal(address);
+    }
+
     @JSBody(params = {"address"}, script = "Module._free(address);")
-    private static native void nativeFree(int address);
+    private static native void nativeFreeInternal(int address);
 
     /**
      * @return returns the last error code FreeType reported
@@ -31,20 +31,18 @@ public class FreeTypeEmu {
     @JSBody(script = "return Module._c_FreeType_getLastErrorCode();")
     static native int getLastErrorCode();
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Pointer")
-    private static class PointerEmu {
+    private static class Pointer {
         int address;
 
-        PointerEmu(int address) {
+        Pointer(int address) {
             this.address = address;
         }
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Library")
-    public static class LibraryEmu extends PointerEmu implements Disposable {
+    public static class Library extends Pointer implements Disposable {
         LongMap<Integer> fontData = new LongMap<Integer>();
 
-        LibraryEmu(int address) {
+        Library(int address) {
             super(address);
         }
 
@@ -59,7 +57,7 @@ public class FreeTypeEmu {
         @JSBody(params = {"library"}, script = "Module._c_Library_doneFreeType(library);")
         private static native void doneFreeType(int library);
 
-        public FaceEmu newFace(FileHandle fontFile, int faceIndex) {
+        public Face newFace(FileHandle fontFile, int faceIndex) {
             ByteBuffer buffer = null;
             try {
                 //buffer = fontFile.map(); //method missing in gwt emulation
@@ -93,13 +91,13 @@ public class FreeTypeEmu {
             return newMemoryFace(buffer, faceIndex);
         }
 
-        public FaceEmu newMemoryFace(byte[] data, int dataSize, int faceIndex) {
+        public Face newMemoryFace(byte[] data, int dataSize, int faceIndex) {
             ByteBuffer buffer = BufferUtils.newByteBuffer(data.length);
             BufferUtils.copy(data, 0, buffer, data.length);
             return newMemoryFace(buffer, faceIndex);
         }
 
-        public FaceEmu newMemoryFace(ByteBuffer buffer, int faceIndex) {
+        public Face newMemoryFace(ByteBuffer buffer, int faceIndex) {
             ArrayBufferViewWrapper buf = TypedArrays.getTypedArray(buffer);
             int[] addressToFree = new int[]{0}; // Hacky way to get two return values
 
@@ -112,7 +110,7 @@ public class FreeTypeEmu {
             }
             else {
                 fontData.put(face, addressToFree[0]);
-                return new FaceEmu(face, this);
+                return new Face(face, this);
             }
         }
 
@@ -124,22 +122,21 @@ public class FreeTypeEmu {
                 "return ret")
         private static native int newMemoryFace(int library, ArrayBufferViewWrapper data, int dataSize, int faceIndex, int[] outAddressToFree);
 
-        public StrokerEmu createStroker() {
+        public Stroker createStroker() {
             int stroker = strokerNew(address);
             if(stroker == 0)
                 throw new GdxRuntimeException("Couldn't create FreeType stroker, FreeType error code: " + getLastErrorCode());
-            return new StrokerEmu(stroker);
+            return new Stroker(stroker);
         }
 
         @JSBody(params = {"library"}, script = "return Module._c_Library_strokerNew(library);")
         private static native int strokerNew(int library);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Face")
-    public static class FaceEmu extends PointerEmu implements Disposable {
-        LibraryEmu library;
+    public static class Face extends Pointer implements Disposable {
+        Library library;
 
-        public FaceEmu(int address, LibraryEmu library) {
+        public Face(int address, Library library) {
             super(address);
             this.library = library;
         }
@@ -262,15 +259,15 @@ public class FreeTypeEmu {
         @JSBody(params = {"face", "charCode", "loadFlags"}, script = "return !!Module._c_Face_loadChar(face, charCode, loadFlags);")
         private static native boolean loadChar(int face, int charCode, int loadFlags);
 
-        public GlyphSlotEmu getGlyph() {
-            return new GlyphSlotEmu(getGlyph(address));
+        public GlyphSlot getGlyph() {
+            return new GlyphSlot(getGlyph(address));
         }
 
         @JSBody(params = {"face"}, script = "return Module._c_Face_getGlyph(face);")
         private static native int getGlyph(int face);
 
-        public SizeEmu getSize() {
-            return new SizeEmu(getSize(address));
+        public Size getSize() {
+            return new Size(getSize(address));
         }
 
         @JSBody(params = {"face"}, script = "return Module._c_Face_getSize(face);")
@@ -298,23 +295,21 @@ public class FreeTypeEmu {
         private static native int getCharIndex(int face, int charCode);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Size")
-    public static class SizeEmu extends PointerEmu {
-        SizeEmu(int address) {
+    public static class Size extends Pointer {
+        Size(int address) {
             super(address);
         }
 
-        public SizeMetricsEmu getMetrics() {
-            return new SizeMetricsEmu(getMetrics(address));
+        public SizeMetrics getMetrics() {
+            return new SizeMetrics(getMetrics(address));
         }
 
         @JSBody(params = {"address"}, script = "return Module._c_Size_getMetrics(address);")
         private static native int getMetrics(int address);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$SizeMetrics")
-    public static class SizeMetricsEmu extends PointerEmu {
-        SizeMetricsEmu(int address) {
+    public static class SizeMetrics extends Pointer {
+        SizeMetrics(int address) {
             super(address);
         }
 
@@ -375,14 +370,13 @@ public class FreeTypeEmu {
         private static native int getMaxAdvance(int metrics);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$GlyphSlot")
-    public static class GlyphSlotEmu extends PointerEmu {
-        GlyphSlotEmu(int address) {
+    public static class GlyphSlot extends Pointer {
+        GlyphSlot(int address) {
             super(address);
         }
 
-        public GlyphMetricsEmu getMetrics() {
-            return new GlyphMetricsEmu(getMetrics(address));
+        public GlyphMetrics getMetrics() {
+            return new GlyphMetrics(getMetrics(address));
         }
 
         @JSBody(params = {"slot"}, script = "return Module._c_GlyphSlot_getMetrics(slot);")
@@ -423,8 +417,8 @@ public class FreeTypeEmu {
         @JSBody(params = {"slot"}, script = "return Module._c_GlyphSlot_getFormat(slot);")
         private static native int getFormat(int slot);
 
-        public BitmapEmu getBitmap() {
-            return new BitmapEmu(getBitmap(address));
+        public Bitmap getBitmap() {
+            return new Bitmap(getBitmap(address));
         }
 
         @JSBody(params = {"slot"}, script = "return Module._c_GlyphSlot_getBitmap(slot);")
@@ -451,22 +445,21 @@ public class FreeTypeEmu {
         @JSBody(params = {"slot", "renderMode"}, script = "return !!Module._c_GlyphSlot_renderGlyph(slot, renderMode);")
         private static native boolean renderGlyph(int slot, int renderMode);
 
-        public GlyphEmu getGlyph() {
+        public Glyph getGlyph() {
             int glyph = getGlyph(address);
             if(glyph == 0)
                 throw new GdxRuntimeException("Couldn't get glyph, FreeType error code: " + getLastErrorCode());
-            return new GlyphEmu(glyph);
+            return new Glyph(glyph);
         }
 
         @JSBody(params = {"glyphSlot"}, script = "return Module._c_GlyphSlot_getGlyph(glyphSlot);")
         private static native int getGlyph(int glyphSlot);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Glyph")
-    public static class GlyphEmu extends PointerEmu implements Disposable {
+    public static class Glyph extends Pointer implements Disposable {
         private boolean rendered;
 
-        GlyphEmu(int address) {
+        Glyph(int address) {
             super(address);
         }
 
@@ -482,7 +475,7 @@ public class FreeTypeEmu {
             return bool == true ? 1 : 0;
         }
 
-        public void strokeBorder(StrokerEmu stroker, boolean inside) {
+        public void strokeBorder(Stroker stroker, boolean inside) {
             address = strokeBorder(address, stroker.address, bTI(inside));
         }
 
@@ -500,11 +493,11 @@ public class FreeTypeEmu {
         @JSBody(params = {"glyph", "renderMode"}, script = "return Module._c_Glyph_toBitmap(glyph, renderMode);")
         private static native int toBitmap(int glyph, int renderMode);
 
-        public BitmapEmu getBitmap() {
+        public Bitmap getBitmap() {
             if(!rendered) {
                 throw new GdxRuntimeException("Glyph is not yet rendered");
             }
-            return new BitmapEmu(getBitmap(address));
+            return new Bitmap(getBitmap(address));
         }
 
         @JSBody(params = {"glyph"}, script = "return Module._c_Glyph_getBitmap(glyph);")
@@ -531,9 +524,8 @@ public class FreeTypeEmu {
         private static native int getTop(int glyph);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Bitmap")
-    public static class BitmapEmu extends PointerEmu {
-        BitmapEmu(int address) {
+    public static class Bitmap extends Pointer {
+        Bitmap(int address) {
             super(address);
         }
 
@@ -667,9 +659,8 @@ public class FreeTypeEmu {
         private static native int getPixelMode(int bitmap);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$GlyphMetrics")
-    public static class GlyphMetricsEmu extends PointerEmu {
-        GlyphMetricsEmu(int address) {
+    public static class GlyphMetrics extends Pointer {
+        GlyphMetrics(int address) {
             super(address);
         }
 
@@ -730,9 +721,8 @@ public class FreeTypeEmu {
         private static native int getVertAdvance(int metrics);
     }
 
-    @Emulate(valueStr = "com.badlogic.gdx.graphics.g2d.freetype.FreeType$Stroker")
-    public static class StrokerEmu extends PointerEmu implements Disposable {
-        StrokerEmu(int address) {
+    public static class Stroker extends Pointer implements Disposable {
+        Stroker(int address) {
             super(address);
         }
 
@@ -840,29 +830,14 @@ public class FreeTypeEmu {
     public static int FT_STROKER_LINEJOIN_MITER = FT_STROKER_LINEJOIN_MITER_VARIABLE;
     public static int FT_STROKER_LINEJOIN_MITER_FIXED = 3;
 
-    private static boolean freeTypeInit;
-
-    public static LibraryEmu initFreeType() {
-        if(!freeTypeInit) {
-            AssetLoader.AssetLoad assetLoader = AssetLoader.getInstance();
-            assetLoader.loadScript(false, "freetype.js", new AssetLoaderListener<>() {
-                @Override
-                public void onSuccess(String url, String result) {
-                    freeTypeInit = true;
-                }
-
-                @Override
-                public void onFailure(String url) {
-                    freeTypeInit = true;
-                }
-            });
-        }
+    public static Library initFreeType() {
+        // Javascript library should be already loaded when calling this
 
         int address = initFreeTypeJni();
         if(address == 0)
             throw new GdxRuntimeException("Couldn't initialize FreeType library");
         else
-            return new LibraryEmu(address);
+            return new Library(address);
     }
 
     @JSBody(script = "return Module._c_FreeType_initFreeTypeJni();")

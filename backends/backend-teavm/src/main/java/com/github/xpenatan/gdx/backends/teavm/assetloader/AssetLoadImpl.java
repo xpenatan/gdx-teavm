@@ -32,7 +32,7 @@ import org.teavm.jso.core.JSPromise;
 /**
  * @author xpenatan
  */
-public class AssetLoadImpl implements AssetLoader.AssetLoad {
+public class AssetLoadImpl implements AssetLoader {
     public int assetTotal = -1;
 
     private static final String ASSET_FOLDER = "assets/";
@@ -42,7 +42,10 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
 
     private HashSet<String> assetInQueue;
 
-    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    private AssetDownloader assetDownloader;
+
+    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+        this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);
@@ -189,7 +192,7 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
             }
         };
 
-        AssetDownloader.getInstance().load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
+        assetDownloader.load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
     }
 
     @Override
@@ -206,12 +209,36 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
     }
 
     @Override
-    public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
-        loadAsset(async, path, assetType, fileType, listener, false);
+    public void loadAsset(String path, AssetType assetType, FileType fileType) {
+        loadAsset(true, path, assetType, fileType, null, false);
     }
 
     @Override
-    public void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
+        loadAsset(true, path, assetType, fileType, listener, false);
+    }
+
+    @Override
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+        loadAsset(true, path, assetType, fileType, listener, overwrite);
+    }
+
+    @Override
+    public void loadScript(String path) {
+        assetDownloader.loadScript(true, getScriptUrl() + path, null);
+    }
+
+    @Override
+    public void loadScript(String path, AssetLoaderListener<String> listener) {
+        assetDownloader.loadScript(true, getScriptUrl() + path, listener);
+    }
+
+    @Override
+    public int getQueue() {
+        return assetDownloader.getQueue();
+    }
+
+    private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -236,7 +263,7 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
         }
 
         assetInQueue.add(path1);
-        AssetDownloader.getInstance().load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
+        assetDownloader.load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
             @Override
             public void onProgress(int total, int loaded) {
                 if(listener != null) {
@@ -255,7 +282,6 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
             @Override
             public void onSuccess(String url, Blob result) {
                 assetInQueue.remove(path1);
-                AssetType type = AssetType.Binary;
                 Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 OutputStream output = fileHandle.write(false, 4096);
@@ -273,16 +299,6 @@ public class AssetLoadImpl implements AssetLoader.AssetLoad {
                 }
             }
         });
-    }
-
-    @Override
-    public void loadScript(boolean async, String url, AssetLoaderListener<String> listener) {
-        AssetDownloader.getInstance().loadScript(async, getScriptUrl() + url, listener);
-    }
-
-    @Override
-    public int getQueue() {
-        return AssetDownloader.getInstance().getQueue();
     }
 
     private String fixPath(String path1) {

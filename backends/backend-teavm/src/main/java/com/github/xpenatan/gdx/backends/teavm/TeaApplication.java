@@ -16,14 +16,13 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import java.util.regex.Matcher;
@@ -100,10 +99,12 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloader.setInstance(new AssetDownloadImpl(config.showDownloadLogs));
+        AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
+        AssetInstance.setInstance(assetDownload);
 
-        AssetDownload instance = AssetDownloader.getInstance();
-        hostPageBaseURL = instance.getHostPageBaseURL();
+        TeaWindow currentWindow = TeaWindow.get();
+        LocationWrapper location = currentWindow.getLocation();
+        hostPageBaseURL = location.getHref();
 
         if(hostPageBaseURL.contains(".html")) {
             // TODO use regex
@@ -117,8 +118,8 @@ public class TeaApplication implements Application, Runnable {
 
         graphics = new TeaGraphics(config);
 
-        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this);
-        AssetLoader.setInstance(assetLoader);
+        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this, assetDownload);
+        AssetInstance.setInstance(assetLoader);
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
@@ -128,6 +129,10 @@ public class TeaApplication implements Application, Runnable {
 
         initGdx();
         initSound();
+
+        if(config.preloadListener != null) {
+            config.preloadListener.onPreload(assetLoader);
+        }
 
         Gdx.app = this;
         Gdx.graphics = graphics;
@@ -216,7 +221,7 @@ public class TeaApplication implements Application, Runnable {
                     initState = AppState.DOWNLOAD_ASSETS;
                     break;
                 case DOWNLOAD_ASSETS:
-                    int queue = AssetDownloader.getInstance().getQueue();
+                    int queue = assetLoader.getQueue();
                     if(queue == 0) {
                         initState = AppState.APP_LOOP;
 
@@ -476,10 +481,10 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        assetLoader.loadScript(true, "gdx.wasm.js", new AssetLoaderListener<>() {});
+        assetLoader.loadScript("gdx.wasm.js", new AssetLoaderListener<>() {});
     }
 
     private void initSound() {
-        assetLoader.loadScript(true, "howler.js", new AssetLoaderListener<>() {});
+        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {});
     }
 }

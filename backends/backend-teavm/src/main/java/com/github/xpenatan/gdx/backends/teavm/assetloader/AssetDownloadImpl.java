@@ -1,9 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader.AssetDownload;
-import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -16,7 +13,7 @@ import org.teavm.jso.dom.html.HTMLScriptElement;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
-public class AssetDownloadImpl implements AssetDownload {
+public class AssetDownloadImpl implements AssetDownloader {
 
     private static final int MAX_DOWNLOAD_ATTEMPT = 3;
 
@@ -26,14 +23,6 @@ public class AssetDownloadImpl implements AssetDownload {
 
     public AssetDownloadImpl(boolean showDownloadLogs) {
         showLogs = showDownloadLogs;
-    }
-
-    @Override
-    public String getHostPageBaseURL() {
-        TeaWindow currentWindow = TeaWindow.get();
-        LocationWrapper location = currentWindow.getLocation();
-        String href = location.getHref();
-        return href;
     }
 
     @Override

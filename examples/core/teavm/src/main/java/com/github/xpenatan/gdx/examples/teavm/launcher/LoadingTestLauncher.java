@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.examples.tests.LoadingTest;
 import com.github.xpenatan.gdx.examples.utils.LoadingBar;
@@ -50,7 +51,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     private Actor loadingBar;
 
     private TeaApplication teaApplication;
-    private AssetLoader.AssetLoad assetLoader;
+    private AssetLoader assetLoader;
 
     // Using manager just to load scene2d assets after downloading.
     private AssetManager manager;
@@ -61,7 +62,7 @@ public class LoadingTestLauncher extends ApplicationAdapter {
     public void create() {
         teaApplication = TeaApplication.get();
 
-        assetLoader = AssetLoader.getInstance();
+        assetLoader = AssetInstance.getLoaderInstance();
 
         stage = new Stage();
         stage.setViewport(new ScreenViewport());
