@@ -15,7 +15,7 @@ public class GdxTestLauncher {
         config.useGL30 = true;
 
         config.preloadListener = assetLoader -> {
-            assetLoader.loadScript("freetype.js", null);
+            assetLoader.loadScript("freetype.js");
         };
 
         new TeaApplication(new ImGuiGame(), config);
