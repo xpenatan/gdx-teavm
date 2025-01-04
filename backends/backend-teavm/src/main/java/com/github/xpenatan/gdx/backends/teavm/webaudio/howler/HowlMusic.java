@@ -17,7 +17,9 @@ public class HowlMusic implements Music {
 
     @Override
     public void play() {
-        howl.play();
+        if(!isPlaying()) {
+            howl.play();
+        }
     }
 
     @Override
