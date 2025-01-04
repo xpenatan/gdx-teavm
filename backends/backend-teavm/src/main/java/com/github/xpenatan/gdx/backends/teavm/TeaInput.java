@@ -398,6 +398,10 @@ public class TeaInput implements Input, EventListenerWrapper {
                 justPressedKeys[i] = false;
             }
         }
+        for(int i = 0; i < touchX.length; i++) {
+            deltaX[i] = 0;
+            deltaY[i] = 0;
+        }
     }
 
     public void setDelta(int touchId, int x, int y) {
@@ -464,7 +468,7 @@ public class TeaInput implements Input, EventListenerWrapper {
         return Math.round(yScaleRatio * getRelativeY(target, touch));
     }
 
-    private int getClientWidth(HTMLCanvasElementWrapper target) {
+    private int  getClientWidth(HTMLCanvasElementWrapper target) {
         return target.getClientWidth();
     }
 
