@@ -16,6 +16,10 @@ import java.nio.ShortBuffer;
 
 @Emulate(BufferUtils.class)
 public final class BufferUtilsEmu {
+
+    static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
+    static int allocatedUnsafe = 0;
+
     public static void copy(float[] src, Buffer dst, int numFloats, int offset) {
         FloatBuffer floatBuffer = asFloatBuffer(dst);
 
@@ -381,5 +385,37 @@ public final class BufferUtilsEmu {
     public static LongBuffer newLongBuffer(int numLongs) {
         // FIXME ouch :p
         return LongBuffer.wrap(new long[numLongs]);
+    }
+
+    public static void disposeUnsafeByteBuffer (ByteBuffer buffer) {
+        int size = buffer.capacity();
+        synchronized (unsafeBuffers) {
+            if (!unsafeBuffers.removeValue(buffer, true))
+                throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
+        }
+        allocatedUnsafe -= size;
+        freeMemory(buffer);
+    }
+
+    public static ByteBuffer newUnsafeByteBuffer (int numBytes) {
+        ByteBuffer buffer = newDisposableByteBuffer(numBytes);
+        buffer.order(ByteOrder.nativeOrder());
+        allocatedUnsafe += numBytes;
+        synchronized (unsafeBuffers) {
+            unsafeBuffers.add(buffer);
+        }
+        return buffer;
+    }
+
+    public static int getAllocatedBytesUnsafe () {
+        return allocatedUnsafe;
+    }
+
+    private static ByteBuffer newDisposableByteBuffer (int numBytes) {
+        return newByteBuffer(numBytes);
+    }
+
+    private static void freeMemory (ByteBuffer buffer) {
+        // Do nothing because this is javascript
     }
 }
