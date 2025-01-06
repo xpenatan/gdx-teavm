@@ -15,7 +15,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
 import java.nio.ByteBuffer;
@@ -26,8 +25,9 @@ public class PixmapEmu implements Disposable {
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
         final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
-        ByteBuffer pixels = pixmap.getPixels();
+        ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
+        pixmap.setPixels(pixels);
         return pixmap;
     }
 
@@ -64,8 +64,7 @@ public class PixmapEmu implements Disposable {
             return Gdx2DPixmapEmu.toGlType(toGdx2DPixmapFormat(format));
         }
     }
-    Uint8ArrayWrapper nativePixels;
-    ByteBuffer buffer;
+
     BlendingEmu blending = PixmapEmu.BlendingEmu.SourceOver;
     FilterEmu filter = PixmapEmu.FilterEmu.BiLinear;
 
@@ -103,12 +102,10 @@ public class PixmapEmu implements Disposable {
         }
         byte[] bytes = file.readBytes();
         nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
-        initPixmapEmu();
     }
 
     public PixmapEmu(byte[] encodedData, int offset, int len) {
         nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
-        initPixmapEmu();
     }
 
     public PixmapEmu(ByteBuffer encodedData, int offset, int len) {
@@ -126,14 +123,13 @@ public class PixmapEmu implements Disposable {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
         setColor(0, 0, 0, 0);
         fill();
-        initPixmapEmu();
     }
 
-    private void initPixmapEmu() {
+    private ByteBuffer getNewBuffer() {
         if(nativePixmap != null) {
-            nativePixels = nativePixmap.getPixels();
+            Uint8ArrayWrapper nativePixels = nativePixmap.getPixels(true);
             byte[] byteArray = TypedArrays.toByteArray(nativePixels);
-            buffer = ByteBuffer.wrap(byteArray);
+            return ByteBuffer.wrap(byteArray);
         }
         else {
             throw new GdxRuntimeException("NOT SUPPORTED PIXMAP");
@@ -224,13 +220,20 @@ public class PixmapEmu implements Disposable {
     }
 
     public ByteBuffer getPixels() {
-        return buffer;
+        ByteBuffer newBuffer = getNewBuffer();
+        return newBuffer;
     }
 
     public void setPixels(ByteBuffer pixels) {
         if (!pixels.isDirect())
             throw new GdxRuntimeException("Couldn't setPixels from non-direct ByteBuffer");
-        BufferUtils.copy(pixels, buffer, buffer.limit());
+        // Return the heap array so we can update the values directly
+        Uint8ArrayWrapper nativePixels = nativePixmap.getPixels(false);
+        int length = nativePixels.getLength();
+        for(int i = 0; i < length; i++) {
+            byte b = pixels.get(i);
+            nativePixels.set(i, b);
+        }
     }
 
     public int getPixel(int x, int y) {
