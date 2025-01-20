@@ -2,6 +2,7 @@ package com.badlogic.gdx.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
@@ -123,6 +124,10 @@ public class PixmapEmu implements Disposable {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
         setColor(0, 0, 0, 0);
         fill();
+    }
+
+    public PixmapEmu (Gdx2DPixmapEmu pixmap) {
+        nativePixmap = pixmap;
     }
 
     private ByteBuffer getNewBuffer() {
