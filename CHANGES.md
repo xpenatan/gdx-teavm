@@ -1,4 +1,11 @@
 [-SNAPSHOT]
+- Fix music not looping correctly
+- Add disposeUnsafeByteBuffer, newUnsafeByteBuffer and getAllocatedBytesUnsafe
+- Fix play music creating new music instance
+- Clear mouse delta every frame
+- Improve PixmapEmu and Gdx2DPixmapEmu
+- Add PixmapEmu(Gdx2DPixmapEmu) constructor
+- Update to libgdx 1.13.1
 
 [1.0.5]
 - Add Config Asset preloadListener
