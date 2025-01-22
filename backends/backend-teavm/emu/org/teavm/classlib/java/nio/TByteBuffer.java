@@ -49,6 +49,11 @@ public abstract class TByteBuffer extends TBuffer implements TComparable<TByteBu
         return array;
     }
 
+    @Override
+    public void setArrayBufferView(Int8Array array) {
+        this.array = array;
+    }
+
     public static TByteBuffer allocateDirect(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException("Capacity is negative: " + capacity);

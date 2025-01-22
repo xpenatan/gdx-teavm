@@ -37,6 +37,11 @@ abstract class TFloatBufferOverByteBuffer extends TFloatBufferImpl implements Ha
     }
 
     @Override
+    public void setArrayBufferView(Int8Array array) {
+        byteByffer.setArrayBufferView(array);
+    }
+
+    @Override
     boolean isArrayPresent() {
         return false;
     }

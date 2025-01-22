@@ -37,6 +37,11 @@ abstract class TIntBufferOverByteBuffer extends TIntBufferImpl implements HasArr
     }
 
     @Override
+    public void setArrayBufferView(Int8Array array) {
+        byteByffer.setArrayBufferView(array);
+    }
+
+    @Override
     boolean isArrayPresent() {
         return false;
     }

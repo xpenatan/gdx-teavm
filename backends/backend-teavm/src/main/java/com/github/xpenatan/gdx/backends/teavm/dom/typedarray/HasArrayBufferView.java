@@ -4,4 +4,5 @@ import org.teavm.jso.typedarrays.Int8Array;
 
 public interface HasArrayBufferView {
     Int8Array getArrayBufferView();
+    void setArrayBufferView(Int8Array array);
 }
