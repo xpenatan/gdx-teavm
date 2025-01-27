@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSObject;
+import org.teavm.jso.JSByRef;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
@@ -173,6 +173,10 @@ public class TypedArrays {
         return newByte;
     }
 
+    public static ArrayBufferViewWrapper getTypedArray(Buffer buffer) {
+        return getTypedArray(false, buffer);
+    }
+
     public static ArrayBufferViewWrapper getTypedArray(boolean isUnsigned, Buffer buffer) {
         if(buffer instanceof ByteBuffer) {
             if(isUnsigned) {
@@ -255,5 +259,5 @@ public class TypedArrays {
 
     @JSBody(params = {"buffer"}, script = "" +
             "return buffer;")
-    public static native Int8Array getTypedByteArray(byte[] buffer);
+    public static native Int8ArrayWrapper getTypedArray(@JSByRef() byte[] buffer); // TODO JSByRef dont work with webassembly
 }

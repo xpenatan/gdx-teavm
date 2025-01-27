@@ -16,7 +16,7 @@
 package org.teavm.classlib.java.nio;
 
 class TIntBufferOverByteBufferBigEndian extends TIntBufferOverByteBuffer {
-    public TIntBufferOverByteBufferBigEndian(int start, int capacity, org.teavm.classlib.java.nio.TByteBufferImpl byteBuffer, int position,
+    public TIntBufferOverByteBufferBigEndian(int start, int capacity, TByteBufferImpl byteBuffer, int position,
                                              int limit, boolean readOnly) {
         super(start, capacity, byteBuffer, position, limit, readOnly);
     }

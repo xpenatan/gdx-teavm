@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.github.xpenatan.gdx.examples.profile.XGLProfiler;
 import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
 import net.mgsx.gltf.loaders.glb.GLBLoader;
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
@@ -44,14 +43,10 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
 
 //    AssetManager assetManager;
 
-//    XGLProfiler profiler;
-
     @Override
     public void create() {
         long millis = TimeUtils.millis();
 
-//        profiler = new XGLProfiler(true);
-//        profiler.enable();
 //        assetManager = new AssetManager();
 //        Texture.setAssetManager(assetManager);
 //        assetManager.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
@@ -105,10 +100,6 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
 
         System.out.println("Time to create Scene: " + newMillis);
 
-//        String status = profiler.getStatus();
-//        System.out.println("Profile Create Status: \n" + status);
-//        profiler.reset();
-
     }
 
     @Override
@@ -135,12 +126,6 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         sceneManager.update(deltaTime);
         sceneManager.render();
-
-//        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-//            String status = profiler.getStatus();
-//            System.out.println("Profile Render Status: \n" + status);
-//        }
-//        profiler.reset();
     }
 
     @Override

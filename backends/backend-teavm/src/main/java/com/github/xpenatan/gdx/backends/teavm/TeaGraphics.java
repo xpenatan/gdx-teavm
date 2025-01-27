@@ -24,7 +24,6 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
-import org.teavm.jso.webgl.WebGLContextAttributes;
 
 /**
  * @author xpenatan

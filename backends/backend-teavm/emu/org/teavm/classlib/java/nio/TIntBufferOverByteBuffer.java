@@ -16,14 +16,15 @@
 package org.teavm.classlib.java.nio;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.HasArrayBufferView;
-import org.teavm.jso.typedarrays.Int8Array;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayNative;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 
 abstract class TIntBufferOverByteBuffer extends TIntBufferImpl implements HasArrayBufferView {
-    org.teavm.classlib.java.nio.TByteBufferImpl byteByffer;
+    TByteBufferImpl byteByffer;
     boolean readOnly;
     int start;
 
-    public TIntBufferOverByteBuffer(int start, int capacity, org.teavm.classlib.java.nio.TByteBufferImpl byteBuffer, int position, int limit,
+    public TIntBufferOverByteBuffer(int start, int capacity, TByteBufferImpl byteBuffer, int position, int limit,
                                     boolean readOnly) {
         super(capacity, position, limit);
         this.start = start;
@@ -32,8 +33,13 @@ abstract class TIntBufferOverByteBuffer extends TIntBufferImpl implements HasArr
     }
 
     @Override
-    public Int8Array getArrayBufferView() {
+    public Int8ArrayWrapper getArrayBufferView() {
         return byteByffer.getArrayBufferView();
+    }
+
+    @Override
+    public void setInt8ArrayNative(Int8ArrayNative array) {
+        byteByffer.setInt8ArrayNative(array);
     }
 
     @Override

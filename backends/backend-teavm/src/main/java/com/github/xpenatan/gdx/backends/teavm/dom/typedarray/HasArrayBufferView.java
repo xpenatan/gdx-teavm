@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.typedarray;
 
-import org.teavm.jso.typedarrays.Int8Array;
-
 public interface HasArrayBufferView {
-    Int8Array getArrayBufferView();
+    Int8ArrayWrapper getArrayBufferView();
+    void setInt8ArrayNative(Int8ArrayNative array);
 }

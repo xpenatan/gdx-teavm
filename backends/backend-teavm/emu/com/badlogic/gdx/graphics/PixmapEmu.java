@@ -13,7 +13,6 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
@@ -125,15 +124,8 @@ public class PixmapEmu implements Disposable {
         fill();
     }
 
-    private ByteBuffer getNewBuffer() {
-        if(nativePixmap != null) {
-            Uint8ArrayWrapper nativePixels = nativePixmap.getPixels(true);
-            byte[] byteArray = TypedArrays.toByteArray(nativePixels);
-            return ByteBuffer.wrap(byteArray);
-        }
-        else {
-            throw new GdxRuntimeException("NOT SUPPORTED PIXMAP");
-        }
+    public PixmapEmu (Gdx2DPixmapEmu pixmap) {
+        nativePixmap = pixmap;
     }
 
     public void setColor(int color) {
@@ -220,20 +212,14 @@ public class PixmapEmu implements Disposable {
     }
 
     public ByteBuffer getPixels() {
-        ByteBuffer newBuffer = getNewBuffer();
-        return newBuffer;
+        return nativePixmap.getBuffer();
     }
 
     public void setPixels(ByteBuffer pixels) {
         if (!pixels.isDirect())
             throw new GdxRuntimeException("Couldn't setPixels from non-direct ByteBuffer");
-        // Return the heap array so we can update the values directly
-        Uint8ArrayWrapper nativePixels = nativePixmap.getPixels(false);
-        int length = nativePixels.getLength();
-        for(int i = 0; i < length; i++) {
-            byte b = pixels.get(i);
-            nativePixels.set(i, b);
-        }
+        ByteBuffer buffer = nativePixmap.getBuffer();
+        BufferUtils.copy(pixels, buffer, buffer.limit());
     }
 
     public int getPixel(int x, int y) {

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.input.NativeInputConfiguration;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class TeaVMInputWrapper extends InputAdapter implements Input {
     Input input;
@@ -158,6 +160,21 @@ public class TeaVMInputWrapper extends InputAdapter implements Input {
     }
 
     @Override
+    public void openTextInputField(NativeInputConfiguration configuration) {
+        throw new GdxRuntimeException("Not supported");
+    }
+
+    @Override
+    public void closeTextInputField(boolean sendReturn) {
+        throw new GdxRuntimeException("Not supported");
+    }
+
+    @Override
+    public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
+        throw new GdxRuntimeException("Not supported");
+    }
+
+    @Override
     public void vibrate(int milliseconds) {
         input.vibrate(milliseconds);
     }
@@ -200,26 +217,6 @@ public class TeaVMInputWrapper extends InputAdapter implements Input {
     @Override
     public long getCurrentEventTime() {
         return input.getCurrentEventTime();
-    }
-
-    @Override
-    public void setCatchBackKey(boolean catchBack) {
-        input.setCatchBackKey(catchBack);
-    }
-
-    @Override
-    public boolean isCatchBackKey() {
-        return input.isCatchBackKey();
-    }
-
-    @Override
-    public void setCatchMenuKey(boolean catchMenu) {
-        input.setCatchMenuKey(catchMenu);
-    }
-
-    @Override
-    public boolean isCatchMenuKey() {
-        return input.isCatchMenuKey();
     }
 
     @Override
