@@ -15,7 +15,7 @@
  */
 package org.teavm.classlib.java.nio;
 
-class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
+class TByteBufferImpl extends TByteBuffer {
     private boolean direct;
     private boolean readOnly;
 
@@ -31,18 +31,18 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer slice() {
+    public TByteBuffer slice() {
         return new TByteBufferImpl(position + start, limit - position,  array(), 0, limit - position,
                 direct, readOnly);
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer duplicate() {
+    public TByteBuffer duplicate() {
         return new TByteBufferImpl(start, capacity, array(), position, limit, direct, readOnly);
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer asReadOnlyBuffer() {
+    public TByteBuffer asReadOnlyBuffer() {
         return new TByteBufferImpl(start, capacity, array(), position, limit, direct, true);
     }
 
@@ -55,7 +55,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer put(byte b) {
+    public TByteBuffer put(byte b) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -75,7 +75,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer put(int index, byte b) {
+    public TByteBuffer put(int index, byte b) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -87,7 +87,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer compact() {
+    public TByteBuffer compact() {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -131,7 +131,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putChar(char value) {
+    public TByteBuffer putChar(char value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -163,7 +163,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putChar(int index, char value) {
+    public TByteBuffer putChar(int index, char value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -184,9 +184,9 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     public TCharBuffer asCharBuffer() {
         int sz = remaining() / 2;
         if (order == TByteOrder.BIG_ENDIAN) {
-            return new org.teavm.classlib.java.nio.TCharBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TCharBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
         } else {
-            return new org.teavm.classlib.java.nio.TCharBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TCharBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
         }
     }
 
@@ -206,7 +206,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putShort(short value) {
+    public TByteBuffer putShort(short value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -238,7 +238,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putShort(int index, short value) {
+    public TByteBuffer putShort(int index, short value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -259,9 +259,9 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     public TShortBuffer asShortBuffer() {
         int sz = remaining() / 2;
         if (order == TByteOrder.BIG_ENDIAN) {
-            return new org.teavm.classlib.java.nio.TShortBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TShortBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
         } else {
-            return new org.teavm.classlib.java.nio.TShortBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TShortBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
         }
     }
 
@@ -283,7 +283,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putInt(int value) {
+    public TByteBuffer putInt(int value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -321,7 +321,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putInt(int index, int value) {
+    public TByteBuffer putInt(int index, int value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -358,12 +358,12 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putFloat(float value) {
+    public TByteBuffer putFloat(float value) {
         return putInt(Float.floatToRawIntBits(value));
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putFloat(int index, float value) {
+    public TByteBuffer putFloat(int index, float value) {
         return putInt(index, Float.floatToRawIntBits(value));
     }
 
@@ -378,7 +378,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putDouble(double value) {
+    public TByteBuffer putDouble(double value) {
         return putLong(Double.doubleToRawLongBits(value));
     }
 
@@ -388,7 +388,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putDouble(int index, double value) {
+    public TByteBuffer putDouble(int index, double value) {
         return putLong(index, Double.doubleToRawLongBits(value));
     }
 
@@ -414,7 +414,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     }
 
     @Override
-    public org.teavm.classlib.java.nio.TByteBuffer putLong(long value) {
+    public TByteBuffer putLong(long value) {
         if (readOnly) {
             throw new TReadOnlyBufferException();
         }
@@ -500,7 +500,7 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
         if (order == TByteOrder.BIG_ENDIAN) {
             return new TLongBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
         } else {
-            return new org.teavm.classlib.java.nio.TLongBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TLongBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
         }
     }
 
@@ -508,9 +508,9 @@ class TByteBufferImpl extends org.teavm.classlib.java.nio.TByteBuffer {
     public TFloatBuffer asFloatBuffer() {
         int sz = remaining() / 4;
         if (order == TByteOrder.LITTLE_ENDIAN) {
-            return new org.teavm.classlib.java.nio.TFloatBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TFloatBufferOverByteBufferBigEndian(start + position, sz, this, 0, sz, isReadOnly());
         } else {
-            return new org.teavm.classlib.java.nio.TFloatBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
+            return new TFloatBufferOverByteBufferLittleEndian(start + position, sz, this, 0, sz, isReadOnly());
         }
     }
 
