@@ -5,6 +5,7 @@
 - Clear mouse delta every frame
 - Improve PixmapEmu and Gdx2DPixmapEmu
 - Add PixmapEmu(Gdx2DPixmapEmu) constructor
+- Add customizable ByteBuffer
 - Update to libgdx 1.13.1
 
 [1.0.5]
