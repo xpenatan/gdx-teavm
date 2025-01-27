@@ -16,13 +16,14 @@
 package org.teavm.classlib.java.nio;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.HasArrayBufferView;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayNative;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import java.util.Objects;
 import org.teavm.classlib.java.lang.TComparable;
-import org.teavm.jso.typedarrays.Int8Array;
 
 public abstract class TByteBuffer extends TBuffer implements TComparable<TByteBuffer>, HasArrayBufferView {
     int start;
-    Int8Array array;
+    Int8ArrayNative array;
     byte[] bkArray;
     TByteOrder order = TByteOrder.BIG_ENDIAN;
 
@@ -31,7 +32,7 @@ public abstract class TByteBuffer extends TBuffer implements TComparable<TByteBu
         this.start = start;
         int length = array.length;
         bkArray = new byte[length];
-        this.array = new Int8Array(length);
+        this.array = new Int8ArrayNative(length);
         putArray(array);
         this.position = position;
         this.limit = limit;
@@ -45,13 +46,20 @@ public abstract class TByteBuffer extends TBuffer implements TComparable<TByteBu
     }
 
     @Override
-    public Int8Array getArrayBufferView() {
-        return array;
+    public Int8ArrayWrapper getArrayBufferView() {
+        return array.getBuffer();
     }
 
     @Override
-    public void setArrayBufferView(Int8Array array) {
+    public void setInt8ArrayNative(Int8ArrayNative array) {
         this.array = array;
+        if(capacity == 0) {
+            // Only update buffer data if capacity is 0.
+            // The reason for this is to keep the original data if javascript buffer recreates
+            capacity = array.getLength();
+            limit(capacity);
+            position(0);
+        }
     }
 
     public static TByteBuffer allocateDirect(int capacity) {
@@ -150,7 +158,7 @@ public abstract class TByteBuffer extends TBuffer implements TComparable<TByteBu
         return this;
     }
 
-    public TByteBuffer put(Int8Array src, int offset, int length) {
+    public TByteBuffer put(Int8ArrayNative src, int offset, int length) {
         if (length == 0) {
             return this;
         }
