@@ -1,4 +1,6 @@
 [-SNAPSHOT]
+
+[1.1.0]
 - Fix music not looping correctly
 - Add disposeUnsafeByteBuffer, newUnsafeByteBuffer and getAllocatedBytesUnsafe
 - Fix play music creating new music instance
