@@ -5,13 +5,13 @@
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/releases/com.github.xpenatan.gdx-teavm/backend-teavm?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://repo.maven.apache.org/maven2/com/github/xpenatan/gdx-teavm/)
 [![Static Badge](https://img.shields.io/badge/snapshot---SNAPSHOT-red)](https://oss.sonatype.org/content/repositories/snapshots/com/github/xpenatan/gdx-teavm/)
 
-gdx-teavm is a backend solution for running [libgdx](https://github.com/libgdx/libgdx) games in a web browser. It uses [TeaVM](https://github.com/konsoletyper/teavm) behind the scene to convert Java/Kotlin bytecode to Javascript.
+**gdx-teavm** is a backend solution for running [libGDX](https://github.com/libgdx/libgdx) games directly in web browsers. It leverages [TeaVM](https://github.com/konsoletyper/teavm), a tool that compiles Java or Kotlin bytecode into JavaScript, enabling seamless execution of game logic within the browser environment without needing additional plugins or complex setup.
+Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to handle some of the Java Native Interface (JNI) code, allowing for the execution of specific internal functions that require native performance.
 
 Note:
 * Reflection support is very small so only reflection used in [tests](https://github.com/konsoletyper/teavm/tree/master/tests/src/test/java/org/teavm/classlib/java/lang/reflect) will work.
 * TeaVM does not support every class methods from java package or JNI native methods. Check teaVM java classes [here](https://github.com/konsoletyper/teavm/blob/master/classlib/src/main/java/org/teavm/classlib).
-* Kotlin [discussions](https://github.com/libktx/ktx/discussions/443).
-* Box2d, Bullet, ImGui, PhysX and Freetype libraries use [emscripten](https://emscripten.org/) and [jParser](https://github.com/xpenatan/jParser) to convert C++ to Javascript/WebAssembly.
+
 
 ## TeaVM Examples:
 * [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/) (Updated 07/09/2024)
@@ -28,6 +28,12 @@ Note:
 * [Retro Commander](https://www.retrocommander.com/webapp/) ([website](https://www.retrocommander.com/))
 
 
+### LibGDX Supported Versions:
+| teavm-backend | LibGDX |
+|---------------|--------|
+| 1.0.5          | 1.12.1 |
+| 1.1.0          | 1.13.1 |
+
 ## Setup:
 ```groovy
 // Add sonatype repository to Root gradle
@@ -42,12 +48,11 @@ repositories {
         isAllowInsecureProtocol = true
     }
 }
-```
-    // SNAPSHOT:
-    gdxTeaVMVersion = "-SNAPSHOT"
-    // RELEASE:
-    gdxTeaVMVersion = "[LAST_TAG_VERSION]"
-```groovy
+
+// Version
+gdxTeaVMVersion = "-SNAPSHOT"
+gdxTeaVMVersion = "[LAST_TAG_VERSION]"
+
 // In teaVM module
 dependencies {
     implementation "com.github.xpenatan.gdx-teavm:backend-teavm:$project.gdxTeaVMVersion"
@@ -58,9 +63,14 @@ dependencies {
 ```
 
 ## Supported libraries:
+- [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
 - [Box2d](https://github.com/xpenatan/gdx-box2d) (WIP). Use GWTBox2d for now.
 - [Bullet](https://github.com/xpenatan/gdx-bullet) (WIP)
 - [PhysX](https://github.com/xpenatan/gdx-physx) (WIP)
-- [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
 - [Lua](https://github.com/xpenatan/gdx-lua) (WIP)
-- FreeType
+- FreeType (Is included in this repo)
+
+
+**ImGui**, **Box2D**, **Bullet**, **PhysX**, and **Lua** libraries leverage **[Emscripten](https://emscripten.org/)** and **[jParser](https://github.com/xpenatan/jParser)** to convert C++ code to JavaScript/WebAssembly.
+
+**Important Note:** Most of these projects are still **works in progress** and **not yet production-ready**. If you're interested in contributing, we welcome your involvement.
