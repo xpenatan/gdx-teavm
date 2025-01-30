@@ -1,8 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
+import com.badlogic.gdx.AbstractInput;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.input.NativeInputConfiguration;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -27,7 +29,7 @@ import org.teavm.jso.browser.Window;
 /**
  * @author xpenatan
  */
-public class TeaInput implements Input, EventListenerWrapper {
+public class TeaInput extends AbstractInput implements EventListenerWrapper {
 
     private static float getMouseWheelVelocity(WheelEventWrapper event) {
         TeaAgentInfo agent = TeaApplication.getAgentInfo();
@@ -78,11 +80,8 @@ public class TeaInput implements Input, EventListenerWrapper {
     private int[] deltaY = new int[MAX_TOUCHES];
     IntSet pressedButtons = new IntSet();
     int pressedKeyCount = 0;
-    boolean[] pressedKeys = new boolean[256];
     boolean keyJustPressed = false;
-    boolean[] justPressedKeys = new boolean[256];
     boolean[] justPressedButtons = new boolean[5];
-    private final IntSet keysToCatch = new IntSet();
     InputProcessor processor;
     long currentEventTimeStamp;
     boolean hasFocus = true;
@@ -398,6 +397,10 @@ public class TeaInput implements Input, EventListenerWrapper {
                 justPressedKeys[i] = false;
             }
         }
+        for(int i = 0; i < touchX.length; i++) {
+            deltaX[i] = 0;
+            deltaY[i] = 0;
+        }
     }
 
     public void setDelta(int touchId, int x, int y) {
@@ -464,7 +467,7 @@ public class TeaInput implements Input, EventListenerWrapper {
         return Math.round(yScaleRatio * getRelativeY(target, touch));
     }
 
-    private int getClientWidth(HTMLCanvasElementWrapper target) {
+    private int  getClientWidth(HTMLCanvasElementWrapper target) {
         return target.getClientWidth();
     }
 
@@ -638,28 +641,6 @@ public class TeaInput implements Input, EventListenerWrapper {
     }
 
     @Override
-    public boolean isKeyPressed(int key) {
-        if(key == Keys.ANY_KEY) {
-            return pressedKeyCount > 0;
-        }
-        if(key < 0 || key > 255) {
-            return false;
-        }
-        return pressedKeys[key];
-    }
-
-    @Override
-    public boolean isKeyJustPressed(int key) {
-        if(key == Keys.ANY_KEY) {
-            return keyJustPressed;
-        }
-        if(key < 0 || key > 255) {
-            return false;
-        }
-        return justPressedKeys[key];
-    }
-
-    @Override
     public void getTextInput(TextInputListener listener, String title, String text, String hint) {
         // TODO Auto-generated method stub
 
@@ -719,41 +700,6 @@ public class TeaInput implements Input, EventListenerWrapper {
     @Override
     public long getCurrentEventTime() {
         return currentEventTimeStamp;
-    }
-
-    @Override
-    public boolean isCatchBackKey() {
-        return keysToCatch.contains(Keys.BACK);
-    }
-
-    @Override
-    public void setCatchBackKey(boolean catchBack) {
-        setCatchKey(Keys.BACK, catchBack);
-    }
-
-    @Override
-    public boolean isCatchMenuKey() {
-        return keysToCatch.contains(Keys.MENU);
-    }
-
-    @Override
-    public void setCatchMenuKey(boolean catchMenu) {
-        setCatchKey(Keys.MENU, catchMenu);
-    }
-
-    @Override
-    public void setCatchKey(int keycode, boolean catchKey) {
-        if(!catchKey) {
-            keysToCatch.remove(keycode);
-        }
-        else {
-            keysToCatch.add(keycode);
-        }
-    }
-
-    @Override
-    public boolean isCatchKey(int keycode) {
-        return keysToCatch.contains(keycode);
     }
 
     @Override
@@ -823,6 +769,21 @@ public class TeaInput implements Input, EventListenerWrapper {
     @Override
     public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void openTextInputField(NativeInputConfiguration nativeInputConfiguration) {
+
+    }
+
+    @Override
+    public void closeTextInputField(boolean b) {
+
+    }
+
+    @Override
+    public void setKeyboardHeightObserver(KeyboardHeightObserver keyboardHeightObserver) {
 
     }
 

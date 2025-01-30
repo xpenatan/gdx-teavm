@@ -186,6 +186,11 @@ public class TeaNet implements Net {
   }
 
   @Override
+  public boolean isHttpRequestPending(HttpRequest httpRequest) {
+    return httpResponseListeners.get(httpRequest) != null && httpResponseListeners.get(httpRequest) != null;
+  }
+
+  @Override
   public ServerSocket newServerSocket(Protocol protocol, String hostname, int port, ServerSocketHints hints) {
     throw new GdxRuntimeException("Streaming sockets not available via JavaScript.");
   }

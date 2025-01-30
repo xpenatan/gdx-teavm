@@ -1,11 +1,22 @@
 [-SNAPSHOT]
 
+[1.1.0]
+- Fix music not looping correctly
+- Add disposeUnsafeByteBuffer, newUnsafeByteBuffer and getAllocatedBytesUnsafe
+- Fix play music creating new music instance
+- Clear mouse delta every frame
+- Improve PixmapEmu and Gdx2DPixmapEmu
+- Add PixmapEmu(Gdx2DPixmapEmu) constructor
+- Add customizable ByteBuffer
+- Update to libgdx 1.13.1
+
 [1.0.5]
 - Add Config Asset preloadListener
 - Update AssetLoader and AssetDownloader
 - Add AssetInstance to obtain AssetLoader or AssetDownloader
 - Fix drawing to Gdx2DPixmapEmu
 - Update Freetype emulation to fix build errors and script loading solution
+- Update TeaVM to 0.11.0
 
 [1.0.4]
 - Fix music id
