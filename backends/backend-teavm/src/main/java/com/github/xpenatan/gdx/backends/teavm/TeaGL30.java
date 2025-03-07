@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
@@ -229,8 +230,11 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glDrawBuffers(int n, IntBuffer bufs) {
+        ArrayBufferViewWrapper arrayBuffer = TypedArrays.getTypedArray(bufs);
         int startPosition = bufs.position();
-        gl.drawBuffers(TypedArrays.getTypedArray(bufs).subarray(0, n));
+        int byteOffset = arrayBuffer.getByteOffset() + bufs.position();
+        Int32ArrayWrapper array32Buffer = TypedArrays.createInt32Array(arrayBuffer.getBuffer(), byteOffset, bufs.remaining());
+        gl.drawBuffers(array32Buffer.subarray(0, n));
         bufs.position(startPosition);
     }
 
