@@ -716,6 +716,10 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+        }
         gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, arrayBuffer);
     }
 
@@ -729,6 +733,10 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+        }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, arrayBuffer);
     }

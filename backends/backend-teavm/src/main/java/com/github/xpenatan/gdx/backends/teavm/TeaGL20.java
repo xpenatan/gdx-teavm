@@ -818,6 +818,10 @@ public class TeaGL20 implements GL20 {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+        }
         gl.texImage2D(target, level, internalformat, width, height, border, format, type, arrayBuffer);
     }
 
@@ -831,6 +835,10 @@ public class TeaGL20 implements GL20 {
         else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+        }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, arrayBuffer);
     }
