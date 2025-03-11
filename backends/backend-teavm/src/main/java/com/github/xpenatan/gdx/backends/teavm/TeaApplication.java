@@ -66,7 +66,7 @@ public class TeaApplication implements Application, Runnable {
     private int lastHeight = 1;
 
     private ApplicationLogger logger;
-    private int logLevel = LOG_ERROR;
+    private int logLevel = LOG_INFO;
 
     private AssetLoadImpl assetLoader;
 
