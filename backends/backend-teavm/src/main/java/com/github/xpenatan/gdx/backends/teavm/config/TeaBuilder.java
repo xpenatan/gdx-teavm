@@ -190,6 +190,10 @@ public class TeaBuilder {
             e.printStackTrace();
             return false;
         }
+
+        if(!isSuccess) {
+            throw new RuntimeException("Build Failed");
+        }
         return isSuccess;
     }
 
