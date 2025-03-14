@@ -187,8 +187,7 @@ public class TeaBuilder {
             }
         }
         catch(Throwable e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException(e);
         }
 
         if(!isSuccess) {
