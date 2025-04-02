@@ -11,7 +11,8 @@ import org.teavm.jso.typedarrays.Int8Array;
 public class Int8ArrayNative {
 
     public Int8ArrayNativeListener listener;
-    private Int8ArrayWrapper buffer;
+    public Int8ArrayWrapper buffer;
+    private ArrayBufferWrapper arrayBuffer;
 
     public Int8ArrayNative() {
     }
@@ -21,61 +22,36 @@ public class Int8ArrayNative {
     }
 
     public int getLength() {
-        shouldRecreateBuffer();
         return buffer.getLength();
     }
 
     public byte get(int index) {
-        shouldRecreateBuffer();
         return buffer.get(index);
     }
 
     public void set(int index, byte value) {
-        shouldRecreateBuffer();
         buffer.set(index, value);
     }
 
-    public void set(Int8ArrayWrapper array) {
-        shouldRecreateBuffer();
-        buffer.set(array);
-    }
-
-    public void set(Int8ArrayWrapper array, int offset) {
-        shouldRecreateBuffer();
-        buffer.set(array, offset);
-    }
-
-    public Int8ArrayWrapper subarray(int start, int end) {
-        shouldRecreateBuffer();
-        return buffer.subarray(start, end);
-    }
-
     public Int8ArrayWrapper getBuffer() {
-        shouldRecreateBuffer();
+        verifyDetachedBuffer();
         return buffer;
     }
 
-    public int getByteOffset() {
-        shouldRecreateBuffer();
-        return buffer.getByteOffset();
-    }
-
-    public int getByteLength() {
-        shouldRecreateBuffer();
-        return buffer.getByteLength();
-    }
-
-    public void shouldRecreateBuffer() {
+    public void verifyDetachedBuffer() {
         boolean recreate = false;
         if(buffer == null) {
             recreate = true;
         }
         else {
-            ArrayBufferWrapper arrayBuffer = buffer.getBuffer();
+            if(arrayBuffer == null) {
+                arrayBuffer = buffer.getBuffer();
+            }
             recreate = arrayBuffer.isDetached();
         }
         if(recreate) {
             buffer = listener.recreateBuffer();
+            arrayBuffer = buffer.getBuffer();
             listener.update();
         }
     }

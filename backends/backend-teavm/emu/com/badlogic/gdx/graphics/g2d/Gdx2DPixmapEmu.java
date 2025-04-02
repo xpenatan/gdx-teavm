@@ -99,6 +99,7 @@ public class Gdx2DPixmapEmu implements Disposable, Int8ArrayNative.Int8ArrayNati
 
         nativeBuffer = new Int8ArrayNative();
         nativeBuffer.listener = this;
+        nativeBuffer.buffer = recreateBuffer();
         HasArrayBufferView hasArrayBufferView = (HasArrayBufferView)buffer;
         hasArrayBufferView.setInt8ArrayNative(nativeBuffer);
     }
