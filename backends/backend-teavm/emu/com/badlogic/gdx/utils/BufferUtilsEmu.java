@@ -196,7 +196,6 @@ public final class BufferUtilsEmu {
         else
             throw new GdxRuntimeException("Buffers must be of same type or ByteBuffer");
         src.position(srcPos);
-        dst.flip();
         dst.position(dstPos);
     }
 
@@ -417,5 +416,24 @@ public final class BufferUtilsEmu {
 
     private static void freeMemory (ByteBuffer buffer) {
         // Do nothing because this is javascript
+    }
+
+    private static int bytesToElements (Buffer dst, int bytes) {
+        if (dst instanceof ByteBuffer)
+            return bytes;
+        else if (dst instanceof ShortBuffer)
+            return bytes >>> 1;
+        else if (dst instanceof CharBuffer)
+            return bytes >>> 1;
+        else if (dst instanceof IntBuffer)
+            return bytes >>> 2;
+        else if (dst instanceof LongBuffer)
+            return bytes >>> 3;
+        else if (dst instanceof FloatBuffer)
+            return bytes >>> 2;
+        else if (dst instanceof DoubleBuffer)
+            return bytes >>> 3;
+        else
+            throw new GdxRuntimeException("Can't copy to a " + dst.getClass().getName() + " instance");
     }
 }
