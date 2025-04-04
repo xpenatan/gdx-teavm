@@ -91,13 +91,12 @@ public class TeaBuilder {
 
     public static TeaVMTool config(TeaVMTool tool, TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
         ArrayList<URL> acceptedURL = new ArrayList<>();
-        ArrayList<URL> notAcceptedURL = new ArrayList<>();
         String webappDirectory = configuration.getWebAppPath();
         String webappName = "webapp";
 
         addDefaultReflectionClasses();
         automaticReflection(configuration);
-        configClasspath(configuration, acceptedURL, notAcceptedURL);
+        configClasspath(configuration, acceptedURL);
 
         TeaBuilder.log("");
         TeaBuilder.log("targetDirectory: " + webappDirectory);
@@ -114,7 +113,7 @@ public class TeaBuilder {
             skipClasses.add(skipClass.getName());
         }
         skipClasses.addAll(configuration.getSkipClasses());
-        TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader(), skipClasses);
+        TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
         configAssets(classLoader, configuration, webappDirectory, webappName, acceptedURL);
@@ -216,6 +215,7 @@ public class TeaBuilder {
         // Move extensions to be first so native classes are replaced by the emulated classes
         makeClassPathFirst(acceptedURL, EXTENSION_FREETYPE);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
+        makeClassPathFirst(acceptedURL, EXTENSION_BOX2D_GWT);
         // Move generic backend to be first
         makeClassPathFirst(acceptedURL, "backend-teavm");
     }
@@ -301,30 +301,23 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
     }
 
-    private static void configClasspath(TeaBuildConfiguration configuration, ArrayList<URL> acceptedURL, ArrayList<URL> notAcceptedURL) {
+    private static void configClasspath(TeaBuildConfiguration configuration, ArrayList<URL> acceptedURL) {
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
-        for(int i = 0; i < classPathEntries.length; i++) {
-            String path = classPathEntries[i];
-            File file = new File(path);
-            path = path.replace("\\", "/");
-            URL url = null;
-            try {
-                url = file.toURI().toURL();
-            }
-            catch(MalformedURLException e) {
-                e.printStackTrace();
-            }
-            ACCEPT_STATE acceptState = acceptPath(path);
-            boolean accept = acceptState == ACCEPT_STATE.ACCEPT;
-            if(accept || acceptState == ACCEPT_STATE.NO_MATCH)
-                accept = configuration.acceptClasspath(url);
 
-            if(accept)
-                acceptedURL.add(url);
-            else
-                notAcceptedURL.add(url);
+        for (String path : classPathEntries) {
+            File file = new File(path);
+            // Ensure the path ends with "/" for directories
+            if (file.isDirectory() && !path.endsWith(File.separator)) {
+                path += File.separator;
+            }
+            try {
+                acceptedURL.add(new File(path).toURI().toURL());
+            } catch(MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         acceptedURL.addAll(configuration.getAdditionalClasspath());
 
         sortAcceptedClassPath(acceptedURL);
@@ -333,98 +326,6 @@ public class TeaBuilder {
         for(int i = 0; i < acceptedURL.size(); i++) {
             TeaBuilder.log(i + " true: " + acceptedURL.get(i).getPath());
         }
-
-        TeaBuilder.logHeader("IGNORED CLASSPATH");
-
-        for(int i = 0; i < notAcceptedURL.size(); i++) {
-            TeaBuilder.log(i + " false: " + notAcceptedURL.get(i).getPath());
-        }
-
-        int size = acceptedURL.size();
-
-        if(size <= 0) {
-            System.err.println("No urls found");
-            throw new RuntimeException("No Urls Found");
-        }
-    }
-
-    private static ACCEPT_STATE acceptPath(String path) {
-        ACCEPT_STATE isValid = ACCEPT_STATE.NO_MATCH;
-        if(path.contains("junit"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("hamcrest"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jackson-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("Java/jdk"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("commons-io"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("org/ow2"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("carrotsearch"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("google/code"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jcraft"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("joda-time"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("mozilla"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jutils"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jinput-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("lwjgl"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jlayer-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("/resources"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("javax"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("jsinterop-annotations"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gwt-user-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("sac-"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gdx-box2d"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gdx-jnigen"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gdx-platform"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("generator/core/"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("gdx-bullet-platform"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("org.reflections"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("com.google.guava"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("org.javassist"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("com.google.code.findbugs"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-        else if(path.contains("org.slf4j"))
-            isValid = ACCEPT_STATE.NOT_ACCEPT;
-
-        if(path.contains("backend-teavm"))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains(EXTENSION_BOX2D_GWT))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains(EXTENSION_FREETYPE))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains(EXTENSION_BOX2D))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains("jParser-loader"))
-            isValid = ACCEPT_STATE.ACCEPT;
-        else if(path.contains("jzlib"))
-          isValid = ACCEPT_STATE.ACCEPT;
-
-        return isValid;
     }
 
     private static void configTool(TeaVMTool tool, TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {

@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,11 +38,11 @@ public class AssetsCopy {
         }
     }
 
-    public static ArrayList<Asset> copyResources(TeaClassLoader classLoader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle assetsOutputPath) {
+    public static ArrayList<Asset> copyResources(ClassLoader classLoader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle assetsOutputPath) {
         return copy(classLoader, classPathAssetsFiles, filter, assetsOutputPath);
     }
 
-    public static ArrayList<Asset> copyScripts(TeaClassLoader classLoader, List<String> classPathAssetsFiles, FileHandle assetsOutputPath) {
+    public static ArrayList<Asset> copyScripts(ClassLoader classLoader, List<String> classPathAssetsFiles, FileHandle assetsOutputPath) {
         return copy(classLoader, classPathAssetsFiles, null, assetsOutputPath);
     }
 
@@ -82,7 +81,7 @@ public class AssetsCopy {
     /**
      * Copy resources
      */
-    private static ArrayList<Asset> copy(TeaClassLoader classloader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle target) {
+    private static ArrayList<Asset> copy(ClassLoader classloader, List<String> classPathAssetsFiles, AssetFilter filter, FileHandle target) {
         String assetsOutputPath = target.path();
         ArrayList<Asset> assets = new ArrayList<Asset>();
         AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
