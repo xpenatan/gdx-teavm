@@ -29,10 +29,10 @@ Note:
 
 
 ### LibGDX Supported Versions:
-| teavm-backend | LibGDX |
-|---------------|--------|
-| 1.0.5          | 1.12.1 |
-| 1.1.0          | 1.13.1 |
+|  teavm-backend  |  LibGDX  |  Teavm version  |
+|:---------------:|:--------:|:---------------:|
+|      1.0.5      |  1.12.1  |     0.11.0      |
+|      1.1.0      |  1.13.1  |     0.11.0      |
 
 ## Setup:
 ```groovy
