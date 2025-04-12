@@ -28,7 +28,7 @@ Note:
 * [Retro Commander](https://www.retrocommander.com/webapp/) ([website](https://www.retrocommander.com/))
 
 
-### LibGDX Supported Versions:
+### Versions:
 | gdx-teavm |  LibGDX  | TeaVM |
 |:-----------------:|:--------:|:------:|
 |       1.0.5       |  1.12.1  | 0.11.0 |
