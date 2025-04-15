@@ -28,12 +28,12 @@ Note:
 * [Retro Commander](https://www.retrocommander.com/webapp/) ([website](https://www.retrocommander.com/))
 
 
-### LibGDX Supported Versions:
-| teavm-backend |  LibGDX  | Teavm version |
-|:-------------:|:--------:|:-------------:|
-|     1.0.5     |  1.12.1  |    0.11.0     |
-|     1.1.X     |  1.13.1  |    0.11.0     |
-|     1.2.0     |  1.13.1  |    0.12.0     |
+### Versions:
+| gdx-teavm |  LibGDX  | TeaVM  |
+|:---------:|:--------:|:------:|
+|   1.0.5   |  1.12.1  | 0.11.0 |
+|   1.1.0   |  1.13.1  | 0.11.0 |
+|   1.2.0   |  1.13.1  | 0.12.0 |
 
 ## Setup:
 ```groovy
