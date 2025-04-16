@@ -1,10 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem.types;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.MemoryFileStorage;
@@ -21,6 +18,7 @@ import org.teavm.jso.indexeddb.IDBObjectStoreParameters;
 import org.teavm.jso.indexeddb.IDBOpenDBRequest;
 import org.teavm.jso.indexeddb.IDBRequest;
 import org.teavm.jso.indexeddb.IDBTransaction;
+import org.teavm.jso.typedarrays.Int8Array;
 
 public class LocalDBStorage extends MemoryFileStorage {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
@@ -106,7 +104,7 @@ public class LocalDBStorage extends MemoryFileStorage {
                     putFolderInternal(key, false);
                 }
                 else {
-                    Int8ArrayWrapper contents = dbFileData.getContents();
+                    Int8Array contents = dbFileData.getContents();
                     byte[] bytes = TypedArrays.toByteArray(contents);
                     putFileInternal(key, bytes, false);
                 }

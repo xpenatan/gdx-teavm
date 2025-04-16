@@ -2,10 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Uint8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLActiveInfoWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLBufferWrapper;
@@ -22,6 +19,9 @@ import java.nio.IntBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSClass;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.typedarrays.ArrayBufferView;
+import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.typedarrays.Uint8Array;
 import org.teavm.jso.webgl.WebGLRenderingContext;
 
 /**
@@ -142,14 +142,14 @@ public class TeaGL20 implements GL20 {
             gl.bufferData(target, size, usage);
         }
         else {
-            ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(data);
+            ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
             gl.bufferData(target, typedArray, usage);
         }
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(data);
+        ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
         gl.bufferSubData(target, offset, typedArray);
     }
 
@@ -547,7 +547,7 @@ public class TeaGL20 implements GL20 {
             params.put(0, gl.getParameteri(pname));
         }
         else if(pname == GL20.GL_VIEWPORT) {
-            Int32ArrayWrapper array = (Int32ArrayWrapper)gl.getParameterv(pname);
+            Int32Array array = (Int32Array)gl.getParameterv(pname);
             params.put(0, array.get(0));
             params.put(1, array.get(1));
             params.put(2, array.get(2));
@@ -736,9 +736,9 @@ public class TeaGL20 implements GL20 {
             throw new GdxRuntimeException(
                     "Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...). Create an issue when you need other formats.");
         }
-        ArrayBufferViewWrapper typedArray = TypedArrays.getTypedArray(pixels);
+        ArrayBufferView typedArray = TypedArrays.getTypedArray(pixels);
         int size = 4 * width * height;
-        Uint8ArrayWrapper buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
+        Uint8Array buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
         gl.readPixels(x, y, width, height, format, type, buffer);
     }
 
@@ -809,7 +809,7 @@ public class TeaGL20 implements GL20 {
             return;
         }
 
-        ArrayBufferViewWrapper arrayBuffer = TypedArrays.getTypedArray(pixels);
+        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
         if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
@@ -827,7 +827,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-        ArrayBufferViewWrapper arrayBuffer = TypedArrays.getTypedArray(pixels);
+        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
         if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
             int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
             arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());

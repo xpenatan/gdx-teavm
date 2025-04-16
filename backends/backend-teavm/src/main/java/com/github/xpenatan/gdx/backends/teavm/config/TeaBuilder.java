@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -281,6 +283,10 @@ public class TeaBuilder {
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.ObjectMap");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.OrderedMap");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Queue");
+        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Predicate");
+//        TeaReflectionSupplier.addReflectionClass(Function.class.getName());
+//        TeaReflectionSupplier.addReflectionClass(Consumer.class.getName());
+
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.VertexAttribute");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.model");
         TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.Net");

@@ -8,6 +8,7 @@ import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher;
 import java.io.File;
 import java.io.IOException;
+import org.teavm.jso.typedarrays.DataView;
 import org.teavm.tooling.TeaVMTool;
 
 @SkipClass

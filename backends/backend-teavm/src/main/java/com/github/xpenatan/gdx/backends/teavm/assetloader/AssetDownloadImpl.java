@@ -1,8 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
@@ -91,7 +89,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         loadBinary(async, url, new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String script = new String(byteArray);
                 Window current = Window.current();
@@ -188,14 +186,13 @@ public class AssetDownloadImpl implements AssetDownloader {
                     if(isString(jsResponse)) {
                         // sync downloading is always string
                         String responseStr = toString(jsResponse);
-                        Int8ArrayWrapper typedArray = TypedArrays.getTypedArray(responseStr.getBytes());
-                        data = (Int8Array)typedArray;
+                        data = TypedArrays.getTypedArray(responseStr.getBytes());
                         arrayBuffer = data.getBuffer();
                     }
                     else {
-                        ArrayBufferWrapper response = (ArrayBufferWrapper)jsResponse;
-                        data = (Int8Array)TypedArrays.createInt8Array(response);
-                        arrayBuffer = (ArrayBuffer)response;
+                        ArrayBuffer response = (ArrayBuffer)jsResponse;
+                        data = TypedArrays.createInt8Array(response);
+                        arrayBuffer = response;
                     }
 
                     if(listener != null) {

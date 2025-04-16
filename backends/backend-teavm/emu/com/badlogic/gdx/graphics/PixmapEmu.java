@@ -11,12 +11,12 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
 import java.nio.ByteBuffer;
+import org.teavm.jso.typedarrays.TypedArray;
 
 @Emulate(Pixmap.class)
 public class PixmapEmu implements Disposable {
@@ -81,7 +81,7 @@ public class PixmapEmu implements Disposable {
 
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                TypedArray data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
                 responseListener.downloadComplete(pixmapEmu);

@@ -23,9 +23,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.WebJSObject;
 import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestEventTargetWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.FloatArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.LongArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ObjectArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -117,12 +114,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
                 setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
             }
 
-            classHolder = findClassHolder(cls, context, ObjectArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, LongArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
             classHolder = findClassHolder(cls, context, HTMLVideoElementWrapper.class);
             setClassInterface(classHolder, JSObject.class);
 
@@ -133,9 +124,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             setMethodAnnotation(classHolder, JSProperty.class, "getHeight", null);
             setMethodAnnotation(classHolder, JSProperty.class, "setHeight", null);
             setMethodAnnotation(classHolder, JSProperty.class, "getOwnerDocument", null);
-
-            classHolder = findClassHolder(cls, context, FloatArrayWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
 
             classHolder = findClassHolder(cls, context, EventListenerWrapper.class);
             setClassInterface(classHolder, JSObject.class);

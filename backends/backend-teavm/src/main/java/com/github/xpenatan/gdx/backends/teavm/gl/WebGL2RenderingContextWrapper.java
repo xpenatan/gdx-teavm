@@ -4,10 +4,10 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.core.JSArray;
+import org.teavm.jso.typedarrays.ArrayBufferView;
+import org.teavm.jso.typedarrays.Int32Array;
 
 /**
  * @author xpenatan
@@ -83,7 +83,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     void drawArraysInstanced(int mode, int first, int count, int instanceCount);
 
-    void drawBuffers(Int32ArrayWrapper buffers);
+    void drawBuffers(Int32Array buffers);
 
     void drawElementsInstanced(int mode, int count, int type, int offset, int instanceCount);
 
@@ -107,13 +107,13 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     int getActiveUniformBlockParameteri(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
 
-    <T extends ArrayBufferViewWrapper> T getActiveUniformBlockParameterv(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
+    <T extends ArrayBufferView> T getActiveUniformBlockParameterv(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
 
     boolean getActiveUniformBlockParameterb(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
 
-    JSArray<Integer> getActiveUniformsi(WebGLProgramWrapper program, Int32ArrayWrapper uniformIndices, int pname);
+    JSArray<Integer> getActiveUniformsi(WebGLProgramWrapper program, Int32Array uniformIndices, int pname);
 
-    JSArray<Boolean> getActiveUniformsb(WebGLProgramWrapper program, Int32ArrayWrapper uniformIndices, int pname);
+    JSArray<Boolean> getActiveUniformsb(WebGLProgramWrapper program, Int32Array uniformIndices, int pname);
 
     int getFragDataLocation(WebGLProgramWrapper program, String name);
 
@@ -140,9 +140,9 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     JSArray<Integer> getUniformIndices(WebGLProgramWrapper program, String[] uniformNames);
 
-    void invalidateFramebuffer(int target, Int32ArrayWrapper attachments);
+    void invalidateFramebuffer(int target, Int32Array attachments);
 
-    void invalidateSubFramebuffer(int target, Int32ArrayWrapper attachments, int x, int y, int width, int height);
+    void invalidateSubFramebuffer(int target, Int32Array attachments, int x, int y, int width, int height);
 
     boolean isQuery(WebGLQueryWrapper query);
 
@@ -171,7 +171,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, int offset);
 
-    void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ArrayBufferViewWrapper pixels);
+    void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ArrayBufferView pixels);
 
     void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ImageDataWrapper pixels);
 
@@ -191,7 +191,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 // throw "UnsupportedOperation";
 // }-*/;
 
-    void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ArrayBufferViewWrapper pixels);
+    void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ArrayBufferView pixels);
 
     void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, HTMLCanvasElementWrapper canvas);
 

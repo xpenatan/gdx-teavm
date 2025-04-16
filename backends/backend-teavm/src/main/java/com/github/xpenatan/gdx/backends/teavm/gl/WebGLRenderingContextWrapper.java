@@ -5,15 +5,13 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WebJSObject;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Float32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.FloatArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.LongArrayWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ObjectArrayWrapper;
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.core.JSArrayReader;
+import org.teavm.jso.typedarrays.ArrayBuffer;
+import org.teavm.jso.typedarrays.ArrayBufferView;
+import org.teavm.jso.typedarrays.Float32Array;
+import org.teavm.jso.typedarrays.Int32Array;
 
 /**
  * @author xpenatan
@@ -27,7 +25,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     boolean isContextLost();
 
-    ObjectArrayWrapper<String> getSupportedExtensions();
+//    ObjectArrayWrapper<String> getSupportedExtensions();
 
     WebJSObject getExtension(String name);
 
@@ -57,13 +55,13 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void bufferData(int target, int size, int usage);
 
-    void bufferData(int target, ArrayBufferViewWrapper data, int usage);
+    void bufferData(int target, ArrayBufferView data, int usage);
 
-    void bufferData(int target, ArrayBufferWrapper data, int usage);
+    void bufferData(int target, ArrayBuffer data, int usage);
 
-    void bufferSubData(int target, int offset, ArrayBufferViewWrapper data);
+    void bufferSubData(int target, int offset, ArrayBufferView data);
 
-    void bufferSubData(int target, int offset, ArrayBufferWrapper data);
+    void bufferSubData(int target, int offset, ArrayBuffer data);
 
     int checkFramebufferStatus(int target);
 
@@ -145,7 +143,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     WebGLActiveInfoWrapper getActiveUniform(WebGLProgramWrapper program, int index);
 
-    ObjectArrayWrapper<WebGLShaderWrapper> getAttachedShaders(WebGLProgramWrapper program);
+    JSArrayReader<WebGLShaderWrapper> getAttachedShaders(WebGLProgramWrapper program);
 
     int getAttribLocation(WebGLProgramWrapper program, String name);
 
@@ -161,7 +159,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
     JSObject getParametero(int pname);
 
     @JSMethod("getParameter")
-    ArrayBufferViewWrapper getParameterv(int pname);
+    ArrayBufferView getParameterv(int pname);
 
     @JSMethod("getParameter")
     public String getParameterString(int pname);
@@ -233,7 +231,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void polygonOffset(float factor, float units);
 
-    void readPixels(int x, int y, int width, int height, int format, int type, ArrayBufferViewWrapper pixels);
+    void readPixels(int x, int y, int width, int height, int format, int type, ArrayBufferView pixels);
 
     void renderbufferStorage(int target, int internalformat, int width, int height);
 
@@ -255,7 +253,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void stencilOpSeparate(int face, int fail, int zfail, int zpass);
 
-    void texImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, ArrayBufferViewWrapper pixels);
+    void texImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, ArrayBufferView pixels);
 
     void texImage2D(int target, int level, int internalformat, int format, int type, ImageDataWrapper pixels);
 
@@ -269,7 +267,7 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void texParameteri(int target, int pname, int param);
 
-    void texSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, ArrayBufferViewWrapper pixels);
+    void texSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, ArrayBufferView pixels);
 
     void texSubImage2D(int target, int level, int xoffset, int yoffset, int format, int type, ImageDataWrapper pixels);
 
@@ -281,63 +279,63 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void uniform1f(WebGLUniformLocationWrapper location, float x);
 
-    void uniform1fv(WebGLUniformLocationWrapper location, Float32ArrayWrapper v);
+    void uniform1fv(WebGLUniformLocationWrapper location, Float32Array v);
 
-    void uniform1fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
+//    void uniform1fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
 
     void uniform1i(WebGLUniformLocationWrapper location, int x);
 
-    void uniform1iv(WebGLUniformLocationWrapper location, Int32ArrayWrapper v);
+    void uniform1iv(WebGLUniformLocationWrapper location, Int32Array v);
 
-    void uniform1iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
+//    void uniform1iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
 
     void uniform2f(WebGLUniformLocationWrapper location, float x, float y);
 
-    void uniform2fv(WebGLUniformLocationWrapper location, Float32ArrayWrapper v);
+    void uniform2fv(WebGLUniformLocationWrapper location, Float32Array v);
 
-    void uniform2fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
+//    void uniform2fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
 
     void uniform2i(WebGLUniformLocationWrapper location, int x, int y);
 
-    void uniform2iv(WebGLUniformLocationWrapper location, Int32ArrayWrapper v);
+    void uniform2iv(WebGLUniformLocationWrapper location, Int32Array v);
 
-    void uniform2iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
+//    void uniform2iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
 
     void uniform3f(WebGLUniformLocationWrapper location, float x, float y, float z);
 
-    void uniform3fv(WebGLUniformLocationWrapper location, Float32ArrayWrapper v);
+    void uniform3fv(WebGLUniformLocationWrapper location, Float32Array v);
 
-    void uniform3fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
+//    void uniform3fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
 
     void uniform3i(WebGLUniformLocationWrapper location, int x, int y, int z);
 
-    void uniform3iv(WebGLUniformLocationWrapper location, Int32ArrayWrapper v);
+    void uniform3iv(WebGLUniformLocationWrapper location, Int32Array v);
 
-    void uniform3iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
+//    void uniform3iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
 
     void uniform4f(WebGLUniformLocationWrapper location, float x, float y, float z, float w);
 
-    void uniform4fv(WebGLUniformLocationWrapper location, Float32ArrayWrapper v);
+    void uniform4fv(WebGLUniformLocationWrapper location, Float32Array v);
 
-    void uniform4fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
+//    void uniform4fv(WebGLUniformLocationWrapper location, FloatArrayWrapper v);
 
     void uniform4i(WebGLUniformLocationWrapper location, int x, int y, int z, int w);
 
-    void uniform4iv(WebGLUniformLocationWrapper location, Int32ArrayWrapper v);
+    void uniform4iv(WebGLUniformLocationWrapper location, Int32Array v);
 
-    void uniform4iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
+//    void uniform4iv(WebGLUniformLocationWrapper location, LongArrayWrapper v);
 
-    void uniformMatrix2fv(WebGLUniformLocationWrapper location, boolean transpose, Float32ArrayWrapper value);
+    void uniformMatrix2fv(WebGLUniformLocationWrapper location, boolean transpose, Float32Array value);
 
-    void uniformMatrix2fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
+//    void uniformMatrix2fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
 
-    void uniformMatrix3fv(WebGLUniformLocationWrapper location, boolean transpose, Float32ArrayWrapper value);
+    void uniformMatrix3fv(WebGLUniformLocationWrapper location, boolean transpose, Float32Array value);
 
-    void uniformMatrix3fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
+//    void uniformMatrix3fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
 
-    void uniformMatrix4fv(WebGLUniformLocationWrapper location, boolean transpose, Float32ArrayWrapper value);
+    void uniformMatrix4fv(WebGLUniformLocationWrapper location, boolean transpose, Float32Array value);
 
-    void uniformMatrix4fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
+//    void uniformMatrix4fv(WebGLUniformLocationWrapper location, boolean transpose, FloatArrayWrapper value);
 
     void useProgram(WebGLProgramWrapper program);
 
@@ -345,27 +343,27 @@ public interface WebGLRenderingContextWrapper extends JSObject  {
 
     void vertexAttrib1f(int indx, float x);
 
-    void vertexAttrib1fv(int indx, Float32ArrayWrapper values);
+    void vertexAttrib1fv(int indx, Float32Array values);
 
-    void vertexAttrib1fv(int indx, FloatArrayWrapper values);
+//    void vertexAttrib1fv(int indx, FloatArrayWrapper values);
 
     void vertexAttrib2f(int indx, float x, float y);
 
-    void vertexAttrib2fv(int indx, Float32ArrayWrapper values);
+    void vertexAttrib2fv(int indx, Float32Array values);
 
-    void vertexAttrib2fv(int indx, FloatArrayWrapper values);
+//    void vertexAttrib2fv(int indx, FloatArrayWrapper values);
 
     void vertexAttrib3f(int indx, float x, float y, float z);
 
-    void vertexAttrib3fv(int indx, Float32ArrayWrapper values);
+    void vertexAttrib3fv(int indx, Float32Array values);
 
-    void vertexAttrib3fv(int indx, FloatArrayWrapper values);
+//    void vertexAttrib3fv(int indx, FloatArrayWrapper values);
 
     void vertexAttrib4f(int indx, float x, float y, float z, float w);
 
-    void vertexAttrib4fv(int indx, Float32ArrayWrapper values);
+    void vertexAttrib4fv(int indx, Float32Array values);
 
-    void vertexAttrib4fv(int indx, FloatArrayWrapper values);
+//    void vertexAttrib4fv(int indx, FloatArrayWrapper values);
 
     void vertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int offset);
 

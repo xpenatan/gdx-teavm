@@ -6,14 +6,13 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import org.teavm.jso.JSBody;
-import org.teavm.jso.JSByRef;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int16Array;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
+import org.teavm.jso.typedarrays.TypedArray;
 import org.teavm.jso.typedarrays.Uint16Array;
 import org.teavm.jso.typedarrays.Uint8Array;
 import org.teavm.jso.typedarrays.Uint8ClampedArray;
@@ -23,147 +22,113 @@ import org.teavm.jso.typedarrays.Uint8ClampedArray;
  */
 public class TypedArrays {
 
-    public static Float32ArrayWrapper createFloat32Array(int length) {
-        return (Float32ArrayWrapper)new Float32Array(length);
+    public static Float32Array createFloat32Array(int length) {
+        return new Float32Array(length);
     }
 
-    public static Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Float32ArrayWrapper)new Float32Array(arrayBuffer);
+    public static Float32Array createFloat32Array(ArrayBuffer buffer) {
+        return new Float32Array(buffer);
     }
 
-    public static Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Float32ArrayWrapper)new Float32Array(arrayBuffer, offset);
+    public static Float32Array createFloat32Array(ArrayBuffer buffer, int offset) {
+        return new Float32Array(buffer, offset);
     }
 
-    public static Float32ArrayWrapper createFloat32Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Float32ArrayWrapper)new Float32Array(arrayBuffer, offset, length);
+    public static Float32Array createFloat32Array(ArrayBuffer buffer, int offset, int length) {
+        return new Float32Array(buffer, offset, length);
     }
 
-    public static Int32ArrayWrapper createInt32Array(int length) {
-        return (Int32ArrayWrapper)new Int32Array(length);
+    public static Int32Array createInt32Array(int length) {
+        return new Int32Array(length);
     }
 
-    public static Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int32ArrayWrapper)new Int32Array(arrayBuffer);
+    public static Int32Array createInt32Array(ArrayBuffer buffer) {
+        return new Int32Array(buffer);
     }
 
-    public static Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int32ArrayWrapper)new Int32Array(arrayBuffer, offset);
+    public static Int32Array createInt32Array(ArrayBuffer buffer, int offset) {
+        return new Int32Array(buffer, offset);
     }
 
-    public static Int32ArrayWrapper createInt32Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int32ArrayWrapper)new Int32Array(arrayBuffer, offset, length);
+    public static Int32Array createInt32Array(ArrayBuffer buffer, int offset, int length) {
+        return new Int32Array(buffer, offset, length);
     }
 
-    public static Int16ArrayWrapper createInt16Array(int length) {
-        return (Int16ArrayWrapper)new Int16Array(length);
+    public static Int16Array createInt16Array(int length) {
+        return new Int16Array(length);
     }
 
-    public static Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int16ArrayWrapper)new Int16Array(arrayBuffer);
+    public static Int16Array createInt16Array(ArrayBuffer buffer) {
+        return new Int16Array(buffer);
     }
 
-    public static Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int16ArrayWrapper)new Int16Array(arrayBuffer, offset);
+    public static Int16Array createInt16Array(ArrayBuffer buffer, int offset) {
+        return new Int16Array(buffer, offset);
     }
 
-    public static Int16ArrayWrapper createInt16Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int16ArrayWrapper)new Int16Array(arrayBuffer, offset, length);
+    public static Int16Array createInt16Array(ArrayBuffer buffer, int offset, int length) {
+        return new Int16Array(buffer, offset, length);
     }
 
-    public static Int8ArrayWrapper createInt8Array(int length) {
-        return (Int8ArrayWrapper)new Int8Array(length);
+    public static Int8Array createInt8Array(int length) {
+        return new Int8Array(length);
     }
 
-    public static Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int8ArrayWrapper)new Int8Array(arrayBuffer);
+    public static Int8Array createInt8Array(ArrayBuffer buffer) {
+        return new Int8Array(buffer);
     }
 
-    public static Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int8ArrayWrapper)new Int8Array(arrayBuffer, offset);
+    public static Int8Array createInt8Array(ArrayBuffer buffer, int offset) {
+        return new Int8Array(buffer, offset);
     }
 
-    public static Int8ArrayWrapper createInt8Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Int8ArrayWrapper)new Int8Array(arrayBuffer, offset, length);
+    public static Int8Array createInt8Array(ArrayBuffer buffer, int offset, int length) {
+        return new Int8Array(buffer, offset, length);
     }
 
-    public static Int8ArrayWrapper createInt8Array(ArrayBufferViewWrapper buffer) {
-        ArrayBufferView arrayBuffer = (ArrayBufferView)buffer;
-        return (Int8ArrayWrapper)new Int8Array(arrayBuffer);
+    public static Int8Array createInt8Array(TypedArray buffer) {
+        return new Int8Array(buffer);
     }
 
-    public static Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ClampedArrayWrapper)new Uint8ClampedArray(arrayBuffer);
+    public static Uint8ClampedArray createUint8ClampedArray(ArrayBuffer buffer) {
+        return new Uint8ClampedArray(buffer);
     }
 
-    public static Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ClampedArrayWrapper)new Uint8ClampedArray(arrayBuffer, offset);
+    public static Uint8ClampedArray createUint8ClampedArray(ArrayBuffer buffer, int offset) {
+        return new Uint8ClampedArray(buffer, offset);
     }
 
-    public static Uint8ClampedArrayWrapper createUint8ClampedArray(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ClampedArrayWrapper)new Uint8ClampedArray(arrayBuffer, offset, length);
+    public static Uint8ClampedArray createUint8ClampedArray(ArrayBuffer buffer, int offset, int length) {
+        return new Uint8ClampedArray(buffer, offset, length);
     }
 
-    public static Uint8ArrayWrapper createUint8Array(int length) {
-        return (Uint8ArrayWrapper)new Uint8Array(length);
+    public static Uint8Array createUint8Array(int length) {
+        return new Uint8Array(length);
     }
 
-    public static Uint8ArrayWrapper createUint8Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ArrayWrapper)new Uint8Array(arrayBuffer, offset);
+    public static Uint8Array createUint8Array(ArrayBuffer buffer, int offset) {
+        return new Uint8Array(buffer, offset);
     }
 
-    public static Uint8ArrayWrapper createUint8Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ArrayWrapper)new Uint8Array(arrayBuffer, offset, length);
+    public static Uint8Array createUint8Array(ArrayBuffer buffer, int offset, int length) {
+        return new Uint8Array(buffer, offset, length);
     }
 
-    public static Uint16ArrayWrapper createUint16Array(int length) {
-        return (Uint16ArrayWrapper)new Uint16Array(length);
+    public static Uint16Array createUint16Array(int length) {
+        return new Uint16Array(length);
     }
 
-    public static Uint8ArrayWrapper createUint16Array(ArrayBufferWrapper buffer, int offset) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint8ArrayWrapper)new Uint16Array(arrayBuffer, offset);
+    public static Uint16Array createUint16Array(ArrayBuffer buffer, int offset) {
+        return new Uint16Array(buffer, offset);
     }
 
-    public static Uint16ArrayWrapper createUint16Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return (Uint16ArrayWrapper)new Uint16Array(arrayBuffer, offset, length);
+    public static Uint16Array createUint16Array(ArrayBuffer buffer, int offset, int length) {
+        return new Uint16Array(buffer, offset, length);
     }
-
-    public static Uint32ArrayWrapper createUint32Array(int length) {
-        return Uint32ArrayWrapper.create(length);
-    }
-
-    public static Uint32ArrayWrapper createUFloat32Array(int length) {
-        return Uint32ArrayWrapper.create(length);
-    }
-
-    public static Uint32ArrayWrapper createUint32Array(ArrayBufferWrapper buffer, int offset, int length) {
-        ArrayBuffer arrayBuffer = (ArrayBuffer)buffer;
-        return Uint32ArrayWrapper.create(arrayBuffer, offset, length);
-    }
-
 
     // Obtain the array reference from ArrayBufferView
-    public static byte[] toByteArray(ArrayBufferViewWrapper array) {
-        Int8Array intArray = new Int8Array((ArrayBufferView)array);
+    public static byte[] toByteArray(TypedArray array) {
+        Int8Array intArray = new Int8Array(array);
         int length = intArray.getLength();
         byte[] newByte = new byte[length];
 
@@ -173,11 +138,11 @@ public class TypedArrays {
         return newByte;
     }
 
-    public static ArrayBufferViewWrapper getTypedArray(Buffer buffer) {
+    public static ArrayBufferView getTypedArray(Buffer buffer) {
         return getTypedArray(false, buffer);
     }
 
-    public static ArrayBufferViewWrapper getTypedArray(boolean isUnsigned, Buffer buffer) {
+    public static ArrayBufferView getTypedArray(boolean isUnsigned, Buffer buffer) {
         if(buffer instanceof ByteBuffer) {
             if(isUnsigned) {
                 return getUTypedArray((ByteBuffer)buffer);
@@ -203,61 +168,31 @@ public class TypedArrays {
         throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
     }
 
-    public static Int8ArrayWrapper getTypedArray(ByteBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Int8ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Int8Array getTypedArray(ByteBuffer buffer) {
+        return Int8Array.fromJavaBuffer(buffer);
     }
 
-    public static Uint8ArrayWrapper getUTypedArray(ByteBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Uint8ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Uint8Array getUTypedArray(ByteBuffer buffer) {
+        return Uint8Array.fromJavaBuffer(buffer);
     }
 
-    public static Int16ArrayWrapper getTypedArray(ShortBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Int16ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Int16Array getTypedArray(ShortBuffer buffer) {
+        return Int16Array.fromJavaBuffer(buffer);
     }
 
-    public static Uint16ArrayWrapper getUTypedArray(ShortBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Uint16ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Uint16Array getUTypedArray(ShortBuffer buffer) {
+        return Uint16Array.fromJavaBuffer(buffer);
     }
 
-    public static Int32ArrayWrapper getTypedArray(IntBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Int32ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Int32Array getTypedArray(IntBuffer buffer) {
+        return Int32Array.fromJavaBuffer(buffer);
     }
 
-    public static Float32ArrayWrapper getTypedArray(FloatBuffer buffer) {
-        if(buffer instanceof HasArrayBufferView) {
-            return (Float32ArrayWrapper)((HasArrayBufferView)buffer).getArrayBufferView();
-        }
-        else {
-            throw new GdxRuntimeException("Buffer should have ArrayBufferView interface");
-        }
+    public static Float32Array getTypedArray(FloatBuffer buffer) {
+        return Float32Array.fromJavaBuffer(buffer);
     }
 
-    @JSBody(params = {"buffer"}, script = "" +
-            "return buffer;")
-    public static native Int8ArrayWrapper getTypedArray(@JSByRef() byte[] buffer); // TODO JSByRef dont work with webassembly
+    public static Int8Array getTypedArray(byte[] buffer) {
+        return Int8Array.fromJavaArray(buffer);
+    }
 }
