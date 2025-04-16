@@ -6,12 +6,9 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLFramebufferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLQueryWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLSamplerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTextureWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTransformFeedbackWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLUniformLocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLVertexArrayObjectWrapper;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -20,7 +17,10 @@ import java.nio.LongBuffer;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.webgl.WebGLFramebuffer;
 import org.teavm.jso.webgl.WebGLRenderingContext;
+import org.teavm.jso.webgl.WebGLTexture;
+import org.teavm.jso.webgl.WebGLUniformLocation;
 
 /**
  * Port from GWT gdx 1.12.0
@@ -38,7 +38,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     final CustomIntMap<WebGLVertexArrayObjectWrapper> vertexArrays = CustomIntMap.create();
 
     public TeaGL30(WebGL2RenderingContextWrapper gl) {
-        super(gl);
+        super((WebGLRenderingContext)gl);
         this.gl = gl;
     }
 
@@ -475,7 +475,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 return;
             case GL30.GL_DRAW_FRAMEBUFFER_BINDING:
             case GL30.GL_READ_FRAMEBUFFER_BINDING:
-                WebGLFramebufferWrapper fbo = (WebGLFramebufferWrapper)gl.getParametero(pname);
+                WebGLFramebuffer fbo = (WebGLFramebuffer)gl.getParameter(pname);
                 if(fbo == null) {
                     params.put(0, 0);
                 }
@@ -485,7 +485,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 return;
             case GL30.GL_TEXTURE_BINDING_2D_ARRAY:
             case GL30.GL_TEXTURE_BINDING_3D:
-                WebGLTextureWrapper tex = (WebGLTextureWrapper)gl.getParametero(pname);
+                WebGLTexture tex = (WebGLTexture)gl.getParameter(pname);
                 if(tex == null) {
                     params.put(0, 0);
                 }
@@ -494,7 +494,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 }
                 return;
             case GL30.GL_VERTEX_ARRAY_BINDING:
-                WebGLVertexArrayObjectWrapper obj = (WebGLVertexArrayObjectWrapper)gl.getParametero(pname);
+                WebGLVertexArrayObjectWrapper obj = (WebGLVertexArrayObjectWrapper)gl.getParameter(pname);
                 if(obj == null) {
                     params.put(0, 0);
                 }
@@ -535,7 +535,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             case GL30.GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE:
             case GL30.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
             case GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
-                params.put(0, gl.getFramebufferAttachmentParameteri(target, attachment, pname));
+                params.put(0, (int)(Object)gl.getFramebufferAttachmentParameter(target, attachment, pname));
                 break;
             default:
                 // Assume it is a GL20 pname
@@ -772,19 +772,19 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glUniform1uiv(int location, int count, IntBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniform1uiv(loc, copyUnsigned(value), 0, count);
     }
 
     @Override
     public void glUniform3uiv(int location, int count, IntBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniform3uiv(loc, copyUnsigned(value), 0, count);
     }
 
     @Override
     public void glUniform4uiv(int location, int count, IntBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniform4uiv(loc, copyUnsigned(value), 0, count);
     }
 
@@ -795,37 +795,37 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glUniformMatrix2x3fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix2x3fv(loc, transpose, TypedArrays.getTypedArray(value));
     }
 
     @Override
     public void glUniformMatrix2x4fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix2x4fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix3x2fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix3x2fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix3x4fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix3x4fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix4x2fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix4x2fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniformMatrix4x3fv(int location, int count, boolean transpose, FloatBuffer value) {
-        WebGLUniformLocationWrapper loc = getUniformLocation(location);
+        WebGLUniformLocation loc = getUniformLocation(location);
         gl.uniformMatrix4x3fv(loc, transpose, TypedArrays.getTypedArray(value), 0, count);
     }
 
