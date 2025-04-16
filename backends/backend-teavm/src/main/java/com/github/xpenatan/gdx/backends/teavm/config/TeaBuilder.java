@@ -23,7 +23,7 @@ import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
-import org.teavm.model.TextLocation;
+import org.teavm.tooling.TeaVMProblemRenderer;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -144,17 +144,6 @@ public class TeaBuilder {
                     Problem problem = problems.get(i);
                     CallLocation location = problem.getLocation();
                     MethodReference method = location != null ? location.getMethod() : null;
-                    String classSource = "-";
-                    String methodName = "-";
-
-                    if(location != null) {
-                        TextLocation sourceLocation = location.getSourceLocation();
-                        if(sourceLocation != null)
-                            classSource = sourceLocation.toString();
-                        if(method != null) {
-                            methodName = method.toString();
-                        }
-                    }
 
                     if(i > 0) {
                         TeaBuilder.log("");
@@ -162,8 +151,11 @@ public class TeaBuilder {
                         TeaBuilder.log("");
                     }
                     TeaBuilder.log(problem.getSeverity().toString() + "[" + i + "]");
-                    TeaBuilder.log("Class: " + classSource);
-                    TeaBuilder.log("Method: " + methodName);
+                    var sb = new StringBuilder();
+                    TeaVMProblemRenderer.renderCallStack(tool.getDependencyInfo().getCallGraph(),
+                            problem.getLocation(), sb);
+                    var locationString = sb.toString();
+                    locationString.lines().forEach(TeaBuilder::log);
                     p.clear();
                     problem.render(p);
                     String text = p.getText();
