@@ -193,6 +193,6 @@ public class TypedArrays {
     }
 
     public static Int8Array getTypedArray(byte[] buffer) {
-        return Int8Array.fromJavaArray(buffer);
+        return Int8Array.copyFromJavaArray(buffer);
     }
 }
