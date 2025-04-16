@@ -8,6 +8,7 @@ import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher;
 import java.io.File;
 import java.io.IOException;
+import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 
 @SkipClass
@@ -24,6 +25,7 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.logoPath = "logo.png";
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
         tool.setObfuscated(false);
         TeaBuilder.build(tool);
