@@ -139,11 +139,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         // don't load on main thread
         addQueue();
         if(async) {
-            new Thread() {
-                public void run() {
-                    loadBinaryInternally(true, url, listener, count);
-                }
-            }.start();
+            Window.setTimeout(() -> loadBinaryInternally(true, url, listener, count), 0);
         }
         else {
             loadBinaryInternally(false, url, listener, count);
@@ -163,14 +159,8 @@ public class AssetDownloadImpl implements AssetDownloader {
                 else if(status != 200) {
                     if ((status != 404) && (status != 403)) {
                         // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                        try {
-                            Thread.sleep(100);
-                        }
-                        catch (Throwable e) {
-                            // ignored
-                        }
                         int newCount = count + 1;
-                        loadBinary(async, url, listener, newCount);
+                        Window.setTimeout(() -> loadBinary(async, url, listener, newCount), 100);
                     }
                     else {
                         if(listener != null) {
