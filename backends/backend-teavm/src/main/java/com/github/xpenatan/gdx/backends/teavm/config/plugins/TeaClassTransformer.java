@@ -4,7 +4,6 @@ import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,9 +11,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
-import org.teavm.model.AnnotationContainer;
-import org.teavm.model.AnnotationHolder;
-import org.teavm.model.AnnotationValue;
 import org.teavm.model.ClassHierarchy;
 import org.teavm.model.ClassHolder;
 import org.teavm.model.ClassHolderTransformer;
@@ -136,24 +132,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         }
     }
 
-    private MethodHolder getMethodHolder(ClassHolder classHolder, String matchText) {
-        Collection<MethodHolder> methods = classHolder.getMethods();
-        Iterator<MethodHolder> iterator = methods.iterator();
-        while(iterator.hasNext()) {
-            MethodHolder methodHolder = iterator.next();
-            MethodDescriptor descriptor = methodHolder.getDescriptor();
-            String string = descriptor.toString();
-            if(string.contains(matchText)) {
-                return methodHolder;
-            }
-        }
-        return null;
-    }
-
-    private ClassHolder findClassHolder(ClassHolder cur, ClassHolderTransformerContext context, Class clazz) {
-        return findClassHolder(cur, context, clazz.getName());
-    }
-
     private ClassHolder findClassHolder(ClassHolder cur, ClassHolderTransformerContext context, String clazz) {
         if(cur.getName().equals(clazz))
             return cur;
@@ -161,45 +139,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         ClassReader classReader = innerSource.get(clazz);
         ClassHolder classHolder = (ClassHolder)classReader;
         return classHolder;
-    }
-
-    private void setFieldAnnotation(ClassHolder classHolder, Class annotationClass, String fieldStr, String value) {
-        for(FieldHolder field : classHolder.getFields().toArray(new FieldHolder[0])) {
-            String name = field.getName();
-            if(name.equals(fieldStr)) {
-                AnnotationContainer annotations = field.getAnnotations();
-                AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
-                if(value != null) {
-                    annotation.getValues().put("value", new AnnotationValue(value));
-                }
-                annotations.add(annotation);
-            }
-        }
-    }
-
-    private void setMethodAnnotation(ClassHolder classHolder, Class annotationClass, String methodStr, String value) {
-        for(MethodHolder method : classHolder.getMethods().toArray(new MethodHolder[0])) {
-            String name = method.getName();
-            if(name.equals(methodStr)) {
-                AnnotationContainer annotations = method.getAnnotations();
-                AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
-                if(value != null) {
-                    annotation.getValues().put("value", new AnnotationValue(value));
-                }
-                annotations.add(annotation);
-            }
-        }
-    }
-
-    private void setClassInterface(ClassHolder classHolder, Class annotationClass) {
-        Set<String> interfaces = classHolder.getInterfaces();
-        interfaces.add(annotationClass.getName());
-    }
-
-    private void setClassAnnotation(ClassHolder classHolder, Class annotationClass) {
-        AnnotationContainer annotations = classHolder.getAnnotations();
-        AnnotationHolder annotation = new AnnotationHolder(annotationClass.getName());
-        annotations.add(annotation);
     }
 
     private void replaceClassCode(ClassReaderSource innerSource, Class<?> emulated, final ClassHolder cls, final ClassReader emuCls) {
@@ -230,21 +169,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
             }
         }
 
-//
-//        if(emulatedClassName.contains("FloatBufferDirect")) {
-//
-//            String parent = emuCls.getParent();
-//            if(parent != null && !parent.isEmpty()) {
-//                ClassReader parentClassHolder = innerSource.get(parent);
-//                if(parentClassHolder != null) {
-//                    ClassHolder classHolder = ModelUtils.copyClass(parentClassHolder);
-//                    ClassHolder parentClassHolderRename = renamer.rename(classHolder);
-//                    String name = parentClassHolderRename.getName();
-//                    cls.setParent(name);
-//                }
-//            }
-//
-//        }
         for(Field field : fields) {
             String emuFieldName = field.getName();
             FieldReader emulatedField = emuCls.getField(emuFieldName);
