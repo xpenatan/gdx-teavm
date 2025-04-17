@@ -1,28 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.CanvasRenderingContext2DWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventHandlerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.KeyboardEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.MouseEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.NodeWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.ProgressEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchListWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.WebJSObject;
-import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestEventTargetWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.XMLHttpRequestWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -35,9 +12,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
-import org.teavm.jso.JSFunctor;
-import org.teavm.jso.JSObject;
-import org.teavm.jso.JSProperty;
 import org.teavm.model.AnnotationContainer;
 import org.teavm.model.AnnotationHolder;
 import org.teavm.model.AnnotationValue;
@@ -108,143 +82,10 @@ public class TeaClassTransformer implements ClassHolderTransformer {
         if(!init) {
             init = true;
             ClassHolder classHolder = null;
-
             if(!applicationListener.isEmpty()) {
                 classHolder = findClassHolder(cls, context, TeaClassTransformer.mainClass);
                 setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
             }
-
-            classHolder = findClassHolder(cls, context, HTMLVideoElementWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, HTMLCanvasElementWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getHeight", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setHeight", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getOwnerDocument", null);
-
-            classHolder = findClassHolder(cls, context, EventListenerWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setClassAnnotation(classHolder, JSFunctor.class);
-
-            classHolder = findClassHolder(cls, context, EventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getTarget", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getType", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getDetail", null);
-
-            classHolder = findClassHolder(cls, context, WheelEventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getDeltaX", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getDeltaY", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getDeltaZ", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getWheelDelta", null);
-
-            classHolder = findClassHolder(cls, context, MouseEventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientX", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientY", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getMovementX", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getMovementY", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getButton", null);
-
-            classHolder = findClassHolder(cls, context, KeyboardEventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getCharCode", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getKeyCode", null);
-
-            classHolder = findClassHolder(cls, context, TouchEventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getChangedTouches", null);
-
-            classHolder = findClassHolder(cls, context, TouchListWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLength", null);
-
-            classHolder = findClassHolder(cls, context, TouchWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getIdentifier", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientX", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientY", null);
-
-            classHolder = findClassHolder(cls, context, DocumentWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getCompatMode", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getDocumentElement", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getBody", null);
-
-            classHolder = findClassHolder(cls, context, ElementWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getScrollTop", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getScrollLeft", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getClientHeight", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getStyle", null);
-
-            classHolder = findClassHolder(cls, context, HTMLElementWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getOffsetParent", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getOffsetTop", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getOffsetLeft", null);
-
-            classHolder = findClassHolder(cls, context, NodeWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getParentNode", null);
-
-            classHolder = findClassHolder(cls, context, HTMLDocumentWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getParentNode", null);
-
-            classHolder = findClassHolder(cls, context, EventHandlerWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setClassAnnotation(classHolder, JSFunctor.class);
-
-            classHolder = findClassHolder(cls, context, XMLHttpRequestEventTargetWrapper.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "setOnprogress", null);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, XMLHttpRequestWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "setOnreadystatechange", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getReadyState", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getStatus", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getResponse", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setResponseType", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getResponseText", null);
-
-            classHolder = findClassHolder(cls, context, ProgressEventWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLoaded", null);
-
-            classHolder = findClassHolder(cls, context, LocationWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getHref", null);
-
-            classHolder = findClassHolder(cls, context, WebJSObject.class);
-            setClassInterface(classHolder, JSObject.class);
-
-            classHolder = findClassHolder(cls, context, CanvasRenderingContext2DWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
-            setMethodAnnotation(classHolder, JSProperty.class, "getGlobalAlpha", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setGlobalAlpha", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setFillStyle", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setStrokeStyle", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getStrokeStyle", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getGlobalCompositeOperation", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setGlobalCompositeOperation", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLineWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setLineWidth", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLineCap", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setLineCap", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getLineJoin", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setLineJoin", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "getMiterLimit", null);
-            setMethodAnnotation(classHolder, JSProperty.class, "setMiterLimit", null);
-
-            classHolder = findClassHolder(cls, context, StyleWrapper.class);
-            setClassInterface(classHolder, JSObject.class);
         }
 
         emulateClass(context, cls, innerSource);

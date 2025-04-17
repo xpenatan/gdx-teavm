@@ -1,6 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-public interface CanvasRenderingContext2DWrapper {
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
+
+public interface CanvasRenderingContext2DWrapper extends JSObject {
     // CanvasRenderingContext2D
     HTMLCanvasElementWrapper getCanvas();
 
@@ -18,20 +21,28 @@ public interface CanvasRenderingContext2DWrapper {
 
     void setTransform(double a, double b, double c, double d, double e, double f);
 
+    @JSProperty
     double getGlobalAlpha();
 
+    @JSProperty
     void setGlobalAlpha(double globalAlpha);
 
+    @JSProperty
     String getGlobalCompositeOperation();
 
+    @JSProperty
     void setGlobalCompositeOperation(String globalCompositeOperation);
 
+    @JSProperty
     String getStrokeStyle();
 
+    @JSProperty
     void setStrokeStyle(String strokeStyle);
 
+    @JSProperty
     String getFillStyle();
 
+    @JSProperty
     void setFillStyle(String fillStyle);
 
 //	CanvasGradient createLinearGradient(double x0, double y0, double x1, double y1);
@@ -44,20 +55,28 @@ public interface CanvasRenderingContext2DWrapper {
 
 //	CanvasPattern createPattern(HTMLVideoElementWrapper image, String repetition);
 
+    @JSProperty
     double getLineWidth();
 
+    @JSProperty
     void setLineWidth(double lineWidth);
 
+    @JSProperty
     String getLineCap();
 
+    @JSProperty
     void setLineCap(String lineCap);
 
+    @JSProperty
     String getLineJoin();
 
+    @JSProperty
     void setLineJoin(String lineJoin);
 
+    @JSProperty
     double getMiterLimit();
 
+    @JSProperty
     void setMiterLimit(double miterLimit);
 
     double getShadowOffsetX();

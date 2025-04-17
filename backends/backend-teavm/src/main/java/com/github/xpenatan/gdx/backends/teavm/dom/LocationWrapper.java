@@ -1,6 +1,9 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-public interface LocationWrapper {
+import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
 
-    public String getHref();
+public interface LocationWrapper extends JSObject {
+    @JSProperty
+    String getHref();
 }
