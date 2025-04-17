@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -73,21 +75,22 @@ public class TeaBuilder {
     private static final String EXTENSION_BOX2D = "gdx-box2d-teavm";
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
 
+
     public static TeaVMTool config(TeaBuildConfiguration configuration) {
+        return config(TeaVMTargetType.JAVASCRIPT, configuration);
+    }
+
+    public static TeaVMTool config(TeaVMTargetType target, TeaBuildConfiguration configuration) {
         TeaVMTool tool = new TeaVMTool();
-        return config(tool, configuration, null);
+        return config(target, tool, configuration, null);
     }
 
     public static TeaVMTool config(TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
         TeaVMTool tool = new TeaVMTool();
-        return config(tool, configuration, progressListener);
+        return config(TeaVMTargetType.JAVASCRIPT, tool, configuration, progressListener);
     }
 
-    public static TeaVMTool config(TeaVMTool tool, TeaBuildConfiguration configuration) {
-        return config(tool, configuration);
-    }
-
-    public static TeaVMTool config(TeaVMTool tool, TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
+    public static TeaVMTool config(TeaVMTargetType target, TeaVMTool tool, TeaBuildConfiguration configuration, TeaProgressListener progressListener) {
         ArrayList<URL> acceptedURL = new ArrayList<>();
         String webappDirectory = configuration.getWebAppPath();
         String webappName = "webapp";
@@ -103,7 +106,7 @@ public class TeaBuilder {
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
-        configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
+        configTool(target, tool, classLoader, configuration, webappDirectory, webappName, progressListener);
         configAssets(classLoader, configuration, webappDirectory, webappName, acceptedURL);
 
         return tool;
@@ -309,13 +312,18 @@ public class TeaBuilder {
         }
     }
 
-    private static void configTool(TeaVMTool tool, TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {
+    private static void configTool(TeaVMTargetType targetType, TeaVMTool tool, TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, TeaProgressListener progressListener) {
         boolean setDebugInformationGenerated = false;
         boolean setSourceMapsFileGenerated = false;
         boolean setSourceFilesCopied = false;
 
         File setTargetDirectory = new File(webappDirectory + File.separator + webappName + File.separator + "teavm");
         String setTargetFileName = "app.js";
+
+        if(targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
+            copyRuntime(setTargetDirectory);
+            setTargetFileName = "app.wasm";
+        }
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
         boolean setIncremental = false;
@@ -338,7 +346,7 @@ public class TeaBuilder {
         tool.setIncremental(setIncremental);
         tool.setCacheDirectory(setCacheDirectory);
         tool.setStrict(false);
-        tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
+        tool.setTargetType(targetType);
         tool.setProgressListener(new TeaVMProgressListener() {
             TeaVMPhase phase = null;
 
@@ -370,6 +378,23 @@ public class TeaBuilder {
             }
         });
         preserveClasses(tool, configuration, classLoader);
+    }
+
+    public static void copyRuntime(File setTargetDirectory) {
+        try {
+            var name = new StringBuilder("wasm-gc");
+            name.append("-runtime");
+            //        if (getObfuscated().get()) {
+            //            name.append(".min");
+            //        }
+            var resourceName = "org/teavm/backend/wasm/" + name + ".js";
+            var classLoader = TeaBuilder.class.getClassLoader();
+            try (var input = classLoader.getResourceAsStream(resourceName)) {
+                Files.copy(input, setTargetDirectory.toPath().resolve(name + ".js"), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch(Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     public static void configAssets(TeaClassLoader classLoader, TeaBuildConfiguration configuration, String webappDirectory, String webappName, ArrayList<URL> acceptedURL) {

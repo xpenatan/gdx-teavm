@@ -22,8 +22,7 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.logoPath = "logo.png";
 
-        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
+        TeaVMTool tool = TeaBuilder.config(TeaVMTargetType.WEBASSEMBLY_GC, teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
         tool.setObfuscated(false);
         TeaBuilder.build(tool);
