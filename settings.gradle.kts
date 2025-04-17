@@ -1,5 +1,17 @@
 import java.util.*
 
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            url = uri("http://teavm.org/maven/repository/")
+            isAllowInsecureProtocol = true
+        }
+    }
+}
+
 include(":backends:backend-teavm")
 
 include(":extensions:asset-loader")

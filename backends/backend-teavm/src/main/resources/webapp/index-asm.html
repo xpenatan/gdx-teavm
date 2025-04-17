@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Main page</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <script type="text/javascript" charset="utf-8" src="teavm/wasm-gc-runtime.js"></script>
+</head>
+<body>
+
+<div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+</div>
+<script>
+    async function main() {
+        let teavm = await TeaVM.wasmGC.load("teavm/app.wasm");
+        teavm.exports.main([]);
+    }
+    main();
+</script>
+</body>
+</html>
