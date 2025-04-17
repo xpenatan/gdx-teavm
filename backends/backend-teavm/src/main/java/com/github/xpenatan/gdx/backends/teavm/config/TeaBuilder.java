@@ -4,7 +4,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaClassTransformer;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,7 +13,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -103,16 +101,6 @@ public class TeaBuilder {
         TeaBuilder.log("");
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
-
-        Set<Class<?>> typesAnnotatedWith = TeaClassTransformer.reflections.getTypesAnnotatedWith(SkipClass.class);
-
-        ArrayList<String> skipClasses = new ArrayList<>();
-        Iterator<Class<?>> iterator = typesAnnotatedWith.stream().iterator();
-        while(iterator.hasNext()) {
-            Class<?> skipClass = iterator.next();
-            skipClasses.add(skipClass.getName());
-        }
-        skipClasses.addAll(configuration.getSkipClasses());
         TeaClassLoader classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
 
         configTool(tool, classLoader, configuration, webappDirectory, webappName, progressListener);
