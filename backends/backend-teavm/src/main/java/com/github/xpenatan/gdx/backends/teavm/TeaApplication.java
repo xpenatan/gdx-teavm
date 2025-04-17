@@ -109,8 +109,9 @@ public class TeaApplication implements Application, Runnable {
         hostPageBaseURL = location.getHref();
 
         if(hostPageBaseURL.contains(".html")) {
-            // TODO use regex
+            // TODO Find a solution to remove html path
             hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
+            hostPageBaseURL = hostPageBaseURL.replace("index-wasm.html", "");
             hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
         }
         int indexQM = hostPageBaseURL.indexOf('?');
