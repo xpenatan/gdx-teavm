@@ -52,7 +52,7 @@ public class Gdx2DPixmapNative implements Disposable {
         Int8Array heapData = getHeapData(false);
         if(buffer == null) {
             int length = heapData.getLength();
-            buffer = ByteBuffer.allocate(length);
+            buffer = ByteBuffer.allocateDirect(length);
         }
         TypedArrays.copy(heapData, buffer);
     }
