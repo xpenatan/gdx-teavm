@@ -246,16 +246,16 @@ public class TypedArrays {
     }
 
     public static Float32Array getTypedArray(FloatBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Float32Array.fromJavaBuffer(buffer);
-        }
-        else {
+//        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+//            return Float32Array.fromJavaBuffer(buffer);
+//        }
+//        else {
             Float32Array array = new Float32Array(buffer.limit());
             for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
                 array.set(j, buffer.get(i));
             }
             return array;
-        }
+//        }
     }
 
     public static Int8Array getTypedArray(byte[] buffer) {
