@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.teavm.jso.JSBody;
@@ -12,6 +13,7 @@ import org.teavm.jso.JSClass;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.typedarrays.Int8Array;
 import org.teavm.jso.typedarrays.Uint8Array;
 import org.teavm.jso.webgl.WebGLActiveInfo;
 import org.teavm.jso.webgl.WebGLBuffer;
@@ -735,10 +737,17 @@ public class TeaGL20 implements GL20 {
             throw new GdxRuntimeException(
                     "Only format RGBA and type UNSIGNED_BYTE are currently supported for glReadPixels(...). Create an issue when you need other formats.");
         }
-        ArrayBufferView typedArray = TypedArrays.getTypedArray(pixels);
+        ByteBuffer byteBuffer = (ByteBuffer)pixels;
         int size = 4 * width * height;
-        Uint8Array buffer = TypedArrays.createUint8Array(typedArray.getBuffer(), typedArray.getByteOffset(), size);
-        gl.readPixels(x, y, width, height, format, type, buffer);
+        Uint8Array array = new Uint8Array(size);
+        gl.readPixels(x, y, width, height, format, type, array);
+        Int8Array ar = new Int8Array(array);
+        for(int i = 0; i < size; i++) {
+            byte value = ar.get(i);
+            byteBuffer.put(i, value);
+        }
+        pixels.position(0);
+        pixels.limit(size);
     }
 
     @Override
@@ -804,40 +813,45 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels) {
         if(pixels == null) {
-            gl.texImage2D(target, level, internalformat, width, height, border, format, type, null);
+            gl.texImage2D(target, level, internalformat, width, height, border, format, type, (ArrayBufferView)null);
             return;
         }
-
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
+        ArrayBufferView arrayBuffer = null;
         if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(true, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(true, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         else if(type == WebGLRenderingContext.FLOAT) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(false, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         gl.texImage2D(target, level, internalformat, width, height, border, format, type, arrayBuffer);
     }
 
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
+        ArrayBufferView arrayBuffer = null;
         if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(true, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(true, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         else if(type == WebGLRenderingContext.FLOAT) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
+            arrayBuffer = TypedArrays.getTypedArray(false, pixels);
+//            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
+//            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
         }
         gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, arrayBuffer);
     }

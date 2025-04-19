@@ -24,9 +24,8 @@ public class PixmapEmu implements Disposable {
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
         final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
-        ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
+        ByteBuffer pixels = pixmap.getPixels();
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
-        pixmap.setPixels(pixels);
         return pixmap;
     }
 

@@ -6,6 +6,9 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import org.teavm.classlib.PlatformDetector;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSByRef;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
@@ -128,12 +131,21 @@ public class TypedArrays {
 
     // Obtain the array reference from ArrayBufferView
     public static byte[] toByteArray(TypedArray array) {
-        Int8Array intArray = new Int8Array(array);
-        int length = intArray.getLength();
+        int length = array.getLength();
         byte[] newByte = new byte[length];
-
-        for(int i = 0; i < length; i++) {
-            newByte[i] = intArray.get(i);
+        if(array instanceof Int8Array) {
+            Int8Array arr = (Int8Array)array;
+            for(int i = 0; i < length; i++) {
+                byte value = arr.get(i);
+                newByte[i] = value;
+            }
+        }
+        else {
+            Int8Array arr = new Int8Array(array);
+            for(int i = 0; i < length; i++) {
+                byte value = arr.get(i);
+                newByte[i] = value;
+            }
         }
         return newByte;
     }
@@ -169,30 +181,96 @@ public class TypedArrays {
     }
 
     public static Int8Array getTypedArray(ByteBuffer buffer) {
-        return Int8Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Int8Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Int8Array array = new Int8Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Uint8Array getUTypedArray(ByteBuffer buffer) {
-        return Uint8Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Uint8Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Uint8Array array = new Uint8Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Int16Array getTypedArray(ShortBuffer buffer) {
-        return Int16Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Int16Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Int16Array array = new Int16Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Uint16Array getUTypedArray(ShortBuffer buffer) {
-        return Uint16Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Uint16Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Uint16Array array = new Uint16Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Int32Array getTypedArray(IntBuffer buffer) {
-        return Int32Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Int32Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Int32Array array = new Int32Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Float32Array getTypedArray(FloatBuffer buffer) {
-        return Float32Array.fromJavaBuffer(buffer);
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Float32Array.fromJavaBuffer(buffer);
+        }
+        else {
+            Float32Array array = new Float32Array(buffer.limit());
+            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
+                array.set(j, buffer.get(i));
+            }
+            return array;
+        }
     }
 
     public static Int8Array getTypedArray(byte[] buffer) {
         return Int8Array.copyFromJavaArray(buffer);
     }
+
+    @JSBody(
+            params = {"array"},
+            script = "return array;"
+    )
+    private static native Uint16Array copyFromJavaArray(@JSByRef(optional = true) short[] var0);
+
+    @JSBody(
+            params = {"typedArray"},
+            script = "return typedArray.buffer.detached;"
+    )
+    public static native boolean isDetached(TypedArray typedArray);
 }

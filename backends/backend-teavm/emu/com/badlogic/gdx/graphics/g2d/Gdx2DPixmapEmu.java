@@ -67,8 +67,8 @@ public class Gdx2DPixmapEmu implements Disposable {
     int heapEndIndex;
 
     private Int32Array nativeData;
-    private Uint8Array nativeBuffer2;
-//    private Int8ArrayNative nativeBuffer;
+    private Uint8Array nativeBuffer;
+    private ByteBuffer buffer;
 
     public Gdx2DPixmapEmu(byte[] encodedData, int offset, int len, int requestedFormat) {
         nativeData = loadNative(encodedData, offset, len);
@@ -94,13 +94,6 @@ public class Gdx2DPixmapEmu implements Disposable {
         this.format = nativeData.get(3);
         this.heapStartIndex = nativeData.get(4);
         this.heapEndIndex = nativeData.get(5);
-        nativeBuffer2 = getHeapData(true);
-
-//        nativeBuffer = new Int8ArrayNative();
-//        nativeBuffer.listener = this;
-//        nativeBuffer.buffer = recreateBuffer();
-//        HasArrayBufferView hasArrayBufferView = (HasArrayBufferView)buffer;
-//        hasArrayBufferView.setInt8ArrayNative(nativeBuffer);
     }
 
 //    public Gdx2DPixmapEmu(ByteBuffer encodedData, int offset, int len, int requestedFormat) throws IOException {
@@ -160,7 +153,7 @@ public class Gdx2DPixmapEmu implements Disposable {
         this.width = pixmap.width;
         this.height = pixmap.height;
         this.nativeData = pixmap.nativeData;
-        this.nativeBuffer2 = pixmap.nativeBuffer2;
+        this.nativeBuffer = pixmap.nativeBuffer;
         this.heapStartIndex = pixmap.heapStartIndex;
         this.heapEndIndex = pixmap.heapEndIndex;
     }
@@ -239,13 +232,14 @@ public class Gdx2DPixmapEmu implements Disposable {
         }
     }
 
-    public Uint8Array getPixels(boolean shouldCopy) {
-        return getHeapData(shouldCopy);
-    }
-
     public ByteBuffer getBuffer() {
-        byte[] byteArray = TypedArrays.toByteArray(nativeBuffer2);
-        return ByteBuffer.wrap(byteArray);
+        // TODO not fulled tested when emscripten buffer is detached (memory grow).
+        if(buffer == null || nativeBuffer != null && TypedArrays.isDetached(nativeBuffer)) {
+            nativeBuffer = getHeapData(false);
+            byte[] byteArray = TypedArrays.toByteArray(nativeBuffer);
+            buffer =  ByteBuffer.wrap(byteArray);
+        }
+        return buffer;
     }
 
     public int getHeight() {

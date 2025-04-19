@@ -4,7 +4,7 @@ package com.github.xpenatan.gdx.backends.teavm;
  * @author xpenatan
  */
 public class TeaTool {
-    private static boolean isProd = true;
+    private static boolean isProd = false;
     public static boolean isProdMode() {
         return isProd;
     }
