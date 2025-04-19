@@ -23,23 +23,8 @@ public class TypedArrays {
 
     // Obtain the array reference from ArrayBufferView
     public static byte[] toByteArray(TypedArray array) {
-        int length = array.getLength();
-        byte[] newByte = new byte[length];
-        if(array instanceof Int8Array) {
-            Int8Array arr = (Int8Array)array;
-            for(int i = 0; i < length; i++) {
-                byte value = arr.get(i);
-                newByte[i] = value;
-            }
-        }
-        else {
-            Int8Array arr = new Int8Array(array);
-            for(int i = 0; i < length; i++) {
-                byte value = arr.get(i);
-                newByte[i] = value;
-            }
-        }
-        return newByte;
+        Int8Array intArray = new Int8Array(array);
+        return intArray.copyToJavaArray();
     }
 
     public static ArrayBufferView getTypedArray(Buffer buffer) {
@@ -76,6 +61,10 @@ public class TypedArrays {
         if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
             return Int8Array.fromJavaBuffer(buffer);
         }
+        else if(buffer.hasArray()) {
+            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
+            return new Int8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+        }
         else {
             Int8Array array = new Int8Array(buffer.limit());
             for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
@@ -88,6 +77,10 @@ public class TypedArrays {
     public static Uint8Array getUTypedArray(ByteBuffer buffer) {
         if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
             return Uint8Array.fromJavaBuffer(buffer);
+        }
+        else if(buffer.hasArray()) {
+            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
+            return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
             Uint8Array array = new Uint8Array(buffer.limit());
@@ -102,6 +95,10 @@ public class TypedArrays {
         if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
             return Int16Array.fromJavaBuffer(buffer);
         }
+        else if(buffer.hasArray()) {
+            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
+            return new Int16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+        }
         else {
             Int16Array array = new Int16Array(buffer.limit());
             for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
@@ -114,6 +111,10 @@ public class TypedArrays {
     public static Uint16Array getUTypedArray(ShortBuffer buffer) {
         if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
             return Uint16Array.fromJavaBuffer(buffer);
+        }
+        else if(buffer.hasArray()) {
+            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
+            return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
             Uint16Array array = new Uint16Array(buffer.limit());
@@ -128,6 +129,10 @@ public class TypedArrays {
         if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
             return Int32Array.fromJavaBuffer(buffer);
         }
+        else if(buffer.hasArray()) {
+            var typedArray = Int32Array.copyFromJavaArray(buffer.array());
+            return new Int32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+        }
         else {
             Int32Array array = new Int32Array(buffer.limit());
             for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
@@ -138,16 +143,20 @@ public class TypedArrays {
     }
 
     public static Float32Array getTypedArray(FloatBuffer buffer) {
-//        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-//            return Float32Array.fromJavaBuffer(buffer);
-//        }
-//        else {
+        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
+            return Float32Array.fromJavaBuffer(buffer);
+        }
+        else if(buffer.hasArray()) {
+            var typedArray = Float32Array.copyFromJavaArray(buffer.array());
+            return new Float32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+        }
+        else {
             Float32Array array = new Float32Array(buffer.limit());
             for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
                 array.set(j, buffer.get(i));
             }
             return array;
-//        }
+        }
     }
 
     public static Int8Array getTypedArray(byte[] buffer) {
