@@ -42,11 +42,6 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         this.gl = gl;
     }
 
-    private Int32Array copyUnsigned(IntBuffer buffer) {
-        ArrayBufferView typedArray = TypedArrays.getTypedArray(buffer);
-        return TypedArrays.createInt32Array(typedArray.getBuffer(), buffer.position(), buffer.remaining());
-    }
-
     private void deallocateQueryId(int id) {
         queries.remove(id);
     }
@@ -229,12 +224,8 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glDrawBuffers(int n, IntBuffer bufs) {
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(bufs);
-        int startPosition = bufs.position();
-        int byteOffset = arrayBuffer.getByteOffset() + bufs.position();
-        Int32Array array32Buffer = TypedArrays.createInt32Array(arrayBuffer.getBuffer(), byteOffset, n);
-        gl.drawBuffers(array32Buffer);
-        bufs.position(startPosition);
+        Int32Array arrayBuffer = TypedArrays.getTypedArray(bufs);
+        gl.drawBuffers(arrayBuffer);
     }
 
     @Override
@@ -713,38 +704,15 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, (ArrayBufferView)null);
             return;
         }
-
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
-        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
-        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
-        else if(type == WebGLRenderingContext.FLOAT) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
+        boolean isUnsigned = type == WebGLRenderingContext.UNSIGNED_BYTE || type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4;
+        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(isUnsigned, pixels);
         gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, arrayBuffer);
     }
 
     @Override
     public void glTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, Buffer pixels) {
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(pixels);
-        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint8Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
-        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createUint16Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
-        else if(type == WebGLRenderingContext.FLOAT) {
-            int byteOffset = arrayBuffer.getByteOffset() + pixels.position();
-            arrayBuffer = TypedArrays.createFloat32Array(arrayBuffer.getBuffer(), byteOffset, pixels.remaining());
-        }
+        boolean isUnsigned = type == WebGLRenderingContext.UNSIGNED_BYTE || type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4;
+        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(isUnsigned, pixels);
         gl.texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, arrayBuffer);
     }
 
@@ -773,19 +741,19 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glUniform1uiv(int location, int count, IntBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform1uiv(loc, copyUnsigned(value), 0, count);
+        gl.uniform1uiv(loc, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniform3uiv(int location, int count, IntBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform3uiv(loc, copyUnsigned(value), 0, count);
+        gl.uniform3uiv(loc, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override
     public void glUniform4uiv(int location, int count, IntBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform4uiv(loc, copyUnsigned(value), 0, count);
+        gl.uniform4uiv(loc, TypedArrays.getTypedArray(value), 0, count);
     }
 
     @Override

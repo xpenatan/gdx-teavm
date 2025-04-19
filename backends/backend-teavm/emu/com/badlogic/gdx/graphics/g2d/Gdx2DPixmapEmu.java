@@ -1,6 +1,7 @@
 package com.badlogic.gdx.graphics.g2d;
 
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -9,7 +10,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.Int32Array;
-import org.teavm.jso.typedarrays.Uint8Array;
+import org.teavm.jso.typedarrays.Int8Array;
 
 @Emulate(Gdx2DPixmap.class)
 public class Gdx2DPixmapEmu implements Disposable {
@@ -67,7 +68,6 @@ public class Gdx2DPixmapEmu implements Disposable {
     int heapEndIndex;
 
     private Int32Array nativeData;
-    private Uint8Array nativeBuffer;
     private ByteBuffer buffer;
 
     public Gdx2DPixmapEmu(byte[] encodedData, int offset, int len, int requestedFormat) {
@@ -94,6 +94,15 @@ public class Gdx2DPixmapEmu implements Disposable {
         this.format = nativeData.get(3);
         this.heapStartIndex = nativeData.get(4);
         this.heapEndIndex = nativeData.get(5);
+        copyHeapToBuffer();
+    }
+
+    private void copyHeapToBuffer() {
+        Int8Array heapData = getHeapData(false);
+        if(buffer == null) {
+            buffer = ByteBuffer.allocate(heapData.getByteLength());
+        }
+        TypedArrays.copy(heapData, buffer);
     }
 
 //    public Gdx2DPixmapEmu(ByteBuffer encodedData, int offset, int len, int requestedFormat) throws IOException {
@@ -153,7 +162,6 @@ public class Gdx2DPixmapEmu implements Disposable {
         this.width = pixmap.width;
         this.height = pixmap.height;
         this.nativeData = pixmap.nativeData;
-        this.nativeBuffer = pixmap.nativeBuffer;
         this.heapStartIndex = pixmap.heapStartIndex;
         this.heapEndIndex = pixmap.heapEndIndex;
     }
@@ -161,14 +169,18 @@ public class Gdx2DPixmapEmu implements Disposable {
     @Override
     public void dispose() {
         free(basePtr);
+        buffer = null;
+        nativeData = null;
     }
 
     public void clear(int color) {
         clear(basePtr, color);
+        copyHeapToBuffer();
     }
 
     public void setPixel(int x, int y, int color) {
         setPixel(basePtr, x, y, color);
+        copyHeapToBuffer();
     }
 
     public int getPixel(int x, int y) {
@@ -177,42 +189,52 @@ public class Gdx2DPixmapEmu implements Disposable {
 
     public void drawLine(int x, int y, int x2, int y2, int color) {
         drawLine(basePtr, x, y, x2, y2, color);
+        copyHeapToBuffer();
     }
 
     public void drawRect(int x, int y, int width, int height, int color) {
         drawRect(basePtr, x, y, width, height, color);
+        copyHeapToBuffer();
     }
 
     public void drawCircle(int x, int y, int radius, int color) {
         drawCircle(basePtr, x, y, radius, color);
+        copyHeapToBuffer();
     }
 
     public void fillRect(int x, int y, int width, int height, int color) {
         fillRect(basePtr, x, y, width, height, color);
+        copyHeapToBuffer();
     }
 
     public void fillCircle(int x, int y, int radius, int color) {
         fillCircle(basePtr, x, y, radius, color);
+        copyHeapToBuffer();
     }
 
     public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int color) {
         fillTriangle(basePtr, x1, y1, x2, y2, x3, y3, color);
+        copyHeapToBuffer();
     }
 
     public void drawPixmap(Gdx2DPixmapEmu src, int srcX, int srcY, int dstX, int dstY, int width, int height) {
         drawPixmap(src.basePtr, basePtr, srcX, srcY, width, height, dstX, dstY, width, height);
+        copyHeapToBuffer();
     }
 
     public void drawPixmap(Gdx2DPixmapEmu src, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
         drawPixmap(src.basePtr, basePtr, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
+        copyHeapToBuffer();
     }
 
     public void setBlend(int blend) {
         setBlend(basePtr, blend);
+        copyHeapToBuffer();
     }
 
     public void setScale(int scale) {
         setScale(basePtr, scale);
+        copyHeapToBuffer();
     }
 
     public static Gdx2DPixmapEmu newPixmap(InputStream in, int requestedFormat) {
@@ -233,12 +255,6 @@ public class Gdx2DPixmapEmu implements Disposable {
     }
 
     public ByteBuffer getBuffer() {
-        // TODO not fulled tested when emscripten buffer is detached (memory grow).
-        if(buffer == null || nativeBuffer != null && TypedArrays.isDetached(nativeBuffer)) {
-            nativeBuffer = getHeapData(false);
-            byte[] byteArray = TypedArrays.toByteArray(nativeBuffer);
-            buffer =  ByteBuffer.wrap(byteArray);
-        }
         return buffer;
     }
 
@@ -270,7 +286,7 @@ public class Gdx2DPixmapEmu implements Disposable {
         return getFormatString(format);
     }
 
-    public Uint8Array getHeapData(boolean shouldCopy) {
+    public Int8Array getHeapData(boolean shouldCopy) {
         if(heapStartIndex == 0 && heapEndIndex == 0) {
             return null;
         }
@@ -297,14 +313,14 @@ public class Gdx2DPixmapEmu implements Disposable {
     }
 
     @JSBody(params = {"shouldCopy", "heapStartIndex", "heapEndIndex"}, script = "" +
-            "var heapArray = Gdx.HEAPU8.subarray(heapStartIndex, heapEndIndex);" +
+            "var heapArray = Gdx.HEAP8.subarray(heapStartIndex, heapEndIndex);" +
             "if(shouldCopy) {" +
-            "   var newArray = new Uint8Array(heapArray);" +
+            "   var newArray = new Int8Array(heapArray);" +
             "   return newArray;" +
             "}" +
             "return heapArray;"
     )
-    private static native Uint8Array getHeapDataNative(boolean shouldCopy, int heapStartIndex, int heapEndIndex);
+    private static native Int8Array getHeapDataNative(boolean shouldCopy, int heapStartIndex, int heapEndIndex);
 
     // @off
     /*JNI

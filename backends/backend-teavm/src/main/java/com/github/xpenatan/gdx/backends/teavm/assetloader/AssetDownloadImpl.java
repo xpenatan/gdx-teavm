@@ -181,7 +181,7 @@ public class AssetDownloadImpl implements AssetDownloader {
                     }
                     else {
                         ArrayBuffer response = (ArrayBuffer)jsResponse;
-                        data = TypedArrays.createInt8Array(response);
+                        data = new Int8Array(response);
                         arrayBuffer = response;
                     }
 

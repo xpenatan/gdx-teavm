@@ -90,7 +90,7 @@ public class AssetLoadImpl implements AssetLoader {
                 public void handleEvent(EventWrapper evt) {
                     FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
                     ArrayBuffer arrayBuffer = target.getResultAsArrayBuffer();
-                    Int8Array data = TypedArrays.createInt8Array(arrayBuffer);
+                    Int8Array data = new Int8Array(arrayBuffer);
                     byte[] bytes = TypedArrays.toByteArray(data);
                     FileData fielData = new FileData(name, bytes);
                     resolve.accept(fielData);
