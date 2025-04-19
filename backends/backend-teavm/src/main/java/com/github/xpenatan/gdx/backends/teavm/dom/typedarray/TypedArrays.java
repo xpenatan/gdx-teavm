@@ -164,10 +164,16 @@ public class TypedArrays {
     }
 
     public static void copy(Int8Array in, ByteBuffer out) {
-        int length = in.getLength();
-        for(int i = 0; i < length; i++) {
-            byte value = in.get(i);
-            out.put(i, value);
-        }
+//        if(PlatformDetector.isJavaScript() || out.isDirect()) {
+//            Int8Array array = Int8Array.fromJavaBuffer(out);
+//            array.set(in);
+//        }
+//        else {
+            int length = in.getLength();
+            for(int i = 0; i < length; i++) {
+                byte value = in.get(i);
+                out.put(i, value);
+            }
+//        }
     }
 }
