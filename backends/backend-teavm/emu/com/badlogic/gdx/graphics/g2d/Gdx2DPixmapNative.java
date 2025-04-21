@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import java.nio.ByteBuffer;
+
+import org.teavm.classlib.impl.nio.Buffers;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Int8Array;
@@ -73,7 +75,10 @@ public class Gdx2DPixmapNative implements Disposable {
     @Override
     public void dispose() {
         free(basePtr);
-        buffer = null;
+        if (buffer != null) {
+            Buffers.free(buffer);
+            buffer = null;
+        }
         nativeData = null;
     }
 

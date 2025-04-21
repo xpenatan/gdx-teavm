@@ -66,11 +66,9 @@ public class TypedArrays {
             return new Int8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Int8Array array = new Int8Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new byte[buffer.capacity()];
+            buffer.get(0, array);
+            return Int8Array.copyFromJavaArray(buffer.array());
         }
     }
 
@@ -83,11 +81,10 @@ public class TypedArrays {
             return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Uint8Array array = new Uint8Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new byte[buffer.capacity()];
+            buffer.get(0, array);
+            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
+            return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
     }
 
@@ -100,11 +97,9 @@ public class TypedArrays {
             return new Int16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Int16Array array = new Int16Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new short[buffer.capacity()];
+            buffer.get(0, array);
+            return Int16Array.copyFromJavaArray(buffer.array());
         }
     }
 
@@ -117,11 +112,10 @@ public class TypedArrays {
             return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Uint16Array array = new Uint16Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new short[buffer.capacity()];
+            buffer.get(0, array);
+            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
+            return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
     }
 
@@ -134,11 +128,9 @@ public class TypedArrays {
             return new Int32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Int32Array array = new Int32Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new int[buffer.capacity()];
+            buffer.get(0, array);
+            return Int32Array.copyFromJavaArray(array);
         }
     }
 
@@ -151,11 +143,9 @@ public class TypedArrays {
             return new Float32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
         else {
-            Float32Array array = new Float32Array(buffer.limit());
-            for(int i = buffer.position(), j = 0; i < buffer.limit(); i++, j++) {
-                array.set(j, buffer.get(i));
-            }
-            return array;
+            var array = new float[buffer.capacity()];
+            buffer.get(0, array);
+            return Float32Array.copyFromJavaArray(array);
         }
     }
 
@@ -169,11 +159,8 @@ public class TypedArrays {
             array.set(in);
         }
         else {
-            int length = in.getLength();
-            for(int i = 0; i < length; i++) {
-                byte value = in.get(i);
-                out.put(i, value);
-            }
+            var data = in.copyToJavaArray();
+            out.put(0, data);
         }
     }
 }

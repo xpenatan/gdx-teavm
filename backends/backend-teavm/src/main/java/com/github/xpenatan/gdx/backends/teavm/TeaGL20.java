@@ -742,10 +742,7 @@ public class TeaGL20 implements GL20 {
         Uint8Array array = new Uint8Array(size);
         gl.readPixels(x, y, width, height, format, type, array);
         Int8Array ar = new Int8Array(array);
-        for(int i = 0; i < size; i++) {
-            byte value = ar.get(i);
-            byteBuffer.put(i, value);
-        }
+        byteBuffer.put(0, ar.copyToJavaArray());
         pixels.position(0);
         pixels.limit(size);
     }

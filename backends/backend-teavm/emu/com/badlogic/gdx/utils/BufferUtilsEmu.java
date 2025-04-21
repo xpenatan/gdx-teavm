@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+import org.teavm.classlib.PlatformDetector;
+import org.teavm.classlib.impl.nio.Buffers;
+
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -388,10 +391,8 @@ public final class BufferUtilsEmu {
 
     public static void disposeUnsafeByteBuffer (ByteBuffer buffer) {
         int size = buffer.capacity();
-        synchronized (unsafeBuffers) {
-            if (!unsafeBuffers.removeValue(buffer, true))
-                throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
-        }
+        if (!unsafeBuffers.removeValue(buffer, true))
+            throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
         allocatedUnsafe -= size;
         freeMemory(buffer);
     }
@@ -415,6 +416,9 @@ public final class BufferUtilsEmu {
     }
 
     private static void freeMemory (ByteBuffer buffer) {
+        if (PlatformDetector.isWebAssemblyGC()) {
+            Buffers.free(buffer);
+        }
         // Do nothing because this is javascript
     }
 
