@@ -15,7 +15,7 @@ public class TeaBuildConfiguration {
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
     public boolean shouldGenerateAssetFile = true;
 
-    private String mainApplicationClass;
+    public String mainApplicationClass;
 
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
@@ -32,6 +32,8 @@ public class TeaBuildConfiguration {
     public String mainClassArgs = "";
 
     public String htmlTitle = "gdx-teavm";
+    public BuildMode buildMode = BuildMode.JAVASCRIPT;
+
     public int htmlWidth = 800;
     public int htmlHeight = 600;
 
@@ -44,91 +46,5 @@ public class TeaBuildConfiguration {
     /** Logo asset path. Requires showLoadingLogo true. */
     public String logoPath = "startup-logo.png";
 
-    public String getHtmlTitle() {
-        return htmlTitle;
-    }
-
-    public String getHtmlWidth() {
-        return String.valueOf(htmlWidth);
-    }
-
-    public String getHtmlHeight() {
-        return String.valueOf(htmlHeight);
-    }
-
-    public boolean isShowLoadingLogo() {
-      return showLoadingLogo;
-    }
-
-    public boolean shouldUseDefaultHtmlIndex() {
-      return useDefaultHtmlIndex;
-    }
-
-    public String getMainClass() {
-        return mainClass;
-    }
-
-    public String getMainClassArgs() {
-        return mainClassArgs;
-    }
-
-    public String getApplicationListenerClass() {
-        return mainApplicationClass;
-    }
-
-    public ArrayList<URL> getAdditionalClasspath() {
-        return additionalClasspath;
-    }
-
-    public ArrayList<String> getAdditionalAssetClasspath() {
-        return additionalAssetsClasspathFiles;
-    }
-
-    public String getWebAppPath() {
-        return webappPath;
-    }
-
-    public ArrayList<AssetFileHandle> assetsPath() {
-        return assetsPath;
-    }
-
-    public boolean shouldGenerateAssetFile() {
-        return shouldGenerateAssetFile;
-    }
-
-    public AssetFilter assetFilter() {
-        return assetFilter;
-    }
-
-    public ArrayList<String> getReflectionInclude() {
-        return reflectionInclude;
-    }
-
-    public ArrayList<String> getReflectionExclude() {
-        return reflectionExclude;
-    }
-
-    public ArrayList<String> getClassesToPreserve() {
-        return classesToPreserve;
-    }
-
-    public ArrayList<String> getSkipClasses() {
-        return classesToSkip;
-    }
-
-    public void setApplicationListener(Class<? extends ApplicationListener> applicationListener) {
-        setApplicationListener(applicationListener.getName());
-    }
-
-    public void setApplicationListener(String applicationListener) {
-        mainApplicationClass = applicationListener;
-    }
-
-    public boolean acceptClasspath(URL url) {
-        return true;
-    }
-
-    public String getLogoPath() {
-        return logoPath;
-    }
+    public boolean obfuscated = true;
 }

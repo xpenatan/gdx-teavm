@@ -42,8 +42,9 @@ teavm {
         mainClass = "com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher"
     }
     wasmGC {
-        sourceMap = true
-        debugInformation = true
+        sourceMap = false
+        obfuscated = true
+        debugInformation = false
         addedToWebApp = false
         mainClass = "com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher"
     }
