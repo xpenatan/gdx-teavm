@@ -401,9 +401,7 @@ public final class BufferUtilsEmu {
         ByteBuffer buffer = newDisposableByteBuffer(numBytes);
         buffer.order(ByteOrder.nativeOrder());
         allocatedUnsafe += numBytes;
-        synchronized (unsafeBuffers) {
-            unsafeBuffers.add(buffer);
-        }
+        unsafeBuffers.add(buffer);
         return buffer;
     }
 
@@ -416,7 +414,7 @@ public final class BufferUtilsEmu {
     }
 
     private static void freeMemory (ByteBuffer buffer) {
-        if (PlatformDetector.isWebAssemblyGC()) {
+        if (PlatformDetector.isWebAssemblyGC() && buffer.isDirect()) {
             Buffers.free(buffer);
         }
         // Do nothing because this is javascript

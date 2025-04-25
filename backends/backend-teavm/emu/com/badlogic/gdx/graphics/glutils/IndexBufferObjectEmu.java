@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+
+import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
 /**
@@ -30,6 +32,7 @@ import java.nio.ShortBuffer;
  * @author mzechner */
 @Emulate(IndexBufferObject.class)
 public class IndexBufferObjectEmu implements IndexData {
+    ByteBuffer byteBuffer;
     ShortBuffer buffer;
     int bufferHandle;
     final boolean isDirect;
@@ -43,7 +46,8 @@ public class IndexBufferObjectEmu implements IndexData {
      * @param maxIndices the maximum number of indices this buffer can hold */
     public IndexBufferObjectEmu (boolean isStatic, int maxIndices) {
         isDirect = true;
-        buffer = BufferUtils.newShortBuffer(maxIndices);
+        byteBuffer = BufferUtils.newUnsafeByteBuffer(maxIndices * 2);
+        buffer = byteBuffer.asShortBuffer();
         buffer.flip();
         bufferHandle = Gdx.gl20.glGenBuffer();
         usage = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;
@@ -165,5 +169,8 @@ public class IndexBufferObjectEmu implements IndexData {
         gl.glBindBuffer(GL20.GL_ELEMENT_ARRAY_BUFFER, 0);
         gl.glDeleteBuffer(bufferHandle);
         bufferHandle = 0;
+        BufferUtils.disposeUnsafeByteBuffer(byteBuffer);
+        byteBuffer = null;
+        buffer = null;
     }
 }
