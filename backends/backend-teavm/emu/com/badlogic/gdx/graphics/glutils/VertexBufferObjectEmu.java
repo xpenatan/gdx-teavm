@@ -6,11 +6,14 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 @Emulate(VertexBufferObject.class)
 public class VertexBufferObjectEmu implements VertexData {
     final VertexAttributes attributes;
+    final ByteBuffer byteBuffer;
     final FloatBuffer buffer;
     int bufferHandle;
     final boolean isStatic;
@@ -36,7 +39,8 @@ public class VertexBufferObjectEmu implements VertexData {
         this.isStatic = isStatic;
         this.attributes = attributes;
 
-        buffer = BufferUtils.newFloatBuffer(this.attributes.vertexSize / 4 * numVertices);
+        byteBuffer = BufferUtils.newUnsafeByteBuffer(this.attributes.vertexSize * numVertices);
+        buffer = byteBuffer.asFloatBuffer();
         buffer.flip();
         bufferHandle = Gdx.gl20.glGenBuffer();
         usage = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;
@@ -180,5 +184,6 @@ public class VertexBufferObjectEmu implements VertexData {
         gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
         gl.glDeleteBuffer(bufferHandle);
         bufferHandle = 0;
+        BufferUtils.disposeUnsafeByteBuffer(byteBuffer);
     }
 }
