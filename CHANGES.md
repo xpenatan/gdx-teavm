@@ -1,8 +1,10 @@
 [-SNAPSHOT]
-- Update to teavm 0.12.0
-- Add WebAssembly support
-- Improve compile error logs
-- Using teavm array/buffers instead of a custom solution
+- Updated to TeaVM 0.12.0
+- Added WebAssembly support
+- Enhanced compile error logging
+- Switched to TeaVM's native array/buffer implementation, eliminating wrappers and custom solution
+- Upgraded to Gradle 8.14
+- Skip annotation deprecation
 
 [1.1.0]
 - Fix music not looping correctly
