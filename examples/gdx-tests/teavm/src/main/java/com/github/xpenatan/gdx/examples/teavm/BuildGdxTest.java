@@ -23,8 +23,9 @@ public class BuildGdxTest {
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../../core/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
-        TeaVMTool tool = TeaBuilder.config(TeaVMTargetType.WEBASSEMBLY_GC, teaBuildConfiguration);
+        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setObfuscated(false);
+        tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(GdxTestLauncher.class.getName());
         TeaBuilder.build(tool);
