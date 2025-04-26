@@ -58,6 +58,12 @@ public class Gdx2DPixmapNative implements Disposable {
         TypedArrays.copy(heapData, buffer);
     }
 
+    public void copyToHeap() {
+        Int8Array heapData = getHeapData(false);
+        Int8Array typedArray = TypedArrays.getTypedArray(buffer);
+        heapData.set(typedArray);
+    }
+
     private void convert(int requestedFormat) {
         Gdx2DPixmapNative pixmap = new Gdx2DPixmapNative(width, height, requestedFormat);
         pixmap.setBlend(Gdx2DPixmap.GDX2D_BLEND_NONE);
@@ -127,12 +133,12 @@ public class Gdx2DPixmapNative implements Disposable {
     }
 
     public void drawPixmap(int basePtr, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-        drawPixmap(basePtr, basePtr, srcX, srcY, width, height, dstX, dstY, width, height);
+        drawPixmap(basePtr, this.basePtr, srcX, srcY, width, height, dstX, dstY, width, height);
         copyHeapToBuffer();
     }
 
     public void drawPixmap(int basePtr, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
-        drawPixmap(basePtr, basePtr, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
+        drawPixmap(basePtr, this.basePtr, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
         copyHeapToBuffer();
     }
 

@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 @Emulate(Gdx2DPixmap.class)
-public class Gdx2DPixmapEmu implements Disposable {
+public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
     public static final int GDX2D_FORMAT_ALPHA = 1;
     public static final int GDX2D_FORMAT_LUMINANCE_ALPHA = 2;
     public static final int GDX2D_FORMAT_RGB888 = 3;
@@ -191,5 +191,10 @@ public class Gdx2DPixmapEmu implements Disposable {
             default:
                 return "unknown";
         }
+    }
+
+    @Override
+    public Gdx2DPixmapNative getNative() {
+        return nativePixmap;
     }
 }

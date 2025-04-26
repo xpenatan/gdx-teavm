@@ -16,7 +16,7 @@ public class BuildFreetypeTest {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.FULL);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(FreetypeTestLauncher.class.getName());
         tool.setObfuscated(false);
         TeaBuilder.build(tool);

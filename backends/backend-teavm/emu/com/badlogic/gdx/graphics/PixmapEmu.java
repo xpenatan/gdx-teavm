@@ -3,6 +3,8 @@ package com.badlogic.gdx.graphics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
+import com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -19,7 +21,7 @@ import java.nio.ByteBuffer;
 import org.teavm.jso.typedarrays.TypedArray;
 
 @Emulate(Pixmap.class)
-public class PixmapEmu implements Disposable {
+public class PixmapEmu implements Disposable, PixmapNativeInterface {
 
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
@@ -121,6 +123,11 @@ public class PixmapEmu implements Disposable {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
         setColor(0, 0, 0, 0);
         fill();
+    }
+
+    @Override
+    public Gdx2DPixmapNative getNative() {
+        return nativePixmap.getNative();
     }
 
     public PixmapEmu (Gdx2DPixmapEmu pixmap) {

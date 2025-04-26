@@ -3,6 +3,8 @@ package emu.com.badlogic.gdx.graphics.g2d.freetype;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
+import com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -629,6 +631,9 @@ public class FreeType {
                         }
                         dst.put(dstRow);
                     }
+                    PixmapNativeInterface nativeInterface = (PixmapNativeInterface)pixmap;
+                    Gdx2DPixmapNative nativePixel = nativeInterface.getNative();
+                    nativePixel.copyToHeap(); // Need to update emscripten heap. TODO implement a way make all native calls use out buffer and not emscripten
                 }
             }
 
@@ -640,6 +645,7 @@ public class FreeType {
                 converted.setBlending(Pixmap.Blending.SourceOver);
                 pixmap.dispose();
             }
+            converted.drawRectangle(0, 0, 1000, 1000);
             return converted;
         }
         // @off
