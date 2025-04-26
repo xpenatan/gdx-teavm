@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,11 +21,6 @@ public class TeaBuildConfiguration {
     public final ArrayList<String> reflectionInclude = new ArrayList<>();
     public final ArrayList<String> reflectionExclude = new ArrayList<>();
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
-
-    /**
-     * Array of class.getName() to skip
-     */
-    public final ArrayList<String> classesToSkip = new ArrayList<>();
 
     public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
