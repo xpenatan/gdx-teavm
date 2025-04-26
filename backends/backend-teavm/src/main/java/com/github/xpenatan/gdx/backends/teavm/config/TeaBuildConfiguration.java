@@ -26,7 +26,6 @@ public class TeaBuildConfiguration {
     public String mainClassArgs = "";
 
     public String htmlTitle = "gdx-teavm";
-    public BuildMode buildMode = BuildMode.JAVASCRIPT;
 
     public int htmlWidth = 800;
     public int htmlHeight = 600;
@@ -39,6 +38,4 @@ public class TeaBuildConfiguration {
 
     /** Logo asset path. Requires showLoadingLogo true. */
     public String logoPath = "startup-logo.png";
-
-    public boolean obfuscated = true;
 }
