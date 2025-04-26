@@ -1,4 +1,8 @@
 [-SNAPSHOT]
+- Update to teavm 0.12.0
+- Add WebAssembly support
+- Improve compile error logs
+- Using teavm array/buffers instead of a custom solution
 
 [1.1.0]
 - Fix music not looping correctly
