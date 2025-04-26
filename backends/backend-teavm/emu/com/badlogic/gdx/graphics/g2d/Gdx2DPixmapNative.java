@@ -345,8 +345,4 @@ public class Gdx2DPixmapNative implements Disposable {
     public static native String getFailureReason(); /*
      return env->NewStringUTF(gdx2d_get_failure_reason());
      */
-
-    @JSBody(params = { "msg" }, script = "" +
-            "console.log(msg);")
-    public static native void print(String msg);
 }
