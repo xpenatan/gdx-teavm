@@ -67,7 +67,7 @@ public class TypedArrays {
         }
         else {
             var array = new byte[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             return Int8Array.copyFromJavaArray(buffer.array());
         }
     }
@@ -82,7 +82,7 @@ public class TypedArrays {
         }
         else {
             var array = new byte[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             var typedArray = Int8Array.copyFromJavaArray(buffer.array());
             return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
@@ -98,7 +98,7 @@ public class TypedArrays {
         }
         else {
             var array = new short[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             return Int16Array.copyFromJavaArray(buffer.array());
         }
     }
@@ -113,7 +113,7 @@ public class TypedArrays {
         }
         else {
             var array = new short[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             var typedArray = Int16Array.copyFromJavaArray(buffer.array());
             return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
         }
@@ -129,7 +129,7 @@ public class TypedArrays {
         }
         else {
             var array = new int[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             return Int32Array.copyFromJavaArray(array);
         }
     }
@@ -144,7 +144,7 @@ public class TypedArrays {
         }
         else {
             var array = new float[buffer.capacity()];
-            buffer.get(0, array);
+            buffer.get(array);
             return Float32Array.copyFromJavaArray(array);
         }
     }
@@ -160,7 +160,7 @@ public class TypedArrays {
         }
         else {
             var data = in.copyToJavaArray();
-            out.put(0, data);
+            out.put(data);
         }
     }
 }
