@@ -633,7 +633,7 @@ public class FreeType {
                     }
                     PixmapNativeInterface nativeInterface = (PixmapNativeInterface)pixmap;
                     Gdx2DPixmapNative nativePixel = nativeInterface.getNative();
-                    nativePixel.copyToHeap(); // Need to update emscripten heap. TODO implement a way make all native calls use out buffer and not emscripten
+                    nativePixel.copyToHeap();
                 }
             }
 

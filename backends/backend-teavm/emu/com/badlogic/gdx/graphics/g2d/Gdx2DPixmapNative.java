@@ -59,6 +59,7 @@ public class Gdx2DPixmapNative implements Disposable {
     }
 
     public void copyToHeap() {
+        // Need to update emscripten heap. TODO implement a way make all native calls use buffer and not emscripten heap
         Int8Array heapData = getHeapData(false);
         Int8Array typedArray = TypedArrays.getTypedArray(buffer);
         heapData.set(typedArray);
