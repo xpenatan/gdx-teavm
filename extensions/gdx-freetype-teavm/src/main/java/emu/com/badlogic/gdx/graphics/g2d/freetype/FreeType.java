@@ -3,19 +3,21 @@ package emu.com.badlogic.gdx.graphics.g2d.freetype;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
+import com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import org.teavm.jso.JSBody;
+import org.teavm.jso.typedarrays.ArrayBufferView;
+import org.teavm.jso.typedarrays.Int8Array;
 
 public class FreeType {
     private static void nativeFree(int address) {
@@ -98,7 +100,7 @@ public class FreeType {
         }
 
         public Face newMemoryFace(ByteBuffer buffer, int faceIndex) {
-            ArrayBufferViewWrapper buf = TypedArrays.getTypedArray(buffer);
+            ArrayBufferView buf = TypedArrays.getTypedArray(buffer);
             int[] addressToFree = new int[]{0}; // Hacky way to get two return values
 
             int face = newMemoryFace(address, buf, buffer.remaining(), faceIndex, addressToFree);
@@ -120,7 +122,7 @@ public class FreeType {
                 "Module.writeArrayToMemory(data, address);" +
                 "var ret = Module._c_Library_newMemoryFace(library, address, dataSize, faceIndex);" +
                 "return ret")
-        private static native int newMemoryFace(int library, ArrayBufferViewWrapper data, int dataSize, int faceIndex, int[] outAddressToFree);
+        private static native int newMemoryFace(int library, ArrayBufferView data, int dataSize, int faceIndex, int[] outAddressToFree);
 
         public Stroker createStroker() {
             int stroker = strokerNew(address);
@@ -560,7 +562,7 @@ public class FreeType {
                 return BufferUtils.newByteBuffer(1);
             int offset = getBufferAddress(address);
             int length = getBufferSize(address);
-            Int8ArrayWrapper int8ArrayWrapper = getBuffer(address, offset, length);
+            Int8Array int8ArrayWrapper = getBuffer(address, offset, length);
 
             byte[] byteArray = TypedArrays.toByteArray(int8ArrayWrapper);
             ByteBuffer buf = ByteBuffer.wrap(byteArray, 0, length);
@@ -576,7 +578,7 @@ public class FreeType {
         @JSBody(params = {"bitmap", "offset", "length"}, script = "" +
                 "var buff = Module.HEAP8.subarray(offset, offset + length);" +
                 "return buff;")
-        private static native Int8ArrayWrapper getBuffer(int bitmap, int offset, int length);
+        private static native Int8Array getBuffer(int bitmap, int offset, int length);
 
         // @on
         public Pixmap getPixmap (Pixmap.Format format, Color color, float gamma) {
@@ -629,6 +631,9 @@ public class FreeType {
                         }
                         dst.put(dstRow);
                     }
+                    PixmapNativeInterface nativeInterface = (PixmapNativeInterface)pixmap;
+                    Gdx2DPixmapNative nativePixel = nativeInterface.getNative();
+                    nativePixel.copyToHeap();
                 }
             }
 
@@ -640,6 +645,7 @@ public class FreeType {
                 converted.setBlending(Pixmap.Blending.SourceOver);
                 pixmap.dispose();
             }
+            converted.drawRectangle(0, 0, 1000, 1000);
             return converted;
         }
         // @off

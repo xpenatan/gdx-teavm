@@ -1,9 +1,11 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface XMLHttpRequestEventTargetWrapper extends EventTargetWrapper {
-
-    public void setOnprogress(EventHandlerWrapper onprogress);
+    @JSProperty
+    void setOnprogress(EventHandlerWrapper onprogress);
 }

@@ -136,8 +136,8 @@ public class TeaVMGdxTests {
         add(tests, AssetManagerTest::new);
         add(tests, AtlasIssueTest::new);
         add(tests, AudioChangeDeviceTest::new);
-        add(tests, AudioDeviceTest::new);
-        add(tests, AudioRecorderTest::new);
+//        add(tests, AudioDeviceTest::new);  // TODO dont compile in webassembly
+//        add(tests, AudioRecorderTest::new); // TODO dont compile in webassembly
         add(tests, AudioSoundAndMusicIsolationTest::new);
         add(tests, Basic3DSceneTest::new);
         add(tests, Basic3DTest::new);
@@ -225,7 +225,7 @@ public class TeaVMGdxTests {
         add(tests, MultitouchTest::new);
         add(tests, NetAPITest::new);
         add(tests, NinePatchTest::new);
-        add(tests, NoncontinuousRenderingTest::new);
+//        add(tests, NoncontinuousRenderingTest::new); // TODO dont compile in webassembly
         add(tests, NonPowerOfTwoTest::new);
         add(tests, OctreeTest::new);
         add(tests, OnscreenKeyboardTest::new);
@@ -288,7 +288,7 @@ public class TeaVMGdxTests {
         add(tests, TextButtonTest::new);
         add(tests, TextInputDialogTest::new);
         add(tests, TextureAtlasTest::new);
-        add(tests, TextureDownloadTest::new);
+//        add(tests, TextureDownloadTest::new); // TODO dont compile in webassembly
         add(tests, TextureFormatTest::new);
         add(tests, TideMapAssetManagerTest::new);
         add(tests, TideMapDirectLoaderTest::new);
@@ -304,7 +304,7 @@ public class TeaVMGdxTests {
         add(tests, TiledMapObjectPropertyTest::new);
         add(tests, TiledMapBench::new);
         add(tests, TiledMapLayerOffsetTest::new);
-        add(tests, TimerTest::new);
+//        add(tests, TimerTest::new);  // TODO dont compile in webassembly
         add(tests, TimeUtilsTest::new);
         add(tests, TouchpadTest::new);
         add(tests, TreeTest::new);

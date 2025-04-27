@@ -4,13 +4,12 @@ import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import java.io.File;
 import java.io.IOException;
+import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
-@SkipClass
 public class BuildGdxTest {
 
     public static void main(String[] args) throws IOException {
@@ -26,6 +25,7 @@ public class BuildGdxTest {
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setObfuscated(false);
+        tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(GdxTestLauncher.class.getName());
         TeaBuilder.build(tool);

@@ -3,6 +3,8 @@ package com.badlogic.gdx.graphics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
+import com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -11,22 +13,22 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
 import java.nio.ByteBuffer;
+import org.teavm.jso.typedarrays.TypedArray;
 
 @Emulate(Pixmap.class)
-public class PixmapEmu implements Disposable {
+public class PixmapEmu implements Disposable, PixmapNativeInterface {
 
     public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
         final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
-        ByteBuffer pixels = BufferUtils.newByteBuffer(h * w * 4);
+        ByteBuffer pixels = pixmap.getPixels();
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
-        pixmap.setPixels(pixels);
+        pixmap.getNative().copyToHeap();
         return pixmap;
     }
 
@@ -81,7 +83,7 @@ public class PixmapEmu implements Disposable {
 
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                TypedArray data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
                 responseListener.downloadComplete(pixmapEmu);
@@ -122,6 +124,11 @@ public class PixmapEmu implements Disposable {
         nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
         setColor(0, 0, 0, 0);
         fill();
+    }
+
+    @Override
+    public Gdx2DPixmapNative getNative() {
+        return nativePixmap.getNative();
     }
 
     public PixmapEmu (Gdx2DPixmapEmu pixmap) {

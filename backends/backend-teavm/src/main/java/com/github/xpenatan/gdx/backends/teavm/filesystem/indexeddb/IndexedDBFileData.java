@@ -1,17 +1,17 @@
 package com.github.xpenatan.gdx.backends.teavm.filesystem.indexeddb;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
 import org.teavm.jso.core.JSDate;
+import org.teavm.jso.typedarrays.Int8Array;
 
 public abstract class IndexedDBFileData implements JSObject {
     @JSProperty
     public abstract void setContents(byte[] contents);
 
     @JSProperty
-    public abstract Int8ArrayWrapper getContents();
+    public abstract Int8Array getContents();
 
     @JSProperty
     public abstract int getType();

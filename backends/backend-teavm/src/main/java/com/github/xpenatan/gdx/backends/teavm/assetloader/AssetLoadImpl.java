@@ -18,8 +18,6 @@ import com.github.xpenatan.gdx.backends.teavm.dom.FileReaderWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.FileWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import java.io.IOException;
@@ -28,6 +26,8 @@ import java.util.HashSet;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.core.JSPromise;
+import org.teavm.jso.typedarrays.ArrayBuffer;
+import org.teavm.jso.typedarrays.Int8Array;
 
 /**
  * @author xpenatan
@@ -89,8 +89,8 @@ public class AssetLoadImpl implements AssetLoader {
                 @Override
                 public void handleEvent(EventWrapper evt) {
                     FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
-                    ArrayBufferWrapper arrayBuffer = target.getResultAsArrayBuffer();
-                    Int8ArrayWrapper data = TypedArrays.createInt8Array(arrayBuffer);
+                    ArrayBuffer arrayBuffer = target.getResultAsArrayBuffer();
+                    Int8Array data = new Int8Array(arrayBuffer);
                     byte[] bytes = TypedArrays.toByteArray(data);
                     FileData fielData = new FileData(name, bytes);
                     resolve.accept(fielData);
@@ -148,7 +148,7 @@ public class AssetLoadImpl implements AssetLoader {
         AssetLoaderListener<Blob> listener = new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String assets = new String(byteArray);
                 String[] lines = assets.split("\n");
@@ -282,7 +282,7 @@ public class AssetLoadImpl implements AssetLoader {
             @Override
             public void onSuccess(String url, Blob result) {
                 assetInQueue.remove(path1);
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
+                Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 OutputStream output = fileHandle.write(false, 4096);
                 try {

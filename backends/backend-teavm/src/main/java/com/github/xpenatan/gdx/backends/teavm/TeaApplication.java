@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.html.HTMLElement;
 
 /**
@@ -74,8 +76,8 @@ public class TeaApplication implements Application, Runnable {
 
     private TeaClipboard clipboard;
 
-    private Array<Runnable> runnables = new Array<Runnable>();
-    private Array<Runnable> runnablesHelper = new Array<Runnable>();
+    private final Array<Runnable> runnables = new Array<>();
+    private final Array<Runnable> runnablesHelper = new Array<>();
 
     private String hostPageBaseURL;
 
@@ -107,8 +109,9 @@ public class TeaApplication implements Application, Runnable {
         hostPageBaseURL = location.getHref();
 
         if(hostPageBaseURL.contains(".html")) {
-            // TODO use regex
+            // TODO Find a solution to remove html path
             hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
+            hostPageBaseURL = hostPageBaseURL.replace("index-wasm.html", "");
             hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
         }
         int indexQM = hostPageBaseURL.indexOf('?');
@@ -146,9 +149,9 @@ public class TeaApplication implements Application, Runnable {
         audio = new DefaultTeaAudio();
         Gdx.audio = audio;
 
-        window.addEventListener("pagehide", new EventListenerWrapper() {
+        window.addEventListener("pagehide", new EventListener() {
             @Override
-            public void handleEvent(EventWrapper evt) {
+            public void handleEvent(Event evt) {
                 if(appListener != null) {
                     appListener.pause();
                     appListener.dispose();
@@ -186,9 +189,9 @@ public class TeaApplication implements Application, Runnable {
         });
 
         if(config.isAutoSizeApplication()) {
-            window.addEventListener("resize", new EventListenerWrapper() {
+            window.addEventListener("resize", new EventListener() {
                 @Override
-                public void handleEvent(EventWrapper evt) {
+                public void handleEvent(Event evt) {
                     int width = window.getClientWidth() - config.padHorizontal;
                     int height = window.getClientHeight() - config.padVertical;
 

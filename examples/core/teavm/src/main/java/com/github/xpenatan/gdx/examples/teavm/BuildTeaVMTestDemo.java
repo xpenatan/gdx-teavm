@@ -4,13 +4,12 @@ import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
 import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
-import com.github.xpenatan.gdx.backends.teavm.gen.SkipClass;
 import com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher;
 import java.io.File;
 import java.io.IOException;
+import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 
-@SkipClass
 public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) throws IOException {
@@ -21,11 +20,13 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
         teaBuildConfiguration.shouldGenerateAssetFile = true;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
-        teaBuildConfiguration.logoPath = "logo.png";
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
-        tool.setObfuscated(false);
+        tool.setObfuscated(true);
+        tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
+        int size = 64 * (1 << 20);
+        tool.setMaxDirectBuffersSize(size);
         TeaBuilder.build(tool);
     }
 }

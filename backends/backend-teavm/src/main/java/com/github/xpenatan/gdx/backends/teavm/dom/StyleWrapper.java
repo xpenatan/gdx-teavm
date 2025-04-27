@@ -1,6 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-public interface StyleWrapper {
+import org.teavm.jso.JSObject;
+
+public interface StyleWrapper extends JSObject {
 
     static String UNIT_MM = "mm";
     static String UNIT_CM = "cm";
