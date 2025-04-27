@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
+import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class BuildTeaVMTestDemo {
 
@@ -22,11 +23,10 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setMainClass(TeaVMTestLauncher.class.getName());
-        tool.setObfuscated(true);
+        tool.setObfuscated(false);
         tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
-        int size = 64 * (1 << 20);
-        tool.setMaxDirectBuffersSize(size);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
+        tool.setMainClass(TeaVMTestLauncher.class.getName());
         TeaBuilder.build(tool);
     }
 }
