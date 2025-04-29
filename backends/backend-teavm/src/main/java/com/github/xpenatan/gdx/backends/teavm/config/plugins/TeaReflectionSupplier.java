@@ -96,6 +96,11 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
         return methods;
     }
 
+    @Override
+    public Collection<String> getClassesFoundByName(ReflectionContext context) {
+        return clazzList;
+    }
+
     private boolean canHaveReflection(String className) {
         for(int i = 0; i < clazzList.size(); i++) {
             String name = clazzList.get(i);
