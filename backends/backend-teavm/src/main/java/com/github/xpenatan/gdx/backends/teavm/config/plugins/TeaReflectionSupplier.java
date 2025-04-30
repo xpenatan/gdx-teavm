@@ -41,7 +41,9 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
      * package path or package path with class name
      */
     public static void addReflectionClass(String className) {
-        clazzList.add(className);
+        if(!clazzList.contains(className)) {
+            clazzList.add(className);
+        }
     }
 
     /**
@@ -97,8 +99,8 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     @Override
-    public Collection<String> getClassesFoundByName(ReflectionContext context) {
-        return clazzList;
+    public boolean isClassFoundByName(ReflectionContext context, String name) {
+        return canHaveReflection(name);
     }
 
     private boolean canHaveReflection(String className) {
