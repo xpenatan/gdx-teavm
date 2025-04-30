@@ -1,10 +1,12 @@
-package com.badlogic.gdx.graphics;
+package emu.com.badlogic.gdx.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapEmu;
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
-import com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import emu.com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
+import emu.com.badlogic.gdx.graphics.g2d.Gdx2DPixmapNative;
+import emu.com.badlogic.gdx.graphics.g2d.PixmapNativeInterface;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -14,66 +16,63 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
 import java.nio.ByteBuffer;
 import org.teavm.jso.typedarrays.TypedArray;
 
-@Emulate(Pixmap.class)
-public class PixmapEmu implements Disposable, PixmapNativeInterface {
+public class Pixmap implements Disposable, PixmapNativeInterface {
 
-    public static PixmapEmu createFromFrameBuffer(int x, int y, int w, int h) {
+    public static Pixmap createFromFrameBuffer(int x, int y, int w, int h) {
         Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
-        final PixmapEmu pixmap = new PixmapEmu(w, h, FormatEmu.RGBA8888);
+        final Pixmap pixmap = new Pixmap(w, h, Format.RGBA8888);
         ByteBuffer pixels = pixmap.getPixels();
         Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
         pixmap.getNative().copyToHeap();
         return pixmap;
     }
 
-    @Emulate(Pixmap.Format.class)
-    public enum FormatEmu {
+    public enum Format {
         Alpha, Intensity, LuminanceAlpha, RGB565, RGBA4444, RGB888, RGBA8888;
 
-        public static int toGdx2DPixmapFormat (FormatEmu format) {
-            if (format == Alpha) return Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA;
-            if (format == Intensity) return Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA;
-            if (format == LuminanceAlpha) return Gdx2DPixmapEmu.GDX2D_FORMAT_LUMINANCE_ALPHA;
-            if (format == RGB565) return Gdx2DPixmapEmu.GDX2D_FORMAT_RGB565;
-            if (format == RGBA4444) return Gdx2DPixmapEmu.GDX2D_FORMAT_RGBA4444;
-            if (format == RGB888) return Gdx2DPixmapEmu.GDX2D_FORMAT_RGB888;
-            if (format == RGBA8888) return Gdx2DPixmapEmu.GDX2D_FORMAT_RGBA8888;
+        public static int toGdx2DPixmapFormat (Format format) {
+            if (format == Alpha) return Gdx2DPixmap.GDX2D_FORMAT_ALPHA;
+            if (format == Intensity) return Gdx2DPixmap.GDX2D_FORMAT_ALPHA;
+            if (format == LuminanceAlpha) return Gdx2DPixmap.GDX2D_FORMAT_LUMINANCE_ALPHA;
+            if (format == RGB565) return Gdx2DPixmap.GDX2D_FORMAT_RGB565;
+            if (format == RGBA4444) return Gdx2DPixmap.GDX2D_FORMAT_RGBA4444;
+            if (format == RGB888) return Gdx2DPixmap.GDX2D_FORMAT_RGB888;
+            if (format == RGBA8888) return Gdx2DPixmap.GDX2D_FORMAT_RGBA8888;
             throw new GdxRuntimeException("Unknown Format: " + format);
         }
 
-        public static FormatEmu fromGdx2DPixmapFormat (int format) {
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_ALPHA) return Alpha;
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_LUMINANCE_ALPHA) return LuminanceAlpha;
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_RGB565) return RGB565;
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_RGBA4444) return RGBA4444;
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_RGB888) return RGB888;
-            if (format == Gdx2DPixmapEmu.GDX2D_FORMAT_RGBA8888) return RGBA8888;
+        public static Format fromGdx2DPixmapFormat (int format) {
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_ALPHA) return Alpha;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_LUMINANCE_ALPHA) return LuminanceAlpha;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB565) return RGB565;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA4444) return RGBA4444;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGB888) return RGB888;
+            if (format == Gdx2DPixmap.GDX2D_FORMAT_RGBA8888) return RGBA8888;
             throw new GdxRuntimeException("Unknown Gdx2DPixmap Format: " + format);
         }
 
-        public static int toGlFormat (FormatEmu format) {
-            return Gdx2DPixmapEmu.toGlFormat(toGdx2DPixmapFormat(format));
+        public static int toGlFormat (Format format) {
+            return Gdx2DPixmap.toGlFormat(toGdx2DPixmapFormat(format));
         }
 
-        public static int toGlType (FormatEmu format) {
-            return Gdx2DPixmapEmu.toGlType(toGdx2DPixmapFormat(format));
+        public static int toGlType (Format format) {
+            return Gdx2DPixmap.toGlType(toGdx2DPixmapFormat(format));
         }
     }
 
-    BlendingEmu blending = PixmapEmu.BlendingEmu.SourceOver;
-    FilterEmu filter = PixmapEmu.FilterEmu.BiLinear;
+    Blending blending = Blending.SourceOver;
+    Filter filter = Filter.BiLinear;
 
     private int color = 0;
-    private Gdx2DPixmapEmu nativePixmap;
+    private Gdx2DPixmap nativePixmap;
     private boolean disposed;
 
-    public static void downloadFromUrl(String url, final Pixmap.DownloadPixmapResponseListener responseListener) {
+    public static void downloadFromUrl(String url, final com.badlogic.gdx.graphics.Pixmap.DownloadPixmapResponseListener responseListener) {
         AssetLoaderListener<Blob> listener = new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
@@ -85,31 +84,29 @@ public class PixmapEmu implements Disposable, PixmapNativeInterface {
             public void onSuccess(String url, Blob result) {
                 TypedArray data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
-                Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
+                com.badlogic.gdx.graphics.Pixmap pixmapEmu = new com.badlogic.gdx.graphics.Pixmap(byteArray, 0, byteArray.length);
                 responseListener.downloadComplete(pixmapEmu);
             }
         };
         AssetInstance.getDownloaderInstance().load(true, url, AssetType.Binary, listener);
     }
 
-    public PixmapEmu(FileHandle file) {
-        TeaFileHandle webFileHandler = (TeaFileHandle)file;
-        String path = webFileHandler.path();
-
+    public Pixmap(FileHandle file) {
+        String path = file.path();
         TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
         if(!file.exists()) {
             // Add a way to debug when assets was not loaded in preloader.
             throw new GdxRuntimeException("File is null, it does not exist: " + path);
         }
         byte[] bytes = file.readBytes();
-        nativePixmap = new Gdx2DPixmapEmu(bytes, 0, bytes.length, 0);
+        nativePixmap = new Gdx2DPixmap(bytes, 0, bytes.length, 0);
     }
 
-    public PixmapEmu(byte[] encodedData, int offset, int len) {
-        nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
+    public Pixmap(byte[] encodedData, int offset, int len) {
+        nativePixmap = new Gdx2DPixmap(encodedData, offset, len, 0);
     }
 
-    public PixmapEmu(ByteBuffer encodedData, int offset, int len) {
+    public Pixmap(ByteBuffer encodedData, int offset, int len) {
         throw new GdxRuntimeException("Pixmap constructor not supported");
 //        if (!encodedData.isDirect()) throw new GdxRuntimeException("Couldn't load pixmap from non-direct ByteBuffer");
 //        try {
@@ -120,8 +117,8 @@ public class PixmapEmu implements Disposable, PixmapNativeInterface {
 //        }
     }
 
-    public PixmapEmu(int width, int height, FormatEmu format) {
-        nativePixmap = new Gdx2DPixmapEmu(width, height, PixmapEmu.FormatEmu.toGdx2DPixmapFormat(format));
+    public Pixmap(int width, int height, Format format) {
+        nativePixmap = new Gdx2DPixmap(width, height, Format.toGdx2DPixmapFormat(format));
         setColor(0, 0, 0, 0);
         fill();
     }
@@ -131,7 +128,7 @@ public class PixmapEmu implements Disposable, PixmapNativeInterface {
         return nativePixmap.getNative();
     }
 
-    public PixmapEmu (Gdx2DPixmapEmu pixmap) {
+    public Pixmap(Gdx2DPixmap pixmap) {
         nativePixmap = pixmap;
     }
 
@@ -159,15 +156,15 @@ public class PixmapEmu implements Disposable, PixmapNativeInterface {
         nativePixmap.drawRect(x, y, width, height, color);
     }
 
-    public void drawPixmap(PixmapEmu pixmap, int x, int y) {
+    public void drawPixmap(Pixmap pixmap, int x, int y) {
         drawPixmap(pixmap, x, y, 0, 0, pixmap.getWidth(), pixmap.getHeight());
     }
 
-    public void drawPixmap(PixmapEmu pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
+    public void drawPixmap(Pixmap pixmap, int x, int y, int srcx, int srcy, int srcWidth, int srcHeight) {
         nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, x, y, srcWidth, srcHeight);
     }
 
-    public void drawPixmap(PixmapEmu pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth, int dstHeight) {
+    public void drawPixmap(Pixmap pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth, int dstHeight) {
         nativePixmap.drawPixmap(pixmap.nativePixmap, srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
     }
 
@@ -241,35 +238,33 @@ public class PixmapEmu implements Disposable, PixmapNativeInterface {
         nativePixmap.setPixel(x, y, color);
     }
 
-    public FormatEmu getFormat () {
-        return FormatEmu.fromGdx2DPixmapFormat(nativePixmap.getFormat());
+    public Format getFormat () {
+        return Format.fromGdx2DPixmapFormat(nativePixmap.getFormat());
     }
 
-    public void setFilter(FilterEmu filter) {
+    public void setFilter(Filter filter) {
         this.filter = filter;
-        nativePixmap.setScale(filter == PixmapEmu.FilterEmu.NearestNeighbour ? Gdx2DPixmapEmu.GDX2D_SCALE_NEAREST : Gdx2DPixmapEmu.GDX2D_SCALE_LINEAR);
+        nativePixmap.setScale(filter == Filter.NearestNeighbour ? Gdx2DPixmap.GDX2D_SCALE_NEAREST : Gdx2DPixmap.GDX2D_SCALE_LINEAR);
     }
 
-    public FilterEmu getFilter() {
+    public Filter getFilter() {
         return filter;
     }
 
-    public void setBlending(BlendingEmu blending) {
+    public void setBlending(Blending blending) {
         this.blending = blending;
-        nativePixmap.setBlend(blending == PixmapEmu.BlendingEmu.None ? 0 : 1);
+        nativePixmap.setBlend(blending == Blending.None ? 0 : 1);
     }
 
-    public BlendingEmu getBlending () {
+    public Blending getBlending () {
         return blending;
     }
 
-    @Emulate(Pixmap.Blending.class)
-    public enum BlendingEmu {
+    public enum Blending {
         None, SourceOver
     }
 
-    @Emulate(Pixmap.Filter.class)
-    public enum FilterEmu {
+    public enum Filter {
         NearestNeighbour, BiLinear
     }
 }

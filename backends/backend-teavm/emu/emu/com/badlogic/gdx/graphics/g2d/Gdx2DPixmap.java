@@ -1,14 +1,12 @@
-package com.badlogic.gdx.graphics.g2d;
+package emu.com.badlogic.gdx.graphics.g2d;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-@Emulate(Gdx2DPixmap.class)
-public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
+public class Gdx2DPixmap implements Disposable, PixmapNativeInterface {
     public static final int GDX2D_FORMAT_ALPHA = 1;
     public static final int GDX2D_FORMAT_LUMINANCE_ALPHA = 2;
     public static final int GDX2D_FORMAT_RGB888 = 3;
@@ -57,14 +55,14 @@ public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
 
     private Gdx2DPixmapNative nativePixmap;
 
-    public Gdx2DPixmapEmu(byte[] encodedData, int offset, int len, int requestedFormat) {
+    public Gdx2DPixmap(byte[] encodedData, int offset, int len, int requestedFormat) {
         nativePixmap = new Gdx2DPixmapNative(encodedData, offset, len, requestedFormat);
     }
 
     /**
      * @throws GdxRuntimeException if allocation failed.
      */
-    public Gdx2DPixmapEmu(int width, int height, int format) throws GdxRuntimeException {
+    public Gdx2DPixmap(int width, int height, int format) throws GdxRuntimeException {
         nativePixmap = new Gdx2DPixmapNative(width, height, format);
     }
 
@@ -109,11 +107,11 @@ public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
         nativePixmap.fillTriangle(x1, y1, x2, y2, x3, y3, color);
     }
 
-    public void drawPixmap(Gdx2DPixmapEmu src, int srcX, int srcY, int dstX, int dstY, int width, int height) {
+    public void drawPixmap(Gdx2DPixmap src, int srcX, int srcY, int dstX, int dstY, int width, int height) {
         nativePixmap.drawPixmap(src.nativePixmap.basePtr, srcX, srcY, dstX, dstY, width, height);
     }
 
-    public void drawPixmap(Gdx2DPixmapEmu src, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
+    public void drawPixmap(Gdx2DPixmap src, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
         nativePixmap.drawPixmap(src.nativePixmap.basePtr, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
     }
 
@@ -125,7 +123,7 @@ public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
         nativePixmap.setScale(scale);
     }
 
-    public static Gdx2DPixmapEmu newPixmap(InputStream in, int requestedFormat) {
+    public static Gdx2DPixmap newPixmap(InputStream in, int requestedFormat) {
         throw new GdxRuntimeException("newPixmap not supported 1");
         //        try {
 //            return new Gdx2DPixmapEmu(in, requestedFormat);
@@ -134,9 +132,9 @@ public class Gdx2DPixmapEmu implements Disposable, PixmapNativeInterface {
 //        }
     }
 
-    public static Gdx2DPixmapEmu newPixmap(int width, int height, int format) {
+    public static Gdx2DPixmap newPixmap(int width, int height, int format) {
         try {
-            return new Gdx2DPixmapEmu(width, height, format);
+            return new Gdx2DPixmap(width, height, format);
         } catch(IllegalArgumentException e) {
             return null;
         }
