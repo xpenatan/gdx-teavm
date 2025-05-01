@@ -79,8 +79,6 @@ public class TeaApplication implements Application, Runnable {
     private final Array<Runnable> runnables = new Array<>();
     private final Array<Runnable> runnablesHelper = new Array<>();
 
-    private String hostPageBaseURL;
-
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
         this.window = TeaWindow.get();
         this.config = config;
@@ -101,26 +99,11 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
-        AssetInstance.setInstance(assetDownload);
-
-        TeaWindow currentWindow = TeaWindow.get();
-        LocationWrapper location = currentWindow.getLocation();
-        hostPageBaseURL = location.getHref();
-
-        if(hostPageBaseURL.contains(".html")) {
-            // TODO Find a solution to remove html path
-            hostPageBaseURL = hostPageBaseURL.replace("index.html", "");
-            hostPageBaseURL = hostPageBaseURL.replace("index-wasm.html", "");
-            hostPageBaseURL = hostPageBaseURL.replace("index-debug.html", "");
-        }
-        int indexQM = hostPageBaseURL.indexOf('?');
-        if (indexQM >= 0) {
-          hostPageBaseURL = hostPageBaseURL.substring(0, indexQM);
-        }
-
         graphics = new TeaGraphics(config);
 
+        AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
+        AssetInstance.setInstance(assetDownload);
+        String hostPageBaseURL = config.baseUrlProvider.getBaseUrl();
         assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this, assetDownload);
         AssetInstance.setInstance(assetLoader);
 
