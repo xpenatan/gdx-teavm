@@ -6,12 +6,10 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
-import org.teavm.jso.core.JSArray;
-import org.teavm.jso.core.JSString;
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLScriptElement;
-import org.teavm.jso.file.Blob;
-import org.teavm.jso.file.BlobPropertyBag;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
@@ -89,54 +87,34 @@ public class AssetDownloadImpl implements AssetDownloader {
         if(showLogs) {
             System.out.println("Loading script: " + url);
         }
+        addQueue();
+        Window current = Window.current();
+        HTMLDocument document = current.getDocument();
+        HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
 
-        loadBinary(async, url, new AssetLoaderListener<>() {
+        scriptElement.addEventListener("load", new EventListener<Event>() {
             @Override
-            public void onSuccess(String url, TeaBlob result) {
-                Int8Array data = result.getData();
-                byte[] byteArray = TypedArrays.toByteArray(data);
-                String script = new String(byteArray);
-                Window current = Window.current();
-                HTMLDocument document = current.getDocument();
-                HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
-
-                BlobPropertyBag blobPropertyBag = BlobPropertyBag.create();
-                blobPropertyBag.type("application/javascript");
-                var array = new JSArray<JSString>();
-                array.push(JSString.valueOf(script));
-                Blob blob = new Blob(array, blobPropertyBag);
-                String scriptUrl = createObjectURL(blob);
-                scriptElement.setSrc(scriptUrl);
-                document.getBody().appendChild(scriptElement);
-
+            public void handleEvent(Event event) {
+                subtractQueue();
                 if(showLogs) {
                     System.out.println("Script download success: " + url);
                 }
                 if(listener != null) {
-                    listener.onSuccess(url, script);
+                    listener.onSuccess(url, "");
                 }
             }
-
-            @Override
-            public void onFailure(String url) {
-                if(showLogs) {
-                    System.err.println("Script download failed: " + url);
-                }
-                if(listener != null) {
-                    listener.onFailure(url);
-                }
+        });
+        scriptElement.addEventListener("error", (error) -> {
+            subtractQueue();
+            if(showLogs) {
+                System.err.println("Script download failed: " + url);
             }
-
-            @Override
-            public void onProgress(int total, int loaded) {
-                if(showDownloadProgress) {
-                    System.out.println("Total: " + total + " loaded: " + loaded + " URL: " + url);
-                }
-                if(listener != null) {
-                    listener.onProgress(total, loaded);
-                }
+            if(listener != null) {
+                listener.onFailure(url);
             }
-        }, 0);
+        });
+        scriptElement.setSrc(url);
+        document.getBody().appendChild(scriptElement);
     }
 
     private void loadBinary(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
