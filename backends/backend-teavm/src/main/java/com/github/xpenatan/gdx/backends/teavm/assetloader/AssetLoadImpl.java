@@ -145,9 +145,9 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     public void preload(TeaApplicationConfiguration config, final String assetFileUrl) {
-        AssetLoaderListener<Blob> listener = new AssetLoaderListener<>() {
+        AssetLoaderListener<TeaBlob> listener = new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String assets = new String(byteArray);
@@ -214,12 +214,12 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
-    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener) {
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener) {
         loadAsset(true, path, assetType, fileType, listener, false);
     }
 
     @Override
-    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
         loadAsset(true, path, assetType, fileType, listener, overwrite);
     }
 
@@ -238,7 +238,7 @@ public class AssetLoadImpl implements AssetLoader {
         return assetDownloader.getQueue();
     }
 
-    private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<Blob> listener, boolean overwrite) {
+    private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -263,7 +263,7 @@ public class AssetLoadImpl implements AssetLoader {
         }
 
         assetInQueue.add(path1);
-        assetDownloader.load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<Blob>() {
+        assetDownloader.load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<TeaBlob>() {
             @Override
             public void onProgress(int total, int loaded) {
                 if(listener != null) {
@@ -280,7 +280,7 @@ public class AssetLoadImpl implements AssetLoader {
             }
 
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 assetInQueue.remove(path1);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);

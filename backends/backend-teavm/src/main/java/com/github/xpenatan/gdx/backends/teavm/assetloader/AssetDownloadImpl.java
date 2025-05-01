@@ -6,8 +6,12 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSArray;
+import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLScriptElement;
+import org.teavm.jso.file.Blob;
+import org.teavm.jso.file.BlobPropertyBag;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
@@ -39,10 +43,10 @@ public class AssetDownloadImpl implements AssetDownloader {
     }
 
     @Override
-    public void load(boolean async, String url, AssetType type, AssetLoaderListener<Blob> listener) {
-        AssetLoaderListener<Blob> internalListener = new AssetLoaderListener<>() {
+    public void load(boolean async, String url, AssetType type, AssetLoaderListener<TeaBlob> listener) {
+        AssetLoaderListener<TeaBlob> internalListener = new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 if(showLogs) {
                     System.out.println("Asset download success: " + url);
                 }
@@ -88,14 +92,21 @@ public class AssetDownloadImpl implements AssetDownloader {
 
         loadBinary(async, url, new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String script = new String(byteArray);
                 Window current = Window.current();
                 HTMLDocument document = current.getDocument();
                 HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
-                scriptElement.setText(script);
+
+                BlobPropertyBag blobPropertyBag = BlobPropertyBag.create();
+                blobPropertyBag.type("application/javascript");
+                var array = new JSArray<JSString>();
+                array.push(JSString.valueOf(script));
+                Blob blob = new Blob(array, blobPropertyBag);
+                String scriptUrl = createObjectURL(blob);
+                scriptElement.setSrc(scriptUrl);
                 document.getBody().appendChild(scriptElement);
 
                 if(showLogs) {
@@ -128,7 +139,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         }, 0);
     }
 
-    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
         if(count == MAX_DOWNLOAD_ATTEMPT) {
             if(listener != null) {
                 listener.onFailure(url);
@@ -146,7 +157,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         }
     }
 
-    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
+    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
         XMLHttpRequest request = new XMLHttpRequest();
         request.setOnReadyStateChange(evt -> {
             if(request.getReadyState() == XMLHttpRequest.DONE) {
@@ -186,7 +197,7 @@ public class AssetDownloadImpl implements AssetDownloader {
                     }
 
                     if(listener != null) {
-                        listener.onSuccess(url, new Blob(arrayBuffer, data));
+                        listener.onSuccess(url, new TeaBlob(arrayBuffer, data));
                     }
                 }
                 subtractQueue();
@@ -217,4 +228,7 @@ public class AssetDownloadImpl implements AssetDownloader {
 
     @JSBody(params = "jsObject", script = "return jsObject;")
     private static native String toString(JSObject jsObject);
+
+    @JSBody(params = "object", script = "return URL.createObjectURL(object);")
+    private static native String createObjectURL(JSObject object);
 }

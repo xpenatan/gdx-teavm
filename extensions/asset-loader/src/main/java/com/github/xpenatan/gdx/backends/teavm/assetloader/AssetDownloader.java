@@ -8,7 +8,7 @@ package com.github.xpenatan.gdx.backends.teavm.assetloader;
  * @author xpenatan
  */
 public interface AssetDownloader {
-    void load(boolean async, final String url, AssetType type, AssetLoaderListener<Blob> listener);
+    void load(boolean async, final String url, AssetType type, AssetLoaderListener<TeaBlob> listener);
     void loadScript(boolean async, final String url, final AssetLoaderListener<String> listener);
     int getQueue();
     void subtractQueue();

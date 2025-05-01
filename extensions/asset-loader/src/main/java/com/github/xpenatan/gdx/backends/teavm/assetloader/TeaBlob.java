@@ -8,12 +8,12 @@ import org.teavm.jso.typedarrays.Int8Array;
 /**
  * @author xpenatan
  */
-public final class Blob {
+public final class TeaBlob {
 
     private ArrayBuffer response;
     private final Int8Array data;
 
-    public Blob(ArrayBuffer response, Int8Array data) {
+    public TeaBlob(ArrayBuffer response, Int8Array data) {
         this.data = data;
         this.response = response;
     }

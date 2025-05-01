@@ -14,10 +14,9 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.Blob;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.TeaBlob;
 import java.nio.ByteBuffer;
 import org.teavm.jso.typedarrays.TypedArray;
 
@@ -73,7 +72,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
     private boolean disposed;
 
     public static void downloadFromUrl(String url, final com.badlogic.gdx.graphics.Pixmap.DownloadPixmapResponseListener responseListener) {
-        AssetLoaderListener<Blob> listener = new AssetLoaderListener<>() {
+        AssetLoaderListener<TeaBlob> listener = new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
                 Throwable t = new Exception("Failed to download image");
@@ -81,7 +80,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
             }
 
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 TypedArray data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 com.badlogic.gdx.graphics.Pixmap pixmapEmu = new com.badlogic.gdx.graphics.Pixmap(byteArray, 0, byteArray.length);
