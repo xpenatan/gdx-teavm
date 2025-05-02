@@ -11,7 +11,7 @@ public class HowlMusic implements Music {
 
     public HowlMusic(FileHandle fileHandle) {
         byte[] bytes = fileHandle.readBytes();
-        ArrayBufferView data = TypedArrays.getTypedArray(bytes);
+        ArrayBufferView data = TypedArrays.getInt8Array(bytes);
         howl = Howl.create(data);
     }
 

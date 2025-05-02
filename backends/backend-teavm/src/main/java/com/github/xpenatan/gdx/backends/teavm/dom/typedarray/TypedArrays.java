@@ -34,122 +34,230 @@ public class TypedArrays {
     public static ArrayBufferView getTypedArray(boolean isUnsigned, Buffer buffer) {
         if(buffer instanceof ByteBuffer) {
             if(isUnsigned) {
-                return getUTypedArray((ByteBuffer)buffer);
+                return getUint8Array(buffer);
             }
             else {
-                return getTypedArray((ByteBuffer)buffer);
+                return getInt8Array(buffer);
             }
         }
         else if(buffer instanceof ShortBuffer) {
             if(isUnsigned) {
-                return getUTypedArray((ShortBuffer)buffer);
+                return getUint16Array(buffer);
             }
             else {
-                return getTypedArray((ShortBuffer)buffer);
+                return getInt16Array(buffer);
             }
         }
         else if(buffer instanceof IntBuffer) {
-            return getTypedArray((IntBuffer)buffer);
+            return getInt32Array(buffer);
         }
         else if(buffer instanceof FloatBuffer) {
-            return getTypedArray((FloatBuffer)buffer);
+            return getFloat32Array(buffer);
         }
         throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
     }
 
-    public static Int8Array getTypedArray(ByteBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Int8Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
-            return new Int8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Int8Array getInt8Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Int8Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new byte[buffer.capacity()];
-            buffer.get(array);
-            return Int8Array.copyFromJavaArray(buffer.array());
+            if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                if(buffer.hasArray()) {
+                    return Int8Array.copyFromJavaArray(buffer.array());
+                }
+                else {
+                    int position = buffer.position();
+                    int limit = buffer.limit();
+                    int capacity = buffer.capacity();
+                    buffer.position(0);
+                    buffer.limit(capacity);
+                    var array = new byte[capacity];
+                    buffer.get(array);
+                    buffer.position(position);
+                    buffer.limit(limit);
+                    return Int8Array.copyFromJavaArray(array);
+                }
+            }
+            else {
+                ArrayBufferView typedArray = getTypedArray(false, buff);
+                return new Int8Array(typedArray.getBuffer());
+            }
         }
     }
 
-    public static Uint8Array getUTypedArray(ByteBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Uint8Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
-            return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Uint8Array getUint8Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Uint8Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new byte[buffer.capacity()];
-            buffer.get(array);
-            var typedArray = Int8Array.copyFromJavaArray(buffer.array());
-            return new Uint8Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+            if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                 if(buffer.hasArray()) {
+                    var typedArray = Int8Array.copyFromJavaArray(buffer.array());
+                    return new Uint8Array(typedArray.getBuffer());
+                }
+                else {
+                     int position = buffer.position();
+                     int limit = buffer.limit();
+                     int capacity = buffer.capacity();
+                     buffer.position(0);
+                     buffer.limit(capacity);
+                     var array = new byte[capacity];
+                     buffer.get(array);
+                     buffer.position(position);
+                     buffer.limit(limit);
+                    var typedArray = Int8Array.copyFromJavaArray(array);
+                    return new Uint8Array(typedArray.getBuffer());
+                }
+            }
+            else {
+                ArrayBufferView typedArray = getTypedArray(true, buff);
+                return new Uint8Array(typedArray.getBuffer());
+            }
         }
     }
 
-    public static Int16Array getTypedArray(ShortBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Int16Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
-            return new Int16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Int16Array getInt16Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Int16Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new short[buffer.capacity()];
-            buffer.get(array);
-            return Int16Array.copyFromJavaArray(buffer.array());
+            if(buff instanceof ShortBuffer) {
+                ShortBuffer buffer = (ShortBuffer)buff;
+                if(buffer.hasArray()) {
+                    return Int16Array.copyFromJavaArray(buffer.array());
+                }
+                else {
+                    int position = buffer.position();
+                    int limit = buffer.limit();
+                    int capacity = buffer.capacity();
+                    buffer.position(0);
+                    buffer.limit(capacity);
+                    var array = new short[buffer.capacity()];
+                    buffer.get(array);
+                    buffer.position(position);
+                    buffer.limit(limit);
+                    return Int16Array.copyFromJavaArray(array);
+                }
+            }
+            else if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                Int8Array array = getInt8Array(buffer);
+                return new Int16Array(array);
+            }
+            else {
+                throw new RuntimeException("TypedArrays#getInt16Array - Unsupported buffer type " + buff.getClass().getSimpleName());
+            }
         }
     }
 
-    public static Uint16Array getUTypedArray(ShortBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Uint16Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
-            return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Uint16Array getUint16Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Uint16Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new short[buffer.capacity()];
-            buffer.get(array);
-            var typedArray = Int16Array.copyFromJavaArray(buffer.array());
-            return new Uint16Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+            if(buff instanceof ShortBuffer) {
+                ShortBuffer buffer = (ShortBuffer)buff;
+                if(buffer.hasArray()) {
+                    var typedArray = Int16Array.copyFromJavaArray(buffer.array());
+                    return new Uint16Array(typedArray.getBuffer());
+                }
+                else {
+                    int position = buffer.position();
+                    int limit = buffer.limit();
+                    int capacity = buffer.capacity();
+                    buffer.position(0);
+                    buffer.limit(capacity);
+                    var array = new short[buffer.capacity()];
+                    buffer.get(array);
+                    buffer.position(position);
+                    buffer.limit(limit);
+                    var typedArray = Int16Array.copyFromJavaArray(array);
+                    return new Uint16Array(typedArray.getBuffer());
+                }
+            }
+            else if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                Uint8Array array = getUint8Array(buffer);
+                return new Uint16Array(array.getBuffer());
+            }
+            else {
+                throw new RuntimeException("TypedArrays#getUint16Array - Unsupported buffer type " + buff.getClass().getSimpleName());
+            }
         }
     }
 
-    public static Int32Array getTypedArray(IntBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Int32Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Int32Array.copyFromJavaArray(buffer.array());
-            return new Int32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Int32Array getInt32Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Int32Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new int[buffer.capacity()];
-            buffer.get(array);
-            return Int32Array.copyFromJavaArray(array);
+            if(buff instanceof IntBuffer) {
+                IntBuffer buffer = (IntBuffer)buff;
+                if(buffer.hasArray()) {
+                    return Int32Array.copyFromJavaArray(buffer.array());
+                }
+                else {
+                    int position = buffer.position();
+                    int limit = buffer.limit();
+                    int capacity = buffer.capacity();
+                    buffer.position(0);
+                    buffer.limit(capacity);
+                    var array = new int[buffer.capacity()];
+                    buffer.get(array);
+                    buffer.position(position);
+                    buffer.limit(limit);
+                    return Int32Array.copyFromJavaArray(array);
+                }
+            }
+            else if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                Int8Array array = getInt8Array(buffer);
+                return new Int32Array(array);
+            }
+            else {
+                throw new RuntimeException("TypedArrays#getInt32Array - Unsupported buffer type " + buff.getClass().getSimpleName());
+            }
         }
     }
 
-    public static Float32Array getTypedArray(FloatBuffer buffer) {
-        if(PlatformDetector.isJavaScript() || buffer.isDirect()) {
-            return Float32Array.fromJavaBuffer(buffer);
-        }
-        else if(buffer.hasArray()) {
-            var typedArray = Float32Array.copyFromJavaArray(buffer.array());
-            return new Float32Array(typedArray.getBuffer(), buffer.arrayOffset(), buffer.capacity());
+    public static Float32Array getFloat32Array(Buffer buff) {
+        if(PlatformDetector.isJavaScript() || buff.isDirect()) {
+            return Float32Array.fromJavaBuffer(buff);
         }
         else {
-            var array = new float[buffer.capacity()];
-            buffer.get(array);
-            return Float32Array.copyFromJavaArray(array);
+            if(buff instanceof FloatBuffer) {
+                FloatBuffer buffer = (FloatBuffer)buff;
+                if(buffer.hasArray()) {
+                    return Float32Array.copyFromJavaArray(buffer.array());
+                }
+                else {
+                    int position = buffer.position();
+                    int limit = buffer.limit();
+                    int capacity = buffer.capacity();
+                    buffer.position(0);
+                    buffer.limit(capacity);
+                    var array = new float[buffer.capacity()];
+                    buffer.get(array);
+                    buffer.position(position);
+                    buffer.limit(limit);
+                    return Float32Array.copyFromJavaArray(array);
+                }
+            }
+            else if(buff instanceof ByteBuffer) {
+                ByteBuffer buffer = (ByteBuffer)buff;
+                Int8Array array = getInt8Array(buffer);
+                return new Float32Array(array);
+            }
+            else {
+                throw new RuntimeException("TypedArrays#getFloat32Array - Unsupported buffer type " + buff.getClass().getSimpleName());
+            }
         }
     }
 
-    public static Int8Array getTypedArray(byte[] buffer) {
+    public static Int8Array getInt8Array(byte[] buffer) {
         return Int8Array.copyFromJavaArray(buffer);
     }
 

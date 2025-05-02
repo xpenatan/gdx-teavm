@@ -100,7 +100,7 @@ public class FreeType {
         }
 
         public Face newMemoryFace(ByteBuffer buffer, int faceIndex) {
-            ArrayBufferView buf = TypedArrays.getTypedArray(buffer);
+            ArrayBufferView buf = TypedArrays.getInt8Array(buffer);
             int[] addressToFree = new int[]{0}; // Hacky way to get two return values
 
             int face = newMemoryFace(address, buf, buffer.remaining(), faceIndex, addressToFree);

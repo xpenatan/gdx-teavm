@@ -165,7 +165,7 @@ public class AssetDownloadImpl implements AssetDownloader {
                     if(isString(jsResponse)) {
                         // sync downloading is always string
                         String responseStr = toString(jsResponse);
-                        data = TypedArrays.getTypedArray(responseStr.getBytes());
+                        data = TypedArrays.getInt8Array(responseStr.getBytes());
                         arrayBuffer = data.getBuffer();
                     }
                     else {

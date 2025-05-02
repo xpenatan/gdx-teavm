@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -30,7 +29,6 @@ import org.teavm.jso.webgl.WebGLUniformLocation;
  *
  * @author xpenatan
  */
-@Emulate(TeaGL20.class)
 public class TeaGL20 implements GL20 {
 
     @JSClass
@@ -813,15 +811,37 @@ public class TeaGL20 implements GL20 {
             gl.texImage2D(target, level, internalformat, width, height, border, format, type, (ArrayBufferView)null);
             return;
         }
-        boolean isUnsigned = type == WebGLRenderingContext.UNSIGNED_BYTE || type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4;
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(isUnsigned, pixels);
+        ArrayBufferView arrayBuffer;
+        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
+            arrayBuffer = TypedArrays.getUint8Array(pixels);
+        }
+        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
+            arrayBuffer = TypedArrays.getUint16Array( pixels);
+        }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            arrayBuffer = TypedArrays.getFloat32Array(pixels);
+        }
+        else {
+            arrayBuffer = TypedArrays.getTypedArray(pixels);
+        }
         gl.texImage2D(target, level, internalformat, width, height, border, format, type, arrayBuffer);
     }
 
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-        boolean isUnsigned = type == WebGLRenderingContext.UNSIGNED_BYTE || type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4;
-        ArrayBufferView arrayBuffer = TypedArrays.getTypedArray(isUnsigned, pixels);
+        ArrayBufferView arrayBuffer;
+        if(type == WebGLRenderingContext.UNSIGNED_BYTE) {
+            arrayBuffer = TypedArrays.getUint8Array(pixels);
+        }
+        else if(type == WebGLRenderingContext.UNSIGNED_SHORT || type == GL_UNSIGNED_SHORT_5_6_5 || type == GL_UNSIGNED_SHORT_4_4_4_4) {
+            arrayBuffer = TypedArrays.getUint16Array(pixels);
+        }
+        else if(type == WebGLRenderingContext.FLOAT) {
+            arrayBuffer = TypedArrays.getFloat32Array(pixels);
+        }
+        else {
+            arrayBuffer = TypedArrays.getTypedArray(pixels);
+        }
         gl.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, arrayBuffer);
     }
 
@@ -854,7 +874,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform1fv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform1fv(loc, TypedArrays.getFloat32Array(v));
     }
 
     @Override
@@ -872,7 +892,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform1iv(int location, int count, IntBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform1iv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform1iv(loc, TypedArrays.getInt32Array(v));
     }
 
     @Override
@@ -890,7 +910,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform2fv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform2fv(loc, TypedArrays.getFloat32Array(v));
     }
 
     @Override
@@ -908,7 +928,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform2iv(int location, int count, IntBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform2iv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform2iv(loc, TypedArrays.getInt32Array(v));
     }
 
     @Override
@@ -926,7 +946,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform3fv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform3fv(loc, TypedArrays.getFloat32Array(v));
     }
 
     @Override
@@ -944,7 +964,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform3iv(int location, int count, IntBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform3iv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform3iv(loc, TypedArrays.getInt32Array(v));
     }
 
     @Override
@@ -962,7 +982,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4fv(int location, int count, FloatBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform4fv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform4fv(loc, TypedArrays.getFloat32Array(v));
     }
 
     @Override
@@ -980,7 +1000,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniform4iv(int location, int count, IntBuffer v) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniform4iv(loc, TypedArrays.getTypedArray(v));
+        gl.uniform4iv(loc, TypedArrays.getInt32Array(v));
     }
 
     @Override
@@ -992,7 +1012,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniformMatrix2fv(loc, transpose, TypedArrays.getTypedArray(value));
+        gl.uniformMatrix2fv(loc, transpose, TypedArrays.getFloat32Array(value));
     }
 
     @Override
@@ -1004,7 +1024,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniformMatrix3fv(loc, transpose, TypedArrays.getTypedArray(value));
+        gl.uniformMatrix3fv(loc, transpose, TypedArrays.getFloat32Array(value));
     }
 
     @Override
@@ -1016,7 +1036,7 @@ public class TeaGL20 implements GL20 {
     @Override
     public void glUniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer value) {
         WebGLUniformLocation loc = getUniformLocation(location);
-        gl.uniformMatrix4fv(loc, transpose, TypedArrays.getTypedArray(value));
+        gl.uniformMatrix4fv(loc, transpose, TypedArrays.getFloat32Array(value));
     }
 
     @Override
@@ -1043,7 +1063,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib1fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib1fv(indx, TypedArrays.getTypedArray(values));
+        gl.vertexAttrib1fv(indx, TypedArrays.getFloat32Array(values));
     }
 
     @Override
@@ -1053,7 +1073,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib2fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib2fv(indx, TypedArrays.getTypedArray(values));
+        gl.vertexAttrib2fv(indx, TypedArrays.getFloat32Array(values));
     }
 
     @Override
@@ -1063,7 +1083,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib3fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib3fv(indx, TypedArrays.getTypedArray(values));
+        gl.vertexAttrib3fv(indx, TypedArrays.getFloat32Array(values));
     }
 
     @Override
@@ -1073,7 +1093,7 @@ public class TeaGL20 implements GL20 {
 
     @Override
     public void glVertexAttrib4fv(int indx, FloatBuffer values) {
-        gl.vertexAttrib4fv(indx, TypedArrays.getTypedArray(values));
+        gl.vertexAttrib4fv(indx, TypedArrays.getFloat32Array(values));
     }
 
     @Override

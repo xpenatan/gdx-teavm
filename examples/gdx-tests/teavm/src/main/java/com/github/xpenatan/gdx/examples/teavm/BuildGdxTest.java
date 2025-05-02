@@ -28,6 +28,8 @@ public class BuildGdxTest {
         tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(GdxTestLauncher.class.getName());
+        int size = 64 * (1 << 20);
+        tool.setMaxDirectBuffersSize(size);
         TeaBuilder.build(tool);
     }
 }
