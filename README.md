@@ -67,16 +67,3 @@ dependencies {
     implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:$project.gdxTeaVMVersion"
 }
 ```
-
-## Supported libraries:
-- [ImGui](https://github.com/xpenatan/gdx-imgui) (WIP)
-- [Box2d](https://github.com/xpenatan/gdx-box2d) (WIP). Use GWTBox2d for now.
-- [Bullet](https://github.com/xpenatan/gdx-bullet) (WIP)
-- [PhysX](https://github.com/xpenatan/gdx-physx) (WIP)
-- [Lua](https://github.com/xpenatan/gdx-lua) (WIP)
-- FreeType (Is included in this repo)
-
-
-**ImGui**, **Box2D**, **Bullet**, **PhysX**, and **Lua** libraries leverage **[Emscripten](https://emscripten.org/)** and **[jParser](https://github.com/xpenatan/jParser)** to convert C++ code to JavaScript/WebAssembly.
-
-**Important Note:** Most of these projects are still **works in progress** and **not yet production-ready**. If you're interested in contributing, we welcome your involvement.
