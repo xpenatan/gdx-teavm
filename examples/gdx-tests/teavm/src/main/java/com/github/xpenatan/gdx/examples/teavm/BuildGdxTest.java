@@ -24,9 +24,9 @@ public class BuildGdxTest {
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
         TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
-        tool.setObfuscated(false);
+        tool.setObfuscated(true);
         tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.ADVANCED);
         tool.setMainClass(GdxTestLauncher.class.getName());
         int size = 64 * (1 << 20);
         tool.setMaxDirectBuffersSize(size);
