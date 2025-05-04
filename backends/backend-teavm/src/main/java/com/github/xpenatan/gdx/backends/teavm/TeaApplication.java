@@ -24,7 +24,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
-import com.github.xpenatan.jmultiplaform.core.JMultiplatform;
+import com.github.xpenatan.jmultiplatform.core.JMultiplatform;
+import com.github.xpenatan.jmultiplatform.core.JPlatformMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.teavm.jso.JSBody;
@@ -111,8 +112,9 @@ public class TeaApplication implements Application, Runnable {
         AssetInstance.setInstance(assetLoader);
 
         JMultiplatform instance = JMultiplatform.getInstance();
-        instance.put(WEB_SCRIPT_PATH, assetLoader.getScriptUrl());
-        instance.put(WEB_ASSET_PATH, assetLoader.getAssetUrl());
+        JPlatformMap map = instance.getMap();
+        map.put(WEB_SCRIPT_PATH, assetLoader.getScriptUrl());
+        map.put(WEB_ASSET_PATH, assetLoader.getAssetUrl());
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
