@@ -20,11 +20,11 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
+import com.github.xpenatan.jmultiplaform.core.JMultiplatform;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.teavm.jso.JSBody;
@@ -38,6 +38,9 @@ import org.teavm.jso.dom.html.HTMLElement;
  * @author xpenatan
  */
 public class TeaApplication implements Application, Runnable {
+
+    private static String WEB_SCRIPT_PATH = "WEB_SCRIPT_PATH";
+    private static String WEB_ASSET_PATH = "WEB_ASSET_PATH";
 
     private static TeaAgentInfo agentInfo;
 
@@ -106,6 +109,10 @@ public class TeaApplication implements Application, Runnable {
         String hostPageBaseURL = config.baseUrlProvider.getBaseUrl();
         assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this, assetDownload);
         AssetInstance.setInstance(assetLoader);
+
+        JMultiplatform instance = JMultiplatform.getInstance();
+        instance.put(WEB_SCRIPT_PATH, assetLoader.getScriptUrl());
+        instance.put(WEB_ASSET_PATH, assetLoader.getAssetUrl());
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
