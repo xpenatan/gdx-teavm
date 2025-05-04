@@ -4,23 +4,28 @@ import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLImageElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLVideoElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.ImageDataWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int32ArrayWrapper;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.core.JSArray;
+import org.teavm.jso.typedarrays.ArrayBufferView;
+import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.webgl.WebGLBuffer;
+import org.teavm.jso.webgl.WebGLProgram;
+import org.teavm.jso.webgl.WebGLRenderingContext;
+import org.teavm.jso.webgl.WebGLTexture;
+import org.teavm.jso.webgl.WebGLUniformLocation;
 
 /**
  * @author xpenatan
  */
-public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrapper {
+public interface WebGL2RenderingContextWrapper extends WebGLRenderingContext {
 
     void beginQuery(int target, WebGLQueryWrapper query);
 
     void beginTransformFeedback(int primitiveMode);
 
-    void bindBufferBase(int target, int index, WebGLBufferWrapper buffer);
+    void bindBufferBase(int target, int index, WebGLBuffer buffer);
 
-    void bindBufferRange(int target, int index, WebGLBufferWrapper buffer, int offset, int size);
+    void bindBufferRange(int target, int index, WebGLBuffer buffer, int offset, int size);
 
     void bindSampler(int unit, WebGLSamplerWrapper sampler);
 
@@ -83,7 +88,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     void drawArraysInstanced(int mode, int first, int count, int instanceCount);
 
-    void drawBuffers(Int32ArrayWrapper buffers);
+    void drawBuffers(Int32Array buffers);
 
     void drawElementsInstanced(int mode, int count, int type, int offset, int instanceCount);
 
@@ -101,21 +106,21 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 //
 // }-*/;
 
-    void framebufferTextureLayer(int target, int attachment, WebGLTextureWrapper texture, int level, int layer);
+    void framebufferTextureLayer(int target, int attachment, WebGLTexture texture, int level, int layer);
 
-    String getActiveUniformBlockName(WebGLProgramWrapper program, int uniformBlockIndex);
+    String getActiveUniformBlockName(WebGLProgram program, int uniformBlockIndex);
 
-    int getActiveUniformBlockParameteri(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
+    int getActiveUniformBlockParameteri(WebGLProgram program, int uniformBlockIndex, int pname);
 
-    <T extends ArrayBufferViewWrapper> T getActiveUniformBlockParameterv(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
+    <T extends ArrayBufferView> T getActiveUniformBlockParameterv(WebGLProgram program, int uniformBlockIndex, int pname);
 
-    boolean getActiveUniformBlockParameterb(WebGLProgramWrapper program, int uniformBlockIndex, int pname);
+    boolean getActiveUniformBlockParameterb(WebGLProgram program, int uniformBlockIndex, int pname);
 
-    JSArray<Integer> getActiveUniformsi(WebGLProgramWrapper program, Int32ArrayWrapper uniformIndices, int pname);
+    JSArray<Integer> getActiveUniformsi(WebGLProgram program, Int32Array uniformIndices, int pname);
 
-    JSArray<Boolean> getActiveUniformsb(WebGLProgramWrapper program, Int32ArrayWrapper uniformIndices, int pname);
+    JSArray<Boolean> getActiveUniformsb(WebGLProgram program, Int32Array uniformIndices, int pname);
 
-    int getFragDataLocation(WebGLProgramWrapper program, String name);
+    int getFragDataLocation(WebGLProgram program, String name);
 
     // Returning an int but GL type is GLint64 and GL30 interface uses LongBuffer. JS does not support long
     // so we return an int, not sure how else to preserve the long values at this time.
@@ -136,13 +141,13 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 // throw "UnsupportedOperation";
 // }-*/;
 
-    int getUniformBlockIndex(WebGLProgramWrapper program, String uniformBlockName);
+    int getUniformBlockIndex(WebGLProgram program, String uniformBlockName);
 
-    JSArray<Integer> getUniformIndices(WebGLProgramWrapper program, String[] uniformNames);
+    JSArray<Integer> getUniformIndices(WebGLProgram program, String[] uniformNames);
 
-    void invalidateFramebuffer(int target, Int32ArrayWrapper attachments);
+    void invalidateFramebuffer(int target, Int32Array attachments);
 
-    void invalidateSubFramebuffer(int target, Int32ArrayWrapper attachments, int x, int y, int width, int height);
+    void invalidateSubFramebuffer(int target, Int32Array attachments, int x, int y, int width, int height);
 
     boolean isQuery(WebGLQueryWrapper query);
 
@@ -171,7 +176,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, int offset);
 
-    void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ArrayBufferViewWrapper pixels);
+    void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ArrayBufferView pixels);
 
     void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, ImageDataWrapper pixels);
 
@@ -191,7 +196,7 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 // throw "UnsupportedOperation";
 // }-*/;
 
-    void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ArrayBufferViewWrapper pixels);
+    void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ArrayBufferView pixels);
 
     void texSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, HTMLCanvasElementWrapper canvas);
 
@@ -199,33 +204,33 @@ public interface WebGL2RenderingContextWrapper extends WebGLRenderingContextWrap
 
     void texSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, int offset);
 
-    void transformFeedbackVaryings(WebGLProgramWrapper program, String[] varyings, int bufferMode);
+    void transformFeedbackVaryings(WebGLProgram program, String[] varyings, int bufferMode);
 
 // Commented out in GL30 interface
 // void uniform1ui (WebGLUniformLocation location, int v0)/*-{
 // this.uniform1ui(location, v0);
 // }-*/;
 
-    void uniform1uiv(WebGLUniformLocationWrapper location, JSObject value, int srcOffset, int srcLength);
+    void uniform1uiv(WebGLUniformLocation location, JSObject value, int srcOffset, int srcLength);
 
-    void uniform3uiv(WebGLUniformLocationWrapper location, JSObject value, int srcOffset, int srcLength);
+    void uniform3uiv(WebGLUniformLocation location, JSObject value, int srcOffset, int srcLength);
 
-    void uniform4uiv(WebGLUniformLocationWrapper location, JSObject value, int srcOffset, int srcLength);
+    void uniform4uiv(WebGLUniformLocation location, JSObject value, int srcOffset, int srcLength);
 
-    void uniformBlockBinding(WebGLProgramWrapper program, int uniformBlockIndex, int uniformBlockBinding);
+    void uniformBlockBinding(WebGLProgram program, int uniformBlockIndex, int uniformBlockBinding);
 
-    void uniformMatrix2x3fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value);
+    void uniformMatrix2x3fv(WebGLUniformLocation location, boolean transpose, JSObject value);
 
 
-    void uniformMatrix2x4fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value, int srcOffset, int srcLength);
+    void uniformMatrix2x4fv(WebGLUniformLocation location, boolean transpose, JSObject value, int srcOffset, int srcLength);
 
-    void uniformMatrix3x2fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value, int srcOffset, int srcLength);
+    void uniformMatrix3x2fv(WebGLUniformLocation location, boolean transpose, JSObject value, int srcOffset, int srcLength);
 
-    void uniformMatrix3x4fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value, int srcOffset, int srcLength);
+    void uniformMatrix3x4fv(WebGLUniformLocation location, boolean transpose, JSObject value, int srcOffset, int srcLength);
 
-    void uniformMatrix4x2fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value, int srcOffset, int srcLength);
+    void uniformMatrix4x2fv(WebGLUniformLocation location, boolean transpose, JSObject value, int srcOffset, int srcLength);
 
-    void uniformMatrix4x3fv(WebGLUniformLocationWrapper location, boolean transpose, JSObject value, int srcOffset, int srcLength);
+    void uniformMatrix4x3fv(WebGLUniformLocation location, boolean transpose, JSObject value, int srcOffset, int srcLength);
 
     void vertexAttribDivisor(int index, int divisor);
 

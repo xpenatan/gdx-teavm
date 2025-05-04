@@ -7,18 +7,21 @@ import org.teavm.jso.JSProperty;
  */
 public interface DocumentWrapper extends ElementWrapper {
 
-    public ElementWrapper getDocumentElement();
+    @JSProperty
+    ElementWrapper getDocumentElement();
 
     @JSProperty
-    public String getVisibilityState();
+    String getVisibilityState();
 
-    public String getCompatMode();
+    @JSProperty
+    String getCompatMode();
 
     HTMLElementWrapper getElementById(String id);
 
-    public NodeWrapper createTextNode(NodeWrapper text);
+    NodeWrapper createTextNode(NodeWrapper text);
 
-    public HTMLElementWrapper createElement(String value);
+    HTMLElementWrapper createElement(String value);
 
-    public NodeWrapper getBody();
+    @JSProperty
+    NodeWrapper getBody();
 }

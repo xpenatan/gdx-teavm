@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.github.xpenatan.gdx.backends.teavm.TeaTool;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
+import org.teavm.classlib.PlatformDetector;
+import org.teavm.classlib.impl.nio.Buffers;
+
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -196,7 +199,6 @@ public final class BufferUtilsEmu {
         else
             throw new GdxRuntimeException("Buffers must be of same type or ByteBuffer");
         src.position(srcPos);
-        dst.flip();
         dst.position(dstPos);
     }
 
@@ -389,10 +391,8 @@ public final class BufferUtilsEmu {
 
     public static void disposeUnsafeByteBuffer (ByteBuffer buffer) {
         int size = buffer.capacity();
-        synchronized (unsafeBuffers) {
-            if (!unsafeBuffers.removeValue(buffer, true))
-                throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
-        }
+        if (!unsafeBuffers.removeValue(buffer, true))
+            throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
         allocatedUnsafe -= size;
         freeMemory(buffer);
     }
@@ -401,9 +401,7 @@ public final class BufferUtilsEmu {
         ByteBuffer buffer = newDisposableByteBuffer(numBytes);
         buffer.order(ByteOrder.nativeOrder());
         allocatedUnsafe += numBytes;
-        synchronized (unsafeBuffers) {
-            unsafeBuffers.add(buffer);
-        }
+        unsafeBuffers.add(buffer);
         return buffer;
     }
 
@@ -416,6 +414,28 @@ public final class BufferUtilsEmu {
     }
 
     private static void freeMemory (ByteBuffer buffer) {
+        if (PlatformDetector.isWebAssemblyGC() && buffer.isDirect()) {
+            Buffers.free(buffer);
+        }
         // Do nothing because this is javascript
+    }
+
+    private static int bytesToElements (Buffer dst, int bytes) {
+        if (dst instanceof ByteBuffer)
+            return bytes;
+        else if (dst instanceof ShortBuffer)
+            return bytes >>> 1;
+        else if (dst instanceof CharBuffer)
+            return bytes >>> 1;
+        else if (dst instanceof IntBuffer)
+            return bytes >>> 2;
+        else if (dst instanceof LongBuffer)
+            return bytes >>> 3;
+        else if (dst instanceof FloatBuffer)
+            return bytes >>> 2;
+        else if (dst instanceof DoubleBuffer)
+            return bytes >>> 3;
+        else
+            throw new GdxRuntimeException("Can't copy to a " + dst.getClass().getName() + " instance");
     }
 }

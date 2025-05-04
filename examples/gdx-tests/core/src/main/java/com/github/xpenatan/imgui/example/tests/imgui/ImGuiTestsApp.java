@@ -1,20 +1,12 @@
 package com.github.xpenatan.imgui.example.tests.imgui;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
-import com.badlogic.gdx.tests.AbstractTestWrapper;
-import com.badlogic.gdx.tests.InputTest;
-import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.TeaVMGdxTests;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.github.xpenatan.gdx.multiview.EmuFrameBuffer;
-import com.github.xpenatan.imgui.example.tests.frame.GameFrame;
+import com.badlogic.gdx.tests.utils.GdxTest;
 import imgui.ImDrawData;
 import imgui.ImGui;
 import imgui.ImGuiCond;
@@ -48,7 +40,7 @@ public class ImGuiTestsApp implements Screen {
         ImGui.CreateContext();
 
         ImGuiIO io = ImGui.GetIO();
-        io.set_ConfigFlags(ImGuiConfigFlags.ImGuiConfigFlags_DockingEnable);
+        io.set_ConfigFlags(ImGuiConfigFlags.DockingEnable);
 
         input = new ImGuiGdxInputMultiplexer();
         impl = new ImGuiGdxImpl();
@@ -85,8 +77,8 @@ public class ImGuiTestsApp implements Screen {
     }
 
     private void drawTestListWindow() {
-        ImGui.SetNextWindowSize(ImVec2.TMP_1.set(250, 500), ImGuiCond.ImGuiCond_FirstUseEver);
-        ImGui.SetNextWindowPos(ImVec2.TMP_1.set(20, 20), ImGuiCond.ImGuiCond_FirstUseEver);
+        ImGui.SetNextWindowSize(ImVec2.TMP_1.set(250, 500), ImGuiCond.FirstUseEver);
+        ImGui.SetNextWindowPos(ImVec2.TMP_1.set(20, 20), ImGuiCond.FirstUseEver);
         ImGui.Begin("GdxTests");
         if(ImGui.Button("Start Test")) {
             if(selected >= 0 && selected < testList.length) {

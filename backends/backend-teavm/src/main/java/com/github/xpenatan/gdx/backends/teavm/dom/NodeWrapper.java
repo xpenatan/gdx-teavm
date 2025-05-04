@@ -1,10 +1,13 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface NodeWrapper extends EventTargetWrapper {
-    public NodeWrapper getParentNode();
+    @JSProperty
+    NodeWrapper getParentNode();
 
-    public void appendChild(NodeWrapper node);
+    void appendChild(NodeWrapper node);
 }

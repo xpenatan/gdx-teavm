@@ -1,10 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm.webaudio.howler;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSClass;
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.typedarrays.ArrayBufferView;
 
 @JSClass
 public class Howl implements JSObject {
@@ -13,7 +13,7 @@ public class Howl implements JSObject {
             "var blob = new Blob( [ arrayBufferView ]);" +
             "var howlSource = URL.createObjectURL(blob);" +
             "return new Howl({ src: [howlSource], format: ['ogg', 'webm', 'mp3', 'wav']});")
-    public static native Howl create(ArrayBufferViewWrapper arrayBufferView);
+    public static native Howl create(ArrayBufferView arrayBufferView);
 
     public native int play();
 

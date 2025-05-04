@@ -4,6 +4,8 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.examples.tests.GLTFQuickStartExample;
 import com.github.xpenatan.gdx.examples.tests.LoadingTest;
+import com.github.xpenatan.gdx.examples.tests.ReflectionTest;
+import com.github.xpenatan.gdx.examples.tests.UITest;
 
 public class TeaVMTestLauncher {
 
@@ -15,5 +17,7 @@ public class TeaVMTestLauncher {
         config.preloadAssets = true;
 //        new TeaApplication(new LoadingTest(), config);
         new TeaApplication(new GLTFQuickStartExample(), config);
+//        new TeaApplication(new ReflectionTest(), config);
+//        new TeaApplication(new UITest(), config);
     }
 }

@@ -1,19 +1,22 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
+
 /**
  * @author xpenatan
  */
 public interface WindowWrapper {
 
-    public DocumentWrapper getDocument();
+    DocumentWrapper getDocument();
 
-    public void requestAnimationFrame(Runnable runnable);
+    void requestAnimationFrame(Runnable runnable);
 
-    public LocationWrapper getLocation();
+    LocationWrapper getLocation();
 
-    public int getClientWidth();
+    int getClientWidth();
 
-    public int getClientHeight();
+    int getClientHeight();
 
-    public void addEventListener(String type, EventListenerWrapper listener);
+    void addEventListener(String type, EventListener<Event> listener);
 }

@@ -23,7 +23,7 @@ subprojects {
 
         maven {
             url = uri("http://teavm.org/maven/repository/")
-            setAllowInsecureProtocol(true)
+            isAllowInsecureProtocol = true
         }
     }
 

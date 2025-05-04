@@ -1,11 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
+import org.teavm.jso.JSProperty;
+
 /**
  * @author xpenatan
  */
 public interface TouchListWrapper extends EventWrapper {
-
-    public int getLength();
-
-    public TouchWrapper item(int index);
+    @JSProperty
+    int getLength();
+    TouchWrapper item(int index);
 }

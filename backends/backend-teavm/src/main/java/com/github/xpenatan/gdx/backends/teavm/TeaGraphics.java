@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
-import com.badlogic.gdx.utils.IntMap;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
@@ -19,17 +18,17 @@ import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLContextAttributesWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.webgl.WebGLRenderingContext;
 
 /**
  * @author xpenatan
  */
 public class TeaGraphics implements Graphics {
-    private WebGLRenderingContextWrapper context;
+    private WebGLRenderingContext context;
     protected HTMLCanvasElementWrapper canvas;
     protected TeaApplicationConfiguration config;
     protected GL20 gl20;
@@ -60,7 +59,7 @@ public class TeaGraphics implements Graphics {
         HTMLCanvasElement canvas1 = (HTMLCanvasElement)canvas;
 
         if (config.useGL30) {
-            context = (WebGLRenderingContextWrapper)canvas1.getContext("webgl2", attr);
+            context = (WebGLRenderingContext)canvas1.getContext("webgl2", attr);
         }
 
         if (config.useGL30 && context != null) {
@@ -69,7 +68,7 @@ public class TeaGraphics implements Graphics {
                     : new TeaGL30((WebGL2RenderingContextWrapper)context);
             this.gl20 = gl30;
         } else {
-            context = (WebGLRenderingContextWrapper)canvas1.getContext("webgl", attr);
+            context = (WebGLRenderingContext)canvas1.getContext("webgl", attr);
             this.gl20 = config.useDebugGL ? new TeaGL20Debug(context) : new TeaGL20(context);
         }
 

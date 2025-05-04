@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem.indexeddb;
 
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSByRef;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
 import org.teavm.jso.core.JSString;

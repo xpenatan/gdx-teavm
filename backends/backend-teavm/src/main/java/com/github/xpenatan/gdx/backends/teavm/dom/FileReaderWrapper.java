@@ -1,10 +1,10 @@
 package com.github.xpenatan.gdx.backends.teavm.dom;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
+import org.teavm.jso.typedarrays.ArrayBuffer;
 
 public abstract class FileReaderWrapper implements EventTargetWrapper, JSObject {
 
@@ -18,7 +18,7 @@ public abstract class FileReaderWrapper implements EventTargetWrapper, JSObject 
     public abstract void readAsText(FileWrapper file);
 
     @JSProperty("result")
-    public abstract ArrayBufferWrapper getResultAsArrayBuffer();
+    public abstract ArrayBuffer getResultAsArrayBuffer();
 
     @JSProperty("result")
     public abstract String getResultAsString();

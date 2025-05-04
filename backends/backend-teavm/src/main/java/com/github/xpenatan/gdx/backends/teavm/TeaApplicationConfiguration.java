@@ -1,7 +1,8 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaBaseUrlProvider;
+import com.github.xpenatan.gdx.backends.teavm.utils.TeaDefaultBaseUrlProvider;
 
 /**
  * @author xpenatan
@@ -100,6 +101,11 @@ public class TeaApplicationConfiguration {
      * Used for preloading asset and libraries
      */
     public TeaAssetPreloadListener preloadListener;
+
+    /**
+     * Base Url provider. Implement to customize the base url for assets loading.
+     */
+    public TeaBaseUrlProvider baseUrlProvider = new TeaDefaultBaseUrlProvider();
 
     public boolean isFixedSizeApplication() {
         return width != 0 && height != 0;

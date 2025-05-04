@@ -2,8 +2,8 @@ package com.github.xpenatan.gdx.backends.teavm.webaudio.howler;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferViewWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import org.teavm.jso.typedarrays.ArrayBufferView;
 
 public class HowlSound implements Sound {
 
@@ -11,7 +11,7 @@ public class HowlSound implements Sound {
 
     public HowlSound(FileHandle fileHandle) {
         byte[] bytes = fileHandle.readBytes();
-        ArrayBufferViewWrapper data = TypedArrays.getTypedArray(bytes);
+        ArrayBufferView data = TypedArrays.getInt8Array(bytes);
         howl = Howl.create(data);
     }
 

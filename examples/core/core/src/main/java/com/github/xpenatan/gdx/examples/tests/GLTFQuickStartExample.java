@@ -2,8 +2,7 @@ package com.github.xpenatan.gdx.examples.tests;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,9 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
-import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
 import net.mgsx.gltf.loaders.glb.GLBLoader;
-import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.loaders.shared.SceneAssetLoaderParameters;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -39,7 +36,8 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
     private SceneSkybox skybox;
     private DirectionalLightEx light;
 
-    private String MODEL_ASSET = "custom/models/BoomBox/glTF/BoomBox.gltf";
+//    private String MODEL_ASSET = "custom/models/BoomBox/glTF/BoomBox.gltf";
+    private String MODEL_ASSET = "custom/models/DamagedHelmet.glb";
 
 //    AssetManager assetManager;
 
@@ -61,9 +59,9 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
 
         // setup camera (The BoomBox model is very small so you may need to adapt camera settings for your scene)
         camera = new PerspectiveCamera(60f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        float d = .02f;
-        camera.near = d / 1000f;
-        camera.far = d * 4;
+//        float d = .02f;
+//        camera.near = d / 1000f;
+//        camera.far = d * 4;
         sceneManager.setCamera(camera);
 
         // setup light
@@ -91,8 +89,14 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
         skybox = new SceneSkybox(environmentCubemap);
         sceneManager.setSkyBox(skybox);
 
-
-        sceneAsset = new GLTFLoader().load(Gdx.files.internal(MODEL_ASSET));
+        FileHandle modelFileHandle = Gdx.files.internal(MODEL_ASSET);
+        String extension = modelFileHandle.extension();
+        if(extension.equals("glb")) {
+            sceneAsset = new GLBLoader().load(modelFileHandle);
+        }
+        else if(extension.equals("gltf")) {
+            sceneAsset = new GLTFLoader().load(modelFileHandle);
+        }
         scene = new Scene(sceneAsset.scene);
         sceneManager.addScene(scene);
 
@@ -117,7 +121,7 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
 
 
         // animate camera
-        camera.position.setFromSpherical(MathUtils.PI / 4, time * .3f).scl(.03f);
+        camera.position.setFromSpherical(MathUtils.PI / 4, time * .3f).scl(3.03f);
         camera.up.set(Vector3.Y);
         camera.lookAt(Vector3.Zero);
         camera.update();

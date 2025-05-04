@@ -271,5 +271,6 @@ public class InstanceBufferObjectEmu implements InstanceData {
         gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
         gl.glDeleteBuffer(bufferHandle);
         bufferHandle = 0;
+        if (ownsBuffer) BufferUtils.disposeUnsafeByteBuffer(byteBuffer);
     }
 }

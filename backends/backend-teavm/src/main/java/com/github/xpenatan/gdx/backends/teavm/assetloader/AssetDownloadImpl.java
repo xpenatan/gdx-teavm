@@ -1,13 +1,13 @@
 package com.github.xpenatan.gdx.backends.teavm.assetloader;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.ArrayBufferWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.Int8ArrayWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLScriptElement;
 import org.teavm.jso.typedarrays.ArrayBuffer;
@@ -41,10 +41,10 @@ public class AssetDownloadImpl implements AssetDownloader {
     }
 
     @Override
-    public void load(boolean async, String url, AssetType type, AssetLoaderListener<Blob> listener) {
-        AssetLoaderListener<Blob> internalListener = new AssetLoaderListener<>() {
+    public void load(boolean async, String url, AssetType type, AssetLoaderListener<TeaBlob> listener) {
+        AssetLoaderListener<TeaBlob> internalListener = new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, Blob result) {
+            public void onSuccess(String url, TeaBlob result) {
                 if(showLogs) {
                     System.out.println("Asset download success: " + url);
                 }
@@ -87,50 +87,37 @@ public class AssetDownloadImpl implements AssetDownloader {
         if(showLogs) {
             System.out.println("Loading script: " + url);
         }
+        addQueue();
+        Window current = Window.current();
+        HTMLDocument document = current.getDocument();
+        HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
 
-        loadBinary(async, url, new AssetLoaderListener<>() {
+        scriptElement.addEventListener("load", new EventListener<Event>() {
             @Override
-            public void onSuccess(String url, Blob result) {
-                Int8ArrayWrapper data = (Int8ArrayWrapper)result.getData();
-                byte[] byteArray = TypedArrays.toByteArray(data);
-                String script = new String(byteArray);
-                Window current = Window.current();
-                HTMLDocument document = current.getDocument();
-                HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
-                scriptElement.setText(script);
-                document.getBody().appendChild(scriptElement);
-
+            public void handleEvent(Event event) {
+                subtractQueue();
                 if(showLogs) {
                     System.out.println("Script download success: " + url);
                 }
                 if(listener != null) {
-                    listener.onSuccess(url, script);
+                    listener.onSuccess(url, "");
                 }
             }
-
-            @Override
-            public void onFailure(String url) {
-                if(showLogs) {
-                    System.err.println("Script download failed: " + url);
-                }
-                if(listener != null) {
-                    listener.onFailure(url);
-                }
+        });
+        scriptElement.addEventListener("error", (error) -> {
+            subtractQueue();
+            if(showLogs) {
+                System.err.println("Script download failed: " + url);
             }
-
-            @Override
-            public void onProgress(int total, int loaded) {
-                if(showDownloadProgress) {
-                    System.out.println("Total: " + total + " loaded: " + loaded + " URL: " + url);
-                }
-                if(listener != null) {
-                    listener.onProgress(total, loaded);
-                }
+            if(listener != null) {
+                listener.onFailure(url);
             }
-        }, 0);
+        });
+        scriptElement.setSrc(url);
+        document.getBody().appendChild(scriptElement);
     }
 
-    private void loadBinary(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
         if(count == MAX_DOWNLOAD_ATTEMPT) {
             if(listener != null) {
                 listener.onFailure(url);
@@ -141,18 +128,14 @@ public class AssetDownloadImpl implements AssetDownloader {
         // don't load on main thread
         addQueue();
         if(async) {
-            new Thread() {
-                public void run() {
-                    loadBinaryInternally(true, url, listener, count);
-                }
-            }.start();
+            Window.setTimeout(() -> loadBinaryInternally(true, url, listener, count), 0);
         }
         else {
             loadBinaryInternally(false, url, listener, count);
         }
     }
 
-    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<Blob> listener, int count) {
+    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
         XMLHttpRequest request = new XMLHttpRequest();
         request.setOnReadyStateChange(evt -> {
             if(request.getReadyState() == XMLHttpRequest.DONE) {
@@ -165,14 +148,8 @@ public class AssetDownloadImpl implements AssetDownloader {
                 else if(status != 200) {
                     if ((status != 404) && (status != 403)) {
                         // re-try: e.g. failure due to ERR_HTTP2_SERVER_REFUSED_STREAM (too many requests)
-                        try {
-                            Thread.sleep(100);
-                        }
-                        catch (Throwable e) {
-                            // ignored
-                        }
                         int newCount = count + 1;
-                        loadBinary(async, url, listener, newCount);
+                        Window.setTimeout(() -> loadBinary(async, url, listener, newCount), 100);
                     }
                     else {
                         if(listener != null) {
@@ -188,18 +165,17 @@ public class AssetDownloadImpl implements AssetDownloader {
                     if(isString(jsResponse)) {
                         // sync downloading is always string
                         String responseStr = toString(jsResponse);
-                        Int8ArrayWrapper typedArray = TypedArrays.getTypedArray(responseStr.getBytes());
-                        data = (Int8Array)typedArray;
+                        data = TypedArrays.getInt8Array(responseStr.getBytes());
                         arrayBuffer = data.getBuffer();
                     }
                     else {
-                        ArrayBufferWrapper response = (ArrayBufferWrapper)jsResponse;
-                        data = (Int8Array)TypedArrays.createInt8Array(response);
-                        arrayBuffer = (ArrayBuffer)response;
+                        ArrayBuffer response = (ArrayBuffer)jsResponse;
+                        data = new Int8Array(response);
+                        arrayBuffer = response;
                     }
 
                     if(listener != null) {
-                        listener.onSuccess(url, new Blob(arrayBuffer, data));
+                        listener.onSuccess(url, new TeaBlob(arrayBuffer, data));
                     }
                 }
                 subtractQueue();
@@ -230,4 +206,7 @@ public class AssetDownloadImpl implements AssetDownloader {
 
     @JSBody(params = "jsObject", script = "return jsObject;")
     private static native String toString(JSObject jsObject);
+
+    @JSBody(params = "object", script = "return URL.createObjectURL(object);")
+    private static native String createObjectURL(JSObject object);
 }

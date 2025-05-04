@@ -1,12 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
 
 /**
@@ -63,8 +63,7 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
     }
 
     @Override
-    public void addEventListener(String type, EventListenerWrapper listener) {
-        EventListener<?> eListener = (EventListener<?>)listener;
-        window.addEventListener(type, eListener);
+    public void addEventListener(String type, EventListener<Event> listener) {
+        window.addEventListener(type, listener);
     }
 }
