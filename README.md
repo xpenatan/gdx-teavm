@@ -11,22 +11,6 @@ Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to ha
 ## TeaVM Examples
 [libGDX-TeaVM](https://github.com/xpenatan/libGDX-TeaVM)
 
-
-## Old TeaVM Examples:
-* [gdx-tests](https://xpenatan.github.io/gdx-teavm/teavm/gdx-tests/) (Updated 07/09/2024)
-* [demo-cubocy](https://xpenatan.github.io/gdx-teavm/teavm/demo-cubocy/)
-* [demo-superjumper](https://xpenatan.github.io/gdx-teavm/teavm/demo-superjumper/)
-* [test-freetype](https://xpenatan.github.io/gdx-teavm/teavm/test-freetype-packtest/)
-* [test-bullet-wasm](https://xpenatan.github.io/gdx-teavm/teavm/test-bullet/)
-* [test-box2d-wasm](https://xpenatan.github.io/gdx-teavm/teavm/test-box2d/)
-* [micronaut-libgdx-teavm](https://github.com/hollingsworthd/micronaut-libgdx-teavm)
-* [6dof-vehicle](https://xpenatan.github.io/gdx-6dof-vehicle-demo/teavm/vehicle/) ([source](https://github.com/xpenatan/gdx-6dof-vehicle-demo))
-
-## TeaVM Games:
-* [Age of Conquest](https://www.ageofconquest.com/webapp/) ([website](https://www.ageofconquest.com/))
-* [Retro Commander](https://www.retrocommander.com/webapp/) ([website](https://www.retrocommander.com/))
-
-
 ### Versions:
 | gdx-teavm |  LibGDX  | TeaVM  |
 |:---------:|:--------:|:------:|
