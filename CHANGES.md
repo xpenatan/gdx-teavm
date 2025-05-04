@@ -1,8 +1,10 @@
 [-SNAPSHOT]
+
+[1.2.0]
 - Updated to TeaVM 0.12.0
 - Add WebAssembly support
 - Enhanced compile error logging
-- Switched to TeaVM's native array/buffer implementation, eliminating wrappers and custom solution
+- Switched to TeaVM's native array/buffer implementation, eliminating wrappers and custom solutions
 - Upgraded to Gradle 8.14
 - Skip annotation deprecation
 
