@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextExt;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -52,7 +53,7 @@ public class TeaGL20 implements GL20 {
         public native int getKey (T value);
     }
 
-    protected WebGLRenderingContext gl;
+    protected WebGLRenderingContextExt gl;
 
     final CustomIntMap<WebGLProgram> programs = CustomIntMap.create();
     final CustomIntMap<WebGLShader> shaders = CustomIntMap.create();
@@ -63,7 +64,7 @@ public class TeaGL20 implements GL20 {
     final CustomIntMap<CustomIntMap<WebGLUniformLocation>> uniforms = CustomIntMap.create();
     private int currProgram = 0;
 
-    public TeaGL20(WebGLRenderingContext gl) {
+    public TeaGL20(WebGLRenderingContextExt gl) {
         this.gl = gl;
         this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
     }
@@ -824,6 +825,7 @@ public class TeaGL20 implements GL20 {
         else {
             arrayBuffer = TypedArrays.getTypedArray(pixels);
         }
+
         gl.texImage2D(target, level, internalformat, width, height, border, format, type, arrayBuffer);
     }
 

@@ -15,6 +15,7 @@ public class TeaVMTestLauncher {
         config.height = 0;
         config.showDownloadLogs = true;
         config.preloadAssets = true;
+        config.useGL30 = true;
 //        new TeaApplication(new LoadingTest(), config);
         new TeaApplication(new GLTFQuickStartExample(), config);
 //        new TeaApplication(new ReflectionTest(), config);

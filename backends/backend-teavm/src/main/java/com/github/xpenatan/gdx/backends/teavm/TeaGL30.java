@@ -4,11 +4,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLQueryWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLSamplerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLTransformFeedbackWrapper;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGLVertexArrayObjectWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextExt;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,10 +12,15 @@ import java.nio.LongBuffer;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Int32Array;
+import org.teavm.jso.typedarrays.Uint32Array;
 import org.teavm.jso.webgl.WebGLFramebuffer;
+import org.teavm.jso.webgl.WebGLQuery;
 import org.teavm.jso.webgl.WebGLRenderingContext;
+import org.teavm.jso.webgl.WebGLSampler;
 import org.teavm.jso.webgl.WebGLTexture;
+import org.teavm.jso.webgl.WebGLTransformFeedback;
 import org.teavm.jso.webgl.WebGLUniformLocation;
+import org.teavm.jso.webgl.WebGLVertexArrayObject;
 
 /**
  * Port from GWT gdx 1.12.0
@@ -28,15 +29,15 @@ import org.teavm.jso.webgl.WebGLUniformLocation;
  */
 public class TeaGL30 extends TeaGL20 implements GL30 {
 
-    protected WebGL2RenderingContextWrapper gl;
+    protected WebGL2RenderingContextExt gl;
 
-    final CustomIntMap<WebGLQueryWrapper> queries = CustomIntMap.create();
-    final CustomIntMap<WebGLSamplerWrapper> samplers = CustomIntMap.create();
-    final CustomIntMap<WebGLTransformFeedbackWrapper> feedbacks = CustomIntMap.create();
-    final CustomIntMap<WebGLVertexArrayObjectWrapper> vertexArrays = CustomIntMap.create();
+    final CustomIntMap<WebGLQuery> queries = CustomIntMap.create();
+    final CustomIntMap<WebGLSampler> samplers = CustomIntMap.create();
+    final CustomIntMap<WebGLTransformFeedback> feedbacks = CustomIntMap.create();
+    final CustomIntMap<WebGLVertexArrayObject> vertexArrays = CustomIntMap.create();
 
-    public TeaGL30(WebGL2RenderingContextWrapper gl) {
-        super((WebGLRenderingContext)gl);
+    public TeaGL30(WebGL2RenderingContextExt gl) {
+        super(gl);
         this.gl = gl;
     }
 
@@ -131,7 +132,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glDeleteQueries(int n, int[] ids, int offset) {
         for(int i = offset; i < offset + n; i++) {
             int id = ids[i];
-            WebGLQueryWrapper query = queries.get(id);
+            WebGLQuery query = queries.get(id);
             deallocateQueryId(id);
             gl.deleteQuery(query);
         }
@@ -142,7 +143,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             int id = ids.get();
-            WebGLQueryWrapper query = queries.get(id);
+            WebGLQuery query = queries.get(id);
             deallocateQueryId(id);
             gl.deleteQuery(query);
         }
@@ -153,7 +154,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glDeleteSamplers(int count, int[] samplers, int offset) {
         for(int i = offset; i < offset + count; i++) {
             int id = samplers[i];
-            WebGLSamplerWrapper sampler = this.samplers.get(id);
+            WebGLSampler sampler = this.samplers.get(id);
             deallocateSamplerId(id);
             gl.deleteSampler(sampler);
         }
@@ -164,7 +165,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             int id = ids.get();
-            WebGLSamplerWrapper sampler = samplers.get(id);
+            WebGLSampler sampler = samplers.get(id);
             deallocateSamplerId(id);
             gl.deleteSampler(sampler);
         }
@@ -175,7 +176,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glDeleteTransformFeedbacks(int n, int[] ids, int offset) {
         for(int i = offset; i < offset + n; i++) {
             int id = ids[i];
-            WebGLTransformFeedbackWrapper feedback = feedbacks.get(id);
+            WebGLTransformFeedback feedback = feedbacks.get(id);
             deallocateFeedbackId(id);
             gl.deleteTransformFeedback(feedback);
         }
@@ -186,7 +187,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             int id = ids.get();
-            WebGLTransformFeedbackWrapper feedback = feedbacks.get(id);
+            WebGLTransformFeedback feedback = feedbacks.get(id);
             deallocateFeedbackId(id);
             gl.deleteTransformFeedback(feedback);
         }
@@ -197,7 +198,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glDeleteVertexArrays(int n, int[] arrays, int offset) {
         for(int i = offset; i < offset + n; i++) {
             int id = arrays[i];
-            WebGLVertexArrayObjectWrapper vArray = vertexArrays.get(id);
+            WebGLVertexArrayObject vArray = vertexArrays.get(id);
             deallocateVertexArrayId(id);
             gl.deleteVertexArray(vArray);
         }
@@ -208,7 +209,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
         int startPosition = ids.position();
         for(int i = 0; i < n; i++) {
             int id = ids.get();
-            WebGLVertexArrayObjectWrapper vArray = vertexArrays.get(id);
+            WebGLVertexArrayObject vArray = vertexArrays.get(id);
             deallocateVertexArrayId(id);
             gl.deleteVertexArray(vArray);
         }
@@ -242,8 +243,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     }
 
     @Override
-    public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type,
-                             int offset) {
+    public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, int offset) {
         gl.texImage2D(target, level, internalformat, width, height, border, format, type, offset);
     }
 
@@ -270,7 +270,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenQueries(int n, int[] ids, int offset) {
         for(int i = offset; i < offset + n; i++) {
-            WebGLQueryWrapper query = gl.createQuery();
+            WebGLQuery query = gl.createQuery();
             int id = queries.add(query);
             ids[i] = id;
         }
@@ -279,7 +279,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenQueries(int n, IntBuffer ids) {
         for(int i = 0; i < n; i++) {
-            WebGLQueryWrapper query = gl.createQuery();
+            WebGLQuery query = gl.createQuery();
             int id = queries.add(query);
             ids.put(i, id);
         }
@@ -288,7 +288,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenSamplers(int count, int[] samplerr, int offset) {
         for(int i = offset; i < offset + count; i++) {
-            WebGLSamplerWrapper sampler = gl.createSampler();
+            WebGLSampler sampler = gl.createSampler();
             int id = samplers.add(sampler);
             samplerr[i] = id;
         }
@@ -297,7 +297,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenSamplers(int n, IntBuffer ids) {
         for(int i = 0; i < n; i++) {
-            WebGLSamplerWrapper sampler = gl.createSampler();
+            WebGLSampler sampler = gl.createSampler();
             int id = samplers.add(sampler);
             ids.put(i, id);
         }
@@ -306,7 +306,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenTransformFeedbacks(int n, int[] ids, int offset) {
         for(int i = offset; i < offset + n; i++) {
-            WebGLTransformFeedbackWrapper feedback = gl.createTransformFeedback();
+            WebGLTransformFeedback feedback = gl.createTransformFeedback();
             int id = feedbacks.add(feedback);
             ids[i] = id;
         }
@@ -315,7 +315,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenTransformFeedbacks(int n, IntBuffer ids) {
         for(int i = 0; i < n; i++) {
-            WebGLTransformFeedbackWrapper feedback = gl.createTransformFeedback();
+            WebGLTransformFeedback feedback = gl.createTransformFeedback();
             int id = feedbacks.add(feedback);
             ids.put(i, id);
         }
@@ -324,7 +324,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenVertexArrays(int n, int[] arrays, int offset) {
         for(int i = offset; i < offset + n; i++) {
-            WebGLVertexArrayObjectWrapper vArray = gl.createVertexArray();
+            WebGLVertexArrayObject vArray = gl.createVertexArray();
             int id = vertexArrays.add(vArray);
             arrays[i] = id;
         }
@@ -333,7 +333,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     @Override
     public void glGenVertexArrays(int n, IntBuffer ids) {
         for(int i = 0; i < n; i++) {
-            WebGLVertexArrayObjectWrapper vArray = gl.createVertexArray();
+            WebGLVertexArrayObject vArray = gl.createVertexArray();
             int id = vertexArrays.add(vArray);
             ids.put(i, id);
         }
@@ -346,7 +346,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
             params.put(0, gl.getActiveUniformBlockParameteri(programs.get(program), uniformBlockIndex, pname));
         }
         else if(pname == GL30.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES) {
-            Int32Array array = gl.getActiveUniformBlockParameterv(programs.get(program), uniformBlockIndex, pname);
+            Uint32Array array = gl.getActiveUniformBlockParameterv(programs.get(program), uniformBlockIndex, pname);
             for(int i = 0; i < array.getLength(); i++) {
                 params.put(i, array.get(i));
             }
@@ -481,7 +481,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
                 }
                 return;
             case GL30.GL_VERTEX_ARRAY_BINDING:
-                WebGLVertexArrayObjectWrapper obj = (WebGLVertexArrayObjectWrapper)gl.getParameter(pname);
+                WebGLVertexArrayObject obj = (WebGLVertexArrayObject)gl.getParameter(pname);
                 if(obj == null) {
                     params.put(0, 0);
                 }
@@ -534,7 +534,7 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
     public void glGetQueryiv(int target, int pname, IntBuffer params) {
         // Not 100% clear on this one. Returning the integer key for the query.
         // Similar to how GwtGL20 handles FBO in glGetIntegerv
-        WebGLQueryWrapper query = gl.getQuery(target, pname);
+        WebGLQuery query = gl.getQuery(target, pname);
         if(query == null) {
             params.put(0, 0);
         }
@@ -580,10 +580,10 @@ public class TeaGL30 extends TeaGL20 implements GL30 {
 
     @Override
     public void glGetUniformIndices(int program, String[] uniformNames, IntBuffer uniformIndices) {
-        JSArray<Integer> array = gl.getUniformIndices(programs.get(program), uniformNames);
-        int length = array.getLength();
+        int[] array = gl.getUniformIndices(programs.get(program), uniformNames);
+        int length = array.length;
         for(int i = 0; i < length; i++) {
-            uniformIndices.put(i, array.get(i));
+            uniformIndices.put(i, array[i]);
         }
     }
 

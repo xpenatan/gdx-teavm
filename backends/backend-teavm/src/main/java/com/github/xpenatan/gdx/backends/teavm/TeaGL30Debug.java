@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextWrapper;
+import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextExt;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -14,7 +14,7 @@ import java.nio.LongBuffer;
  */
 public class TeaGL30Debug extends TeaGL30 {
 
-    protected TeaGL30Debug(WebGL2RenderingContextWrapper gl) {
+    protected TeaGL30Debug(WebGL2RenderingContextExt gl) {
         super(gl);
     }
     private void checkError () {
