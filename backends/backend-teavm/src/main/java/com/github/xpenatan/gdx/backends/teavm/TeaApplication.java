@@ -16,13 +16,11 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaWebAgent;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetDownloadImpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
+import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
+import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import com.github.xpenatan.jmultiplatform.core.JMultiplatform;
 import com.github.xpenatan.jmultiplatform.core.JPlatformMap;
@@ -152,9 +150,9 @@ public class TeaApplication implements Application, Runnable {
             }
         });
 
-        window.getDocument().addEventListener("visibilitychange", new EventListenerWrapper() {
+        window.getDocument().addEventListener("visibilitychange", new EventListener<Event>() {
             @Override
-            public void handleEvent(EventWrapper evt) {
+            public void handleEvent(Event evt) {
                 // notify of state change
                 if(initState == AppState.APP_LOOP) {
                     String state = window.getDocument().getVisibilityState();

@@ -3,14 +3,12 @@ package com.github.xpenatan.gdx.backends.teavm.dom;
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
+import org.teavm.jso.file.FileList;
 
 public interface DataTransferWrapper extends JSObject {
 
     @JSProperty
-    DataTransferItemArrayWrapper getItems();
-
-    @JSProperty
-    FileListWrapper getFiles();
+    FileList getFiles();
 
     @JSMethod
     String getData(String format);

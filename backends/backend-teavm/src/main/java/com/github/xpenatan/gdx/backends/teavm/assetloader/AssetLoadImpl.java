@@ -11,13 +11,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.dom.DataTransferWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.DragEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.FileListWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.FileReaderWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.FileWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import java.io.IOException;
@@ -26,6 +20,12 @@ import java.util.HashSet;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.core.JSPromise;
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
+import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.dom.html.HTMLDocument;
+import org.teavm.jso.file.File;
+import org.teavm.jso.file.FileList;
 import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.Int8Array;
 
@@ -44,50 +44,50 @@ public class AssetLoadImpl implements AssetLoader {
 
     private AssetDownloader assetDownloader;
 
-    public AssetLoadImpl(String newBaseURL, HTMLCanvasElementWrapper canvas, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+    public AssetLoadImpl(String newBaseURL, HTMLCanvasElement canvas, TeaApplication teaApplication, AssetDownloader assetDownloader) {
         this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
         setupFileDrop(canvas, teaApplication);
     }
 
-    private void setupFileDrop(HTMLCanvasElementWrapper canvas, TeaApplication teaApplication) {
+    private void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
         TeaApplicationConfiguration config = teaApplication.getConfig();
         if(config.windowListener != null) {
-            HTMLDocumentWrapper document = canvas.getOwnerDocument();
-            document.addEventListener("dragenter", new EventListenerWrapper() {
+            HTMLDocument document = canvas.getOwnerDocument();
+            document.addEventListener("dragenter", new EventListener() {
                 @Override
-                public void handleEvent(EventWrapper evt) {
+                public void handleEvent(Event evt) {
                     evt.preventDefault();
                 }
             }, false);
-            document.addEventListener("dragover", new EventListenerWrapper() {
+            document.addEventListener("dragover", new EventListener() {
                 @Override
-                public void handleEvent(EventWrapper evt) {
+                public void handleEvent(Event evt) {
                     evt.preventDefault();
                 }
             }, false);
-            document.addEventListener("drop", new EventListenerWrapper() {
+            document.addEventListener("drop", new EventListener() {
                 @Override
-                public void handleEvent(EventWrapper evt) {
+                public void handleEvent(Event evt) {
                     evt.preventDefault();
                     DragEventWrapper event = (DragEventWrapper)evt;
                     DataTransferWrapper dataTransfer = event.getDataTransfer();
-                    FileListWrapper files = dataTransfer.getFiles();
+                    FileList files = dataTransfer.getFiles();
                     downloadDroppedFile(config, files);
                 }
             });
         }
     }
 
-    private JSPromise<FileData> getFile(String name, FileWrapper fileWrapper) {
+    private JSPromise<FileData> getFile(String name, File fileWrapper) {
         JSPromise<FileData> success = new JSPromise<>((resolve, reject) -> {
             FileReaderWrapper fileReader = FileReaderWrapper.create();
             fileReader.readAsArrayBuffer(fileWrapper);
 
-            fileReader.addEventListener("load", new EventListenerWrapper() {
+            fileReader.addEventListener("load", new EventListener<Event>() {
                 @Override
-                public void handleEvent(EventWrapper evt) {
+                public void handleEvent(Event evt) {
                     FileReaderWrapper target = (FileReaderWrapper)evt.getTarget();
                     ArrayBuffer arrayBuffer = target.getResultAsArrayBuffer();
                     Int8Array data = new Int8Array(arrayBuffer);
@@ -101,13 +101,13 @@ public class AssetLoadImpl implements AssetLoader {
         return success;
     }
 
-    private void downloadDroppedFile(TeaApplicationConfiguration config, FileListWrapper files) {
+    private void downloadDroppedFile(TeaApplicationConfiguration config, FileList files) {
         int totalDraggedFiles = files.getLength();
         if(totalDraggedFiles > 0) {
             Array<String> droppedFiles = new Array<>();
             var promises = new JSArray<JSPromise<FileData>>();
             for(int i = 0; i < totalDraggedFiles; i++) {
-                FileWrapper fileWrapper = files.get(i);
+                File fileWrapper = files.get(i);
                 String name = fileWrapper.getName();
 
                 if(config.windowListener.acceptFileDropped(name)) {

@@ -1,10 +1,11 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.audio;
 
 import org.teavm.jso.JSBody;
+import org.teavm.jso.dom.html.HTMLAudioElement;
 
 public class Audio {
 
-    public static HTMLAudioElementWrapper createIfSupported() {
+    public static HTMLAudioElement createIfSupported() {
         //TODO
 //        if (detector == null) {
 //            detector = GWT.create(AudioElementSupportDetector.class);
@@ -20,5 +21,5 @@ public class Audio {
     }
 
     @JSBody(script = "return new Audio();")
-    private static native HTMLAudioElementWrapper createAudio();
+    private static native HTMLAudioElement createAudio();
 }

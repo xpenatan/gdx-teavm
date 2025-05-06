@@ -1,14 +1,14 @@
 package com.github.xpenatan.gdx.backends.teavm.utils;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
+import org.teavm.jso.browser.Location;
 
 public class TeaDefaultBaseUrlProvider implements TeaBaseUrlProvider{
     @Override
     public String getBaseUrl() {
         TeaWindow currentWindow = TeaWindow.get();
-        LocationWrapper location = currentWindow.getLocation();
-        String hostPageBaseURL = location.getHref();
+        Location location = currentWindow.getLocation();
+        String hostPageBaseURL = location.getFullURL();
 
         if(hostPageBaseURL.contains(".html")) {
             // TODO Find a solution to remove html path

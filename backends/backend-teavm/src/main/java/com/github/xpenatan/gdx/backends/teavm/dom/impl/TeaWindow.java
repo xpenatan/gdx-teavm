@@ -1,8 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.dom.impl;
 
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.LocationWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.WindowWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentExt;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.Window;
@@ -12,7 +10,7 @@ import org.teavm.jso.dom.events.EventListener;
 /**
  * @author xpenatan
  */
-public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
+public class TeaWindow implements AnimationFrameCallback {
 
     private static final TeaWindow TEA_WINDOW = new TeaWindow();;
 
@@ -27,42 +25,34 @@ public class TeaWindow implements WindowWrapper, AnimationFrameCallback {
         this.window = Window.current();
     }
 
-    @Override
-    public DocumentWrapper getDocument() {
-        DocumentWrapper document = (DocumentWrapper)window.getDocument();
-        return document;
+    public HTMLDocumentExt getDocument() {
+        return (HTMLDocumentExt)window.getDocument();
     }
 
-    @Override
     public void requestAnimationFrame(Runnable runnable) {
         this.runnable = runnable;
         Window.requestAnimationFrame(this);
     }
 
-    @Override
     public void onAnimationFrame(double arg0) {
         Runnable toRun = runnable;
         runnable = null;
         toRun.run();
     }
 
-    @Override
-    public LocationWrapper getLocation() {
+    public Location getLocation() {
         Location location = window.getLocation();
-        return (LocationWrapper)location;
+        return location;
     }
 
-    @Override
     public int getClientWidth() {
         return window.getInnerWidth();
     }
 
-    @Override
     public int getClientHeight() {
         return window.getInnerHeight();
     }
 
-    @Override
     public void addEventListener(String type, EventListener<Event> listener) {
         window.addEventListener(type, listener);
     }

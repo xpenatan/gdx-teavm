@@ -9,29 +9,32 @@ import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
-import com.github.xpenatan.gdx.backends.teavm.dom.ElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventListenerWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventTargetWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.EventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.KeyboardEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.MouseEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchEventWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchListWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.TouchWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.DocumentExt;
+import com.github.xpenatan.gdx.backends.teavm.dom.ElementExt;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementExt;
+import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventExt;
 import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSArrayReader;
+import org.teavm.jso.dom.events.Event;
+import org.teavm.jso.dom.events.EventListener;
+import org.teavm.jso.dom.events.EventTarget;
+import org.teavm.jso.dom.events.KeyboardEvent;
+import org.teavm.jso.dom.events.MouseEvent;
+import org.teavm.jso.dom.events.Touch;
+import org.teavm.jso.dom.events.TouchEvent;
+import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.dom.html.HTMLDocument;
+import org.teavm.jso.dom.html.HTMLElement;
+import org.teavm.jso.dom.xml.Element;
 
 /**
  * @author xpenatan
  */
-public class TeaInput extends AbstractInput implements EventListenerWrapper {
+public class TeaInput extends AbstractInput implements EventListener<Event> {
 
-    private static float getMouseWheelVelocity(WheelEventWrapper event) {
+    private static float getMouseWheelVelocity(WheelEventExt event) {
         TeaAgentInfo agent = TeaApplication.getAgentInfo();
         float delta = 0;
         float detail = event.getDetail();
@@ -68,7 +71,7 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         return delta;
     }
 
-    private HTMLCanvasElementWrapper canvas;
+    private HTMLCanvasElement canvas;
 
     static final int MAX_TOUCHES = 20;
     boolean justTouched = false;
@@ -88,14 +91,14 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
 
     private TeaApplication application;
 
-    public TeaInput(TeaApplication application, HTMLCanvasElementWrapper canvas) {
+    public TeaInput(TeaApplication application, HTMLCanvasElement canvas) {
         this.application = application;
         this.canvas = canvas;
         hookEvents();
     }
 
     private void hookEvents() {
-        HTMLDocumentWrapper document = canvas.getOwnerDocument();
+        HTMLDocument document = canvas.getOwnerDocument();
         document.addEventListener("mousedown", this, false);
         document.addEventListener("mouseup", this, false);
         document.addEventListener("mousemove", this, false);
@@ -112,23 +115,22 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
     }
 
     @Override
-    public void handleEvent(EventWrapper e) {
+    public void handleEvent(Event e) {
         if(application.getApplicationListener() != null) {
             handleMouseEvents(e);
             handleKeyboardEvents(e);
         }
     }
 
-    private void handleMouseEvents(EventWrapper e) {
+    private void handleMouseEvents(Event e) {
         String type = e.getType();
         if(type.equals("mousedown")) {
             // makes sure the game has keyboard focus (e.g. when embedded in iFrame on itch.io)
             Window.current().focus();
 
-            MouseEventWrapper mouseEvent = (MouseEventWrapper)e;
-            EventTargetWrapper target = e.getTarget();
-            HTMLCanvasElementWrapper canvas2 = canvas;
-            boolean equals = target == canvas2;
+            MouseEvent mouseEvent = (MouseEvent)e;
+            EventTarget target = e.getTarget();
+            boolean equals = target == canvas;
             if(!equals || touched[0]) { // TODO needs check equals bug
                 float mouseX = getRelativeX(mouseEvent, canvas);
                 float mouseY = getRelativeY(mouseEvent, canvas);
@@ -146,8 +148,8 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             this.deltaX[0] = 0;
             this.deltaY[0] = 0;
             if(isCursorCatched()) {
-                this.touchX[0] += mouseEvent.getMovementX();
-                this.touchY[0] += mouseEvent.getMovementY();
+                this.touchX[0] += (int)mouseEvent.getMovementX();
+                this.touchY[0] += (int)mouseEvent.getMovementY();
             }
             else {
                 int relativeX = getRelativeX(mouseEvent, canvas);
@@ -163,14 +165,14 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             e.stopPropagation();
         }
         else if(type.equals("mouseup")) {
-            MouseEventWrapper mouseEvent = (MouseEventWrapper)e;
+            MouseEvent mouseEvent = (MouseEvent)e;
             if(!touched[0]) return;
             this.pressedButtons.remove(KeyCodes.getButton(mouseEvent.getButton()));
             this.touched[0] = pressedButtons.size > 0;
             if(isCursorCatched()) {
                 setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
-                this.touchX[0] += mouseEvent.getMovementX();
-                this.touchY[0] += mouseEvent.getMovementY();
+                this.touchX[0] += (int)mouseEvent.getMovementX();
+                this.touchY[0] += (int)mouseEvent.getMovementY();
             }
             else {
                 setDelta(0, getRelativeX(mouseEvent, canvas) - touchX[0], getRelativeY(mouseEvent, canvas) - touchY[0]);
@@ -183,11 +185,11 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
                 processor.touchUp(touchX[0], touchY[0], 0, KeyCodes.getButton(mouseEvent.getButton()));
         }
         else if(type.equals("mousemove")) {
-            MouseEventWrapper mouseEvent = (MouseEventWrapper)e;
+            MouseEvent mouseEvent = (MouseEvent)e;
             if(isCursorCatched()) {
                 setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
-                this.touchX[0] += mouseEvent.getMovementX();
-                this.touchY[0] += mouseEvent.getMovementY();
+                this.touchX[0] += (int)mouseEvent.getMovementX();
+                this.touchY[0] += (int)mouseEvent.getMovementY();
             }
             else {
                 int relativeX = getRelativeX(mouseEvent, canvas);
@@ -205,7 +207,7 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             }
         }
         else if(type.equals("wheel")) {
-            WheelEventWrapper wheel = (WheelEventWrapper)e;
+            WheelEventExt wheel = (WheelEventExt)e;
             if(processor != null) {
                 float wheelDelta = getMouseWheelVelocity(wheel);
                 processor.scrolled(0, (int)wheelDelta);
@@ -214,10 +216,10 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         }
         else if(type.equals("touchstart")) {
             this.justTouched = true;
-            TouchEventWrapper touchEvent = (TouchEventWrapper)e;
-            TouchListWrapper touches = touchEvent.getChangedTouches();
+            TouchEvent touchEvent = (TouchEvent)e;
+            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
             for(int i = 0, j = touches.getLength(); i < j; i++) {
-                TouchWrapper touch = touches.item(i);
+                Touch touch = touches.get(i);
                 int real = touch.getIdentifier();
                 int touchId;
                 touchMap.put(real, touchId = getAvailablePointer());
@@ -234,10 +236,10 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             e.preventDefault();
         }
         if(type.equals("touchmove")) {
-            TouchEventWrapper touchEvent = (TouchEventWrapper)e;
-            TouchListWrapper touches = touchEvent.getChangedTouches();
+            TouchEvent touchEvent = (TouchEvent)e;
+            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
             for(int i = 0, j = touches.getLength(); i < j; i++) {
-                TouchWrapper touch = touches.item(i);
+                Touch touch = touches.get(i);
                 int real = touch.getIdentifier();
                 int touchId = touchMap.get(real);
                 setDelta(touchId, getRelativeX(touch, canvas) - touchX[touchId], getRelativeY(touch, canvas) - touchY[touchId]);
@@ -251,10 +253,10 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             e.preventDefault();
         }
         if(type.equals("touchcancel")) {
-            TouchEventWrapper touchEvent = (TouchEventWrapper)e;
-            TouchListWrapper touches = touchEvent.getChangedTouches();
+            TouchEvent touchEvent = (TouchEvent)e;
+            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
             for(int i = 0, j = touches.getLength(); i < j; i++) {
-                TouchWrapper touch = touches.item(i);
+                Touch touch = touches.get(i);
                 int real = touch.getIdentifier();
                 int touchId = touchMap.get(real);
                 touchMap.remove(real);
@@ -272,10 +274,10 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             e.preventDefault();
         }
         if(type.equals("touchend")) {
-            TouchEventWrapper touchEvent = (TouchEventWrapper)e;
-            TouchListWrapper touches = touchEvent.getChangedTouches();
+            TouchEvent touchEvent = (TouchEvent)e;
+            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
             for(int i = 0, j = touches.getLength(); i < j; i++) {
-                TouchWrapper touch = touches.item(i);
+                Touch touch = touches.get(i);
                 int real = touch.getIdentifier();
                 int touchId = touchMap.get(real);
                 touchMap.remove(real);
@@ -294,11 +296,11 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         }
     }
 
-    private void handleKeyboardEvents(EventWrapper e) {
+    private void handleKeyboardEvents(Event e) {
         String type = e.getType();
 
         if(type.equals("keydown") && hasFocus) {
-            KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
+            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
             int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
             char keyChar = 0;
 
@@ -341,7 +343,7 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             }
         }
         else if(type.equals("keypress") && hasFocus) {
-            KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
+            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
             char c = (char)keyboardEvent.getCharCode();
             if(processor != null) processor.keyTyped(c);
 
@@ -353,7 +355,7 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         }
 
         else if(type.equals("keyup") && hasFocus) {
-            KeyboardEventWrapper keyboardEvent = (KeyboardEventWrapper)e;
+            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
             int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
 
             if(isCatchKey(code)) {
@@ -408,83 +410,86 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         deltaY[touchId] = y;
     }
 
-    private ElementWrapper getCompatMode(HTMLDocumentWrapper target) {
-        String compatMode = target.getCompatMode();
+    private Element getCompatMode(HTMLDocument target) {
+        DocumentExt doc = (DocumentExt) target;
+        String compatMode = doc.getCompatMode();
         boolean isComp = compatMode.equals("CSS1Compat");
-        ElementWrapper element = isComp ? target.getDocumentElement() : target;
+        Element element = isComp ? target.getDocumentElement() : (Element)target; // TODO This may not work
         return element;
     }
 
-    private int getScrollTop(ElementWrapper target) {
-        int val = target.getScrollTop();
+    private int getScrollTop(Element target) {
+        ElementExt elem = (ElementExt)target;
+        int val = elem.getScrollTop();
         return toInt32(val);
     }
 
-    private int getScrollTop(HTMLDocumentWrapper target) {
-        ElementWrapper element = getCompatMode(target);
+    private int getScrollTop(HTMLDocument target) {
+        Element element = getCompatMode(target);
         return getScrollTop(element);
     }
 
-    private int getScrollLeft(ElementWrapper target) {
-        int val = target.getScrollLeft();
+    private int getScrollLeft(Element target) {
+        ElementExt elem = (ElementExt)target;
+        int val = elem.getScrollLeft();
         return toInt32(val);
     }
 
-    private int getScrollLeft(HTMLDocumentWrapper target) {
-        ElementWrapper element = getCompatMode(target);
+    private int getScrollLeft(HTMLDocument target) {
+        Element element = getCompatMode(target);
         return getScrollLeft(element);
     }
 
-    private int getRelativeX(HTMLCanvasElementWrapper target, TouchWrapper touch) {
-        return touch.getClientX() - getAbsoluteLeft(target) + getScrollLeft(target)
-                + getScrollLeft(target.getOwnerDocument());
+    private int getRelativeX(HTMLCanvasElement target, Touch touch) {
+        return (int)(touch.getClientX() - getAbsoluteLeft(target) + getScrollLeft(target)
+                        + getScrollLeft(target.getOwnerDocument()));
     }
 
-    private int getRelativeY(HTMLCanvasElementWrapper target, TouchWrapper touch) {
-        return touch.getClientY() - getAbsoluteTop(target) + getScrollTop(target)
-                + getScrollTop(target.getOwnerDocument());
+    private int getRelativeY(HTMLCanvasElement target, Touch touch) {
+        return (int)(touch.getClientY() - getAbsoluteTop(target) + getScrollTop(target)
+                        + getScrollTop(target.getOwnerDocument()));
     }
 
-    protected int getRelativeX(MouseEventWrapper e, HTMLCanvasElementWrapper target) {
+    protected int getRelativeX(MouseEvent e, HTMLCanvasElement target) {
         float xScaleRatio = target.getWidth() * 1f / getClientWidth(target); // Correct for canvas CSS scaling
         return Math.round(xScaleRatio
                 * (e.getClientX() - getAbsoluteLeft(target) + getScrollLeft(target) + getScrollLeft(target.getOwnerDocument())));
     }
 
-    protected int getRelativeY(MouseEventWrapper e, HTMLCanvasElementWrapper target) {
+    protected int getRelativeY(MouseEvent e, HTMLCanvasElement target) {
         float yScaleRatio = target.getHeight() * 1f / getClientHeight(target); // Correct for canvas CSS scaling
         return Math.round(yScaleRatio
                 * (e.getClientY() - getAbsoluteTop(target) + getScrollTop(target) + getScrollTop(target.getOwnerDocument())));
     }
 
-    protected int getRelativeX(TouchWrapper touch, HTMLCanvasElementWrapper target) {
+    protected int getRelativeX(Touch touch, HTMLCanvasElement target) {
         float xScaleRatio = target.getWidth() * 1f / getClientWidth(target); // Correct for canvas CSS scaling
         return Math.round(xScaleRatio * getRelativeX(target, touch));
     }
 
-    protected int getRelativeY(TouchWrapper touch, HTMLCanvasElementWrapper target) {
+    protected int getRelativeY(Touch touch, HTMLCanvasElement target) {
         float yScaleRatio = target.getHeight() * 1f / getClientHeight(target); // Correct for canvas CSS scaling
         return Math.round(yScaleRatio * getRelativeY(target, touch));
     }
 
-    private int  getClientWidth(HTMLCanvasElementWrapper target) {
+    private int  getClientWidth(HTMLCanvasElement target) {
         return target.getClientWidth();
     }
 
-    private int getClientHeight(HTMLCanvasElementWrapper target) {
+    private int getClientHeight(HTMLCanvasElement target) {
         return target.getClientHeight();
     }
 
-    private int getAbsoluteTop(HTMLCanvasElementWrapper target) {
+    private int getAbsoluteTop(HTMLCanvasElement target) {
         return toInt32(getSubPixelAbsoluteTop(target));
     }
 
-    private double getSubPixelAbsoluteTop(HTMLElementWrapper elem) {
+    private double getSubPixelAbsoluteTop(HTMLElement elem) {
         float top = 0;
-        HTMLElementWrapper curr = elem;
+        HTMLElementExt curr = (HTMLElementExt)elem;
         while(curr.getOffsetParent() != null) {
             top -= curr.getScrollTop();
-            curr = (HTMLElementWrapper)curr.getParentNode();
+            curr = (HTMLElementExt)curr.getParentNode();
         }
 
         while(elem != null) {
@@ -495,16 +500,18 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
         return top;
     }
 
-    private int getAbsoluteLeft(HTMLCanvasElementWrapper target) {
+    private int getAbsoluteLeft(HTMLCanvasElement target) {
         return toInt32(getSubPixelAbsoluteLeft(target));
     }
 
-    private double getSubPixelAbsoluteLeft(HTMLElementWrapper elem) {
+    private double getSubPixelAbsoluteLeft(HTMLElement elem) {
         float left = 0;
-        HTMLElementWrapper curr = elem;
+
+        HTMLElementExt curr = (HTMLElementExt)elem;
+
         while(curr.getOffsetParent() != null) {
             left -= curr.getScrollLeft();
-            curr = (HTMLElementWrapper)curr.getParentNode();
+            curr = (HTMLElementExt)curr.getParentNode();
         }
 
         while(elem != null) {
@@ -800,7 +807,7 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             "}\n" +
             "element.requestPointerLock();"
     )
-    private static native void setCursorCatchedJSNI(HTMLElementWrapper element);
+    private static native void setCursorCatchedJSNI(HTMLElement element);
 
     /**
      * from https://github.com/toji/game-shim/blob/master/game-shim.js
@@ -821,5 +828,5 @@ public class TeaInput extends AbstractInput implements EventListenerWrapper {
             "}\n" +
             "return false;"
     )
-    private static native boolean isCursorCatchedJSNI(HTMLElementWrapper canvas);
+    private static native boolean isCursorCatchedJSNI(HTMLElement canvas);
 }

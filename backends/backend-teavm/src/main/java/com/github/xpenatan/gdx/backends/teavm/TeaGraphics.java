@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
-import com.github.xpenatan.gdx.backends.teavm.dom.DocumentWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLCanvasElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementWrapper;
-import com.github.xpenatan.gdx.backends.teavm.dom.StyleWrapper;
+import com.github.xpenatan.gdx.backends.teavm.dom.HTMLDocumentExt;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGL2RenderingContextExt;
 import com.github.xpenatan.gdx.backends.teavm.gl.WebGLContextAttributesExt;
@@ -22,7 +19,9 @@ import com.github.xpenatan.gdx.backends.teavm.gl.WebGLRenderingContextExt;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.dom.css.CSSStyleDeclaration;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.webgl.WebGLContextAttributes;
 import org.teavm.jso.webgl.WebGLRenderingContext;
 
@@ -31,7 +30,7 @@ import org.teavm.jso.webgl.WebGLRenderingContext;
  */
 public class TeaGraphics implements Graphics {
     private WebGLRenderingContext context;
-    protected HTMLCanvasElementWrapper canvas;
+    protected HTMLCanvasElement canvas;
     protected TeaApplicationConfiguration config;
     protected GL20 gl20;
     protected GL30 gl30;
@@ -47,9 +46,9 @@ public class TeaGraphics implements Graphics {
     public TeaGraphics(TeaApplicationConfiguration config) {
         this.config = config;
         TeaWindow window = new TeaWindow();
-        DocumentWrapper document = window.getDocument();
-        HTMLElementWrapper elementID = document.getElementById(config.canvasID);
-        this.canvas = (HTMLCanvasElementWrapper)elementID;
+        HTMLDocumentExt document = window.getDocument();
+        HTMLElement elementID = document.getElementById(config.canvasID);
+        this.canvas = (HTMLCanvasElement)elementID;
 
         WebGLContextAttributesExt attr = (WebGLContextAttributesExt)WebGLContextAttributes.create();
         attr.setAlpha(config.alpha);
@@ -58,10 +57,9 @@ public class TeaGraphics implements Graphics {
         attr.setPremultipliedAlpha(config.premultipliedAlpha);
         attr.setPreserveDrawingBuffer(config.preserveDrawingBuffer);
         attr.setPowerPreference(config.powerPreference);
-        HTMLCanvasElement canvas1 = (HTMLCanvasElement)canvas;
 
         if (config.useGL30) {
-            context = (WebGLRenderingContext)canvas1.getContext("webgl2", attr);
+            context = (WebGLRenderingContext)canvas.getContext("webgl2", attr);
         }
 
         if (config.useGL30 && context != null) {
@@ -70,7 +68,7 @@ public class TeaGraphics implements Graphics {
                     : new TeaGL30((WebGL2RenderingContextExt)context);
             this.gl20 = gl30;
         } else {
-            context = (WebGLRenderingContext)canvas1.getContext("webgl", attr);
+            context = (WebGLRenderingContext)canvas.getContext("webgl", attr);
             this.gl20 = config.useDebugGL ? new TeaGL20Debug((WebGLRenderingContextExt)context) : new TeaGL20((WebGLRenderingContextExt)context);
         }
 
@@ -349,9 +347,9 @@ public class TeaGraphics implements Graphics {
         canvas.setWidth(w);
         canvas.setHeight(h);
         if(usePhysicalPixels) {
-            StyleWrapper style = canvas.getStyle();
-            style.setProperty("width", width + StyleWrapper.Unit.PX.getType());
-            style.setProperty("height", height + StyleWrapper.Unit.PX.getType());
+            CSSStyleDeclaration style = canvas.getStyle();
+            style.setProperty("width", width + "px");
+            style.setProperty("height", height + "px");
         }
     }
 
@@ -458,14 +456,14 @@ public class TeaGraphics implements Graphics {
             "if (element.msRequestFullscreen) {\n" +
             "   document.addEventListener(\"msfullscreenchange\", fullscreenChanged, false);\n" +
             "}")
-    private static native void addFullscreenChangeListener(HTMLCanvasElementWrapper element, FullscreenChanged fullscreenChanged);
+    private static native void addFullscreenChangeListener(HTMLCanvasElement element, FullscreenChanged fullscreenChanged);
 
     @JSFunctor
     public interface FullscreenChanged extends org.teavm.jso.JSObject {
         void fullscreenChanged();
     }
 
-    public boolean enterFullscreen(HTMLCanvasElementWrapper element, int screenWidth, int screenHeight) {
+    public boolean enterFullscreen(HTMLCanvasElement element, int screenWidth, int screenHeight) {
         return enterFullscreenNATIVE(element, screenWidth, screenHeight);
     }
 
@@ -497,7 +495,7 @@ public class TeaGraphics implements Graphics {
             "}\n" +
             "\n" +
             "return false;")
-    private static native boolean enterFullscreenNATIVE(HTMLCanvasElementWrapper element, int screenWidth, int screenHeight);
+    private static native boolean enterFullscreenNATIVE(HTMLCanvasElement element, int screenWidth, int screenHeight);
 
     public void exitFullscreen() {
         exitFullscreenNATIVE();
