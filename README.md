@@ -24,8 +24,7 @@ Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to ha
 repositories {
     
     mavenCentral()
-    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-    maven { url = uri("https://oss.sonatype.org/content/repositories/releases/") }
+    maven { url = uri("https://central.sonatype.com/repository/maven-snapshots/") }
     maven { url = uri("https://jitpack.io") }
     
     // If there is a problem with the teavm repository, you can try using http
