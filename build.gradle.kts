@@ -52,13 +52,7 @@ configure(libProjects) {
     publishing {
         repositories {
             maven {
-                url = uri {
-                    val ver = project.version.toString()
-                    val isSnapshot = ver.uppercase().contains("SNAPSHOT")
-                    val repoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    val repoUrlSnapshot = "https://oss.sonatype.org/content/repositories/snapshots/"
-                    if(isSnapshot) repoUrlSnapshot else repoUrl
-                }
+                url = uri { "https://central.sonatype.com/api/v1/publisher/upload" }
                 credentials {
                     username = System.getenv("USER")
                     password = System.getenv("PASSWORD")
