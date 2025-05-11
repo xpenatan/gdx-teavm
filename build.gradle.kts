@@ -53,9 +53,9 @@ configure(libProjects) {
         repositories {
             maven {
                 url = if (project.version.toString().endsWith("-SNAPSHOT")) {
-                    uri("https://central.sonatype.com/api/v1/publisher/upload/snapshots")
+                    uri("https://central.sonatype.com/repository/maven-snapshots/")
                 } else {
-                    uri("https://central.sonatype.com/api/v1/publisher/upload/releases")
+                    uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
                 }
                 credentials {
                     username = System.getenv("USER")
