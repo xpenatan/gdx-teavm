@@ -53,7 +53,7 @@ public class TeaGL20 implements GL20 {
         public native int getKey (T value);
     }
 
-    protected WebGLRenderingContextExt gl;
+    public final WebGLRenderingContextExt gl;
 
     final CustomIntMap<WebGLProgram> programs = CustomIntMap.create();
     final CustomIntMap<WebGLShader> shaders = CustomIntMap.create();
