@@ -52,7 +52,11 @@ configure(libProjects) {
     publishing {
         repositories {
             maven {
-                url = uri { "https://central.sonatype.com/api/v1/publisher/upload" }
+                url = if (project.version.toString().endsWith("-SNAPSHOT")) {
+                    uri("https://central.sonatype.com/api/v1/publisher/upload/snapshots")
+                } else {
+                    uri("https://central.sonatype.com/api/v1/publisher/upload/releases")
+                }
                 credentials {
                     username = System.getenv("USER")
                     password = System.getenv("PASSWORD")
