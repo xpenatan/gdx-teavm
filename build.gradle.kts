@@ -58,8 +58,8 @@ configure(libProjects) {
                     uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
                 }
                 credentials {
-                    username = System.getenv("USER")
-                    password = System.getenv("PASSWORD")
+                    username = System.getenv("CENTRAL_PORTAL_USERNAME")
+                    password = System.getenv("CENTRAL_PORTAL_PASSWORD")
                 }
             }
         }

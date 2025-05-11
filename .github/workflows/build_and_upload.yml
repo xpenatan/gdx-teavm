@@ -60,8 +60,8 @@ jobs:
           retry_on: error
           command: ./gradlew publish
         env:
-          USER: ${{ secrets.USER }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
           SIGNING_KEY: ${{ secrets.PGP_SECRET }}
           SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
 
