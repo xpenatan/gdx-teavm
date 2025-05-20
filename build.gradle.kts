@@ -1,3 +1,4 @@
+import java.net.URLEncoder
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -152,6 +153,9 @@ if(!LibExt.libVersion.endsWith("-SNAPSHOT")) {
                 val username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: throw GradleException("CENTRAL_PORTAL_USERNAME environment variable not set")
                 val password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: throw GradleException("CENTRAL_PORTAL_PASSWORD environment variable not set")
 
+                val rawBundleName = "gdx-teavm-${LibExt.libVersion}"
+                val encodedBundleName = URLEncoder.encode(rawBundleName, "UTF-8")
+
                 exec {
                     commandLine = listOf(
                         "curl",
@@ -160,10 +164,8 @@ if(!LibExt.libVersion.endsWith("-SNAPSHOT")) {
                         "--request",
                         "POST",
                         "--form",
-                        "name=",
-                        "gdx-teavm ${LibExt.libVersion}",
                         "bundle=@${zipFile.absolutePath}",
-                        "https://central.sonatype.com/api/v1/publisher/upload"
+                        "https://central.sonatype.com/api/v1/publisher/upload?name=${encodedBundleName}"
                     )
                 }
             }
