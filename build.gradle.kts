@@ -160,6 +160,8 @@ if(!LibExt.libVersion.endsWith("-SNAPSHOT")) {
                         "--request",
                         "POST",
                         "--form",
+                        "name=",
+                        "gdx-teavm ${LibExt.libVersion}",
                         "bundle=@${zipFile.absolutePath}",
                         "https://central.sonatype.com/api/v1/publisher/upload"
                     )
