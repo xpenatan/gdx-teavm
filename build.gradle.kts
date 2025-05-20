@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
 plugins {
     id("java")
     id("maven-publish")
@@ -52,14 +55,17 @@ configure(libProjects) {
     publishing {
         repositories {
             maven {
-                url = if (project.version.toString().endsWith("-SNAPSHOT")) {
+                val isSnapshot = project.version.toString().endsWith("-SNAPSHOT")
+                url = if (isSnapshot) {
                     uri("https://central.sonatype.com/repository/maven-snapshots/")
                 } else {
-                    uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+                    uri(rootProject.layout.buildDirectory.dir("staging-deploy"))
                 }
-                credentials {
-                    username = System.getenv("CENTRAL_PORTAL_USERNAME")
-                    password = System.getenv("CENTRAL_PORTAL_PASSWORD")
+                if(isSnapshot) {
+                    credentials {
+                        username = System.getenv("CENTRAL_PORTAL_USERNAME")
+                        password = System.getenv("CENTRAL_PORTAL_PASSWORD")
+                    }
                 }
             }
         }
@@ -111,5 +117,68 @@ configure(libProjects) {
                 sign(this)
             }
         }
+    }
+
+    if(!project.version.toString().endsWith("-SNAPSHOT")) {
+
+    }
+}
+
+// Task to zip the staging-deploy directory
+tasks.register<Zip>("zipStagingDeploy") {
+    // Depend on the publish tasks of all libProjects
+    dependsOn(libProjects.map { it.tasks.named("publish") })
+    // Source directory to zip
+    from(rootProject.layout.buildDirectory.dir("staging-deploy"))
+    // Name of the output zip file
+    archiveFileName.set("staging-deploy.zip")
+    // Destination directory for the zip file
+    destinationDirectory.set(rootProject.layout.buildDirectory)
+    // Only run if the version is not a snapshot
+    onlyIf { !project.version.toString().endsWith("-SNAPSHOT") }
+}
+
+tasks.register("uploadToMavenCentral") {
+    dependsOn("zipStagingDeploy")
+    doLast {
+        if (!project.version.toString().endsWith("-SNAPSHOT")) {
+            // Define paths
+            val stagingDir = rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile
+            val zipFile = rootProject.layout.buildDirectory.file("staging-deploy.zip").get().asFile
+
+            if (!stagingDir.exists()) {
+                throw GradleException("Staging directory $stagingDir does not exist. Ensure the publish task ran successfully.")
+            }
+
+            if (!zipFile.exists()) {
+                throw GradleException("Zip file ${zipFile.absolutePath} was not created. Check the zip command output.")
+            }
+
+            if (!Files.isReadable(Paths.get(zipFile.absolutePath))) {
+                throw GradleException("Zip file ${zipFile.absolutePath} is not readable. Check file permissions.")
+            }
+
+            val username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: throw GradleException("CENTRAL_PORTAL_USERNAME environment variable not set")
+            val password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: throw GradleException("CENTRAL_PORTAL_PASSWORD environment variable not set")
+
+            exec {
+                commandLine = listOf(
+                    "curl",
+                    "-u",
+                    "$username:$password",
+                    "--request",
+                    "POST",
+                    "--form",
+                    "bundle=@${zipFile.absolutePath}",
+                    "https://central.sonatype.com/api/v1/publisher/upload"
+                )
+            }
+        }
+    }
+}
+
+if(!project.version.toString().endsWith("-SNAPSHOT")) {
+    tasks.named("publish") {
+        finalizedBy(rootProject.tasks.named("uploadToMavenCentral"))
     }
 }
