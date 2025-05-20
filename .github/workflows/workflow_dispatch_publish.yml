@@ -1,0 +1,18 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      isRelease:
+        description: 'Is this a release build?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build-and-upload:
+    uses: ./.github/workflows/build_and_upload.yml
+    with:
+      isRelease: ${{ inputs.isRelease }}
+      shouldUpload: true
+    secrets: inherit

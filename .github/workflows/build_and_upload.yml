@@ -9,18 +9,6 @@ on:
       shouldUpload:
         required: true
         type: boolean
-  workflow_dispatch:
-    inputs:
-      isRelease:
-        description: 'Is this a release build?'
-        required: true
-        type: boolean
-        default: false
-      shouldUpload:
-        description: 'Should upload artifacts?'
-        required: true
-        type: boolean
-        default: true
 
 env:
   RELEASE: ${{ inputs.isRelease }}
