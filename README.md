@@ -1,6 +1,5 @@
 # gdx-teavm
 
-![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/release.yml/badge.svg)
 ![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/snapshot.yml/badge.svg)
 
 [![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-teavm)](https://central.sonatype.com/artifact/com.github.xpenatan.gdx-teavm/backend-teavm)
