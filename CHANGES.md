@@ -1,5 +1,10 @@
 [-SNAPSHOT]
 
+[1.2.1]
+- Updated to libgdx 1.13.5
+- Fix compile error
+- Remove some internal javascript wrappers
+
 [1.2.0]
 - Updated to TeaVM 0.12.0
 - Add WebAssembly support
