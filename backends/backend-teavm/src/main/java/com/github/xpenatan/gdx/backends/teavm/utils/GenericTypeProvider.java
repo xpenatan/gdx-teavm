@@ -115,7 +115,7 @@ public class GenericTypeProvider {
                 return Class.forName(name, false, classLoader);
             }
             catch(ClassNotFoundException e) {
-                throw new RuntimeException("Can't find class " + name, e);
+                return null;
             }
         });
     }
