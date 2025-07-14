@@ -101,7 +101,7 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        graphics = new TeaGraphics(config);
+        graphics = createGraphics(config);
 
         AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
         AssetInstance.setInstance(assetDownload);
@@ -479,5 +479,9 @@ public class TeaApplication implements Application, Runnable {
 
     private void initSound() {
         assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {});
+    }
+
+    protected TeaGraphics createGraphics (TeaApplicationConfiguration config) {
+        return new TeaGraphics(config);
     }
 }

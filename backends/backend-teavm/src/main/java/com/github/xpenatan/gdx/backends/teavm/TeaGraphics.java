@@ -384,7 +384,10 @@ public class TeaGraphics implements Graphics {
         // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Using_Extensions
         // Thus, it is not safe to use an extension just because context.getSupportedExtensions() tells you it is available.
         // We need to call getExtension() to enable it.
-        return context.getExtension(extensionName) != null;
+        if(context != null) {
+            return context.getExtension(extensionName) != null;
+        }
+        return false;
     }
 
     @Override
