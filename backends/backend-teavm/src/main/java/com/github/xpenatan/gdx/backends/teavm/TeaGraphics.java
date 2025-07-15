@@ -43,6 +43,9 @@ public class TeaGraphics implements Graphics {
     float time = 0;
     int frames;
 
+    public TeaGraphics() {
+    }
+
     public TeaGraphics(TeaApplicationConfiguration config) {
         this.config = config;
         TeaWindow window = new TeaWindow();
