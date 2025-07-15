@@ -206,6 +206,24 @@ public class TeaApplication implements Application, Runnable {
         try {
             graphics.update();
             switch(state) {
+                case APP_LOOP:
+                    if(queueAppListener != null) {
+                        if(appListener != null) {
+                            appListener.pause();
+                            appListener.dispose();
+                        }
+                        input.setInputProcessor(null);
+                        input.reset();
+                        runnables.clear();
+                        appListener = queueAppListener;
+                        queueAppListener = null;
+                        initState = AppState.APP_CREATE;
+                        graphics.frameId  = 0;
+                    }
+                    if(appListener != null) {
+                        step(appListener);
+                    }
+                    break;
                 case INIT:
                     if(delayInitCount == 0) {
                         initState = AppState.PRELOAD_ASSETS;
@@ -238,24 +256,6 @@ public class TeaApplication implements Application, Runnable {
                             progressBar.getStyle().setProperty("width", percentage + "%");
                           }
                         }
-                    }
-                    break;
-                case APP_LOOP:
-                    if(queueAppListener != null) {
-                        if(appListener != null) {
-                            appListener.pause();
-                            appListener.dispose();
-                        }
-                        input.setInputProcessor(null);
-                        input.reset();
-                        runnables.clear();
-                        appListener = queueAppListener;
-                        queueAppListener = null;
-                        initState = AppState.APP_CREATE;
-                        graphics.frameId  = 0;
-                    }
-                    if(appListener != null) {
-                        step(appListener);
                     }
                     break;
             }
