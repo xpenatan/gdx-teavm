@@ -101,18 +101,19 @@ public class TeaApplication implements Application, Runnable {
         else
             System.setProperty("os.name", "no OS");
 
-        graphics = createGraphics(config);
-
         AssetDownloadImpl assetDownload = new AssetDownloadImpl(config.showDownloadLogs);
         AssetInstance.setInstance(assetDownload);
         String hostPageBaseURL = config.baseUrlProvider.getBaseUrl();
-        assetLoader = new AssetLoadImpl(hostPageBaseURL, graphics.canvas, this, assetDownload);
+        assetLoader = new AssetLoadImpl(hostPageBaseURL, this, assetDownload);
         AssetInstance.setInstance(assetLoader);
 
         JMultiplatform instance = JMultiplatform.getInstance();
         JPlatformMap map = instance.getMap();
         map.put(WEB_SCRIPT_PATH, assetLoader.getScriptUrl());
         map.put(WEB_ASSET_PATH, assetLoader.getAssetUrl());
+
+        graphics = createGraphics(config);
+        assetLoader.setupFileDrop(graphics.canvas, this);
 
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);

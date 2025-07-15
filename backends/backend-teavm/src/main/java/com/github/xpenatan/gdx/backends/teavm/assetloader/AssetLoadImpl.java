@@ -44,14 +44,13 @@ public class AssetLoadImpl implements AssetLoader {
 
     private AssetDownloader assetDownloader;
 
-    public AssetLoadImpl(String newBaseURL, HTMLCanvasElement canvas, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+    public AssetLoadImpl(String newBaseURL, TeaApplication teaApplication, AssetDownloader assetDownloader) {
         this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new HashSet<>();
-        setupFileDrop(canvas, teaApplication);
     }
 
-    private void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
+    public void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
         TeaApplicationConfiguration config = teaApplication.getConfig();
         if(config.windowListener != null) {
             HTMLDocument document = canvas.getOwnerDocument();
