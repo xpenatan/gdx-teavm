@@ -338,7 +338,7 @@ public class TeaGraphics implements Graphics {
         return true;
     }
 
-    void setCanvasSize(int width, int height, boolean usePhysicalPixels) {
+    protected void setCanvasSize(int width, int height, boolean usePhysicalPixels) {
         // event calls us with logical pixel size, so if we use physical pixels internally,
         // we need to convert them
         double density = 1;
