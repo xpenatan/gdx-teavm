@@ -5,18 +5,18 @@ import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.TextureData;
-import com.badlogic.gdx.graphics.TextureEmu;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.utils.Array;
 import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 
 @Emulate(TextureLoader.class)
-public class TextureLoaderEmu extends AsynchronousAssetLoader<TextureEmu, TextureLoaderEmu.TextureParameterEmu> {
+public class TextureLoaderEmu extends AsynchronousAssetLoader<Texture, TextureLoaderEmu.TextureParameterEmu> {
     TextureData data;
-    TextureEmu texture;
+    Texture texture;
 
     public TextureLoaderEmu(FileHandleResolver resolver) {
         super(resolver);
@@ -48,13 +48,13 @@ public class TextureLoaderEmu extends AsynchronousAssetLoader<TextureEmu, Textur
     }
 
     @Override
-    public TextureEmu loadSync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameterEmu parameter) {
-        TextureEmu texture = this.texture;
+    public Texture loadSync(AssetManager manager, String fileName, FileHandle fileHandle, TextureParameterEmu parameter) {
+        Texture texture = this.texture;
         if(texture != null) {
             texture.load(data);
         }
         else {
-            texture = new TextureEmu(data);
+            texture = new Texture(data);
         }
         if(parameter != null) {
             texture.setFilter(parameter.minFilter, parameter.magFilter);
@@ -69,7 +69,7 @@ public class TextureLoaderEmu extends AsynchronousAssetLoader<TextureEmu, Textur
     }
 
     @Emulate(TextureLoader.TextureParameter.class)
-    static public class TextureParameterEmu extends AssetLoaderParameters<TextureEmu> {
+    static public class TextureParameterEmu extends AssetLoaderParameters<Texture> {
         /**
          * the format of the final Texture. Uses the source images format if null
          **/
@@ -78,7 +78,7 @@ public class TextureLoaderEmu extends AsynchronousAssetLoader<TextureEmu, Textur
          * whether to generate mipmaps
          **/
         public boolean genMipMaps = false;
-        public TextureEmu texture = null;
+        public Texture texture = null;
         /**
          * TextureData for textures created on the fly, optional. When set, all format and genMipMaps are ignored
          */

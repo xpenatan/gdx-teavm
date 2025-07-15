@@ -50,9 +50,6 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
         preloadAssets = app.getConfig().preloadAssets;
     }
 
-    /**
-     * Loads parts of the asset asynchronously if the loader is an {@link AsynchronousAssetLoader}.
-     */
     @Override
     public Void call() throws Exception {
         if(cancel) return null;
@@ -76,15 +73,6 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
         return null;
     }
 
-    /**
-     * Updates the loading of the asset. In case the asset is loaded with an {@link AsynchronousAssetLoader}, the loaders
-     * {@link AsynchronousAssetLoader#loadAsync(AssetManager, String, FileHandle, AssetLoaderParameters)} method is first called on
-     * a worker thread. Once this method returns, the rest of the asset is loaded on the rendering thread via
-     * {@link AsynchronousAssetLoader#loadSync(AssetManager, String, FileHandle, AssetLoaderParameters)}.
-     *
-     * @return true in case the asset was fully loaded, false otherwise
-     * @throws GdxRuntimeException
-     */
     public boolean update() {
         // GTW: check if we have a file that was not preloaded and is not done loading yet
         AssetLoader assetLoader = AssetInstance.getLoaderInstance();
@@ -157,9 +145,6 @@ class AssetLoadingTaskEmu implements AsyncTask<Void> {
         }
     }
 
-    /**
-     * Called when this task is the task that is currently being processed and it is unloaded.
-     */
     public void unload() {
         if(loader instanceof AsynchronousAssetLoader)
             ((AsynchronousAssetLoader)loader).unloadAsync(manager, assetDesc.fileName, resolve(loader, assetDesc), assetDesc.params);

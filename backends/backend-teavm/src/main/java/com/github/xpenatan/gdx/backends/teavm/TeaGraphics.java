@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.backends.teavm;
 
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.Cursor;
@@ -101,6 +102,10 @@ public class TeaGraphics implements Graphics {
               // listening to fullscreen mode changes
           }
         });
+    }
+
+    public void render(ApplicationListener listener) {
+        listener.render();
     }
 
     public void update() {

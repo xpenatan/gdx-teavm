@@ -822,7 +822,7 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
      *
      * @return is Cursor catched
      */
-    @JSBody(params = "element", script =
+    @JSBody(params = "canvas", script =
             "if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {\n" +
             "   return true;\n" +
             "}\n" +

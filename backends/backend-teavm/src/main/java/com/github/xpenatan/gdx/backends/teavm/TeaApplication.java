@@ -204,6 +204,7 @@ public class TeaApplication implements Application, Runnable {
     public void run() {
         AppState state = initState;
         try {
+            graphics.update();
             switch(state) {
                 case INIT:
                     if(delayInitCount == 0) {
@@ -268,7 +269,6 @@ public class TeaApplication implements Application, Runnable {
     }
 
     private void step(ApplicationListener appListener) {
-        graphics.update();
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
 
@@ -277,7 +277,6 @@ public class TeaApplication implements Application, Runnable {
         if(initState == AppState.APP_CREATE) {
             initState = AppState.APP_LOOP;
             appListener.create();
-            appListener.resume();
             resizeBypass = true;
         }
 
@@ -296,7 +295,7 @@ public class TeaApplication implements Application, Runnable {
         runnablesHelper.clear();
         graphics.frameId++;
         if(graphics.frameId > 60) { // A bit of delay before rendering so fps don't start with 0
-            appListener.render();
+            graphics.render(appListener);
         }
         input.reset();
     }
