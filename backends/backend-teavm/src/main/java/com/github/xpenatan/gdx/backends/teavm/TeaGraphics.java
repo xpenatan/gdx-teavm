@@ -462,7 +462,7 @@ public class TeaGraphics implements Graphics {
             "if (element.msRequestFullscreen) {\n" +
             "   document.addEventListener(\"msfullscreenchange\", fullscreenChanged, false);\n" +
             "}")
-    private static native void addFullscreenChangeListener(HTMLCanvasElement element, FullscreenChanged fullscreenChanged);
+    protected static native void addFullscreenChangeListener(HTMLCanvasElement element, FullscreenChanged fullscreenChanged);
 
     @JSFunctor
     public interface FullscreenChanged extends org.teavm.jso.JSObject {
