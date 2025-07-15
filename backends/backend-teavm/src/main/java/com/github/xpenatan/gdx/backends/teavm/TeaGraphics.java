@@ -108,6 +108,11 @@ public class TeaGraphics implements Graphics {
         listener.render();
     }
 
+    public void resize(ApplicationListener appListener, int width, int height) {
+        Gdx.gl.glViewport(0, 0, width, height);
+        appListener.resize(width, height);
+    }
+
     public void update() {
         long currTimeStamp = System.currentTimeMillis();
         deltaTime = (currTimeStamp - lastTimeStamp) / 1000.0f;

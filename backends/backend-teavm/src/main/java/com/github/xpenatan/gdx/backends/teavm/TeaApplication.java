@@ -283,8 +283,7 @@ public class TeaApplication implements Application, Runnable {
         if((width != lastWidth || height != lastHeight) || resizeBypass) {
             lastWidth = width;
             lastHeight = height;
-            Gdx.gl.glViewport(0, 0, width, height);
-            appListener.resize(width, height);
+            graphics.resize(appListener, width, height);
         }
 
         runnablesHelper.addAll(runnables);
