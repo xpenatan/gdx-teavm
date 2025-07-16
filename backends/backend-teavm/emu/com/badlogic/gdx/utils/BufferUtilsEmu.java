@@ -24,6 +24,10 @@ public final class BufferUtilsEmu {
     static int allocatedUnsafe = 0;
 
     public static void copy(float[] src, Buffer dst, int numFloats, int offset) {
+        if (dst instanceof ByteBuffer)
+            dst.limit(numFloats << 2);
+        else if (dst instanceof FloatBuffer) dst.limit(numFloats);
+
         FloatBuffer floatBuffer = asFloatBuffer(dst);
 
         floatBuffer.clear();
@@ -38,6 +42,7 @@ public final class BufferUtilsEmu {
 
     public static void copy(byte[] src, int srcOffset, Buffer dst, int numElements) {
         if(!(dst instanceof ByteBuffer)) throw new GdxRuntimeException("dst must be a ByteBuffer");
+        dst.limit(dst.position() + bytesToElements(dst, numElements));
 
         ByteBuffer byteBuffer = (ByteBuffer)dst;
         int oldPosition = byteBuffer.position();
@@ -47,6 +52,8 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(short[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 1));
+
         ShortBuffer buffer = null;
         if(dst instanceof ByteBuffer)
             buffer = ((ByteBuffer)dst).asShortBuffer();
@@ -60,6 +67,7 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(char[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 1));
         CharBuffer buffer = null;
         if(dst instanceof ByteBuffer)
             buffer = ((ByteBuffer)dst).asCharBuffer();
@@ -73,6 +81,7 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(int[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 2));
         IntBuffer buffer = null;
         if(dst instanceof ByteBuffer)
             buffer = ((ByteBuffer)dst).asIntBuffer();
@@ -86,6 +95,7 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(long[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 3));
         LongBuffer buffer = null;
         if(dst instanceof ByteBuffer)
             buffer = ((ByteBuffer)dst).asLongBuffer();
@@ -99,6 +109,7 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(float[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 2));
         FloatBuffer buffer = asFloatBuffer(dst);
 
         int oldPosition = buffer.position();
@@ -108,6 +119,7 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(double[] src, int srcOffset, Buffer dst, int numElements) {
+        dst.limit(dst.position() + bytesToElements(dst, numElements << 3));
         DoubleBuffer buffer = null;
         if(dst instanceof ByteBuffer)
             buffer = ((ByteBuffer)dst).asDoubleBuffer();
@@ -176,6 +188,8 @@ public final class BufferUtilsEmu {
     }
 
     public static void copy(Buffer src, Buffer dst, int numElements) {
+        int numBytes = elementsToBytes(src, numElements);
+        dst.limit(dst.position() + bytesToElements(dst, numBytes));
         int srcPos = src.position();
         int dstPos = dst.position();
         src.limit(srcPos + numElements);
@@ -435,6 +449,25 @@ public final class BufferUtilsEmu {
             return bytes >>> 2;
         else if (dst instanceof DoubleBuffer)
             return bytes >>> 3;
+        else
+            throw new GdxRuntimeException("Can't copy to a " + dst.getClass().getName() + " instance");
+    }
+
+    private static int elementsToBytes (Buffer dst, int elements) {
+        if (dst instanceof ByteBuffer)
+            return elements;
+        else if (dst instanceof ShortBuffer)
+            return elements << 1;
+        else if (dst instanceof CharBuffer)
+            return elements << 1;
+        else if (dst instanceof IntBuffer)
+            return elements << 2;
+        else if (dst instanceof LongBuffer)
+            return elements << 3;
+        else if (dst instanceof FloatBuffer)
+            return elements << 2;
+        else if (dst instanceof DoubleBuffer)
+            return elements << 3;
         else
             throw new GdxRuntimeException("Can't copy to a " + dst.getClass().getName() + " instance");
     }
