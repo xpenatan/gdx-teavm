@@ -1,6 +1,7 @@
 package emu.com.badlogic.gdx.graphics.g2d;
 
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
@@ -54,7 +55,7 @@ public class Gdx2DPixmapNative implements Disposable {
         Int8Array heapData = getHeapData(false);
         if(buffer == null) {
             int length = heapData.getLength();
-            buffer = ByteBuffer.allocateDirect(length);
+            buffer = BufferUtils.newByteBuffer(length);
         }
         TypedArrays.copy(heapData, buffer);
     }

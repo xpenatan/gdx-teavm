@@ -1,9 +1,10 @@
-package com.badlogic.gdx.utils;
+package emu.com.badlogic.gdx.utils;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaTool;
-import com.github.xpenatan.gdx.backends.teavm.gen.Emulate;
 import org.teavm.classlib.PlatformDetector;
 import org.teavm.classlib.impl.nio.Buffers;
 
@@ -17,8 +18,7 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 
-@Emulate(BufferUtils.class)
-public final class BufferUtilsEmu {
+public final class BufferUtils {
 
     static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
     static int allocatedUnsafe = 0;
@@ -334,8 +334,7 @@ public final class BufferUtilsEmu {
 
     public static FloatBuffer newFloatBuffer(int numFloats) {
         if(TeaTool.isProdMode()) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
-            buffer.order(ByteOrder.nativeOrder());
+            ByteBuffer buffer = newByteBuffer(numFloats * 4);
             return buffer.asFloatBuffer();
         }
         else {
@@ -345,8 +344,7 @@ public final class BufferUtilsEmu {
 
     public static DoubleBuffer newDoubleBuffer(int numDoubles) {
         if(TeaTool.isProdMode()) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numDoubles * 8);
-            buffer.order(ByteOrder.nativeOrder());
+            ByteBuffer buffer = newByteBuffer(numDoubles * 8);
             return buffer.asDoubleBuffer();
         }
         else {
@@ -367,8 +365,7 @@ public final class BufferUtilsEmu {
 
     public static ShortBuffer newShortBuffer(int numShorts) {
         if(TeaTool.isProdMode()) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numShorts * 2);
-            buffer.order(ByteOrder.nativeOrder());
+            ByteBuffer buffer = newByteBuffer(numShorts * 2);
             return buffer.asShortBuffer();
         }
         else {
@@ -378,8 +375,7 @@ public final class BufferUtilsEmu {
 
     public static CharBuffer newCharBuffer(int numChars) {
         if(TeaTool.isProdMode()) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numChars * 2);
-            buffer.order(ByteOrder.nativeOrder());
+            ByteBuffer buffer = newByteBuffer(numChars * 2);
             return buffer.asCharBuffer();
         }
         else {
@@ -389,8 +385,7 @@ public final class BufferUtilsEmu {
 
     public static IntBuffer newIntBuffer(int numInts) {
         if(TeaTool.isProdMode()) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numInts * 4);
-            buffer.order(ByteOrder.nativeOrder());
+            ByteBuffer buffer = newByteBuffer(numInts * 4);
             return buffer.asIntBuffer();
         }
         else {
@@ -424,7 +419,9 @@ public final class BufferUtilsEmu {
     }
 
     private static ByteBuffer newDisposableByteBuffer (int numBytes) {
-        return newByteBuffer(numBytes);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(numBytes);
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer;
     }
 
     private static void freeMemory (ByteBuffer buffer) {
