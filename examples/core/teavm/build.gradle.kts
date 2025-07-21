@@ -1,6 +1,5 @@
 plugins {
     id("org.gretty") version("3.1.0")
-    id("org.teavm") version("0.12.0-dev-6")
 }
 
 gretty {
@@ -32,20 +31,4 @@ tasks.register("core-run-teavm") {
     dependsOn(list)
 
     tasks.findByName("jettyRun")?.mustRunAfter("core-build")
-}
-
-teavm {
-    js {
-        sourceMap = true
-        debugInformation = true
-        addedToWebApp = true
-        mainClass = "com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher"
-    }
-    wasmGC {
-        sourceMap = false
-        obfuscated = true
-        debugInformation = false
-        addedToWebApp = false
-        mainClass = "com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher"
-    }
 }
