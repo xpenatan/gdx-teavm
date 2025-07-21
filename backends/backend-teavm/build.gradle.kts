@@ -27,7 +27,7 @@ dependencies {
     api("org.teavm:teavm-jso-apis:${LibExt.teaVMVersion}")
     api("org.teavm:teavm-jso-impl:${LibExt.teaVMVersion}")
 
-    implementation("com.github.xpenatan:jMultiplatform:0.1.2")
+    implementation("com.github.xpenatan:jMultiplatform:${LibExt.jMultiplatform}")
 
     testImplementation("com.google.truth:truth:${LibExt.truthVersion}")
 }
