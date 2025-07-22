@@ -51,14 +51,28 @@ jobs:
       - name: Build
         run: ./gradlew build
 
-      - name: Upload to repository
+      - name: Upload Release to repository
         uses: nick-fields/retry@v3
-        if: ${{ inputs.shouldUpload }}
+        if: ${{ inputs.shouldUpload && inputs.isRelease }}
         with:
           max_attempts: 6
           timeout_minutes: 10
           retry_on: error
-          command: ./gradlew publish
+          command: ./gradlew publishRelease
+        env:
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.PGP_SECRET }}
+          SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
+
+      - name: Upload Snapshot to repository
+        uses: nick-fields/retry@v3
+        if: ${{ inputs.shouldUpload && !inputs.isRelease }}
+        with:
+          max_attempts: 6
+          timeout_minutes: 10
+          retry_on: error
+          command: ./gradlew publishSnapshot
         env:
           CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
