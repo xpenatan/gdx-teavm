@@ -10,8 +10,6 @@ var libProjects = mutableSetOf(
 
 LibExt.isRelease = gradle.startParameter.taskNames.any { it == "publishRelease" }
 
-println("isRelease: " + LibExt.isRelease)
-
 configure(libProjects) {
     apply(plugin = "java")
     apply(plugin = "signing")

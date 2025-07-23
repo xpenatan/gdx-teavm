@@ -4,7 +4,7 @@ plugins {
 
 val moduleName = "backend-teavm"
 
-sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
+sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "emulate", "src/main/java/"))
 
 val compileJavaTask = tasks.getByPath("compileJava")!!
 compileJavaTask.doFirst {
