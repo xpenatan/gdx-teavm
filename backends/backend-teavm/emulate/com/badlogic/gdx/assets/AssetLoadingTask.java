@@ -17,7 +17,7 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
 
-class AssetLoadingTask implements AsyncTask<Void> {
+public class AssetLoadingTask implements AsyncTask<Void> {
     AssetManager manager;
     final AssetDescriptor assetDesc;
     final com.badlogic.gdx.assets.loaders.AssetLoader loader;

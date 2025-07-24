@@ -1,17 +1,33 @@
 package com.badlogic.gdx.utils.async;
 
-public class AsyncResult<T> {
-    private final T result;
+import com.badlogic.gdx.assets.AssetLoadingTask;
+import org.teavm.jso.browser.TimerHandler;
+import org.teavm.jso.browser.Window;
 
-    AsyncResult(T result) {
-        this.result = result;
+public class AsyncResult<T> implements TimerHandler {
+    private AssetLoadingTask loadingTask;
+    private boolean isDone;
+
+    AsyncResult(AsyncTask<T> task) {
+        loadingTask = (AssetLoadingTask)task;
+        Window.setTimeout(this, 0);
     }
 
     public boolean isDone() {
-        return true;
+        return isDone;
     }
 
     public T get() {
-        return result;
+        return null;
+    }
+
+    @Override
+    public void onTimer() {
+        isDone = true;
+        try {
+            loadingTask.call();
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
