@@ -1,5 +1,6 @@
 plugins {
     id("org.gretty") version("3.1.0")
+    id("org.teavm") version(LibExt.teaVMVersion)
 }
 
 gretty {
@@ -31,4 +32,27 @@ tasks.register("core-run-teavm") {
     dependsOn(list)
 
     tasks.findByName("jettyRun")?.mustRunAfter("core-build")
+}
+
+val main = "com.github.xpenatan.gdx.examples.teavm.launcher.TeaVMTestLauncher"
+
+teavm {
+    js {
+        obfuscated = false
+        mainClass = main
+        targetFileName = "app.js"
+        relativePathInOutputDir = "webapp"
+        outputDir = file("${layout.buildDirectory.get()}/dist")
+        sourceMap = true
+        debugInformation = true
+    }
+    wasmGC {
+        obfuscated = false
+        mainClass = main
+        targetFileName = "app.wasm"
+        relativePathInOutputDir = "webapp"
+        outputDir = file("${layout.buildDirectory.get()}/dist")
+        sourceMap = true
+        debugInformation = true
+    }
 }

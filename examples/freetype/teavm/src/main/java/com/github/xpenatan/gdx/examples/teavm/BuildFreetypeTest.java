@@ -15,7 +15,9 @@ public class BuildFreetypeTest {
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
-        TeaVMTool tool = TeaBuilder.config(teaBuildConfiguration);
+        teaBuildConfiguration.webAssemblyMode = false;
+        TeaBuilder.configWebApp(teaBuildConfiguration);
+        TeaVMTool tool = new TeaVMTool();
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(FreetypeTestLauncher.class.getName());
         tool.setObfuscated(false);

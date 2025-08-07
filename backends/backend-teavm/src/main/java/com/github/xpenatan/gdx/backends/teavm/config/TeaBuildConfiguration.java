@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
-import com.github.xpenatan.gdx.backends.teavm.TeaLauncher;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -14,15 +13,12 @@ public class TeaBuildConfiguration {
     public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
     public boolean shouldGenerateAssetFile = true;
 
-    public String mainApplicationClass;
-
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
     public final ArrayList<String> reflectionInclude = new ArrayList<>();
     public final ArrayList<String> reflectionExclude = new ArrayList<>();
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
-    public String mainClass = TeaLauncher.class.getName();
     public String mainClassArgs = "";
 
     public String htmlTitle = "gdx-teavm";
@@ -38,4 +34,8 @@ public class TeaBuildConfiguration {
 
     /** Logo asset path. Requires showLoadingLogo true. */
     public String logoPath = "startup-logo.png";
+
+    public BaseWebApp webApp;
+    public boolean webAssemblyMode;
+    public String targetFileName = "app";
 }

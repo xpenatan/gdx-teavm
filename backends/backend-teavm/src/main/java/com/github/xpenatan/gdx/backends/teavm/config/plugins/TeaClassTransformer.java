@@ -35,8 +35,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     private boolean init = false;
 
-    public static String applicationListener = "";
-    public static String mainClass = "";
     public static Reflections reflections = new Reflections("emulate", "emu", "com", "org", "net");
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
@@ -75,15 +73,6 @@ public class TeaClassTransformer implements ClassHolderTransformer {
     @Override
     public void transformClass(ClassHolder cls, ClassHolderTransformerContext context) {
         ClassReaderSource innerSource = context.getHierarchy().getClassSource();
-        if(!init) {
-            init = true;
-            ClassHolder classHolder = null;
-            if(!applicationListener.isEmpty()) {
-                classHolder = findClassHolder(cls, context, TeaClassTransformer.mainClass);
-                setGdxApplicationClass(classHolder, context, TeaClassTransformer.applicationListener);
-            }
-        }
-
         emulateClass(context, cls, innerSource);
     }
 
