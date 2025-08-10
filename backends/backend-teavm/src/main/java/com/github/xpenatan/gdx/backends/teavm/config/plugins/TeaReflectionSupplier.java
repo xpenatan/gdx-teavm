@@ -22,40 +22,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
     static {
         addReflectionClass("com.badlogic.gdx.scenes.scene2d");
-        addReflectionClass("com.badlogic.gdx.math");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.GlyphLayout");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.TextureRegion");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.Sprite");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.BitmapFont");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.NinePatch");
-        addReflectionClass("com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.materials.MaterialAttribute");
-        addReflectionClass("com.badlogic.gdx.graphics.Color");
-        addReflectionClass("com.badlogic.gdx.graphics.Texture");
-        addReflectionClass("com.badlogic.gdx.utils.Array");
-        addReflectionClass("com.badlogic.gdx.utils.Disposable");
-        addReflectionClass("com.badlogic.gdx.utils.Json");
-        addReflectionClass("com.badlogic.gdx.utils.ObjectMap");
-        addReflectionClass("com.badlogic.gdx.utils.OrderedMap");
-        addReflectionClass("com.badlogic.gdx.utils.Queue");
-        addReflectionClass("com.badlogic.gdx.utils.Predicate");
-        addReflectionClass("com.badlogic.gdx.graphics.VertexAttribute");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.model");
-        addReflectionClass("com.badlogic.gdx.Net");
-        addReflectionClass("com.badlogic.gdx.maps.MapObject");
-        addReflectionClass("com.badlogic.gdx.maps.objects");
-        addReflectionClass("com.badlogic.gdx.maps.tiled.objects");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParticleEffect");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParticleController");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData.SaveData");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData.AssetData");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParallelArray");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.values");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.emitters");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.influencers");
-        addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.renderers");
-        addReflectionClass("com.badlogic.gdx.math.Interpolation");
         addReflectionClass("net.mgsx.gltf.data");
     }
 
