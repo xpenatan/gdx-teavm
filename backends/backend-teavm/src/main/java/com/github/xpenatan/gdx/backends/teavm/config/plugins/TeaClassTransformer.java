@@ -86,7 +86,9 @@ public class TeaClassTransformer implements ClassHolderTransformer {
                 replaceClassCode(innerSource, emulated, cls, emulatedClassHolder);
 
                 // teavm makes bunch of classreader copies. We also need to update the original class
-                replaceClassCode(innerSource, emulated, (ClassHolder)original, emulatedClassHolder);
+                if(original instanceof ClassHolder) {
+                    replaceClassCode(innerSource, emulated, (ClassHolder)original, emulatedClassHolder);
+                }
             }
         }
         else if(emulations.containsKey(className)) {
@@ -97,7 +99,9 @@ public class TeaClassTransformer implements ClassHolderTransformer {
                 replaceClass(innerSource, cls, emulatedClassHolder);
 
                 // teavm makes bunch of classreader copies. We also need to update the original class
-                replaceClass(innerSource, (ClassHolder)original, emulatedClassHolder);
+                if(original instanceof ClassHolder) {
+                    replaceClass(innerSource, (ClassHolder)original, emulatedClassHolder);
+                }
             }
         }
     }
