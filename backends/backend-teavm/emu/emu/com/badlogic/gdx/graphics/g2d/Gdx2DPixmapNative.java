@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import java.nio.ByteBuffer;
 
+import java.nio.ByteOrder;
 import org.teavm.classlib.impl.nio.Buffers;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.typedarrays.Int32Array;
@@ -54,7 +55,8 @@ public class Gdx2DPixmapNative implements Disposable {
         Int8Array heapData = getHeapData(false);
         if(buffer == null) {
             int length = heapData.getLength();
-            buffer = BufferUtils.newByteBuffer(length);
+            buffer = ByteBuffer.allocateDirect(length);
+            buffer.order(ByteOrder.BIG_ENDIAN);
         }
         TypedArrays.copy(heapData, buffer);
     }
