@@ -80,7 +80,6 @@ public class TeaBuilder {
         acceptedURL = new ArrayList<>();
         String webappDirectory = configuration.webappPath;
 
-        addDefaultReflectionClasses();
         automaticReflection(configuration);
         configClasspath(configuration, acceptedURL);
 
@@ -233,45 +232,6 @@ public class TeaBuilder {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static void addDefaultReflectionClasses() {
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.scenes.scene2d");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.GlyphLayout");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.TextureRegion");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.Sprite");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.BitmapFont");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.NinePatch");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.materials.MaterialAttribute");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.Color");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.Texture");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Array");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Disposable");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Json");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.ObjectMap");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.OrderedMap");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Queue");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.utils.Predicate");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.VertexAttribute");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.model");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.Net");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.maps.MapObject");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.maps.objects");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.maps.tiled.objects");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParticleEffect");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParticleController");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData.SaveData");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ResourceData.AssetData");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.ParallelArray");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.values");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.emitters");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.influencers");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.graphics.g3d.particles.renderers");
-        TeaReflectionSupplier.addReflectionClass("com.badlogic.gdx.math.Interpolation");
-        TeaReflectionSupplier.addReflectionClass("net.mgsx.gltf.data");
     }
 
     private static void configClasspath(TeaBuildConfiguration configuration, ArrayList<URL> acceptedURL) {
