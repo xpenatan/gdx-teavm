@@ -1,3 +1,5 @@
+import org.teavm.gradle.api.SourceFilePolicy
+
 plugins {
     id("org.gretty") version("3.1.0")
     id("org.teavm") version(LibExt.teaVMVersion)
@@ -17,7 +19,7 @@ dependencies {
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
-val mainConfigClassName = "com.github.xpenatan.gdx.examples.teavm.ConfigureTeaVMTestDemo"
+val mainConfigClassName = "com.github.xpenatan.gdx.examples.teavm.ConfigTeaVMTestDemo"
 
 tasks.register<JavaExec>("core-config") {
     group = "example-teavm"
@@ -53,6 +55,7 @@ teavm {
         outputDir = file("${layout.buildDirectory.get()}/dist")
         sourceMap = true
         debugInformation = true
+        sourceFilePolicy = SourceFilePolicy.COPY
     }
     wasmGC {
         obfuscated = false
@@ -62,5 +65,6 @@ teavm {
         outputDir = file("${layout.buildDirectory.get()}/dist")
         sourceMap = true
         debugInformation = true
+        sourceFilePolicy = SourceFilePolicy.COPY
     }
 }

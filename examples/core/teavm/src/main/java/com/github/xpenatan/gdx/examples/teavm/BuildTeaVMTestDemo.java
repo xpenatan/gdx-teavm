@@ -9,7 +9,7 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) throws IOException {
-        ConfigureTeaVMTestDemo.configureWebapp();
+        ConfigTeaVMTestDemo.configureWebapp();
 
         TeaVMTool tool = new TeaVMTool();
         tool.setObfuscated(false);

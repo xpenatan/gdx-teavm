@@ -75,7 +75,7 @@ public class TeaBuilder {
     private static TeaClassLoader classLoader;
     private static ArrayList<URL> acceptedURL;
 
-    public static void configWebApp(TeaBuildConfiguration configuration) {
+    public static void config(TeaBuildConfiguration configuration) {
         TeaBuilder.configuration = configuration;
         acceptedURL = new ArrayList<>();
         String webappDirectory = configuration.webappPath;
@@ -265,7 +265,7 @@ public class TeaBuilder {
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
 
-        if(configuration.webAssemblyMode) {
+        if(configuration.targetType == TeaTargetType.WEBASSEMBLY) {
             tool.setTargetFileName(configuration.targetFileName + ".wasm");
             tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
         }
@@ -391,7 +391,7 @@ public class TeaBuilder {
         webXML.writeString(webApp.webXML, false);
         AssetsCopy.copyResources(classLoader, webApp.rootAssets, null, webappDistFolder);
 
-        if(configuration.webAssemblyMode) {
+        if(configuration.targetType == TeaTargetType.WEBASSEMBLY) {
             copyRuntime(setTargetDirectory);
         }
     }

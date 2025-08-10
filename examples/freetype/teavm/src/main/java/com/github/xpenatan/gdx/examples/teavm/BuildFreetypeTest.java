@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.config.TeaTargetType;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.tooling.TeaVMTool;
@@ -15,8 +16,8 @@ public class BuildFreetypeTest {
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
 
-        teaBuildConfiguration.webAssemblyMode = false;
-        TeaBuilder.configWebApp(teaBuildConfiguration);
+        teaBuildConfiguration.targetType = TeaTargetType.JAVASCRIPT;
+        TeaBuilder.config(teaBuildConfiguration);
         TeaVMTool tool = new TeaVMTool();
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(FreetypeTestLauncher.class.getName());

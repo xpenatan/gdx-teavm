@@ -36,6 +36,6 @@ public class TeaBuildConfiguration {
     public String logoPath = "startup-logo.png";
 
     public BaseWebApp webApp;
-    public boolean webAssemblyMode;
+    public TeaTargetType targetType = TeaTargetType.JAVASCRIPT;
     public String targetFileName = "app";
 }

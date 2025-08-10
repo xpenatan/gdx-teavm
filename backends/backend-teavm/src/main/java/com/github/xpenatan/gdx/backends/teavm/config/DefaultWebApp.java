@@ -31,7 +31,7 @@ public class DefaultWebApp extends BaseWebApp {
 
         String mode = "main(%ARGS%)";
         String jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\""  + config.targetFileName + ".js\"></script>";
-        if(config.webAssemblyMode) {
+        if(config.targetType == TeaTargetType.WEBASSEMBLY) {
             mode = "let teavm = await TeaVM.wasmGC.load(\"" + config.targetFileName + ".wasm\"); teavm.exports.main([%ARGS%]);";
             String jsName = "wasm-gc-runtime.min.js";
             jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\"" + jsName + "\"></script>";
