@@ -17,6 +17,14 @@ dependencies {
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
+val mainConfigClassName = "com.github.xpenatan.gdx.examples.teavm.ConfigureTeaVMTestDemo"
+
+tasks.register<JavaExec>("core-config") {
+    group = "example-teavm"
+    description = "Config webapp test example"
+    mainClass.set(mainConfigClassName)
+    classpath = sourceSets["main"].runtimeClasspath
+}
 
 tasks.register<JavaExec>("core-build") {
     group = "example-teavm"
