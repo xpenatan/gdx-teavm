@@ -6,6 +6,8 @@ import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSuppli
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -25,6 +27,8 @@ import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMProblemRenderer;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
+import org.teavm.tooling.sources.DirectorySourceFileProvider;
+import org.teavm.tooling.sources.JarSourceFileProvider;
 import org.teavm.vm.TeaVMPhase;
 import org.teavm.vm.TeaVMProgressFeedback;
 import org.teavm.vm.TeaVMProgressListener;
@@ -272,6 +276,20 @@ public class TeaBuilder {
         else {
             tool.setTargetFileName(configuration.targetFileName + ".js");
             tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
+        }
+
+        for(int i = 0; i < acceptedURL.size(); i++) {
+            URL url = acceptedURL.get(i);
+            try {
+                URI uri = url.toURI();
+
+                String path = uri.getPath();
+                File file = new File(uri);
+                if (file.isFile() && path.endsWith("-sources.jar")) {
+                    tool.addSourceFileProvider(new JarSourceFileProvider(file));
+                }
+            } catch(URISyntaxException e) {
+            }
         }
 
         tool.setClassLoader(classLoader);
