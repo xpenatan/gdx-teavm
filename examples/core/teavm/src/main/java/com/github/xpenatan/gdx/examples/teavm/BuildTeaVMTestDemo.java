@@ -23,12 +23,12 @@ public class BuildTeaVMTestDemo {
         teaBuildConfiguration.webAssemblyMode = false;
         TeaBuilder.configWebApp(teaBuildConfiguration);
 
-//        TeaVMTool tool = new TeaVMTool();
-//        tool.setObfuscated(false);
-//        tool.setOptimizationLevel(TeaVMOptimizationLevel.ADVANCED);
-//        tool.setMainClass(TeaVMTestLauncher.class.getName());
-//        int size = 64 * (1 << 20);
-//        tool.setMaxDirectBuffersSize(size);
-//        TeaBuilder.build(tool);
+        TeaVMTool tool = new TeaVMTool();
+        tool.setObfuscated(false);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.ADVANCED);
+        tool.setMainClass(TeaVMTestLauncher.class.getName());
+        int size = 64 * (1 << 20);
+        tool.setMaxDirectBuffersSize(size);
+        TeaBuilder.build(tool);
     }
 }

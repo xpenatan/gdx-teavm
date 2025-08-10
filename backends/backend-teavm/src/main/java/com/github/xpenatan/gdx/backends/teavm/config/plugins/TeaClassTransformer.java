@@ -35,7 +35,7 @@ public class TeaClassTransformer implements ClassHolderTransformer {
 
     private boolean init = false;
 
-    public static Reflections reflections = new Reflections("emulate", "emu", "com", "org", "net");
+    public static Reflections reflections = new Reflections("emulate", "emu", "com", "org", "emu/net");
 
     private HashMap<String, Class<?>> emulations = new HashMap<>();
     private HashMap<String, String> emulations2 = new HashMap<>();
