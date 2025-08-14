@@ -12,10 +12,31 @@ gretty {
 
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
+
     implementation(project(":examples:core:core"))
 
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-freetype-teavm"))
+}
+
+//tasks.register<Jar>("sourceJar") {
+//    archiveClassifier.set("sources") // Results in your-app-sources.jar
+//    from(sourceSets.main.get().java.srcDirs) // Include source directories
+//    include("**/*.java") // Include .java files
+//    include("**/*.kt")   // Include .kt files (if using Kotlin)
+//}
+//
+//// Make the build task depend on sourceJar
+//tasks.build {
+//    dependsOn("sourceJar")
+//}
+
+tasks.register<Jar>("sourceJar") {
+    archiveClassifier.set("sources") // Sets the classifier to "sources" (e.g., your-app-sources.jar)
+    from(sourceSets.main.get().java.srcDirs) // Include source directories
+    include("**/*.java") // Include .java files
+    include("**/*.kt")   // Include .kt files (if using Kotlin)
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
@@ -56,6 +77,10 @@ teavm {
         sourceMap = true
         debugInformation = true
         sourceFilePolicy = SourceFilePolicy.COPY
+
+        devServer {
+            port = 8080
+        }
     }
     wasmGC {
         obfuscated = false
