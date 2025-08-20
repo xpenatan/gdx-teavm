@@ -176,6 +176,8 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        stage.dispose();
+        logoTexture.dispose();
     }
 
     private enum Step {
