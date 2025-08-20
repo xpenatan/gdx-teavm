@@ -29,6 +29,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
 
     public String startupLogo = "startup-logo.png";
     public float animationSpeed = 0.9f;
+    protected int initQueue = 0;
 
     private TeaApplication teaApplication;
     private AssetLoader assetLoader;
@@ -44,29 +45,34 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     private float displayedProgress = 0f;
     private int assetsCount = -1;
     private boolean isAnimation = false;
+    private int initStage = 0;
 
     @Override
     public void create() {
         teaApplication = TeaApplication.get();
         assetLoader = AssetInstance.getLoaderInstance();
+        setupPreloadAssets();
+    }
 
-        stage = createStage();
-        stage.setViewport(new ScreenViewport());
-
+    protected void setupPreloadAssets() {
+        initQueue++;
         assetLoader.loadAsset(startupLogo, AssetType.Binary, Files.FileType.Internal, new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, TeaBlob result) {
-                Gdx.app.postRunnable(() -> {
-                    preloadStep = Step.PRELOAD_ASSETS;
-                    stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-                    setupScene2d();
-                    assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
-                        @Override
-                        public void onSuccess(String url, Void result) {
-                            assetsCount = assetLoader.getQueue();
-                        }
-                    });
-                });
+                initQueue--;
+            }
+        });
+    }
+
+    private void setupStage() {
+        stage = createStage();
+        stage.setViewport(new ScreenViewport());
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        setupScene2d();
+        assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, Void result) {
+                assetsCount = assetLoader.getQueue();
             }
         });
     }
@@ -148,33 +154,45 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        stage.act();
-        stage.draw();
+        if(initQueue == 0 && initStage == 0) {
+            initStage = 1;
+        }
 
-        if(assetsCount >= 0) {
-            int queue = assetLoader.getQueue();
-            float progress = (float)(assetsCount - queue) / assetsCount;
-            if(!isAnimation) {
-                targetProgress = progress;
-            }
+        if(preloadStep == Step.PRELOAD_ASSETS) {
+            float deltaTime = Gdx.graphics.getDeltaTime();
+            stage.act();
+            stage.draw();
 
-            progressBar.setValue(displayedProgress);
-            boolean downloading = assetLoader.isDownloading();
-            if(progress == 1.0 && !downloading && displayedProgress == 1.0f) {
-                teaApplication.setPreloadReady();
-            }
+            if(assetsCount >= 0) {
+                int queue = assetLoader.getQueue();
+                float progress = (float)(assetsCount - queue) / assetsCount;
+                if(!isAnimation) {
+                    targetProgress = progress;
+                }
 
-            // Animate progress toward targetProgress.
-            if (targetProgress > displayedProgress) {
-                float progressDelta = animationSpeed * deltaTime; // Smooth increase per frame.
-                displayedProgress = Math.min(targetProgress, displayedProgress + progressDelta);
                 progressBar.setValue(displayedProgress);
-                isAnimation = true;
+                boolean downloading = assetLoader.isDownloading();
+                if(progress == 1.0 && !downloading && displayedProgress == 1.0f) {
+                    teaApplication.setPreloadReady();
+                }
+
+                // Animate progress toward targetProgress.
+                if (targetProgress > displayedProgress) {
+                    float progressDelta = animationSpeed * deltaTime; // Smooth increase per frame.
+                    displayedProgress = Math.min(targetProgress, displayedProgress + progressDelta);
+                    progressBar.setValue(displayedProgress);
+                    isAnimation = true;
+                }
+                else {
+                    isAnimation = false;
+                }
             }
-            else {
-                isAnimation = false;
-            }
+        }
+
+        if(initStage == 1) {
+            initStage = 2;
+            preloadStep = Step.PRELOAD_ASSETS;
+            setupStage();
         }
     }
 
