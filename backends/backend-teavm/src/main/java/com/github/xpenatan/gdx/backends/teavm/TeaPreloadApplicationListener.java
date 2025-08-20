@@ -30,9 +30,9 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     public String startupLogo = "startup-logo.png";
     public float animationSpeed = 0.9f;
     protected int initQueue = 0;
+    protected AssetLoader assetLoader;
 
     private TeaApplication teaApplication;
-    private AssetLoader assetLoader;
     private Step preloadStep = Step.PRELOAD_LOADING_ASSETS;
     private Texture logoTexture;
     private Stage stage;
