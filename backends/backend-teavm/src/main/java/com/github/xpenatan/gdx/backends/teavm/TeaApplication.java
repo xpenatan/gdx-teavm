@@ -236,6 +236,7 @@ public class TeaApplication implements Application {
                     initState = AppState.INIT;
                     curListener.dispose();
                     curListener = appListener;
+                    appListener = null;
                     window.requestAnimationFrame(appLoop);
                 }
                 else {
