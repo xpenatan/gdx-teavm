@@ -89,10 +89,14 @@ public class TeaApplication implements Application {
         this.config = config;
         this.appListener = appListener;
         if(preloadAppListener == null) {
-            preloadAppListener = new TeaPreloadApplicationListener();
+            preloadAppListener = createDefaultPreloadAppListener();
         }
         curListener = preloadAppListener;
         init();
+    }
+
+    protected ApplicationListener createDefaultPreloadAppListener() {
+        return new TeaPreloadApplicationListener();
     }
 
     protected void init() {
