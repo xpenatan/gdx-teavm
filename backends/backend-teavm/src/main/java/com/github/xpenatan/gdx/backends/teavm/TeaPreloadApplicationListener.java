@@ -89,6 +89,11 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
         return new Stage();
     }
 
+    protected void clearScreen() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+    }
+
     private void setupScene2d() {
         FileHandle internal = Gdx.files.internal(startupLogo);
         logoTexture = createTexture(internal);
@@ -151,8 +156,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        clearScreen();
 
         if(initQueue == 0 && initStage == 0) {
             initStage = 1;
