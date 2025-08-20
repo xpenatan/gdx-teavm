@@ -50,7 +50,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
         teaApplication = TeaApplication.get();
         assetLoader = AssetInstance.getLoaderInstance();
 
-        stage = new Stage();
+        stage = createStage();
         stage.setViewport(new ScreenViewport());
 
         assetLoader.loadAsset(startupLogo, AssetType.Binary, Files.FileType.Internal, new AssetLoaderListener<>() {
@@ -71,9 +71,21 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
         });
     }
 
+    protected Texture createTexture(Pixmap pixmap) {
+        return new Texture(pixmap);
+    }
+
+    protected Texture createTexture(FileHandle internal) {
+        return new Texture(internal);
+    }
+
+    protected Stage createStage() {
+        return new Stage();
+    }
+
     private void setupScene2d() {
         FileHandle internal = Gdx.files.internal(startupLogo);
-        logoTexture = new Texture(internal);
+        logoTexture = createTexture(internal);
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         logo = new Image(logoTexture);
@@ -85,7 +97,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
-        Texture whiteTexture = new Texture(pixmap);
+        Texture whiteTexture = createTexture(pixmap);
         pixmap.dispose();
 
         // Create the border drawable (white stroke) with fixed height.
