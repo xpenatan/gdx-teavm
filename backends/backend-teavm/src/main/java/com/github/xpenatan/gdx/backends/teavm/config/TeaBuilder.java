@@ -349,7 +349,7 @@ public class TeaBuilder {
 
         boolean shouldUseDefaultHtmlIndex = configuration.useDefaultHtmlIndex;
         if(shouldUseDefaultHtmlIndex) {
-            useDefaultHTMLIndexFile(configuration.webApp, webappFolder);
+            useDefaultHTMLIndexFile(configuration.webApp, webappFolder, assetsFolder);
         }
 
         boolean generateAssetPaths = configuration.shouldGenerateAssetFile;
@@ -401,13 +401,13 @@ public class TeaBuilder {
         TeaBuilder.log("");
     }
 
-    private static void useDefaultHTMLIndexFile(BaseWebApp webApp, FileHandle webappDistFolder) {
+    private static void useDefaultHTMLIndexFile(BaseWebApp webApp, FileHandle webappDistFolder, FileHandle assetsFolder) {
         configuration.webApp.setup(classLoader, configuration);
         FileHandle indexHandler = webappDistFolder.child("index.html");
         FileHandle webXML = webappDistFolder.child("WEB-INF").child("web.xml");
         indexHandler.writeString(webApp.indexHtml, false);
         webXML.writeString(webApp.webXML, false);
-        AssetsCopy.copyResources(classLoader, webApp.rootAssets, null, webappDistFolder);
+        AssetsCopy.copyResources(classLoader, webApp.rootAssets, null, assetsFolder);
 
         if(configuration.targetType == TeaTargetType.WEBASSEMBLY) {
             copyRuntime(setTargetDirectory);

@@ -10,13 +10,16 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.github.xpenatan.gdx.backends.teavm.TeaFileHandle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MemoryFileStorage extends FileDB {
+    public boolean debug = false;
+
     private final OrderedMap<String, FileData> fileMap;
 
     private final Array<String> tmpPaths = new Array<>();
 
-    public boolean debug = false;
 
     public MemoryFileStorage() {
         fileMap = new OrderedMap<>();
@@ -212,6 +215,7 @@ public class MemoryFileStorage extends FileDB {
         String text = "";
         text += println("####### START DEBUG FILE: " + fileMap.size + "\n");
         ObjectMap.Entries<String, FileData> it = fileMap.iterator();
+        ArrayList<String> debugLog = new ArrayList<>();
         while(it.hasNext) {
             ObjectMap.Entry<String, FileData> next = it.next();
             FileData value = next.value;
@@ -221,7 +225,12 @@ public class MemoryFileStorage extends FileDB {
             if(!value.getPath().equals(next.key)) {
                 name = " Path: \"" + value.getPath() + "\"";
             }
-            text += println("Key: \"" + key + name + " Type: " + value.getType() + " Bytes: " + value.getBytesSize()+ "\n");
+            String log = println("Key: \"" + key + name + " Type: " + value.getType() + " Bytes: " + value.getBytesSize()+ "\n");
+            debugLog.add(log);
+        }
+        Collections.sort(debugLog);
+        for(int i = 0; i < debugLog.size(); i++) {
+            text += debugLog.get(i);
         }
         text += println("####### END DEBUG FILE");
         return text;

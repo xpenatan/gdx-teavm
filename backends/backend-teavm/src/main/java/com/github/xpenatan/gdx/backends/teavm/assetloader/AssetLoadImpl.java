@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
@@ -16,6 +17,8 @@ import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.backends.teavm.filesystem.FileData;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSArrayReader;
@@ -40,14 +43,18 @@ public class AssetLoadImpl implements AssetLoader {
 
     public final String baseUrl;
 
-    private HashSet<String> assetInQueue;
+    private Array<QueueAsset> assetInQueue;
+    private HashSet<String> assetDownloading;
 
     private AssetDownloader assetDownloader;
+
+    private int maxMultiDownloadCount = 5;
 
     public AssetLoadImpl(String newBaseURL, TeaApplication teaApplication, AssetDownloader assetDownloader) {
         this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
-        assetInQueue = new HashSet<>();
+        assetInQueue = new Array<>();
+        assetDownloading = new HashSet<>();
     }
 
     public void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
@@ -143,10 +150,12 @@ public class AssetLoadImpl implements AssetLoader {
         return baseUrl + SCRIPTS_FOLDER;
     }
 
-    public void preload(TeaApplicationConfiguration config, final String assetFileUrl) {
+    @Override
+    public void preload(final String assetFileUrl, AssetLoaderListener<Void> preloadListener) {
         AssetLoaderListener<TeaBlob> listener = new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, TeaBlob result) {
+                assetDownloading.remove(assetFileUrl);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String assets = new String(byteArray);
@@ -179,25 +188,28 @@ public class AssetLoadImpl implements AssetLoader {
                     AssetType assetType = AssetType.Binary;
                     if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
 
-                    if(config.preloadAssets || fileType == FileType.Classpath) {
-                        loadAsset(true, assetUrl, assetType, fileType, null, shouldOverwriteLocalData);
-                    }
+                    addAssetToQueue(assetUrl, assetType, fileType, shouldOverwriteLocalData);
                 }
+                preloadListener.onSuccess(assetFileUrl, null);
+                downloadMultiAssets(null);
             }
 
             @Override
             public void onFailure(String url) {
+                assetDownloading.remove(assetFileUrl);
                 System.out.println("ErrorLoading: " + assetFileUrl);
+                preloadListener.onFailure(assetFileUrl);
             }
         };
 
+        assetDownloading.add(assetFileUrl);
         assetDownloader.load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
     }
 
     @Override
     public boolean isAssetInQueue(String path) {
         String path1 = fixPath(path);
-        return assetInQueue.contains(path1);
+        return assetInQueue(path1);
     }
 
     @Override
@@ -209,17 +221,17 @@ public class AssetLoadImpl implements AssetLoader {
 
     @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType) {
-        loadAsset(true, path, assetType, fileType, null, false);
+        loadAssetInternal(path, assetType, fileType, null, false);
     }
 
     @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener) {
-        loadAsset(true, path, assetType, fileType, listener, false);
+        loadAssetInternal(path, assetType, fileType, listener, false);
     }
 
     @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
-        loadAsset(true, path, assetType, fileType, listener, overwrite);
+        loadAssetInternal(path, assetType, fileType, listener, overwrite);
     }
 
     @Override
@@ -234,17 +246,32 @@ public class AssetLoadImpl implements AssetLoader {
 
     @Override
     public int getQueue() {
-        return assetDownloader.getQueue();
+        return assetInQueue.size;
     }
 
-    private void loadAsset(boolean async, String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
+    @Override
+    public int getDownloadingCount() {
+        return assetDownloading.size();
+    }
+
+    @Override
+    public boolean isDownloading() {
+        return getQueue() > 0 || getDownloadingCount() > 0;
+    }
+
+    private void loadAssetInternal(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
+        addAssetToQueue(path, assetType, fileType, overwrite);
+        downloadQueueAssets(listener);
+    }
+
+    private void addAssetToQueue(String path, AssetType assetType, FileType fileType, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
             return;
         }
 
-        if(assetInQueue.contains(path1)) {
+        if(assetInQueue(path1)) {
             return;
         }
 
@@ -261,26 +288,41 @@ public class AssetLoadImpl implements AssetLoader {
             return;
         }
 
-        assetInQueue.add(path1);
-        assetDownloader.load(async, getAssetUrl() + path1, AssetType.Binary, new AssetLoaderListener<TeaBlob>() {
-            @Override
-            public void onProgress(int total, int loaded) {
-                if(listener != null) {
-                    listener.onProgress(total, loaded);
-                }
-            }
+        QueueAsset queueAsset = new QueueAsset();
+        queueAsset.assetUrl = path1;
+        queueAsset.fileHandle = fileHandle;
+        assetInQueue.add(queueAsset);
+    }
+
+    private void downloadMultiAssets(AssetLoaderListener<TeaBlob> listener) {
+        for(int i = 0; i < maxMultiDownloadCount; i++) {
+            downloadQueueAssets(listener);
+        }
+    }
+
+    private void downloadQueueAssets(AssetLoaderListener<TeaBlob> listener) {
+        if(assetInQueue.size == 0 || assetDownloading.size() >= maxMultiDownloadCount) {
+            return;
+        }
+        QueueAsset queueAsset = assetInQueue.removeIndex(0);
+        String assetPath = queueAsset.assetUrl;
+        FileHandle fileHandle = queueAsset.fileHandle;
+        assetDownloading.add(assetPath);
+
+        assetDownloader.load(true, getAssetUrl() + assetPath, AssetType.Binary, new AssetLoaderListener<>() {
 
             @Override
             public void onFailure(String url) {
-                assetInQueue.remove(path1);
+                assetDownloading.remove(assetPath);
                 if(listener != null) {
-                    listener.onFailure(path1);
+                    listener.onFailure(assetPath);
                 }
+                downloadMultiAssets(listener);
             }
 
             @Override
             public void onSuccess(String url, TeaBlob result) {
-                assetInQueue.remove(path1);
+                assetDownloading.remove(assetPath);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 OutputStream output = fileHandle.write(false, 4096);
@@ -294,10 +336,21 @@ public class AssetLoadImpl implements AssetLoader {
                     StreamUtils.closeQuietly(output);
                 }
                 if(listener != null) {
-                    listener.onSuccess(path1, result);
+                    listener.onSuccess(assetPath, result);
                 }
+                downloadMultiAssets(listener);
             }
         });
+    }
+
+    private boolean assetInQueue(String path) {
+        for(int i = 0; i < assetInQueue.size; i++) {
+            QueueAsset queueAsset = assetInQueue.get(i);
+            if(queueAsset.assetUrl.equals(path)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String fixPath(String path1) {

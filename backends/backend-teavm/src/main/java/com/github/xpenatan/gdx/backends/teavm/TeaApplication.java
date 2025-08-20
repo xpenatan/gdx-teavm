@@ -28,22 +28,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Storage;
-import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
-import org.teavm.jso.dom.html.HTMLElement;
 
 /**
  * @author xpenatan
  */
-public class TeaApplication implements Application, Runnable {
+public class TeaApplication implements Application {
 
     private static String WEB_SCRIPT_PATH = "WEB_SCRIPT_PATH";
     private static String WEB_ASSET_PATH = "WEB_ASSET_PATH";
 
     private static TeaAgentInfo agentInfo;
 
-    public int delayInitCount;
+    private int initQueue;
 
     public static TeaAgentInfo getAgentInfo() {
         return agentInfo;
@@ -59,12 +57,13 @@ public class TeaApplication implements Application, Runnable {
     private TeaNet net;
     private TeaAudio audio;
     private TeaApplicationConfiguration config;
-    private ApplicationListener queueAppListener;
     private ApplicationListener appListener;
-    private final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>(4);
+    private ApplicationListener curListener;
+    private final Array<LifecycleListener> lifecycleListeners = new Array<>(4);
     private TeaWindow window;
 
     private AppState initState = AppState.INIT;
+    private boolean isPreloadReady = false;
 
     private int lastWidth = -1;
     private int lastHeight = 1;
@@ -82,13 +81,21 @@ public class TeaApplication implements Application, Runnable {
     private final Array<Runnable> runnablesHelper = new Array<>();
 
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
+        this(appListener, null, config);
+    }
+
+    public TeaApplication(ApplicationListener appListener, ApplicationListener preloadAppListener, TeaApplicationConfiguration config) {
         this.window = TeaWindow.get();
         this.config = config;
-        setApplicationListener(appListener);
+        this.appListener = appListener;
+        if(preloadAppListener == null) {
+            preloadAppListener = new TeaPreloadApplicationListener();
+        }
+        curListener = preloadAppListener;
         init();
     }
 
-    private void init() {
+    protected void init() {
         TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
         System.setProperty("userAgent", TeaApplication.agentInfo.getUserAgent());
@@ -143,10 +150,10 @@ public class TeaApplication implements Application, Runnable {
         window.addEventListener("pagehide", new EventListener() {
             @Override
             public void handleEvent(Event evt) {
-                if(appListener != null) {
-                    appListener.pause();
-                    appListener.dispose();
-                    appListener = null;
+                if(curListener != null) {
+                    curListener.pause();
+                    curListener.dispose();
+                    curListener = null;
                 }
             }
         });
@@ -164,7 +171,7 @@ public class TeaApplication implements Application, Runnable {
                                 listener.pause();
                             }
                         }
-                        appListener.pause();
+                        curListener.pause();
                     }
                     else if(state.equals("visible")){
                         // visible: i.e. we resume
@@ -173,7 +180,7 @@ public class TeaApplication implements Application, Runnable {
                                 listener.resume();
                             }
                         }
-                        appListener.resume();
+                        curListener.resume();
                     }
                 }
             }
@@ -197,76 +204,110 @@ public class TeaApplication implements Application, Runnable {
             });
         }
 
-        window.requestAnimationFrame(this);
-    }
-
-    @Override
-    public void run() {
-        AppState state = initState;
-        try {
-            graphics.update();
-            switch(state) {
-                case APP_LOOP:
-                    if(queueAppListener != null) {
-                        if(appListener != null) {
-                            appListener.pause();
-                            appListener.dispose();
-                        }
-                        input.setInputProcessor(null);
-                        input.reset();
-                        runnables.clear();
-                        appListener = queueAppListener;
-                        queueAppListener = null;
-                        initState = AppState.APP_CREATE;
-                        graphics.frameId  = 0;
-                    }
-                    if(appListener != null) {
-                        step(appListener);
-                    }
-                    break;
-                case INIT:
-                    if(delayInitCount == 0) {
-                        initState = AppState.PRELOAD_ASSETS;
-                    }
-                    break;
-                case PRELOAD_ASSETS:
-                    assetLoader.preload(config, "assets.txt");
-                    initState = AppState.DOWNLOAD_ASSETS;
-                    break;
-                case DOWNLOAD_ASSETS:
-                    int queue = assetLoader.getQueue();
-                    if(queue == 0) {
-                        initState = AppState.APP_LOOP;
-
-                        // remove loading indicator
-                        HTMLElement element = Window.current().getDocument().getElementById("progress");
-                        if (element != null) {
-                          element.getStyle().setProperty("display", "none");
-                        }
-                    }
-                    else {
-                        // update progress bar once we know the total number of assets that are loaded
-                        int total = assetLoader.assetTotal;
-                        if (total > 0) {
-                          // we have the actual total and can update the progress bar
-                          int minPercentage = 25;
-                          int percentage = minPercentage + (((100 - minPercentage) * (total - queue)) / total);
-                          HTMLElement progressBar = Window.current().getDocument().getElementById("progress-bar");
-                          if (progressBar != null) {
-                            progressBar.getStyle().setProperty("width", percentage + "%");
-                          }
-                        }
-                    }
-                    break;
+        Runnable appLoop = new Runnable() {
+            @Override
+            public void run() {
+                graphics.update();
+                step(curListener);
+                window.requestAnimationFrame(this);
             }
-        }
-        catch(Throwable t) {
-            t.printStackTrace();
-            throw t;
-        }
+        };
 
-        window.requestAnimationFrame(this);
+        Runnable initialization = new Runnable() {
+            @Override
+            public void run() {
+                AppState state = initState;
+                graphics.update();
+                switch(state) {
+                    case APP_LOOP:
+                        step(curListener);
+                        break;
+                    case INIT:
+                        if(initQueue == 0) {
+                            step(curListener);
+                        }
+                        break;
+                }
+                if(isPreloadReady) {
+                    initState = AppState.INIT;
+                    curListener.dispose();
+                    curListener = appListener;
+                    window.requestAnimationFrame(appLoop);
+                }
+                else {
+                    window.requestAnimationFrame(this);
+                }
+            }
+        };
+        window.requestAnimationFrame(initialization);
     }
+
+//    public void run() {
+//        AppState state = initState;
+//        try {
+//            graphics.update();
+//            switch(state) {
+//                case APP_LOOP:
+//                    if(queueAppListener != null) {
+//                        if(appListener != null) {
+//                            appListener.pause();
+//                            appListener.dispose();
+//                        }
+//                        input.setInputProcessor(null);
+//                        input.reset();
+//                        runnables.clear();
+//                        appListener = queueAppListener;
+//                        queueAppListener = null;
+//                        graphics.frameId  = 0;
+//                        initState = AppState.APP_CREATE;
+//                    }
+//                    if(appListener != null) {
+//                        step(appListener);
+//                    }
+//                    break;
+//                case INIT:
+//                    if(initQueue == 0) {
+//                        initState = AppState.PRELOAD_LOOP;
+//                    }
+//                    break;
+//                case PRELOAD_LOOP:
+//                    assetLoader.preload(config, "assets.txt");
+//                    initState = AppState.DOWNLOAD_ASSETS;
+//                    break;
+//                case DOWNLOAD_ASSETS:
+//                    int queue = assetLoader.getQueue();
+//                    if(queue == 0) {
+//                        initState = AppState.APP_LOOP;
+//
+//                        // remove loading indicator
+//                        HTMLElement element = Window.current().getDocument().getElementById("progress");
+//                        if (element != null) {
+//                          element.getStyle().setProperty("display", "none");
+//                        }
+//                    }
+//                    else {
+//                        // update progress bar once we know the total number of assets that are loaded
+//                        int total = assetLoader.assetTotal;
+//                        if (total > 0) {
+//                          // we have the actual total and can update the progress bar
+//                          int minPercentage = 25;
+//                          int percentage = minPercentage + (((100 - minPercentage) * (total - queue)) / total);
+//                          HTMLElement progressBar = Window.current().getDocument().getElementById("progress-bar");
+//                          if (progressBar != null) {
+//                            progressBar.getStyle().setProperty("width", percentage + "%");
+//                          }
+//                        }
+//                    }
+//                    break;
+//            }
+//        }
+//        catch(Throwable t) {
+//            t.printStackTrace();
+//            throw t;
+//        }
+//
+//        window.requestAnimationFrame(this);
+//    }
 
     private void step(ApplicationListener appListener) {
         int width = Gdx.graphics.getWidth();
@@ -274,8 +315,12 @@ public class TeaApplication implements Application, Runnable {
 
         boolean resizeBypass = false;
 
-        if(initState == AppState.APP_CREATE) {
+        if(initState == AppState.INIT) {
             initState = AppState.APP_LOOP;
+            input.setInputProcessor(null);
+            input.reset();
+            runnables.clear();
+            graphics.frameId  = 0;
             appListener.create();
             resizeBypass = true;
         }
@@ -299,17 +344,13 @@ public class TeaApplication implements Application, Runnable {
         input.reset();
     }
 
-    public void setApplicationListener(ApplicationListener applicationListener) {
-        this.queueAppListener = applicationListener;
-    }
-
     public TeaApplicationConfiguration getConfig() {
         return config;
     }
 
     @Override
     public ApplicationListener getApplicationListener() {
-        return appListener;
+        return curListener;
     }
 
     @Override
@@ -458,11 +499,25 @@ public class TeaApplication implements Application, Runnable {
         return m.matches();
     }
 
+
+    public void setPreloadReady() {
+        isPreloadReady = true;
+    }
+
+    public int getInitQueue() {
+        return initQueue;
+    }
+
+    public void addInitQueue() {
+        initQueue++;
+    }
+
+    public void subtractInitQueue() {
+        initQueue--;
+    }
+
     public enum AppState {
         INIT,
-        PRELOAD_ASSETS,
-        DOWNLOAD_ASSETS,
-        APP_CREATE,
         APP_LOOP
     }
 
@@ -473,11 +528,32 @@ public class TeaApplication implements Application, Runnable {
     // ##################### NATIVE CALLS #####################
 
     private void initGdx() {
-        assetLoader.loadScript("gdx.wasm.js", new AssetLoaderListener<>() {});
+        addInitQueue();
+        assetLoader.loadScript("gdx.wasm.js", new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, String result) {
+                subtractInitQueue();
+            }
+
+            @Override
+            public void onFailure(String url) {
+                throw new RuntimeException("Gdx script failed to load");
+            }
+        });
     }
 
     private void initSound() {
-        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {});
+        addInitQueue();
+        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {
+            public void onSuccess(String url, String result) {
+                subtractInitQueue();
+            }
+
+            @Override
+            public void onFailure(String url) {
+                throw new RuntimeException("Sound script failed to load");
+            }
+        });
     }
 
     protected TeaGraphics createGraphics (TeaApplicationConfiguration config) {

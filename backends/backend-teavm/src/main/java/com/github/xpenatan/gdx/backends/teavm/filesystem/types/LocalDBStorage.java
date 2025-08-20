@@ -33,7 +33,7 @@ public class LocalDBStorage extends MemoryFileStorage {
             return;
         }
         TeaApplicationConfiguration config = teaApplication.getConfig();
-        teaApplication.delayInitCount++;
+        teaApplication.addInitQueue();
 
         IDBFactory instance = IDBFactory.getInstance();
         String databaseName = config.localStoragePrefix;
@@ -52,7 +52,7 @@ public class LocalDBStorage extends MemoryFileStorage {
 
         request.setOnError(() -> {
             System.err.println("IndexedDB" + " Error opening database: " + databaseName);
-            teaApplication.delayInitCount--;
+            teaApplication.subtractInitQueue();
         });
     }
 
@@ -114,12 +114,12 @@ public class LocalDBStorage extends MemoryFileStorage {
         });
 
         transaction.setOnComplete(() -> {
-            teaApplication.delayInitCount--;
+            teaApplication.subtractInitQueue();
         });
 
         cursorRequest.setOnError(() -> {
             System.err.println("IndexedDB" + " Error cursor");
-            teaApplication.delayInitCount--;
+            teaApplication.subtractInitQueue();
         });
     }
 

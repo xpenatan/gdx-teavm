@@ -17,27 +17,11 @@ public class AssetDownloadImpl implements AssetDownloader {
 
     private static final int MAX_DOWNLOAD_ATTEMPT = 3;
 
-    private int queue;
     private final boolean showLogs;
     private boolean showDownloadProgress;
 
     public AssetDownloadImpl(boolean showDownloadLogs) {
         showLogs = showDownloadLogs;
-    }
-
-    @Override
-    public int getQueue() {
-        return queue;
-    }
-
-    @Override
-    public void subtractQueue() {
-        queue--;
-    }
-
-    @Override
-    public void addQueue() {
-        queue++;
     }
 
     @Override
@@ -87,7 +71,6 @@ public class AssetDownloadImpl implements AssetDownloader {
         if(showLogs) {
             System.out.println("Loading script: " + url);
         }
-        addQueue();
         Window current = Window.current();
         HTMLDocument document = current.getDocument();
         HTMLScriptElement scriptElement = (HTMLScriptElement)document.createElement("script");
@@ -95,7 +78,6 @@ public class AssetDownloadImpl implements AssetDownloader {
         scriptElement.addEventListener("load", new EventListener<Event>() {
             @Override
             public void handleEvent(Event event) {
-                subtractQueue();
                 if(showLogs) {
                     System.out.println("Script download success: " + url);
                 }
@@ -105,7 +87,6 @@ public class AssetDownloadImpl implements AssetDownloader {
             }
         });
         scriptElement.addEventListener("error", (error) -> {
-            subtractQueue();
             if(showLogs) {
                 System.err.println("Script download failed: " + url);
             }
@@ -126,7 +107,6 @@ public class AssetDownloadImpl implements AssetDownloader {
         }
 
         // don't load on main thread
-        addQueue();
         if(async) {
             Window.setTimeout(() -> loadBinaryInternally(true, url, listener, count), 0);
         }
@@ -178,7 +158,6 @@ public class AssetDownloadImpl implements AssetDownloader {
                         listener.onSuccess(url, new TeaBlob(arrayBuffer, data));
                     }
                 }
-                subtractQueue();
             }
         });
 

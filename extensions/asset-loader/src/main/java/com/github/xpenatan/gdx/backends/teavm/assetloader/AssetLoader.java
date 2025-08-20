@@ -10,6 +10,8 @@ import com.badlogic.gdx.Files.FileType;
  */
 public interface AssetLoader {
 
+    void preload(String assetFileUrl, AssetLoaderListener<Void> preloadListener);
+
     String getAssetUrl();
 
     String getScriptUrl();
@@ -44,4 +46,6 @@ public interface AssetLoader {
     void loadScript(String path, AssetLoaderListener<String> listener);
 
     int getQueue();
+    int getDownloadingCount();
+    boolean isDownloading();
 }
