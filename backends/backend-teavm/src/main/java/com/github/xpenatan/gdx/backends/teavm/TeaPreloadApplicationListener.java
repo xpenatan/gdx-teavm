@@ -29,9 +29,9 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
 
     public String startupLogo = "startup-logo.png";
     public float animationSpeed = 0.9f;
-    protected int initQueue = 0;
     protected AssetLoader assetLoader;
 
+    private int initQueue = 0;
     private TeaApplication teaApplication;
     private Step preloadStep = Step.PRELOAD_LOADING_ASSETS;
     private Texture logoTexture;
@@ -55,11 +55,11 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     }
 
     protected void setupPreloadAssets() {
-        initQueue++;
+        addQueue();
         assetLoader.loadAsset(startupLogo, AssetType.Binary, Files.FileType.Internal, new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, TeaBlob result) {
-                initQueue--;
+                subtractQueue();
             }
         });
     }
@@ -75,6 +75,14 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
                 assetsCount = assetLoader.getQueue();
             }
         });
+    }
+
+    final protected void addQueue() {
+        initQueue++;
+    }
+
+    final protected void subtractQueue() {
+        initQueue--;
     }
 
     protected Texture createTexture(Pixmap pixmap) {
