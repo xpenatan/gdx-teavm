@@ -27,6 +27,8 @@ public class BuildTeaVMTestDemo {
         tool.addSourceFileProvider(new DirectorySourceFileProvider(coreSourcePath));
         File teavmSourcePath = new File("../../../backends/backend-teavm/src/main/java");
         tool.addSourceFileProvider(new DirectorySourceFileProvider(teavmSourcePath));
+        File teavmEmuSourcePath = new File("../../../backends/backend-teavm/emu/");
+        tool.addSourceFileProvider(new DirectorySourceFileProvider(teavmEmuSourcePath));
 
         int size = 64 * (1 << 20);
         tool.setMaxDirectBuffersSize(size);

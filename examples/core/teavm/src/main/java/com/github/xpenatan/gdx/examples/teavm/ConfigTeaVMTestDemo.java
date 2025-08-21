@@ -19,7 +19,7 @@ public class ConfigTeaVMTestDemo {
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
-        teaBuildConfiguration.shouldGenerateAssetFile = true;
+        teaBuildConfiguration.shouldGenerateAssetFile = false;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
         teaBuildConfiguration.targetType = TeaTargetType.JAVASCRIPT;
         TeaBuilder.config(teaBuildConfiguration);

@@ -1,7 +1,6 @@
 package emu.com.badlogic.gdx.assets;
 
 import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.EMU_AssetManagerUtils;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import emu.com.badlogic.gdx.utils.async.AsyncExecutor;
 import emu.com.badlogic.gdx.utils.async.AsyncResult;
 import emu.com.badlogic.gdx.utils.async.AsyncTask;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
@@ -38,17 +36,12 @@ public class AssetLoadingTask implements AsyncTask<Void> {
 
     int count = 0;
 
-    private boolean preloadAssets = true;
-
     public AssetLoadingTask(AssetManager manager, AssetDescriptor assetDesc, com.badlogic.gdx.assets.loaders.AssetLoader loader, AsyncExecutor threadPool) {
         this.manager = manager;
         this.assetDesc = assetDesc;
         this.loader = loader;
         this.executor = threadPool;
         startTime = manager.getLogger().getLevel() == Logger.DEBUG ? TimeUtils.nanoTime() : 0;
-
-        TeaApplication app = (TeaApplication)Gdx.app;
-        preloadAssets = app.getConfig().preloadAssets;
     }
 
     @Override
@@ -80,8 +73,8 @@ public class AssetLoadingTask implements AsyncTask<Void> {
         FileHandle fileHandle = resolve(loader, assetDesc);
         String path = fileHandle.path();
         Files.FileType type = fileHandle.type();
-        if(!preloadAssets && !assetLoader.isAssetLoaded(type, path)) {
-            if(!assetLoader.isAssetInQueue(path)) {
+        if(!assetLoader.isAssetLoaded(type, path)) {
+            if(!assetLoader.isAssetInQueueOrDownloading(path)) {
                 count++;
                 if(count == 2) {
                     cancel = true;

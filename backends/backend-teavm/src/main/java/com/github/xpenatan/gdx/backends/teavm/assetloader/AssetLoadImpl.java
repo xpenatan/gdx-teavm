@@ -207,9 +207,9 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
-    public boolean isAssetInQueue(String path) {
+    public boolean isAssetInQueueOrDownloading(String path) {
         String path1 = fixPath(path);
-        return assetInQueue(path1);
+        return assetInQueue(path1) || assetDownloading.contains(path1);
     }
 
     @Override

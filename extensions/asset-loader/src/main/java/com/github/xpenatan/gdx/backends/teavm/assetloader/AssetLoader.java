@@ -16,7 +16,8 @@ public interface AssetLoader {
 
     String getScriptUrl();
 
-    boolean isAssetInQueue(String path);
+    /** Return true if asset is in queue or downloading */
+    boolean isAssetInQueueOrDownloading(String path);
 
     boolean isAssetLoaded(FileType fileType, String path);
 

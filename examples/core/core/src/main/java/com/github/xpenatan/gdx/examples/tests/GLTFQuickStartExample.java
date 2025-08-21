@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.examples.tests;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
@@ -11,7 +12,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
+import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
 import net.mgsx.gltf.loaders.glb.GLBLoader;
+import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.loaders.shared.SceneAssetLoaderParameters;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -39,20 +42,20 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
 //    private String MODEL_ASSET = "custom/models/BoomBox/glTF/BoomBox.gltf";
     private String MODEL_ASSET = "custom/models/DamagedHelmet.glb";
 
-//    AssetManager assetManager;
+    AssetManager assetManager;
 
     @Override
     public void create() {
         long millis = TimeUtils.millis();
 
-//        assetManager = new AssetManager();
-//        Texture.setAssetManager(assetManager);
-//        assetManager.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
-//        assetManager.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
+        assetManager = new AssetManager();
+        Texture.setAssetManager(assetManager);
+        assetManager.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
+        assetManager.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
 
         SceneAssetLoaderParameters params = new SceneAssetLoaderParameters();
         params.withData = true;
-//        assetManager.load(MODEL_ASSET, SceneAsset.class, params);
+        assetManager.load(MODEL_ASSET, SceneAsset.class, params);
 
         // create scene
         sceneManager = new SceneManager();
@@ -89,16 +92,18 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
         skybox = new SceneSkybox(environmentCubemap);
         sceneManager.setSkyBox(skybox);
 
-        FileHandle modelFileHandle = Gdx.files.internal(MODEL_ASSET);
-        String extension = modelFileHandle.extension();
-        if(extension.equals("glb")) {
-            sceneAsset = new GLBLoader().load(modelFileHandle);
+        if(assetManager == null) {
+            FileHandle modelFileHandle = Gdx.files.internal(MODEL_ASSET);
+            String extension = modelFileHandle.extension();
+            if(extension.equals("glb")) {
+                sceneAsset = new GLBLoader().load(modelFileHandle);
+            }
+            else if(extension.equals("gltf")) {
+                sceneAsset = new GLTFLoader().load(modelFileHandle);
+            }
+            scene = new Scene(sceneAsset.scene);
+            sceneManager.addScene(scene);
         }
-        else if(extension.equals("gltf")) {
-            sceneAsset = new GLTFLoader().load(modelFileHandle);
-        }
-        scene = new Scene(sceneAsset.scene);
-        sceneManager.addScene(scene);
 
         long newMillis = TimeUtils.timeSinceMillis(millis);
 
@@ -117,8 +122,15 @@ public class GLTFQuickStartExample extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
         time += deltaTime;
 
-//        assetManager.update();
-
+        if(assetManager.update()) {
+            if(sceneAsset == null) {
+                if(assetManager.isLoaded(MODEL_ASSET)) {
+                    sceneAsset = assetManager.get(MODEL_ASSET, SceneAsset.class);
+                    scene = new Scene(sceneAsset.scene);
+                    sceneManager.addScene(scene);
+                }
+            }
+        }
 
         // animate camera
         camera.position.setFromSpherical(MathUtils.PI / 4, time * .3f).scl(3.03f);
