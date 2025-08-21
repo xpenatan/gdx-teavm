@@ -49,19 +49,21 @@ public class AssetLoadingTask implements AsyncTask<Void> {
         if(cancel) return null;
         AsynchronousAssetLoader asyncLoader = (AsynchronousAssetLoader)loader;
         if(!dependenciesLoaded) {
-            dependencies = asyncLoader.getDependencies(assetDesc.fileName, resolve(loader, assetDesc), assetDesc.params);
+            FileHandle resolve = resolve(loader, assetDesc);
+            dependencies = asyncLoader.getDependencies(assetDesc.fileName, resolve, assetDesc.params);
             if(dependencies != null) {
                 removeDuplicates(dependencies);
                 EMU_AssetManagerUtils.injectDependencies(manager, assetDesc.fileName, dependencies);
             }
             else {
                 // if we have no dependencies, we load the async part of the task immediately.
-                asyncLoader.loadAsync(manager, assetDesc.fileName, resolve(loader, assetDesc), assetDesc.params);
+                asyncLoader.loadAsync(manager, assetDesc.fileName, resolve, assetDesc.params);
                 asyncDone = true;
             }
         }
         else {
-            asyncLoader.loadAsync(manager, assetDesc.fileName, resolve(loader, assetDesc), assetDesc.params);
+            FileHandle resolve = resolve(loader, assetDesc);
+            asyncLoader.loadAsync(manager, assetDesc.fileName, resolve, assetDesc.params);
             asyncDone = true;
         }
         return null;
