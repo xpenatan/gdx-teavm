@@ -43,9 +43,6 @@ public class DefaultWebApp extends BaseWebApp {
         indexHtml = indexHtml.replace("%WIDTH%", String.valueOf(config.htmlWidth));
         indexHtml = indexHtml.replace("%HEIGHT%", String.valueOf(config.htmlHeight));
         indexHtml = indexHtml.replace("%ARGS%", config.mainClassArgs);
-        indexHtml = indexHtml.replace(
-                "%LOGO%", config.showLoadingLogo ? "<img id=\"progress-img\" src=\"" + logo + "\">" : ""
-        );
         if(config.showLoadingLogo) {
             rootAssets.add(logo);
         }

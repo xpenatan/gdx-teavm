@@ -11,13 +11,10 @@ Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to ha
 ## TeaVM Examples
 [libGDX-TeaVM](https://github.com/xpenatan/libGDX-TeaVM)
 
-### Versions:
+### Version:
 | gdx-teavm | LibGDX | TeaVM  |
 |:---------:|:------:|:------:|
-|   1.2.1   | 1.13.5 | 0.12.0 |
-|   1.2.0   | 1.13.1 | 0.12.0 |
-|   1.1.0   | 1.13.1 | 0.11.0 |
-|   1.0.5   | 1.12.1 | 0.11.0 |
+|   1.3.0   | 1.13.5 | 0.12.3 |
 
 ## Setup:
 ```groovy

@@ -10,11 +10,10 @@ import com.github.xpenatan.gdx.examples.tests.UITest;
 public class TeaVMTestLauncher {
 
     public static void main(String[] args) {
-        TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
+        TeaApplicationConfiguration config = new TeaApplicationConfiguration();
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = true;
-        config.preloadAssets = true;
         config.useGL30 = true;
 //        new TeaApplication(new LoadingTest(), config);
         new TeaApplication(new GLTFQuickStartExample(), config);

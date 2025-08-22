@@ -19,11 +19,6 @@ public class TeaApplicationConfiguration {
     public TeaWindowListener windowListener;
 
     /**
-     * Load assets before starting the game. For custom loading, change to false.
-     */
-    public boolean preloadAssets = true;
-
-    /**
      * The prefix for the browser storage. If you have multiple apps on the same server and want to keep the
      * data separate for those applications, you will need to set unique prefixes. This is useful if you are
      * e.g. uploading multiple webapps to itch.io and want to keep the data separate for each application.
@@ -43,7 +38,7 @@ public class TeaApplicationConfiguration {
      */
     public boolean showDownloadLogs = false;
 
-    public String canvasID;
+    public String canvasID = "canvas";
 
     /**
      * the width of the drawing area in pixels, 0 for using the available space or -1 to use html canvas size
@@ -114,6 +109,8 @@ public class TeaApplicationConfiguration {
     public boolean isAutoSizeApplication() {
         return width == 0 && height == 0;
     }
+
+    public TeaApplicationConfiguration() { }
 
     public TeaApplicationConfiguration(String canvasID) {
         this.canvasID = canvasID;
