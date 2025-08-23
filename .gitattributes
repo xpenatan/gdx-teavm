@@ -7,3 +7,6 @@
 *.ttf binary
 *.js binary
 *.wasm binary
+*.mp3 binary
+*.ogg binary
+*.wav binary

@@ -24,6 +24,7 @@ include(":extensions:gdx-freetype-teavm")
 include(":examples:core:core")
 include(":examples:core:desktop")
 include(":examples:core:teavm")
+include(":examples:core:web-audio")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
