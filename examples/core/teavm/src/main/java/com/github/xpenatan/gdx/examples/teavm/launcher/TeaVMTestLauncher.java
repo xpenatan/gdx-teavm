@@ -22,7 +22,7 @@ public class TeaVMTestLauncher {
 //        new TeaApplication(new ReflectionTest(), config);
 //        new TeaApplication(new UITest(), config);
 
-        // Audio is no longer supported in gdx-teavm. You can use these solution to keep using Howler.js
+        // Audio is no longer supported in gdx-teavm. You can use this solution to keep using Howler.js
         new TeaApplication(new AudioTest(), new TeaAudioPreloadApplicationListener(), config);
     }
 }
