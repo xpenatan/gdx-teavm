@@ -5,7 +5,7 @@ import com.github.xpenatan.gdx.backends.teavm.TeaPreloadApplicationListener;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 
 /**
- * So keep using Audio, You need to add howler.js to root of resources and add META-INF/gdx-teavm.properties.
+ * To keep using Audio, You need to add howler.js to root of resources and add META-INF/gdx-teavm.properties.
  */
 public class TeaAudioPreloadApplicationListener extends TeaPreloadApplicationListener {
 
