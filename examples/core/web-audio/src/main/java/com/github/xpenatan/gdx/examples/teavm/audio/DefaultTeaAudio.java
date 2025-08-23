@@ -8,10 +8,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaAudio;
 
-/**
- * @author xpenatan
- * Port from GWT gdx 1.12.0
- */
 public class DefaultTeaAudio implements TeaAudio {
     private HowlerAudioManager webAudioAPIManager = null;
 
