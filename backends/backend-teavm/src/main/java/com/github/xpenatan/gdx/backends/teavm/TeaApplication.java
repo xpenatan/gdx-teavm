@@ -55,7 +55,6 @@ public class TeaApplication implements Application {
     private TeaInput input;
     private TeaFiles files;
     private TeaNet net;
-    private TeaAudio audio;
     private TeaApplicationConfiguration config;
     private ApplicationListener appListener;
     private ApplicationListener curListener;
@@ -133,7 +132,6 @@ public class TeaApplication implements Application {
         clipboard = new TeaClipboard();
 
         initGdx();
-        initSound();
 
         if(config.preloadListener != null) {
             config.preloadListener.onPreload(assetLoader);
@@ -147,9 +145,6 @@ public class TeaApplication implements Application {
         Gdx.input = input;
         Gdx.files = files;
         Gdx.net = net;
-
-        audio = new DefaultTeaAudio();
-        Gdx.audio = audio;
 
         window.addEventListener("pagehide", new EventListener() {
             @Override
@@ -296,9 +291,10 @@ public class TeaApplication implements Application {
         return graphics;
     }
 
+    @Deprecated
     @Override
     public Audio getAudio() {
-        return audio;
+        return null;
     }
 
     @Override
@@ -476,20 +472,6 @@ public class TeaApplication implements Application {
             @Override
             public void onFailure(String url) {
                 throw new RuntimeException("Gdx script failed to load");
-            }
-        });
-    }
-
-    private void initSound() {
-        addInitQueue();
-        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {
-            public void onSuccess(String url, String result) {
-                subtractInitQueue();
-            }
-
-            @Override
-            public void onFailure(String url) {
-                throw new RuntimeException("Sound script failed to load");
             }
         });
     }
