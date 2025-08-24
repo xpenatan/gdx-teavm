@@ -12,6 +12,10 @@ on:
 
 env:
   RELEASE: ${{ inputs.isRelease }}
+  CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+  CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+  SIGNING_KEY: ${{ secrets.PGP_SECRET }}
+  SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
 
 jobs:
   build_linux:
@@ -54,11 +58,6 @@ jobs:
           timeout_minutes: 10
           retry_on: error
           command: ./gradlew publishRelease
-        env:
-          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
-          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.PGP_SECRET }}
-          SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
 
       - name: Upload Snapshot to repository
         uses: nick-fields/retry@v3
@@ -68,11 +67,6 @@ jobs:
           timeout_minutes: 10
           retry_on: error
           command: ./gradlew publishSnapshot
-        env:
-          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
-          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.PGP_SECRET }}
-          SIGNING_PASSWORD: ${{ secrets.PGP_PASSPHRASE }}
 
       - name: Create Git tag
         uses: actions/github-script@v7
