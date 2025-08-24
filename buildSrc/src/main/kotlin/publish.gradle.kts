@@ -32,9 +32,12 @@ configure(libProjects) {
                     uri(rootProject.layout.buildDirectory.dir("staging-deploy"))
                 }
                 if(isSnapshot) {
+                    val user = System.getenv("CENTRAL_PORTAL_USERNAME") ?: throw GradleException("CENTRAL_PORTAL_USERNAME environment variable not set")
+                    val pass = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: throw GradleException("CENTRAL_PORTAL_PASSWORD environment variable not set")
+
                     credentials {
-                        username = System.getenv("CENTRAL_PORTAL_USERNAME")
-                        password = System.getenv("CENTRAL_PORTAL_PASSWORD")
+                        username = user
+                        password = pass
                     }
                 }
             }
