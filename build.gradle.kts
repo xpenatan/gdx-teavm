@@ -30,4 +30,4 @@ subprojects {
     }
 }
 
-apply(from = "publish.gradle.kts")
+apply(plugin = "publish")

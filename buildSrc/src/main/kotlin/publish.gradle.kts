@@ -77,9 +77,9 @@ configure(libProjects) {
         withSourcesJar()
     }
 
-    val signingKey = System.getenv("SIGNING_KEY")
-    val signingPassword = System.getenv("SIGNING_PASSWORD")
-    if (signingKey != null && signingPassword != null) {
+    val signingKey = System.getenv("SIGNING_KEY").orEmpty()
+    val signingPassword = System.getenv("SIGNING_PASSWORD").orEmpty()
+    if (signingKey.isNotEmpty() && signingPassword.isNotEmpty()) {
         extensions.configure<SigningExtension> {
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign(extensions.getByType<PublishingExtension>().publications)
