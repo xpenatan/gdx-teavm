@@ -11,7 +11,6 @@ on:
         type: boolean
 
 env:
-  RELEASE: ${{ inputs.isRelease }}
   CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
   CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
   SIGNING_KEY: ${{ secrets.PGP_SECRET }}
