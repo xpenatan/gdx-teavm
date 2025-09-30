@@ -11,12 +11,8 @@ var libProjects = mutableSetOf(
 LibExt.isRelease = gradle.startParameter.taskNames.any { it == "publishRelease" }
 
 configure(libProjects) {
-    apply(plugin = "java")
     apply(plugin = "signing")
     apply(plugin = "maven-publish")
-
-    group = LibExt.groupId
-    version = LibExt.libVersion
 
     if(LibExt.libVersion.isEmpty()) {
         throw RuntimeException("Version cannot be empty")
