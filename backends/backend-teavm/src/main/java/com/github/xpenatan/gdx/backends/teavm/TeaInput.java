@@ -36,11 +36,7 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
     private static float getMouseWheelVelocity(WheelEvent event) {
         float deltaY = (float)event.getDeltaY();
         int deltaMode = event.getDeltaMode();
-        if(deltaMode == 0) {
-            int LINE_HEIGHT = 40;
-            deltaY = deltaY / LINE_HEIGHT; // Scale to line-like units
-        }
-        else if(deltaMode == 2) {
+        if(deltaMode == 2) {
             return 0;
         }
         float delta = 0;
