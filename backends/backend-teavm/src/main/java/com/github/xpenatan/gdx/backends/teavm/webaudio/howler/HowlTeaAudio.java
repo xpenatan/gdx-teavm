@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm.audio;
+package com.github.xpenatan.gdx.backends.teavm.webaudio.howler;
 
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
@@ -8,10 +8,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.backends.teavm.TeaAudio;
 
-public class DefaultTeaAudio implements TeaAudio {
+public class HowlTeaAudio implements TeaAudio {
     private HowlerAudioManager webAudioAPIManager = null;
 
-    public DefaultTeaAudio() {
+    public HowlTeaAudio() {
         webAudioAPIManager = new HowlerAudioManager();
     }
 

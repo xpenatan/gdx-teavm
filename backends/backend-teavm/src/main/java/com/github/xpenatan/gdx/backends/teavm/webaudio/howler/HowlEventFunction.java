@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm.audio;
+package com.github.xpenatan.gdx.backends.teavm.webaudio.howler;
 
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;

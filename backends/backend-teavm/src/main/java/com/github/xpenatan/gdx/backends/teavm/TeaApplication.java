@@ -22,6 +22,7 @@ import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoadImpl;
 import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.backends.teavm.dom.impl.TeaWindow;
 import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
+import com.github.xpenatan.gdx.backends.teavm.webaudio.howler.HowlTeaAudio;
 import com.github.xpenatan.jmultiplatform.core.JMultiplatform;
 import com.github.xpenatan.jmultiplatform.core.JPlatformMap;
 import java.util.regex.Matcher;
@@ -131,7 +132,7 @@ public class TeaApplication implements Application {
         logger = new TeaApplicationLogger();
         clipboard = new TeaClipboard();
 
-        initGdx();
+        initNativeLibraries();
 
         if(config.preloadListener != null) {
             config.preloadListener.onPreload(assetLoader);
@@ -461,7 +462,12 @@ public class TeaApplication implements Application {
 
     // ##################### NATIVE CALLS #####################
 
-    private void initGdx() {
+    private void initNativeLibraries() {
+        initGdxLibrary();
+        initAudio();
+    }
+
+    protected void initGdxLibrary() {
         addInitQueue();
         assetLoader.loadScript("gdx.wasm.js", new AssetLoaderListener<>() {
             @Override
@@ -472,6 +478,17 @@ public class TeaApplication implements Application {
             @Override
             public void onFailure(String url) {
                 throw new RuntimeException("Gdx script failed to load");
+            }
+        });
+    }
+
+    protected void initAudio() {
+        addInitQueue();
+        assetLoader.loadScript("howler.js", new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, String result) {
+                subtractInitQueue();
+                Gdx.audio = new HowlTeaAudio();
             }
         });
     }
