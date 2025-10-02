@@ -43,7 +43,15 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
         else if(deltaMode == 2) {
             return 0;
         }
-        return deltaY;
+        float delta = 0;
+        if(deltaY < 0) {
+            delta = -1;
+        }
+        else if(deltaY > 0) {
+            delta = 1f;
+        }
+        System.out.println("delta: " + delta);
+        return delta;
     }
 
     private HTMLCanvasElement canvas;
