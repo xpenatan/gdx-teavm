@@ -34,7 +34,7 @@ import org.teavm.jso.dom.xml.Element;
 public class TeaInput extends AbstractInput implements EventListener<Event> {
 
     private static float getMouseWheelVelocity(WheelEvent event) {
-        float deltaY = (float)event.getDeltaY();
+        double deltaY = event.getDeltaY();
         int deltaMode = event.getDeltaMode();
         if(deltaMode == 2) {
             return 0;
