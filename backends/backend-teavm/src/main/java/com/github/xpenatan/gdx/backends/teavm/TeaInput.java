@@ -50,7 +50,6 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
         else if(deltaY > 0) {
             delta = 1f;
         }
-        System.out.println("delta: " + delta);
         return delta;
     }
 
