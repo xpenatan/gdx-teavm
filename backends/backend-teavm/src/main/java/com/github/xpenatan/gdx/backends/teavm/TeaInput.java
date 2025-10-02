@@ -8,11 +8,9 @@ import com.badlogic.gdx.input.NativeInputConfiguration;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.github.xpenatan.gdx.backends.teavm.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.backends.teavm.dom.DocumentExt;
 import com.github.xpenatan.gdx.backends.teavm.dom.ElementExt;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementExt;
-import com.github.xpenatan.gdx.backends.teavm.dom.WheelEventExt;
 import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Window;
@@ -24,6 +22,7 @@ import org.teavm.jso.dom.events.KeyboardEvent;
 import org.teavm.jso.dom.events.MouseEvent;
 import org.teavm.jso.dom.events.Touch;
 import org.teavm.jso.dom.events.TouchEvent;
+import org.teavm.jso.dom.events.WheelEvent;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
@@ -34,41 +33,17 @@ import org.teavm.jso.dom.xml.Element;
  */
 public class TeaInput extends AbstractInput implements EventListener<Event> {
 
-    private static float getMouseWheelVelocity(WheelEventExt event) {
-        TeaAgentInfo agent = TeaApplication.getAgentInfo();
-        float delta = 0;
-        float detail = event.getDetail();
-        float wheelDelta = event.getWheelDelta();
-        if(agent.isFirefox()) {
-            if(agent.isMacOS()) {
-                delta = 1.0f * detail;
-            }
-            else {
-                delta = 1.0f * detail / 3f;
-            }
+    private static float getMouseWheelVelocity(WheelEvent event) {
+        float deltaY = (float)event.getDeltaY();
+        int deltaMode = event.getDeltaMode();
+        if(deltaMode == 0) {
+            int LINE_HEIGHT = 40;
+            deltaY = deltaY / LINE_HEIGHT; // Scale to line-like units
         }
-        else if(agent.isOpera()) {
-            if(agent.isLinux()) {
-                delta = -1.0f * wheelDelta / 80f;
-            }
-            else {
-                // on mac
-                delta = -1.0f * wheelDelta / 40f;
-            }
+        else if(deltaMode == 2) {
+            return 0;
         }
-        else if(agent.isChrome() || agent.isSafari() || agent.isIE()) {
-            delta = -1.0f * wheelDelta / 120f;
-            // handle touchpad for chrome
-            if(Math.abs(delta) < 1) {
-                if(agent.isWindows()) {
-                    delta = -1.0f * wheelDelta;
-                }
-                else if(agent.isMacOS()) {
-                    delta = -1.0f * wheelDelta / 3;
-                }
-            }
-        }
-        return delta;
+        return deltaY;
     }
 
     private HTMLCanvasElement canvas;
@@ -207,7 +182,7 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
             }
         }
         else if(type.equals("wheel")) {
-            WheelEventExt wheel = (WheelEventExt)e;
+            WheelEvent wheel = (WheelEvent)e;
             if(processor != null) {
                 float wheelDelta = getMouseWheelVelocity(wheel);
                 processor.scrolled(0, (int)wheelDelta);
