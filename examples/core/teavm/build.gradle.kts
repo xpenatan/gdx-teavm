@@ -15,7 +15,6 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
 
     implementation(project(":examples:core:core"))
-    implementation(project(":examples:core:web-audio"))
 
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-freetype-teavm"))
