@@ -25,9 +25,12 @@ import com.github.xpenatan.gdx.backends.teavm.utils.TeaNavigator;
 import com.github.xpenatan.gdx.backends.teavm.webaudio.howler.HowlTeaAudio;
 import com.github.xpenatan.jmultiplatform.core.JMultiplatform;
 import com.github.xpenatan.jmultiplatform.core.JPlatformMap;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSExceptions;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Storage;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
@@ -249,34 +252,70 @@ public class TeaApplication implements Application {
 
         boolean resizeBypass = false;
 
-        if(initState == AppState.INIT) {
-            initState = AppState.APP_LOOP;
-            input.setInputProcessor(null);
-            input.reset();
+        try {
+
+            if(initState == AppState.INIT) {
+                initState = AppState.APP_LOOP;
+                input.setInputProcessor(null);
+                input.reset();
+                runnables.clear();
+                graphics.frameId = 0;
+                appListener.create();
+                resizeBypass = true;
+            }
+
+            if((width != lastWidth || height != lastHeight) || resizeBypass) {
+                lastWidth = width;
+                lastHeight = height;
+                graphics.resize(appListener, width, height);
+            }
+
+            runnablesHelper.addAll(runnables);
             runnables.clear();
-            graphics.frameId  = 0;
-            appListener.create();
-            resizeBypass = true;
-        }
+            for(int i = 0; i < runnablesHelper.size; i++) {
+                runnablesHelper.get(i).run();
+            }
+            runnablesHelper.clear();
+            graphics.frameId++;
+            if(graphics.frameId > 60) { // A bit of delay before rendering so fps don't start with 0
+                graphics.render(appListener);
+            }
+            input.reset();
 
-        if((width != lastWidth || height != lastHeight) || resizeBypass) {
-            lastWidth = width;
-            lastHeight = height;
-            graphics.resize(appListener, width, height);
+        } catch(Throwable t) {
+            onError(t);
         }
-
-        runnablesHelper.addAll(runnables);
-        runnables.clear();
-        for(int i = 0; i < runnablesHelper.size; i++) {
-            runnablesHelper.get(i).run();
-        }
-        runnablesHelper.clear();
-        graphics.frameId++;
-        if(graphics.frameId > 60) { // A bit of delay before rendering so fps don't start with 0
-            graphics.render(appListener);
-        }
-        input.reset();
     }
+
+    protected void onError(Throwable error) {
+        ArrayList<JSObject> errors = new ArrayList<>();
+        ArrayList<String> throwables = new ArrayList<>();
+        Throwable root = error.getCause(); // FIXME start with getCause or error ?
+        while(root != null) {
+            JSObject jsException = JSExceptions.getJSException(root);
+            errors.add(jsException);
+            String msg = root.getMessage();
+            if(msg == null) msg = "";
+            throwables.add(root.getClass().getSimpleName() + " " + msg);
+            root = root.getCause();
+        }
+        JSObject[] errorsJS = new JSObject[errors.size()];
+        String[] exceptions = new String[errors.size()];
+        errors.toArray(errorsJS);
+        throwables.toArray(exceptions);
+        printStack(errorsJS, exceptions);
+    }
+
+    @JSBody(params = { "errors", "exceptions" }, script = "" +
+            "console.groupCollapsed('%cFatal Error', 'color: #FF0000');" +
+            "errors.forEach((error, i) => {\n" +
+            "   var count = i + 1;" +
+            "   console.log('%cStack ' + count + ': ' + exceptions[i], 'color: #FF0000');" +
+            "   console.log(error);" +
+            "});" +
+            "console.groupEnd();"
+    )
+    private static native void printStack(JSObject[] errors, String[] exceptions);
 
     public TeaApplicationConfiguration getConfig() {
         return config;
