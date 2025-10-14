@@ -290,7 +290,7 @@ public class TeaApplication implements Application {
     protected void onError(Throwable error) {
         ArrayList<JSObject> errors = new ArrayList<>();
         ArrayList<String> throwables = new ArrayList<>();
-        Throwable root = error.getCause(); // FIXME start with getCause or error ?
+        Throwable root = error;
         while(root != null) {
             JSObject jsException = JSExceptions.getJSException(root);
             errors.add(jsException);
@@ -310,7 +310,7 @@ public class TeaApplication implements Application {
             "console.groupCollapsed('%cFatal Error', 'color: #FF0000');" +
             "errors.forEach((error, i) => {\n" +
             "   var count = i + 1;" +
-            "   console.log('%cStack ' + count + ': ' + exceptions[i], 'color: #FF0000');" +
+            "   console.log('%cException ' + count + ': ' + exceptions[i], 'color: #FF0000');" +
             "   console.log(error);" +
             "});" +
             "console.groupEnd();"
