@@ -27,7 +27,6 @@ import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMProblemRenderer;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
-import org.teavm.tooling.sources.DirectorySourceFileProvider;
 import org.teavm.tooling.sources.JarSourceFileProvider;
 import org.teavm.vm.TeaVMPhase;
 import org.teavm.vm.TeaVMProgressFeedback;
@@ -84,7 +83,6 @@ public class TeaBuilder {
         acceptedURL = new ArrayList<>();
         String webappDirectory = configuration.webappPath;
 
-        automaticReflection(configuration);
         configClasspath(configuration, acceptedURL);
 
         TeaBuilder.log("");
@@ -207,26 +205,20 @@ public class TeaBuilder {
         }
     }
 
-    private static void automaticReflection(TeaBuildConfiguration configuration) {
-        for(URL classPath : configuration.additionalClasspath) {
+    private static void automaticReflection(ArrayList<URL> acceptedURL) {
+        for(URL classPath : acceptedURL) {
             try {
                 ZipInputStream zip = new ZipInputStream(classPath.openStream());
-                TeaBuilder.logHeader("Automatic Reflection Include");
                 for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
                     if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
                         // This ZipEntry represents a class. Now, what class does it represent?
                         String className = entry.getName().replace('/', '.'); // including ".class"
                         String name = className.substring(0, className.length() - ".class".length());
                         boolean add = false;
-                        for(String toInclude : configuration.reflectionInclude) {
-                            if(name.startsWith(toInclude)) add = true;
+                        if(configuration.reflectionListener != null) {
+                            add = configuration.reflectionListener.shouldAddReflection(name);
                         }
-                        for(String toExclude : configuration.reflectionExclude) {
-                            if(name.startsWith(toExclude)) add = false;
-                        }
-
                         if(add) {
-                            TeaBuilder.log("Include class: " + name);
                             TeaReflectionSupplier.addReflectionClass(name);
                         }
                     }
@@ -258,6 +250,8 @@ public class TeaBuilder {
         acceptedURL.addAll(configuration.additionalClasspath);
 
         sortAcceptedClassPath(acceptedURL);
+
+        automaticReflection(acceptedURL);
 
         TeaBuilder.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {

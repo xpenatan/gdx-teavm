@@ -15,8 +15,6 @@ public class TeaBuildConfiguration {
 
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
-    public final ArrayList<String> reflectionInclude = new ArrayList<>();
-    public final ArrayList<String> reflectionExclude = new ArrayList<>();
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
     public String mainClassArgs = "";
@@ -38,4 +36,6 @@ public class TeaBuildConfiguration {
     public BaseWebApp webApp;
     public TeaTargetType targetType = TeaTargetType.JAVASCRIPT;
     public String targetFileName = "app";
+
+    public TeaBuildReflectionListener reflectionListener;
 }

@@ -18,8 +18,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
     private static ArrayList<String> clazzList = new ArrayList();
 
-    private static HashSet<String> REFLECTION_CLASSES = new HashSet<>();
-
     static {
         addReflectionClass("com.badlogic.gdx.scenes.scene2d");
         addReflectionClass("net.mgsx.gltf.data");
@@ -43,7 +41,7 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     /**
-     * package path or package path with class name
+     * Full class name. Use config reflectionListener for more control.
      */
     public static void addReflectionClass(String className) {
         if(!clazzList.contains(className)) {
@@ -55,8 +53,8 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
      * Must be called after TeaBuilder.build
      */
     public static void printReflectionClasses() {
-        TeaBuilder.logHeader("REFLECTION CLASSES: " + REFLECTION_CLASSES.size());
-        for(String reflectionClass : REFLECTION_CLASSES) {
+        TeaBuilder.logHeader("REFLECTION CLASSES: " + clazzList.size());
+        for(String reflectionClass : clazzList) {
             TeaBuilder.log(reflectionClass);
         }
         TeaBuilder.logEnd();
@@ -75,7 +73,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
         if(cls != null) {
             if(canHaveReflection(className)) {
-                REFLECTION_CLASSES.add(className);
                 for(FieldReader field : cls.getFields()) {
                     String name = field.getName();
                     fields.add(name);
@@ -93,7 +90,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
         }
         Set<MethodDescriptor> methods = new HashSet<>();
         if(canHaveReflection(className)) {
-            REFLECTION_CLASSES.add(className);
             Collection<? extends MethodReader> methods2 = cls.getMethods();
             for(MethodReader method : methods2) {
                 MethodDescriptor descriptor = method.getDescriptor();
@@ -109,12 +105,14 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     private boolean canHaveReflection(String className) {
+        boolean flag = false;
         for(int i = 0; i < clazzList.size(); i++) {
             String name = clazzList.get(i);
             if(className.contains(name)) {
-                return true;
+                flag = true;
+                break;
             }
         }
-        return false;
+        return flag;
     }
 }
