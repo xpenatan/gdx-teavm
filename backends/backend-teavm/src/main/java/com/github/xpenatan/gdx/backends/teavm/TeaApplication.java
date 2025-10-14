@@ -83,6 +83,8 @@ public class TeaApplication implements Application {
     private final Array<Runnable> runnables = new Array<>();
     private final Array<Runnable> runnablesHelper = new Array<>();
 
+    private boolean stepError;
+
     public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
         this(appListener, null, config);
     }
@@ -212,6 +214,9 @@ public class TeaApplication implements Application {
             public void run() {
                 graphics.update();
                 step(curListener);
+                if(stepError) {
+                    return;
+                }
                 window.requestAnimationFrame(this);
             }
         };
@@ -230,6 +235,9 @@ public class TeaApplication implements Application {
                             step(curListener);
                         }
                         break;
+                }
+                if(stepError) {
+                    return;
                 }
                 if(isPreloadReady) {
                     initState = AppState.INIT;
@@ -283,6 +291,7 @@ public class TeaApplication implements Application {
             input.reset();
 
         } catch(Throwable t) {
+            stepError = true;
             onError(t);
         }
     }
