@@ -216,7 +216,7 @@ public class TeaBuilder {
                         String name = className.substring(0, className.length() - ".class".length());
                         boolean add = false;
                         if(configuration.reflectionListener != null) {
-                            add = configuration.reflectionListener.shouldAddReflection(name);
+                            add = configuration.reflectionListener.shouldEnableReflection(name);
                         }
                         if(add) {
                             TeaReflectionSupplier.addReflectionClass(name);
