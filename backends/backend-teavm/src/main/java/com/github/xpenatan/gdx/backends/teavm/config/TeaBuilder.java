@@ -380,7 +380,7 @@ public class TeaBuilder {
             }
         }
         // Copy additional classpath files
-        ArrayList<String> classPathAssetsFiles = configuration.additionalAssetsClasspathFiles;
+        ArrayList<String> classPathAssetsFiles = configuration.assetsClasspath;
         ArrayList<AssetsCopy.Asset> classpathAssets = AssetsCopy.copyResources(classLoader, classPathAssetsFiles, filter, assetsFolder);
 
         // Copy resources

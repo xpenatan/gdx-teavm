@@ -10,11 +10,23 @@ public class TeaBuildConfiguration {
 
     public AssetFilter assetFilter = null;
     public ArrayList<AssetFileHandle> assetsPath = new ArrayList<>();
-    public ArrayList<String> additionalAssetsClasspathFiles = new ArrayList<>();
+
+    /**
+     * Assets within a package (FileType.Classpath) must be added here. For example: com/lib/my/asset
+     */
+    public ArrayList<String> assetsClasspath = new ArrayList<>();
+
+    /**
+     * The true flag will generate an assets.txt file in the dist folder to enable asset preloading.
+     */
     public boolean shouldGenerateAssetFile = true;
 
     public String webappPath;
     public final ArrayList<URL> additionalClasspath = new ArrayList<>();
+
+    /**
+     * This list prevents a class from being removed by TeaVM if it is not used. Reflection also prevents a class from being removed during optimization.
+     */
     public final ArrayList<String> classesToPreserve = new ArrayList<>();
 
     public String mainClassArgs = "";
@@ -37,5 +49,8 @@ public class TeaBuildConfiguration {
     public TeaTargetType targetType = TeaTargetType.JAVASCRIPT;
     public String targetFileName = "app";
 
+    /**
+     * A listener to enable a class for reflection. Note that using reflection increases the size of JavaScript/WebAssembly code.
+     */
     public TeaBuildReflectionListener reflectionListener;
 }
