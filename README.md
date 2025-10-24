@@ -18,7 +18,7 @@ If you find this project valuable and want to fuel its continued growth, please 
 ### Version:
 | gdx-teavm | LibGDX | TeaVM  |
 |:---------:|:------:|:------:|
-|   1.3.2   | 1.14.5 | 0.12.3 |
+|   1.3.2   | 1.14.0 | 0.12.3 |
 
 ## Setup:
 ```groovy
