@@ -46,7 +46,6 @@ import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.badlogic.gdx.tests.gles3.ModelInstancedRenderingTest;
 import com.badlogic.gdx.tests.gles3.NonPowerOfTwoTest;
 import com.badlogic.gdx.tests.gles3.UniformBufferObjectsTest;
-import com.badlogic.gdx.tests.gles31.GL31FrameBufferMultisampleTest;
 import com.badlogic.gdx.tests.gles31.GL31IndirectDrawingIndexedTest;
 import com.badlogic.gdx.tests.gles31.GL31IndirectDrawingNonIndexedTest;
 import com.badlogic.gdx.tests.gles31.GL31ProgramIntrospectionTest;
@@ -180,7 +179,6 @@ public class TeaVMGdxTests {
         add(tests, GLES30Test::new);
         add(tests, GL31IndirectDrawingIndexedTest::new);
         add(tests, GL31IndirectDrawingNonIndexedTest::new);
-        add(tests, GL31FrameBufferMultisampleTest::new);
         add(tests, GL31ProgramIntrospectionTest::new);
         add(tests, GL32AdvancedBlendingTest::new);
         add(tests, GL32DebugControlTest::new);
