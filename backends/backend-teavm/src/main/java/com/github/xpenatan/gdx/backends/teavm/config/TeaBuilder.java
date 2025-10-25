@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -274,6 +275,8 @@ public class TeaBuilder {
             tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
         }
 
+        HashSet<String> set = new HashSet<>();
+
         for(int i = 0; i < acceptedURL.size(); i++) {
             URL url = acceptedURL.get(i);
             try {
@@ -281,12 +284,23 @@ public class TeaBuilder {
 
                 String path = uri.getPath();
                 File file = new File(uri);
-                File sourceFile = getSourceDirectory(file);
-                if(sourceFile != null) {
-                    tool.addSourceFileProvider(new DirectorySourceFileProvider(sourceFile));
+
+                if(file.isFile() && path.endsWith("-sources.jar")) {
+                    String absolutePath = file.getAbsolutePath();
+                    if(!set.contains(absolutePath)) {
+                        set.add(absolutePath);
+                        tool.addSourceFileProvider(new JarSourceFileProvider(file));
+                    }
                 }
-                else if(file.isFile() && path.endsWith("-sources.jar")) {
-                    tool.addSourceFileProvider(new JarSourceFileProvider(file));
+                else {
+                    File sourceFile = getSourceDirectory(file);
+                    if(sourceFile != null) {
+                        String absolutePath = sourceFile.getAbsolutePath();
+                        if(!set.contains(absolutePath)) {
+                            set.add(absolutePath);
+                            tool.addSourceFileProvider(new DirectorySourceFileProvider(sourceFile));
+                        }
+                    }
                 }
             } catch(URISyntaxException e) {
             }

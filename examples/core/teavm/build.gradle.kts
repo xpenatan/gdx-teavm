@@ -20,25 +20,6 @@ dependencies {
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 
-//tasks.register<Jar>("sourceJar") {
-//    archiveClassifier.set("sources") // Results in your-app-sources.jar
-//    from(sourceSets.main.get().java.srcDirs) // Include source directories
-//    include("**/*.java") // Include .java files
-//    include("**/*.kt")   // Include .kt files (if using Kotlin)
-//}
-//
-//// Make the build task depend on sourceJar
-//tasks.build {
-//    dependsOn("sourceJar")
-//}
-
-tasks.register<Jar>("sourceJar") {
-    archiveClassifier.set("sources") // Sets the classifier to "sources" (e.g., your-app-sources.jar)
-    from(sourceSets.main.get().java.srcDirs) // Include source directories
-    include("**/*.java") // Include .java files
-    include("**/*.kt")   // Include .kt files (if using Kotlin)
-}
-
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
 val mainConfigClassName = "com.github.xpenatan.gdx.examples.teavm.ConfigTeaVMTestDemo"
 
