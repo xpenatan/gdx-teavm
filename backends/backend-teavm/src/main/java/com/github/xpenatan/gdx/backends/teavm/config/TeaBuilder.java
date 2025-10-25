@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMProblemRenderer;
 import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
+import org.teavm.tooling.sources.DirectorySourceFileProvider;
 import org.teavm.tooling.sources.JarSourceFileProvider;
 import org.teavm.vm.TeaVMPhase;
 import org.teavm.vm.TeaVMProgressFeedback;
@@ -279,7 +281,11 @@ public class TeaBuilder {
 
                 String path = uri.getPath();
                 File file = new File(uri);
-                if (file.isFile() && path.endsWith("-sources.jar")) {
+                File sourceFile = getSourceDirectory(file);
+                if(sourceFile != null) {
+                    tool.addSourceFileProvider(new DirectorySourceFileProvider(sourceFile));
+                }
+                else if(file.isFile() && path.endsWith("-sources.jar")) {
                     tool.addSourceFileProvider(new JarSourceFileProvider(file));
                 }
             } catch(URISyntaxException e) {
@@ -393,6 +399,21 @@ public class TeaBuilder {
         AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
 
         TeaBuilder.log("");
+    }
+
+    private static File getSourceDirectory(File file) {
+        File buildRoot = file;
+        while(buildRoot != null && !buildRoot.getName().equals("build")) {
+            buildRoot = buildRoot.getParentFile();
+        }
+        if(buildRoot != null) {
+            Path moduleRoot = buildRoot.getParentFile().toPath();
+            Path sourceDir = moduleRoot.resolve("src/main/java");
+            if(Files.exists(sourceDir) && Files.isDirectory(sourceDir)) {
+                return sourceDir.toFile();
+            }
+        }
+        return null;
     }
 
     private static void useDefaultHTMLIndexFile(BaseWebApp webApp, FileHandle webappDistFolder, FileHandle assetsFolder) {
