@@ -312,19 +312,38 @@ public class TeaApplication implements Application {
         String[] exceptions = new String[errors.size()];
         errors.toArray(errorsJS);
         throwables.toArray(exceptions);
-        printStack(errorsJS, exceptions);
+        groupCollapsed("%cFatal Error", "color: #FF0000");
+
+        for(int i = 0; i < errorsJS.length; i++) {
+            int count = i + 1;
+            JSObject errorJS = errorsJS[i];
+            consoleLog("%cException " + count + ": " + exceptions[i], "color: #FF0000");
+            consoleLogError(errorJS);
+        }
+        {
+            groupCollapsed("%cOriginal Error", "color: #FF0000");
+            rethrowError(errorsJS[0]);
+            groupEnd();
+        }
+        groupEnd();
     }
 
-    @JSBody(params = { "errors", "exceptions" }, script = "" +
-            "console.groupCollapsed('%cFatal Error', 'color: #FF0000');" +
-            "errors.forEach((error, i) => {\n" +
-            "   var count = i + 1;" +
-            "   console.log('%cException ' + count + ': ' + exceptions[i], 'color: #FF0000');" +
-            "   console.log(error);" +
-            "});" +
-            "console.groupEnd();"
+    @JSBody(params = { "error" }, script = "console.log(error);")
+    private static native void consoleLogError(JSObject error);
+
+    @JSBody(params = { "error" }, script = "" +
+            "throw error"
     )
-    private static native void printStack(JSObject[] errors, String[] exceptions);
+    private static native void rethrowError(JSObject error);
+
+    @JSBody(params = { "msg" , "param"}, script = "console.log(msg, param);")
+    private static native void consoleLog(String msg, String param);
+
+    @JSBody(params = { "text", "param" }, script = "console.groupCollapsed(text, param);")
+    private static native void groupCollapsed(String text, String param);
+
+    @JSBody(script = "console.groupEnd();")
+    private static native void groupEnd();
 
     public TeaApplicationConfiguration getConfig() {
         return config;
