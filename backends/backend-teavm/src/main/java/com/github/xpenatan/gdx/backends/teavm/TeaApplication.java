@@ -105,6 +105,7 @@ public class TeaApplication implements Application {
     }
 
     protected void init() {
+        updateBrowserErrorStack();
         TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
         System.setProperty("userAgent", TeaApplication.agentInfo.getUserAgent());
@@ -320,21 +321,14 @@ public class TeaApplication implements Application {
             consoleLog("%cException " + count + ": " + exceptions[i], "color: #FF0000");
             consoleLogError(errorJS);
         }
-        {
-            groupCollapsed("%cOriginal Error", "color: #FF0000");
-            rethrowError(errorsJS[0]);
-            groupEnd();
-        }
         groupEnd();
     }
 
     @JSBody(params = { "error" }, script = "console.log(error);")
     private static native void consoleLogError(JSObject error);
 
-    @JSBody(params = { "error" }, script = "" +
-            "throw error"
-    )
-    private static native void rethrowError(JSObject error);
+    @JSBody(script = "Error.stackTraceLimit = Infinity;")
+    private static native void updateBrowserErrorStack();
 
     @JSBody(params = { "msg" , "param"}, script = "console.log(msg, param);")
     private static native void consoleLog(String msg, String param);
