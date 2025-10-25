@@ -327,7 +327,10 @@ public class TeaApplication implements Application {
     @JSBody(params = { "error" }, script = "console.log(error);")
     private static native void consoleLogError(JSObject error);
 
-    @JSBody(script = "Error.stackTraceLimit = Infinity;")
+    @JSBody(script = "" +
+            "if(typeof Error.stackTraceLimit !== 'undefined') {\n" +
+            "  Error.stackTraceLimit = Infinity;\n" +
+            "}")
     private static native void updateBrowserErrorStack();
 
     @JSBody(params = { "msg" , "param"}, script = "console.log(msg, param);")
