@@ -318,7 +318,7 @@ public class TeaApplication implements Application {
         String[] exceptions = new String[errors.size()];
         errors.toArray(errorsJS);
         throwables.toArray(exceptions);
-        groupCollapsed("%cFatal Error", "color: #FF0000");
+        groupCollapsed("%cFatal Error" + ": " + exceptions[0], "color: #FF0000");
 
         for(int i = 0; i < errorsJS.length; i++) {
             int count = i + 1;
