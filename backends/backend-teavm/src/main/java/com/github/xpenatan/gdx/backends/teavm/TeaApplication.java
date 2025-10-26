@@ -298,6 +298,11 @@ public class TeaApplication implements Application {
     }
 
     protected void onError(Throwable error) {
+        printErrorStack(error);
+    }
+
+    public static void printErrorStack(Object obj) {
+        Throwable error = (Throwable)obj;
         ArrayList<JSObject> errors = new ArrayList<>();
         ArrayList<String> throwables = new ArrayList<>();
         Throwable root = error;
