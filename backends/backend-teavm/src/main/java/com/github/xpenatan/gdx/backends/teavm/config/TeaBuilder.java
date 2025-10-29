@@ -265,14 +265,12 @@ public class TeaBuilder {
     private static void configTool(TeaVMTool tool) {
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
-
-        if(configuration.targetType == TeaTargetType.WEBASSEMBLY) {
+        tool.setTargetType(configuration.targetType);
+        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
             tool.setTargetFileName(configuration.targetFileName + ".wasm");
-            tool.setTargetType(TeaVMTargetType.WEBASSEMBLY_GC);
         }
-        else {
+        else if(configuration.targetType == TeaVMTargetType.JAVASCRIPT) {
             tool.setTargetFileName(configuration.targetFileName + ".js");
-            tool.setTargetType(TeaVMTargetType.JAVASCRIPT);
         }
 
         HashSet<String> set = new HashSet<>();
@@ -438,7 +436,7 @@ public class TeaBuilder {
         webXML.writeString(webApp.webXML, false);
         AssetsCopy.copyResources(classLoader, webApp.rootAssets, null, assetsFolder);
 
-        if(configuration.targetType == TeaTargetType.WEBASSEMBLY) {
+        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
             copyRuntime(setTargetDirectory);
         }
     }

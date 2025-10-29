@@ -12,7 +12,7 @@ gretty {
 
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
+//    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
 
     implementation(project(":examples:core:core"))
 

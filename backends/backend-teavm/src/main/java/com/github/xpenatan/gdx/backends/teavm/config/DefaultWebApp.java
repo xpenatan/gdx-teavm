@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.backends.teavm.config;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import java.io.IOException;
 import java.io.InputStream;
+import org.teavm.tooling.TeaVMTargetType;
 
 public class DefaultWebApp extends BaseWebApp {
 
@@ -31,7 +32,7 @@ public class DefaultWebApp extends BaseWebApp {
 
         String mode = "main(%ARGS%)";
         String jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\""  + config.targetFileName + ".js\"></script>";
-        if(config.targetType == TeaTargetType.WEBASSEMBLY) {
+        if(config.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
             mode = "let teavm = await TeaVM.wasmGC.load(\"" + config.targetFileName + ".wasm\"); teavm.exports.main([%ARGS%]);";
             String jsName = "wasm-gc-runtime.min.js";
             jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\"" + jsName + "\"></script>";

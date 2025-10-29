@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.backends.teavm.config;
 
 import java.net.URL;
 import java.util.ArrayList;
+import org.teavm.tooling.TeaVMTargetType;
 
 /**
  * @author xpenatan
@@ -46,11 +47,15 @@ public class TeaBuildConfiguration {
     public String logoPath = "startup-logo.png";
 
     public BaseWebApp webApp;
-    public TeaTargetType targetType = TeaTargetType.JAVASCRIPT;
+    public TeaVMTargetType targetType;
     public String targetFileName = "app";
 
     /**
      * A listener to enable a class for reflection. Note that using reflection increases the size of JavaScript/WebAssembly code.
      */
     public TeaBuildReflectionListener reflectionListener;
+
+    public TeaBuildConfiguration(TeaVMTargetType targetType) {
+        this.targetType = targetType;
+    }
 }
