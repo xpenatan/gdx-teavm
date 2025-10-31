@@ -12,9 +12,10 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 public class BuildFreetypeTest {
 
     public static void main(String[] args) throws IOException {
-        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration(TeaVMTargetType.JAVASCRIPT);
+        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
+        teaBuildConfiguration.targetType = TeaVMTargetType.JAVASCRIPT;
         TeaBuilder.config(teaBuildConfiguration);
         TeaVMTool tool = new TeaVMTool();
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);

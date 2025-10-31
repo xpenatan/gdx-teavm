@@ -17,7 +17,8 @@ public class ConfigTeaVMTestDemo {
     public static void configureWebapp() throws IOException {
         String reflectionPackage = "com.badlogic.gdx.math";
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
-        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration(TeaVMTargetType.JAVASCRIPT);
+        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
+        teaBuildConfiguration.targetType = TeaVMTargetType.JAVASCRIPT;
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../assets"));
         teaBuildConfiguration.shouldGenerateAssetFile = true;
         teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();

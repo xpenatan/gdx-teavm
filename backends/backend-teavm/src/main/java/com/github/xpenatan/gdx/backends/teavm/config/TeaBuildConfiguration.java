@@ -47,15 +47,11 @@ public class TeaBuildConfiguration {
     public String logoPath = "startup-logo.png";
 
     public BaseWebApp webApp;
-    public TeaVMTargetType targetType;
+    public TeaVMTargetType targetType = TeaVMTargetType.JAVASCRIPT;
     public String targetFileName = "app";
 
     /**
      * A listener to enable a class for reflection. Note that using reflection increases the size of JavaScript/WebAssembly code.
      */
     public TeaBuildReflectionListener reflectionListener;
-
-    public TeaBuildConfiguration(TeaVMTargetType targetType) {
-        this.targetType = targetType;
-    }
 }

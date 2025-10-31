@@ -16,7 +16,8 @@ public class BuildGdxTest {
         String reflectionPackage = "com.badlogic.gdx.math";
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
-        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration(TeaVMTargetType.WEBASSEMBLY_GC);
+        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
+        teaBuildConfiguration.targetType = TeaVMTargetType.JAVASCRIPT;
         String gdxAssetsPath = args[0];
         System.out.println("gdxAssetsPath: " + gdxAssetsPath);
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle(gdxAssetsPath));
