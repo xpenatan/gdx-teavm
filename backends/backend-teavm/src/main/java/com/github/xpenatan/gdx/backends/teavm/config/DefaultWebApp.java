@@ -1,16 +1,21 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import org.teavm.tooling.TeaVMTargetType;
 
 public class DefaultWebApp extends BaseWebApp {
 
     @Override
-    public void setup(TeaClassLoader classLoader, TeaBuildConfiguration config) {
+    public void setup(TeaClassLoader classLoader, TeaBuildConfiguration config, FileHandle webappFolder) {
         InputStream indexSteam = classLoader.getResourceAsStream("webapp/index.html");
         InputStream webXMLStream = classLoader.getResourceAsStream("webapp/WEB-INF/web.xml");
+
+        String webXML = "";
+        String indexHtml = "";
 
         if(indexSteam != null) {
             try {
@@ -44,8 +49,18 @@ public class DefaultWebApp extends BaseWebApp {
         indexHtml = indexHtml.replace("%WIDTH%", String.valueOf(config.htmlWidth));
         indexHtml = indexHtml.replace("%HEIGHT%", String.valueOf(config.htmlHeight));
         indexHtml = indexHtml.replace("%ARGS%", config.mainClassArgs);
+
+        ArrayList<String> rootAssets = new ArrayList<>();
+
         if(config.showLoadingLogo) {
             rootAssets.add(logo);
         }
+
+        FileHandle assetsFolder = webappFolder.child("assets");
+        FileHandle indexHandler = webappFolder.child("index.html");
+        FileHandle webXMLFile = webappFolder.child("WEB-INF").child("web.xml");
+        indexHandler.writeString(indexHtml, false);
+        webXMLFile.writeString(webXML, false);
+        AssetsCopy.copyResources(classLoader, rootAssets, null, assetsFolder);
     }
 }

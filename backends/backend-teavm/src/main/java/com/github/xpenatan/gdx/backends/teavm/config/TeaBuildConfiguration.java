@@ -37,7 +37,7 @@ public class TeaBuildConfiguration {
     public int htmlWidth = 800;
     public int htmlHeight = 600;
 
-    /** True to use the default html index. False will stop overwriting html file. */
+    /** True to use the default index.html and web.xml. False will stop overwriting html file. */
     public boolean useDefaultHtmlIndex = true;
 
     /** If the logo is shown while the application is loading. Requires showLoadingLogo true. */
@@ -46,6 +46,7 @@ public class TeaBuildConfiguration {
     /** Logo asset path. Requires showLoadingLogo true. */
     public String logoPath = "startup-logo.png";
 
+    /** Setup WebApp files like index.html and other. Null will use the DefaultWebApp class. */
     public BaseWebApp webApp;
     public TeaVMTargetType targetType = TeaVMTargetType.JAVASCRIPT;
     public String targetFileName = "app";

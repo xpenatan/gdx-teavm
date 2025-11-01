@@ -97,9 +97,6 @@ public class TeaBuilder {
 
         setTargetDirectory = new File(webappDirectory + File.separator + webappName);
 
-        if(configuration.webApp == null) {
-            configuration.webApp = new DefaultWebApp();
-        }
         configAssets();
     }
 
@@ -359,9 +356,15 @@ public class TeaBuilder {
 
         AssetFilter filter = configuration.assetFilter;
 
-        boolean shouldUseDefaultHtmlIndex = configuration.useDefaultHtmlIndex;
-        if(shouldUseDefaultHtmlIndex) {
-            useDefaultHTMLIndexFile(configuration.webApp, webappFolder, assetsFolder);
+        if(configuration.useDefaultHtmlIndex) {
+            BaseWebApp webApp = configuration.webApp;
+            if(webApp == null) {
+                webApp = new DefaultWebApp();
+            }
+            webApp.setup(classLoader, configuration, webappFolder);
+        }
+        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
+            copyRuntime(setTargetDirectory);
         }
 
         boolean generateAssetPaths = configuration.shouldGenerateAssetFile;
@@ -426,18 +429,5 @@ public class TeaBuilder {
             }
         }
         return null;
-    }
-
-    private static void useDefaultHTMLIndexFile(BaseWebApp webApp, FileHandle webappDistFolder, FileHandle assetsFolder) {
-        configuration.webApp.setup(classLoader, configuration);
-        FileHandle indexHandler = webappDistFolder.child("index.html");
-        FileHandle webXML = webappDistFolder.child("WEB-INF").child("web.xml");
-        indexHandler.writeString(webApp.indexHtml, false);
-        webXML.writeString(webApp.webXML, false);
-        AssetsCopy.copyResources(classLoader, webApp.rootAssets, null, assetsFolder);
-
-        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
-            copyRuntime(setTargetDirectory);
-        }
     }
 }
