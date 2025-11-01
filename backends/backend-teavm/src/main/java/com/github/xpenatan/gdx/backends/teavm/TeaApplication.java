@@ -308,10 +308,10 @@ public class TeaApplication implements Application {
         Throwable root = error;
         while(root != null) {
             JSObject jsException = JSExceptions.getJSException(root);
-            errors.add(jsException);
+            errors.add(0, jsException);
             String msg = root.getMessage();
             if(msg == null) msg = "";
-            throwables.add(root.getClass().getSimpleName() + " " + msg);
+            throwables.add(0, root.getClass().getSimpleName() + " " + msg);
             root = root.getCause();
         }
         JSObject[] errorsJS = new JSObject[errors.size()];
