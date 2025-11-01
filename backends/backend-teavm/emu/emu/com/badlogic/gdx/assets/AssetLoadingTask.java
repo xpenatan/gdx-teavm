@@ -75,7 +75,8 @@ public class AssetLoadingTask implements AsyncTask<Void> {
         FileHandle fileHandle = resolve(loader, assetDesc);
         String path = fileHandle.path();
         Files.FileType type = fileHandle.type();
-        if(!assetLoader.isAssetLoaded(type, path)) {
+        if(!fileHandle.extension().isEmpty() && !assetLoader.isAssetLoaded(type, path)) {
+            // Only try to download if contains extension and is not in queue or downloading.
             if(!assetLoader.isAssetInQueueOrDownloading(path)) {
                 count++;
                 if(count == 2) {
