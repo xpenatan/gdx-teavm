@@ -16,10 +16,10 @@ Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to ha
 If you find this project valuable and want to fuel its continued growth, please consider [sponsoring](https://github.com/sponsors/xpenatan) it. Your support keeps the momentum going!
 
 ### Version:
-| gdx-teavm | LibGDX | TeaVM  |
-|:---------:|:------:|:------:|
-|   1.4.0   | 1.14.0 | 0.13.0 |
-|   1.3.3   | 1.14.0 | 0.12.3 |
+| gdx-teavm | LibGDX |     TeaVM     |
+|:---------:|:------:|:-------------:|
+| -SNAPSHOT | 1.14.0 | 0.13.0-dev-12 |
+|   1.3.3   | 1.14.0 |    0.12.3     |
 
 ## Setup:
 ```groovy
