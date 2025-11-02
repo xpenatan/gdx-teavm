@@ -19,9 +19,9 @@ public class BuildTeaVMTestDemo {
         tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
         tool.setMainClass(TeaVMTestLauncher.class.getName());
 
-        tool.setDebugInformationGenerated(true);
-        tool.setSourceMapsFileGenerated(true);
-        tool.setSourceFilePolicy(TeaVMSourceFilePolicy.COPY);
+//        tool.setDebugInformationGenerated(true);
+//        tool.setSourceMapsFileGenerated(true);
+//        tool.setSourceFilePolicy(TeaVMSourceFilePolicy.COPY);
 
 //        File coreSourcePath = new File("../core/src/main/java");
 //        tool.addSourceFileProvider(new DirectorySourceFileProvider(coreSourcePath));
@@ -30,8 +30,8 @@ public class BuildTeaVMTestDemo {
 //        File teavmEmuSourcePath = new File("../../../backends/backend-teavm/emu/");
 //        tool.addSourceFileProvider(new DirectorySourceFileProvider(teavmEmuSourcePath));
 
-        int size = 64 * (1 << 20);
-        tool.setMaxDirectBuffersSize(size);
+//        int size = 64 * (1 << 20);
+//        tool.setMaxDirectBuffersSize(size);
         TeaBuilder.build(tool);
     }
 }
