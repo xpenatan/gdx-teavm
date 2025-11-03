@@ -17,7 +17,7 @@ public class BuildGdxTest {
         TeaReflectionSupplier.addReflectionClass(reflectionPackage);
 
         TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.targetType = TeaVMTargetType.JAVASCRIPT;
+        teaBuildConfiguration.targetType = TeaVMTargetType.WEBASSEMBLY_GC;
         String gdxAssetsPath = args[0];
         System.out.println("gdxAssetsPath: " + gdxAssetsPath);
         teaBuildConfiguration.assetsPath.add(new AssetFileHandle(gdxAssetsPath));
@@ -26,8 +26,8 @@ public class BuildGdxTest {
         TeaBuilder.config(teaBuildConfiguration);
 
         TeaVMTool tool = new TeaVMTool();
-        tool.setObfuscated(false);
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
+        tool.setObfuscated(true);
+        tool.setOptimizationLevel(TeaVMOptimizationLevel.ADVANCED);
         tool.setMainClass(GdxTestLauncher.class.getName());
         int size = 64 * (1 << 20);
         tool.setMaxDirectBuffersSize(size);
