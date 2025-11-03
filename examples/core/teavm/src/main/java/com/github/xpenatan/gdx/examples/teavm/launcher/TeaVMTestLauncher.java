@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.examples.teavm.launcher;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.examples.tests.AudioTest;
-import com.github.xpenatan.gdx.examples.tests.CrashTest;
 
 public class TeaVMTestLauncher {
 
@@ -19,6 +18,6 @@ public class TeaVMTestLauncher {
 //        new TeaApplication(new UITest(), config);
 
         // Audio is no longer supported in gdx-teavm. You can use this solution to keep using Howler.js
-        new TeaApplication(new CrashTest(), config);
+        new TeaApplication(new AudioTest(), config);
     }
 }
