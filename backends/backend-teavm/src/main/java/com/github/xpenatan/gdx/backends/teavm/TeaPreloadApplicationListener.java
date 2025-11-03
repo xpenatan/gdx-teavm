@@ -185,6 +185,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
                 progressBar.setValue(displayedProgress);
                 boolean downloading = assetLoader.isDownloading();
                 if(progress == 1.0 && !downloading && displayedProgress == 1.0f) {
+                    clearScreen();
                     teaApplication.setPreloadReady();
                 }
 
