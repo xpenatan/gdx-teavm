@@ -8,18 +8,19 @@
 **gdx-teavm** is a backend solution for running [libGDX](https://github.com/libgdx/libgdx) games directly in web browsers. It leverages [TeaVM](https://github.com/konsoletyper/teavm), a tool that compiles Java or Kotlin bytecode into JavaScript or WebAssembly, enabling seamless execution of game logic within the browser environment without needing additional plugins or complex setup.
 Additionally, gdx-teavm incorporates [Emscripten](https://emscripten.org/) to handle some of the Java Native Interface (JNI) code, allowing for the execution of specific internal functions that require native performance.
 
-## TeaVM Examples
-[libGDX-TeaVM](https://github.com/xpenatan/libGDX-TeaVM)
+## Examples
+[gdx-teavm-examples](https://github.com/xpenatan/gdx-teavm-examples)
 
 # Support
 
 If you find this project valuable and want to fuel its continued growth, please consider [sponsoring](https://github.com/sponsors/xpenatan) it. Your support keeps the momentum going!
 
 ### Version:
-| gdx-teavm | LibGDX |     TeaVM     |
-|:---------:|:------:|:-------------:|
-| -SNAPSHOT | 1.14.0 | 0.13.0-dev-12 |
-|   1.3.3   | 1.14.0 |    0.12.3     |
+| gdx-teavm | LibGDX | TeaVM  |
+|:---------:|:------:|:------:|
+| -SNAPSHOT | 1.14.0 | 0.13.0 |
+|   1.4.0   | 1.14.0 | 0.13.0 |
+|   1.3.3   | 1.14.0 | 0.12.3 |
 
 ## Setup:
 ```groovy
