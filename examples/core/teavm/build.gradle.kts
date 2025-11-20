@@ -1,13 +1,13 @@
 import org.teavm.gradle.api.SourceFilePolicy
 
 plugins {
-    id("org.gretty") version("3.1.0")
+    id("org.gretty") version("4.1.10")
     id("org.teavm") version(LibExt.teaVMVersion)
 }
 
+project.extra["webAppDir"] = File(projectDir, "build/dist/webapp")
 gretty {
     contextPath = "/"
-    extraResourceBase("build/dist/webapp")
 }
 
 dependencies {
