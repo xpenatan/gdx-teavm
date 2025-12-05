@@ -94,9 +94,14 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
 
     @Override
     public void handleEvent(Event e) {
-        if(application.getApplicationListener() != null) {
-            handleMouseEvents(e);
-            handleKeyboardEvents(e);
+        try{
+            if(application.getApplicationListener() != null) {
+                handleMouseEvents(e);
+                handleKeyboardEvents(e);
+            }
+        }
+        catch(Throwable t) {
+            application.onError(t);
         }
     }
 
