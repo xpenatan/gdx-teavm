@@ -323,7 +323,9 @@ public class TeaApplication implements Application {
         for(int i = 0; i < errorsJS.length; i++) {
             int count = i + 1;
             JSObject errorJS = errorsJS[i];
-            consoleLog("%cException " + count + ": " + exceptions[i], "color: #FF0000");
+            if(i > 0) { // Already logged the first one
+                consoleLog("%cException " + count + ": " + exceptions[i], "color: #FF0000");
+            }
             consoleLogError(errorJS);
         }
         groupEnd();
