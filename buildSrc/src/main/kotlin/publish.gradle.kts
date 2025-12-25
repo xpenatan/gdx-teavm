@@ -4,6 +4,7 @@ import java.net.URLEncoder
 
 var libProjects = mutableSetOf(
     project(":backends:backend-teavm"),
+    project(":extensions:gdx-controllers-teavm"),
     project(":extensions:gdx-freetype-teavm"),
     project(":extensions:asset-loader")
 )

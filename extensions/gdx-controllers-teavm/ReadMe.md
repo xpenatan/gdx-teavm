@@ -1,0 +1,2 @@
+Source code and concept from [gdx-controllers-gwt](https://github.com/libgdx/gdx-controllers/tree/master/gdx-controllers-gwt/src/main/java/com/badlogic/gdx/controllers/gwt).
+Use the ```TeavmControllers.getInstance().getControllers()```method instead of ```Controllers.getControllers()```.

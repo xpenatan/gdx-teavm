@@ -22,6 +22,7 @@ object LibExt {
 
     const val gdxGltfVersion = "2.2.1"
     const val aiVersion = "1.8.2"
+    const val gdxControllerVersion = "2.2.4"
 
     const val truthVersion = "1.4.2"
 
