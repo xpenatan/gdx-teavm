@@ -1,4 +1,4 @@
-val moduleName = "gdx-freetype-teavm"
+val moduleName = "gdx-controllers-teavm"
 
 dependencies {
     implementation(project(":backends:backend-teavm"))

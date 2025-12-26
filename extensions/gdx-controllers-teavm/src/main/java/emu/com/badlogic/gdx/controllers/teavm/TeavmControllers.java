@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.controllers.teavm;
+package emu.com.badlogic.gdx.controllers.teavm;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.AbstractControllerManager;

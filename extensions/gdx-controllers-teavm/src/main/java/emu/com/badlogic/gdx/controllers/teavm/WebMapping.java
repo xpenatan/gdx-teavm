@@ -13,31 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.badlogic.gdx.controllers.teavm;
+package emu.com.badlogic.gdx.controllers.teavm;
 
-public class TeavmControllerEvent {
+import com.badlogic.gdx.controllers.ControllerMapping;
 
-    public static final int BUTTON_DOWN = 0;
-    public static final int BUTTON_UP = 1;
-    public static final int AXIS = 2;
-    public static final int CONNECTED = 4;
-    public static final int DISCONNECTED = 5;
+public class WebMapping extends ControllerMapping {
+    private static WebMapping instance;
 
-    /**
-     * the controller the event belongs to
-     **/
-    public TeavmController controller;
-    /**
-     * the event type, see constants above
-     **/
-    public int type;
-    /**
-     * the code for the even source, e.g. button keycode, axis index
-     **/
-    public int code;
-    /**
-     * the value if this is an #AXIS, a #BUTTON_DOWN, or a #BUTTON_UP event
-     **/
-    public float amount;
+    WebMapping() {
+        super(0, 1, 2, 3,
+                0, 1, 2, 3, 8, 9,
+                4, 6, 5, 7, 10, 11,
+                12, 13, 14, 15);
+    }
 
+    static WebMapping getInstance() {
+        if (instance == null)
+            instance = new WebMapping();
+
+        return instance;
+    }
 }
