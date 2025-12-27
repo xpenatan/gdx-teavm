@@ -15,6 +15,7 @@ pluginManagement {
 include(":backends:backend-teavm")
 
 include(":extensions:asset-loader")
+include(":extensions:gdx-controllers-teavm")
 include(":extensions:gdx-freetype-teavm")
 
 //include(":tools:generator:core")
