@@ -13,6 +13,7 @@ import com.github.xpenatan.gdx.backends.teavm.dom.ElementExt;
 import com.github.xpenatan.gdx.backends.teavm.dom.HTMLElementExt;
 import com.github.xpenatan.gdx.backends.teavm.utils.KeyCodes;
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSProperty;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.dom.events.Event;
@@ -23,9 +24,7 @@ import org.teavm.jso.dom.events.MouseEvent;
 import org.teavm.jso.dom.events.Touch;
 import org.teavm.jso.dom.events.TouchEvent;
 import org.teavm.jso.dom.events.WheelEvent;
-import org.teavm.jso.dom.html.HTMLCanvasElement;
-import org.teavm.jso.dom.html.HTMLDocument;
-import org.teavm.jso.dom.html.HTMLElement;
+import org.teavm.jso.dom.html.*;
 import org.teavm.jso.dom.xml.Element;
 
 /**
@@ -632,8 +631,7 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
 
     @Override
     public void getTextInput(TextInputListener listener, String title, String text, String hint) {
-        // TODO Auto-generated method stub
-
+        this.getTextInput(listener, title, text, hint, OnscreenKeyboardType.Default);
     }
 
     @Override
@@ -644,23 +642,37 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
 
     @Override
     public void vibrate(int milliseconds) {
-        // TODO Auto-generated method stub
-
+        if (isVibrationSupportedCatchedJSNI() && milliseconds > 0)
+            vibrateNativeCatchedJSNI(milliseconds);
     }
 
     @Override
     public void vibrate(int milliseconds, boolean fallback) {
-        // TODO Auto-generated method stub
+        vibrate(milliseconds);
     }
 
     @Override
     public void vibrate(int milliseconds, int amplitude, boolean fallback) {
-        // TODO Auto-generated method stub
+        vibrate(milliseconds);
     }
 
     @Override
     public void vibrate(VibrationType vibrationType) {
-        // TODO Auto-generated method stub
+        int duration;
+        switch(vibrationType) {
+            case LIGHT:
+                duration = 50;
+                break;
+            case MEDIUM:
+                duration = 100;
+                break;
+            case HEAVY:
+                duration = 500;
+                break;
+            default:
+                duration = 200;
+        }
+        vibrate(duration);
     }
 
     @Override
@@ -752,8 +764,179 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
 
     @Override
     public void getTextInput(TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
-        // TODO Auto-generated method stub
-
+        HTMLDocument document = Window.current().getDocument();
+        HTMLElement oldTextInput = document.getElementById("text_input");
+        if (null != oldTextInput) { // remove old dialog
+            document.getBody().removeChild(oldTextInput);
+        }
+        HTMLElement overlay = document.createElement("div");
+        overlay.setId("text_input");
+        Runnable close = new Runnable() {
+            @Override
+            public void run() {
+                document.getBody().removeChild(overlay);
+            }
+        };
+        overlay.getStyle().setCssText("position: fixed;" +
+                "top: 0;" +
+                "left: 0;" +
+                "width: 100%;" +
+                "height: 100%;" +
+                "background: rgba(0,0,0,0.5);" +
+                "display: flex;" +
+                "align-items: center;" +
+                "justify-content: center;" +
+                "z-index: 9999;");
+        HTMLElement dialog = document.createElement("div");
+        dialog.getStyle().setCssText("background: white;" +
+                "border-radius: 8px;" +
+                "padding: 20px;" +
+                "min-width: 300px;" +
+                "max-width: 500px;" +
+                "box-shadow: 0 10px 30px rgba(0,0,0,0.3);");
+        HTMLElement titleEl = document.createElement("h3");
+        titleEl.setTextContent(title);
+        titleEl.getStyle().setCssText("margin: 0 0 10px 0;" +
+                "color: #333;" +
+                "font-size: 18px;");
+        HTMLElement textEl = document.createElement("p");
+        textEl.setTextContent(text);
+        textEl.getStyle().setCssText("margin: 0 0 15px 0;" +
+                "color: #666;" +
+                "font-size: 14px;");
+        HTMLElement buttonContainer = document.createElement("div");
+        buttonContainer.getStyle().setCssText("display: flex;" +
+                "justify-content: flex-end;" +
+                "gap: 10px;");
+        HTMLButtonElement cancelBtn = (HTMLButtonElement) document.createElement("button");
+        cancelBtn.setTextContent("Cancel");
+        cancelBtn.getStyle().setCssText("padding: 8px 16px;" +
+                "border: 1px solid #ddd;" +
+                "background: white;" +
+                "border-radius: 4px;" +
+                "cursor: pointer;" +
+                "font-size: 14px;");
+        HTMLButtonElement confirmBtn = (HTMLButtonElement) document.createElement("button");
+        confirmBtn.setTextContent("OK");
+        confirmBtn.getStyle().setCssText("padding: 8px 16px;" +
+                "border: none;" +
+                "background: #1890ff;" +
+                "color: white;" +
+                "border-radius: 4px;" +
+                "cursor: pointer;" +
+                "font-size: 14px;");
+        dialog.appendChild(titleEl);
+        dialog.appendChild(textEl);
+        overlay.appendChild(dialog);
+        cancelBtn.addEventListener("click", (EventListener<MouseEvent>) evt -> close.run());
+        buttonContainer.appendChild(cancelBtn);
+        buttonContainer.appendChild(confirmBtn);
+        document.getBody().appendChild(overlay);
+        overlay.addEventListener("click", (EventListener<MouseEvent>) evt -> {
+            if (evt.getTarget() == overlay) {
+                if (null != listener)
+                    listener.canceled();
+                close.run();
+            }
+        });
+        HTMLElement inputContainer = document.createElement("div");
+        inputContainer.getStyle().setCssText("position: relative;" +
+                "margin-bottom: 20px;");
+        HTMLInputElement input = (HTMLInputElement) document.createElement("input");
+        input.setType("text");
+        switch (type) {
+            case NumberPad: {
+                input.setType("number");
+                break;
+            }
+            case Password: {
+                input.setType("password");
+                break;
+            }
+            default: {
+                input.setType("text");
+            }
+        }
+        // input.setValue(text);
+        input.setPlaceholder(hint);
+        input.getStyle().setCssText("width: 100%;" +
+                "padding: 10px 35px 10px 10px;" +
+                "border: 1px solid #ddd;" +
+                "border-radius: 4px;" +
+                "font-size: 14px;" +
+                "box-sizing: border-box;");
+        HTMLButtonElement clearBtn = (HTMLButtonElement) document.createElement("button");
+        clearBtn.setInnerText("X");
+        clearBtn.setType("button");
+        clearBtn.getStyle().setCssText(
+                "position: absolute;" +
+                        "right: 8px;" +
+                        "top: 50%;" +
+                        "transform: translateY(-50%);" +
+                        "background: none;" +
+                        "border: none;" +
+                        "font-size: 18px;" +
+                        "cursor: pointer;" +
+                        "color: #999;" +
+                        "width: 20px;" +
+                        "height: 20px;" +
+                        "border-radius: 50%;" +
+                        "display: block;" +
+                        "align-items: center;" +
+                        "justify-content: center;");
+        inputContainer.appendChild(input);
+        inputContainer.appendChild(clearBtn);
+        dialog.appendChild(inputContainer);
+        dialog.appendChild(buttonContainer);
+        clearBtn.addEventListener("click", (EventListener<MouseEvent>) evt -> {
+            input.setValue("");
+            input.focus();
+        });
+        Runnable handleConfirm = () -> {
+            String value = input.getValue();
+            if (value.isEmpty()) {
+                input.getStyle().setProperty("border-color", "red");
+                input.getStyle().setProperty("animation", "shake 0.5s");
+                Window.setTimeout(() -> {
+                    input.getStyle().removeProperty("border-color");
+                    input.getStyle().removeProperty("animation");
+                }, 1000);
+                return;
+            }
+            close.run();
+            if (null != listener)
+                listener.input(value);
+        };
+        overlay.addEventListener("keydown", (EventListener<KeyboardEvent>) evt -> {
+            if ("Enter".equals(evt.getKey())) {
+                handleConfirm.run();
+            } else if ("Backspace".equals(evt.getKey())) {
+                /*
+                todo ...
+                 I'm confused why the Backspace key has no effect in my custom text input dialog when running under TeaVM on the web.
+                 The only way I can delete characters is by listening to keyboard events and manually removing the last character from the input value.
+                */
+                String value = input.getValue();
+                if (value != null && !value.isEmpty()) {
+                    InputWithSelection input1 = inputCastCatchedJSNI(input);
+                    int start = input1.getSelectionStart();
+                    int end = input1.getSelectionEnd();
+                    if (start > 0) {
+                        String newValue = value.substring(0, start - 1) + value.substring(end);
+                        input1.setValue(newValue);
+                        input1.setSelectionStart(start - 1);
+                        input1.setSelectionEnd(end - 1 > -1 ? end - 1 : input1.getSelectionEnd());
+                        evt.preventDefault();
+                    }
+                }
+            } else if ("Escape".equals(evt.getKey())) {
+                close.run();
+                if (null != listener)
+                    listener.canceled();
+            }
+        });
+        confirmBtn.addEventListener("click", (EventListener<MouseEvent>) evt -> handleConfirm.run());
+        Window.setTimeout(input::focus, 100);
     }
 
     @Override
@@ -812,4 +995,34 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
             "return false;"
     )
     private static native boolean isCursorCatchedJSNI(HTMLElement canvas);
+
+    public abstract static class InputWithSelection extends HTMLInputElement {
+        @JSProperty
+        public abstract int getSelectionStart();
+
+        @JSProperty
+        public abstract int getSelectionEnd();
+
+        @JSProperty
+        public abstract void setSelectionStart(int pos);
+
+        @JSProperty
+        public abstract void setSelectionEnd(int pos);
+    }
+
+    @JSBody(params = "el", script =
+            "return el;"
+    )
+    public static native InputWithSelection inputCastCatchedJSNI(HTMLInputElement el);
+
+    @JSBody(script =
+            "return !!navigator.vibrate;"
+    )
+    private static native boolean isVibrationSupportedCatchedJSNI();
+
+    @JSBody(script =
+            "navigator.vibrate(duration);"
+    )
+    private static native void vibrateNativeCatchedJSNI(int durationMillis);
+
 }
