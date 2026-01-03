@@ -1,16 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -18,15 +14,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
 import org.teavm.model.CallLocation;
 import org.teavm.model.MethodReference;
 import org.teavm.tooling.TeaVMProblemRenderer;
-import org.teavm.tooling.TeaVMTargetType;
 import org.teavm.tooling.TeaVMTool;
 import org.teavm.tooling.sources.DirectorySourceFileProvider;
 import org.teavm.tooling.sources.JarSourceFileProvider;
@@ -39,6 +32,33 @@ import org.teavm.vm.TeaVMProgressListener;
  */
 public class TeaBuilder {
 
+    public static void log(String msg) {
+        String text = "| " + msg;
+        logInternalNewLine(text);
+    }
+
+    public static void logInternal(String msg) {
+        System.err.print(msg);
+    }
+
+    public static void logInternalNewLine(String msg) {
+        logInternal(msg + "\n");
+    }
+
+    public static void logHeader(String text) {
+        String msg = "";
+        msg += "#################################################################\n";
+        msg += "|\n| " + text + "\n|";
+        msg += "\n" + "#################################################################";
+
+        logInternalNewLine(msg);
+    }
+
+    public static void logEnd() {
+        String msg = "\n#################################################################";
+        logInternalNewLine(msg);
+    }
+
     enum ACCEPT_STATE {
         ACCEPT, NOT_ACCEPT, NO_MATCH
     }
@@ -47,29 +67,20 @@ public class TeaBuilder {
     private static final String EXTENSION_BOX2D = "gdx-box2d-teavm";
     private static final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
 
-    private static String webappName = "webapp";
-    private static TeaBuildConfiguration configuration;
+    private static String webappName = "c";
     private static File setTargetDirectory;
     private static TeaClassLoader classLoader;
     private static ArrayList<URL> acceptedURL;
 
-    public static void config(TeaBuildConfiguration configuration) {
-        TeaBuilder.configuration = configuration;
+    public static void config(String outputDirectory) {
         acceptedURL = new ArrayList<>();
-        String webappDirectory = configuration.webappPath;
-
-        configClasspath(configuration, acceptedURL);
-
-        TeaBuilderLog.log("");
-        TeaBuilderLog.log("targetDirectory: " + webappDirectory);
-        TeaBuilderLog.log("");
-
+        configClasspath(acceptedURL);
+        TeaBuilder.log("");
+        TeaBuilder.log("targetDirectory: " + outputDirectory);
+        TeaBuilder.log("");
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
-
-        setTargetDirectory = new File(webappDirectory + File.separator + webappName);
-
-        configAssets();
+        setTargetDirectory = new File(outputDirectory + File.separator + webappName);
     }
 
     public static boolean build(TeaVMTool tool) {
@@ -89,7 +100,7 @@ public class TeaBuilder {
             Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
             if(problems.size() > 0) {
-                TeaBuilderLog.logHeader("Compiler problems");
+                TeaBuilder.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
 
@@ -99,26 +110,26 @@ public class TeaBuilder {
                     MethodReference method = location != null ? location.getMethod() : null;
 
                     if(i > 0) {
-                        TeaBuilderLog.log("");
-                        TeaBuilderLog.log("----");
-                        TeaBuilderLog.log("");
+                        TeaBuilder.log("");
+                        TeaBuilder.log("----");
+                        TeaBuilder.log("");
                     }
-                    TeaBuilderLog.log(problem.getSeverity().toString() + "[" + i + "]");
+                    TeaBuilder.log(problem.getSeverity().toString() + "[" + i + "]");
                     var sb = new StringBuilder();
                     TeaVMProblemRenderer.renderCallStack(tool.getDependencyInfo().getCallGraph(),
                             problem.getLocation(), sb);
                     var locationString = sb.toString();
-                    locationString.lines().forEach(TeaBuilderLog::log);
+                    locationString.lines().forEach(TeaBuilder::log);
                     p.clear();
                     problem.render(p);
                     String text = p.getText();
-                    TeaBuilderLog.log("Text: " + text);
+                    TeaBuilder.log("Text: " + text);
                 }
-                TeaBuilderLog.logEnd();
+                TeaBuilder.logEnd();
             }
             else {
                 isSuccess = true;
-                TeaBuilderLog.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
+                TeaBuilder.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
             }
 
             if(logClassNames) {
@@ -126,7 +137,7 @@ public class TeaBuilder {
                 Iterator<String> iterator = sorted.iterator();
                 while(iterator.hasNext()) {
                     String clazz = iterator.next();
-                    TeaBuilderLog.log(clazz);
+                    TeaBuilder.log(clazz);
                 }
             }
         }
@@ -138,17 +149,6 @@ public class TeaBuilder {
             throw new RuntimeException("Build Failed");
         }
         return isSuccess;
-    }
-
-    private static void preserveClasses(TeaVMTool tool, TeaBuildConfiguration configuration, TeaClassLoader classLoader) {
-        //Keep reflection classes
-        List<String> classesToPreserve = tool.getClassesToPreserve();
-        ArrayList<String> configClassesToPreserve = configuration.classesToPreserve;
-        List<String> reflectionClasses = TeaReflectionSupplier.getReflectionClasses();
-        configClassesToPreserve.addAll(reflectionClasses);
-        // Get classes or packages from reflection. When path is a package, get all classes from it.
-        ArrayList<String> preserveClasses = classLoader.getAllClasses(configClassesToPreserve);
-        classesToPreserve.addAll(preserveClasses);
     }
 
     private static void sortAcceptedClassPath(ArrayList<URL> acceptedURL) {
@@ -177,32 +177,7 @@ public class TeaBuilder {
         }
     }
 
-    private static void automaticReflection(ArrayList<URL> acceptedURL) {
-        for(URL classPath : acceptedURL) {
-            try {
-                ZipInputStream zip = new ZipInputStream(classPath.openStream());
-                for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                    if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-                        // This ZipEntry represents a class. Now, what class does it represent?
-                        String className = entry.getName().replace('/', '.'); // including ".class"
-                        String name = className.substring(0, className.length() - ".class".length());
-                        boolean add = false;
-                        if(configuration.reflectionListener != null) {
-                            add = configuration.reflectionListener.shouldEnableReflection(name);
-                        }
-                        if(add) {
-                            TeaReflectionSupplier.addReflectionClass(name);
-                        }
-                    }
-                }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void configClasspath(TeaBuildConfiguration configuration, ArrayList<URL> acceptedURL) {
+    private static void configClasspath(ArrayList<URL> acceptedURL) {
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
 
@@ -219,28 +194,17 @@ public class TeaBuilder {
             }
         }
 
-        acceptedURL.addAll(configuration.additionalClasspath);
-
         sortAcceptedClassPath(acceptedURL);
 
-        automaticReflection(acceptedURL);
-
-        TeaBuilderLog.logHeader("ACCEPTED CLASSPATH");
+        TeaBuilder.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {
-            TeaBuilderLog.log(i + " true: " + acceptedURL.get(i).getPath());
+            TeaBuilder.log(i + " true: " + acceptedURL.get(i).getPath());
         }
     }
 
     private static void configTool(TeaVMTool tool) {
         String tmpdir = System.getProperty("java.io.tmpdir");
         File setCacheDirectory = new File(tmpdir + File.separator + "TeaVMCache");
-        tool.setTargetType(configuration.targetType);
-        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
-            tool.setTargetFileName(configuration.targetFileName + ".wasm");
-        }
-        else if(configuration.targetType == TeaVMTargetType.JAVASCRIPT) {
-            tool.setTargetFileName(configuration.targetFileName + ".js");
-        }
 
         HashSet<String> set = new HashSet<>();
 
@@ -273,20 +237,20 @@ public class TeaBuilder {
             }
         }
 
-        tool.setClassLoader(classLoader);
+//        tool.setClassLoader(classLoader);
         tool.setTargetDirectory(setTargetDirectory);
         tool.setCacheDirectory(setCacheDirectory);
         tool.setProgressListener(new TeaVMProgressListener() {
-            TeaVMPhase phase = null;
+        TeaVMPhase phase = null;
 
             @Override
             public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
                 if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    TeaBuilderLog.logHeader("DEPENDENCY_ANALYSIS");
+                    TeaBuilder.logHeader("DEPENDENCY_ANALYSIS");
                 }
                 else if(teaVMPhase == TeaVMPhase.COMPILING) {
-                    TeaBuilderLog.logInternalNewLine("");
-                    TeaBuilderLog.logHeader("COMPILING");
+                    TeaBuilder.logInternalNewLine("");
+                    TeaBuilder.logHeader("COMPILING");
                 }
                 phase = teaVMPhase;
                 return TeaVMProgressFeedback.CONTINUE;
@@ -295,97 +259,11 @@ public class TeaBuilder {
             @Override
             public TeaVMProgressFeedback progressReached(int i) {
                 if(phase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    TeaBuilderLog.logInternal("|");
+                    TeaBuilder.logInternal("|");
                 }
                 return TeaVMProgressFeedback.CONTINUE;
             }
         });
-        preserveClasses(tool, configuration, classLoader);
-    }
-
-    public static void copyRuntime(File setTargetDirectory) {
-        try {
-            var name = new StringBuilder("wasm-gc-runtime.min");
-            setTargetDirectory.mkdirs();
-            var resourceName = "org/teavm/backend/wasm/" + name + ".js";
-            var classLoader = TeaBuilder.class.getClassLoader();
-            try (var input = classLoader.getResourceAsStream(resourceName)) {
-                Files.copy(input, setTargetDirectory.toPath().resolve(name + ".js"), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch(Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
-
-    public static void configAssets() {
-        TeaBuilderLog.logHeader("COPYING ASSETS");
-        String webappDirectory = configuration.webappPath;;
-        FileHandle distFolder = new FileHandle(webappDirectory);
-        FileHandle webappFolder = distFolder.child(webappName);
-        FileHandle assetsFolder = webappFolder.child("assets");
-        FileHandle scriptsFolder = webappFolder.child("scripts");
-        FileHandle assetFile = assetsFolder.child("assets.txt");
-
-        AssetFilter filter = configuration.assetFilter;
-
-        if(configuration.useDefaultHtmlIndex) {
-            BaseWebApp webApp = configuration.webApp;
-            if(webApp == null) {
-                webApp = new DefaultWebApp();
-            }
-            webApp.setup(classLoader, configuration, webappFolder);
-        }
-        if(configuration.targetType == TeaVMTargetType.WEBASSEMBLY_GC) {
-            copyRuntime(setTargetDirectory);
-        }
-
-        boolean generateAssetPaths = configuration.shouldGenerateAssetFile;
-
-        ArrayList<AssetsCopy.Asset> alLAssets = new ArrayList<>();
-        // Copy Assets files
-        ArrayList<AssetFileHandle> assetsPaths = configuration.assetsPath;
-        for(int i = 0; i < assetsPaths.size(); i++) {
-            AssetFileHandle assetFileHandle = assetsPaths.get(i);
-            ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, filter, assetsFolder);
-            alLAssets.addAll(assets);
-        }
-
-        if(assetFile.exists()) {
-            // Delete assets.txt before adding the updated list.
-            assetFile.delete();
-        }
-
-        if(generateAssetPaths) {
-            AssetsCopy.generateAssetsFile(alLAssets, assetsFolder, assetFile);
-        }
-
-        // Copy assets from resources
-        List<String> resources = TeaVMResourceProperties.getResources(acceptedURL);
-
-        List<String> scripts = new ArrayList<>();
-        // Filter out javascript
-        for(int i = 0; i < resources.size(); i++) {
-            String asset = resources.get(i);
-            if(asset.endsWith(".js") || asset.endsWith(".wasm")) {
-                resources.remove(i);
-                scripts.add(asset);
-                i--;
-            }
-        }
-        // Copy additional classpath files
-        ArrayList<String> classPathAssetsFiles = configuration.assetsClasspath;
-        ArrayList<AssetsCopy.Asset> classpathAssets = AssetsCopy.copyResources(classLoader, classPathAssetsFiles, filter, assetsFolder);
-
-        // Copy resources
-        ArrayList<AssetsCopy.Asset> resourceAssets = AssetsCopy.copyResources(classLoader, resources, filter, assetsFolder);
-
-        // Copy scripts
-        ArrayList<AssetsCopy.Asset> scriptsAssets = AssetsCopy.copyScripts(classLoader, scripts, scriptsFolder);
-
-        AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
-        AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
-
-        TeaBuilderLog.log("");
     }
 
     private static File getSourceDirectory(File file) {
