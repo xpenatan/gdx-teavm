@@ -1020,8 +1020,8 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
     )
     private static native boolean isVibrationSupportedCatchedJSNI();
 
-    @JSBody(script =
-            "navigator.vibrate(duration);"
+    @JSBody(params = "durationMillis", script =
+            "navigator.vibrate(durationMillis);"
     )
     private static native void vibrateNativeCatchedJSNI(int durationMillis);
 
