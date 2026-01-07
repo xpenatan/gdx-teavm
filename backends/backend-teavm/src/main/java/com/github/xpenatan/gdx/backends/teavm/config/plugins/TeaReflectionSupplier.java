@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
-import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilderLog;
+import com.github.xpenatan.gdx.backends.teavm.config.TeaLogHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,11 +53,11 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
      * Must be called after TeaBuilder.build
      */
     public static void printReflectionClasses() {
-        TeaBuilderLog.logHeader("REFLECTION CLASSES: " + clazzList.size());
+        TeaLogHelper.logHeader("REFLECTION CLASSES: " + clazzList.size());
         for(String reflectionClass : clazzList) {
-            TeaBuilderLog.log(reflectionClass);
+            TeaLogHelper.log(reflectionClass);
         }
-        TeaBuilderLog.logEnd();
+        TeaLogHelper.logEnd();
     }
 
     public TeaReflectionSupplier() {

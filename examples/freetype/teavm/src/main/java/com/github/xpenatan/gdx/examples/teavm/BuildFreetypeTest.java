@@ -1,26 +1,21 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.config.backend.TeaJavaScriptBackend;
+import com.github.xpenatan.gdx.backends.teavm.config.compiler.TeaCompiler;
 import java.io.File;
 import java.io.IOException;
-import org.teavm.tooling.TeaVMTargetType;
-import org.teavm.tooling.TeaVMTool;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class BuildFreetypeTest {
 
     public static void main(String[] args) throws IOException {
-        TeaBuildConfiguration teaBuildConfiguration = new TeaBuildConfiguration();
-        teaBuildConfiguration.assetsPath.add(new AssetFileHandle("../desktop/assets"));
-        teaBuildConfiguration.webappPath = new File("build/dist").getCanonicalPath();
-        teaBuildConfiguration.targetType = TeaVMTargetType.JAVASCRIPT;
-        TeaBuilder.config(teaBuildConfiguration);
-        TeaVMTool tool = new TeaVMTool();
-        tool.setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE);
-        tool.setMainClass(FreetypeTestLauncher.class.getName());
-        tool.setObfuscated(false);
-        TeaBuilder.build(tool);
+        new TeaCompiler()
+                .addAssets(new AssetFileHandle("../desktop/assets"))
+                .setBackend(new TeaJavaScriptBackend())
+                .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
+                .setMainClass(FreetypeTestLauncher.class.getName())
+                .setObfuscated(false)
+                .build(new File("build/dist"));
     }
 }

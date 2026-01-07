@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMTargetType;
 
+@Deprecated
 public class DefaultWebApp extends BaseWebApp {
 
     @Override

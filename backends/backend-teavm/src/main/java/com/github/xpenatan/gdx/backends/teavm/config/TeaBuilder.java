@@ -37,6 +37,7 @@ import org.teavm.vm.TeaVMProgressListener;
 /**
  * @author xpenatan
  */
+@Deprecated
 public class TeaBuilder {
 
     enum ACCEPT_STATE {
@@ -60,9 +61,9 @@ public class TeaBuilder {
 
         configClasspath(configuration, acceptedURL);
 
-        TeaBuilderLog.log("");
-        TeaBuilderLog.log("targetDirectory: " + webappDirectory);
-        TeaBuilderLog.log("");
+        TeaLogHelper.log("");
+        TeaLogHelper.log("targetDirectory: " + webappDirectory);
+        TeaLogHelper.log("");
 
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
         classLoader = new TeaClassLoader(classPaths, TeaBuilder.class.getClassLoader());
@@ -89,7 +90,7 @@ public class TeaBuilder {
             Collection<String> classes = tool.getClasses();
             List<Problem> problems = problemProvider.getProblems();
             if(problems.size() > 0) {
-                TeaBuilderLog.logHeader("Compiler problems");
+                TeaLogHelper.logHeader("Compiler problems");
 
                 DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
 
@@ -99,26 +100,26 @@ public class TeaBuilder {
                     MethodReference method = location != null ? location.getMethod() : null;
 
                     if(i > 0) {
-                        TeaBuilderLog.log("");
-                        TeaBuilderLog.log("----");
-                        TeaBuilderLog.log("");
+                        TeaLogHelper.log("");
+                        TeaLogHelper.log("----");
+                        TeaLogHelper.log("");
                     }
-                    TeaBuilderLog.log(problem.getSeverity().toString() + "[" + i + "]");
+                    TeaLogHelper.log(problem.getSeverity().toString() + "[" + i + "]");
                     var sb = new StringBuilder();
                     TeaVMProblemRenderer.renderCallStack(tool.getDependencyInfo().getCallGraph(),
                             problem.getLocation(), sb);
                     var locationString = sb.toString();
-                    locationString.lines().forEach(TeaBuilderLog::log);
+                    locationString.lines().forEach(TeaLogHelper::log);
                     p.clear();
                     problem.render(p);
                     String text = p.getText();
-                    TeaBuilderLog.log("Text: " + text);
+                    TeaLogHelper.log("Text: " + text);
                 }
-                TeaBuilderLog.logEnd();
+                TeaLogHelper.logEnd();
             }
             else {
                 isSuccess = true;
-                TeaBuilderLog.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
+                TeaLogHelper.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
             }
 
             if(logClassNames) {
@@ -126,7 +127,7 @@ public class TeaBuilder {
                 Iterator<String> iterator = sorted.iterator();
                 while(iterator.hasNext()) {
                     String clazz = iterator.next();
-                    TeaBuilderLog.log(clazz);
+                    TeaLogHelper.log(clazz);
                 }
             }
         }
@@ -225,9 +226,9 @@ public class TeaBuilder {
 
         automaticReflection(acceptedURL);
 
-        TeaBuilderLog.logHeader("ACCEPTED CLASSPATH");
+        TeaLogHelper.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {
-            TeaBuilderLog.log(i + " true: " + acceptedURL.get(i).getPath());
+            TeaLogHelper.log(i + " true: " + acceptedURL.get(i).getPath());
         }
     }
 
@@ -282,11 +283,11 @@ public class TeaBuilder {
             @Override
             public TeaVMProgressFeedback phaseStarted(TeaVMPhase teaVMPhase, int i) {
                 if(teaVMPhase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    TeaBuilderLog.logHeader("DEPENDENCY_ANALYSIS");
+                    TeaLogHelper.logHeader("DEPENDENCY_ANALYSIS");
                 }
                 else if(teaVMPhase == TeaVMPhase.COMPILING) {
-                    TeaBuilderLog.logInternalNewLine("");
-                    TeaBuilderLog.logHeader("COMPILING");
+                    TeaLogHelper.logInternalNewLine("");
+                    TeaLogHelper.logHeader("COMPILING");
                 }
                 phase = teaVMPhase;
                 return TeaVMProgressFeedback.CONTINUE;
@@ -295,7 +296,7 @@ public class TeaBuilder {
             @Override
             public TeaVMProgressFeedback progressReached(int i) {
                 if(phase == TeaVMPhase.DEPENDENCY_ANALYSIS) {
-                    TeaBuilderLog.logInternal("|");
+                    TeaLogHelper.logInternal("|");
                 }
                 return TeaVMProgressFeedback.CONTINUE;
             }
@@ -318,7 +319,7 @@ public class TeaBuilder {
     }
 
     public static void configAssets() {
-        TeaBuilderLog.logHeader("COPYING ASSETS");
+        TeaLogHelper.logHeader("COPYING ASSETS");
         String webappDirectory = configuration.webappPath;;
         FileHandle distFolder = new FileHandle(webappDirectory);
         FileHandle webappFolder = distFolder.child(webappName);
@@ -385,7 +386,7 @@ public class TeaBuilder {
         AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
         AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
 
-        TeaBuilderLog.log("");
+        TeaLogHelper.log("");
     }
 
     private static File getSourceDirectory(File file) {
