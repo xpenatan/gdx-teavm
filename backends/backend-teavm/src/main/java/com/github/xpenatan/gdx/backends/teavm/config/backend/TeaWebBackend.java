@@ -25,8 +25,13 @@ abstract class TeaWebBackend extends TeaBackend {
 
     @Override
     protected void setup(TeaCompilerData data) {
-        releasePath = new File(data.output, "webapp");
-        tool.setTargetDirectory(releasePath);
+        if(data.releasePath != null) {
+            releasePath = data.releasePath.getAbsolutePath().replace("\\", "/");
+        }
+        else {
+            releasePath = new File(data.output, "webapp").getAbsolutePath().replace("\\", "/");
+        }
+        tool.setTargetDirectory(new File(releasePath));
         setupWebapp(data);
     }
 
@@ -62,7 +67,7 @@ abstract class TeaWebBackend extends TeaBackend {
             String jsName = "wasm-gc-runtime.min.js";
             jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\"" + jsName + "\"></script>";
 
-            copyRuntime(releasePath);
+            copyRuntime(new File(releasePath));
         }
 
         indexHtml = indexHtml.replace("%MODE%", mode);

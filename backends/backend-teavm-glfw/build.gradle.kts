@@ -4,7 +4,7 @@ plugins {
 
 val moduleName = "backend-teavm-c"
 
-sourceSets["main"].java.setSrcDirs(mutableSetOf("src/main/java/"))
+sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
 sourceSets["main"].resources.srcDir("src/main/cpp/")
 
 dependencies {

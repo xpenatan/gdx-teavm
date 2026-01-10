@@ -1,19 +1,18 @@
-package com.github.xpenatan.gdx.backends.teavm.glfw;
+package com.github.xpenatan.gdx.backends.teavm.glfw.utils;
 
 import java.nio.ByteBuffer;
-import org.teavm.backend.c.runtime.Memory;
 import org.teavm.interop.Structure;
 
-public class TeaGLFWImage extends Structure {
+public class GLFWImage extends Structure {
     public int width;
     public int height;
     public byte[] pixels;
 
-    public TeaGLFWImage() {
+    public GLFWImage() {
     }
 
-    public static TeaGLFWImage malloc() {
-        return Memory.malloc(sizeOf(TeaGLFWImage.class)).toStructure();
+    public static GLFWImage malloc() {
+        return Memory.malloc(sizeOf(GLFWImage.class)).toStructure();
     }
 
     public static Buffer malloc(int length) {
@@ -31,10 +30,10 @@ public class TeaGLFWImage extends Structure {
     }
 
     public static class Buffer extends Structure {
-        public TeaGLFWImage[] buffer = new TeaGLFWImage[0];
+        public GLFWImage[] buffer = new GLFWImage[0];
 
-        public void put(TeaGLFWImage icon) {
-            TeaGLFWImage[] newBuffer = new TeaGLFWImage[buffer.length + 1];
+        public void put(GLFWImage icon) {
+            GLFWImage[] newBuffer = new GLFWImage[buffer.length + 1];
             System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
             newBuffer[buffer.length] = icon;
             buffer = newBuffer;

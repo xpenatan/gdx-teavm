@@ -1,12 +1,11 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
-import com.badlogic.gdx.ApplicationListener;
-import com.github.xpenatan.gdx.backends.teavm.glfw.TeaGLFWApplication;
+import com.github.xpenatan.gdx.backends.teavm.glfw.GLFWApplication;
+import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 
-public class TestCLauncher implements ApplicationListener {
+public class TestCLauncher {
 
     public static void main(String[] args) {
-
         int test = 931231235;
 
         int count = 0;
@@ -14,40 +13,12 @@ public class TestCLauncher implements ApplicationListener {
             count++;
         }
 
-
         System.out.println("HELLO WORLD: " + test);
         System.out.println("count: " + count);
 
-        new TeaGLFWApplication(new TestCLauncher());
+        System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
+//        new GLFWApplication(new TestCApplication());
+        new GLFWApplication(new GearsDemo());
     }
 
-    @Override
-    public void create() {
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void render() {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void dispose() {
-
-    }
 }

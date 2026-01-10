@@ -91,6 +91,11 @@ public class TeaCompiler {
         return this;
     }
 
+    public TeaCompiler setReleasePath(File releasePath) {
+        data.releasePath = releasePath;
+        return this;
+    }
+
     public void build(File output) {
         if(data != null) {
             if(data.backend != null) {

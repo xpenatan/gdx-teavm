@@ -44,7 +44,7 @@ public abstract class TeaBackend {
     protected TeaVMTool tool;
     protected TeaVMTargetType targetType;
     public boolean logClassNames;
-    protected File releasePath;
+    protected String releasePath;
 
     protected abstract void setup(TeaCompilerData data);
 
@@ -138,6 +138,9 @@ public abstract class TeaBackend {
     private void setupReflection(TeaCompilerData data, ArrayList<URL> acceptedURL) {
         for(URL classPath : acceptedURL) {
             try {
+                if(!new File(classPath.getFile()).exists()) {
+                    continue;
+                }
                 ZipInputStream zip = new ZipInputStream(classPath.openStream());
                 for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
                     if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
@@ -233,7 +236,13 @@ public abstract class TeaBackend {
                 }
                 else if(teaVMPhase == TeaVMPhase.COMPILING) {
                     TeaLogHelper.logInternalNewLine("");
-                    TeaLogHelper.logHeader("COMPILING");
+
+                    if(targetType == TeaVMTargetType.C) {
+                        TeaLogHelper.logHeader("GENERATING C SOURCE FILES");
+                    }
+                    else {
+                        TeaLogHelper.logHeader("COMPILING");
+                    }
                 }
                 phase = teaVMPhase;
                 return TeaVMProgressFeedback.CONTINUE;
@@ -334,7 +343,7 @@ public abstract class TeaBackend {
                 i--;
             }
             else if(asset.startsWith("/external_cpp/")) {
-                if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h")) {
+                if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h") || asset.endsWith(".c") || asset.endsWith(".cpp")) {
                     cppFiles.add(asset);
                 }
                 resources.remove(i);

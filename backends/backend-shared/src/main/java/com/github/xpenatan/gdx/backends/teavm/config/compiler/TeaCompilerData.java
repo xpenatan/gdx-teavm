@@ -14,6 +14,7 @@ public class TeaCompilerData {
     public boolean isObfuscated;
     public TeaVMOptimizationLevel optimizationLevel;
     public String mainClass;
+    public File releasePath;
     public File output;
     public final ArrayList<AssetFileHandle> assets = new ArrayList<>();
     public final ArrayList<SourceFileProvider> sourceFileProviders = new ArrayList<>();

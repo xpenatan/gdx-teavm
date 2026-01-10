@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
 import com.github.xpenatan.gdx.backends.teavm.glfw.config.backend.TeaCBackend;
 import com.github.xpenatan.gdx.backends.teavm.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.examples.tests.GearsDemo;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -19,6 +20,7 @@ public class BuildTeaVMTestDemo {
                 .setObfuscated(false)
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(TestCLauncher.class.getName())
+                .setReleasePath(new File("C:\\Users\\Xpe\\Desktop\\test app"))
                 .build(new File("build/dist"));
     }
 }

@@ -1,6 +1,7 @@
-package com.github.xpenatan.gdx.backends.teavm.glfw;
+package com.github.xpenatan.gdx.backends.teavm.glfw.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.github.xpenatan.gdx.backends.teavm.glfw.GLFWCallbacks;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;
 import org.teavm.interop.Import;
@@ -9,7 +10,7 @@ import org.teavm.interop.Structure;
 import org.teavm.interop.c.Include;
 
 @Include("GLFW/glfw3.h")
-public class TeaGLFW {
+public class GLFW {
     public static final int GLFW_VERSION_MAJOR = 3;
     public static final int GLFW_VERSION_MINOR = 4;
     public static final int GLFW_VERSION_REVISION = 0;
@@ -733,7 +734,7 @@ public class TeaGLFW {
         glfwInitHint(hint, value);
     }
 
-    public static void setDebugCallback(TeaCallback o) {
+    public static void setDebugCallback(Callback o) {
         Gdx.app.error("GLFW", "Setting debug callback is not supported!");
     }
 
@@ -755,19 +756,19 @@ public class TeaGLFW {
         glfwSwapInterval(interval);
     }
 
-    public static long createCursor(TeaGLFWImage glfwImage, int xHotspot, int yHotspot) {
+    public static long createCursor(GLFWImage glfwImage, int xHotspot, int yHotspot) {
         return glfwCreateImage(glfwImage, xHotspot, yHotspot).toLong();
     }
 
     @Import(name = "glfwCreateImage")
-    private static native Address glfwCreateImage(TeaGLFWImage glfwImage, int xHotspot, int yHotspot);
+    private static native Address glfwCreateImage(GLFWImage glfwImage, int xHotspot, int yHotspot);
 
     public static void destroyCursor(long cursor) {
-        glfwDestroyCursor(cursor);
+        glfwDestroyCursor(Address.fromLong(cursor));
     }
 
     @Import(name = "glfwDestroyCursor")
-    private static native void glfwDestroyCursor(long cursor);
+    private static native void glfwDestroyCursor(Address cursor);
 
     public static long createStandardCursor(int cursor) {
         return glfwCreateStandardCursor(cursor).toLong();
@@ -777,11 +778,11 @@ public class TeaGLFW {
     private static native Address glfwCreateStandardCursor(int cursor);
 
     public static void setCursor(long window, long cursor) {
-        glfwSetCursor(window, cursor);
+        glfwSetCursor(Address.fromLong(window), Address.fromLong(cursor));
     }
 
     @Import(name = "glfwSetCursor")
-    private static native void glfwSetCursor(long window, long cursor);
+    private static native void glfwSetCursor(Address window, Address cursor);
 
     public static void setWindowShouldClose(long window, boolean b) {
         glfwSetWindowShouldClose(Address.fromLong(window), b);
@@ -853,11 +854,11 @@ public class TeaGLFW {
         return strings;
     }
 
-    public static abstract class GLFWErrorCallback extends Function {
-        public static GLFWErrorCallback createPrint() {
-            return Function.get(GLFWErrorCallback.class, TeaNativeCallbacks.class, "onError");
-        }
+    public static GLFWErrorCallback createPrint() {
+        return Function.get(GLFWErrorCallback.class, GLFWCallbacks.class, "onError");
+    }
 
+    public static abstract class GLFWErrorCallback extends Function {
         public abstract void invoke(int error, String description);
     }
 
