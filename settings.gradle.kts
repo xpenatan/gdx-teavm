@@ -14,7 +14,6 @@ pluginManagement {
 
 include(":backends:backend-shared")
 include(":backends:backend-teavm")
-include(":backends:backend-teavm-glfw")
 
 include(":extensions:asset-loader")
 include(":extensions:gdx-controllers-teavm")
@@ -27,7 +26,6 @@ include(":extensions:gdx-freetype-teavm")
 include(":examples:core:core")
 include(":examples:core:desktop")
 include(":examples:core:teavm")
-include(":examples:core:teavm-glfw")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
