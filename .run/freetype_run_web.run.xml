@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="core_run_desktop" type="GradleRunConfiguration" factoryName="Gradle" folderName="examples">
+  <configuration default="false" name="freetype_run_web" type="GradleRunConfiguration" factoryName="Gradle" folderName="examples-freetype">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":examples:core:desktop:core_run_desktop" />
+          <option value=":examples:freetype:teavm:freetype_run_web" />
         </list>
       </option>
       <option name="vmOptions" />

@@ -13,13 +13,11 @@ dependencies {
 
     implementation(project(":backends:backend-teavm"))
     implementation(project(":extensions:gdx-freetype-teavm"))
-
-    implementation("com.github.xpenatan.gdx-imgui:imgui-teavm:${LibExt.gdxImGuiVersion}")
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGdxTest"
 
-tasks.register<JavaExec>("gdx-tests-build") {
+tasks.register<JavaExec>("gdx_tests_build_web") {
     group = "examples-teavm"
     description = "Build gdx-tests example"
     mainClass.set(mainClassName)
@@ -27,11 +25,11 @@ tasks.register<JavaExec>("gdx-tests-build") {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-tasks.register("gdx-tests-run-teavm") {
+tasks.register("gdx_tests_run_web") {
     group = "examples-teavm"
     description = "Run gdx-tests teavm app"
-    val list = listOf("gdx-tests-build", "jettyRun")
+    val list = listOf("gdx_tests_build_web", "jettyRun")
     dependsOn(list)
 
-    tasks.findByName("jettyRun")?.mustRunAfter("gdx-tests-build")
+    tasks.findByName("jettyRun")?.mustRunAfter("gdx_tests_build_web")
 }
