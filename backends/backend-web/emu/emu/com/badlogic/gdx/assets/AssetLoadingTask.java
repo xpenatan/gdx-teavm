@@ -14,9 +14,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import emu.com.badlogic.gdx.utils.async.AsyncExecutor;
 import emu.com.badlogic.gdx.utils.async.AsyncResult;
 import emu.com.badlogic.gdx.utils.async.AsyncTask;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetType;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+import com.github.xpenatan.gdx.teavm.backend.web.assetloader.AssetInstance;
+import com.github.xpenatan.gdx.teavm.backend.web.assetloader.AssetType;
+import com.github.xpenatan.gdx.teavm.backend.web.assetloader.AssetLoader;
 
 public class AssetLoadingTask implements AsyncTask<Void> {
     AssetManager manager;

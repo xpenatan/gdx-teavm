@@ -1,7 +1,7 @@
 package emu.com.badlogic.gdx.utils;
 
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetInstance;
-import com.github.xpenatan.gdx.backends.teavm.assetloader.AssetLoader;
+import com.github.xpenatan.gdx.teavm.backend.web.assetloader.AssetInstance;
+import com.github.xpenatan.gdx.teavm.backend.web.assetloader.AssetLoader;
 
 public class SharedLibraryLoader {
 

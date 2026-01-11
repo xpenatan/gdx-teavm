@@ -1,1 +1,1 @@
-com.github.xpenatan.gdx.backends.teavm.config.plugins.TeaReflectionSupplier
+com.github.xpenatan.gdx.teavm.backend.web.config.plugins.TeaReflectionSupplier

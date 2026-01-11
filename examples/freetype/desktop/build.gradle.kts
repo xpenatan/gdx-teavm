@@ -1,4 +1,4 @@
-val mainClassName = "com.github.xpenatan.gdx.examples.desktop.Main"
+val mainClassName = "com.github.xpenatan.gdx.teavm.example.freetype.desktop.Main"
 val assetsDir = File("/assets")
 
 dependencies {

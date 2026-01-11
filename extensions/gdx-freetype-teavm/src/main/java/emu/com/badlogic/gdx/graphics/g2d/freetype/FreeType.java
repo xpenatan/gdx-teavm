@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.backends.teavm.dom.typedarray.TypedArrays;
+import com.github.xpenatan.gdx.teavm.backend.web.dom.typedarray.TypedArrays;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;

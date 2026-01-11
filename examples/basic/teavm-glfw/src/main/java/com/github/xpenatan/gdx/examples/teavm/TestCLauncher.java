@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.glfw.GLFWApplication;
-import com.github.xpenatan.gdx.examples.tests.GearsDemo;
+import com.github.xpenatan.gdx.teavm.backend.teavm.glfw.GLFWApplication;
+import com.github.xpenatan.gdx.example.basic.tests.GearsDemo;
 
 public class TestCLauncher {
 

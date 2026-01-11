@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Matrix3;
 import emu.com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.backends.teavm.TeaTool;
+import com.github.xpenatan.gdx.teavm.backend.web.TeaTool;
 import org.teavm.classlib.PlatformDetector;
 import org.teavm.classlib.impl.nio.Buffers;
 

@@ -17,7 +17,7 @@ dependencies {
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 
-val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildFreetypeTest"
+val mainClassName = "com.github.xpenatan.gdx.teavm.example.freetype.teavm.BuildFreetypeTest"
 
 tasks.register<JavaExec>("freetype_build_web") {
     dependsOn("classes")

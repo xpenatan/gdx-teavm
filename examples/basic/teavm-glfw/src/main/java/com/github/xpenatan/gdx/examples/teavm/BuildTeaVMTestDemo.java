@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.examples.teavm;
 
-import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle;
-import com.github.xpenatan.gdx.backends.teavm.glfw.config.backend.TeaGLFWBackend;
-import com.github.xpenatan.gdx.backends.teavm.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backend.shared.config.AssetFileHandle;
+import com.github.xpenatan.gdx.teavm.backend.teavm.glfw.config.backend.TeaGLFWBackend;
+import com.github.xpenatan.gdx.teavm.backend.shared.config.compiler.TeaCompiler;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.vm.TeaVMOptimizationLevel;
