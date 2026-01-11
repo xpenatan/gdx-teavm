@@ -13,7 +13,7 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:freetype:core"))
 
-    implementation(project(":backends:backend-teavm"))
+    implementation(project(":backends:backend-web"))
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 

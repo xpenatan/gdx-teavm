@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 include(":backends:backend-shared")
-include(":backends:backend-teavm")
+include(":backends:backend-web")
 include(":backends:backend-glfw")
 
 include(":extensions:asset-loader")

@@ -1,7 +1,7 @@
 val moduleName = "gdx-freetype-teavm"
 
 dependencies {
-    implementation(project(":backends:backend-teavm"))
+    implementation(project(":backends:backend-web"))
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
 }
 
