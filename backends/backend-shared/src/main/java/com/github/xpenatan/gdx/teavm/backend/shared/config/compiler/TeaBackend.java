@@ -71,6 +71,8 @@ public abstract class TeaBackend {
         for(int i = 0; i < data.sourceFileProviders.size(); i++) {
             tool.addSourceFileProvider(data.sourceFileProviders.get(i));
         }
+        List<String> classesToPreserve = tool.getClassesToPreserve();
+        classesToPreserve.addAll(data.reflectionClasses);
         tool.setDebugInformationGenerated(data.debugInformationGenerated);
         tool.setSourceMapsFileGenerated(data.sourceMapsFileGenerated);
         tool.setMinHeapSize(data.minHeapSize);
@@ -164,7 +166,6 @@ public abstract class TeaBackend {
     }
 
     protected void build(TeaCompilerData data) {
-        boolean isSuccess = false;
         try {
             tool.setTargetType(targetType);
             tool.generate();
