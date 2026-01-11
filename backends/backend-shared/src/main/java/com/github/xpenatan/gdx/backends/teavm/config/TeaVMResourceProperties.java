@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -145,7 +146,6 @@ public class TeaVMResourceProperties {
                 }
             }
         } catch(IOException e) {
-            throw new RuntimeException(e);
         }
         return null;
     }

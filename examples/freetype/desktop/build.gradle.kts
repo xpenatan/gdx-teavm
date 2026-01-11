@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":examples:freetype:core"))
 }
 
-tasks.register<JavaExec>("freetype-run-desktop") {
+tasks.register<JavaExec>("freetype_run_desktop") {
     dependsOn("classes")
     group = "examples-desktop"
     description = "Run Freetype example"

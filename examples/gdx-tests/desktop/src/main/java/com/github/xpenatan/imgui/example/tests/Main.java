@@ -9,7 +9,6 @@ import com.badlogic.gdx.tests.g3d.MultipleRenderTargetTest;
 import com.badlogic.gdx.tests.g3d.TextureArrayTest;
 import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
 import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
-import com.github.xpenatan.imgui.example.tests.imgui.ImGuiGame;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class Main {
@@ -21,7 +20,6 @@ public class Main {
         config.gles30ContextMajorVersion = 4;
         config.gles30ContextMinorVersion = 3;
         config.useGL30 = true;
-//        new LwjglApplication(new TeaVMTestWrapper(), config);
-        new LwjglApplication(new ImGuiGame(), config);
+        new LwjglApplication(new TeaVMTestWrapper(), config);
     }
 }

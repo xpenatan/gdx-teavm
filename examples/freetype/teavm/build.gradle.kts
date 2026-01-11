@@ -19,7 +19,7 @@ dependencies {
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildFreetypeTest"
 
-tasks.register<JavaExec>("freetype-build") {
+tasks.register<JavaExec>("freetype_build_web") {
     dependsOn("classes")
     group = "examples-teavm"
     description = "Build teavm FreeType example"
@@ -27,15 +27,15 @@ tasks.register<JavaExec>("freetype-build") {
     classpath = sourceSets["main"].runtimeClasspath
 }
 
-tasks.register("freetype-run-teavm") {
+tasks.register("freetype_run_web") {
     group = "examples-teavm"
-    description = "Run FreeType Demo example"
+    description = "Run FreeType example"
     val list = arrayOf(
         "clean",
-        "freetype-build",
+        "freetype_build_web",
         "jettyRun"
     )
     dependsOn(list)
-    tasks.findByName("freetype-build")?.mustRunAfter("clean")
-    tasks.findByName("jettyRun")?.mustRunAfter("freetype-build")
+    tasks.findByName("freetype_build_web")?.mustRunAfter("clean")
+    tasks.findByName("jettyRun")?.mustRunAfter("freetype_build_web")
 }

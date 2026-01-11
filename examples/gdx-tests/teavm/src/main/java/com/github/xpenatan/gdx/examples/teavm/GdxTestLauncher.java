@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.examples.teavm;
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
-import com.github.xpenatan.imgui.example.tests.imgui.ImGuiGame;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class GdxTestLauncher {
@@ -18,7 +17,6 @@ public class GdxTestLauncher {
             assetLoader.loadScript("freetype.js");
         };
 
-        new TeaApplication(new ImGuiGame(), config);
-//        new TeaApplication(new TeaVMTestWrapper(), config);
+        new TeaApplication(new TeaVMTestWrapper(), config);
     }
 }
