@@ -11,7 +11,7 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 public class TeaCompilerData {
     public TeaBackend backend;
     public String outputName = "app";
-    public boolean isObfuscated;
+    public boolean obfuscated;
     public TeaVMOptimizationLevel optimizationLevel;
     public String mainClass;
     public File releasePath;

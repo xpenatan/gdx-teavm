@@ -9,11 +9,27 @@ import com.github.xpenatan.jParser.builder.targets.WindowsMSVCTarget;
 import com.github.xpenatan.jParser.core.util.CustomFileDescriptor;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Properties;
+import org.teavm.backend.c.CTarget;
+import org.teavm.backend.c.generate.CNameProvider;
+import org.teavm.backend.c.generate.ShorteningFileNameProvider;
+import org.teavm.backend.c.generate.SimpleFileNameProvider;
+import org.teavm.cache.AlwaysStaleCacheStatus;
+import org.teavm.cache.EmptyProgramCache;
+import org.teavm.model.PreOptimizingClassHolderSource;
+import org.teavm.model.ReferenceCache;
+import org.teavm.parsing.ClasspathClassHolderSource;
+import org.teavm.parsing.ClasspathResourceProvider;
 import org.teavm.tooling.TeaVMTargetType;
+import org.teavm.vm.BuildTarget;
+import org.teavm.vm.DirectoryBuildTarget;
+import org.teavm.vm.TeaVM;
+import org.teavm.vm.TeaVMBuilder;
 
 public class TeaGLFWBackend extends TeaBackend {
 
     public boolean shouldGenerateSource = true;
+    public boolean shouldUseCustomGeneration = true;
 
     protected String buildRootPath;
     protected String generatedSources;
@@ -34,17 +50,60 @@ public class TeaGLFWBackend extends TeaBackend {
         tool.setTargetDirectory(new File(generatedSources));
     }
 
+    private void generate(TeaCompilerData data) {
+        ClasspathResourceProvider classpathResourceProvider = new ClasspathResourceProvider(classLoader);
+
+        CTarget cTarget = new CTarget(new CNameProvider());
+        cTarget.setMinHeapSize(data.minHeapSize);
+        cTarget.setMaxHeapSize(data.maxHeapSize);
+        cTarget.setLineNumbersGenerated(data.debugInformationGenerated);
+        cTarget.setHeapDump(false);
+        cTarget.setObfuscated(data.obfuscated);
+        cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
+        ReferenceCache referenceCache = new ReferenceCache();
+        TeaVMBuilder vmBuilder = new TeaVMBuilder(cTarget);
+        vmBuilder.setReferenceCache(referenceCache);
+
+        PreOptimizingClassHolderSource preOptimizingClassHolderSource = new PreOptimizingClassHolderSource(new ClasspathClassHolderSource(classpathResourceProvider, referenceCache));
+        vmBuilder.setClassLoader(classLoader);
+        vmBuilder.setClassSource(preOptimizingClassHolderSource);
+
+        Properties properties = new Properties();
+
+        TeaVM vm = vmBuilder.build();
+        vm.setProgressListener(obtainProgressListener());
+        vm.setProperties(properties);
+        vm.setProgramCache(EmptyProgramCache.INSTANCE);
+        vm.setCacheStatus(AlwaysStaleCacheStatus.INSTANCE);
+        vm.setOptimizationLevel(data.optimizationLevel);
+        vm.installPlugins();
+        vm.setEntryPoint(data.mainClass);
+        vm.setEntryPointName("main");
+        for(String className : data.reflectionClasses) {
+            vm.preserveType(className);
+        }
+        File targetDirectory = tool.getTargetDirectory();
+        if(!targetDirectory.exists() && !targetDirectory.mkdirs()) {
+            System.err.println("Target directory could not be created");
+            System.exit(-1);
+        }
+
+        BuildTarget buildTarget = new DirectoryBuildTarget(targetDirectory);
+        vm.build(buildTarget, data.outputName);
+
+        logBuild(vm.getProblemProvider(), vm.getClasses(), vm.getDependencyInfo().getCallGraph());
+    }
+
     @Override
     protected void build(TeaCompilerData data) {
         if(shouldGenerateSource) {
-            super.build(data);
+            if(shouldUseCustomGeneration) {
+                generate(data);
+            }
+            else {
+                super.build(data);
+            }
         }
-
-//        CTarget cTarget = new CTarget(new CNameProvider());
-
-//        TeaVMBuilder vmBuilder = new TeaVMBuilder(cTarget);
-
-
 
         String libName = data.outputName;
         String buildCPath = buildRootPath + "/c/build";

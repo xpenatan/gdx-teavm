@@ -19,7 +19,7 @@ public class BuildTeaVMTestDemo {
                 .setObfuscated(false)
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(TestCLauncher.class.getName())
-                .setReleasePath(new File("C:\\Users\\Xpe\\Desktop\\test app"))
+                .setReleasePath(new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "test app"))
                 .build(new File("build/dist"));
     }
 }
