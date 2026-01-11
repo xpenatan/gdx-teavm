@@ -2,7 +2,7 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
 //    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
     implementation(project(":examples:basic:core"))
-    implementation(project(":backends:backend-teavm-glfw"))
+    implementation(project(":backends:backend-glfw"))
 }
 
 val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"

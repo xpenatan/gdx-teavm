@@ -17,8 +17,8 @@ public class TestCLauncher {
         System.out.println("count: " + count);
 
         System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
-        new GLFWApplication(new TestCApplication());
-//        new GLFWApplication(new GearsDemo());
+//        new GLFWApplication(new TestCApplication());
+        new GLFWApplication(new GearsDemo());
     }
 
 }
