@@ -17,7 +17,7 @@ public class TeaCompiler {
     }
 
     public TeaCompiler setObfuscated(boolean flag) {
-        data.isObfuscated = flag;
+        data.obfuscated = flag;
         return this;
     }
 

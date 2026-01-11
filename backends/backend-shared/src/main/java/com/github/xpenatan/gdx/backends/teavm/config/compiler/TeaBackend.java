@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.teavm.callgraph.CallGraph;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
 import org.teavm.diagnostics.ProblemProvider;
@@ -63,7 +64,7 @@ public abstract class TeaBackend {
 
     private void initializeTeavmTool(TeaCompilerData data) {
         tool = new TeaVMTool();
-        tool.setObfuscated(data.isObfuscated);
+        tool.setObfuscated(data.obfuscated);
         tool.setOptimizationLevel(data.optimizationLevel);
         tool.setMainClass(data.mainClass);
         tool.setClassLoader(classLoader);
@@ -78,7 +79,7 @@ public abstract class TeaBackend {
         tool.setMinDirectBuffersSize(data.minDirectBuffersSize);
         tool.setMaxDirectBuffersSize(data.maxDirectBuffersSize);
         tool.setTargetFileName(data.outputName);
-        setupProgressListener();
+        tool.setProgressListener(obtainProgressListener());
     }
 
     private void configClasspath(TeaCompilerData data, ArrayList<URL> acceptedURL) {
@@ -166,58 +167,60 @@ public abstract class TeaBackend {
     protected void build(TeaCompilerData data) {
         boolean isSuccess = false;
         try {
-            long timeStart = new Date().getTime();
             tool.setTargetType(targetType);
             tool.generate();
-            long timeEnd = new Date().getTime();
-            float seconds = (timeEnd - timeStart) / 1000f;
-            ProblemProvider problemProvider = tool.getProblemProvider();
-            Collection<String> classes = tool.getClasses();
-            List<Problem> problems = problemProvider.getProblems();
-            if(problems.size() > 0) {
-                TeaLogHelper.logHeader("Compiler problems");
-
-                DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
-
-                for(int i = 0; i < problems.size(); i++) {
-                    Problem problem = problems.get(i);
-                    CallLocation location = problem.getLocation();
-                    MethodReference method = location != null ? location.getMethod() : null;
-
-                    if(i > 0) {
-                        TeaLogHelper.log("");
-                        TeaLogHelper.log("----");
-                        TeaLogHelper.log("");
-                    }
-                    TeaLogHelper.log(problem.getSeverity().toString() + "[" + i + "]");
-                    var sb = new StringBuilder();
-                    TeaVMProblemRenderer.renderCallStack(tool.getDependencyInfo().getCallGraph(),
-                            problem.getLocation(), sb);
-                    var locationString = sb.toString();
-                    locationString.lines().forEach(TeaLogHelper::log);
-                    p.clear();
-                    problem.render(p);
-                    String text = p.getText();
-                    TeaLogHelper.log("Text: " + text);
-                }
-                TeaLogHelper.logEnd();
-            }
-            else {
-                isSuccess = true;
-                TeaLogHelper.logHeader("Build complete in " + seconds + " seconds. Total Classes: " + classes.size());
-            }
-
-            if(logClassNames) {
-                Stream<String> sorted = classes.stream().sorted();
-                Iterator<String> iterator = sorted.iterator();
-                while(iterator.hasNext()) {
-                    String clazz = iterator.next();
-                    TeaLogHelper.log(clazz);
-                }
-            }
-        }
-        catch(Throwable e) {
+        } catch(Throwable e) {
             throw new RuntimeException(e);
+        }
+        ProblemProvider problemProvider = tool.getProblemProvider();
+        Collection<String> classes = tool.getClasses();
+        CallGraph callGraph = tool.getDependencyInfo().getCallGraph();
+        logBuild(problemProvider, classes, callGraph);
+    }
+
+    protected void logBuild(ProblemProvider problemProvider, Collection<String> classes, CallGraph callGraph) {
+        boolean isSuccess = false;
+        List<Problem> problems = problemProvider.getProblems();
+        if(problems.size() > 0) {
+            TeaLogHelper.logHeader("Compiler problems");
+
+            DefaultProblemTextConsumer p = new DefaultProblemTextConsumer();
+
+            for(int i = 0; i < problems.size(); i++) {
+                Problem problem = problems.get(i);
+                CallLocation location = problem.getLocation();
+                MethodReference method = location != null ? location.getMethod() : null;
+
+                if(i > 0) {
+                    TeaLogHelper.log("");
+                    TeaLogHelper.log("----");
+                    TeaLogHelper.log("");
+                }
+                TeaLogHelper.log(problem.getSeverity().toString() + "[" + i + "]");
+                var sb = new StringBuilder();
+                TeaVMProblemRenderer.renderCallStack(callGraph,
+                        problem.getLocation(), sb);
+                var locationString = sb.toString();
+                locationString.lines().forEach(TeaLogHelper::log);
+                p.clear();
+                problem.render(p);
+                String text = p.getText();
+                TeaLogHelper.log("Text: " + text);
+            }
+            TeaLogHelper.logEnd();
+        }
+        else {
+            isSuccess = true;
+            TeaLogHelper.logHeader("Build complete. Total Classes: " + classes.size());
+        }
+
+        if(logClassNames) {
+            Stream<String> sorted = classes.stream().sorted();
+            Iterator<String> iterator = sorted.iterator();
+            while(iterator.hasNext()) {
+                String clazz = iterator.next();
+                TeaLogHelper.log(clazz);
+            }
         }
 
         if(!isSuccess) {
@@ -225,8 +228,8 @@ public abstract class TeaBackend {
         }
     }
 
-    private void setupProgressListener() {
-        tool.setProgressListener(new TeaVMProgressListener() {
+    protected TeaVMProgressListener obtainProgressListener() {
+        return new TeaVMProgressListener() {
             TeaVMPhase phase = null;
 
             @Override
@@ -255,7 +258,7 @@ public abstract class TeaBackend {
                 }
                 return TeaVMProgressFeedback.CONTINUE;
             }
-        });
+        };
     }
 
     private void setupSources(TeaCompilerData data) {
