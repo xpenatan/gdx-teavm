@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="core_build_teavm_glfw" type="GradleRunConfiguration" factoryName="Gradle" folderName="examples">
+  <configuration default="false" name="basic_build_teavm_glfw" type="GradleRunConfiguration" factoryName="Gradle" folderName="examples-basic">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":examples:core:teavm-glfw:core_build_teavm_glfw" />
+          <option value=":examples:basic:teavm-glfw:basic_build_teavm_glfw" />
         </list>
       </option>
       <option name="vmOptions" />
