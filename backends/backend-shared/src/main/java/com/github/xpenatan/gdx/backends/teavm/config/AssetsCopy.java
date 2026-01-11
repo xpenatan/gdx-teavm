@@ -62,18 +62,18 @@ public class AssetsCopy {
         }
         AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
         if(assetsPath != null && assetsPath.exists() && assetsPath.isDirectory()) {
-            TeaBuilder.log("Copying assets from:");
+            TeaLogHelper.log("Copying assets from:");
             FileHandle source = assetsPath;
             String path = source.path();
-            TeaBuilder.log(path);
+            TeaLogHelper.log(path);
             copyDirectory(source, assetsPath.assetsChildDir, target, defaultAssetFilter, assets);
 
-            TeaBuilder.log("to:");
-            TeaBuilder.log(assetsOutputPath);
+            TeaLogHelper.log("to:");
+            TeaLogHelper.log(assetsOutputPath);
         }
 
-        TeaBuilder.log("to:");
-        TeaBuilder.log(assetsOutputPath);
+        TeaLogHelper.log("to:");
+        TeaLogHelper.log(assetsOutputPath);
 
         return assets;
     }
@@ -89,8 +89,8 @@ public class AssetsCopy {
         if(classloader != null && classPathAssetsFiles != null) {
             // Copy assets from class package directory
             addDirectoryClassPathFiles(classPathAssetsFiles);
-            TeaBuilder.log("");
-            TeaBuilder.log("Copying assets from:");
+            TeaLogHelper.log("");
+            TeaLogHelper.log("Copying assets from:");
             for(String classpathFile : classPathAssetsFiles) {
                 String path = classpathFile;
                 if(path.startsWith("/") == false) {
@@ -102,7 +102,7 @@ public class AssetsCopy {
                 AssetFilterOption op = new AssetFilterOption();
                 if(defaultAssetFilter.accept(path, false, op)) {
                     try {
-                        TeaBuilder.log(classpathFile);
+                        TeaLogHelper.log(classpathFile);
                         InputStream is = classloader.getResourceAsStream(classpathFile);
                         if(is != null) {
                             FileHandle dest = target.child(classpathFile);
@@ -122,8 +122,8 @@ public class AssetsCopy {
             }
         }
 
-        TeaBuilder.log("to:");
-        TeaBuilder.log(assetsOutputPath);
+        TeaLogHelper.log("to:");
+        TeaLogHelper.log(assetsOutputPath);
 
         return assets;
     }

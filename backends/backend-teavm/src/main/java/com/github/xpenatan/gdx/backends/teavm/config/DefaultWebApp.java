@@ -1,12 +1,12 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.backends.teavm.TeaClassLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMTargetType;
 
+@Deprecated
 public class DefaultWebApp extends BaseWebApp {
 
     @Override

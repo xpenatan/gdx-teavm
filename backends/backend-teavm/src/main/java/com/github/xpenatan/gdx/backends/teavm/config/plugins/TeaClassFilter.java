@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.backends.teavm.config.plugins;
 
-import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder;
+import com.github.xpenatan.gdx.backends.teavm.config.TeaLogHelper;
 import java.util.ArrayList;
 import org.teavm.model.FieldReference;
 import org.teavm.model.MethodReference;
@@ -40,22 +40,22 @@ public class TeaClassFilter implements ElementFilter {
      * Must be called after TeaBuilder.build
      */
     public static void printAllowedClasses() {
-        TeaBuilder.logHeader("EXCLUDED CLASSES: " + ALLOWED_CLASSES.size());
+        TeaLogHelper.logHeader("EXCLUDED CLASSES: " + ALLOWED_CLASSES.size());
         for(String allowedClass : ALLOWED_CLASSES) {
-            TeaBuilder.log(allowedClass);
+            TeaLogHelper.log(allowedClass);
         }
-        TeaBuilder.logEnd();
+        TeaLogHelper.logEnd();
     }
 
     /**
      * Must be called after TeaBuilder.build
      */
     public static void printExcludedClasses() {
-        TeaBuilder.logHeader("ALLOWED CLASES: " + EXCLUDED_CLASSES.size());
+        TeaLogHelper.logHeader("ALLOWED CLASES: " + EXCLUDED_CLASSES.size());
         for(String excludedClass : EXCLUDED_CLASSES) {
-            TeaBuilder.log(excludedClass);
+            TeaLogHelper.log(excludedClass);
         }
-        TeaBuilder.logEnd();
+        TeaLogHelper.logEnd();
     }
 
     private static boolean containsClass(ArrayList<String> list, String className) {

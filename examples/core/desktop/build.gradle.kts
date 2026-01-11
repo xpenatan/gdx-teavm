@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":examples:core:core"))
 }
 
-tasks.register<JavaExec>("core-run-desktop") {
+tasks.register<JavaExec>("core_run_desktop") {
     dependsOn("classes")
     group = "examples-desktop"
     description = "Run core example"

@@ -1,6 +1,5 @@
 package com.github.xpenatan.gdx.backends.teavm.config;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +20,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import com.badlogic.gdx.Files.FileType;
 
 public class TeaVMResourceProperties {
     private static final String OPTION_ADDITIONAL_RESOURCES = "resources";
