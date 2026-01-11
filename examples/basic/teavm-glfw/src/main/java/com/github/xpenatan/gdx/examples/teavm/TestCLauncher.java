@@ -9,8 +9,8 @@ public class TestCLauncher {
     public static void main(String[] args) {
         System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
 //        new GLFWApplication(new TestCApplication());
-//        new GLFWApplication(new GearsDemo());
-        new GLFWApplication(new HelloTriangle());
+        new GLFWApplication(new GearsDemo());
+//        new GLFWApplication(new HelloTriangle());
     }
 
 }

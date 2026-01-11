@@ -24,9 +24,11 @@ public final class TBufferUtils {
             dst.limit(numFloats << 2);
         else if (dst instanceof FloatBuffer) dst.limit(numFloats);
         FloatBuffer floatBuffer = asFloatBuffer(dst);
-        floatBuffer.clear();
+        floatBuffer.position(0);
+        floatBuffer.limit(numFloats);
         dst.position(0);
         floatBuffer.put(src, offset, numFloats);
+        floatBuffer.position(0);
         dst.position(0);
         if(dst instanceof ByteBuffer)
             dst.limit(numFloats << 2);

@@ -15,8 +15,6 @@ public class HelloTriangle extends ApplicationAdapter {
     Mesh mesh;
     GLDebugProfiler glProfiler;
 
-    private boolean firstLog = true;
-
     @Override
     public void create() {
         glProfiler = new GLDebugProfiler(Gdx.graphics);
@@ -46,13 +44,13 @@ public class HelloTriangle extends ApplicationAdapter {
                 "}";
 
         shader = new ShaderProgram(vertexShader, fragmentShader);
+        if (!shader.isCompiled()) {
+            System.out.println("Shader compilation failed: " + shader.getLog());
+            throw new RuntimeException("Shader compilation failed");
+        }
         mesh = new Mesh(true, 3, 0, new VertexAttribute(Usage.Position, 3, "vPosition"));
         float[] vertices = {0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f};
         mesh.setVertices(vertices);
-
-        glProfiler.printMethodCounts();
-        glProfiler.reset();
-        System.out.println("-------------------");
     }
 
     @Override
@@ -62,10 +60,5 @@ public class HelloTriangle extends ApplicationAdapter {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shader.bind();
         mesh.render(shader, GL20.GL_TRIANGLES);
-
-        if(firstLog) {
-            firstLog = false;
-            glProfiler.printMethodCounts();
-        }
     }
 }
