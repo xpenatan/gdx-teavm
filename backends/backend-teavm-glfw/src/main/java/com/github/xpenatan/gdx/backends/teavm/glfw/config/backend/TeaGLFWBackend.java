@@ -10,7 +10,7 @@ import com.github.xpenatan.jParser.core.util.CustomFileDescriptor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
-import org.teavm.backend.c.CTarget;
+import org.teavm.backend.c.CustomCTarget;
 import org.teavm.backend.c.generate.CNameProvider;
 import org.teavm.backend.c.generate.ShorteningFileNameProvider;
 import org.teavm.backend.c.generate.SimpleFileNameProvider;
@@ -53,13 +53,14 @@ public class TeaGLFWBackend extends TeaBackend {
     private void generate(TeaCompilerData data) {
         ClasspathResourceProvider classpathResourceProvider = new ClasspathResourceProvider(classLoader);
 
-        CTarget cTarget = new CTarget(new CNameProvider());
+        CustomCTarget cTarget = new CustomCTarget(new CNameProvider());
         cTarget.setMinHeapSize(data.minHeapSize);
         cTarget.setMaxHeapSize(data.maxHeapSize);
         cTarget.setLineNumbersGenerated(data.debugInformationGenerated);
         cTarget.setHeapDump(false);
         cTarget.setObfuscated(data.obfuscated);
-        cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
+//        cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
+        cTarget.setFileNames(new SimpleFileNameProvider());
         ReferenceCache referenceCache = new ReferenceCache();
         TeaVMBuilder vmBuilder = new TeaVMBuilder(cTarget);
         vmBuilder.setReferenceCache(referenceCache);
