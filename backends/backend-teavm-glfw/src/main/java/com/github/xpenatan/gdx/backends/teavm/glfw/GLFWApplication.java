@@ -121,10 +121,7 @@ public class GLFWApplication implements GLFWApplicationBase {
             loop();
             cleanupWindows();
         } catch (Throwable t) {
-            if (t instanceof RuntimeException)
-                throw (RuntimeException) t;
-            else
-                throw new GdxRuntimeException(t);
+            t.printStackTrace(System.out);
         } finally {
             cleanup();
         }
@@ -151,7 +148,6 @@ public class GLFWApplication implements GLFWApplicationBase {
                 }
                 if (targetFramerate == -2) targetFramerate = window.getConfig().foregroundFPS;
 //                synchronized (lifecycleListeners) {
-//                    haveWindowsRendered = haveWindowsRendered | window.update();
                     haveWindowsRendered = isWindowRendered(haveWindowsRendered, window.update());
 //                }
                 if (window.shouldClose()) {

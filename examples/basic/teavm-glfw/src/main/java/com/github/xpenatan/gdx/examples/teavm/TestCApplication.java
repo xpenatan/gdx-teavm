@@ -3,14 +3,12 @@ package com.github.xpenatan.gdx.examples.teavm;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL32;
-import com.github.xpenatan.gdx.backends.teavm.glfw.GLFWApplication;
 
 public class TestCApplication implements ApplicationListener {
 
     @Override
     public void create() {
         System.out.println("CREATE");
-
     }
 
     @Override
