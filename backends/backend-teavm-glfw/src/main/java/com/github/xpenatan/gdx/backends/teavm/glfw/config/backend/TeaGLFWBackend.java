@@ -9,12 +9,9 @@ import com.github.xpenatan.jParser.builder.targets.WindowsMSVCTarget;
 import com.github.xpenatan.jParser.core.util.CustomFileDescriptor;
 import java.io.File;
 import java.util.ArrayList;
-import org.teavm.backend.c.CTarget;
-import org.teavm.backend.c.generate.CNameProvider;
 import org.teavm.tooling.TeaVMTargetType;
-import org.teavm.vm.TeaVMBuilder;
 
-public class TeaCBackend extends TeaBackend {
+public class TeaGLFWBackend extends TeaBackend {
 
     public boolean shouldGenerateSource = true;
 
