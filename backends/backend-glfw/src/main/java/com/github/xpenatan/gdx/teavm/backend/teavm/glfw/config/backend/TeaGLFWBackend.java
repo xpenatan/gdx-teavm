@@ -56,6 +56,7 @@ public class TeaGLFWBackend extends TeaBackend {
         CustomCTarget cTarget = new CustomCTarget(new CNameProvider());
         cTarget.setMinHeapSize(data.minHeapSize);
         cTarget.setMaxHeapSize(data.maxHeapSize);
+        cTarget.setLineNumbersGenerated(true);
         cTarget.setLineNumbersGenerated(data.debugInformationGenerated);
         cTarget.setHeapDump(false);
         cTarget.setObfuscated(data.obfuscated);

@@ -20,8 +20,10 @@ public final class TBufferUtils {
     static int allocatedUnsafe = 0;
 
     public static void copy(float[] src, Buffer dst, int numFloats, int offset) {
+        if (dst instanceof ByteBuffer)
+            dst.limit(numFloats << 2);
+        else if (dst instanceof FloatBuffer) dst.limit(numFloats);
         FloatBuffer floatBuffer = asFloatBuffer(dst);
-
         floatBuffer.clear();
         dst.position(0);
         floatBuffer.put(src, offset, numFloats);
