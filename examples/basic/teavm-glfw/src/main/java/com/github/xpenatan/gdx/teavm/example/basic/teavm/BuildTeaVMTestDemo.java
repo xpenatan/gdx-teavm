@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm;
+package com.github.xpenatan.gdx.teavm.example.basic.teavm;
 
 import com.github.xpenatan.gdx.teavm.backend.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backend.teavm.glfw.config.backend.TeaGLFWBackend;

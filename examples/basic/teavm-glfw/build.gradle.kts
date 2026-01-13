@@ -5,7 +5,7 @@ dependencies {
     implementation(project(":backends:backend-glfw"))
 }
 
-val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildTeaVMTestDemo"
+val mainClassName = "com.github.xpenatan.gdx.teavm.example.basic.teavm.BuildTeaVMTestDemo"
 
 tasks.register<JavaExec>("basic_build_teavm_glfw") {
     group = "example-teavm"

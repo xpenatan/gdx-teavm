@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.examples.teavm;
+package com.github.xpenatan.gdx.teavm.example.basic.teavm;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;

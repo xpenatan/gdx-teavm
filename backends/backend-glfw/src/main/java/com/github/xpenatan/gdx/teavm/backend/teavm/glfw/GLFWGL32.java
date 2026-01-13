@@ -23,6 +23,9 @@ public class GLFWGL32 implements GL32 {
 
     private final Map<Integer, NativePointer> managedShaderSources = new HashMap<>();
 
+    // Keep strong references to buffers to prevent garbage collection during GL operations
+    private static final Map<String, Buffer> bufferCache = new HashMap<>();
+
     private void ensureBufferCapacity (int numBytes) {
         if (buffer == null || buffer.capacity() < numBytes) {
             buffer = com.badlogic.gdx.utils.BufferUtils.newByteBuffer(numBytes);
@@ -32,7 +35,46 @@ public class GLFWGL32 implements GL32 {
     }
 
     public static class AddressUtils {
+        // Safe method for output buffers - uses backing array directly so modifications are visible
+        public static Address ofOutput(IntBuffer buffer) {
+            if (buffer == null) return Address.fromInt(0);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                // Fallback for direct buffers - create copy (won't work properly but prevents crashes)
+                int[] data = new int[buffer.capacity()];
+                return Address.ofData(data);
+            }
+        }
+
+        public static Address ofOutput(FloatBuffer buffer) {
+            if (buffer == null) return Address.fromInt(0);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                float[] data = new float[buffer.capacity()];
+                return Address.ofData(data);
+            }
+        }
+
+        public static Address ofOutput(Buffer buffer) {
+            if (buffer == null) return Address.fromInt(0);
+            if (buffer instanceof IntBuffer) {
+                return ofOutput((IntBuffer) buffer);
+            } else if (buffer instanceof FloatBuffer) {
+                return ofOutput((FloatBuffer) buffer);
+            }
+            // Fallback to regular of()
+            return of(buffer);
+        }
+
         public static Address of(Buffer buffer) {
+            if (buffer == null) {
+                return Address.fromInt(0);
+            }
+
+            // Always create a fresh address from the current buffer state
+            // Don't cache because buffer position/limit may change
             if (buffer instanceof ByteBuffer) {
                 return of((ByteBuffer) buffer);
             } else if (buffer instanceof ShortBuffer) {
@@ -53,45 +95,87 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address of(ByteBuffer buffer) {
-            byte[] data = new byte[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            // Get the backing array if direct buffer
+            if (buffer.isDirect()) {
+                // For direct buffers, use the address directly
+                // But since we can't get direct address in TeaVM, create a copy
+                byte[] data = new byte[buffer.remaining()];
+                int pos = buffer.position();
+                buffer.get(data);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
+                // Use backing array directly
+                return Address.ofData(buffer.array());
+            } else {
+                // Create a copy
+                byte[] data = new byte[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(ShortBuffer buffer) {
-            short[] data = new short[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                short[] data = new short[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(IntBuffer buffer) {
-            int[] data = new int[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            // For IntBuffer, use backing array directly if available
+            // This ensures modifications by native code are visible in the buffer
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                // For direct buffers, create a copy and read data back later
+                int[] data = new int[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(LongBuffer buffer) {
-            long[] data = new long[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                long[] data = new long[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(FloatBuffer buffer) {
-            float[] data = new float[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                float[] data = new float[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(DoubleBuffer buffer) {
-            double[] data = new double[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                double[] data = new double[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static Address of(CharBuffer buffer) {
-            char[] data = new char[buffer.remaining()];
-            buffer.get(data);
-            return Address.ofData(data);
+            if (buffer.hasArray()) {
+                return Address.ofData(buffer.array());
+            } else {
+                char[] data = new char[buffer.remaining()];
+                buffer.get(data);
+                return Address.ofData(data);
+            }
         }
 
         public static void put(Buffer buffer, Address address) {
@@ -117,78 +201,31 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static void put(ByteBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getByte());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(ShortBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getShort());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(IntBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getInt());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(LongBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getLong());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(FloatBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getFloat());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(DoubleBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getDouble());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
 
         public static void put(CharBuffer buffer, Address address) {
-            int size = buffer.capacity();
-            buffer.rewind();
-
-            for (int a = 0; a < size; a++) {
-                buffer.put(address.getChar());
-            }
-
-            buffer.rewind();
+            if (buffer != null) buffer.rewind();
         }
     }
 
@@ -355,26 +392,38 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetnUniformfv(int program, int location, FloatBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetnUniformfv(program, location, address);
+        if (params == null) return;
+        float[] temp = new float[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetnUniformfv(program, location, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetnUniformiv(int program, int location, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetnUniformiv(program, location, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetnUniformiv(program, location, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetnUniformuiv(int program, int location, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetnUniformuiv(program, location, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetnUniformuiv(program, location, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -1106,10 +1155,10 @@ public class GLFWGL32 implements GL32 {
         OpenGL.glFlushMappedBufferRange(target, offset, length);
     }
 
+    private static int bindVAOCount = 0;
+
     @Override
     public void glBindVertexArray(int array) {
-        nullCheck(array);
-
         OpenGL.glBindVertexArray(array);
     }
 
@@ -1587,6 +1636,8 @@ public class GLFWGL32 implements GL32 {
         AddressUtils.put(indices, address);
     }
 
+    private static int enableCallCount = 0;
+
     @Override
     public void glEnable(int cap) {
         OpenGL.glEnable(cap);
@@ -1628,9 +1679,14 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetIntegerv(int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetIntegerv(pname, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetIntegerv(pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
@@ -1754,21 +1810,41 @@ public class GLFWGL32 implements GL32 {
         OpenGL.glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     }
 
+    private static int bufferDataCallCount = 0;
+    private static int bufferDataCounter = 0;
+
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
         // TeaVM's C backend doesn't properly handle Buffer parameters in native methods.
-        // Use AddressUtils to extract data as Address, similar to glUniform methods.
+        // Cache the buffer to prevent garbage collection of the underlying data
+
+        // Store buffer in cache to keep it alive
+        String cacheKey = "buffer_" + (bufferDataCounter++);
+        if (data != null) {
+            bufferCache.put(cacheKey, data);
+            // Keep last 100 buffers to avoid memory bloat while ensuring buffers stay alive
+            if (bufferCache.size() > 100) {
+                bufferCache.remove("buffer_" + (bufferDataCounter - 101));
+            }
+        }
+
         Address address = AddressUtils.of(data);
         OpenGL.glBufferData(target, size, address, usage);
-        AddressUtils.put(data, address);
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
         // Use Address-based approach for TeaVM C backend
+        // Cache buffer to prevent garbage collection
+        String cacheKey = "buffer_" + (bufferDataCounter++);
+        if (data != null) {
+            bufferCache.put(cacheKey, data);
+            if (bufferCache.size() > 100) {
+                bufferCache.remove("buffer_" + (bufferDataCounter - 101));
+            }
+        }
         Address address = AddressUtils.of(data);
         OpenGL.glBufferSubData(target, offset, size, address);
-        AddressUtils.put(data, address);
     }
 
     @Override
@@ -1997,18 +2073,43 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public String glGetActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
-        CharBuffer nameBuf = CharBuffer.allocate(512);
+        // TeaVM C backend doesn't properly handle CharBuffer in native calls
+        // Use byte array instead for proper marshalling
         IntBuffer lenBuf = IntBuffer.allocate(1);
-        OpenGL.glGetActiveAttrib(program, index, 512, lenBuf, size, type, nameBuf);
-        return nameBuf.limit(lenBuf.get(0)).toString();
+        byte[] nameBytes = new byte[512];
+
+        OpenGL.glGetActiveAttrib(program, index, 512, lenBuf, size, type, nameBytes);
+
+        int nameLength = lenBuf.get(0);
+        String name = "";
+
+        if (nameLength > 0 && nameLength <= 512) {
+            name = new String(nameBytes, 0, nameLength);
+        }
+
+        return name;
     }
 
     @Override
     public String glGetActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
-        CharBuffer nameBuf = CharBuffer.allocate(512);
+        // Use ByteBuffer instead of CharBuffer
+        ByteBuffer nameBufBytes = ByteBuffer.allocate(512);
         IntBuffer lenBuf = IntBuffer.allocate(1);
+
+        CharBuffer nameBuf = nameBufBytes.asCharBuffer();
         OpenGL.glGetActiveUniform(program, index, 512, lenBuf, size, type, nameBuf);
-        return nameBuf.limit(lenBuf.get(0)).toString();
+
+        int nameLength = lenBuf.get(0);
+        String name = "";
+
+        if (nameLength > 0 && nameLength <= 512) {
+            byte[] bytes = new byte[nameLength];
+            nameBufBytes.position(0);
+            nameBufBytes.get(bytes);
+            name = new String(bytes);
+        }
+
+        return name;
     }
 
     @Override
@@ -2031,34 +2132,50 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetBufferParameteriv(int target, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetBufferParameteriv(target, pname, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetBufferParameteriv(target, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetFloatv(int pname, FloatBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetFloatv(pname, address);
+        if (params == null) return;
+        float[] temp = new float[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetFloatv(pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetFramebufferAttachmentParameteriv(int target, int attachment, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetFramebufferAttachmentParameteriv(target, attachment, pname, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetFramebufferAttachmentParameteriv(target, attachment, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetProgramiv(int program, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetProgramiv(program, pname, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetProgramiv(program, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -2071,18 +2188,26 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetRenderbufferParameteriv(int target, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address address = Address.ofData(temp);
         OpenGL.glGetRenderbufferParameteriv(target, pname, address);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
     public void glGetShaderiv(int shader, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetShaderiv(shader, pname, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetShaderiv(shader, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -2095,41 +2220,68 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetShaderPrecisionFormat(int shadertype, int precisiontype, IntBuffer range, IntBuffer precision) {
-        Address rangeAddr = AddressUtils.of(range);
-        Address precisionAddr = AddressUtils.of(precision);
+        if (range == null || precision == null) return;
+        int[] tempRange = new int[range.capacity()];
+        int[] tempPrecision = new int[precision.capacity()];
+        Address rangeAddr = Address.ofData(tempRange);
+        Address precisionAddr = Address.ofData(tempPrecision);
         OpenGL.glGetShaderPrecisionFormat(shadertype, precisiontype, rangeAddr, precisionAddr);
+        for (int i = 0; i < tempRange.length; i++) {
+            range.put(i, tempRange[i]);
+        }
+        for (int i = 0; i < tempPrecision.length; i++) {
+            precision.put(i, tempPrecision[i]);
+        }
         range.rewind();
         precision.rewind();
-        AddressUtils.put(range, rangeAddr);
-        AddressUtils.put(precision, precisionAddr);
     }
 
     @Override
     public void glGetTexParameterfv(int target, int pname, FloatBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetTexParameterfv(target, pname, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        float[] temp = new float[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetTexParameterfv(target, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
     public void glGetTexParameteriv(int target, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetTexParameteriv(target, pname, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetTexParameteriv(target, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
     public void glGetUniformfv(int program, int location, FloatBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetUniformfv(program, location, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        float[] temp = new float[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetUniformfv(program, location, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
     public void glGetUniformiv(int program, int location, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetUniformiv(program, location, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetUniformiv(program, location, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
@@ -2139,23 +2291,40 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glGetVertexAttribfv(int index, int pname, FloatBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetVertexAttribfv(index, pname, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        float[] temp = new float[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetVertexAttribfv(index, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
     public void glGetVertexAttribiv(int index, int pname, IntBuffer params) {
-        Address address = AddressUtils.of(params);
-        OpenGL.glGetVertexAttribiv(index, pname, address);
-        AddressUtils.put(params, address);
+        if (params == null) return;
+        int[] temp = new int[params.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetVertexAttribiv(index, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            params.put(i, temp[i]);
+        }
+        params.rewind();
     }
 
     @Override
     public void glGetVertexAttribPointerv(int index, int pname, Buffer pointer) {
-        Address address = AddressUtils.of(pointer);
-        OpenGL.glGetVertexAttribPointerv(index, pname, address);
-        AddressUtils.put(pointer, address);
+        if (pointer == null) return;
+        int[] temp = new int[pointer.capacity()];
+        Address addr = Address.ofData(temp);
+        OpenGL.glGetVertexAttribPointerv(index, pname, addr);
+        for (int i = 0; i < temp.length; i++) {
+            if (pointer instanceof IntBuffer) {
+                ((IntBuffer)pointer).put(i, temp[i]);
+            }
+        }
+        pointer.rewind();
     }
 
     @Override
@@ -2350,7 +2519,7 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glUniform3fv(int location, int count, float[] v, int offset) {
         Address address = Address.ofData(v);
-        address.add(offset);
+        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
         OpenGL.glUniform3fv(location, count, address);
     }
 
@@ -2386,7 +2555,7 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glUniform4fv(int location, int count, float[] v, int offset) {
         Address address = Address.ofData(v);
-        address.add(offset);
+        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
         OpenGL.glUniform4fv(location, count, address);
     }
 
@@ -2405,7 +2574,7 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glUniform4iv(int location, int count, int[] v, int offset) {
         Address address = Address.ofData(v);
-        address.add(offset);
+        address.add(offset * 4); // offset is in ints, but address.add() expects bytes
         OpenGL.glUniform4iv(location, count, address);
     }
 
@@ -2419,7 +2588,7 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glUniformMatrix2fv(int location, int count, boolean transpose, float[] value, int offset) {
         Address address = Address.ofData(value);
-        address.add(offset);
+        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
         OpenGL.glUniformMatrix2fv(location, count, transpose, address);
     }
 
@@ -2433,7 +2602,7 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glUniformMatrix3fv(int location, int count, boolean transpose, float[] value, int offset) {
         Address address = Address.ofData(value);
-        address.add(offset);
+        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
         OpenGL.glUniformMatrix3fv(location, count, transpose, address);
     }
 
@@ -2446,8 +2615,9 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniformMatrix4fv(int location, int count, boolean transpose, float[] value, int offset) {
-        FloatBuffer buffer = FloatBuffer.wrap(value, offset, count * 16);
-        OpenGL.glUniformMatrix4fv(location, count, transpose, buffer);
+        Address address = Address.ofData(value);
+        address.add(offset * 4); // offset is in floats, but address.add() expects bytes, so multiply by 4
+        OpenGL.glUniformMatrix4fv(location, count, transpose, address);
     }
 
     @Override

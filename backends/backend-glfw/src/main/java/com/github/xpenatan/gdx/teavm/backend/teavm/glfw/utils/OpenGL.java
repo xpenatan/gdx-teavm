@@ -3274,8 +3274,14 @@ public class OpenGL {
     @Import(name = "glGetActiveAttrib")
     public static native void glGetActiveAttrib(int program, int index, int maxLength, IntBuffer length, IntBuffer size, IntBuffer type, CharBuffer name);
 
+    @Import(name = "glGetActiveAttrib")
+    public static native void glGetActiveAttrib(int program, int index, int maxLength, IntBuffer length, IntBuffer size, IntBuffer type, byte[] name);
+
     @Import(name = "glGetActiveUniform")
     public static native void glGetActiveUniform(int program, int index, int maxLength, IntBuffer length, IntBuffer size, IntBuffer type, CharBuffer name);
+
+    @Import(name = "glGetActiveUniform")
+    public static native void glGetActiveUniform(int program, int index, int maxLength, IntBuffer length, IntBuffer size, IntBuffer type, byte[] name);
 
     @Import(name = "glGetAttachedShaders")
     public static native void glGetAttachedShaders(int program, int maxcount, Buffer count, IntBuffer shaders);
