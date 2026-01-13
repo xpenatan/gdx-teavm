@@ -146,10 +146,10 @@ public class GLFWApplication implements GLFWApplicationBase {
                     window.makeCurrent();
                     currentWindow = window;
                 }
-                if (targetFramerate == -2) targetFramerate = window.getConfig().foregroundFPS;
-//                synchronized (lifecycleListeners) {
-                    haveWindowsRendered = isWindowRendered(haveWindowsRendered, window.update());
-//                }
+                if (targetFramerate == -2)  {
+                    targetFramerate = window.getConfig().foregroundFPS;
+                }
+                haveWindowsRendered = isWindowRendered(haveWindowsRendered, window.update());
                 if (window.shouldClose()) {
                     closedWindows.add(window);
                 }
@@ -157,12 +157,10 @@ public class GLFWApplication implements GLFWApplicationBase {
             GLFW.pollEvents();
 
             boolean shouldRequestRendering;
-//            synchronized (runnables) {
-                shouldRequestRendering = runnables.size > 0;
-                executedRunnables.clear();
-                executedRunnables.addAll(runnables);
-                runnables.clear();
-//            }
+            shouldRequestRendering = runnables.size > 0;
+            executedRunnables.clear();
+            executedRunnables.addAll(runnables);
+            runnables.clear();
             for (Runnable runnable : executedRunnables) {
                 runnable.run();
             }
@@ -212,11 +210,9 @@ public class GLFWApplication implements GLFWApplicationBase {
     }
 
     protected void cleanupWindows() {
-        synchronized (lifecycleListeners) {
-            for (LifecycleListener lifecycleListener : lifecycleListeners) {
-                lifecycleListener.pause();
-                lifecycleListener.dispose();
-            }
+        for (LifecycleListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.pause();
+            lifecycleListener.dispose();
         }
         for (GLFWWindow window : windows) {
             window.dispose();
@@ -355,9 +351,7 @@ public class GLFWApplication implements GLFWApplicationBase {
 
     @Override
     public void postRunnable(Runnable runnable) {
-        synchronized (runnables) {
-            runnables.add(runnable);
-        }
+        runnables.add(runnable);
     }
 
     @Override
@@ -367,16 +361,12 @@ public class GLFWApplication implements GLFWApplicationBase {
 
     @Override
     public void addLifecycleListener(LifecycleListener listener) {
-        synchronized (lifecycleListeners) {
             lifecycleListeners.add(listener);
-        }
     }
 
     @Override
     public void removeLifecycleListener(LifecycleListener listener) {
-        synchronized (lifecycleListeners) {
             lifecycleListeners.removeValue(listener, true);
-        }
     }
 
     @Override
