@@ -6,7 +6,7 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx-freetype-platform:${LibExt.gdxVersion}:natives-desktop")
 }
 
-val mainClassName = "com.github.xpenatan.imgui.example.tests.Main"
+val mainClassName = "Main"
 
 sourceSets["main"].resources.srcDirs(File("../../core/assets"))
 

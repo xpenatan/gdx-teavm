@@ -1,14 +1,5 @@
-package com.github.xpenatan.imgui.example.tests;
-
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.tests.DownloadTest;
-import com.badlogic.gdx.tests.FloatTextureTest;
-import com.badlogic.gdx.tests.g3d.MultipleRenderTargetTest;
-import com.badlogic.gdx.tests.g3d.TextureArrayTest;
-import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
-import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class Main {

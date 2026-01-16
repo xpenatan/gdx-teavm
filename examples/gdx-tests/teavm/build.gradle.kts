@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 
-val mainClassName = "com.github.xpenatan.gdx.examples.teavm.BuildGdxTest"
+val mainClassName = "BuildGdxTest"
 
 tasks.register<JavaExec>("gdx_tests_build_web") {
     group = "examples-teavm"

@@ -1,5 +1,3 @@
-package com.github.xpenatan.gdx.teavm.examples.freetype.teavm;
-
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.web.config.backend.TeaJavaScriptBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;

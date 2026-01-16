@@ -1,5 +1,3 @@
-package com.github.xpenatan.gdx.teavm.examples.freetype.teavm;
-
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.examples.freetype.FreetypeDemo;

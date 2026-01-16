@@ -1,5 +1,3 @@
-package com.github.xpenatan.gdx.teavm.examples.freetype.desktop;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.github.xpenatan.gdx.teavm.examples.freetype.FreetypeDemo;
 

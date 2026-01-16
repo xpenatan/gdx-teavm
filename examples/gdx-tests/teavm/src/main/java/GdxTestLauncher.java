@@ -1,7 +1,5 @@
-package com.github.xpenatan.gdx.examples.teavm;
-
-import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class GdxTestLauncher {
