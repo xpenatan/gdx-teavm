@@ -182,7 +182,7 @@ public class Timer {
 
     /** Manages the single timer thread. Stops thread on libgdx application pause and dispose, starts thread on resume.
      * @author Nathan Sweet */
-    static class TimerThread extends com.github.xpenatan.gdx.teavm.backend.web.utils.Timer implements Runnable, LifecycleListener {
+    static class TimerThread extends com.github.xpenatan.gdx.teavm.backends.web.utils.Timer implements Runnable, LifecycleListener {
         private Application app;
         private long pauseMillis;
 

@@ -1,6 +1,6 @@
 package emulate.java.lang;
 
-import com.github.xpenatan.gdx.teavm.backend.web.gen.Emulate;
+import com.github.xpenatan.gdx.teavm.backends.web.gen.Emulate;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;

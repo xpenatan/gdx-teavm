@@ -4,7 +4,7 @@ package emu.com.badlogic.gdx.scenes.scene2d.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.github.xpenatan.gdx.teavm.backend.web.utils.TeaNavigator;
+import com.github.xpenatan.gdx.teavm.backends.web.utils.TeaNavigator;
 
 public class UIUtils {
     static public boolean isAndroid = TeaNavigator.getPlatform().contains("Android");

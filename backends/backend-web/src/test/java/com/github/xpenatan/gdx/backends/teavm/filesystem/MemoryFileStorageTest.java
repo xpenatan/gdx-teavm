@@ -2,9 +2,9 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.teavm.backend.web.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.backend.web.TeaFiles;
-import com.github.xpenatan.gdx.teavm.backend.web.filesystem.MemoryFileStorage;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaFiles;
+import com.github.xpenatan.gdx.teavm.backends.web.filesystem.MemoryFileStorage;
 import com.google.common.truth.Truth;
 import org.junit.Before;
 import org.junit.Test;
