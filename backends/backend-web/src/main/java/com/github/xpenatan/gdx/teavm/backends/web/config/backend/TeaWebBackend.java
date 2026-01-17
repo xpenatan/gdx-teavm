@@ -16,7 +16,7 @@ import org.teavm.tooling.TeaVMTargetType;
 
 public class TeaWebBackend extends TeaBackend {
     public String logoPath = "startup-logo.png";
-    public String htmlTitle = "app";
+    public String htmlTitle = "gdx-teavm";
     public String mainClassArgs = "";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
