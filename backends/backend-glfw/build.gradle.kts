@@ -5,7 +5,6 @@ plugins {
 val moduleName = "backend-glfw"
 
 sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
-sourceSets["main"].resources.srcDir("src/main/cpp/")
 
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
