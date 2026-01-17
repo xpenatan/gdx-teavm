@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.examples.basic.tests;
+package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;

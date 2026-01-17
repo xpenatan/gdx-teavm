@@ -5,8 +5,8 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config;
  */
 public class DefaultAssetFilter implements AssetFilter {
     @Override
-    public boolean accept(String file, boolean isDirectory, AssetFilterOption op) {
-        if(isDirectory && file.endsWith(".svn")) return false;
+    public boolean accept(String file) {
+        if(file.endsWith(".svn")) return false;
         if(file.endsWith(".jar")) return false;
         if(file.endsWith("assets.txt")) return false;
         return true;

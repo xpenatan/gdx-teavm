@@ -1,5 +1,5 @@
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.Basic3DTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.Basic3DTest;
 
 public class Main {
 

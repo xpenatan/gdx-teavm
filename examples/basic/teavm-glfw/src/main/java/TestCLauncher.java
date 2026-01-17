@@ -1,4 +1,4 @@
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.GearsDemo;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GearsDemo;
 import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWApplication;
 
 public class TestCLauncher {

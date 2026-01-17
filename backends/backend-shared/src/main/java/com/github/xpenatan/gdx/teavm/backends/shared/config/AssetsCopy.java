@@ -56,17 +56,25 @@ public class AssetsCopy {
     private static ArrayList<Asset> copy(AssetFileHandle assetsPath, AssetFilter filter, FileHandle target) {
         String assetsOutputPath = target.path();
         ArrayList<Asset> assets = new ArrayList<Asset>();
-        if(assetsPath.filter != null) {
-            //Override global filter with the handle filter
-            filter = assetsPath.filter;
-        }
         AssetFilter defaultAssetFilter = filter != null ? filter : new DefaultAssetFilter();
         if(assetsPath != null && assetsPath.exists() && assetsPath.isDirectory()) {
             TeaLogHelper.log("Copying assets from:");
             FileHandle source = assetsPath;
             String path = source.path();
             TeaLogHelper.log(path);
-            copyDirectory(source, assetsPath.assetsChildDir, target, defaultAssetFilter, assets);
+            copyDirectory(source, assetsPath.assetsChildDir, target, new AssetFilter() {
+                @Override
+                public boolean accept(String file) {
+                    boolean accept = true;
+                    if(assetsPath.filter != null) {
+                        accept = assetsPath.filter.accept(file);
+                    }
+                    if(accept) {
+                        accept = defaultAssetFilter.accept(file);
+                    }
+                    return accept;
+                }
+            }, assets);
 
             TeaLogHelper.log("to:");
             TeaLogHelper.log(assetsOutputPath);
@@ -100,7 +108,7 @@ public class AssetsCopy {
                     classpathFile = classpathFile.replaceFirst("/", "");
                 }
                 AssetFilterOption op = new AssetFilterOption();
-                if(defaultAssetFilter.accept(path, false, op)) {
+                if(defaultAssetFilter.accept(path)) {
                     try {
                         TeaLogHelper.log(classpathFile);
                         InputStream is = classloader.getResourceAsStream(classpathFile);
@@ -265,7 +273,7 @@ public class AssetsCopy {
 
     private static void copyFile(FileHandle source, FileHandle dest, AssetFilter filter, ArrayList<Asset> assets) {
         AssetFilterOption op = new AssetFilterOption();
-        if(!filter.accept(dest.path(), false, op)) return;
+        if(!filter.accept(dest.path())) return;
         try {
             assets.add(new Asset(dest, getType(dest.path()), op));
             InputStream read = source.read();
@@ -279,7 +287,6 @@ public class AssetsCopy {
     }
 
     private static void copyDirectory(FileHandle sourceDir, FileHandle destDir, AssetFilter filter, ArrayList<Asset> assets) {
-        String destPath = destDir.path();
         destDir.mkdirs();
         FileHandle[] files = sourceDir.list();
         for(int i = 0, n = files.length; i < n; i++) {
@@ -288,9 +295,6 @@ public class AssetsCopy {
             // Destination type is copied from source type
             FileHandle destFile = AssetFileHandle.createHandle(destFile1.file(), srcFile.type());
             if(srcFile.isDirectory()) {
-                AssetFilterOption op = new AssetFilterOption();
-                if(!filter.accept(destPath, true, op)) continue;
-                assets.add(new Asset(destFile, AssetType.Directory, op));
                 copyDirectory(srcFile, destFile, filter, assets);
             }
             else

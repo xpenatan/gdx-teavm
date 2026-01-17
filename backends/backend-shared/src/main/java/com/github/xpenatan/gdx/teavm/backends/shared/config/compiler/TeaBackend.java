@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
@@ -44,7 +45,10 @@ public abstract class TeaBackend {
     protected TeaVMTool tool;
     protected TeaVMTargetType targetType;
     public boolean logClassNames;
-    protected String releasePath;
+    protected FileHandle releasePath;
+    protected AssetFilter assetFilter;
+    protected List<String> scripts = new ArrayList<>();
+    protected List<String> cppFiles = new ArrayList<>();
 
     protected abstract void setup(TeaCompilerData data);
 
@@ -308,40 +312,39 @@ public abstract class TeaBackend {
         return null;
     }
 
-    public void configAssets(TeaCompilerData data) {
+    private void configAssets(TeaCompilerData data) {
         TeaLogHelper.logHeader("COPYING ASSETS");
-        FileHandle outputFolder = new FileHandle(data.output);
-        FileHandle releaseFolder = new FileHandle(releasePath);
-        FileHandle assetsFolder = releaseFolder.child("assets");
-        FileHandle scriptsFolder = releaseFolder.child("scripts");
-        FileHandle assetFile = assetsFolder.child("assets.txt");
+        copyAssets(data);
+        TeaLogHelper.log("");
+    }
 
-        ArrayList<AssetsCopy.Asset> alLAssets = new ArrayList<>();
-        // Copy Assets files
-        ArrayList<AssetFileHandle> assetsPaths = data.assets;
-        for(int i = 0; i < assetsPaths.size(); i++) {
-            AssetFileHandle assetFileHandle = assetsPaths.get(i);
-            ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, null, assetsFolder);
-            alLAssets.addAll(assets);
-        }
+    protected void copyAssets(TeaCompilerData data) {
+        FileHandle assetsFolder = releasePath.child("assets");
+        FileHandle assetFile = assetsFolder.child("assets.txt");
 
         if(assetFile.exists()) {
             // Delete assets.txt before adding the updated list.
             assetFile.delete();
         }
 
-        AssetsCopy.generateAssetsFile(alLAssets, assetsFolder, assetFile);
+        ArrayList<AssetsCopy.Asset> allAssets = new ArrayList<>();
+        // Copy Assets files
+        ArrayList<AssetFileHandle> assetsPaths = data.assets;
+        for(int i = 0; i < assetsPaths.size(); i++) {
+            AssetFileHandle assetFileHandle = assetsPaths.get(i);
+            ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, assetFilter, assetsFolder);
+            allAssets.addAll(assets);
+        }
+        AssetsCopy.generateAssetsFile(allAssets, assetsFolder, assetFile);
 
         // Copy assets from resources
-        List<String> resources = TeaVMResourceProperties.getResources(acceptedURL);
+        List<String> propertiesResources = TeaVMResourceProperties.getResources(acceptedURL);
 
-        List<String> scripts = new ArrayList<>();
-        List<String> cppFiles = new ArrayList<>();
-        // Filter out javascript
-        for(int i = 0; i < resources.size(); i++) {
-            String asset = resources.get(i);
+        // Filter out JavaScript and C code
+        for(int i = 0; i < propertiesResources.size(); i++) {
+            String asset = propertiesResources.get(i);
             if(asset.endsWith(".js") || asset.endsWith(".wasm")) {
-                resources.remove(i);
+                propertiesResources.remove(i);
                 scripts.add(asset);
                 i--;
             }
@@ -349,28 +352,19 @@ public abstract class TeaBackend {
                 if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h") || asset.endsWith(".c") || asset.endsWith(".cpp")) {
                     cppFiles.add(asset);
                 }
-                resources.remove(i);
+                propertiesResources.remove(i);
                 i--;
             }
         }
+
+        // TODO add custom classpath option
         // Copy additional classpath files
 //        ArrayList<String> classPathAssetsFiles = configuration.assetsClasspath;
 //        ArrayList<AssetsCopy.Asset> classpathAssets = AssetsCopy.copyResources(classLoader, classPathAssetsFiles, filter, assetsFolder);
 //        AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
 
         // Copy resources
-        ArrayList<AssetsCopy.Asset> resourceAssets = AssetsCopy.copyResources(classLoader, resources, null, assetsFolder);
+        ArrayList<AssetsCopy.Asset> resourceAssets = AssetsCopy.copyResources(classLoader, propertiesResources, assetFilter, assetsFolder);
         AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
-
-        // Copy scripts
-
-        if(targetType == TeaVMTargetType.C) {
-            AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder);
-        }
-        else {
-            AssetsCopy.copyScripts(classLoader, scripts, scriptsFolder);
-        }
-
-        TeaLogHelper.log("");
     }
 }

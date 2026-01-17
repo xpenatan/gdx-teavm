@@ -565,6 +565,6 @@ public class TeaApplication implements Application {
     }
 
     protected TeaGraphics createGraphics (TeaApplicationConfiguration config) {
-        return new TeaGraphics(config);
+        return new TeaGLGraphics(config);
     }
 }

@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.GearsDemo;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GearsDemo;
 
 public class TestWebLauncher {
 

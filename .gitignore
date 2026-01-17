@@ -15,6 +15,7 @@ obj/
 out/
 classes/
 .gwt/
+.kotlin/
 gwt-unitCache/
 war/
 gen-external-apklibs/

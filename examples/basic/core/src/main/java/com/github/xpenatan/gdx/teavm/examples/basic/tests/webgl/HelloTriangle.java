@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.examples.basic.tests;
+package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.profiling.GLErrorListener;
-import com.github.xpenatan.gdx.teavm.examples.basic.debug.GLDebugProfiler;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.debug.GLDebugProfiler;
 
 public class HelloTriangle extends ApplicationAdapter {
     ShaderProgram shader;

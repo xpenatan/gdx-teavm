@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.web.config.TeaBuilder;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
@@ -13,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMTargetType;
 
-abstract class TeaWebBackend extends TeaBackend {
+public class TeaWebBackend extends TeaBackend {
     public String logoPath = "startup-logo.png";
     public String htmlTitle = "app";
     public String mainClassArgs = "";
@@ -21,17 +22,32 @@ abstract class TeaWebBackend extends TeaBackend {
     public int htmlHeight = 600;
     public boolean showLoadingLogo = true;
     public String webappFolderName = "webapp";
-    public boolean useDefaultHtmlIndex;
+
+    private final boolean isWebAssembly;
+
+    public AssetFilter scriptFilter;
+
+    public TeaWebBackend(boolean isWebAssembly) {
+        this.isWebAssembly = isWebAssembly;
+    }
 
     @Override
     protected void setup(TeaCompilerData data) {
+        if(isWebAssembly) {
+            targetType = TeaVMTargetType.WEBASSEMBLY_GC;
+            tool.setTargetFileName(data.outputName + ".wasm");
+        } else {
+            targetType = TeaVMTargetType.JAVASCRIPT;
+            tool.setTargetFileName(data.outputName + ".js");
+        }
+
         if(data.releasePath != null) {
-            releasePath = data.releasePath.getAbsolutePath().replace("\\", "/");
+            releasePath = new FileHandle(data.releasePath.getAbsolutePath().replace("\\", "/"));
         }
         else {
-            releasePath = new File(data.output, "webapp").getAbsolutePath().replace("\\", "/");
+            releasePath = new FileHandle(new File(data.output, webappFolderName).getAbsolutePath().replace("\\", "/"));
         }
-        tool.setTargetDirectory(new File(releasePath));
+        tool.setTargetDirectory(releasePath.file());
         setupWebapp(data);
     }
 
@@ -67,7 +83,7 @@ abstract class TeaWebBackend extends TeaBackend {
             String jsName = "wasm-gc-runtime.min.js";
             jsScript = "<script type=\"text/javascript\" charset=\"utf-8\" src=\"" + jsName + "\"></script>";
 
-            copyRuntime(new File(releasePath));
+            copyRuntime(releasePath.file());
         }
 
         indexHtml = indexHtml.replace("%MODE%", mode);
@@ -83,10 +99,9 @@ abstract class TeaWebBackend extends TeaBackend {
             rootAssets.add(logo);
         }
 
-        FileHandle webappFolder = new FileHandle(releasePath);
-        FileHandle assetsFolder = webappFolder.child(ASSETS_FOLDER_NAME);
-        FileHandle indexHandler = webappFolder.child("index.html");
-        FileHandle webXMLFile = webappFolder.child("WEB-INF").child("web.xml");
+        FileHandle assetsFolder = releasePath.child(ASSETS_FOLDER_NAME);
+        FileHandle indexHandler = releasePath.child("index.html");
+        FileHandle webXMLFile = releasePath.child("WEB-INF").child("web.xml");
         indexHandler.writeString(indexHtml, false);
         webXMLFile.writeString(webXML, false);
         AssetsCopy.copyResources(classLoader, rootAssets, null, assetsFolder);
@@ -104,5 +119,12 @@ abstract class TeaWebBackend extends TeaBackend {
         } catch(Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    @Override
+    protected void copyAssets(TeaCompilerData data) {
+        super.copyAssets(data);
+        FileHandle scriptsFolder = releasePath.child("scripts");
+        AssetsCopy.copyResources(classLoader, scripts, scriptFilter, scriptsFolder);
     }
 }

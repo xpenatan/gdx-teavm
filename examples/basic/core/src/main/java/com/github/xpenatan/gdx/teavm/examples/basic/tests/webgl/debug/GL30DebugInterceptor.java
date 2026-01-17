@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.examples.basic.debug;
+package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.debug;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;

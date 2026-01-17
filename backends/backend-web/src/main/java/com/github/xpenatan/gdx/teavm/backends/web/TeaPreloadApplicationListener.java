@@ -5,7 +5,6 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoader;
@@ -46,11 +46,13 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     private int assetsCount = -1;
     private boolean isAnimation = false;
     private int initStage = 0;
+    private TeaApplicationConfiguration config;
 
     @Override
     public void create() {
         teaApplication = TeaApplication.get();
         assetLoader = AssetInstance.getLoaderInstance();
+        config = teaApplication.getConfig();
         setupPreloadAssets();
     }
 
@@ -62,19 +64,20 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
                 subtractQueue();
             }
         });
+
+        addQueue();
+        assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, Void result) {
+                subtractQueue();
+                assetsCount = assetLoader.getQueue();
+            }
+        });
     }
 
     private void setupStage() {
         stage = createStage();
-        stage.setViewport(new ScreenViewport());
-        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         setupScene2d();
-        assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
-            @Override
-            public void onSuccess(String url, Void result) {
-                assetsCount = assetLoader.getQueue();
-            }
-        });
     }
 
     final protected void addQueue() {
@@ -98,11 +101,13 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     }
 
     protected void clearScreen() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        ScreenUtils.clear(0, 0, 0, 1, true);
     }
 
-    private void setupScene2d() {
+    protected void setupScene2d() {
+        stage.setViewport(new ScreenViewport());
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
         FileHandle internal = Gdx.files.internal(startupLogo);
         logoTexture = createTexture(internal);
         logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

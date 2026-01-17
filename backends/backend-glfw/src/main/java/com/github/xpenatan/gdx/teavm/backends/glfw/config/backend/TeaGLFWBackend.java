@@ -1,5 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw.config.backend;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
 import com.github.xpenatan.jParser.builder.BuildConfig;
@@ -39,10 +41,10 @@ public class TeaGLFWBackend extends TeaBackend {
     protected void setup(TeaCompilerData data) {
         targetType = TeaVMTargetType.C;
         if(data.releasePath != null) {
-            releasePath = data.releasePath.getAbsolutePath().replace("\\", "/");
+            releasePath = new FileHandle(data.releasePath.getAbsolutePath().replace("\\", "/"));
         }
         else {
-            releasePath = new File(data.output, "c/release").getAbsolutePath().replace("\\", "/");
+            releasePath = new FileHandle(new File(data.output, "c/release").getAbsolutePath().replace("\\", "/"));
         }
         buildRootPath = data.output.getAbsolutePath().replace("\\", "/");
         generatedSources = buildRootPath +  "/c/src";
@@ -113,7 +115,7 @@ public class TeaGLFWBackend extends TeaBackend {
                 libName,
                 buildCPath,
                 generatedSources,
-                releasePath
+                releasePath.path()
         );
         config.additionalSourceDirs.add(new CustomFileDescriptor(generatedSources));
         config.additionalSourceDirs.add(new CustomFileDescriptor(externalSources));
@@ -174,5 +176,12 @@ public class TeaGLFWBackend extends TeaBackend {
         multiTarget.add(linkTarget);
 
         return multiTarget;
+    }
+
+    @Override
+    protected void copyAssets(TeaCompilerData data) {
+        super.copyAssets(data);
+        FileHandle outputFolder = new FileHandle(data.output);
+        AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder);
     }
 }
