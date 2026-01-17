@@ -351,6 +351,11 @@ public abstract class TeaGraphics implements Graphics {
     }
 
     @Override
+    public boolean supportsExtension(String extension) {
+        return false;
+    }
+
+    @Override
     public void setForegroundFPS(int fps) {
         // not available
     }
