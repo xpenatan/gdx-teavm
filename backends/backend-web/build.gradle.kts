@@ -2,7 +2,7 @@ plugins {
     id("java-library")
 }
 
-val moduleName = "backend-teavm"
+val moduleName = "backend-web"
 
 sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
 
