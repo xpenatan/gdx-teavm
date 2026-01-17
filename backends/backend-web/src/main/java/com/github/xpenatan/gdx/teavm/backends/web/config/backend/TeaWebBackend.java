@@ -20,7 +20,7 @@ public class TeaWebBackend extends TeaBackend {
     public String mainClassArgs = "";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
-    public boolean showLoadingLogo = true;
+    public boolean copyLoadingAsset = true;
     public String webappFolderName = "webapp";
     public boolean isWebAssembly;
     public AssetFilter scriptFilter;
@@ -55,8 +55,8 @@ public class TeaWebBackend extends TeaBackend {
         return this;
     }
 
-    public TeaWebBackend setShowLoadingLogo(boolean showLoadingLogo) {
-        this.showLoadingLogo = showLoadingLogo;
+    public TeaWebBackend setCopyLoadingAsset(boolean copyLoadingAsset) {
+        this.copyLoadingAsset = copyLoadingAsset;
         return this;
     }
 
@@ -134,7 +134,7 @@ public class TeaWebBackend extends TeaBackend {
 
         ArrayList<String> rootAssets = new ArrayList<>();
 
-        if(showLoadingLogo) {
+        if(copyLoadingAsset) {
             rootAssets.add(logo);
         }
 
