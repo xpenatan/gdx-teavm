@@ -63,11 +63,11 @@ import com.badlogic.gdx.tests.net.OpenBrowserExample;
 import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.utils.IssueTest;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.GLTFQuickStartExample;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.GearsDemo;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.PixelTest;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.ReadPixelsTest;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.TeaVMInputTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GLTFQuickStartExample;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GearsDemo;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.PixelTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.ReadPixelsTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.TeaVMInputTest;
 import java.util.ArrayList;
 
 public class TeaVMGdxTests {

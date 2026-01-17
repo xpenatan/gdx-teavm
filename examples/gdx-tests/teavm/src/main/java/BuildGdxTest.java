@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
-import com.github.xpenatan.gdx.teavm.backends.web.config.backend.TeaWebAssemblyBackend;
+import com.github.xpenatan.gdx.teavm.backends.web.config.backend.TeaWebBackend;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -17,7 +17,7 @@ public class BuildGdxTest {
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(GdxTestLauncher.class.getName())
                 .setObfuscated(false)
-                .setBackend(new TeaWebAssemblyBackend())
+                .setBackend(new TeaWebBackend(false))
                 .build(new File("build/dist"));
     }
 }
