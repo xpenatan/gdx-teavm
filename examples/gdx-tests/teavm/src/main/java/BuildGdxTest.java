@@ -17,7 +17,7 @@ public class BuildGdxTest {
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(GdxTestLauncher.class.getName())
                 .setObfuscated(false)
-                .setBackend(new TeaWebBackend(false))
+                .setBackend(new TeaWebBackend())
                 .build(new File("build/dist"));
     }
 }

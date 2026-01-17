@@ -16,19 +16,58 @@ import org.teavm.tooling.TeaVMTargetType;
 
 public class TeaWebBackend extends TeaBackend {
     public String logoPath = "startup-logo.png";
-    public String htmlTitle = "app";
+    public String htmlTitle = "gdx-teavm";
     public String mainClassArgs = "";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
-    public boolean showLoadingLogo = true;
+    public boolean copyLoadingAsset = true;
     public String webappFolderName = "webapp";
-
-    private final boolean isWebAssembly;
-
+    public boolean isWebAssembly;
     public AssetFilter scriptFilter;
 
-    public TeaWebBackend(boolean isWebAssembly) {
+    public TeaWebBackend setWebAssembly(boolean isWebAssembly) {
         this.isWebAssembly = isWebAssembly;
+        return this;
+    }
+
+    public TeaWebBackend setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
+        return this;
+    }
+
+    public TeaWebBackend setHtmlTitle(String htmlTitle) {
+        this.htmlTitle = htmlTitle;
+        return this;
+    }
+
+    public TeaWebBackend setMainClassArgs(String mainClassArgs) {
+        this.mainClassArgs = mainClassArgs;
+        return this;
+    }
+
+    public TeaWebBackend setHtmlWidth(int htmlWidth) {
+        this.htmlWidth = htmlWidth;
+        return this;
+    }
+
+    public TeaWebBackend setHtmlHeight(int htmlHeight) {
+        this.htmlHeight = htmlHeight;
+        return this;
+    }
+
+    public TeaWebBackend setCopyLoadingAsset(boolean copyLoadingAsset) {
+        this.copyLoadingAsset = copyLoadingAsset;
+        return this;
+    }
+
+    public TeaWebBackend setWebappFolderName(String webappFolderName) {
+        this.webappFolderName = webappFolderName;
+        return this;
+    }
+
+    public TeaWebBackend setScriptFilter(AssetFilter scriptFilter) {
+        this.scriptFilter = scriptFilter;
+        return this;
     }
 
     @Override
@@ -95,7 +134,7 @@ public class TeaWebBackend extends TeaBackend {
 
         ArrayList<String> rootAssets = new ArrayList<>();
 
-        if(showLoadingLogo) {
+        if(copyLoadingAsset) {
             rootAssets.add(logo);
         }
 

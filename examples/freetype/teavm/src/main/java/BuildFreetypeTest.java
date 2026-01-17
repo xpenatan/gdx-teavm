@@ -10,7 +10,7 @@ public class BuildFreetypeTest {
     public static void main(String[] args) throws IOException {
         new TeaCompiler()
                 .addAssets(new AssetFileHandle("../desktop/assets"))
-                .setBackend(new TeaWebBackend(false))
+                .setBackend(new TeaWebBackend())
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(FreetypeTestLauncher.class.getName())
                 .setObfuscated(false)
