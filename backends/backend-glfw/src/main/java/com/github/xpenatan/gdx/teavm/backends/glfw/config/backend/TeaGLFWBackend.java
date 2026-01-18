@@ -48,7 +48,7 @@ public class TeaGLFWBackend extends TeaBackend {
         }
         buildRootPath = data.output.getAbsolutePath().replace("\\", "/");
         generatedSources = buildRootPath +  "/c/src";
-        externalSources = buildRootPath +  "/external_cpp";
+        externalSources = buildRootPath +  "/c/external_cpp";
         tool.setTargetDirectory(new File(generatedSources));
     }
 
@@ -108,24 +108,74 @@ public class TeaGLFWBackend extends TeaBackend {
             }
         }
 
-        String libName = data.outputName;
-        String buildCPath = buildRootPath + "/c/build";
+//        String libName = data.outputName;
+//        String buildCPath = buildRootPath + "/c/build";
+//
+//        BuildConfig config = new BuildConfig(
+//                libName,
+//                buildCPath,
+//                generatedSources,
+//                releasePath.path()
+//        );
+//        config.additionalSourceDirs.add(new CustomFileDescriptor(generatedSources));
+//        config.additionalSourceDirs.add(new CustomFileDescriptor(externalSources));
+//
+//        ArrayList<BuildMultiTarget> targets = new ArrayList<>();
+//        targets.add(setupWindowsTarget(data));
+//        JBuilder.build(config, targets);
 
-        BuildConfig config = new BuildConfig(
-                libName,
-                buildCPath,
-                generatedSources,
-                releasePath.path()
-        );
-        config.additionalSourceDirs.add(new CustomFileDescriptor(generatedSources));
-        config.additionalSourceDirs.add(new CustomFileDescriptor(externalSources));
-
-        ArrayList<BuildMultiTarget> targets = new ArrayList<>();
-        targets.add(setupWindowsTarget(data));
-        JBuilder.build(config, targets);
+        generateCMakeLists(data);
     }
 
-    private BuildMultiTarget setupWindowsTarget(TeaCompilerData data) {
+    private void generateCMakeLists(TeaCompilerData data) {
+        String cmakePath = buildRootPath + "/CMakeLists.txt";
+        String projectName = data.outputName;
+        String generatedSourcesPath = generatedSources;
+        String externalCppPath = externalSources;
+        String glfwPath = externalCppPath + "/glfw";
+        String stbPath = externalCppPath + "/stb";
+        String glewPath = externalCppPath + "/glew-2.3.0";
+        String releasePathStr = releasePath.path();
+
+        StringBuilder cmakeContent = new StringBuilder();
+        cmakeContent.append("cmake_minimum_required(VERSION 3.10)\n");
+        cmakeContent.append("project(").append(projectName).append(" C)\n");
+        cmakeContent.append("set(CMAKE_C_STANDARD 11)\n");
+        cmakeContent.append("if(CMAKE_CONFIGURATION_TYPES)\n");
+        cmakeContent.append("    foreach(config ${CMAKE_CONFIGURATION_TYPES})\n");
+        cmakeContent.append("        string(TOUPPER ${config} config_upper)\n");
+        cmakeContent.append("        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} \"").append(releasePathStr).append("\")\n");
+        cmakeContent.append("    endforeach()\n");
+        cmakeContent.append("else()\n");
+        cmakeContent.append("    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY \"").append(releasePathStr).append("\")\n");
+        cmakeContent.append("endif()\n");
+        cmakeContent.append("if(NOT CMAKE_BUILD_TYPE)\n");
+        cmakeContent.append("    set(CMAKE_BUILD_TYPE Release)\n");
+        cmakeContent.append("endif()\n");
+        cmakeContent.append("set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG} -g -std=c11\")\n");
+        cmakeContent.append("set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11\")\n");
+        cmakeContent.append("set(CMAKE_MSVC_RUNTIME_LIBRARY \"MultiThreaded$<IF:$<CONFIG:Debug>,Debug,>\")\n");
+        cmakeContent.append("add_definitions(-DGLEW_STATIC)\n");
+        cmakeContent.append("include_directories(\"").append(generatedSourcesPath).append("\")\n");
+        cmakeContent.append("include_directories(\"").append(glfwPath).append("/include\")\n");
+        cmakeContent.append("include_directories(\"").append(stbPath).append("/include\")\n");
+        cmakeContent.append("include_directories(\"").append(glewPath).append("/include\")\n");
+        cmakeContent.append("link_directories(\"").append(glfwPath).append("/lib-vc2022\")\n");
+        cmakeContent.append("link_directories(\"").append(glewPath).append("/lib/Release/x64\")\n");
+        cmakeContent.append("set(SOURCES \"").append(externalCppPath).append("/app_include.c\")\n");
+        cmakeContent.append("add_executable(").append(projectName).append(" ${SOURCES})\n");
+        cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES OUTPUT_NAME \"").append(projectName).append("_$<IF:$<CONFIG:Debug>,debug,release>\")\n");
+        cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY \"").append(releasePathStr).append("\")\n");
+        cmakeContent.append("target_link_libraries(").append(projectName).append(" glfw3 glew32s opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib)\n");
+
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), cmakeContent.toString().getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private BuildMultiTarget setupWindowsTargetOld(TeaCompilerData data) {
 
         String glfwPath = externalSources + "/glfw";
         String stbPath = externalSources + "/stb";
@@ -181,7 +231,7 @@ public class TeaGLFWBackend extends TeaBackend {
     @Override
     protected void copyAssets(TeaCompilerData data) {
         super.copyAssets(data);
-        FileHandle outputFolder = new FileHandle(data.output);
+        FileHandle outputFolder = new FileHandle(buildRootPath + "/c");
         AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder);
     }
 }
