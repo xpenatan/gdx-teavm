@@ -57,20 +57,23 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     }
 
     protected void setupPreloadAssets() {
+        preloadAssets();
+    }
+
+    protected void preloadAssets() {
         addQueue();
         assetLoader.loadAsset(startupLogo, AssetType.Binary, Files.FileType.Internal, new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, TeaBlob result) {
                 subtractQueue();
-            }
-        });
-
-        addQueue();
-        assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
-            @Override
-            public void onSuccess(String url, Void result) {
-                subtractQueue();
-                assetsCount = assetLoader.getQueue();
+                addQueue();
+                assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
+                    @Override
+                    public void onSuccess(String url, Void result) {
+                        subtractQueue();
+                        assetsCount = assetLoader.getQueue();
+                    }
+                });
             }
         });
     }

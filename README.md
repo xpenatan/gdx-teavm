@@ -44,7 +44,7 @@ gdxTeaVMVersion = "[LAST_TAG_VERSION]"
 
 // In teaVM module
 dependencies {
-    implementation "com.github.xpenatan.gdx-teavm:backend-teavm:$project.gdxTeaVMVersion"
+    implementation "com.github.xpenatan.gdx-teavm:backend-web:$project.gdxTeaVMVersion"
 
     // FreeType extension
     implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:$project.gdxTeaVMVersion"

@@ -185,10 +185,10 @@ public class AssetLoadImpl implements AssetLoader {
                     AssetType assetType = AssetType.Binary;
                     if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
 
-                    addAssetToQueue(assetUrl, assetType, fileType, shouldOverwriteLocalData);
+                    addAssetToQueue(assetUrl, assetType, fileType, null, shouldOverwriteLocalData);
                 }
                 preloadListener.onSuccess(assetFileUrl, null);
-                downloadMultiAssets(null);
+                downloadMultiAssets();
             }
 
             @Override
@@ -257,11 +257,11 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     private void loadAssetInternal(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
-        addAssetToQueue(path, assetType, fileType, overwrite);
-        downloadQueueAssets(listener);
+        addAssetToQueue(path, assetType, fileType, listener, overwrite);
+        downloadQueueAssets();
     }
 
-    private void addAssetToQueue(String path, AssetType assetType, FileType fileType, boolean overwrite) {
+    private void addAssetToQueue(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -288,33 +288,44 @@ public class AssetLoadImpl implements AssetLoader {
         QueueAsset queueAsset = new QueueAsset();
         queueAsset.assetUrl = path1;
         queueAsset.fileHandle = fileHandle;
+        queueAsset.listener = listener;
         assetInQueue.add(queueAsset);
     }
 
-    private void downloadMultiAssets(AssetLoaderListener<TeaBlob> listener) {
+    private void downloadMultiAssets() {
         for(int i = 0; i < maxMultiDownloadCount; i++) {
-            downloadQueueAssets(listener);
+            downloadQueueAssets();
         }
     }
 
-    private void downloadQueueAssets(AssetLoaderListener<TeaBlob> listener) {
+    private void downloadQueueAssets() {
         if(assetInQueue.size == 0 || assetDownloading.size() >= maxMultiDownloadCount) {
             return;
         }
         QueueAsset queueAsset = assetInQueue.removeIndex(0);
-        String assetPath = queueAsset.assetUrl;
-        FileHandle fileHandle = queueAsset.fileHandle;
+        final String assetPath = queueAsset.assetUrl;
+        final FileHandle fileHandle = queueAsset.fileHandle;
+        final AssetLoaderListener<TeaBlob> listener = queueAsset.listener;
         assetDownloading.add(assetPath);
 
-        assetDownloader.load(true, getAssetUrl() + assetPath, AssetType.Binary, new AssetLoaderListener<>() {
+        createAndStartDownload(assetPath, fileHandle, listener);
+    }
 
+    private void createAndStartDownload(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<TeaBlob> listener) {
+        // Create an independent wrapper listener to ensure proper closure capture
+        AssetLoaderListener<TeaBlob> downloadListener = createDownloadListener(assetPath, fileHandle, listener);
+        assetDownloader.load(true, getAssetUrl() + assetPath, AssetType.Binary, downloadListener);
+    }
+
+    private AssetLoaderListener<TeaBlob> createDownloadListener(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<TeaBlob> listener) {
+        return new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
                 assetDownloading.remove(assetPath);
                 if(listener != null) {
                     listener.onFailure(assetPath);
                 }
-                downloadMultiAssets(listener);
+                downloadMultiAssets();
             }
 
             @Override
@@ -335,9 +346,9 @@ public class AssetLoadImpl implements AssetLoader {
                 if(listener != null) {
                     listener.onSuccess(assetPath, result);
                 }
-                downloadMultiAssets(listener);
+                downloadMultiAssets();
             }
-        });
+        };
     }
 
     private boolean assetInQueue(String path) {
