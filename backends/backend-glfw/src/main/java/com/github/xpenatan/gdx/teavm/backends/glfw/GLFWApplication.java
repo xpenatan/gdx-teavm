@@ -132,80 +132,90 @@ public class GLFWApplication implements GLFWApplicationBase {
         return flag;
     }
 
+    boolean haveWindowsRendered = false;
+    Array<GLFWWindow> closedWindows = new Array<>();
+
     protected void loop() {
-        Array<GLFWWindow> closedWindows = new Array<>();
+
         while (running && windows.size > 0) {
             // FIXME put it on a separate thread
             audio.update();
 
-            boolean haveWindowsRendered = false;
+            haveWindowsRendered = false;
             closedWindows.clear();
-            int targetFramerate = -2;
-            for (GLFWWindow window : windows) {
-                if (currentWindow != window) {
-                    window.makeCurrent();
-                    currentWindow = window;
-                }
-                if (targetFramerate == -2)  {
-                    targetFramerate = window.getConfig().foregroundFPS;
-                }
-                haveWindowsRendered = isWindowRendered(haveWindowsRendered, window.update());
-                if (window.shouldClose()) {
-                    closedWindows.add(window);
-                }
-            }
+            loopWindow();
             GLFW.pollEvents();
 
-            boolean shouldRequestRendering;
-            shouldRequestRendering = runnables.size > 0;
-            executedRunnables.clear();
-            executedRunnables.addAll(runnables);
-            runnables.clear();
-            for (Runnable runnable : executedRunnables) {
-                runnable.run();
-            }
-            if (shouldRequestRendering) {
+            if (loopRunnables()) {
                 // Must follow Runnables execution so changes done by Runnables are reflected
                 // in the following render.
                 for (GLFWWindow window : windows) {
                     if (!window.getGraphics().isContinuousRendering()) window.requestRendering();
                 }
             }
+            loopClosedWindows();
+        }
+    }
 
-            for (GLFWWindow closedWindow : closedWindows) {
-                if (windows.size == 1) {
-                    // Lifecycle listener methods have to be called before ApplicationListener methods. The
-                    // application will be disposed when _all_ windows have been disposed, which is the case,
-                    // when there is only 1 window left, which is in the process of being disposed.
-                    for (int i = lifecycleListeners.size - 1; i >= 0; i--) {
-                        LifecycleListener l = lifecycleListeners.get(i);
-                        l.pause();
-                        l.dispose();
-                    }
-                    lifecycleListeners.clear();
-                }
-                closedWindow.dispose();
-
-                windows.removeValue(closedWindow, false);
+    private void loopClosedWindows() {
+        int size = closedWindows.size;
+        int ci = 0;
+        while(ci < size) {
+            GLFWWindow closedWindow = closedWindows.get(ci);
+            if (windows.size == 1) {
+                // Lifecycle listener methods have to be called before ApplicationListener methods. The
+                // application will be disposed when _all_ windows have been disposed, which is the case,
+                // when there is only 1 window left, which is in the process of being disposed.
+                loopLifeCycle();
             }
+            closedWindow.dispose();
 
-            if (!haveWindowsRendered) {
-                // Sleep a few milliseconds in case no rendering was requested
-                // with continuous rendering disabled.
-                // TODO
-//                try {
-//                    Thread.sleep(1000 / config.idleFPS);
-//                } catch (InterruptedException e) {
-//                    // ignore
-//                }
-            } else if (targetFramerate > 0) {
-//				sync.sync(targetFramerate); // sleep as needed to meet the target framerate
-                // TODO: implement a real sync method that uses vsync if possible
-//                try {
-//                    Thread.sleep(1000 / targetFramerate);
-//                } catch (InterruptedException e) {
-//                }
+            windows.removeValue(closedWindow, false);
+        }
+    }
+
+    private void loopLifeCycle() {
+        for (int i = lifecycleListeners.size - 1; i >= 0; i--) {
+            LifecycleListener l = lifecycleListeners.get(i);
+            l.pause();
+            l.dispose();
+        }
+        lifecycleListeners.clear();
+    }
+
+    private boolean loopRunnables() {
+        boolean shouldRequestRendering = runnables.size > 0;
+        executedRunnables.clear();
+        executedRunnables.addAll(runnables);
+        runnables.clear();
+
+        int c = 0;
+        int size = executedRunnables.size;
+        while(c < size) {
+            Runnable runnable = executedRunnables.get(c);
+            runnable.run();
+            c++;
+        }
+        return shouldRequestRendering;
+    }
+
+    private void loopWindow() {
+        int targetFramerate = -2;
+        int wi = 0;
+        while(wi < windows.size) {
+            GLFWWindow window = windows.get(wi);
+            if (currentWindow != window) {
+                window.makeCurrent();
+                currentWindow = window;
             }
+            if (targetFramerate == -2)  {
+                targetFramerate = window.getConfig().foregroundFPS;
+            }
+            haveWindowsRendered = isWindowRendered(haveWindowsRendered, window.update());
+            if (window.shouldClose()) {
+                closedWindows.add(window);
+            }
+            wi++;
         }
     }
 

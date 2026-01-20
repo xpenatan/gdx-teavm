@@ -5,6 +5,9 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import org.teavm.backend.c.CustomCTarget;
 import org.teavm.backend.c.generate.CNameProvider;
@@ -52,7 +55,7 @@ public class TeaGLFWBackend extends TeaBackend {
         CustomCTarget cTarget = new CustomCTarget(new CNameProvider());
         cTarget.setMinHeapSize(data.minHeapSize);
         cTarget.setMaxHeapSize(data.maxHeapSize);
-//        cTarget.setLineNumbersGenerated(true);
+        cTarget.setLineNumbersGenerated(true);
         cTarget.setHeapDump(true);
         cTarget.setObfuscated(data.obfuscated);
         cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
@@ -102,17 +105,25 @@ public class TeaGLFWBackend extends TeaBackend {
             }
         }
 
+        try {
+            Files.writeString(Path.of(generatedSources, "app_include.c"),
+                    "#include <GL/glew.h>\n" +
+                    "#define STB_IMAGE_IMPLEMENTATION\n" +
+                    "#include \"stb_image.h\"\n" +
+                    "#include \"all.c\"");
+        } catch (IOException e) {
+            throw new RuntimeException("Build Failed", e);
+        }
+
         generateCMakeLists(data);
     }
 
     private void generateCMakeLists(TeaCompilerData data) {
         String cmakePath = buildRootPath + "/CMakeLists.txt";
         String projectName = data.outputName;
-        String generatedSourcesPath = generatedSources;
-        String externalCppPath = externalSources;
-        String glfwPath = externalCppPath + "/glfw";
-        String stbPath = externalCppPath + "/stb";
-        String glewPath = externalCppPath + "/glew-2.3.0";
+        String glfwPath = externalSources + "/glfw";
+        String stbPath = externalSources + "/stb";
+        String glewPath = externalSources + "/glew-2.3.0";
         String releasePathStr = releasePath.path();
 
         StringBuilder cmakeContent = new StringBuilder();
@@ -132,19 +143,17 @@ public class TeaGLFWBackend extends TeaBackend {
         cmakeContent.append("endif()\n");
         cmakeContent.append("set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG} -g -std=c11\")\n");
         cmakeContent.append("set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11\")\n");
-        cmakeContent.append("set(CMAKE_MSVC_RUNTIME_LIBRARY \"MultiThreaded$<IF:$<CONFIG:Debug>,Debug,>\")\n");
         cmakeContent.append("add_definitions(-DGLEW_STATIC)\n");
-        cmakeContent.append("include_directories(\"").append(generatedSourcesPath).append("\")\n");
         cmakeContent.append("include_directories(\"").append(glfwPath).append("/include\")\n");
         cmakeContent.append("include_directories(\"").append(stbPath).append("/include\")\n");
         cmakeContent.append("include_directories(\"").append(glewPath).append("/include\")\n");
         cmakeContent.append("link_directories(\"").append(glfwPath).append("/lib-vc2022\")\n");
         cmakeContent.append("link_directories(\"").append(glewPath).append("/lib/Release/x64\")\n");
-        cmakeContent.append("set(SOURCES \"").append(externalCppPath).append("/app_include.c\")\n");
+        cmakeContent.append("set(SOURCES \"").append(generatedSources).append("/app_include.c\")\n");
         cmakeContent.append("add_executable(").append(projectName).append(" ${SOURCES})\n");
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES OUTPUT_NAME \"").append(projectName).append("_$<IF:$<CONFIG:Debug>,debug,release>\")\n");
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY \"").append(releasePathStr).append("\")\n");
-        cmakeContent.append("target_link_libraries(").append(projectName).append(" glfw3 glew32s opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib)\n");
+        cmakeContent.append("target_link_libraries(").append(projectName).append(" glfw3 opengl32 glew32s)\n");
 
         try {
             java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), cmakeContent.toString().getBytes());
@@ -202,7 +211,25 @@ public class TeaGLFWBackend extends TeaBackend {
         batContent.append("\n");
         batContent.append(":: Use CMake to create build files\n");
         batContent.append("echo Generating CMake build files for !BUILD_CONFIG!...\n");
-        batContent.append("cmake -S . -B build\\cmake\n");
+        batContent.append("\n");
+        batContent.append(":: Try to find cmake\n");
+        batContent.append("set CMAKE_PATH=cmake\n");
+        batContent.append("where cmake >nul 2>&1\n");
+        batContent.append("if errorlevel 1 (\n");
+        batContent.append("    echo cmake not found in PATH, trying Visual Studio paths...\n");
+        batContent.append("    if exist \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\" (\n");
+        batContent.append("        set \"CMAKE_PATH=C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\"\n");
+        batContent.append("    ) else (\n");
+        batContent.append("        if exist \"C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\" (\n");
+        batContent.append("            set \"CMAKE_PATH=C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\"\n");
+        batContent.append("        ) else (\n");
+        batContent.append("            echo cmake could not be found. Please install CMake or add it to PATH.\n");
+        batContent.append("            exit /b 1\n");
+        batContent.append("        )\n");
+        batContent.append("    )\n");
+        batContent.append(")\n");
+        batContent.append("\n");
+        batContent.append("!CMAKE_PATH! -S . -B build\\cmake\n");
         batContent.append("if errorlevel 1 (\n");
         batContent.append("    echo CMake build generation failed\n");
         batContent.append("    exit /b 1\n");
