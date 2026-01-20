@@ -171,6 +171,7 @@ public class GLFWApplication implements GLFWApplicationBase {
             closedWindow.dispose();
 
             windows.removeValue(closedWindow, false);
+            ci++;
         }
     }
 
