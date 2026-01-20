@@ -154,6 +154,7 @@ public class TeaGLFWBackend extends TeaBackend {
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES OUTPUT_NAME \"").append(projectName).append("_$<IF:$<CONFIG:Debug>,debug,release>\")\n");
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY \"").append(releasePathStr).append("\")\n");
         cmakeContent.append("target_link_libraries(").append(projectName).append(" glfw3 opengl32 glew32s)\n");
+        cmakeContent.append("set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ").append(projectName).append(")\n");
 
         try {
             java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), cmakeContent.toString().getBytes());
