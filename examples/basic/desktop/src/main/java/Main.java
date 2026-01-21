@@ -1,11 +1,13 @@
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.Basic3DTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest;
 
 public class Main {
 
     public static void main(String[] args) {
 //        new LwjglApplication(new GearsDemo());
-        new LwjglApplication(new Basic3DTest());
+//        new LwjglApplication(new Basic3DTest());
+        new LwjglApplication(new SpriteBatchTest());
 //        new LwjglApplication(new TeaVMInputTest());
 //        new LwjglApplication(new ReflectionTest());
 //        new LwjglApplication(new ReadPixelsTest());

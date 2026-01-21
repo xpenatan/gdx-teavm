@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import org.teavm.backend.c.CustomCTarget;
 import org.teavm.backend.c.generate.CNameProvider;
@@ -28,7 +30,8 @@ import org.teavm.vm.TeaVMBuilder;
 public class TeaGLFWBackend extends TeaBackend {
 
     public boolean shouldGenerateSource = true;
-    public boolean shouldUseCustomGeneration = true;
+    public boolean shouldUseCustomGeneration = false;
+    public List<String> additionalSourcePaths = new ArrayList<>();
 
     protected String buildRootPath;
     protected String generatedSources;
@@ -46,6 +49,7 @@ public class TeaGLFWBackend extends TeaBackend {
         buildRootPath = data.output.getAbsolutePath().replace("\\", "/");
         generatedSources = buildRootPath +  "/c/src";
         externalSources = buildRootPath +  "/c/external_cpp";
+        additionalSourcePaths.add(externalSources + "/gdx");
         tool.setTargetDirectory(new File(generatedSources));
     }
 
@@ -55,7 +59,7 @@ public class TeaGLFWBackend extends TeaBackend {
         CustomCTarget cTarget = new CustomCTarget(new CNameProvider());
         cTarget.setMinHeapSize(data.minHeapSize);
         cTarget.setMaxHeapSize(data.maxHeapSize);
-        cTarget.setLineNumbersGenerated(true);
+        cTarget.setLineNumbersGenerated(false);
         cTarget.setHeapDump(true);
         cTarget.setObfuscated(data.obfuscated);
         cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
@@ -108,8 +112,6 @@ public class TeaGLFWBackend extends TeaBackend {
         try {
             Files.writeString(Path.of(generatedSources, "app_include.c"),
                     "#include <GL/glew.h>\n" +
-                    "#define STB_IMAGE_IMPLEMENTATION\n" +
-                    "#include \"stb_image.h\"\n" +
                     "#include \"all.c\"");
         } catch (IOException e) {
             throw new RuntimeException("Build Failed", e);
@@ -121,6 +123,7 @@ public class TeaGLFWBackend extends TeaBackend {
     private void generateCMakeLists(TeaCompilerData data) {
         String cmakePath = buildRootPath + "/CMakeLists.txt";
         String projectName = data.outputName;
+        String gdxPath = externalSources + "/gdx";
         String glfwPath = externalSources + "/glfw";
         String stbPath = externalSources + "/stb";
         String glewPath = externalSources + "/glew-2.3.0";
@@ -144,12 +147,18 @@ public class TeaGLFWBackend extends TeaBackend {
         cmakeContent.append("set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG} -g -std=c11\")\n");
         cmakeContent.append("set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11\")\n");
         cmakeContent.append("add_definitions(-DGLEW_STATIC)\n");
+        cmakeContent.append("include_directories(\"").append(gdxPath).append("/include\")\n");
         cmakeContent.append("include_directories(\"").append(glfwPath).append("/include\")\n");
         cmakeContent.append("include_directories(\"").append(stbPath).append("/include\")\n");
         cmakeContent.append("include_directories(\"").append(glewPath).append("/include\")\n");
         cmakeContent.append("link_directories(\"").append(glfwPath).append("/lib-vc2022\")\n");
         cmakeContent.append("link_directories(\"").append(glewPath).append("/lib/Release/x64\")\n");
         cmakeContent.append("set(SOURCES \"").append(generatedSources).append("/app_include.c\")\n");
+        for(int i = 0; i < additionalSourcePaths.size(); i++) {
+            String path = additionalSourcePaths.get(i);
+            cmakeContent.append("file(GLOB_RECURSE EXTERNAL_SOURCES_").append(i).append(" \"").append(path).append("/*.c\")\n");
+            cmakeContent.append("list(APPEND SOURCES ${EXTERNAL_SOURCES_").append(i).append("})\n");
+        }
         cmakeContent.append("add_executable(").append(projectName).append(" ${SOURCES})\n");
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES OUTPUT_NAME \"").append(projectName).append("_$<IF:$<CONFIG:Debug>,debug,release>\")\n");
         cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY \"").append(releasePathStr).append("\")\n");

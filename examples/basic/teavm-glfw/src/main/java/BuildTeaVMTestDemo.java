@@ -8,7 +8,7 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) throws IOException {
-        AssetFileHandle assetsPath = new AssetFileHandle("../desktop/assets");
+        AssetFileHandle assetsPath = new AssetFileHandle("../assets");
         TeaGLFWBackend cBackend = new TeaGLFWBackend();
 //        cBackend.shouldGenerateSource = false;
         new TeaCompiler()

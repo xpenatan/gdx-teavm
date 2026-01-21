@@ -56,7 +56,7 @@ public class TGdx2DPixmap implements Disposable, TPixmapNativeInterface {
     private TGdx2DPixmapNative nativePixmap;
 
     public TGdx2DPixmap(byte[] encodedData, int offset, int len, int requestedFormat) {
-        nativePixmap = new TGdx2DPixmapNative(ByteBuffer.wrap(encodedData), offset, len, requestedFormat);
+        nativePixmap = new TGdx2DPixmapNative(encodedData, offset, len, requestedFormat);
     }
 
     /**
@@ -108,11 +108,11 @@ public class TGdx2DPixmap implements Disposable, TPixmapNativeInterface {
     }
 
     public void drawPixmap(TGdx2DPixmap src, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-        nativePixmap.drawPixmap(src.nativePixmap.getBuffer(), srcX, srcY, dstX, dstY, width, height);
+        nativePixmap.drawPixmap(src.nativePixmap, srcX, srcY, dstX, dstY, width, height);
     }
 
     public void drawPixmap(TGdx2DPixmap src, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight) {
-        nativePixmap.drawPixmap(src.nativePixmap.getBuffer(), srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
+        nativePixmap.drawPixmap(src.nativePixmap, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
     }
 
     public void setBlend(int blend) {

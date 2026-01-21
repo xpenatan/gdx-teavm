@@ -47,6 +47,9 @@ public class GLFWApplication implements GLFWApplicationBase {
     private static GLFW.GLFWErrorCallback errorCallback;
     private static GLVersion glVersion;
     private static Callback glDebugCallback;
+    private int targetFramerate = -2;
+    private boolean haveWindowsRendered = false;
+    private final Array<GLFWWindow> closedWindows = new Array<>();
 
     static void initializeGlfw() {
         if (errorCallback == null) {
@@ -132,8 +135,7 @@ public class GLFWApplication implements GLFWApplicationBase {
         return flag;
     }
 
-    boolean haveWindowsRendered = false;
-    Array<GLFWWindow> closedWindows = new Array<>();
+    int frame = 0;
 
     protected void loop() {
 
@@ -154,6 +156,7 @@ public class GLFWApplication implements GLFWApplicationBase {
                 }
             }
             loopClosedWindows();
+            loopSleep();
         }
     }
 
@@ -172,6 +175,20 @@ public class GLFWApplication implements GLFWApplicationBase {
 
             windows.removeValue(closedWindow, false);
             ci++;
+        }
+    }
+
+    private void loopSleep() {
+        if (!haveWindowsRendered) {
+            // Sleep a few milliseconds in case no rendering was requested
+            // with continuous rendering disabled.
+            try {
+                Thread.sleep(1000 / config.idleFPS);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        } else if (targetFramerate > 0) {
+//            sync.sync(targetFramerate); // sleep as needed to meet the target framerate
         }
     }
 
@@ -201,8 +218,8 @@ public class GLFWApplication implements GLFWApplicationBase {
     }
 
     private void loopWindow() {
-        int targetFramerate = -2;
         int wi = 0;
+        targetFramerate = -2;
         while(wi < windows.size) {
             GLFWWindow window = windows.get(wi);
             if (currentWindow != window) {
