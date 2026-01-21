@@ -10,7 +10,6 @@ public class BuildTeaVMTestDemo {
     public static void main(String[] args) throws IOException {
         AssetFileHandle assetsPath = new AssetFileHandle("../assets");
         TeaGLFWBackend cBackend = new TeaGLFWBackend();
-//        cBackend.shouldGenerateSource = false;
         new TeaCompiler()
                 .addAssets(assetsPath)
                 .setBackend(cBackend)
