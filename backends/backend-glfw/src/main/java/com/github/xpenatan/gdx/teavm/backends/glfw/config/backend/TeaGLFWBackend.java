@@ -123,52 +123,22 @@ public class TeaGLFWBackend extends TeaBackend {
     private void generateCMakeLists(TeaCompilerData data) {
         String cmakePath = buildRootPath + "/CMakeLists.txt";
         String projectName = data.outputName;
-        String gdxPath = externalSources + "/gdx";
-        String glfwPath = externalSources + "/glfw";
-        String stbPath = externalSources + "/stb";
-        String glewPath = externalSources + "/glew-2.3.0";
         String releasePathStr = releasePath.path();
 
-        StringBuilder cmakeContent = new StringBuilder();
-        cmakeContent.append("cmake_minimum_required(VERSION 3.10)\n");
-        cmakeContent.append("project(").append(projectName).append(" C)\n");
-        cmakeContent.append("set(CMAKE_C_STANDARD 11)\n");
-        cmakeContent.append("if(CMAKE_CONFIGURATION_TYPES)\n");
-        cmakeContent.append("    foreach(config ${CMAKE_CONFIGURATION_TYPES})\n");
-        cmakeContent.append("        string(TOUPPER ${config} config_upper)\n");
-        cmakeContent.append("        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} \"").append(releasePathStr).append("\")\n");
-        cmakeContent.append("    endforeach()\n");
-        cmakeContent.append("else()\n");
-        cmakeContent.append("    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY \"").append(releasePathStr).append("\")\n");
-        cmakeContent.append("endif()\n");
-        cmakeContent.append("if(NOT CMAKE_BUILD_TYPE)\n");
-        cmakeContent.append("    set(CMAKE_BUILD_TYPE Release)\n");
-        cmakeContent.append("endif()\n");
-        cmakeContent.append("set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG} -g -std=c11\")\n");
-        cmakeContent.append("set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11\")\n");
-        cmakeContent.append("add_definitions(-DGLEW_STATIC)\n");
-        cmakeContent.append("include_directories(\"").append(gdxPath).append("/include\")\n");
-        cmakeContent.append("include_directories(\"").append(glfwPath).append("/include\")\n");
-        cmakeContent.append("include_directories(\"").append(stbPath).append("/include\")\n");
-        cmakeContent.append("include_directories(\"").append(glewPath).append("/include\")\n");
-        cmakeContent.append("link_directories(\"").append(glfwPath).append("/lib-vc2022\")\n");
-        cmakeContent.append("link_directories(\"").append(glewPath).append("/lib/Release/x64\")\n");
-        cmakeContent.append("set(SOURCES \"").append(generatedSources).append("/app_include.c\")\n");
-        for(int i = 0; i < additionalSourcePaths.size(); i++) {
-            String path = additionalSourcePaths.get(i);
-            cmakeContent.append("file(GLOB_RECURSE EXTERNAL_SOURCES_").append(i).append(" \"").append(path).append("/*.c\")\n");
-            cmakeContent.append("list(APPEND SOURCES ${EXTERNAL_SOURCES_").append(i).append("})\n");
-        }
-        cmakeContent.append("add_executable(").append(projectName).append(" ${SOURCES})\n");
-        cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES OUTPUT_NAME \"").append(projectName).append("_$<IF:$<CONFIG:Debug>,debug,release>\")\n");
-        cmakeContent.append("set_target_properties(").append(projectName).append(" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY \"").append(releasePathStr).append("\")\n");
-        cmakeContent.append("target_link_libraries(").append(projectName).append(" glfw3 opengl32 glew32s)\n");
-        cmakeContent.append("set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ").append(projectName).append(")\n");
+        // Copy the CMakeLists.txt template from resources
+        try (var input = getClass().getClassLoader().getResourceAsStream("CMakeLists.txt")) {
+            if (input == null) {
+                throw new RuntimeException("CMakeLists.txt template in resources");
+            }
+            String template = new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
 
-        try {
-            java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), cmakeContent.toString().getBytes());
+            // Replace placeholders in template
+            template = template.replace("${PROJECT_NAME}", projectName);
+            template = template.replace("${RELEASE_PATH}", releasePathStr.replace("\\", "/"));
+
+            java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), template.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to setup CMakeLists.txt", e);
         }
 
         // Generate bat files for building the project
