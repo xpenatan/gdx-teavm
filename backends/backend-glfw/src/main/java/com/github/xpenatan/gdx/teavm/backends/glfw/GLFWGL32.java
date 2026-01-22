@@ -11,8 +11,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import org.teavm.interop.Address;
 import org.teavm.interop.Strings;
 
@@ -27,25 +25,25 @@ public class GLFWGL32 implements GL32 {
             // Always create a fresh address from the current buffer state
             // Don't cache because buffer position/limit may change
             if (buffer instanceof ByteBuffer) {
-                return of((ByteBuffer) buffer);
+                return ofInternal((ByteBuffer) buffer);
             } else if (buffer instanceof ShortBuffer) {
-                return of((ShortBuffer) buffer);
+                return ofInternal((ShortBuffer) buffer);
             } else if (buffer instanceof IntBuffer) {
-                return of((IntBuffer) buffer);
+                return ofInternal((IntBuffer) buffer);
             } else if (buffer instanceof LongBuffer) {
-                return of((LongBuffer) buffer);
+                return ofInternal((LongBuffer) buffer);
             } else if (buffer instanceof FloatBuffer) {
-                return of((FloatBuffer) buffer);
+                return ofInternal((FloatBuffer) buffer);
             } else if (buffer instanceof DoubleBuffer) {
-                return of((DoubleBuffer) buffer);
+                return ofInternal((DoubleBuffer) buffer);
             } else if (buffer instanceof CharBuffer) {
-                return of((CharBuffer) buffer);
+                return ofInternal((CharBuffer) buffer);
             }
 
             throw new IllegalArgumentException("Unsupported buffer type: " + buffer.getClass());
         }
 
-        public static Address of(ByteBuffer buffer) {
+        public static Address ofInternal(ByteBuffer buffer) {
             // Get the backing array if direct buffer
             if (buffer.isDirect()) {
                 // For direct buffers, use the address directly
@@ -66,7 +64,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(ShortBuffer buffer) {
+        public static Address ofInternal(ShortBuffer buffer) {
             if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
@@ -76,7 +74,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(IntBuffer buffer) {
+        public static Address ofInternal(IntBuffer buffer) {
             // For IntBuffer, use backing array directly if available
             // This ensures modifications by native code are visible in the buffer
             if (buffer.hasArray()) {
@@ -89,7 +87,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(LongBuffer buffer) {
+        public static Address ofInternal(LongBuffer buffer) {
             if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
@@ -99,7 +97,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(FloatBuffer buffer) {
+        public static Address ofInternal(FloatBuffer buffer) {
             if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
@@ -109,7 +107,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(DoubleBuffer buffer) {
+        public static Address ofInternal(DoubleBuffer buffer) {
             if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
@@ -119,7 +117,7 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static Address of(CharBuffer buffer) {
+        public static Address ofInternal(CharBuffer buffer) {
             if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
@@ -128,7 +126,6 @@ public class GLFWGL32 implements GL32 {
                 return Address.ofData(data);
             }
         }
-
     }
 
     private static void nullCheck(int value) {
