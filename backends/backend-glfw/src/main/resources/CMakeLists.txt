@@ -26,7 +26,8 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11")
 add_definitions(-DGLEW_STATIC)
 
 # Include directories - using CMAKE_CURRENT_SOURCE_DIR
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glew-2.3.0/include")
@@ -41,6 +42,10 @@ set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
 # Collect external C sources from gdx
 file(GLOB_RECURSE EXTERNAL_SOURCES_0 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
 list(APPEND SOURCES ${EXTERNAL_SOURCES_0})
+
+# Collect external C++ sources from etc1
+file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/*.cpp")
+list(APPEND SOURCES ${EXTERNAL_SOURCES_1})
 
 # Add executable
 add_executable(${PROJECT_NAME} ${SOURCES})

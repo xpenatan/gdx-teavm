@@ -23,7 +23,7 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
     Texture texture;
     SpriteBatch spriteBatch;
     ScreenViewport viewport;
-    Sprite[] sprites = new Sprite[SPRITES * 2];
+    Sprite[] sprites = new Sprite[SPRITES];
     float angle = 0;
     float ROTATION_SPEED = 20;
     float scale = 1;
@@ -37,12 +37,7 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
         spriteBatch = new SpriteBatch(SPRITES);
 
         // TODO need to support texture constructor that calls native ETC1 methods
-//        texture = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
-
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("data/badlogicsmall.jpg"));
-        texture = new Texture(32, 32, Pixmap.Format.RGB565);
-        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        texture.draw(pixmap, 0, 0);
+        texture = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
 
     }
 
