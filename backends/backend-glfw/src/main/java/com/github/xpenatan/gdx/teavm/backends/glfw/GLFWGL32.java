@@ -17,22 +17,6 @@ import org.teavm.interop.Address;
 import org.teavm.interop.Strings;
 
 public class GLFWGL32 implements GL32 {
-    private ByteBuffer buffer = null;
-    private FloatBuffer floatBuffer = null;
-    private IntBuffer intBuffer = null;
-
-    private final Map<Integer, NativePointer> managedShaderSources = new HashMap<>();
-
-    // Keep strong references to buffers to prevent garbage collection during GL operations
-    private static final Map<String, Buffer> bufferCache = new HashMap<>();
-
-    private void ensureBufferCapacity (int numBytes) {
-        if (buffer == null || buffer.capacity() < numBytes) {
-            buffer = com.badlogic.gdx.utils.BufferUtils.newByteBuffer(numBytes);
-            floatBuffer = buffer.asFloatBuffer();
-            intBuffer = buffer.asIntBuffer();
-        }
-    }
 
     public static class AddressUtils {
         // Safe method for output buffers - uses backing array directly so modifications are visible
@@ -178,55 +162,6 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
-        public static void put(Buffer buffer, Address address) {
-            if (buffer instanceof ByteBuffer) {
-                put((ByteBuffer) buffer, address);
-            } else if (buffer instanceof ShortBuffer) {
-                put((ShortBuffer) buffer, address);
-            } else if (buffer instanceof IntBuffer) {
-                put((IntBuffer) buffer, address);
-            } else if (buffer instanceof LongBuffer) {
-                put((LongBuffer) buffer, address);
-            } else if (buffer instanceof FloatBuffer) {
-                put((FloatBuffer) buffer, address);
-            } else if (buffer instanceof DoubleBuffer) {
-                put((DoubleBuffer) buffer, address);
-            } else if (buffer instanceof CharBuffer) {
-                put((CharBuffer) buffer, address);
-            } else {
-                throw new UnsupportedOperationException("Unsupported buffer type: " + buffer.getClass().getName());
-            }
-
-            buffer.rewind();
-        }
-
-        public static void put(ByteBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(ShortBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(IntBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(LongBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(FloatBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(DoubleBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
-
-        public static void put(CharBuffer buffer, Address address) {
-            if (buffer != null) buffer.rewind();
-        }
     }
 
     @Override
@@ -244,7 +179,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(ids);
         OpenGL.glDebugMessageControl(source, type, severity, address, enabled);
         ids.rewind();
-        AddressUtils.put(ids, address);
     }
 
     @Override
@@ -348,7 +282,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(indices);
         OpenGL.glDrawElementsBaseVertex(mode, count, type, address, basevertex);
         indices.rewind();
-        AddressUtils.put(indices, address);
     }
 
     @Override
@@ -356,7 +289,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(indices);
         OpenGL.glDrawRangeElementsBaseVertex(mode, start, end, count, type, address, basevertex);
         indices.rewind();
-        AddressUtils.put(indices, address);
     }
 
     @Override
@@ -364,7 +296,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(indices);
         OpenGL.glDrawElementsInstancedBaseVertex(mode, count, type, address, instanceCount, basevertex);
         indices.rewind();
-        AddressUtils.put(indices, address);
     }
 
     @Override
@@ -387,7 +318,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(data);
         OpenGL.glReadnPixels(x, y, width, height, format, type, bufSize, address);
         data.rewind();
-        AddressUtils.put(data, address);
     }
 
     @Override
@@ -441,7 +371,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glTexParameterIiv(target, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -449,7 +378,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glTexParameterIuiv(target, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -457,7 +385,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetTexParameterIiv(target, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -465,7 +392,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetTexParameterIuiv(target, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -473,7 +399,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(param);
         OpenGL.glSamplerParameterIiv(sampler, pname, address);
         param.rewind();
-        AddressUtils.put(param, address);
     }
 
     @Override
@@ -481,7 +406,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(param);
         OpenGL.glSamplerParameterIuiv(sampler, pname, address);
         param.rewind();
-        AddressUtils.put(param, address);
     }
 
     @Override
@@ -489,7 +413,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetSamplerParameterIiv(sampler, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -497,7 +420,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetSamplerParameterIuiv(sampler, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -545,7 +467,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetFramebufferParameteriv(target, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -553,7 +474,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetProgramInterfaceiv(program, programInterface, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -577,9 +497,9 @@ public class GLFWGL32 implements GL32 {
                 lengthAddress,
                 paramsAddress);
 
-        AddressUtils.put(props, propsAddress);
-        AddressUtils.put(length, lengthAddress);
-        AddressUtils.put(params, paramsAddress);
+        props.rewind();
+        length.rewind();
+        params.rewind();
     }
 
     @Override
@@ -616,14 +536,14 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(pipelines);
         OpenGL.glDeleteProgramPipelines(n, address);
-        AddressUtils.put(pipelines, address);
+        pipelines.rewind();
     }
 
     @Override
     public void glGenProgramPipelines(int n, IntBuffer pipelines) {
         Address address = AddressUtils.of(pipelines);
         OpenGL.glGenProgramPipelines(n, address);
-        AddressUtils.put(pipelines, address);
+        pipelines.rewind();
     }
 
     @Override
@@ -636,7 +556,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetProgramPipelineiv(pipeline, pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -703,147 +622,147 @@ public class GLFWGL32 implements GL32 {
     public void glProgramUniform1iv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform1iv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform2iv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform2iv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform3iv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform3iv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform4iv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform4iv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform1uiv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform1uiv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform2uiv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform2uiv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform3uiv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform3uiv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform4uiv(int program, int location, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform4uiv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform1fv(int program, int location, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform1fv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform2fv(int program, int location, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform2fv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform3fv(int program, int location, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform3fv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniform4fv(int program, int location, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniform4fv(program, location, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix2fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix2fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix3fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix3fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix4fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix4fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix2x3fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix2x3fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix3x2fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix3x2fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix2x4fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix2x4fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix4x2fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix4x2fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix3x4fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix3x4fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glProgramUniformMatrix4x3fv(int program, int location, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glProgramUniformMatrix4x3fv(program, location, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -865,7 +784,7 @@ public class GLFWGL32 implements GL32 {
     public void glGetBooleani_v(int target, int index, IntBuffer data) {
         Address address = AddressUtils.of(data);
         OpenGL.glGetBooleani_v(target, index, address);
-        AddressUtils.put(data, address);
+        data.rewind();
     }
 
     @Override
@@ -887,7 +806,7 @@ public class GLFWGL32 implements GL32 {
     public void glGetMultisamplefv(int pname, int index, FloatBuffer val) {
         Address address = AddressUtils.of(val);
         OpenGL.glGetMultisamplefv(pname, index, address);
-        AddressUtils.put(val, address);
+        val.rewind();
     }
 
     @Override
@@ -899,14 +818,14 @@ public class GLFWGL32 implements GL32 {
     public void glGetTexLevelParameteriv(int target, int level, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetTexLevelParameteriv(target, level, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
     public void glGetTexLevelParameterfv(int target, int level, int pname, FloatBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetTexLevelParameterfv(target, level, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -943,7 +862,7 @@ public class GLFWGL32 implements GL32 {
     public void glDrawRangeElements(int mode, int start, int end, int count, int type, Buffer indices) {
         Address address = AddressUtils.of(indices);
         OpenGL.glDrawRangeElements(mode, start, end, count, type, address);
-        AddressUtils.put(indices, address);
+        indices.rewind();
     }
 
     @Override
@@ -960,7 +879,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, Buffer pixels) {
         Address address = AddressUtils.of(pixels);
         OpenGL.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, address);
-        AddressUtils.put(pixels, address);
+        pixels.rewind();
     }
 
     @Override
@@ -977,7 +896,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, Buffer pixels) {
         Address address = AddressUtils.of(pixels);
         OpenGL.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, address);
-        AddressUtils.put(pixels, address);
+        pixels.rewind();
     }
 
     @Override
@@ -999,7 +918,7 @@ public class GLFWGL32 implements GL32 {
     public void glGenQueries(int n, IntBuffer ids) {
         Address address = AddressUtils.of(ids);
         OpenGL.glGenQueries(n, address, 0);
-        AddressUtils.put(ids, address);
+        ids.rewind();
     }
 
     @Override
@@ -1018,7 +937,7 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(ids);
         OpenGL.glDeleteQueries(n, address, 0);
-        AddressUtils.put(ids, address);
+        ids.rewind();
     }
 
     @Override
@@ -1029,7 +948,6 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glBeginQuery(int target, int id) {
         nullCheck(id, 0);
-        
         OpenGL.glBeginQuery(target, id);
     }
 
@@ -1044,7 +962,7 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(params);
         OpenGL.glGetQueryiv(target, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1053,7 +971,7 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(params);
         OpenGL.glGetQueryObjectuiv(id, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1073,16 +991,15 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(bufs);
         OpenGL.glDrawBuffers(n, address);
-        AddressUtils.put(bufs, address);
+        bufs.rewind();
     }
 
     @Override
     public void glUniformMatrix2x3fv(int location, int count, boolean transpose, FloatBuffer value) {
         nullCheck(location);
-        
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix2x3fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -1091,25 +1008,23 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix3x2fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glUniformMatrix2x4fv(int location, int count, boolean transpose, FloatBuffer value) {
         nullCheck(location);
-        
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix2x4fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glUniformMatrix4x2fv(int location, int count, boolean transpose, FloatBuffer value) {
         nullCheck(location);
-        
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix4x2fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -1118,16 +1033,15 @@ public class GLFWGL32 implements GL32 {
         
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix3x4fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glUniformMatrix4x3fv(int location, int count, boolean transpose, FloatBuffer value) {
         nullCheck(location);
-        
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix4x3fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -1225,14 +1139,14 @@ public class GLFWGL32 implements GL32 {
     public void glGetVertexAttribIiv(int index, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetVertexAttribIiv(index, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
     public void glGetVertexAttribIuiv(int index, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetVertexAttribIuiv(index, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1249,7 +1163,7 @@ public class GLFWGL32 implements GL32 {
     public void glGetUniformuiv(int program, int location, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetUniformuiv(program, location, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1261,42 +1175,42 @@ public class GLFWGL32 implements GL32 {
     public void glUniform1uiv(int location, int count, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniform1uiv(location, count, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glUniform3uiv(int location, int count, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniform3uiv(location, count, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glUniform4uiv(int location, int count, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniform4uiv(location, count, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glClearBufferiv(int buffer, int drawbuffer, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glClearBufferiv(buffer, drawbuffer, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glClearBufferuiv(int buffer, int drawbuffer, IntBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glClearBufferuiv(buffer, drawbuffer, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
     public void glClearBufferfv(int buffer, int drawbuffer, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glClearBufferfv(buffer, drawbuffer, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -1318,7 +1232,7 @@ public class GLFWGL32 implements GL32 {
     public void glGetUniformIndices(int program, String[] uniformNames, IntBuffer uniformIndices) {
         Address address = AddressUtils.of(uniformIndices);
         OpenGL.glGetUniformIndices(program, uniformNames, address);
-        AddressUtils.put(uniformIndices, address);
+        uniformIndices.rewind();
     }
 
     @Override
@@ -1326,8 +1240,8 @@ public class GLFWGL32 implements GL32 {
         Address indicesAddress = AddressUtils.of(uniformIndices);
         Address paramsAddress = AddressUtils.of(params);
         OpenGL.glGetActiveUniformsiv(program, uniformCount, indicesAddress, pname, paramsAddress);
-        AddressUtils.put(uniformIndices, indicesAddress);
-        AddressUtils.put(params, paramsAddress);
+        uniformIndices.rewind();
+        params.rewind();
     }
 
     @Override
@@ -1339,7 +1253,7 @@ public class GLFWGL32 implements GL32 {
     public void glGetActiveUniformBlockiv(int program, int uniformBlockIndex, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetActiveUniformBlockiv(program, uniformBlockIndex, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1347,8 +1261,8 @@ public class GLFWGL32 implements GL32 {
         Address lengthAddress = AddressUtils.of(length);
         Address nameAddress = AddressUtils.of(uniformBlockName);
         OpenGL.glGetActiveUniformBlockName(program, uniformBlockIndex, lengthAddress, nameAddress);
-        AddressUtils.put(length, lengthAddress);
-        AddressUtils.put(uniformBlockName, nameAddress);
+        length.rewind();
+        uniformBlockName.rewind();
     }
 
     @Override
@@ -1375,14 +1289,14 @@ public class GLFWGL32 implements GL32 {
     public void glGetInteger64v(int pname, LongBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetInteger64v(pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
     public void glGetBufferParameteri64v(int target, int pname, LongBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetBufferParameteri64v(target, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1394,7 +1308,7 @@ public class GLFWGL32 implements GL32 {
     public void glGenSamplers(int count, IntBuffer samplers) {
         Address address = AddressUtils.of(samplers);
         OpenGL.glGenSamplers(count, address, 0);
-        AddressUtils.put(samplers, address);
+        samplers.rewind();
     }
 
     @Override
@@ -1406,7 +1320,7 @@ public class GLFWGL32 implements GL32 {
     public void glDeleteSamplers(int count, IntBuffer samplers) {
         Address address = AddressUtils.of(samplers);
         OpenGL.glDeleteSamplers(count, address, 0);
-        AddressUtils.put(samplers, address);
+        samplers.rewind();
     }
 
     @Override
@@ -1428,7 +1342,7 @@ public class GLFWGL32 implements GL32 {
     public void glSamplerParameteriv(int sampler, int pname, IntBuffer param) {
         Address address = AddressUtils.of(param);
         OpenGL.glSamplerParameteriv(sampler, pname, address);
-        AddressUtils.put(param, address);
+        param.rewind();
     }
 
     @Override
@@ -1440,21 +1354,21 @@ public class GLFWGL32 implements GL32 {
     public void glSamplerParameterfv(int sampler, int pname, FloatBuffer param) {
         Address address = AddressUtils.of(param);
         OpenGL.glSamplerParameterfv(sampler, pname, address);
-        AddressUtils.put(param, address);
+        param.rewind();
     }
 
     @Override
     public void glGetSamplerParameteriv(int sampler, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetSamplerParameteriv(sampler, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
     public void glGetSamplerParameterfv(int sampler, int pname, FloatBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glGetSamplerParameterfv(sampler, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -1511,14 +1425,14 @@ public class GLFWGL32 implements GL32 {
     public void glInvalidateFramebuffer(int target, int numAttachments, IntBuffer attachments) {
         Address address = AddressUtils.of(attachments);
         OpenGL.glInvalidateFramebuffer(target, numAttachments, address);
-        AddressUtils.put(attachments, address);
+        attachments.rewind();
     }
 
     @Override
     public void glInvalidateSubFramebuffer(int target, int numAttachments, IntBuffer attachments, int x, int y, int width, int height) {
         Address address = AddressUtils.of(attachments);
         OpenGL.glInvalidateSubFramebuffer(target, numAttachments, address, x, y, width, height);
-        AddressUtils.put(attachments, address);
+        attachments.rewind();
     }
 
     @Override
@@ -1565,14 +1479,14 @@ public class GLFWGL32 implements GL32 {
     public void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, Buffer data) {
         Address address = AddressUtils.of(data);
         OpenGL.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, address);
-        AddressUtils.put(data, address);
+        data.rewind();
     }
 
     @Override
     public void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, Buffer data) {
         Address address = AddressUtils.of(data);
         OpenGL.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, address);
-        AddressUtils.put(data, address);
+        data.rewind();
     }
 
     @Override
@@ -1594,7 +1508,7 @@ public class GLFWGL32 implements GL32 {
     public void glDeleteTextures(int n, IntBuffer textures) {
         Address address = AddressUtils.of(textures);
         OpenGL.glDeleteTextures(n, address);
-        AddressUtils.put(textures, address);
+        textures.rewind();
     }
 
     @Override
@@ -1633,10 +1547,8 @@ public class GLFWGL32 implements GL32 {
     public void glDrawElements(int mode, int count, int type, Buffer indices) {
         Address address = AddressUtils.of(indices);
         OpenGL.glDrawElements(mode, count, type, address);
-        AddressUtils.put(indices, address);
+        indices.rewind();
     }
-
-    private static int enableCallCount = 0;
 
     @Override
     public void glEnable(int cap) {
@@ -1662,7 +1574,7 @@ public class GLFWGL32 implements GL32 {
     public void glGenTextures(int n, IntBuffer textures) {
         Address address = AddressUtils.of(textures);
         OpenGL.glGenTextures(n, address);
-        AddressUtils.put(textures, address);
+        textures.rewind();
     }
 
     @Override
@@ -1718,7 +1630,7 @@ public class GLFWGL32 implements GL32 {
     public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer pixels) {
         Address address = AddressUtils.of(pixels);
         OpenGL.glReadPixels(x, y, width, height, format, type, address);
-        AddressUtils.put(pixels, address);
+        pixels.rewind();
     }
 
     @Override
@@ -1745,7 +1657,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels) {
         Address address = AddressUtils.of(pixels);
         OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, address);
-        AddressUtils.put(pixels, address);
+        pixels.rewind();
     }
 
     @Override
@@ -1757,7 +1669,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
         Address address = AddressUtils.of(pixels);
         OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, address);
-        AddressUtils.put(pixels, address);
+        pixels.rewind();
     }
 
     @Override
@@ -1810,39 +1722,14 @@ public class GLFWGL32 implements GL32 {
         OpenGL.glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     }
 
-    private static int bufferDataCallCount = 0;
-    private static int bufferDataCounter = 0;
-
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
-        // TeaVM's C backend doesn't properly handle Buffer parameters in native methods.
-        // Cache the buffer to prevent garbage collection of the underlying data
-
-        // Store buffer in cache to keep it alive
-        String cacheKey = "buffer_" + (bufferDataCounter++);
-        if (data != null) {
-            bufferCache.put(cacheKey, data);
-            // Keep last 100 buffers to avoid memory bloat while ensuring buffers stay alive
-            if (bufferCache.size() > 100) {
-                bufferCache.remove("buffer_" + (bufferDataCounter - 101));
-            }
-        }
-
         Address address = AddressUtils.of(data);
         OpenGL.glBufferData(target, size, address, usage);
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        // Use Address-based approach for TeaVM C backend
-        // Cache buffer to prevent garbage collection
-        String cacheKey = "buffer_" + (bufferDataCounter++);
-        if (data != null) {
-            bufferCache.put(cacheKey, data);
-            if (bufferCache.size() > 100) {
-                bufferCache.remove("buffer_" + (bufferDataCounter - 101));
-            }
-        }
         Address address = AddressUtils.of(data);
         OpenGL.glBufferSubData(target, offset, size, address);
     }
@@ -1878,7 +1765,7 @@ public class GLFWGL32 implements GL32 {
     public void glDeleteBuffers(int n, IntBuffer buffers) {
         Address address = AddressUtils.of(buffers);
         OpenGL.glDeleteBuffers(n, address);
-        AddressUtils.put(buffers, address);
+        buffers.rewind();
     }
 
     @Override
@@ -1917,7 +1804,6 @@ public class GLFWGL32 implements GL32 {
         nullCheck(shader);
 
         OpenGL.glDeleteShader(shader);
-        managedShaderSources.remove(shader);
     }
 
     private static void nullCheck(int value) {
@@ -2039,7 +1925,7 @@ public class GLFWGL32 implements GL32 {
     public void glGenBuffers(int n, IntBuffer buffers) {
         Address address = AddressUtils.of(buffers);
         OpenGL.glGenBuffers(n, address);
-        AddressUtils.put(buffers, address);
+        buffers.rewind();
     }
 
     @Override
@@ -2127,7 +2013,6 @@ public class GLFWGL32 implements GL32 {
         Address address = AddressUtils.of(params);
         OpenGL.glGetBooleanv(pname, address);
         params.rewind();
-        AddressUtils.put(params, address);
     }
 
     @Override
@@ -2387,15 +2272,14 @@ public class GLFWGL32 implements GL32 {
         Address shadersAddr = AddressUtils.of(shaders);
         Address binaryAddr = AddressUtils.of(binary);
         OpenGL.glShaderBinary(n, shadersAddr, binaryformat, binaryAddr, length);
-        AddressUtils.put(shaders, shadersAddr);
-        AddressUtils.put(binary, binaryAddr);
+        shaders.rewind();
+        binary.rewind();
     }
 
     @Override
     public void glShaderSource(int shader, String string) {
         Address strings = Address.ofData(new byte[Address.sizeOf()]);
         Address source = Strings.toC(string);
-        this.managedShaderSources.put(shader, new NativePointer(strings));
         strings.putAddress(source);
         IntBuffer len = IntBuffer.allocate(1);
         len.put(0, string.length());
@@ -2421,7 +2305,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexParameterfv(int target, int pname, FloatBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glTexParameterfv(target, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -2433,7 +2317,7 @@ public class GLFWGL32 implements GL32 {
     public void glTexParameteriv(int target, int pname, IntBuffer params) {
         Address address = AddressUtils.of(params);
         OpenGL.glTexParameteriv(target, pname, address);
-        AddressUtils.put(params, address);
+        params.rewind();
     }
 
     @Override
@@ -2445,7 +2329,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform1fv(int location, int count, FloatBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform1fv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2462,7 +2346,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform1iv(int location, int count, IntBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform1iv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2479,7 +2363,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform2fv(int location, int count, FloatBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform2fv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2496,7 +2380,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform2iv(int location, int count, IntBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform2iv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2513,7 +2397,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform3fv(int location, int count, FloatBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform3fv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2532,7 +2416,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform3iv(int location, int count, IntBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform3iv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2549,7 +2433,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform4fv(int location, int count, FloatBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform4fv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2568,7 +2452,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniform4iv(int location, int count, IntBuffer v) {
         Address address = AddressUtils.of(v);
         OpenGL.glUniform4iv(location, count, address);
-        AddressUtils.put(v, address);
+        v.rewind();
     }
 
     @Override
@@ -2582,7 +2466,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix2fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -2596,7 +2480,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix3fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -2610,7 +2494,7 @@ public class GLFWGL32 implements GL32 {
     public void glUniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer value) {
         Address address = AddressUtils.of(value);
         OpenGL.glUniformMatrix4fv(location, count, transpose, address);
-        AddressUtils.put(value, address);
+        value.rewind();
     }
 
     @Override
@@ -2639,7 +2523,7 @@ public class GLFWGL32 implements GL32 {
     public void glVertexAttrib1fv(int indx, FloatBuffer values) {
         Address address = AddressUtils.of(values);
         OpenGL.glVertexAttrib1fv(indx, address);
-        AddressUtils.put(values, address);
+        values.rewind();
     }
 
     @Override
@@ -2651,7 +2535,7 @@ public class GLFWGL32 implements GL32 {
     public void glVertexAttrib2fv(int indx, FloatBuffer values) {
         Address address = AddressUtils.of(values);
         OpenGL.glVertexAttrib2fv(indx, address);
-        AddressUtils.put(values, address);
+        values.rewind();
     }
 
     @Override
@@ -2663,7 +2547,7 @@ public class GLFWGL32 implements GL32 {
     public void glVertexAttrib3fv(int indx, FloatBuffer values) {
         Address address = AddressUtils.of(values);
         OpenGL.glVertexAttrib3fv(indx, address);
-        AddressUtils.put(values, address);
+        values.rewind();
     }
 
     @Override
@@ -2675,14 +2559,14 @@ public class GLFWGL32 implements GL32 {
     public void glVertexAttrib4fv(int indx, FloatBuffer values) {
         Address address = AddressUtils.of(values);
         OpenGL.glVertexAttrib4fv(indx, address);
-        AddressUtils.put(values, address);
+        values.rewind();
     }
 
     @Override
     public void glVertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, Buffer ptr) {
         Address address = AddressUtils.of(ptr);
         OpenGL.glVertexAttribPointer(indx, size, type, normalized, stride, address);
-        AddressUtils.put(ptr, address);
+        ptr.rewind();
     }
 
     @Override
