@@ -383,18 +383,12 @@ public class GLFW {
         glfwSetWindowFocusCallback(Address.fromLong(window), focusCallback);
     }
 
-    @Import(name = "glfwSetWindowFocusCallback")
-    private static native void glfwSetWindowFocusCallback(Address window, GLFWWindowFocusCallback focusCallback);
-
     public static void setWindowMaximizeCallback(long window, GLFWWindowMaximizeCallback maximizeCallback) {
         if (window == 0) {
             throw new IllegalArgumentException("window must not be null");
         }
         glfwSetWindowMaximizeCallback(Address.fromLong(window), maximizeCallback);
     }
-
-    @Import(name = "glfwSetWindowMaximizeCallback")
-    private static native void glfwSetWindowMaximizeCallback(Address window, GLFWWindowMaximizeCallback maximizeCallback);
 
     public static void setWindowCloseCallback(long window, GLFWWindowCloseCallback maximizeCallback) {
         if (window == 0) {
@@ -410,18 +404,12 @@ public class GLFW {
         glfwSetDropCallback(Address.fromLong(window), dropCallback);
     }
 
-    @Import(name = "glfwSetWindowCloseCallback")
-    private static native void glfwSetWindowCloseCallback(Address window, GLFWWindowCloseCallback maximizeCallback);
-
     public static void setWindowIconifyCallback(long window, GLFWWindowIconifyCallback maximizeCallback) {
         if (window == 0) {
             throw new IllegalArgumentException("window must not be null");
         }
         glfwSetWindowIconifyCallback(Address.fromLong(window), maximizeCallback);
     }
-
-    @Import(name = "glfwSetWindowIconifyCallback")
-    private static native void glfwSetWindowIconifyCallback(Address window, GLFWWindowIconifyCallback maximizeCallback);
 
     public static void setWindowRefreshCallback(long window, GLFWWindowRefreshCallback maximizeCallback) {
         if (window == 0) {
@@ -430,242 +418,13 @@ public class GLFW {
         glfwSetWindowRefreshCallback(Address.fromLong(window), maximizeCallback);
     }
 
-    @Import(name = "glfwSetWindowRefreshCallback")
-    private static native void glfwSetWindowRefreshCallback(Address window, GLFWWindowRefreshCallback maximizeCallback);
-
     public static String getClipboardString(long window) {
         return glfwGetClipboardString(Address.fromLong(window));
     }
 
-    @Import(name = "glfwGetClipboardString")
-    private static native String glfwGetClipboardString(Address window);
-
     public static void setClipboardString(long window, String string) {
         glfwSetClipboardString(Address.fromLong(window), string);
     }
-
-    @Import(name = "glfwSetClipboardString")
-    private static native void glfwSetClipboardString(Address window, String string);
-
-    @Import(name = "glfwInit")
-    private static native boolean glfwInit();
-
-    @Import(name = "glfwCreateWindow")
-    private static native Address glfwCreateWindowNative(int width, int height, String title,
-                                                         Address monitor, Address share);
-
-    @Import(name = "glfwWindowShouldClose")
-    private static native boolean glfwWindowShouldClose(Address window);
-
-    @Import(name = "glfwSwapBuffers")
-    private static native void glfwSwapBuffers(Address window);
-
-    @Import(name = "glfwPollEvents")
-    private static native void glfwPollEvents();
-
-    @Import(name = "glfwTerminate")
-    private static native void glfwTerminate();
-
-    @Import(name = "glfwMakeContextCurrent")
-    private static native void glfwMakeContextCurrent(Address window);
-
-    @Import(name = "glfwGetCurrentContext")
-    private static native Address glfwGetCurrentContext();
-
-    @Import(name = "glfwSetErrorCallback")
-    private static native void glfwSetErrorCallback(GLFWErrorCallback callback);
-
-    @Import(name = "glfwGetError")
-    private static native int glfwGetError(Address description);
-
-    @Import(name = "glfwGetVersion")
-    private static native void glfwGetVersion(Address major, Address minor, Address rev);
-
-    @Import(name = "glfwGetVersionString")
-    private static native String glfwGetVersionString();
-
-    @Import(name = "glfwExtensionSupported")
-    private static native boolean glfwExtensionSupported(String extension);
-
-    @Import(name = "glfwGetPrimaryMonitor")
-    private static native Address glfwGetPrimaryMonitor();
-
-    @Import(name = "glfwGetMonitorPos")
-    private static native void glfwGetMonitorPos(Address monitor, Address xpos, Address ypos);
-
-    @Import(name = "glfwGetMonitorWorkarea")
-    private static native void glfwGetMonitorWorkarea(Address monitor, Address xpos, Address ypos, Address width, Address height);
-
-    @Import(name = "glfwGetMonitorPhysicalSize")
-    private static native void glfwGetMonitorPhysicalSize(Address monitor, Address widthMM, Address heightMM);
-
-    @Import(name = "glfwGetMonitorContentScale")
-    private static native void glfwGetMonitorContentScale(Address monitor, Address xscale, Address yscale);
-
-    @Import(name = "glfwGetMonitorName")
-    private static native String glfwGetMonitorName(Address monitor);
-
-    @Import(name = "glfwSetMonitorUserPointer")
-    private static native void glfwSetMonitorUserPointer(Address monitor, Address pointer);
-
-    @Import(name = "glfwGetMonitorUserPointer")
-    private static native Address glfwGetMonitorUserPointer(Address monitor);
-
-    @Import(name = "glfwSetMonitorCallback")
-    private static native void glfwSetMonitorCallback(Address callback);
-
-    @Import(name = "glfwGetVideoMode")
-    private static native GLFWVidMode glfwGetVideoMode(Address monitor);
-
-    @Import(name = "glfwGetVideoModes")
-    private static native GLFWVidMode[] glfwGetVideoModes(Address monitor);
-
-    @Import(name = "glfwSetGamma")
-    private static native void glfwSetGamma(Address monitor, float gamma);
-
-    @Import(name = "glfwGetGammaRamp")
-    private static native Address glfwGetGammaRamp(Address monitor);
-
-    @Import(name = "glfwSetGammaRamp")
-    private static native void glfwSetGammaRamp(Address monitor, Address ramp);
-
-    @Import(name = "glfwDefaultWindowHints")
-    private static native void glfwDefaultWindowHints();
-
-    @Import(name = "glfwWindowHint")
-    private static native void glfwWindowHint(int hint, int value);
-
-    @Import(name = "glfwWindowHintString")
-    private static native void glfwWindowHintString(int hint, String value);
-
-    @Import(name = "glfwDestroyWindow")
-    private static native void glfwDestroyWindow(Address window);
-
-    @Import(name = "glfwWindowHintString")
-    private static native void glfwWindowHintString(int hint, Address value);
-
-    @Import(name = "glfwSetWindowTitle")
-    private static native void glfwSetWindowTitle(Address window, String title);
-
-    @Import(name = "glfwSetWindowIcon")
-    private static native void glfwSetWindowIcon(Address window, int count, Address images);
-
-    @Import(name = "glfwSetWindowPos")
-    private static native void glfwSetWindowPos(Address window, int xpos, int ypos);
-
-    @Import(name = "glfwGetWindowPos")
-    private static native void glfwGetWindowPos(Address window, Address xpos, Address ypos);
-
-    @Import(name = "glfwSetWindowSizeLimits")
-    private static native void glfwSetWindowSizeLimits(Address window, int minwidth, int minheight, int maxwidth, int maxheight);
-
-    @Import(name = "glfwSetWindowAspectRatio")
-    private static native void glfwSetWindowAspectRatio(Address window, int numer, int denom);
-
-    @Import(name = "glfwSetWindowSize")
-    private static native void glfwSetWindowSize(Address window, int width, int height);
-
-    @Import(name = "glfwGetWindowSize")
-    private static native void glfwGetWindowSize(Address window, Address width, Address height);
-
-    @Import(name = "glfwSetWindowMonitor")
-    private static native void glfwSetWindowMonitor(Address window, Address monitor, int xpos, int ypos, int width, int height, int refreshRate);
-
-    @Import(name = "glfwGetWindowMonitor")
-    private static native Address glfwGetWindowMonitor(Address window);
-
-    @Import(name = "glfwGetWindowAttrib")
-    private static native int glfwGetWindowAttrib(Address window, int attrib);
-
-    @Import(name = "glfwSetWindowAttrib")
-    private static native void glfwSetWindowAttrib(Address window, int attrib, int value);
-
-    @Import(name = "glfwPollEventsTimeout")
-    private static native void glfwPollEventsTimeout(double timeout);
-
-    @Import(name = "glfwWaitEventsTimeout")
-    private static native void glfwWaitEventsTimeout(double timeout);
-
-    @Import(name = "glfwWaitEvents")
-    private static native void glfwWaitEvents();
-
-    @Import(name = "glfwPostEmptyEvent")
-    private static native void glfwPostEmptyEvent();
-
-    @Import(name = "glfwGetInputMode")
-    private static native int glfwGetInputMode(Address window, int mode);
-
-    @Import(name = "glfwSetInputMode")
-    private static native void glfwSetInputMode(Address window, int mode, int value);
-
-    @Import(name = "glfwRawMouseMotionSupported")
-    private static native boolean glfwRawMouseMotionSupported();
-
-    @Import(name = "glfwRawMouseMotionEnable")
-    private static native void glfwRawMouseMotionEnable(boolean value);
-
-    @Import(name = "glfwGetKeyName")
-    private static native String glfwGetKeyName(int key, int scancode);
-
-    @Import(name = "glfwGetKey")
-    private static native int glfwGetKey(int key);
-
-    @Import(name = "glfwGetKeyState")
-    private static native int glfwGetKeyState(int key);
-
-    @Import(name = "glfwSetKeyCallback")
-    private static native void glfwSetKeyCallback(Address window, GLFWKeyCallback callback);
-
-    @Import(name = "glfwSetCharCallback")
-    private static native void glfwSetCharCallback(Address window, GLFWCharCallback callback);
-
-    @Import(name = "glfwSetMouseButtonCallback")
-    private static native void glfwSetMouseButtonCallback(Address window, GLFWMouseButtonCallback callback);
-
-    @Import(name = "glfwSetCursorPosCallback")
-    private static native void glfwSetCursorPosCallback(Address window, GLFWCursorPosCallback callback);
-
-    @Import(name = "glfwSetCursorEnterCallback")
-    private static native void glfwSetCursorEnterCallback(Address window, GLFWCursorEnterCallback callback);
-
-    @Import(name = "glfwSetScrollCallback")
-    private static native void glfwSetScrollCallback(Address window, GLFWScrollCallback callback);
-
-    @Import(name = "glfwSetDropCallback")
-    private static native void glfwSetDropCallback(Address window, GLFWDropCallback callback);
-
-    @Import(name = "glfwSwapInterval")
-    private static native void glfwSwapInterval(int interval);
-
-    @Import(name = "glfwGetMouseButton")
-    private static native int glfwGetMouseButton(Address window, int button);
-
-    @Import(name = "glfwGetTimerValue")
-    private static native long glfwGetTimerValue();
-
-    @Import(name = "glfwGetTimerFrequency")
-    private static native long glfwGetTimerFrequency();
-
-    @Import(name = "glfwSetTime")
-    private static native void glfwSetTime(double time);
-
-    @Import(name = "glfwSetCursorPos")
-    private static native void glfwSetCursorPos(Address window, double xpos, double ypos);
-
-    @Import(name = "glfwGetCursorPos")
-    private static native void glfwGetCursorPos(Address window, Address xpos, Address ypos);
-
-    @Import(name = "glfwSetFramebufferSizeCallback")
-    private static native void glfwSetFramebufferSizeCallback(Address window, GLFWFramebufferSizeCallback callback);
-
-    @Import(name = "glfwGetFramebufferSize")
-    private static native void glfwGetFramebufferSize(Address window, Address width, Address height);
-
-    @Import(name = "glfwGetMonitors")
-    private static native Address glfwGetMonitors(Address count);
-
-    @Import(name = "glfwInitHint")
-    private static native void glfwInitHint(int hint, int value);
 
     public static void setKeyCallback(long window, GLFWKeyCallback keyCallback) {
         glfwSetKeyCallback(Address.fromLong(window), keyCallback);
@@ -742,15 +501,9 @@ public class GLFW {
         glfwMaximizeWindow(Address.fromLong(window));
     }
 
-    @Import(name = "glfwMaximizeWindow")
-    private static native void glfwMaximizeWindow(Address address);
-
     public static void iconifyWindow(long window) {
         glfwIconifyWindow(Address.fromLong(window));
     }
-
-    @Import(name = "glfwIconifyWindow")
-    private static native void glfwIconifyWindow(Address address);
 
     public static void swapInterval(int interval) {
         glfwSwapInterval(interval);
@@ -760,36 +513,20 @@ public class GLFW {
         return glfwCreateImage(glfwImage, xHotspot, yHotspot).toLong();
     }
 
-    @Import(name = "glfwCreateImage")
-    private static native Address glfwCreateImage(GLFWImage glfwImage, int xHotspot, int yHotspot);
-
     public static void destroyCursor(long cursor) {
         glfwDestroyCursor(Address.fromLong(cursor));
     }
-
-    @Import(name = "glfwDestroyCursor")
-    private static native void glfwDestroyCursor(Address cursor);
 
     public static long createStandardCursor(int cursor) {
         return glfwCreateStandardCursor(cursor).toLong();
     }
 
-    @Import(name = "glfwCreateStandardCursor")
-    private static native Address glfwCreateStandardCursor(int cursor);
-
     public static void setCursor(long window, long cursor) {
         glfwSetCursor(Address.fromLong(window), Address.fromLong(cursor));
     }
-
-    @Import(name = "glfwSetCursor")
-    private static native void glfwSetCursor(Address window, Address cursor);
-
     public static void setWindowShouldClose(long window, boolean b) {
         glfwSetWindowShouldClose(Address.fromLong(window), b);
     }
-
-    @Import(name = "glfwSetWindowShouldClose")
-    private static native void glfwSetWindowShouldClose(Address address, boolean b);
 
     public static void setWindowSize(long window, int width, int height) {
         glfwSetWindowSize(Address.fromLong(window), width, height);
@@ -810,37 +547,23 @@ public class GLFW {
     public static void showWindow(long window) {
         glfwShowWindow(Address.fromLong(window));
     }
-    
-    @Import(name = "glfwShowWindow")
-    private static native void glfwShowWindow(Address address);
-    
+
     public static void hideWindow(long window) {
         glfwHideWindow(Address.fromLong(window));
     }
-    
-    @Import(name = "glfwHideWindow")
-    private static native void glfwHideWindow(Address address);
 
     public static void restoreWindow(long window) {
         glfwRestoreWindow(Address.fromLong(window));
     }
-    
-    @Import(name = "glfwRestoreWindow")
-    private static native void glfwRestoreWindow(Address address);
 
     public static void focusWindow(long window) {
         glfwFocusWindow(Address.fromLong(window));
     }
 
-    @Import(name = "glfwFocusWindow")
-    private static native void glfwFocusWindow(Address address);
 
     public static void requestWindowAttention(long window) {
         glfwRequestWindowAttention(Address.fromLong(window));
     }
-
-    @Import(name = "glfwRequestWindowAttention")
-    private static native void glfwRequestWindowAttention(Address address);
 
     public static String[] dropNames(int count, long names) {
         String[] strings = new String[count];
@@ -1084,5 +807,282 @@ public class GLFW {
     public static void setErrorCallback(GLFWErrorCallback glfwErrorCallback) {
         glfwSetErrorCallback(glfwErrorCallback);
     }
+
+    @Import(name = "glfwSetWindowFocusCallback")
+    private static native void glfwSetWindowFocusCallback(Address window, GLFWWindowFocusCallback focusCallback);
+
+    @Import(name = "glfwSetWindowMaximizeCallback")
+    private static native void glfwSetWindowMaximizeCallback(Address window, GLFWWindowMaximizeCallback maximizeCallback);
+
+    @Import(name = "glfwSetWindowCloseCallback")
+    private static native void glfwSetWindowCloseCallback(Address window, GLFWWindowCloseCallback maximizeCallback);
+
+    @Import(name = "glfwSetWindowIconifyCallback")
+    private static native void glfwSetWindowIconifyCallback(Address window, GLFWWindowIconifyCallback maximizeCallback);
+
+    @Import(name = "glfwSetWindowRefreshCallback")
+    private static native void glfwSetWindowRefreshCallback(Address window, GLFWWindowRefreshCallback maximizeCallback);
+
+    @Import(name = "glfwGetClipboardString")
+    private static native String glfwGetClipboardString(Address window);
+
+    @Import(name = "glfwShowWindow")
+    private static native void glfwShowWindow(Address address);
+
+    @Import(name = "glfwMaximizeWindow")
+    private static native void glfwMaximizeWindow(Address address);
+
+    @Import(name = "glfwIconifyWindow")
+    private static native void glfwIconifyWindow(Address address);
+
+    @Import(name = "glfwCreateImage")
+    private static native Address glfwCreateImage(GLFWImage glfwImage, int xHotspot, int yHotspot);
+
+    @Import(name = "glfwDestroyCursor")
+    private static native void glfwDestroyCursor(Address cursor);
+
+    @Import(name = "glfwCreateStandardCursor")
+    private static native Address glfwCreateStandardCursor(int cursor);
+
+    @Import(name = "glfwSetCursor")
+    private static native void glfwSetCursor(Address window, Address cursor);
+
+    @Import(name = "glfwSetWindowShouldClose")
+    private static native void glfwSetWindowShouldClose(Address address, boolean b);
+
+    @Import(name = "glfwHideWindow")
+    private static native void glfwHideWindow(Address address);
+
+    @Import(name = "glfwRestoreWindow")
+    private static native void glfwRestoreWindow(Address address);
+
+    @Import(name = "glfwFocusWindow")
+    private static native void glfwFocusWindow(Address address);
+
+    @Import(name = "glfwRequestWindowAttention")
+    private static native void glfwRequestWindowAttention(Address address);
+
+    @Import(name = "glfwSetClipboardString")
+    private static native void glfwSetClipboardString(Address window, String string);
+
+    @Import(name = "glfwInit")
+    private static native boolean glfwInit();
+
+    @Import(name = "glfwCreateWindow")
+    private static native Address glfwCreateWindowNative(int width, int height, String title,
+                                                         Address monitor, Address share);
+
+    @Import(name = "glfwWindowShouldClose")
+    private static native boolean glfwWindowShouldClose(Address window);
+
+    @Import(name = "glfwSwapBuffers")
+    private static native void glfwSwapBuffers(Address window);
+
+    @Import(name = "glfwPollEvents")
+    private static native void glfwPollEvents();
+
+    @Import(name = "glfwTerminate")
+    private static native void glfwTerminate();
+
+    @Import(name = "glfwMakeContextCurrent")
+    private static native void glfwMakeContextCurrent(Address window);
+
+    @Import(name = "glfwGetCurrentContext")
+    private static native Address glfwGetCurrentContext();
+
+    @Import(name = "glfwSetErrorCallback")
+    private static native void glfwSetErrorCallback(GLFWErrorCallback callback);
+
+    @Import(name = "glfwGetError")
+    private static native int glfwGetError(Address description);
+
+    @Import(name = "glfwGetVersion")
+    private static native void glfwGetVersion(Address major, Address minor, Address rev);
+
+    @Import(name = "glfwGetVersionString")
+    private static native String glfwGetVersionString();
+
+    @Import(name = "glfwExtensionSupported")
+    private static native boolean glfwExtensionSupported(String extension);
+
+    @Import(name = "glfwGetPrimaryMonitor")
+    private static native Address glfwGetPrimaryMonitor();
+
+    @Import(name = "glfwGetMonitorPos")
+    private static native void glfwGetMonitorPos(Address monitor, Address xpos, Address ypos);
+
+    @Import(name = "glfwGetMonitorWorkarea")
+    private static native void glfwGetMonitorWorkarea(Address monitor, Address xpos, Address ypos, Address width, Address height);
+
+    @Import(name = "glfwGetMonitorPhysicalSize")
+    private static native void glfwGetMonitorPhysicalSize(Address monitor, Address widthMM, Address heightMM);
+
+    @Import(name = "glfwGetMonitorContentScale")
+    private static native void glfwGetMonitorContentScale(Address monitor, Address xscale, Address yscale);
+
+    @Import(name = "glfwGetMonitorName")
+    private static native String glfwGetMonitorName(Address monitor);
+
+    @Import(name = "glfwSetMonitorUserPointer")
+    private static native void glfwSetMonitorUserPointer(Address monitor, Address pointer);
+
+    @Import(name = "glfwGetMonitorUserPointer")
+    private static native Address glfwGetMonitorUserPointer(Address monitor);
+
+    @Import(name = "glfwSetMonitorCallback")
+    private static native void glfwSetMonitorCallback(Address callback);
+
+    @Import(name = "glfwGetVideoMode")
+    private static native GLFWVidMode glfwGetVideoMode(Address monitor);
+
+    @Import(name = "glfwGetVideoModes")
+    private static native GLFWVidMode[] glfwGetVideoModes(Address monitor);
+
+    @Import(name = "glfwSetGamma")
+    private static native void glfwSetGamma(Address monitor, float gamma);
+
+    @Import(name = "glfwGetGammaRamp")
+    private static native Address glfwGetGammaRamp(Address monitor);
+
+    @Import(name = "glfwSetGammaRamp")
+    private static native void glfwSetGammaRamp(Address monitor, Address ramp);
+
+    @Import(name = "glfwDefaultWindowHints")
+    private static native void glfwDefaultWindowHints();
+
+    @Import(name = "glfwWindowHint")
+    private static native void glfwWindowHint(int hint, int value);
+
+    @Import(name = "glfwWindowHintString")
+    private static native void glfwWindowHintString(int hint, String value);
+
+    @Import(name = "glfwDestroyWindow")
+    private static native void glfwDestroyWindow(Address window);
+
+    @Import(name = "glfwWindowHintString")
+    private static native void glfwWindowHintString(int hint, Address value);
+
+    @Import(name = "glfwSetWindowTitle")
+    private static native void glfwSetWindowTitle(Address window, String title);
+
+    @Import(name = "glfwSetWindowIcon")
+    private static native void glfwSetWindowIcon(Address window, int count, Address images);
+
+    @Import(name = "glfwSetWindowPos")
+    private static native void glfwSetWindowPos(Address window, int xpos, int ypos);
+
+    @Import(name = "glfwGetWindowPos")
+    private static native void glfwGetWindowPos(Address window, Address xpos, Address ypos);
+
+    @Import(name = "glfwSetWindowSizeLimits")
+    private static native void glfwSetWindowSizeLimits(Address window, int minwidth, int minheight, int maxwidth, int maxheight);
+
+    @Import(name = "glfwSetWindowAspectRatio")
+    private static native void glfwSetWindowAspectRatio(Address window, int numer, int denom);
+
+    @Import(name = "glfwSetWindowSize")
+    private static native void glfwSetWindowSize(Address window, int width, int height);
+
+    @Import(name = "glfwGetWindowSize")
+    private static native void glfwGetWindowSize(Address window, Address width, Address height);
+
+    @Import(name = "glfwSetWindowMonitor")
+    private static native void glfwSetWindowMonitor(Address window, Address monitor, int xpos, int ypos, int width, int height, int refreshRate);
+
+    @Import(name = "glfwGetWindowMonitor")
+    private static native Address glfwGetWindowMonitor(Address window);
+
+    @Import(name = "glfwGetWindowAttrib")
+    private static native int glfwGetWindowAttrib(Address window, int attrib);
+
+    @Import(name = "glfwSetWindowAttrib")
+    private static native void glfwSetWindowAttrib(Address window, int attrib, int value);
+
+    @Import(name = "glfwPollEventsTimeout")
+    private static native void glfwPollEventsTimeout(double timeout);
+
+    @Import(name = "glfwWaitEventsTimeout")
+    private static native void glfwWaitEventsTimeout(double timeout);
+
+    @Import(name = "glfwWaitEvents")
+    private static native void glfwWaitEvents();
+
+    @Import(name = "glfwPostEmptyEvent")
+    private static native void glfwPostEmptyEvent();
+
+    @Import(name = "glfwGetInputMode")
+    private static native int glfwGetInputMode(Address window, int mode);
+
+    @Import(name = "glfwSetInputMode")
+    private static native void glfwSetInputMode(Address window, int mode, int value);
+
+    @Import(name = "glfwRawMouseMotionSupported")
+    private static native boolean glfwRawMouseMotionSupported();
+
+    @Import(name = "glfwRawMouseMotionEnable")
+    private static native void glfwRawMouseMotionEnable(boolean value);
+
+    @Import(name = "glfwGetKeyName")
+    private static native String glfwGetKeyName(int key, int scancode);
+
+    @Import(name = "glfwGetKey")
+    private static native int glfwGetKey(int key);
+
+    @Import(name = "glfwGetKeyState")
+    private static native int glfwGetKeyState(int key);
+
+    @Import(name = "glfwSetKeyCallback")
+    private static native void glfwSetKeyCallback(Address window, GLFWKeyCallback callback);
+
+    @Import(name = "glfwSetCharCallback")
+    private static native void glfwSetCharCallback(Address window, GLFWCharCallback callback);
+
+    @Import(name = "glfwSetMouseButtonCallback")
+    private static native void glfwSetMouseButtonCallback(Address window, GLFWMouseButtonCallback callback);
+
+    @Import(name = "glfwSetCursorPosCallback")
+    private static native void glfwSetCursorPosCallback(Address window, GLFWCursorPosCallback callback);
+
+    @Import(name = "glfwSetCursorEnterCallback")
+    private static native void glfwSetCursorEnterCallback(Address window, GLFWCursorEnterCallback callback);
+
+    @Import(name = "glfwSetScrollCallback")
+    private static native void glfwSetScrollCallback(Address window, GLFWScrollCallback callback);
+
+    @Import(name = "glfwSetDropCallback")
+    private static native void glfwSetDropCallback(Address window, GLFWDropCallback callback);
+
+    @Import(name = "glfwSwapInterval")
+    private static native void glfwSwapInterval(int interval);
+
+    @Import(name = "glfwGetMouseButton")
+    private static native int glfwGetMouseButton(Address window, int button);
+
+    @Import(name = "glfwGetTimerValue")
+    private static native long glfwGetTimerValue();
+
+    @Import(name = "glfwGetTimerFrequency")
+    private static native long glfwGetTimerFrequency();
+
+    @Import(name = "glfwSetTime")
+    private static native void glfwSetTime(double time);
+
+    @Import(name = "glfwSetCursorPos")
+    private static native void glfwSetCursorPos(Address window, double xpos, double ypos);
+
+    @Import(name = "glfwGetCursorPos")
+    private static native void glfwGetCursorPos(Address window, Address xpos, Address ypos);
+
+    @Import(name = "glfwSetFramebufferSizeCallback")
+    private static native void glfwSetFramebufferSizeCallback(Address window, GLFWFramebufferSizeCallback callback);
+
+    @Import(name = "glfwGetFramebufferSize")
+    private static native void glfwGetFramebufferSize(Address window, Address width, Address height);
+
+    @Import(name = "glfwGetMonitors")
+    private static native Address glfwGetMonitors(Address count);
+
+    @Import(name = "glfwInitHint")
+    private static native void glfwInitHint(int hint, int value);
 
 }
