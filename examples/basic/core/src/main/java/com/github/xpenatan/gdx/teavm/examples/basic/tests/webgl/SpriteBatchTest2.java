@@ -2,8 +2,6 @@ package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,16 +13,14 @@ import java.text.DecimalFormat;
 public class SpriteBatchTest2 extends ApplicationAdapter {
     private static final String TAG = "SpriteBatchTest";
     DecimalFormat df = new DecimalFormat("000.0000000000");
-    int SPRITES = 4;
+    int SPRITES = 8191;
 
     long startTime = TimeUtils.nanoTime();
     int frames = 0;
-    private OrthographicCamera camera;
     Texture texture;
     SpriteBatch spriteBatch;
     ScreenViewport viewport;
     Sprite[] sprites = new Sprite[SPRITES];
-    float angle = 0;
     float ROTATION_SPEED = 20;
     float scale = 1;
     float SCALE_SPEED = -1;
