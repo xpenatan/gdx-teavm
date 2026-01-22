@@ -13,10 +13,11 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
+import org.teavm.classlib.impl.nio.Buffers;
 
 public final class TBufferUtils {
 
-    private static boolean PROD = true;
+    private static boolean useDirectBuffer = false;
 
     static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
     static int allocatedUnsafe = 0;
@@ -321,74 +322,87 @@ public final class TBufferUtils {
     }
 
     public static FloatBuffer newFloatBuffer(int numFloats) {
-        if(PROD) { // This in prod. TODO Add Dev Mode
-            ByteBuffer buffer = ByteBuffer.allocate(numFloats * 4);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asFloatBuffer();
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numFloats * 4);
         }
         else {
-            return FloatBuffer.wrap(new float[numFloats]);
+            buffer = ByteBuffer.allocate(numFloats * 4);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asFloatBuffer();
     }
 
     public static DoubleBuffer newDoubleBuffer(int numDoubles) {
-        if(PROD) {
-            ByteBuffer buffer = ByteBuffer.allocate(numDoubles * 8);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asDoubleBuffer();
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numDoubles * 8);
         }
         else {
-            return DoubleBuffer.wrap(new double[numDoubles]);
+            buffer = ByteBuffer.allocate(numDoubles * 8);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asDoubleBuffer();
     }
 
     public static ByteBuffer newByteBuffer(int numBytes) {
-        if(PROD) {
-            ByteBuffer buffer = ByteBuffer.allocate(numBytes);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer;
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numBytes);
         }
         else {
-            return ByteBuffer.wrap(new byte[numBytes]);
+            buffer = ByteBuffer.allocate(numBytes);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer;
     }
 
     public static ShortBuffer newShortBuffer(int numShorts) {
-        if(PROD) {
-            ByteBuffer buffer = ByteBuffer.allocate(numShorts * 2);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asShortBuffer();
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numShorts * 2);
         }
         else {
-            return ShortBuffer.wrap(new short[numShorts]);
+            buffer = ByteBuffer.allocate(numShorts * 2);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asShortBuffer();
     }
 
     public static CharBuffer newCharBuffer(int numChars) {
-        if(PROD) {
-            ByteBuffer buffer = ByteBuffer.allocate(numChars * 2);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asCharBuffer();
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numChars * 2);
         }
         else {
-            return CharBuffer.wrap(new char[numChars]);
+            buffer = ByteBuffer.allocate(numChars * 2);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asCharBuffer();
     }
 
     public static IntBuffer newIntBuffer(int numInts) {
-        if(PROD) {
-            ByteBuffer buffer = ByteBuffer.allocate(numInts * 4);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asIntBuffer();
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numInts * 4);
         }
         else {
-            return IntBuffer.wrap(new int[numInts]);
+            buffer = ByteBuffer.allocate(numInts * 4);
         }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asIntBuffer();
     }
 
     public static LongBuffer newLongBuffer(int numLongs) {
-        // FIXME ouch :p
-        return LongBuffer.wrap(new long[numLongs]);
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numLongs * 8);
+        }
+        else {
+            buffer = ByteBuffer.allocate(numLongs * 8);
+        }
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asLongBuffer();
     }
 
     public static void disposeUnsafeByteBuffer (ByteBuffer buffer) {
@@ -396,11 +410,17 @@ public final class TBufferUtils {
         if (!unsafeBuffers.removeValue(buffer, true))
             throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
         allocatedUnsafe -= size;
-        freeMemory(buffer);
+        Buffers.free(buffer);
     }
 
     public static ByteBuffer newUnsafeByteBuffer (int numBytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(numBytes);
+        ByteBuffer buffer;
+        if(useDirectBuffer) {
+            buffer = ByteBuffer.allocateDirect(numBytes);
+        }
+        else {
+            buffer = ByteBuffer.allocate(numBytes);
+        }
         buffer.order(ByteOrder.nativeOrder());
         allocatedUnsafe += numBytes;
         unsafeBuffers.add(buffer);
@@ -413,11 +433,6 @@ public final class TBufferUtils {
 
     private static ByteBuffer newDisposableByteBuffer (int numBytes) {
         return newByteBuffer(numBytes);
-    }
-
-    private static void freeMemory (ByteBuffer buffer) {
-//        Buffers.free(buffer);
-        // Might not be needed
     }
 
     private static int bytesToElements (Buffer dst, int bytes) {
