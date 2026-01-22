@@ -16,6 +16,8 @@ import java.nio.ShortBuffer;
 
 public final class TBufferUtils {
 
+    private static boolean PROD = true;
+
     static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
     static int allocatedUnsafe = 0;
 
@@ -319,8 +321,8 @@ public final class TBufferUtils {
     }
 
     public static FloatBuffer newFloatBuffer(int numFloats) {
-        if(true) { // This in prod. TODO Add Dev Mode
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
+        if(PROD) { // This in prod. TODO Add Dev Mode
+            ByteBuffer buffer = ByteBuffer.allocate(numFloats * 4);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asFloatBuffer();
         }
@@ -330,8 +332,8 @@ public final class TBufferUtils {
     }
 
     public static DoubleBuffer newDoubleBuffer(int numDoubles) {
-        if(true) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numDoubles * 8);
+        if(PROD) {
+            ByteBuffer buffer = ByteBuffer.allocate(numDoubles * 8);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asDoubleBuffer();
         }
@@ -341,8 +343,8 @@ public final class TBufferUtils {
     }
 
     public static ByteBuffer newByteBuffer(int numBytes) {
-        if(true) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numBytes);
+        if(PROD) {
+            ByteBuffer buffer = ByteBuffer.allocate(numBytes);
             buffer.order(ByteOrder.nativeOrder());
             return buffer;
         }
@@ -352,8 +354,8 @@ public final class TBufferUtils {
     }
 
     public static ShortBuffer newShortBuffer(int numShorts) {
-        if(true) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numShorts * 2);
+        if(PROD) {
+            ByteBuffer buffer = ByteBuffer.allocate(numShorts * 2);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asShortBuffer();
         }
@@ -363,8 +365,8 @@ public final class TBufferUtils {
     }
 
     public static CharBuffer newCharBuffer(int numChars) {
-        if(true) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numChars * 2);
+        if(PROD) {
+            ByteBuffer buffer = ByteBuffer.allocate(numChars * 2);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asCharBuffer();
         }
@@ -374,8 +376,8 @@ public final class TBufferUtils {
     }
 
     public static IntBuffer newIntBuffer(int numInts) {
-        if(true) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(numInts * 4);
+        if(PROD) {
+            ByteBuffer buffer = ByteBuffer.allocate(numInts * 4);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asIntBuffer();
         }
