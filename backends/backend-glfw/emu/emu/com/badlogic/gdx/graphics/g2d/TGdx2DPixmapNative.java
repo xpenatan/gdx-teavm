@@ -1,9 +1,7 @@
 package emu.com.badlogic.gdx.graphics.g2d;
 
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import java.nio.ByteBuffer;
 import org.teavm.backend.c.runtime.Memory;
 import org.teavm.interop.Address;
