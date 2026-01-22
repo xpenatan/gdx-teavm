@@ -19,39 +19,6 @@ import org.teavm.interop.Strings;
 public class GLFWGL32 implements GL32 {
 
     public static class AddressUtils {
-        // Safe method for output buffers - uses backing array directly so modifications are visible
-        public static Address ofOutput(IntBuffer buffer) {
-            if (buffer == null) return Address.fromInt(0);
-            if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
-            } else {
-                // Fallback for direct buffers - create copy (won't work properly but prevents crashes)
-                int[] data = new int[buffer.capacity()];
-                return Address.ofData(data);
-            }
-        }
-
-        public static Address ofOutput(FloatBuffer buffer) {
-            if (buffer == null) return Address.fromInt(0);
-            if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
-            } else {
-                float[] data = new float[buffer.capacity()];
-                return Address.ofData(data);
-            }
-        }
-
-        public static Address ofOutput(Buffer buffer) {
-            if (buffer == null) return Address.fromInt(0);
-            if (buffer instanceof IntBuffer) {
-                return ofOutput((IntBuffer) buffer);
-            } else if (buffer instanceof FloatBuffer) {
-                return ofOutput((FloatBuffer) buffer);
-            }
-            // Fallback to regular of()
-            return of(buffer);
-        }
-
         public static Address of(Buffer buffer) {
             if (buffer == null) {
                 return Address.fromInt(0);
@@ -162,6 +129,30 @@ public class GLFWGL32 implements GL32 {
             }
         }
 
+    }
+
+    private static void nullCheck(int value) {
+        if (value == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method");
+    }
+
+    private static void nullCheck(int shader, int index) {
+        if (shader == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array/buffer index " + index);
+    }
+
+    private static void nullCheck(IntBuffer buf) {
+        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer");
+
+        for (int i = 0; i < buf.capacity(); i++) {
+            if (buf.get(i) == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer at index " + i);
+        }
+    }
+
+    private static void nullCheck(int[] buf) {
+        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from array");
+
+        for (int i = 0; i < buf.length; i++) {
+            if (buf[i] == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array at index " + i);
+        }
     }
 
     @Override
@@ -1069,8 +1060,6 @@ public class GLFWGL32 implements GL32 {
         OpenGL.glFlushMappedBufferRange(target, offset, length);
     }
 
-    private static int bindVAOCount = 0;
-
     @Override
     public void glBindVertexArray(int array) {
         OpenGL.glBindVertexArray(array);
@@ -1079,7 +1068,6 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glDeleteVertexArrays(int n, int[] arrays, int offset) {
         nullCheck(arrays);
-
         OpenGL.glDeleteVertexArrays(n, IntBuffer.wrap(arrays, offset, n));
     }
 
@@ -1802,88 +1790,9 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glDeleteShader(int shader) {
         nullCheck(shader);
-
         OpenGL.glDeleteShader(shader);
     }
 
-    private static void nullCheck(int value) {
-        if (value == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method");
-    }
-
-    private static void nullCheck(int shader, int index) {
-        if (shader == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array/buffer index " + index);
-    }
-
-    private static void nullCheck(ByteBuffer buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer");
-        
-        for (int i = 0; i < buf.capacity(); i++) {
-            if (buf.get(i) == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer at index " + i);
-        }
-    }
-    
-    private static void nullCheck(byte[] buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from array");
-        
-        for (int i = 0; i < buf.length; i++) {
-            if (buf[i] == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array at index " + i);
-        }
-    }
-
-    private static void nullCheck(ShortBuffer buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer");
-        
-        for (int i = 0; i < buf.capacity(); i++) {
-            if (buf.get(i) == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer at index " + i);
-        }
-    }
-    
-    private static void nullCheck(short[] buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from array");
-        
-        for (int i = 0; i < buf.length; i++) {
-            if (buf[i] == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array at index " + i);
-        }
-    }
-
-    private static void nullCheck(IntBuffer buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer");
-        
-        for (int i = 0; i < buf.capacity(); i++) {
-            if (buf.get(i) == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer at index " + i);
-        }
-    }
-    
-    private static void nullCheck(int[] buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from array");
-        
-        for (int i = 0; i < buf.length; i++) {
-            if (buf[i] == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array at index " + i);
-        }
-    }
-
-    private static void nullCheck(LongBuffer buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer");
-        
-        for (int i = 0; i < buf.capacity(); i++) {
-            if (buf.get(i) == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from buffer at index " + i);
-        }
-    }
-    
-    private static void nullCheck(long[] buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL value passed to OpenGL method from array");
-        
-        for (int i = 0; i < buf.length; i++) {
-            if (buf[i] == 0) throw new GdxRuntimeException("NULL value passed to OpenGL method from array at index " + i);
-        }
-    }
-
-    private static void nullCheck(Address buf) {
-        if (buf == null) throw new GdxRuntimeException("NULL address passed to OpenGL method");
-        long aLong = buf.toLong();
-        if (aLong == 0) throw new GdxRuntimeException("NULL address passed to OpenGL method");
-    }
-    
     @Override
     public void glDetachShader(int program, int shader) {
         OpenGL.glDetachShader(program, shader);
@@ -2572,12 +2481,5 @@ public class GLFWGL32 implements GL32 {
     @Override
     public void glVertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int ptr) {
         OpenGL.glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
-    }
-
-    static final class NativePointer {
-        final Address address;
-        NativePointer(Address address) {
-            this.address = address;
-        }
     }
 }
