@@ -2,9 +2,12 @@ package com.github.xpenatan.gdx.teavm.backends.glfw.utils;
 
 import com.badlogic.gdx.graphics.GL32;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import org.teavm.interop.Address;
 import org.teavm.interop.Import;
 import org.teavm.interop.c.Include;
@@ -3044,16 +3047,10 @@ public class OpenGL {
     public static native void glColorMask(boolean red, boolean green, boolean blue, boolean alpha);
 
     @Import(name = "glCompressedTexImage2D")
-    public static native void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, Buffer data);
-
-    @Import(name = "glCompressedTexImage2D")
-    public static native void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, Address data);
+    public static native void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, ByteBuffer data);
 
     @Import(name = "glCompressedTexSubImage2D")
-    public static native void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, Buffer data);
-
-    @Import(name = "glCompressedTexSubImage2D")
-    public static native void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, Address data);
+    public static native void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, ByteBuffer data);
 
     @Import(name = "glCopyTexImage2D")
     public static native void glCopyTexImage2D(int target, int level, int internalformat, int x, int y, int width, int height, int border);
@@ -3134,10 +3131,16 @@ public class OpenGL {
     public static native void glPolygonOffset(float factor, float units);
 
     @Import(name = "glReadPixels")
-    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer pixels);
+    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, ByteBuffer pixels);
 
     @Import(name = "glReadPixels")
-    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, Address pixels);
+    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, ShortBuffer pixels);
+
+    @Import(name = "glReadPixels")
+    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, IntBuffer pixels);
+
+    @Import(name = "glReadPixels")
+    public static native void glReadPixels(int x, int y, int width, int height, int format, int type, FloatBuffer pixels);
 
     @Import(name = "glScissor")
     public static native void glScissor(int x, int y, int width, int height);
@@ -3152,19 +3155,37 @@ public class OpenGL {
     public static native void glStencilOp(int fail, int zfail, int zpass);
 
     @Import(name = "glTexImage2D")
-    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels);
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, ByteBuffer pixels);
 
     @Import(name = "glTexImage2D")
-    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Address pixels);
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, ShortBuffer pixels);
+
+    @Import(name = "glTexImage2D")
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, IntBuffer pixels);
+
+    @Import(name = "glTexImage2D")
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, FloatBuffer pixels);
+
+    @Import(name = "glTexImage2D")
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, DoubleBuffer pixels);
 
     @Import(name = "glTexParameterf")
     public static native void glTexParameterf(int target, int pname, float param);
 
     @Import(name = "glTexSubImage2D")
-    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Address pixels);
+    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, ByteBuffer pixels);
 
     @Import(name = "glTexSubImage2D")
-    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels);
+    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, ShortBuffer pixels);
+
+    @Import(name = "glTexSubImage2D")
+    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, IntBuffer pixels);
+
+    @Import(name = "glTexSubImage2D")
+    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, FloatBuffer pixels);
+
+    @Import(name = "glTexSubImage2D")
+    public static native void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, DoubleBuffer pixels);
 
     @Import(name = "glViewport")
     public static native void glViewport(int x, int y, int width, int height);
@@ -3197,16 +3218,34 @@ public class OpenGL {
     public static native void glBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha);
 
     @Import(name = "glBufferData")
-    public static native void glBufferData(int target, int size, Buffer data, int usage);
+    public static native void glBufferData(int target, int size, ByteBuffer data, int usage);
 
     @Import(name = "glBufferData")
-    public static native void glBufferData(int target, int size, Address data, int usage);
+    public static native void glBufferData(int target, int size, IntBuffer data, int usage);
+
+    @Import(name = "glBufferData")
+    public static native void glBufferData(int target, int size, FloatBuffer data, int usage);
+
+    @Import(name = "glBufferData")
+    public static native void glBufferData(int target, int size, DoubleBuffer data, int usage);
+
+    @Import(name = "glBufferData")
+    public static native void glBufferData(int target, int size, ShortBuffer data, int usage);
 
     @Import(name = "glBufferSubData")
-    public static native void glBufferSubData(int target, int offset, int size, Buffer data);
+    public static native void glBufferSubData(int target, int offset, int size, ByteBuffer data);
 
     @Import(name = "glBufferSubData")
-    public static native void glBufferSubData(int target, int offset, int size, Address data);
+    public static native void glBufferSubData(int target, int offset, int size, IntBuffer data);
+
+    @Import(name = "glBufferSubData")
+    public static native void glBufferSubData(int target, int offset, int size, FloatBuffer data);
+
+    @Import(name = "glBufferSubData")
+    public static native void glBufferSubData(int target, int offset, int size, DoubleBuffer data);
+
+    @Import(name = "glBufferSubData")
+    public static native void glBufferSubData(int target, int offset, int size, ShortBuffer data);
 
     @Import(name = "glCheckFramebufferStatus")
     public static native int glCheckFramebufferStatus(int target);

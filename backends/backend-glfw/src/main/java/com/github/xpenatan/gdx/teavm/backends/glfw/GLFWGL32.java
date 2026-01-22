@@ -44,20 +44,16 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(ByteBuffer buffer) {
-            // Get the backing array if direct buffer
             if (buffer.isDirect()) {
-                // For direct buffers, use the address directly
-                // But since we can't get direct address in TeaVM, create a copy
-                byte[] data = new byte[buffer.remaining()];
+                int remaining = buffer.remaining();
+                byte[] data = new byte[remaining];
                 int pos = buffer.position();
-                buffer.get(data);
+                buffer.get(data, pos, remaining);
                 buffer.position(pos); // Restore position
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                // Use backing array directly
                 return Address.ofData(buffer.array());
             } else {
-                // Create a copy
                 byte[] data = new byte[buffer.remaining()];
                 buffer.get(data);
                 return Address.ofData(data);
@@ -65,7 +61,14 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(ShortBuffer buffer) {
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                short[] data = new short[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
                 short[] data = new short[buffer.remaining()];
@@ -75,12 +78,16 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(IntBuffer buffer) {
-            // For IntBuffer, use backing array directly if available
-            // This ensures modifications by native code are visible in the buffer
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                int[] data = new int[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
-                // For direct buffers, create a copy and read data back later
                 int[] data = new int[buffer.remaining()];
                 buffer.get(data);
                 return Address.ofData(data);
@@ -88,7 +95,14 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(LongBuffer buffer) {
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                long[] data = new long[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
                 long[] data = new long[buffer.remaining()];
@@ -98,7 +112,14 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(FloatBuffer buffer) {
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                float[] data = new float[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
                 float[] data = new float[buffer.remaining()];
@@ -108,7 +129,14 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(DoubleBuffer buffer) {
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                double[] data = new double[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
                 double[] data = new double[buffer.remaining()];
@@ -118,7 +146,14 @@ public class GLFWGL32 implements GL32 {
         }
 
         public static Address ofInternal(CharBuffer buffer) {
-            if (buffer.hasArray()) {
+            if (buffer.isDirect()) {
+                int remaining = buffer.remaining();
+                char[] data = new char[remaining];
+                int pos = buffer.position();
+                buffer.get(data, pos, remaining);
+                buffer.position(pos); // Restore position
+                return Address.ofData(data);
+            } else if (buffer.hasArray()) {
                 return Address.ofData(buffer.array());
             } else {
                 char[] data = new char[buffer.remaining()];
@@ -1462,16 +1497,20 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, Buffer data) {
-        Address address = AddressUtils.of(data);
-        OpenGL.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, address);
-        data.rewind();
+//        if (data instanceof ByteBuffer) {
+//            OpenGL.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, (ByteBuffer)data);
+//        } else {
+//            throw new GdxRuntimeException("Can't use " + data.getClass().getName() + " with this method. Use ByteBuffer instead.");
+//        }
     }
 
     @Override
     public void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, Buffer data) {
-        Address address = AddressUtils.of(data);
-        OpenGL.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, address);
-        data.rewind();
+//        if (data instanceof ByteBuffer) {
+//            OpenGL.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, (ByteBuffer)data);
+//        } else {
+//            throw new GdxRuntimeException("Can't use " + data.getClass().getName() + " with this method. Use ByteBuffer instead.");
+//        }
     }
 
     @Override
@@ -1613,9 +1652,17 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer pixels) {
-        Address address = AddressUtils.of(pixels);
-        OpenGL.glReadPixels(x, y, width, height, format, type, address);
-        pixels.rewind();
+//        if (pixels instanceof ByteBuffer)
+//            OpenGL.glReadPixels(x, y, width, height, format, type, (ByteBuffer)pixels);
+//        else if (pixels instanceof ShortBuffer)
+//            OpenGL.glReadPixels(x, y, width, height, format, type, (ShortBuffer)pixels);
+//        else if (pixels instanceof IntBuffer)
+//            OpenGL.glReadPixels(x, y, width, height, format, type, (IntBuffer)pixels);
+//        else if (pixels instanceof FloatBuffer)
+//            OpenGL.glReadPixels(x, y, width, height, format, type, (FloatBuffer)pixels);
+//        else
+//            throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+//                    + " with this method. Use ByteBuffer, ShortBuffer, IntBuffer or FloatBuffer instead.");
     }
 
     @Override
@@ -1640,9 +1687,19 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels) {
-        Address address = AddressUtils.of(pixels);
-        OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, address);
-        pixels.rewind();
+        if (pixels instanceof ByteBuffer || pixels == null)
+            OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, (ByteBuffer)pixels);
+        else if (pixels instanceof ShortBuffer)
+            OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, (ShortBuffer)pixels);
+        else if (pixels instanceof IntBuffer)
+            OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, (IntBuffer)pixels);
+        else if (pixels instanceof FloatBuffer)
+            OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, (FloatBuffer)pixels);
+        else if (pixels instanceof DoubleBuffer)
+            OpenGL.glTexImage2D(target, level, internalformat, width, height, border, format, type, (DoubleBuffer)pixels);
+        else
+            throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+                    + " with this method. Use ByteBuffer, ShortBuffer, IntBuffer, FloatBuffer or DoubleBuffer instead");
     }
 
     @Override
@@ -1652,9 +1709,19 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels) {
-        Address address = AddressUtils.of(pixels);
-        OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, address);
-        pixels.rewind();
+        if (pixels instanceof ByteBuffer || pixels == null)
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (ByteBuffer)pixels);
+        else if (pixels instanceof ShortBuffer)
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (ByteBuffer)pixels);
+        else if (pixels instanceof IntBuffer)
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (IntBuffer)pixels);
+        else if (pixels instanceof FloatBuffer)
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (FloatBuffer)pixels);
+        else if (pixels instanceof DoubleBuffer)
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (DoubleBuffer)pixels);
+        else
+            throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+                    + " with this method. Use ByteBuffer, ShortBuffer, IntBuffer, FloatBuffer or DoubleBuffer instead. Blame LWJGL");
     }
 
     @Override
@@ -1709,14 +1776,30 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glBufferData(int target, int size, Buffer data, int usage) {
-        Address address = AddressUtils.of(data);
-        OpenGL.glBufferData(target, size, address, usage);
+        if (data instanceof ByteBuffer || data == null)
+            OpenGL.glBufferData(target, size, (ByteBuffer)data, usage);
+        else if (data instanceof IntBuffer)
+            OpenGL.glBufferData(target, size, (IntBuffer)data, usage);
+        else if (data instanceof FloatBuffer)
+            OpenGL.glBufferData(target, size, (FloatBuffer)data, usage);
+        else if (data instanceof DoubleBuffer)
+            OpenGL.glBufferData(target, size, (DoubleBuffer)data, usage);
+        else if (data instanceof ShortBuffer)
+            OpenGL.glBufferData(target, size, (ShortBuffer)data, usage);
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        Address address = AddressUtils.of(data);
-        OpenGL.glBufferSubData(target, offset, size, address);
+        if (data instanceof ByteBuffer || data == null)
+            OpenGL.glBufferSubData(target, offset, size, (ByteBuffer)data);
+        else if (data instanceof IntBuffer)
+            OpenGL.glBufferSubData(target, offset, size, (IntBuffer)data);
+        else if (data instanceof FloatBuffer)
+            OpenGL.glBufferSubData(target, offset, size, (FloatBuffer)data);
+        else if (data instanceof DoubleBuffer)
+            OpenGL.glBufferSubData(target, offset, size, (DoubleBuffer)data);
+        else if (data instanceof ShortBuffer)
+            OpenGL.glBufferSubData(target, offset, size, (ShortBuffer)data);
     }
 
     @Override
@@ -2479,4 +2562,6 @@ public class GLFWGL32 implements GL32 {
     public void glVertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int ptr) {
         OpenGL.glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
     }
+
+    private static native Address ofData(ByteBuffer buffer);
 }
