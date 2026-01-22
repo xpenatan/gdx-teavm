@@ -410,7 +410,9 @@ public final class TBufferUtils {
         if (!unsafeBuffers.removeValue(buffer, true))
             throw new IllegalArgumentException("buffer not allocated with newUnsafeByteBuffer or already disposed");
         allocatedUnsafe -= size;
-        Buffers.free(buffer);
+        if(buffer.isDirect()) {
+            Buffers.free(buffer);
+        }
     }
 
     public static ByteBuffer newUnsafeByteBuffer (int numBytes) {
