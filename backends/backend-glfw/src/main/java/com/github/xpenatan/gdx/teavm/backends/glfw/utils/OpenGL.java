@@ -2930,7 +2930,7 @@ public class OpenGL {
     public static native void glDrawArraysInstanced(int mode, int first, int count, int instanceCount);
 
     @Import(name = "glDrawElementsInstanced")
-    public static native void glDrawElementsInstanced(int mode, int count, int type, int indicesOffset, int instanceCount);
+    public static native void glDrawElementsInstanced(int mode, int count, int type, Address indicesOffset, int instanceCount);
 
     @Import(name = "glGetInteger64v")
     public static native void glGetInteger64v(int pname, Address params);

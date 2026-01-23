@@ -1302,7 +1302,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glDrawElementsInstanced(int mode, int count, int type, int indicesOffset, int instanceCount) {
-        OpenGL.glDrawElementsInstanced(mode, count, type, indicesOffset, instanceCount);
+        OpenGL.glDrawElementsInstanced(mode, count, type, Address.fromInt(indicesOffset), instanceCount);
     }
 
     @Override
@@ -1885,7 +1885,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glDrawElements(int mode, int count, int type, int indices) {
-        OpenGL.glDrawElements(mode, count, type, indices);
+        OpenGL.glDrawElements(mode, count, type, Address.fromInt(indices));
     }
 
     @Override
@@ -2560,7 +2560,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glVertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int ptr) {
-        OpenGL.glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
+        OpenGL.glVertexAttribPointer(indx, size, type, normalized, stride, Address.fromInt(ptr));
     }
 
     private static native Address ofData(ByteBuffer buffer);
