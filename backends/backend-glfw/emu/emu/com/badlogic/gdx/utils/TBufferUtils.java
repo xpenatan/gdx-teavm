@@ -17,7 +17,7 @@ import org.teavm.classlib.impl.nio.Buffers;
 
 public final class TBufferUtils {
 
-    private static boolean useDirectBuffer = false;
+    private static boolean useDirectBuffer = true;
 
     static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
     static int allocatedUnsafe = 0;
