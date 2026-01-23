@@ -18,23 +18,40 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Compiler flags
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -std=c11")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11")
+if (UNIX)
+  find_package(glfw3 CONFIG REQUIRED)
+  find_package(OpenGL REQUIRED)
+  find_package(GLEW REQUIRED)
+endif()
 
-# Define GLEW_STATIC
-add_definitions(-DGLEW_STATIC)
+if (WIN32)
+  # Compiler flags
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -std=c11")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11")
 
+  # Define GLEW_STATIC
+  add_definitions(-DGLEW_STATIC)
+endif()
+if (UNIX)
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
+endif()
+
+if (WIN32)
 # Include directories - using CMAKE_CURRENT_SOURCE_DIR
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glew-2.3.0/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glew-2.3.0/include")
+endif()
 
-# Link directories
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw/lib-vc2022")
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glew-2.3.0/lib/Release/x64")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
+
+if (WIN32)
+  # Link directories
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw/lib-vc2022")
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glew-2.3.0/lib/Release/x64")
+endif()
 
 # Source files
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
@@ -54,12 +71,20 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}_$<IF:$<CONFIG:Debug>,debug,release>")
 
-# Set Visual Studio debugger working directory
+if (WIN32)
+  # Set Visual Studio debugger working directory
+  set_target_properties(${PROJECT_NAME} PROPERTIES
+      VS_DEBUGGER_WORKING_DIRECTORY "${RELEASE_PATH}")
+  # Link libraries
+  target_link_libraries(${PROJECT_NAME} glfw3 opengl32 glew32s)
+
+  # Set startup project for Visual Studio
+  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+endif()
+if (UNIX)
+  target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL glfw GLEW::GLEW m)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "${RELEASE_PATH}")
-
-# Link libraries
-target_link_libraries(${PROJECT_NAME} glfw3 opengl32 glew32s)
-
-# Set startup project for Visual Studio
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE ON
+)

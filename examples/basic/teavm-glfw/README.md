@@ -61,6 +61,22 @@ Simply double-click either script. It will:
 3. Open the generated Visual Studio solution file
 4. Build the project in Visual Studio
 
+### Linux
+
+Just type
+
+```shell
+cmake .
+make
+```
+
+or to build debug version, following:
+
+```shell
+cmake -DCMAKE_BUILD_TYPE=Debug
+make
+```
+
 ## Output
 
 After successful compilation, you will find:
