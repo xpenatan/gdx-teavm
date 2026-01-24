@@ -6,8 +6,10 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -130,13 +132,13 @@ public class TeaGLFWBackend extends TeaBackend {
             if (input == null) {
                 throw new RuntimeException("CMakeLists.txt template in resources");
             }
-            String template = new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            String template = new String(input.readAllBytes(), StandardCharsets.UTF_8);
 
             // Replace placeholders in template
             template = template.replace("${PROJECT_NAME}", projectName);
             template = template.replace("${RELEASE_PATH}", releasePathStr.replace("\\", "/"));
 
-            java.nio.file.Files.write(java.nio.file.Paths.get(cmakePath), template.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            Files.write(Paths.get(cmakePath), template.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new RuntimeException("Failed to setup CMakeLists.txt", e);
         }
@@ -159,7 +161,7 @@ public class TeaGLFWBackend extends TeaBackend {
         // Generate app_release.bat
         String releaseBatContent = generateBatContent(projectName, "Release");
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get(releaseBatPath), releaseBatContent.getBytes());
+            Files.write(Paths.get(releaseBatPath), releaseBatContent.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,7 +169,7 @@ public class TeaGLFWBackend extends TeaBackend {
         // Generate app_debug.bat
         String debugBatContent = generateBatContent(projectName, "Debug");
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get(debugBatPath), debugBatContent.getBytes());
+            Files.write(Paths.get(debugBatPath), debugBatContent.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
