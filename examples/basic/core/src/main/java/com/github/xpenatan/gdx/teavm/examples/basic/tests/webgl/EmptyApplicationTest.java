@@ -1,12 +1,17 @@
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL32;
+package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
-public class TestCApplication implements ApplicationListener {
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.graphics.FPSLogger;
+import com.badlogic.gdx.utils.ScreenUtils;
+
+public class EmptyApplicationTest implements ApplicationListener {
+
+    FPSLogger fpsLogger;
 
     @Override
     public void create() {
         System.out.println("CREATE");
+        fpsLogger = new FPSLogger();
     }
 
     @Override
@@ -16,9 +21,8 @@ public class TestCApplication implements ApplicationListener {
 
     @Override
     public void render() {
-        System.out.println("Loop");
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+        ScreenUtils.clear(0, 1, 0, 1, true);
+        fpsLogger.log();
     }
 
     @Override
