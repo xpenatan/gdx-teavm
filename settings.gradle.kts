@@ -15,6 +15,7 @@ pluginManagement {
 include(":backends:backend-shared")
 include(":backends:backend-web")
 include(":backends:backend-glfw")
+include(":backends:backend-psp")
 
 include(":extensions:asset-loader")
 include(":extensions:gdx-controllers-teavm")
@@ -28,6 +29,7 @@ include(":examples:basic:core")
 include(":examples:basic:desktop")
 include(":examples:basic:teavm")
 include(":examples:basic:teavm-glfw")
+include(":examples:basic:teavm-psp")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")

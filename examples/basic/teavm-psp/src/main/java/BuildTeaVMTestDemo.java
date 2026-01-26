@@ -1,0 +1,25 @@
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
+import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import java.io.File;
+import org.teavm.vm.TeaVMOptimizationLevel;
+
+public class BuildTeaVMTestDemo {
+
+    public static void main(String[] args) {
+        try {
+            AssetFileHandle assetsPath = new AssetFileHandle("../assets");
+            TeaPSPBackend pspBackend = new TeaPSPBackend();
+            new TeaCompiler()
+                    .addAssets(assetsPath)
+                    .setBackend(pspBackend)
+                    .setObfuscated(false)
+                    .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
+                    .setMainClass(PSPLauncherTest.class.getName())
+                    .build(new File("build/dist"));
+            System.out.println("Build successful");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
