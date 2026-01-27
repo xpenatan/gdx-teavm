@@ -14,6 +14,7 @@ public class BuildTeaVMTestDemo {
                     .addAssets(assetsPath)
                     .setBackend(pspBackend)
                     .setObfuscated(false)
+                    .setDebugInformationGenerated(true) // Generates .prx file for debugging
                     .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                     .setMainClass(PSPLauncherTest.class.getName())
                     .build(new File("build/dist"));

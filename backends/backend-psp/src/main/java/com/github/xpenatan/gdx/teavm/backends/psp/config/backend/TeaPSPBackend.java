@@ -143,21 +143,14 @@ public class TeaPSPBackend extends TeaBackend {
                 pb = new ProcessBuilder("bash", shPath);
             }
             pb.directory(new File(buildRootPath));
+            pb.redirectErrorStream(true); // Merge stderr into stdout for ordered output
             Process p = pb.start();
 
-            // Read and print output
+            // Read merged output
             try (var reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
-                }
-            }
-
-            // Read and print error
-            try (var reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getErrorStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.err.println(line);
                 }
             }
 

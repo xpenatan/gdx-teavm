@@ -25,6 +25,7 @@ import com.github.xpenatan.gdx.teavm.backends.glfw.utils.Callback;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLUtil;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.OpenGL;
+import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
 import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -96,7 +97,7 @@ public class GLFWApplication implements GLFWApplicationBase {
     public GLFWApplication(ApplicationListener listener, GLFWApplicationConfiguration config) {
         if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) loadANGLE();
         initializeGlfw();
-        setApplicationLogger(new GLFWApplicationLogger());
+        setApplicationLogger(new SharedApplicationLogger());
 
         this.config = config = GLFWApplicationConfiguration.copy(config);
         if (config.title == null) config.title = listener.getClass().getSimpleName();

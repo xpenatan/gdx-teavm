@@ -27,7 +27,8 @@ mkdir -p build
 cd build
 
 # Configure with psp-cmake
-psp-cmake ..
+# -DENC_PRX=1 // None Modified PSP
+psp-cmake -DBUILD_PRX=1 ..
 
 # Build with make
 make
@@ -35,12 +36,14 @@ make
 # Ensure c/release directory exists and copy EBOOT
 mkdir -p ../c/release
 cp EBOOT.PBP ../c/release/
+cp ${PROJECT_NAME}.prx ../c/release/
 rm EBOOT.PBP
+rm ${PROJECT_NAME}.prx
 
 echo ""
 echo "===================================="
 echo "  SUCCESS!"
 echo "===================================="
 echo ""
-echo "EBOOT.PBP created!"
+echo "EBOOT.PBP created at $(wslpath -w ../c/release/EBOOT.PBP)"
 echo ""

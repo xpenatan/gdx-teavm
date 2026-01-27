@@ -35,12 +35,3 @@ if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Build failed!
     exit /b 1
 )
-
-echo.
-echo ====================================
-echo   SUCCESS!
-echo ====================================
-echo.
-echo EBOOT.PBP created successfully!
-echo Location: %CD%\c\release\EBOOT.PBP
-echo.

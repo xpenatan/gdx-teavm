@@ -14,6 +14,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
 import com.github.xpenatan.gdx.teavm.backends.web.agent.TeaAgentInfo;
 import com.github.xpenatan.gdx.teavm.backends.web.agent.TeaWebAgent;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetDownloadImpl;
@@ -135,7 +136,7 @@ public class TeaApplication implements Application {
         input = new TeaInput(this, graphics.canvas);
         files = new TeaFiles(config, this);
         net = new TeaNet();
-        logger = new TeaApplicationLogger();
+        logger = new SharedApplicationLogger();
         clipboard = new TeaClipboard();
 
         initNativeLibraries();

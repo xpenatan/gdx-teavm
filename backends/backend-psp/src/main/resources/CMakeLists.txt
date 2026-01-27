@@ -10,14 +10,14 @@ set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    pspgu
-    pspge
-    pspgum
-    pspvram
-    pspdisplay
-    psphprm
-    pspsdk
-    pspdebug
+    pspgu      # Graphics Utility for 2D/3D rendering
+    pspge      # Graphics Engine, low-level graphics operations
+    pspgum     # Graphics Utility Matrix, for transformations and math
+    pspvram    # Video RAM management
+    pspdisplay # Display management and screen functions
+    psphprm    # HP Remote Play, for remote control
+    pspsdk     # PSP SDK core library
+    pspdebug   # Debugging utilities
 )
 
 # Create an EBOOT.PBP file
