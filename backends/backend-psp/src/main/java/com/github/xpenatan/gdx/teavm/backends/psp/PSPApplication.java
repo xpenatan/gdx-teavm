@@ -55,6 +55,7 @@ public class PSPApplication implements Application {
         catch(Throwable t) {
             t.printStackTrace(System.out);
         }
+        PSPGraphicsApi.sceGuDisplay(PSPGraphicsApi.GU_FALSE);
         PSPGraphicsApi.sceGuTerm();
     }
 
