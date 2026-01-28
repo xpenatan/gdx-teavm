@@ -11,13 +11,12 @@ public class BuildGdxTest {
         String gdxAssetsPath = args[0];
         System.out.println("gdxAssetsPath: " + gdxAssetsPath);
 
-        new TeaCompiler()
+        new TeaCompiler(new TeaWebBackend())
                 .addAssets(new AssetFileHandle(gdxAssetsPath))
                 .addAssets(new AssetFileHandle("../../basic/assets"))
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(GdxTestLauncher.class.getName())
                 .setObfuscated(false)
-                .setBackend(new TeaWebBackend())
                 .build(new File("build/dist"));
     }
 }

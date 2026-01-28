@@ -9,7 +9,6 @@ import org.teavm.tooling.sources.SourceFileProvider;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class TeaCompilerData {
-    public TeaBackend backend;
     public String outputName = "app";
     public boolean obfuscated;
     public TeaVMOptimizationLevel optimizationLevel;

@@ -50,6 +50,7 @@ public abstract class TeaBackend {
     protected List<String> scripts = new ArrayList<>();
     protected List<String> cppFiles = new ArrayList<>();
 
+    protected void preSetup(TeaCompilerData data) {}
     protected abstract void setup(TeaCompilerData data);
 
     final void compile(TeaCompilerData data) {
