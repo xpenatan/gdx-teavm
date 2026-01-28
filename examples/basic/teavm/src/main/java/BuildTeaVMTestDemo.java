@@ -9,9 +9,8 @@ public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) throws IOException {
         AssetFileHandle assetsPath = new AssetFileHandle("../assets");
-        new TeaCompiler()
+        new TeaCompiler(new TeaWebBackend())
                 .addAssets(assetsPath)
-                .setBackend(new TeaWebBackend())
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(TestWebLauncher.class.getName())
                 .setObfuscated(false)

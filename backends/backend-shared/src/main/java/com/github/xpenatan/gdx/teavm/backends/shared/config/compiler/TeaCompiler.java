@@ -9,11 +9,12 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class TeaCompiler {
 
+    private TeaBackend backend;
     private TeaCompilerData data = new TeaCompilerData();
 
-    public TeaCompiler setBackend(TeaBackend backend) {
-        data.backend = backend;
-        return this;
+    public TeaCompiler(TeaBackend backend) {
+        backend.preSetup(data);
+        this.backend = backend;
     }
 
     public TeaCompiler setObfuscated(boolean flag) {
@@ -98,11 +99,10 @@ public class TeaCompiler {
 
     public void build(File output) {
         if(data != null) {
-            if(data.backend != null) {
-                data.output = output;
-                data.backend.compile(data);
-            }
+            data.output = output;
+            backend.compile(data);
         }
+        backend = null;
         data = null;
     }
 }
