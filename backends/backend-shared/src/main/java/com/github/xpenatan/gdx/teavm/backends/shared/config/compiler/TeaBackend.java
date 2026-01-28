@@ -65,7 +65,7 @@ public abstract class TeaBackend {
         build(data);
     }
 
-    private void initializeTeavmTool(TeaCompilerData data) {
+    protected void initializeTeavmTool(TeaCompilerData data) {
         tool = new TeaVMTool();
         tool.setObfuscated(data.obfuscated);
         tool.setOptimizationLevel(data.optimizationLevel);

@@ -21,7 +21,7 @@ public class EmptyApplicationTest implements ApplicationListener {
 
     @Override
     public void render() {
-        ScreenUtils.clear(0, 0, 1, 1, true);
+        ScreenUtils.clear(0, 1, 0, 1.0f, true);
         fpsLogger.log();
     }
 

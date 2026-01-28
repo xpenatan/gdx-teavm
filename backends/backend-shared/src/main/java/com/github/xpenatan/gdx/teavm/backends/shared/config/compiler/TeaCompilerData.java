@@ -21,10 +21,10 @@ public class TeaCompilerData {
     public boolean debugInformationGenerated;
     public boolean sourceMapsFileGenerated;
     public TeaVMSourceFilePolicy sourceFilePolicy = TeaVMSourceFilePolicy.COPY;
-    public int minHeapSize = 16 * (1 << 20);
-    public int maxHeapSize = 16 * (1 << 20);
-    public int minDirectBuffersSize = 16 * (1 << 20);
-    public int maxDirectBuffersSize = 16 * (1 << 20);
+    public int minHeapSize = 4 * (1 << 20);
+    public int maxHeapSize = 128 * (1 << 20);
+    public int minDirectBuffersSize = 4 * (1 << 20);
+    public int maxDirectBuffersSize = 128 * (1 << 20);
     public final ArrayList<String> reflectionClasses = new ArrayList<>();
     public TeaBuildReflectionListener reflectionListener;
     public boolean shortFileNames = false;

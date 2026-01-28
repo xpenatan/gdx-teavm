@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,21 @@ public class TeaPSPBackend extends TeaBackend {
 
     public boolean shouldGenerateSource = true;
     public boolean autoExecuteBuild = true;
+    public boolean debugMemory;
     public List<String> additionalSourcePaths = new ArrayList<>();
 
     protected String buildRootPath;
     protected String generatedSources;
     protected String externalSources;
+
+    @Override
+    protected void initializeTeavmTool(TeaCompilerData data) {
+        data.minHeapSize = 2 * (1 << 20);
+        data.maxHeapSize = 8 * (1 << 20);
+        data.minDirectBuffersSize = 2 * (1 << 20);
+        data.maxDirectBuffersSize = 12 * (1 << 20);
+        super.initializeTeavmTool(data);
+    }
 
     @Override
     protected void setup(TeaCompilerData data) {
@@ -87,7 +96,9 @@ public class TeaPSPBackend extends TeaBackend {
 
             // Replace placeholders in template
             template = template.replace("${PROJECT_NAME}", projectName);
-//            template = template.replace("${RELEASE_PATH}", releasePathStr.replace("\\", "/"));
+            if (debugMemory) {
+                template = template.replace("include_directories(\"${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/psp\")", "include_directories(\"${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/psp\")\nadd_definitions(-DPSP_DEBUG_MEMORY)");
+            }
 
             Files.write(Paths.get(cmakePath), template.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {

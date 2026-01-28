@@ -10,6 +10,9 @@ public class BuildTeaVMTestDemo {
         try {
             AssetFileHandle assetsPath = new AssetFileHandle("../assets");
             TeaPSPBackend pspBackend = new TeaPSPBackend();
+
+            pspBackend.debugMemory = true;
+
             new TeaCompiler()
                     .addAssets(assetsPath)
                     .setBackend(pspBackend)
