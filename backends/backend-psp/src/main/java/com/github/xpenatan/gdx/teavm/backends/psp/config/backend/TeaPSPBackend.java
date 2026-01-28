@@ -25,12 +25,11 @@ public class TeaPSPBackend extends TeaBackend {
     protected String externalSources;
 
     @Override
-    protected void initializeTeavmTool(TeaCompilerData data) {
+    protected void preSetup(TeaCompilerData data) {
         data.minHeapSize = 2 * (1 << 20);
         data.maxHeapSize = 8 * (1 << 20);
         data.minDirectBuffersSize = 2 * (1 << 20);
         data.maxDirectBuffersSize = 12 * (1 << 20);
-        super.initializeTeavmTool(data);
     }
 
     @Override

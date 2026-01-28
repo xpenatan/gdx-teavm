@@ -13,9 +13,8 @@ public class BuildTeaVMTestDemo {
 
             pspBackend.debugMemory = true;
 
-            new TeaCompiler()
+            new TeaCompiler(pspBackend)
                     .addAssets(assetsPath)
-                    .setBackend(pspBackend)
                     .setObfuscated(false)
                     .setDebugInformationGenerated(true) // Generates .prx file for debugging
                     .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
