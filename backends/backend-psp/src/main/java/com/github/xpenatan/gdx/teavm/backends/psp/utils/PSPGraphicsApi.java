@@ -630,15 +630,14 @@ public class PSPGraphicsApi {
         public abstract void invoke(int value);
     }
 
-
     // CUSTOM METHODS
 
-    @Import(name = "grInitGraphics")
-    public static native void grInitGraphics();
+    @Import(name = "initGraphics")
+    public static native void initGraphics();
 
-    @Import(name = "grStartFrame")
-    public static native void grStartFrame(int dialog);
+    @Import(name = "startFrame")
+    public static native void startFrame(int dialog);
 
-    @Import(name = "grSwapBuffers")
-    public static native void grSwapBuffers(int vsync, int dialog);
+    @Import(name = "endFrame")
+    public static native void endFrame(int vsync, int dialog);
 }

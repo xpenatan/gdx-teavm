@@ -2,13 +2,13 @@
 
 #include <vramalloc.h>
 
-static unsigned int __attribute__((aligned(16))) list[262144];
+static unsigned int __attribute__((aligned(16))) list[1 * 1024 * 1024];
 
 #define PSP_BUF_WIDTH (512)
 #define PSP_SCR_WIDTH (480)
 #define PSP_SCR_HEIGHT (272)
 
-void grInitGraphics() {
+void initGraphics() {
     void* fbp0 = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_8888);
     void* fbp1 = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_8888);
     void* zbp = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_4444);
@@ -38,7 +38,7 @@ void grInitGraphics() {
     sceGuDisplay(GU_TRUE);
 }
 
-void grStartFrame(int dialog) {
+void startFrame(int dialog) {
     sceGuStart(GU_DIRECT, list);
 
     if (dialog) {
@@ -47,7 +47,7 @@ void grStartFrame(int dialog) {
     }
 }
 
-void grSwapBuffers(int vsync, int dialog) {
+void endFrame(int vsync, int dialog) {
     if (!dialog) {
         sceGuFinish();
         sceGuSync(0, 0);

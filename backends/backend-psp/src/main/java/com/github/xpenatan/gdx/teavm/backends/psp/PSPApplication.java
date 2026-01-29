@@ -36,7 +36,7 @@ public class PSPApplication implements Application {
     public PSPApplication(ApplicationListener listener, PSPApplicationConfiguration config) {
         this.config = config;
         PSPCoreApi.init();
-        PSPGraphicsApi.grInitGraphics();
+        PSPGraphicsApi.initGraphics();
 
         graphics = new PSPGraphics();
         applicationListener = listener;
@@ -65,7 +65,7 @@ public class PSPApplication implements Application {
         }
 
         int dialog = PSPGraphicsApi.GU_FALSE;
-        PSPGraphicsApi.grStartFrame(dialog);
+        PSPGraphicsApi.startFrame(dialog);
         graphics.update();
         if(!applicationInitialized) {
             applicationInitialized = true;
@@ -77,7 +77,7 @@ public class PSPApplication implements Application {
         }
 
         int vsync = PSPGraphicsApi.GU_TRUE;
-        PSPGraphicsApi.grSwapBuffers(vsync, dialog);
+        PSPGraphicsApi.endFrame(vsync, dialog);
     }
 
     @Override
