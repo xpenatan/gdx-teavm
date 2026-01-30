@@ -9,8 +9,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "PSPLog.h"
-
 typedef struct AllocHeader {
     size_t   size;
     uint32_t magic;
@@ -41,7 +39,7 @@ void tracked_free(void* ptr) {
     AllocHeader* header = (AllocHeader*)ptr - 1;
 
     if (header->magic != ALLOC_MAGIC) {
-        printf("tracked_free: invalid header at %p\n", ptr);
+//        fprint("tracked_free: invalid header at %p\n", ptr); // TODO find a way to log errors
         return;
     }
 
@@ -68,7 +66,7 @@ void* tracked_realloc(void* ptr, size_t new_size) {
 
     AllocHeader* old_header = (AllocHeader*)ptr - 1;
     if (old_header->magic != ALLOC_MAGIC) {
-        printf("tracked_realloc: invalid header at %p\n", ptr);
+//        printf("tracked_realloc: invalid header at %p\n", ptr); // TODO find a way to log errors
         return NULL;
     }
 

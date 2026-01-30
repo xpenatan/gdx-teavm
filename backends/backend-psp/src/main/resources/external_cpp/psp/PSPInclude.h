@@ -11,4 +11,3 @@
 #include <pspgum.h>
 
 #include "PSPMemory.h"
-#include "PSPLog.h"
