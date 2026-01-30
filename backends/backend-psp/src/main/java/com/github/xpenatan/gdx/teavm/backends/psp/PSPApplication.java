@@ -35,7 +35,7 @@ public class PSPApplication implements Application {
 
     public PSPApplication(ApplicationListener listener, PSPApplicationConfiguration config) {
         this.config = config;
-        PSPCoreApi.init();
+        PSPCoreApi.initPSP();
         PSPGraphicsApi.initGraphics();
 
         graphics = new PSPGraphics();

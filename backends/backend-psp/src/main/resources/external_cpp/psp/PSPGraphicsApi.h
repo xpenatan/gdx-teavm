@@ -4,33 +4,32 @@
 
 static unsigned int __attribute__((aligned(16))) list[1 * 1024 * 1024];
 
-#define PSP_BUF_WIDTH (512)
-#define PSP_SCR_WIDTH (480)
-#define PSP_SCR_HEIGHT (272)
+#define BUFFER_WIDTH 512
+#define BUFFER_HEIGHT 272
+#define SCREEN_WIDTH 480
+#define SCREEN_HEIGHT BUFFER_HEIGHT
 
 void initGraphics() {
-    void* fbp0 = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_8888);
-    void* fbp1 = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_8888);
-    void* zbp = guGetStaticVramBuffer(PSP_BUF_WIDTH, PSP_SCR_HEIGHT, GU_PSM_4444);
+    void* fbp0 = guGetStaticVramBuffer(BUFFER_WIDTH, BUFFER_HEIGHT, GU_PSM_8888);
+    void* fbp1 = guGetStaticVramBuffer(BUFFER_WIDTH, BUFFER_HEIGHT, GU_PSM_8888);
+    void* zbp = guGetStaticVramBuffer(BUFFER_WIDTH, BUFFER_HEIGHT, GU_PSM_4444);
 
     sceGuInit();
 
     sceGuStart(GU_DIRECT, list);
-    sceGuDrawBuffer(GU_PSM_8888, fbp0, PSP_BUF_WIDTH);
-    sceGuDispBuffer(PSP_SCR_WIDTH, PSP_SCR_HEIGHT, fbp1, PSP_BUF_WIDTH);
-    sceGuDepthBuffer(zbp, PSP_BUF_WIDTH);
-    sceGuOffset(2048 - (PSP_SCR_WIDTH / 2), 2048 - (PSP_SCR_HEIGHT / 2));
-    sceGuViewport(2048, 2048, PSP_SCR_WIDTH, PSP_SCR_HEIGHT);
+    sceGuDrawBuffer(GU_PSM_8888, fbp0, BUFFER_WIDTH);
+    sceGuDispBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, fbp1, BUFFER_WIDTH);
+    sceGuDepthBuffer(zbp, BUFFER_WIDTH);
+    sceGuOffset(2048 - (SCREEN_WIDTH / 2), 2048 - (SCREEN_HEIGHT / 2));
+    sceGuViewport(2048, 2048, SCREEN_WIDTH, SCREEN_HEIGHT);
     sceGuDepthRange(0, 65535);
-    sceGuScissor(0, 0, PSP_SCR_WIDTH, PSP_SCR_HEIGHT);
+    sceGuScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     sceGuEnable(GU_SCISSOR_TEST);
     sceGuDepthFunc(GU_GEQUAL);
     sceGuEnable(GU_DEPTH_TEST);
     sceGuFrontFace(GU_CW);
     sceGuShadeModel(GU_SMOOTH);
     sceGuEnable(GU_CULL_FACE);
-    sceGuEnable(GU_TEXTURE_2D);
-    sceGuEnable(GU_CLIP_PLANES);
     sceGuFinish();
     sceGuSync(0, 0);
 

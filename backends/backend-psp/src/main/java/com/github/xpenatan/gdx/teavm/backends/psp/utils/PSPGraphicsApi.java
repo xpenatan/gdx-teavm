@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.psp.utils;
 
+import java.nio.ByteBuffer;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;
 import org.teavm.interop.Import;
@@ -417,6 +418,9 @@ public class PSPGraphicsApi {
 
     @Import(name = "sceGuDrawArray")
     public static native void sceGuDrawArray(int prim, int vtype, int count, Address indices, Address vertices);
+
+    @Import(name = "sceGuDrawArray")
+    public static native void sceGuDrawArray(int prim, int vtype, int count, Address indices, ByteBuffer vertices);
 
     @Import(name = "sceGuBeginObject")
     public static native void sceGuBeginObject(int vtype, int count, Address indices, Address vertices);

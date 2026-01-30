@@ -16,7 +16,7 @@ public class PSPDebugApi {
     public static native void pspDebugScreenSetXY(int x, int y);
 
     /**
-     * @return The amount of user memory available, in bytes.
+     * @return The amount of user memory allocated in bytes.
      */
     @Import(name = "getAllocatedMemory")
     private static native int getAllocatedMemory();

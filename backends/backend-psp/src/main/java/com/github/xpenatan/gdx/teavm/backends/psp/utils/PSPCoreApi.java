@@ -10,6 +10,6 @@ public class PSPCoreApi {
     public static native boolean isRunning();
 
     @Import(name = "initPSP")
-    public static native int init();
+    public static native int initPSP();
 
 }
