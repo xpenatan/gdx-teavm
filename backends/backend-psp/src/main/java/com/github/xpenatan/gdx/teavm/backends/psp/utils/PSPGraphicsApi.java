@@ -9,6 +9,8 @@ import org.teavm.interop.c.Include;
 @Include("PSPGraphicsApi.h")
 public class PSPGraphicsApi {
 
+    // pspgu.h
+
     /* PI, float-sized */
     public static final float GU_PI = 3.141593f;
 
@@ -633,6 +635,164 @@ public class PSPGraphicsApi {
     public static abstract class GuSetCallback extends Function {
         public abstract void invoke(int value);
     }
+
+    // pspgum.h
+
+    @Import(name = "sceGumDrawArray")
+    public static native void sceGumDrawArray(int prim, int vtype, int count, Address indices, Address vertices);
+
+    @Import(name = "sceGumDrawArrayN")
+    public static native void sceGumDrawArrayN(int prim, int vtype, int count, int a3, Address indices, Address vertices);
+
+    @Import(name = "sceGumDrawBezier")
+    public static native void sceGumDrawBezier(int vtype, int ucount, int vcount, Address indices, Address vertices);
+
+    @Import(name = "sceGumDrawSpline")
+    public static native void sceGumDrawSpline(int vtype, int ucount, int vcount, int uedge, int vedge, Address indices, Address vertices);
+
+    @Import(name = "sceGumLoadIdentity")
+    public static native void sceGumLoadIdentity();
+
+    @Import(name = "sceGumLoadMatrix")
+    public static native void sceGumLoadMatrix(Address matrix4);
+
+    @Import(name = "sceGumLookAt")
+    public static native void sceGumLookAt(Address eye_Vector3, Address center_Vector3, Address up_Vector3);
+
+    @Import(name = "sceGumMatrixMode")
+    public static native void sceGumMatrixMode(int mode);
+
+    @Import(name = "sceGumMultMatrix")
+    public static native void sceGumMultMatrix(Address matrix4);
+
+    @Import(name = "sceGumOrtho")
+    public static native void sceGumOrtho(float left, float right, float bottom, float top, float near, float far);
+
+    @Import(name = "sceGumPerspective")
+    public static native void sceGumPerspective(float fovy, float aspect, float near, float far);
+
+    @Import(name = "sceGumPopMatrix")
+    public static native void sceGumPopMatrix();
+
+    @Import(name = "sceGumPushMatrix")
+    public static native void sceGumPushMatrix();
+
+    @Import(name = "sceGumRotateX")
+    public static native void sceGumRotateX(float angle);
+
+    @Import(name = "sceGumRotateY")
+    public static native void sceGumRotateY(float angle);
+
+    @Import(name = "sceGumRotateZ")
+    public static native void sceGumRotateZ(float angle);
+
+    @Import(name = "sceGumRotateXYZ")
+    public static native void sceGumRotateXYZ(Address vector3);
+
+    @Import(name = "sceGumRotateZYX")
+    public static native void sceGumRotateZYX(Address vector3);
+
+    @Import(name = "sceGumRotate")
+    public static native void sceGumRotate(Address quaternion);
+
+    @Import(name = "sceGumScale")
+    public static native void sceGumScale(Address vector3);
+
+    @Import(name = "sceGumStoreMatrix")
+    public static native void sceGumStoreMatrix(Address matrix4);
+
+    @Import(name = "sceGumTranslate")
+    public static native void sceGumTranslate(Address vector3);
+
+    @Import(name = "sceGumUpdateMatrix")
+    public static native void sceGumUpdateMatrix();
+
+    @Import(name = "sceGumFullInverse")
+    public static native void sceGumFullInverse();
+
+    @Import(name = "sceGumFastInverse")
+    public static native void sceGumFastInverse();
+
+    @Import(name = "sceGumBeginObject")
+    public static native void sceGumBeginObject(int vtype, int count, Address indices, Address vertices);
+
+    @Import(name = "sceGumEndObject")
+    public static native void sceGumEndObject();
+
+    @Import(name = "gumInit")
+    public static native void gumInit();
+
+    @Import(name = "gumInit")
+    public static native void gumLoadIdentity(Address matrix4);
+
+    @Import(name = "gumInit")
+    public static native void gumLoadQuaternion(Address rMatrix4, Address quaternion);
+
+    @Import(name = "gumInit")
+    public static native void gumLoadMatrix(Address rMatrix4, Address aMatrix4);
+
+    @Import(name = "gumInit")
+    public static native void gumLookAt(Address matrix4, Address eyeVector3, Address centerVector3, Address upVector3);
+
+    @Import(name = "gumInit")
+    public static native void gumMultMatrix(Address resultMatrix4, Address aMatrix4, Address bMatrix4);
+
+    @Import(name = "gumInit")
+    public static native void gumOrtho(Address matrix4, float left, float right, float bottom, float top, float near, float far);
+
+    @Import(name = "gumInit")
+    public static native void gumPerspective(Address matrix4, float fovy, float aspect, float near, float far);
+
+    @Import(name = "gumRotateX")
+    public static native void gumRotateX(Address matrix4, float angle);
+
+    @Import(name = "gumRotateXYZ")
+    public static native void gumRotateXYZ(Address matrix4, Address vector3);
+
+    @Import(name = "gumRotateY")
+    public static native void gumRotateY(Address matrix4, float angle);
+
+    @Import(name = "gumRotateZ")
+    public static native void gumRotateZ(Address matrix4, float angle);
+
+    @Import(name = "gumRotateZYX")
+    public static native void gumRotateZYX(Address matrix4, Address vector3);
+
+    @Import(name = "gumRotateMatrix")
+    public static native void gumRotateMatrix(Address matrix4, Address quaternion);
+
+    @Import(name = "gumScale")
+    public static native void gumScale(Address matrix4, Address vector3);
+
+    @Import(name = "gumTranslate")
+    public static native void gumTranslate(Address matrix4, Address vector3);
+
+    @Import(name = "gumFullInverse")
+    public static native void gumFullInverse(Address rMatrix4, Address aMatrix4);
+
+    @Import(name = "gumFastInverse")
+    public static native void gumFastInverse(Address rMatrix4, Address aMatrix4);
+
+    @Import(name = "gumCrossProduct")
+    public static native void gumCrossProduct(Address rVector3, Address aVector3, Address bVector3);
+
+    @Import(name = "gumDotProduct")
+    public static native float gumDotProduct(Address aVector3, Address bVector3);
+
+    @Import(name = "gumNormalize")
+    public static native void gumNormalize(Address vVector3);
+
+    @Import(name = "gumRotateVector")
+    public static native void gumRotateVector(Address rVector3, Address quaternion, Address vector3);
+
+    @Import(name = "gumNormalizeQuaternion")
+    public static native void gumNormalizeQuaternion(Address quaternion);
+
+    @Import(name = "gumLoadAxisAngle")
+    public static native void gumLoadAxisAngle(Address rQuaternion, Address axisVector3, float t);
+
+    @Import(name = "gumMultQuaternion")
+    public static native void gumMultQuaternion(Address resultQuaternion, Address aQuaternion, Address bQuaternion);
 
     // CUSTOM METHODS
 
