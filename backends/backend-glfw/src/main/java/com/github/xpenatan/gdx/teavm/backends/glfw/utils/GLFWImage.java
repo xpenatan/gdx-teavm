@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw.utils;
 
 import java.nio.ByteBuffer;
+import org.teavm.backend.c.runtime.Memory;
 import org.teavm.interop.Structure;
 
 public class GLFWImage extends Structure {

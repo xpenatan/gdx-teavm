@@ -3,7 +3,7 @@ import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPCoreApi;
 import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPDebugApi;
 import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.EmptyApplicationTest;
-import demos.PSPShapeTest;
+import demos.PSPCubeTest;
 import demos.PSPTest;
 
 public class PSPLauncherTest {
@@ -22,18 +22,18 @@ public class PSPLauncherTest {
     }
 
     private static PSPTest obtainSimpleTest() {
-        return new PSPShapeTest();
-//        return new PSPCubeTest();
+//        return new PSPShapeTest();
+        return new PSPCubeTest();
     }
 
     private static void setupSimpleLoop() {
         PSPTest test = obtainSimpleTest();
-        PSPCoreApi.initPSP();
+        PSPCoreApi.setupCallbacks();
         PSPGraphicsApi.initGraphics();
 
         PSPTest app = null;
         while(PSPCoreApi.isRunning()) {
-            PSPGraphicsApi.startFrame(PSPGraphicsApi.GU_FALSE);
+            PSPGraphicsApi.beginFrame(PSPGraphicsApi.GU_FALSE);
             {
                 PSPDebugApi.logUsedMemory(1000);
                 if(app == null) {

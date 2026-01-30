@@ -16,7 +16,7 @@ int callback_thread(SceSize args, void *argp) {
     return 0;
 }
 
-int initPSP() {
+int setupCallbacks() {
     running = true;
     int thid = sceKernelCreateThread("update_thread", callback_thread, 0x11, 0xFA0, 0, 0);
     if(thid >= 0) {

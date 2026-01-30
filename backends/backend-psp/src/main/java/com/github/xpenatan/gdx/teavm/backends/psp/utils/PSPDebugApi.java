@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.psp.utils;
 
+import org.teavm.interop.Address;
 import org.teavm.interop.Import;
 import org.teavm.interop.c.Include;
 
@@ -36,4 +37,16 @@ public class PSPDebugApi {
             lastMemoryLogTime = currentTime;
         }
     }
+
+    @Import(name = "getVertices")
+    public static native Address getVertices();
+
+    @Import(name = "rotateCube")
+    public static native void rotateCube(int val);
+
+    @Import(name = "drawArray")
+    public static native void drawArray();
+
+    @Import(name = "drawArray2")
+    public static native void drawArray2(int prim, int vtype, int count, Address indices);
 }

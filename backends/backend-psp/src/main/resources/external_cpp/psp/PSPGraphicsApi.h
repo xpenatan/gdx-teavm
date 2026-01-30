@@ -37,7 +37,7 @@ void initGraphics() {
     sceGuDisplay(GU_TRUE);
 }
 
-void startFrame(int dialog) {
+void beginFrame(int dialog) {
     sceGuStart(GU_DIRECT, list);
 
     if (dialog) {
@@ -49,7 +49,7 @@ void startFrame(int dialog) {
 void endFrame(int vsync, int dialog) {
     if (!dialog) {
         sceGuFinish();
-        sceGuSync(0, 0);
+        sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
     }
 
     if (vsync) {

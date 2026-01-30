@@ -12,27 +12,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import org.teavm.backend.c.CustomCTarget;
-import org.teavm.backend.c.generate.CNameProvider;
-import org.teavm.backend.c.generate.ShorteningFileNameProvider;
-import org.teavm.backend.c.generate.SimpleFileNameProvider;
-import org.teavm.cache.AlwaysStaleCacheStatus;
-import org.teavm.cache.EmptyProgramCache;
-import org.teavm.model.PreOptimizingClassHolderSource;
-import org.teavm.model.ReferenceCache;
-import org.teavm.parsing.ClasspathClassHolderSource;
-import org.teavm.parsing.ClasspathResourceProvider;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.teavm.tooling.TeaVMTargetType;
-import org.teavm.vm.BuildTarget;
-import org.teavm.vm.DirectoryBuildTarget;
-import org.teavm.vm.TeaVM;
-import org.teavm.vm.TeaVMBuilder;
 
 public class TeaGLFWBackend extends TeaBackend {
 
     public boolean shouldGenerateSource = true;
-    public boolean shouldUseCustomGeneration = false;
     public List<String> additionalSourcePaths = new ArrayList<>();
 
     protected String buildRootPath;
@@ -55,60 +41,10 @@ public class TeaGLFWBackend extends TeaBackend {
         tool.setTargetDirectory(new File(generatedSources));
     }
 
-    private void generate(TeaCompilerData data) {
-        ClasspathResourceProvider classpathResourceProvider = new ClasspathResourceProvider(classLoader);
-
-        CustomCTarget cTarget = new CustomCTarget(new CNameProvider());
-        cTarget.setMinHeapSize(data.minHeapSize);
-        cTarget.setMaxHeapSize(data.maxHeapSize);
-        cTarget.setLineNumbersGenerated(false);
-        cTarget.setHeapDump(true);
-        cTarget.setObfuscated(data.obfuscated);
-        cTarget.setFileNames(new ShorteningFileNameProvider(new SimpleFileNameProvider()));
-//        cTarget.setFileNames(new SimpleFileNameProvider());
-        ReferenceCache referenceCache = new ReferenceCache();
-        TeaVMBuilder vmBuilder = new TeaVMBuilder(cTarget);
-        vmBuilder.setReferenceCache(referenceCache);
-
-        PreOptimizingClassHolderSource preOptimizingClassHolderSource = new PreOptimizingClassHolderSource(new ClasspathClassHolderSource(classpathResourceProvider, referenceCache));
-        vmBuilder.setClassLoader(classLoader);
-        vmBuilder.setClassSource(preOptimizingClassHolderSource);
-
-        Properties properties = new Properties();
-
-        TeaVM vm = vmBuilder.build();
-        vm.setProgressListener(obtainProgressListener());
-        vm.setProperties(properties);
-        vm.setProgramCache(EmptyProgramCache.INSTANCE);
-        vm.setCacheStatus(AlwaysStaleCacheStatus.INSTANCE);
-        vm.setOptimizationLevel(data.optimizationLevel);
-        vm.installPlugins();
-        vm.setEntryPoint(data.mainClass);
-        vm.setEntryPointName("main");
-        for(String className : data.reflectionClasses) {
-            vm.preserveType(className);
-        }
-        File targetDirectory = tool.getTargetDirectory();
-        if(!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            System.err.println("Target directory could not be created");
-            System.exit(-1);
-        }
-
-        BuildTarget buildTarget = new DirectoryBuildTarget(targetDirectory);
-        vm.build(buildTarget, data.outputName);
-
-        logBuild(vm.getProblemProvider(), vm.getClasses(), vm.getDependencyInfo().getCallGraph());
-    }
-
     @Override
     protected void build(TeaCompilerData data) {
         if(shouldGenerateSource) {
-            if(shouldUseCustomGeneration) {
-                generate(data);
-            }
-            else {
-                super.build(data);
-            }
+            super.build(data);
         }
 
         try {
@@ -118,6 +54,8 @@ public class TeaGLFWBackend extends TeaBackend {
         } catch (IOException e) {
             throw new RuntimeException("Build Failed", e);
         }
+
+        fixGeneratedCFiles();
 
         generateCMakeLists(data);
     }
@@ -296,6 +234,52 @@ public class TeaGLFWBackend extends TeaBackend {
         batContent.append("endlocal\n");
 
         return batContent.toString();
+    }
+
+    private void fixGeneratedCFiles() {
+        try {
+            Files.walk(Paths.get(generatedSources))
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".c"))
+                    .forEach(this::fixCFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to fix generated C files", e);
+        }
+    }
+
+    private void fixCFile(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            String fixed = fixFunctionDefinitions(content);
+            if (!fixed.equals(content)) {
+                System.out.println("Remove this");
+//                Files.writeString(path, fixed, StandardCharsets.UTF_8);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to fix C file: " + path, e);
+        }
+    }
+
+    private String fixFunctionDefinitions(String content) {
+        // Pattern to match function definitions with unnamed parameters
+        // Matches: returnType functionName(Type*, Type* param) {
+        // And replaces the first unnamed Type* with Type* arg0
+        Pattern pattern = Pattern.compile("(\\w+\\s+\\w+\\()([^,)]*\\*)\\s*,");
+        Matcher matcher = pattern.matcher(content);
+        StringBuffer sb = new StringBuffer();
+        int argIndex = 0;
+        while (matcher.find()) {
+            String param = matcher.group(2);
+            if (!param.contains(" ")) { // No space means no name
+                String replacement = param + " arg" + argIndex;
+                matcher.appendReplacement(sb, matcher.group(1) + replacement + ",");
+                argIndex++;
+            } else {
+                matcher.appendReplacement(sb, matcher.group(0));
+            }
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 
     @Override

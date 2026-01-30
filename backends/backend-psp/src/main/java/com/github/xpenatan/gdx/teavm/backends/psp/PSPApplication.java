@@ -35,7 +35,7 @@ public class PSPApplication implements Application {
 
     public PSPApplication(ApplicationListener listener, PSPApplicationConfiguration config) {
         this.config = config;
-        PSPCoreApi.initPSP();
+        PSPCoreApi.setupCallbacks();
         PSPGraphicsApi.initGraphics();
 
         graphics = new PSPGraphics();
@@ -65,7 +65,7 @@ public class PSPApplication implements Application {
         }
 
         int dialog = PSPGraphicsApi.GU_FALSE;
-        PSPGraphicsApi.startFrame(dialog);
+        PSPGraphicsApi.beginFrame(dialog);
         graphics.update();
         if(!applicationInitialized) {
             applicationInitialized = true;

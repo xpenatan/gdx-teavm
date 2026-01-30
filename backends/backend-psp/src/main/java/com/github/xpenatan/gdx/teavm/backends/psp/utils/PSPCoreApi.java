@@ -9,7 +9,7 @@ public class PSPCoreApi {
     @Import(name = "isRunning")
     public static native boolean isRunning();
 
-    @Import(name = "initPSP")
-    public static native int initPSP();
+    @Import(name = "setupCallbacks")
+    public static native int setupCallbacks();
 
 }
