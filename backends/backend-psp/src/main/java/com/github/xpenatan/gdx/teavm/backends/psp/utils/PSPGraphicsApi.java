@@ -63,51 +63,42 @@ public class PSPGraphicsApi {
     public static final int GU_TEXTURE = 3;
 
     /* Vertex Declarations Begin */
-    public static int GU_TEXTURE_SHIFT(int n) { return (n) << 0; }
-    public static final int GU_TEXTURE_8BIT = GU_TEXTURE_SHIFT(1);
-    public static final int GU_TEXTURE_16BIT = GU_TEXTURE_SHIFT(2);
-    public static final int GU_TEXTURE_32BITF = GU_TEXTURE_SHIFT(3);
-    public static final int GU_TEXTURE_BITS = GU_TEXTURE_SHIFT(3);
+    public static final int GU_TEXTURE_8BIT = 1 << 0;
+    public static final int GU_TEXTURE_16BIT = 2 << 0;
+    public static final int GU_TEXTURE_32BITF = 3 << 0;
+    public static final int GU_TEXTURE_BITS = 3 << 0;
 
-    public static int GU_COLOR_SHIFT(int n) { return (n) << 2; }
-    public static final int GU_COLOR_5650 = GU_COLOR_SHIFT(4);
-    public static final int GU_COLOR_5551 = GU_COLOR_SHIFT(5);
-    public static final int GU_COLOR_4444 = GU_COLOR_SHIFT(6);
-    public static final int GU_COLOR_8888 = GU_COLOR_SHIFT(7);
-    public static final int GU_COLOR_BITS = GU_COLOR_SHIFT(7);
+    public static final int GU_COLOR_5650 = 4 << 2;
+    public static final int GU_COLOR_5551 = 5 << 2;
+    public static final int GU_COLOR_4444 = 6 << 2;
+    public static final int GU_COLOR_8888 = 7 << 2;
+    public static final int GU_COLOR_BITS = 7 << 2;
 
-    public static int GU_NORMAL_SHIFT(int n) { return (n) << 5; }
-    public static final int GU_NORMAL_8BIT = GU_NORMAL_SHIFT(1);
-    public static final int GU_NORMAL_16BIT = GU_NORMAL_SHIFT(2);
-    public static final int GU_NORMAL_32BITF = GU_NORMAL_SHIFT(3);
-    public static final int GU_NORMAL_BITS = GU_NORMAL_SHIFT(3);
+    public static final int GU_NORMAL_8BIT = 1 << 5;
+    public static final int GU_NORMAL_16BIT = 2 << 5;
+    public static final int GU_NORMAL_32BITF = 3 << 5;
+    public static final int GU_NORMAL_BITS = 3 << 5;
 
-    public static int GU_VERTEX_SHIFT(int n) { return (n) << 7; }
-    public static final int GU_VERTEX_8BIT = GU_VERTEX_SHIFT(1);
-    public static final int GU_VERTEX_16BIT = GU_VERTEX_SHIFT(2);
-    public static final int GU_VERTEX_32BITF = GU_VERTEX_SHIFT(3);
-    public static final int GU_VERTEX_BITS = GU_VERTEX_SHIFT(3);
+    public static final int GU_VERTEX_8BIT = 1 << 7;
+    public static final int GU_VERTEX_16BIT = 2 << 7;
+    public static final int GU_VERTEX_32BITF = 3 << 7;
+    public static final int GU_VERTEX_BITS = 3 << 7;
 
-    public static int GU_WEIGHT_SHIFT(int n) { return (n) << 9; }
-    public static final int GU_WEIGHT_8BIT = GU_WEIGHT_SHIFT(1);
-    public static final int GU_WEIGHT_16BIT = GU_WEIGHT_SHIFT(2);
-    public static final int GU_WEIGHT_32BITF = GU_WEIGHT_SHIFT(3);
-    public static final int GU_WEIGHT_BITS = GU_WEIGHT_SHIFT(3);
+    public static final int GU_WEIGHT_8BIT = 1 << 9;
+    public static final int GU_WEIGHT_16BIT = 2 << 9;
+    public static final int GU_WEIGHT_32BITF = 3 << 9;
+    public static final int GU_WEIGHT_BITS = 3 << 9;
 
-    public static int GU_INDEX_SHIFT(int n) { return (n) << 11; }
-    public static final int GU_INDEX_8BIT = GU_INDEX_SHIFT(1);
-    public static final int GU_INDEX_16BIT = GU_INDEX_SHIFT(2);
-    public static final int GU_INDEX_BITS = GU_INDEX_SHIFT(3);
+    public static final int GU_INDEX_8BIT = 1 << 11;
+    public static final int GU_INDEX_16BIT = 2 << 11;
+    public static final int GU_INDEX_BITS = 3 << 11;
 
-    public static int GU_WEIGHTS(int n) { return (((n)-1)&7)<<14; }
-    public static final int GU_WEIGHTS_BITS = GU_WEIGHTS(8);
-    public static int GU_VERTICES(int n) { return (((n)-1)&7)<<18; }
-    public static final int GU_VERTICES_BITS = GU_VERTICES(8);
+    public static final int GU_WEIGHTS_BITS = 7 << 14;
+    public static final int GU_VERTICES_BITS = 7 << 18;
 
-    public static int GU_TRANSFORM_SHIFT(int n) { return (n) << 23; }
-    public static final int GU_TRANSFORM_3D = GU_TRANSFORM_SHIFT(0);
-    public static final int GU_TRANSFORM_2D = GU_TRANSFORM_SHIFT(1);
-    public static final int GU_TRANSFORM_BITS = GU_TRANSFORM_SHIFT(1);
+    public static final int GU_TRANSFORM_3D = 0 << 23;
+    public static final int GU_TRANSFORM_2D = 1 << 23;
+    public static final int GU_TRANSFORM_BITS = 1 << 23;
     /* Vertex Declarations End */
 
     /* display ON/OFF switch */
