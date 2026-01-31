@@ -645,6 +645,9 @@ public class PSPGraphicsApi {
     @Import(name = "sceGumDrawArray")
     public static native void sceGumDrawArray(int prim, int vtype, int count, Address indices, Address vertices);
 
+    @Import(name = "sceGumDrawArray")
+    public static native void sceGumDrawArray(int prim, int vtype, int count, Address indices, ByteBuffer vertices);
+
     @Import(name = "sceGumDrawArrayN")
     public static native void sceGumDrawArrayN(int prim, int vtype, int count, int a3, Address indices, Address vertices);
 

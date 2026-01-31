@@ -40,13 +40,4 @@ public class PSPDebugApi {
 
     @Import(name = "getVertices")
     public static native Address getVertices();
-
-    @Import(name = "rotateCube")
-    public static native void rotateCube(int val);
-
-    @Import(name = "drawArray")
-    public static native void drawArray();
-
-    @Import(name = "drawArray2")
-    public static native void drawArray2(int prim, int vtype, int count, Address indices);
 }
