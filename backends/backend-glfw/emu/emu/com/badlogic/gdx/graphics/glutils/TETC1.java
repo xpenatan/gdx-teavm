@@ -25,7 +25,7 @@ import org.teavm.interop.c.Include;
  *
  * @author mzechner
  */
-@Include("etc1_utils.h")
+@Include("etc1/etc1_utils.h")
 public class TETC1 {
     /**
      * The PKM header size in bytes

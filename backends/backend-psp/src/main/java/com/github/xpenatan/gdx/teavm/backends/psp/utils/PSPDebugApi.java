@@ -24,7 +24,7 @@ public class PSPDebugApi {
 
     public static float getAllocatedMemoryMB() {
         double mb = getAllocatedMemory() / (1024.0 * 1024.0);
-        return (float)(Math.round(mb * 100) / 100.0);
+        return (float)(Math.round(mb * 1000) / 1000.0);
     }
 
     private static long lastMemoryLogTime;
@@ -33,11 +33,9 @@ public class PSPDebugApi {
         long currentTime = System.currentTimeMillis();
         if(currentTime - lastMemoryLogTime >= logMemoryDelayMilli) {
             float usedMemory= getAllocatedMemoryMB();
-            System.out.println("Used memory: " + String.format("%.2f", usedMemory) + " MB");
+            System.out.println("Used memory: " + String.format("%.3f", usedMemory) + " MB");
             lastMemoryLogTime = currentTime;
         }
     }
 
-    @Import(name = "getVertices")
-    public static native Address getVertices();
 }

@@ -113,9 +113,7 @@ public class PSPCubeTest implements PSPTest {
 
         // draw cube
 
-        Address vertices = PSPDebugApi.getVertices();
         sceGumDrawArray(GU_TRIANGLES,GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF|GU_TRANSFORM_3D,12*3, null, vertices);
-//        sceGumDrawArray(GU_TRIANGLES,GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF|GU_TRANSFORM_3D,12*3, null, vertices);
         val++;
     }
 

@@ -47,15 +47,17 @@ public class TeaGLFWBackend extends TeaBackend {
             super.build(data);
         }
 
-        try {
-            Files.writeString(Path.of(generatedSources, "app_include.c"),
-                    "#include <GL/glew.h>\n" +
-                    "#include \"all.c\"");
-        } catch (IOException e) {
-            throw new RuntimeException("Build Failed", e);
+        // Copy app_include.c from resources
+        String appIncludePath = generatedSources + "/app_include.c";
+        try (var input = getClass().getClassLoader().getResourceAsStream("app_include.c")) {
+            if (input == null) {
+                throw new RuntimeException("app_include.c not found in resources");
+            }
+            String template = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            Files.write(Paths.get(appIncludePath), template.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to copy app_include.c", e);
         }
-
-        fixGeneratedCFiles();
 
         generateCMakeLists(data);
     }
@@ -234,52 +236,6 @@ public class TeaGLFWBackend extends TeaBackend {
         batContent.append("endlocal\n");
 
         return batContent.toString();
-    }
-
-    private void fixGeneratedCFiles() {
-        try {
-            Files.walk(Paths.get(generatedSources))
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".c"))
-                    .forEach(this::fixCFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to fix generated C files", e);
-        }
-    }
-
-    private void fixCFile(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            String fixed = fixFunctionDefinitions(content);
-            if (!fixed.equals(content)) {
-                System.out.println("Remove this");
-//                Files.writeString(path, fixed, StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to fix C file: " + path, e);
-        }
-    }
-
-    private String fixFunctionDefinitions(String content) {
-        // Pattern to match function definitions with unnamed parameters
-        // Matches: returnType functionName(Type*, Type* param) {
-        // And replaces the first unnamed Type* with Type* arg0
-        Pattern pattern = Pattern.compile("(\\w+\\s+\\w+\\()([^,)]*\\*)\\s*,");
-        Matcher matcher = pattern.matcher(content);
-        StringBuffer sb = new StringBuffer();
-        int argIndex = 0;
-        while (matcher.find()) {
-            String param = matcher.group(2);
-            if (!param.contains(" ")) { // No space means no name
-                String replacement = param + " arg" + argIndex;
-                matcher.appendReplacement(sb, matcher.group(1) + replacement + ",");
-                argIndex++;
-            } else {
-                matcher.appendReplacement(sb, matcher.group(0));
-            }
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
     }
 
     @Override

@@ -61,7 +61,7 @@ file(GLOB_RECURSE EXTERNAL_SOURCES_0 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp
 list(APPEND SOURCES ${EXTERNAL_SOURCES_0})
 
 # Collect external C++ sources from etc1
-file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/*.cpp")
+file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/etc1/*.cpp")
 list(APPEND SOURCES ${EXTERNAL_SOURCES_1})
 
 # Add executable

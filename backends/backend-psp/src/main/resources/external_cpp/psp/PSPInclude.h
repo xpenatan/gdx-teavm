@@ -9,8 +9,3 @@
 #include <pspdisplay.h>
 #include <pspgu.h>
 #include <pspgum.h>
-
-#include "PSPMemory.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>

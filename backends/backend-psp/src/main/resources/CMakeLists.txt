@@ -2,8 +2,19 @@ cmake_minimum_required(VERSION 3.11)
 project(${PROJECT_NAME} C)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/psp")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/std/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/ec1")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
 
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
+
+# Collect external C sources from gdx
+file(GLOB_RECURSE EXTERNAL_SOURCES_0 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
+list(APPEND SOURCES ${EXTERNAL_SOURCES_0})
+
+# Collect external C++ sources from etc1
+file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/etc1/*.cpp")
+list(APPEND SOURCES ${EXTERNAL_SOURCES_1})
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
