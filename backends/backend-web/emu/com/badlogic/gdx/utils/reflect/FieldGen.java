@@ -1,6 +1,6 @@
 package com.badlogic.gdx.utils.reflect;
 
-import com.github.xpenatan.gdx.teavm.backends.web.config.plugins.TeaReflectionSupplier;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.web.utils.GenericTypeProvider;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;

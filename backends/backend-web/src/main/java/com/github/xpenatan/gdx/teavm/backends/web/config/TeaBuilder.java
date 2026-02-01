@@ -7,7 +7,7 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaVMResourceProperties;
-import com.github.xpenatan.gdx.teavm.backends.web.config.plugins.TeaReflectionSupplier;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
