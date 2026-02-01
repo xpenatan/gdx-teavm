@@ -14,7 +14,6 @@ public class PSPCubeTest implements PSPTest {
     private ScePspFVector3 pos;
     private ScePspFVector3 rot;
     private ByteBuffer vertices;
-    private Address logo_start; // Texture buffer pointer
     private Texture texture;
 
     @Override
@@ -54,7 +53,6 @@ public class PSPCubeTest implements PSPTest {
         set(vertices, 1, 1, color1, 1, 1,-1); // 6
         set(vertices, 0, 1, color1,-1, 1,-1); // 7
 
-
         set(vertices, 0, 0, color2, 1,-1,-1); // 0
         set(vertices, 1, 0, color2, 1,-1, 1); // 3
         set(vertices, 1, 1, color2, 1, 1, 1); // 7
@@ -70,8 +68,6 @@ public class PSPCubeTest implements PSPTest {
         set(vertices, 0, 0, color2,-1,-1,-1); // 0
         set(vertices, 1, 1, color2,-1, 1, 1); // 7
         set(vertices, 0, 1, color2,-1,-1, 1); // 4
-
-
 
         set(vertices, 0, 0, color3,-1, 1,-1); // 0
         set(vertices, 1, 0, color3, 1, 1,-1); // 1
