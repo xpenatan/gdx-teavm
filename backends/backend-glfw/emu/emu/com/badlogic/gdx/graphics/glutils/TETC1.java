@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWGL32;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGL32;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

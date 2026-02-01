@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Os;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class GLFWWindow implements Disposable {
     final GLFWApplicationBase application;
     private boolean listenerInitialized = false;
     GLFWWindowListener windowListener;
-    private GLFWGraphics graphics;
+    private GLFWGLGraphics graphics;
     private GLFWInput input;
     private final GLFWApplicationConfiguration config;
     private final Array<Runnable> runnables = new Array<>();
@@ -225,7 +226,7 @@ public class GLFWWindow implements Disposable {
     void create(long windowHandle) {
         this.windowHandle = windowHandle;
         this.input = application.createInput(this);
-        this.graphics = new GLFWGraphics(this);
+        this.graphics = new GLFWGLGraphics(this);
 
         windows.put(windowHandle, this);
 
@@ -437,11 +438,11 @@ public class GLFWWindow implements Disposable {
                 maxHeight > -1 ? maxHeight : GLFW.GLFW_DONT_CARE);
     }
 
-    GLFWGraphics getGraphics() {
+    public GLFWGLGraphics getGraphics() {
         return graphics;
     }
 
-    GLFWInput getInput() {
+    public GLFWInput getInput() {
         return input;
     }
 
@@ -498,7 +499,7 @@ public class GLFWWindow implements Disposable {
         return shouldRender;
     }
 
-    void requestRendering() {
+    public void requestRendering() {
         synchronized (this) {
             this.requestRendering = true;
         }
@@ -508,11 +509,11 @@ public class GLFWWindow implements Disposable {
         return GLFW.windowShouldClose(windowHandle);
     }
 
-    GLFWApplicationConfiguration getConfig() {
+    public GLFWApplicationConfiguration getConfig() {
         return config;
     }
 
-    boolean isListenerInitialized() {
+    public boolean isListenerInitialized() {
         return listenerInitialized;
     }
 
@@ -524,7 +525,7 @@ public class GLFWWindow implements Disposable {
         }
     }
 
-    void makeCurrent() {
+    public void makeCurrent() {
         Gdx.graphics = graphics;
         Gdx.gl32 = graphics.getGL32();
         Gdx.gl31 = Gdx.gl32 != null ? Gdx.gl32 : graphics.getGL31();

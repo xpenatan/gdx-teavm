@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 
 /**
  * Receives notifications of various window events, such as iconification, focus loss and gain, and window close events. Can be
@@ -66,7 +67,7 @@ public interface GLFWWindowListener {
 
     /**
      * Called when the window content is damaged and needs to be refreshed. When this occurs,
-     * {@link GLFWGraphics#requestRendering()} is automatically called.
+     * {@link GLFWGLGraphics#requestRendering()} is automatically called.
      */
     void refreshRequested();
 

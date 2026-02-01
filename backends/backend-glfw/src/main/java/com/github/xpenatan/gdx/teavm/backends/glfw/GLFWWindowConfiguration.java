@@ -4,6 +4,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.graphics.Color;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import java.util.Arrays;
 
 public class GLFWWindowConfiguration {
@@ -15,16 +16,16 @@ public class GLFWWindowConfiguration {
     boolean windowResizable = true;
     boolean windowDecorated = true;
     boolean windowMaximized = false;
-    GLFWGraphics.NativeMonitor maximizedMonitor;
+    GLFWGLGraphics.NativeMonitor maximizedMonitor;
     boolean autoIconify = true;
     FileType windowIconFileType;
     String[] windowIconPaths;
     GLFWWindowListener windowListener;
-    GLFWGraphics.NativeDisplayMode fullscreenMode;
+    GLFWGLGraphics.NativeDisplayMode fullscreenMode;
     String title;
     Color initialBackgroundColor = Color.BLACK;
     boolean initialVisible = true;
-    boolean vSyncEnabled = true;
+    public boolean vSyncEnabled = true;
 
     void setWindowConfiguration(GLFWWindowConfiguration config) {
         windowX = config.windowX;
@@ -94,7 +95,7 @@ public class GLFWWindowConfiguration {
      * @param monitor what monitor the window should maximize to
      */
     public void setMaximizedMonitor(Graphics.Monitor monitor) {
-        this.maximizedMonitor = (GLFWGraphics.NativeMonitor) monitor;
+        this.maximizedMonitor = (GLFWGLGraphics.NativeMonitor) monitor;
     }
 
     /**
@@ -158,7 +159,7 @@ public class GLFWWindowConfiguration {
      * this class to enumerate connected monitors and their fullscreen display modes.
      */
     public void setFullscreenMode(DisplayMode mode) {
-        this.fullscreenMode = (GLFWGraphics.NativeDisplayMode) mode;
+        this.fullscreenMode = (GLFWGLGraphics.NativeDisplayMode) mode;
     }
 
     /**

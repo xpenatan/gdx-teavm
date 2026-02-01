@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw;
+package com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl;
 
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.utils.GdxRuntimeException;

@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.teavm.backends.glfw;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Clipboard;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 
 /**
@@ -18,11 +19,11 @@ public class GLFWClipboard implements Clipboard {
 
     @Override
     public String getContents() {
-        return GLFW.getClipboardString(((GLFWGraphics) Gdx.graphics).getWindow().getWindowHandle());
+        return GLFW.getClipboardString(((GLFWGLGraphics) Gdx.graphics).getWindow().getWindowHandle());
     }
 
     @Override
     public void setContents(String content) {
-        GLFW.setClipboardString(((GLFWGraphics) Gdx.graphics).getWindow().getWindowHandle(), content);
+        GLFW.setClipboardString(((GLFWGLGraphics) Gdx.graphics).getWindow().getWindowHandle(), content);
     }
 }

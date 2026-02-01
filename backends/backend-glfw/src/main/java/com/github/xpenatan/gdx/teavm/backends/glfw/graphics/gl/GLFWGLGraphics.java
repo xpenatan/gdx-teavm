@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw;
+package com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl;
 
 import com.badlogic.gdx.AbstractGraphics;
 import com.badlogic.gdx.Application;
@@ -15,14 +15,17 @@ import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWCursor;
+import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWWindow;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.OpenGL;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;
 
-public class GLFWGraphics extends AbstractGraphics implements Disposable {
+public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
     final GLFWWindow window;
-    GL20 gl20;
+    public GL20 gl20;
     private GL30 gl30;
     private GL31 gl31;
     private GL32 gl32;
@@ -49,12 +52,12 @@ public class GLFWGraphics extends AbstractGraphics implements Disposable {
     int[] tmpBuffer = new int[1];
     int[] tmpBuffer2 = new int[1];
 
-    GLFW.GLFWFramebufferSizeCallback resizeCallback = Function.get(GLFW.GLFWFramebufferSizeCallback.class, GLFWGraphics.class, "resizeCallback");
+    GLFW.GLFWFramebufferSizeCallback resizeCallback = Function.get(GLFW.GLFWFramebufferSizeCallback.class, GLFWGLGraphics.class, "resizeCallback");
 
     public static void resizeCallback(Address windowHandle, int width, int height) {
         try {
             GLFWWindow window = GLFWWindow.byAddress(windowHandle);
-            GLFWGraphics graphics = window.getGraphics();
+            GLFWGLGraphics graphics = window.getGraphics();
 //        if (!"glfw_async".equals(Configuration.GLFW_LIBRARY_NAME.get())) {
             graphics.updateFramebufferInfo();
             if (!window.isListenerInitialized()) {
@@ -75,7 +78,7 @@ public class GLFWGraphics extends AbstractGraphics implements Disposable {
         }
     }
 
-    public GLFWGraphics(GLFWWindow window) {
+    public GLFWGLGraphics(GLFWWindow window) {
         this.window = window;
         if (window.getConfig().glEmulation == GLFWApplicationConfiguration.GLEmulation.GL32) {
             this.gl20 = this.gl30 = this.gl31 = this.gl32 = new GLFWGL32();
@@ -136,19 +139,19 @@ public class GLFWGraphics extends AbstractGraphics implements Disposable {
         return window;
     }
 
-    void updateFramebufferInfo() {
+    public void updateFramebufferInfo() {
         GLFW.getFramebufferSize(window.getWindowHandle(), tmpBuffer, tmpBuffer2);
         this.backBufferWidth = tmpBuffer[0];
         this.backBufferHeight = tmpBuffer2[0];
         GLFW.getWindowSize(window.getWindowHandle(), tmpBuffer, tmpBuffer2);
-        GLFWGraphics.this.logicalWidth = tmpBuffer[0];
-        GLFWGraphics.this.logicalHeight = tmpBuffer2[0];
+        GLFWGLGraphics.this.logicalWidth = tmpBuffer[0];
+        GLFWGLGraphics.this.logicalHeight = tmpBuffer2[0];
         GLFWApplicationConfiguration config = window.getConfig();
         bufferFormat = new BufferFormat(config.r, config.g, config.b, config.a, config.depth, config.stencil, config.samples,
                 false);
     }
 
-    void update() {
+    public void update() {
         long time = System.nanoTime();
         if (lastFrameTime == -1) lastFrameTime = time;
         if (resetDeltaTime) {
@@ -564,7 +567,7 @@ public class GLFWGraphics extends AbstractGraphics implements Disposable {
     public static class NativeDisplayMode extends DisplayMode {
         final long monitorHandle;
 
-        NativeDisplayMode(long monitor, int width, int height, int refreshRate, int bitsPerPixel) {
+        public NativeDisplayMode(long monitor, int width, int height, int refreshRate, int bitsPerPixel) {
             super(width, height, refreshRate, bitsPerPixel);
             this.monitorHandle = monitor;
         }
@@ -575,9 +578,9 @@ public class GLFWGraphics extends AbstractGraphics implements Disposable {
     }
 
     public static class NativeMonitor extends Monitor {
-        final long monitorHandle;
+        public final long monitorHandle;
 
-        NativeMonitor(long monitor, int virtualX, int virtualY, String name) {
+        public NativeMonitor(long monitor, int virtualX, int virtualY, String name) {
             super(virtualX, virtualY, name);
             this.monitorHandle = monitor;
         }

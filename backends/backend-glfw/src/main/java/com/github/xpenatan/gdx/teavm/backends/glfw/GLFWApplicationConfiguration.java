@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.math.GridPoint2;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import java.io.PrintStream;
 
@@ -23,33 +24,33 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
      */
     int maxNetThreads = Integer.MAX_VALUE;
 
-    int audioDeviceSimultaneousSources = 16;
-    int audioDeviceBufferSize = 512;
-    int audioDeviceBufferCount = 9;
+    public int audioDeviceSimultaneousSources = 16;
+    public int audioDeviceBufferSize = 512;
+    public int audioDeviceBufferCount = 9;
 
     public enum GLEmulation {
         ANGLE_GLES20, GL20, GL30, GL31, GL32
     }
 
-    GLEmulation glEmulation = GLEmulation.GL20;
+    public GLEmulation glEmulation = GLEmulation.GL20;
     int gles30ContextMajorVersion = 3;
     int gles30ContextMinorVersion = 2;
 
-    int r = 8, g = 8, b = 8, a = 8;
-    int depth = 16, stencil = 0;
-    int samples = 0;
-    boolean transparentFramebuffer;
+    public int r = 8, g = 8, b = 8, a = 8;
+    public int depth = 16, stencil = 0;
+    public int samples = 0;
+    public boolean transparentFramebuffer;
 
-    int idleFPS = 60;
-    int foregroundFPS = 0;
+    public int idleFPS = 60;
+    public int foregroundFPS = 0;
 
-    boolean pauseWhenMinimized = true;
-    boolean pauseWhenLostFocus = false;
+    public  boolean pauseWhenMinimized = true;
+    public boolean pauseWhenLostFocus = false;
 
     String preferencesDirectory = ".prefs/";
     FileType preferencesFileType = FileType.External;
 
-    HdpiMode hdpiMode = HdpiMode.Logical;
+    public HdpiMode hdpiMode = HdpiMode.Logical;
 
     boolean debug = false;
     PrintStream debugStream = System.err;
@@ -243,7 +244,7 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
     public static DisplayMode getDisplayMode() {
         GLFWApplication.initializeGlfw();
         GLFW.GLFWVidMode videoMode = GLFW.getVideoMode(GLFW.getPrimaryMonitor());
-        return new GLFWGraphics.NativeDisplayMode(GLFW.getPrimaryMonitor(), videoMode.width, videoMode.height,
+        return new GLFWGLGraphics.NativeDisplayMode(GLFW.getPrimaryMonitor(), videoMode.width, videoMode.height,
                 videoMode.refreshRate, videoMode.redBits + videoMode.greenBits + videoMode.blueBits);
     }
 
@@ -252,8 +253,8 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
      */
     public static DisplayMode getDisplayMode(Monitor monitor) {
         GLFWApplication.initializeGlfw();
-        GLFW.GLFWVidMode videoMode = GLFW.getVideoMode(((GLFWGraphics.NativeMonitor) monitor).monitorHandle);
-        return new GLFWGraphics.NativeDisplayMode(((GLFWGraphics.NativeMonitor) monitor).monitorHandle, videoMode.width, videoMode.height,
+        GLFW.GLFWVidMode videoMode = GLFW.getVideoMode(((GLFWGLGraphics.NativeMonitor) monitor).monitorHandle);
+        return new GLFWGLGraphics.NativeDisplayMode(((GLFWGLGraphics.NativeMonitor) monitor).monitorHandle, videoMode.width, videoMode.height,
                 videoMode.refreshRate, videoMode.redBits + videoMode.greenBits + videoMode.blueBits);
     }
 
@@ -266,7 +267,7 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
         DisplayMode[] result = new DisplayMode[videoModes.length];
         for (int i = 0; i < result.length; i++) {
             GLFW.GLFWVidMode videoMode = videoModes[i];
-            result[i] = new GLFWGraphics.NativeDisplayMode(GLFW.getPrimaryMonitor(), videoMode.width, videoMode.height,
+            result[i] = new GLFWGLGraphics.NativeDisplayMode(GLFW.getPrimaryMonitor(), videoMode.width, videoMode.height,
                     videoMode.refreshRate, videoMode.redBits + videoMode.greenBits + videoMode.blueBits);
         }
         return result;
@@ -277,11 +278,11 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
      */
     public static DisplayMode[] getDisplayModes(Monitor monitor) {
         GLFWApplication.initializeGlfw();
-        GLFW.GLFWVidMode[] videoModes = GLFW.getVideoModes(((GLFWGraphics.NativeMonitor) monitor).monitorHandle);
+        GLFW.GLFWVidMode[] videoModes = GLFW.getVideoModes(((GLFWGLGraphics.NativeMonitor) monitor).monitorHandle);
         DisplayMode[] result = new DisplayMode[videoModes.length];
         for (int i = 0; i < result.length; i++) {
             GLFW.GLFWVidMode videoMode = videoModes[i];
-            result[i] = new GLFWGraphics.NativeDisplayMode(((GLFWGraphics.NativeMonitor) monitor).monitorHandle, videoMode.width,
+            result[i] = new GLFWGLGraphics.NativeDisplayMode(((GLFWGLGraphics.NativeMonitor) monitor).monitorHandle, videoMode.width,
                     videoMode.height, videoMode.refreshRate, videoMode.redBits + videoMode.greenBits + videoMode.blueBits);
         }
         return result;
@@ -308,17 +309,17 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
         return monitors;
     }
 
-    static GLFWGraphics.NativeMonitor toNativeMonitor(long glfwMonitor) {
+    public static GLFWGLGraphics.NativeMonitor toNativeMonitor(long glfwMonitor) {
         int[] tmp = new int[1];
         int[] tmp2 = new int[1];
         GLFW.getMonitorPos(glfwMonitor, tmp, tmp2);
         int virtualX = tmp[0];
         int virtualY = tmp2[0];
         String name = GLFW.getMonitorName(glfwMonitor);
-        return new GLFWGraphics.NativeMonitor(glfwMonitor, virtualX, virtualY, name);
+        return new GLFWGLGraphics.NativeMonitor(glfwMonitor, virtualX, virtualY, name);
     }
 
-    static GridPoint2 calculateCenteredWindowPosition(GLFWGraphics.NativeMonitor monitor, int newWidth, int newHeight) {
+    public static GridPoint2 calculateCenteredWindowPosition(GLFWGLGraphics.NativeMonitor monitor, int newWidth, int newHeight) {
         int[] tmp = new int[1];
         int[] tmp2 = new int[1];
         int[] tmp3 = new int[1];

@@ -19,9 +19,9 @@ public class GLFWCursor implements Cursor {
     final GLFWWindow window;
     Pixmap pixmapCopy;
     GLFWImage glfwImage;
-    final long glfwCursor;
+    public final long glfwCursor;
 
-    GLFWCursor(GLFWWindow window, Pixmap pixmap, int xHotspot, int yHotspot) {
+    public GLFWCursor(GLFWWindow window, Pixmap pixmap, int xHotspot, int yHotspot) {
         this.window = window;
         if (pixmap.getFormat() != Pixmap.Format.RGBA8888) {
             throw new GdxRuntimeException("Cursor image pixmap is not in RGBA8888 format.");
@@ -87,7 +87,7 @@ public class GLFWCursor implements Cursor {
         systemCursors.clear();
     }
 
-    static void setSystemCursor(long windowHandle, SystemCursor systemCursor) {
+    public static void setSystemCursor(long windowHandle, SystemCursor systemCursor) {
         if (systemCursor == SystemCursor.None) {
             if (inputModeBeforeNoneCursor == -1)
                 inputModeBeforeNoneCursor = GLFW.getInputMode(windowHandle, GLFW.GLFW_CURSOR);
