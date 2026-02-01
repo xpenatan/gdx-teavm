@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugin;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import java.util.ArrayList;
@@ -25,6 +25,13 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
     public static void addReflectionClass(Class<?> type) {
         addReflectionClass(type.getName());
+    }
+
+    public static void addReflectionClass(ArrayList<String> classes) {
+        for(int i = 0; i < classes.size(); i++) {
+            String className = classes.get(i);
+            addReflectionClass(className);
+        }
     }
 
     public static List<String> getReflectionClasses() {
