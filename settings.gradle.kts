@@ -27,7 +27,7 @@ include(":extensions:gdx-freetype-teavm")
 
 include(":examples:basic:core")
 include(":examples:basic:desktop")
-include(":examples:basic:teavm")
+include(":examples:basic:teavm-web")
 include(":examples:basic:teavm-glfw")
 include(":examples:basic:teavm-psp")
 
