@@ -95,10 +95,11 @@ void* tracked_realloc(void* ptr, size_t new_size) {
 
 #endif // PSP_DEBUG_MEMORY
 
+// FIXME This is experimental and may not work correctly.
 int getAllocatedMemory() {
     #if PSP_DEBUG_MEMORY
         return (int)live_allocated_bytes;
     #else
         return -1;
-    #endif // PSP_DEBUG_MEMORY
+    #endif
 }

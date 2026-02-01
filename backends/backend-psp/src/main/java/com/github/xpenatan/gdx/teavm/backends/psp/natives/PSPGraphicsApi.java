@@ -1,9 +1,9 @@
-package com.github.xpenatan.gdx.teavm.backends.psp.utils;
+package com.github.xpenatan.gdx.teavm.backends.psp.natives;
 
-import com.github.xpenatan.gdx.teavm.backends.psp.types.ScePspFMatrix4;
-import com.github.xpenatan.gdx.teavm.backends.psp.types.ScePspFQuaternion;
-import com.github.xpenatan.gdx.teavm.backends.psp.types.ScePspFVector3;
-import com.github.xpenatan.gdx.teavm.backends.psp.types.ScePspIMatrix4;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.types.ScePspFMatrix4;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.types.ScePspFQuaternion;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.types.ScePspFVector3;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.types.ScePspIMatrix4;
 import java.nio.ByteBuffer;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;

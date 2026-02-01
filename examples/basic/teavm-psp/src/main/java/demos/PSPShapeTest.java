@@ -2,7 +2,7 @@ package demos;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import static com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi.*;
+import static com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi.*;
 
 public class PSPShapeTest implements PSPTest {
 

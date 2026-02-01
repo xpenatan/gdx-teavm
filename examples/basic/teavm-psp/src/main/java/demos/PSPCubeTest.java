@@ -1,11 +1,12 @@
 package demos;
 
-import com.github.xpenatan.gdx.teavm.backends.psp.types.ScePspFVector3;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPDebugApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPTextureApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.types.ScePspFVector3;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import org.teavm.interop.Address;
-import static com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi.*;
+import org.teavm.interop.Structure;
+import static com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi.*;
 
 public class PSPCubeTest implements PSPTest {
 
@@ -14,9 +15,15 @@ public class PSPCubeTest implements PSPTest {
     private ScePspFVector3 rot;
     private ByteBuffer vertices;
     private Address logo_start; // Texture buffer pointer
+    private Texture texture;
 
     @Override
     public void create() {
+        Address address = PSPTextureApi.load_texture("assets/data/badlogic.jpg", 0);
+        texture = address.toStructure();
+
+        System.out.println("Texture: " + texture.width + "x" + texture.height + ", p: " + texture.pW + "x" + texture.pH);
+
         pos = ScePspFVector3.malloc();
         rot = ScePspFVector3.malloc();
 
@@ -24,53 +31,63 @@ public class PSPCubeTest implements PSPTest {
         vertices = ByteBuffer.allocateDirect((12 * 3) * vertexSize);
         vertices.order(ByteOrder.LITTLE_ENDIAN);
 
-        set(vertices, 0, 0, 0xff7f0000,-1,-1, 1); // 0
-        set(vertices, 1, 0, 0xff7f0000,-1, 1, 1); // 4
-        set(vertices, 1, 1, 0xff7f0000, 1, 1, 1); // 5
+        int color1 = 0xff7f0000;
+        color1 = 0;
+        int color2 = 0xff007f00;
+        color2 = 0;
+        int color3 = 0xff00007f;
+        color3 = 0;
 
-        set(vertices, 0, 0, 0xff7f0000,-1,-1, 1); // 0
-        set(vertices, 1, 1, 0xff7f0000, 1, 1, 1); // 5
-        set(vertices, 0, 1, 0xff7f0000, 1,-1, 1); // 1
+        set(vertices, 0, 0, color1,-1,-1, 1); // 0
+        set(vertices, 1, 0, color1,-1, 1, 1); // 4
+        set(vertices, 1, 1, color1, 1, 1, 1); // 5
 
-        set(vertices, 0, 0, 0xff7f0000,-1,-1,-1); // 3
-        set(vertices, 1, 0, 0xff7f0000, 1,-1,-1); // 2
-        set(vertices, 1, 1, 0xff7f0000, 1, 1,-1); // 6
+        set(vertices, 0, 0, color1,-1,-1, 1); // 0
+        set(vertices, 1, 1, color1, 1, 1, 1); // 5
+        set(vertices, 0, 1, color1, 1,-1, 1); // 1
 
-        set(vertices, 0, 0, 0xff7f0000,-1,-1,-1); // 3
-        set(vertices, 1, 1, 0xff7f0000, 1, 1,-1); // 6
-        set(vertices, 0, 1, 0xff7f0000,-1, 1,-1); // 7
+        set(vertices, 0, 0, color1,-1,-1,-1); // 3
+        set(vertices, 1, 0, color1, 1,-1,-1); // 2
+        set(vertices, 1, 1, color1, 1, 1,-1); // 6
 
-        set(vertices, 0, 0, 0xff007f00, 1,-1,-1); // 0
-        set(vertices, 1, 0, 0xff007f00, 1,-1, 1); // 3
-        set(vertices, 1, 1, 0xff007f00, 1, 1, 1); // 7
+        set(vertices, 0, 0, color1,-1,-1,-1); // 3
+        set(vertices, 1, 1, color1, 1, 1,-1); // 6
+        set(vertices, 0, 1, color1,-1, 1,-1); // 7
 
-        set(vertices, 0, 0, 0xff007f00, 1,-1,-1); // 0
-        set(vertices, 1, 1, 0xff007f00, 1, 1, 1); // 7
-        set(vertices, 0, 1, 0xff007f00, 1, 1,-1); // 4
 
-        set(vertices, 0, 0, 0xff007f00,-1,-1,-1); // 0
-        set(vertices, 1, 0, 0xff007f00,-1, 1,-1); // 3
-        set(vertices, 1, 1, 0xff007f00,-1, 1, 1); // 7
+        set(vertices, 0, 0, color2, 1,-1,-1); // 0
+        set(vertices, 1, 0, color2, 1,-1, 1); // 3
+        set(vertices, 1, 1, color2, 1, 1, 1); // 7
 
-        set(vertices, 0, 0, 0xff007f00,-1,-1,-1); // 0
-        set(vertices, 1, 1, 0xff007f00,-1, 1, 1); // 7
-        set(vertices, 0, 1, 0xff007f00,-1,-1, 1); // 4
+        set(vertices, 0, 0, color2, 1,-1,-1); // 0
+        set(vertices, 1, 1, color2, 1, 1, 1); // 7
+        set(vertices, 0, 1, color2, 1, 1,-1); // 4
 
-        set(vertices, 0, 0, 0xff00007f,-1, 1,-1); // 0
-        set(vertices, 1, 0, 0xff00007f, 1, 1,-1); // 1
-        set(vertices, 1, 1, 0xff00007f, 1, 1, 1); // 2
+        set(vertices, 0, 0, color2,-1,-1,-1); // 0
+        set(vertices, 1, 0, color2,-1, 1,-1); // 3
+        set(vertices, 1, 1, color2,-1, 1, 1); // 7
 
-        set(vertices, 0, 0, 0xff00007f,-1, 1,-1); // 0
-        set(vertices, 1, 1, 0xff00007f, 1, 1, 1); // 2
-        set(vertices, 0, 1, 0xff00007f,-1, 1, 1); // 3
+        set(vertices, 0, 0, color2,-1,-1,-1); // 0
+        set(vertices, 1, 1, color2,-1, 1, 1); // 7
+        set(vertices, 0, 1, color2,-1,-1, 1); // 4
 
-        set(vertices, 0, 0, 0xff00007f,-1,-1,-1); // 4
-        set(vertices, 1, 0, 0xff00007f,-1,-1, 1); // 7
-        set(vertices, 1, 1, 0xff00007f, 1,-1, 1); // 6
 
-        set(vertices, 0, 0, 0xff00007f,-1,-1,-1); // 4
-        set(vertices, 1, 1, 0xff00007f, 1,-1, 1); // 6
-        set(vertices, 0, 1, 0xff00007f, 1,-1,-1); // 5
+
+        set(vertices, 0, 0, color3,-1, 1,-1); // 0
+        set(vertices, 1, 0, color3, 1, 1,-1); // 1
+        set(vertices, 1, 1, color3, 1, 1, 1); // 2
+
+        set(vertices, 0, 0, color3,-1, 1,-1); // 0
+        set(vertices, 1, 1, color3, 1, 1, 1); // 2
+        set(vertices, 0, 1, color3,-1, 1, 1); // 3
+
+        set(vertices, 0, 0, color3,-1,-1,-1); // 4
+        set(vertices, 1, 0, color3,-1,-1, 1); // 7
+        set(vertices, 1, 1, color3, 1,-1, 1); // 6
+
+        set(vertices, 0, 0, color3,-1,-1,-1); // 4
+        set(vertices, 1, 1, color3, 1,-1, 1); // 6
+        set(vertices, 0, 1, color3, 1,-1,-1); // 5
     }
 
     @Override
@@ -102,14 +119,16 @@ public class PSPCubeTest implements PSPTest {
 
         // setup texture
 
-        sceGuTexMode(GU_PSM_4444, 0, 0, 0);
-        sceGuTexImage(0, 64, 64, 64, logo_start);
+        sceGuTexMode(GU_PSM_8888, 0, 0, 1);
+        sceGuTexImage(0, texture.pW, texture.pH, texture.pW, texture.data);
         sceGuTexFunc(GU_TFX_ADD, GU_TCC_RGB);
         sceGuTexEnvColor(0xffff00);
         sceGuTexFilter(GU_LINEAR, GU_LINEAR);
         sceGuTexScale(1.0f, 1.0f);
         sceGuTexOffset(0.0f, 0.0f);
         sceGuAmbientColor(0xffffffff);
+
+        sceGuEnable(GU_TEXTURE_2D);
 
         // draw cube
 
@@ -124,5 +143,11 @@ public class PSPCubeTest implements PSPTest {
         obj.putFloat(x);
         obj.putFloat(y);
         obj.putFloat(z);
+    }
+
+    static class Texture extends Structure {
+        public int width, height;
+        public int pW, pH;
+        public Address data;
     }
 }

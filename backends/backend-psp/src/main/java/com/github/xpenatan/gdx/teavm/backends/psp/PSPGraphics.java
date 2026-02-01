@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi;
 
 public class PSPGraphics implements Graphics {
 

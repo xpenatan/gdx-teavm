@@ -1,7 +1,7 @@
 import com.github.xpenatan.gdx.teavm.backends.psp.PSPApplication;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPCoreApi;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPDebugApi;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPCoreApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPDebugApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.EmptyApplicationTest;
 import demos.PSPCubeTest;
 import demos.PSPTest;

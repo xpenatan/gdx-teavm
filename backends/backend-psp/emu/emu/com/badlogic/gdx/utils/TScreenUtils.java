@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi;
 
 public final class TScreenUtils {
 

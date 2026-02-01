@@ -12,14 +12,15 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Clipboard;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPCoreApi;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPDebugApi;
-import com.github.xpenatan.gdx.teavm.backends.psp.utils.PSPGraphicsApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPCoreApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPDebugApi;
+import com.github.xpenatan.gdx.teavm.backends.psp.natives.PSPGraphicsApi;
 import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
 
 public class PSPApplication implements Application {
 
     private PSPGraphics graphics;
+    private Files files;
     private ApplicationListener applicationListener;
     private ApplicationLogger applicationLogger;
 
@@ -28,6 +29,7 @@ public class PSPApplication implements Application {
     private boolean applicationInitialized = false;
 
     private PSPApplicationConfiguration config;
+
 
     public PSPApplication(ApplicationListener listener) {
         this(listener, new PSPApplicationConfiguration());
@@ -44,6 +46,8 @@ public class PSPApplication implements Application {
 
         Gdx.app = this;
         Gdx.graphics = graphics;
+
+//        this.files = Gdx.files = new PSPFiles();
 
         try {
             while(PSPCoreApi.isRunning()) {
@@ -102,7 +106,7 @@ public class PSPApplication implements Application {
 
     @Override
     public Files getFiles() {
-        return null;
+        return files;
     }
 
     @Override

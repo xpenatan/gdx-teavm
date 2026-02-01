@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.psp.utils;
+package com.github.xpenatan.gdx.teavm.backends.psp.natives;
 
 import org.teavm.interop.c.Include;
 

@@ -1,6 +1,5 @@
-package com.github.xpenatan.gdx.teavm.backends.psp.utils;
+package com.github.xpenatan.gdx.teavm.backends.psp.natives;
 
-import org.teavm.interop.Address;
 import org.teavm.interop.Import;
 import org.teavm.interop.c.Include;
 
@@ -37,5 +36,4 @@ public class PSPDebugApi {
             lastMemoryLogTime = currentTime;
         }
     }
-
 }

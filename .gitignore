@@ -49,7 +49,6 @@ libgdx-*.zip.MD5
 *.iml
 /.idea/
 
-natives/
 **/jni/build
 ProguardMapping.txt
 local.properties

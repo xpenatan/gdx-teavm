@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.psp.types;
+package com.github.xpenatan.gdx.teavm.backends.psp.natives.types;
 
 import org.teavm.backend.c.runtime.Memory;
 import org.teavm.interop.Structure;
