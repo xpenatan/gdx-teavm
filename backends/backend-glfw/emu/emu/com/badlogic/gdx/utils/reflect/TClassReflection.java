@@ -68,15 +68,13 @@ public final class TClassReflection {
     }
 
     static public <T> T newInstance(Class<T> c) throws ReflectionException {
-        try {
-            return c.newInstance();
-        }
-        catch(InstantiationException e) {
-            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-        }
-        catch(IllegalAccessException e) {
-            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-        }
+        return null;
+//        try {
+//            return TInstanceGen.newInstance(c);
+//        }
+//        catch(Exception e) {
+//            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
+//        }
     }
 
     static public Class getComponentType(Class c) {
