@@ -87,8 +87,9 @@ public class TeaCompiler {
         return this;
     }
 
-    public DefaultReflectionListener getReflectionListener() {
-        return data.reflectionListener;
+    public TeaCompiler addReflectionPattern(String classOrPackage) {
+        data.reflectionListener.addClassOrPackage(classOrPackage);
+        return this;
     }
 
     public TeaCompiler setOutputName(String outputName) {
