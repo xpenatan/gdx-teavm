@@ -16,6 +16,8 @@ import org.teavm.model.MethodReader;
 
 public class TeaReflectionSupplier implements ReflectionSupplier {
 
+    public static boolean printDebugLogs = false;
+
     private static ArrayList<String> clazzList = new ArrayList();
 
     public static void addReflectionClass(Class<?> type) {
@@ -81,6 +83,9 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
                 }
             }
         }
+        if(printDebugLogs) {
+            System.out.println("getAccessibleFields: " + className + " = " + fields);
+        }
         return fields;
     }
 
@@ -98,12 +103,19 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
                 methods.add(descriptor);
             }
         }
+        if(printDebugLogs) {
+            System.out.println("getAccessibleMethods: " + className + " = " + methods);
+        }
         return methods;
     }
 
     @Override
     public boolean isClassFoundByName(ReflectionContext context, String name) {
-        return canHaveReflection(name);
+        boolean b = canHaveReflection(name);
+        if(printDebugLogs) {
+            System.out.println("isClassFoundByName: " + name + " = " + b);
+        }
+        return b;
     }
 
     private boolean canHaveReflection(String className) {
