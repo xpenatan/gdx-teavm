@@ -18,11 +18,6 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
 
     private static ArrayList<String> clazzList = new ArrayList();
 
-    static {
-        addReflectionClass("com.badlogic.gdx.scenes.scene2d");
-        addReflectionClass("net.mgsx.gltf.data");
-    }
-
     public static void addReflectionClass(Class<?> type) {
         addReflectionClass(type.getName());
     }

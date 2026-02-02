@@ -2,7 +2,7 @@ package com.github.xpenatan.gdx.teavm.backends.web.config;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaBuildReflectionListener;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
 import java.net.URL;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMTargetType;
@@ -57,5 +57,5 @@ public class TeaBuildConfiguration {
     /**
      * A listener to enable a class for reflection. Note that using reflection increases the size of JavaScript/WebAssembly code.
      */
-    public TeaBuildReflectionListener reflectionListener;
+    public DefaultReflectionListener reflectionListener = new DefaultReflectionListener();
 }

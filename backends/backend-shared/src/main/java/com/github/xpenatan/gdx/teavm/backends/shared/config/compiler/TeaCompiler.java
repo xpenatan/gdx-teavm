@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaBuildReflectionListener;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
 import java.io.File;
 import org.teavm.tooling.TeaVMSourceFilePolicy;
 import org.teavm.tooling.sources.SourceFileProvider;
@@ -82,9 +82,13 @@ public class TeaCompiler {
         return this;
     }
 
-    public TeaCompiler setReflectionListener(TeaBuildReflectionListener reflectionListener) {
+    public TeaCompiler setReflectionListener(DefaultReflectionListener reflectionListener) {
         data.reflectionListener = reflectionListener;
         return this;
+    }
+
+    public DefaultReflectionListener getReflectionListener() {
+        return data.reflectionListener;
     }
 
     public TeaCompiler setOutputName(String outputName) {

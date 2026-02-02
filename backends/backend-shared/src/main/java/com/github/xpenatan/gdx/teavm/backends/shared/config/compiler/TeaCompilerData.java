@@ -1,7 +1,8 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaBuildReflectionListener;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.TeaReflectionListener;
 import java.io.File;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMSourceFilePolicy;
@@ -25,5 +26,5 @@ public class TeaCompilerData {
     public int minDirectBuffersSize = 2 * (1 << 20);
     public int maxDirectBuffersSize = 32 * (1 << 20);
     public final ArrayList<String> reflectionClasses = new ArrayList<>();
-    public TeaBuildReflectionListener reflectionListener;
+    public DefaultReflectionListener reflectionListener = new DefaultReflectionListener();
 }
