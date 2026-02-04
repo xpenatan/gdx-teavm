@@ -18,10 +18,10 @@ public class TestCLauncher {
 //        new GLFWApplication(new GearsDemo());
 //        new GLFWApplication(new SpriteBatchTest());
 //        new GLFWApplication(new SpriteBatchTest2(), config);
-        new GLFWApplication(new ReflectionTest(), config);
+//        new GLFWApplication(new ReflectionTest(), config);
 //        new GLFWApplication(new ReadPixelsTest());
 //        new GLFWApplication(new Basic3DTest());
-//        new GLFWApplication(new GLTFQuickStartExample());
+        new GLFWApplication(new GLTFQuickStartExample());
 //        new GLFWApplication(new HelloTriangle());
     }
 

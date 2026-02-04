@@ -20,11 +20,17 @@ public class TGdx2DPixmapNative implements Disposable {
     private GDX2D_pixmap gdx2DPixmap;
 
     public TGdx2DPixmapNative(byte[] encodedData, int offset, int len, int requestedFormat) {
-        Address address = Address.ofData(encodedData);
-        address.add(offset);
+//        System.out.println("offset: " + offset);
+//        System.out.println("len: " + len);
+//        System.out.println("encodedData: " + encodedData.length);
+        Address address = Address.ofData(encodedData).add(offset);
         gdx2DPixmap = gdx2d_load(address, len);
         this.width = gdx2DPixmap.width;
         this.height = gdx2DPixmap.height;
+
+//        System.out.println("gdx2DPixmap.pixels: " + gdx2DPixmap.pixels);
+//        System.out.println("gdx2DPixmap.pixels size: " + gdx2DPixmap.pixels.length);
+
         this.buffer = ByteBuffer.wrap(gdx2DPixmap.pixels);
         this.format = gdx2DPixmap.format;
         if (requestedFormat != 0 && requestedFormat != format) {

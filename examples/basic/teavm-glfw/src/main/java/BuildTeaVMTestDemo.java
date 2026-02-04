@@ -15,6 +15,7 @@ public class BuildTeaVMTestDemo {
                 .setObfuscated(false)
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(TestCLauncher.class.getName())
+                .addReflectionPattern("com.badlogic.gdx.math.Vector2")
                 .build(new File("build/dist"));
     }
 }

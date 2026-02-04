@@ -3454,26 +3454,17 @@ public class OpenGL {
     @Import(name = "glUniform1iv")
     public static native void glUniform1iv(int location, int count, Address v);
 
-    @Import(name = "glUniform1iv")
-    public static native void glUniform1iv(int location, int count, Address v, int offset);
-
     @Import(name = "glUniform2f")
     public static native void glUniform2f(int location, float x, float y);
 
     @Import(name = "glUniform2fv")
     public static native void glUniform2fv(int location, int count, Address v);
 
-    @Import(name = "glUniform2fv")
-    public static native void glUniform2fv(int location, int count, Address v, int offset);
-
     @Import(name = "glUniform2i")
     public static native void glUniform2i(int location, int x, int y);
 
     @Import(name = "glUniform2iv")
     public static native void glUniform2iv(int location, int count, Address v);
-
-    @Import(name = "glUniform2iv")
-    public static native void glUniform2iv(int location, int count, Address v, int offset);
 
     @Import(name = "glUniform3f")
     public static native void glUniform3f(int location, float x, float y, float z);
@@ -3486,9 +3477,6 @@ public class OpenGL {
 
     @Import(name = "glUniform3iv")
     public static native void glUniform3iv(int location, int count, Address v);
-
-    @Import(name = "glUniform3iv")
-    public static native void glUniform3iv(int location, int count, Address v, int offset);
 
     @Import(name = "glUniform4f")
     public static native void glUniform4f(int location, float x, float y, float z, float w);

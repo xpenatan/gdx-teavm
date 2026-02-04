@@ -64,6 +64,8 @@ if(includeTeaVMSource) {
             substitute(module("org.teavm:teavm-jso-apis")).using(project(":jso:apis"))
             substitute(module("org.teavm:teavm-jso-impl")).using(project(":jso:impl"))
             substitute(module("org.teavm:teavm-interop")).using(project(":interop:core"))
+            substitute(module("org.teavm:teavm-metaprogramming-api")).using(project(":metaprogramming:api"))
+            substitute(module("org.teavm:teavm-metaprogramming-impl")).using(project(":metaprogramming:impl"))
         }
     }
 }

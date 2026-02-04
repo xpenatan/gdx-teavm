@@ -2340,7 +2340,8 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform1iv(int location, int count, int[] v, int offset) {
-        OpenGL.glUniform1iv(location, count, Address.ofData(v), offset);
+        Address address = Address.ofData(v).add(offset);
+        OpenGL.glUniform1iv(location, count, address);
     }
 
     @Override
@@ -2357,7 +2358,8 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform2fv(int location, int count, float[] v, int offset) {
-        OpenGL.glUniform2fv(location, count, Address.ofData(v), offset);
+        Address address = Address.ofData(v).add(offset);
+        OpenGL.glUniform2fv(location, count, address);
     }
 
     @Override
@@ -2374,7 +2376,8 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform2iv(int location, int count, int[] v, int offset) {
-        OpenGL.glUniform2iv(location, count, Address.ofData(v), offset);
+        Address address = Address.ofData(v).add(offset);
+        OpenGL.glUniform2iv(location, count, address);
     }
 
     @Override
@@ -2391,8 +2394,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform3fv(int location, int count, float[] v, int offset) {
-        Address address = Address.ofData(v);
-        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
+        Address address = Address.ofData(v).add(offset * 4);
         OpenGL.glUniform3fv(location, count, address);
     }
 
@@ -2410,7 +2412,8 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform3iv(int location, int count, int[] v, int offset) {
-        OpenGL.glUniform3iv(location, count, Address.ofData(v), offset);
+        Address address = Address.ofData(v).add(offset);
+        OpenGL.glUniform3iv(location, count, address);
     }
 
     @Override
@@ -2427,8 +2430,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform4fv(int location, int count, float[] v, int offset) {
-        Address address = Address.ofData(v);
-        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
+        Address address = Address.ofData(v).add(offset * 4);
         OpenGL.glUniform4fv(location, count, address);
     }
 
@@ -2446,8 +2448,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniform4iv(int location, int count, int[] v, int offset) {
-        Address address = Address.ofData(v);
-        address.add(offset * 4); // offset is in ints, but address.add() expects bytes
+        Address address = Address.ofData(v).add(offset * 4);
         OpenGL.glUniform4iv(location, count, address);
     }
 
@@ -2460,8 +2461,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniformMatrix2fv(int location, int count, boolean transpose, float[] value, int offset) {
-        Address address = Address.ofData(value);
-        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
+        Address address = Address.ofData(value).add(offset * 4);
         OpenGL.glUniformMatrix2fv(location, count, transpose, address);
     }
 
@@ -2474,8 +2474,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniformMatrix3fv(int location, int count, boolean transpose, float[] value, int offset) {
-        Address address = Address.ofData(value);
-        address.add(offset * 4); // offset is in floats, but address.add() expects bytes
+        Address address = Address.ofData(value).add(offset * 4);
         OpenGL.glUniformMatrix3fv(location, count, transpose, address);
     }
 
@@ -2488,8 +2487,7 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glUniformMatrix4fv(int location, int count, boolean transpose, float[] value, int offset) {
-        Address address = Address.ofData(value);
-        address.add(offset * 4); // offset is in floats, but address.add() expects bytes, so multiply by 4
+        Address address = Address.ofData(value).add(offset * 4);
         OpenGL.glUniformMatrix4fv(location, count, transpose, address);
     }
 

@@ -1,5 +1,6 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
+import com.badlogic.gdx.utils.reflect.FieldGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public final class TField {
@@ -81,7 +82,7 @@ public final class TField {
 
     public Class getElementType(int index) {
         Class<?> declaringClass = field.getDeclaringClass();
-        return TFieldGen.getElementType(declaringClass, field.getName(), index);
+        return FieldGen.getElementType(declaringClass, field.getName(), index);
     }
 
     public boolean isAnnotationPresent(Class<? extends java.lang.annotation.Annotation> annotationType) {

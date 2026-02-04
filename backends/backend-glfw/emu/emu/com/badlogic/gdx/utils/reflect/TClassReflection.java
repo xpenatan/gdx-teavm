@@ -1,17 +1,23 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
+import com.badlogic.gdx.utils.reflect.ClassGen;
+import com.badlogic.gdx.utils.reflect.Constructor;
+import com.badlogic.gdx.utils.reflect.InstanceGen;
+import com.badlogic.gdx.utils.reflect.ConstructorGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.Modifier;
 
 public final class TClassReflection {
 
     static public Class forName(String name) throws ReflectionException {
-        try {
-            return Class.forName(name);
-        }
-        catch(ClassNotFoundException e) {
-            throw new ReflectionException("Class not found: " + name, e);
-        }
+        return ClassGen.forName(name);
+
+//        try {
+//            return Class.forName(name);
+//        }
+//        catch(ClassNotFoundException e) {
+//            throw new ReflectionException("Class not found: " + name, e);
+//        }
     }
 
     static public String getSimpleName(Class c) {
@@ -68,13 +74,20 @@ public final class TClassReflection {
     }
 
     static public <T> T newInstance(Class<T> c) throws ReflectionException {
-        return null;
 //        try {
-//            return TInstanceGen.newInstance(c);
+//            return c.newInstance();
 //        }
-//        catch(Exception e) {
+//        catch(InstantiationException e) {
 //            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
 //        }
+//        catch(IllegalAccessException e) {
+//            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
+//        }
+            Object o = InstanceGen.newInstance(c);
+            if(o == null) {
+                throw new ReflectionException("Could not instantiate instance of class: " + c.getName());
+            }
+            return (T)o;
     }
 
     static public Class getComponentType(Class c) {
@@ -85,7 +98,7 @@ public final class TClassReflection {
         java.lang.reflect.Constructor[] constructors = c.getConstructors();
         TConstructor[] result = new TConstructor[constructors.length];
         for(int i = 0, j = constructors.length; i < j; i++) {
-            result[i] = new TConstructor(constructors[i]);
+            result[i] = new TConstructor(c, constructors[i]);
         }
         return result;
     }
@@ -93,39 +106,35 @@ public final class TClassReflection {
     static private TConstructor getNoArgPublicConstructor(Class c) {
         java.lang.reflect.Constructor[] constructors = c.getConstructors();
         if(constructors.length > 0)
-            return new TConstructor(constructors[0]);
+            return new TConstructor(c, constructors[0]);
         return null;
     }
 
     static public TConstructor getConstructor(Class c, Class... parameterTypes) throws ReflectionException {
-
-        if(parameterTypes == null || parameterTypes.length == 0) {
-            //Teavm does not accept null parameter to get public no args constructor. Need to do it manually
-            return getNoArgPublicConstructor(c);
-        }
-
         try {
-            java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
-            return new TConstructor(constructor);
+
+            Object constructor = ConstructorGen.getConstructor(c, parameterTypes);
+            return (TConstructor)constructor;
         }
-        catch(SecurityException e) {
-            throw new ReflectionException("Security violation occurred while getting constructor for class: '" + c.getName() + "'.",
-                    e);
-        }
-        catch(NoSuchMethodException e) {
+        catch(Exception e) {
             throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
         }
     }
 
     static public TConstructor getDeclaredConstructor(Class c, Class... parameterTypes) throws ReflectionException {
         try {
-            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes);
-            return new TConstructor(declaredConstructor);
+            //TODO fix this
+//            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes);
+//            return new TConstructor(c, declaredConstructor);
+            return new TConstructor(c, null);
         }
         catch(SecurityException e) {
             throw new ReflectionException("Security violation while getting constructor for class: " + c.getName(), e);
         }
-        catch(NoSuchMethodException e) {
+//        catch(NoSuchMethodException e) {
+//            throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
+//        }
+        catch(Exception e) {
             throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
         }
     }

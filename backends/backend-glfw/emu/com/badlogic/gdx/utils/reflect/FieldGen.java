@@ -1,6 +1,5 @@
-package emu.com.badlogic.gdx.utils.reflect;
+package com.badlogic.gdx.utils.reflect;
 
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.GenericTypeProvider;
 import java.lang.reflect.GenericArrayType;
@@ -14,7 +13,7 @@ import org.teavm.metaprogramming.Value;
 import org.teavm.metaprogramming.reflect.ReflectField;
 
 @CompileTime
-public class TFieldGen {
+public class FieldGen {
     private static Class<?> getActualType(Type actualType) {
         if(actualType instanceof Class)
             return (Class)actualType;
