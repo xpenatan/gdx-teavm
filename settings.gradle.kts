@@ -25,11 +25,11 @@ include(":extensions:gdx-freetype-teavm")
 
 include(":examples:basic:core")
 include(":examples:basic:desktop")
-include(":examples:basic:teavm")
+include(":examples:basic:teavm-web")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
-include(":examples:freetype:teavm")
+include(":examples:freetype:teavm-web")
 
 val file = File(settingsDir, "gradle.properties")
 

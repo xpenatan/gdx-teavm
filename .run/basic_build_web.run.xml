@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":examples:basic:teavm:basic_build_web" />
+          <option value=":examples:basic:teavm-web:basic_build_web" />
         </list>
       </option>
       <option name="vmOptions" />
