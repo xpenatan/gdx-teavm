@@ -24,6 +24,9 @@ public class TeaWebBackend extends TeaBackend {
     public String webappFolderName = "webapp";
     public boolean isWebAssembly;
     public AssetFilter scriptFilter;
+    public boolean startJettyAfterBuild = false;
+
+    private JettyServer server;
 
     public TeaWebBackend setWebAssembly(boolean isWebAssembly) {
         this.isWebAssembly = isWebAssembly;
@@ -70,8 +73,20 @@ public class TeaWebBackend extends TeaBackend {
         return this;
     }
 
+    public TeaWebBackend setStartJettyAfterBuild(boolean startJettyAfterBuild) {
+        this.startJettyAfterBuild = startJettyAfterBuild;
+        return this;
+    }
+
+    public void startJetty(String path) {
+        server.stopServer();
+        server.startServer(path);
+    }
+
     @Override
     protected void setup(TeaCompilerData data) {
+        server = new JettyServer();
+
         if(isWebAssembly) {
             targetType = TeaVMTargetType.WEBASSEMBLY_GC;
             tool.setTargetFileName(data.outputName + ".wasm");
@@ -88,6 +103,14 @@ public class TeaWebBackend extends TeaBackend {
         }
         tool.setTargetDirectory(releasePath.file());
         setupWebapp(data);
+    }
+
+    @Override
+    protected void build(TeaCompilerData data) {
+        super.build(data);
+        if(startJettyAfterBuild) {
+            startJetty(data.output.getPath());
+        }
     }
 
     protected void setupWebapp(TeaCompilerData data) {
