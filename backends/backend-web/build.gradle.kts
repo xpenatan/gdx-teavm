@@ -20,6 +20,8 @@ dependencies {
 
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation("com.github.xpenatan:jMultiplatform:${LibExt.jMultiplatform}")
+    implementation("org.eclipse.jetty:jetty-server:${LibExt.jettyVersion}")
+    implementation("org.eclipse.jetty:jetty-webapp:${LibExt.jettyVersion}")
 
     testImplementation("com.google.truth:truth:${LibExt.truthVersion}")
 }

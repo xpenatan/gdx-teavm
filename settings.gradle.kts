@@ -33,7 +33,7 @@ include(":examples:basic:teavm-psp")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
-include(":examples:freetype:teavm")
+include(":examples:freetype:teavm-web")
 
 val file = File(settingsDir, "gradle.properties")
 
