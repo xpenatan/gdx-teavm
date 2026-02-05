@@ -1,12 +1,3 @@
-plugins {
-    id("org.gretty") version("4.1.10")
-}
-
-project.extra["webAppDir"] = File(projectDir, "build/dist/webapp")
-gretty {
-    contextPath = "/"
-}
-
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:gdx-tests:core"))
@@ -23,13 +14,4 @@ tasks.register<JavaExec>("gdx_tests_build_web") {
     mainClass.set(mainClassName)
     args = mutableListOf(LibExt.gdxTestsAssetsPath)
     classpath = sourceSets["main"].runtimeClasspath
-}
-
-tasks.register("gdx_tests_run_web") {
-    group = "examples-teavm"
-    description = "Run gdx-tests teavm app"
-    val list = listOf("gdx_tests_build_web", "jettyRun")
-    dependsOn(list)
-
-    tasks.findByName("jettyRun")?.mustRunAfter("gdx_tests_build_web")
 }
