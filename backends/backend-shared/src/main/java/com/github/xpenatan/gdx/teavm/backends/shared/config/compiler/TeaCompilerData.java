@@ -24,6 +24,6 @@ public class TeaCompilerData {
     public int maxHeapSize = 128 * (1 << 20);
     public int minDirectBuffersSize = 2 * (1 << 20);
     public int maxDirectBuffersSize = 32 * (1 << 20);
-    public final ArrayList<String> reflectionClasses = new ArrayList<>();
+    public final ArrayList<String> finalReflectionClasses = new ArrayList<>(); // used internally
     public DefaultReflectionListener reflectionListener = new DefaultReflectionListener();
 }

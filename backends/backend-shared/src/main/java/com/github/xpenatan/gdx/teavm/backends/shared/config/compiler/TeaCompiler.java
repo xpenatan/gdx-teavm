@@ -77,17 +77,12 @@ public class TeaCompiler {
         return this;
     }
 
-    public TeaCompiler addReflectionClass(String fullClassName) {
-        data.reflectionClasses.add(fullClassName);
-        return this;
-    }
-
     public TeaCompiler setReflectionListener(DefaultReflectionListener reflectionListener) {
         data.reflectionListener = reflectionListener;
         return this;
     }
 
-    public TeaCompiler addReflectionPattern(String classOrPackage) {
+    public TeaCompiler addReflectionClass(String classOrPackage) {
         data.reflectionListener.addClassOrPackage(classOrPackage);
         return this;
     }
