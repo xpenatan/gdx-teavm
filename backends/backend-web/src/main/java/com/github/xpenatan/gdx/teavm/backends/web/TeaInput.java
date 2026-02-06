@@ -66,9 +66,9 @@ public class TeaInput extends AbstractInput implements EventListener<Event> {
     long currentEventTimeStamp;
     boolean hasFocus = true;
 
-    private TeaApplication application;
+    private TeaWebApplication application;
 
-    public TeaInput(TeaApplication application, HTMLCanvasElement canvas) {
+    public TeaInput(TeaWebApplication application, HTMLCanvasElement canvas) {
         this.application = application;
         this.canvas = canvas;
         hookEvents();

@@ -38,7 +38,7 @@ import org.teavm.jso.dom.events.EventListener;
 /**
  * @author xpenatan
  */
-public class TeaApplication implements Application {
+public class TeaWebApplication implements Application {
 
     private static String WEB_SCRIPT_PATH = "WEB_SCRIPT_PATH";
     private static String WEB_ASSET_PATH = "WEB_ASSET_PATH";
@@ -51,8 +51,8 @@ public class TeaApplication implements Application {
         return agentInfo;
     }
 
-    public static TeaApplication get() {
-        return (TeaApplication)Gdx.app;
+    public static TeaWebApplication get() {
+        return (TeaWebApplication)Gdx.app;
     }
 
     private TeaGraphics graphics;
@@ -85,11 +85,11 @@ public class TeaApplication implements Application {
 
     private boolean stepError;
 
-    public TeaApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
+    public TeaWebApplication(ApplicationListener appListener, TeaApplicationConfiguration config) {
         this(appListener, null, config);
     }
 
-    public TeaApplication(ApplicationListener appListener, ApplicationListener preloadAppListener, TeaApplicationConfiguration config) {
+    public TeaWebApplication(ApplicationListener appListener, ApplicationListener preloadAppListener, TeaApplicationConfiguration config) {
         this.window = TeaWindow.get();
         this.config = config;
         this.appListener = appListener;
@@ -106,9 +106,9 @@ public class TeaApplication implements Application {
 
     protected void init() {
         updateBrowserErrorStack();
-        TeaApplication.agentInfo = TeaWebAgent.computeAgentInfo();
+        TeaWebApplication.agentInfo = TeaWebAgent.computeAgentInfo();
         System.setProperty("java.runtime.name", "");
-        System.setProperty("userAgent", TeaApplication.agentInfo.getUserAgent());
+        System.setProperty("userAgent", TeaWebApplication.agentInfo.getUserAgent());
         if(agentInfo.isWindows())
             System.setProperty("os.name", "Windows");
         else if(agentInfo.isMacOS())

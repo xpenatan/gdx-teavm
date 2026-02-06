@@ -1,6 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.web.filesystem.types;
 
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.teavm.backends.web.filesystem.FileData;
@@ -24,11 +24,11 @@ public class LocalDBStorage extends MemoryFileStorage {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
     private IDBDatabase dataBase = null;
 
-    public LocalDBStorage(TeaApplication teaApplication) {
+    public LocalDBStorage(TeaWebApplication teaApplication) {
         setupIndexedDB(teaApplication);
     }
 
-    private void setupIndexedDB(TeaApplication teaApplication) {
+    private void setupIndexedDB(TeaWebApplication teaApplication) {
         if(teaApplication == null) {
             return;
         }
@@ -88,7 +88,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         });
     }
 
-    private void readAllFilesAsync(TeaApplication teaApplication) {
+    private void readAllFilesAsync(TeaWebApplication teaApplication) {
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readonly");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
         IDBCursorRequest cursorRequest = objectStore.openCursor();

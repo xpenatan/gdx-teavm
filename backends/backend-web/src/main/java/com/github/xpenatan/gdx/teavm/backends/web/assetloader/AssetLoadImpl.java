@@ -6,7 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.DataTransferWrapper;
@@ -47,14 +47,14 @@ public class AssetLoadImpl implements AssetLoader {
 
     private int maxMultiDownloadCount = 5;
 
-    public AssetLoadImpl(String newBaseURL, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+    public AssetLoadImpl(String newBaseURL, TeaWebApplication teaApplication, AssetDownloader assetDownloader) {
         this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new Array<>();
         assetDownloading = new HashSet<>();
     }
 
-    public void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
+    public void setupFileDrop(HTMLCanvasElement canvas, TeaWebApplication teaApplication) {
         TeaApplicationConfiguration config = teaApplication.getConfig();
         if(config.windowListener != null) {
             HTMLDocument document = canvas.getOwnerDocument();

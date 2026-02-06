@@ -32,7 +32,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
     protected AssetLoader assetLoader;
 
     private int initQueue = 0;
-    private TeaApplication teaApplication;
+    private TeaWebApplication teaApplication;
     private Step preloadStep = Step.PRELOAD_LOADING_ASSETS;
     private Texture logoTexture;
     private Stage stage;
@@ -50,7 +50,7 @@ public class TeaPreloadApplicationListener extends ApplicationAdapter {
 
     @Override
     public void create() {
-        teaApplication = TeaApplication.get();
+        teaApplication = TeaWebApplication.get();
         assetLoader = AssetInstance.getLoaderInstance();
         config = teaApplication.getConfig();
         setupPreloadAssets();

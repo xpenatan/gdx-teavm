@@ -19,7 +19,7 @@ public class TeaFiles implements Files {
     public MemoryFileStorage localStorage;
     public String localStoragePrefix;
 
-    public TeaFiles(TeaApplicationConfiguration config, TeaApplication teaApplication) {
+    public TeaFiles(TeaApplicationConfiguration config, TeaWebApplication teaApplication) {
         this.internalStorage = new InternalStorage();
         this.classpathStorage = new ClasspathStorage();
         this.localStorage = new LocalDBStorage(teaApplication);

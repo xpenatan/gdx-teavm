@@ -1,4 +1,4 @@
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
@@ -15,6 +15,6 @@ public class GdxTestLauncher {
             assetLoader.loadScript("freetype.js");
         };
 
-        new TeaApplication(new TeaVMTestWrapper(), config);
+        new TeaWebApplication(new TeaVMTestWrapper(), config);
     }
 }

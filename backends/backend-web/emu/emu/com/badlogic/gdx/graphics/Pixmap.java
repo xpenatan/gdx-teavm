@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoaderListener;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetType;
@@ -92,7 +92,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
 
     public Pixmap(FileHandle file) {
         String path = file.path();
-        TeaApplicationConfiguration config = ((TeaApplication)Gdx.app).getConfig();
+        TeaApplicationConfiguration config = ((TeaWebApplication)Gdx.app).getConfig();
         if(!file.exists()) {
             // Add a way to debug when assets was not loaded in preloader.
             throw new GdxRuntimeException("File is null, it does not exist: " + path);

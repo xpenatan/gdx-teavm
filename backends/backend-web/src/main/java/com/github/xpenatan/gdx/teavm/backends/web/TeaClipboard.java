@@ -64,7 +64,7 @@ public class TeaClipboard implements Clipboard {
     @Override
     public void setContents (String content) {
         this.content = content;
-        if (requestedWritePermissions || TeaApplication.getAgentInfo().isFirefox()) {
+        if (requestedWritePermissions || TeaWebApplication.getAgentInfo().isFirefox()) {
           if (hasWritePermissions) setContentNATIVE(content);
         } else {
           TeaPermissions.queryPermission("clipboard-write", writeHandler);

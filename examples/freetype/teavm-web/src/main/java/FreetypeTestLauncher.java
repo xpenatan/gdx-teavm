@@ -1,4 +1,4 @@
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.examples.freetype.FreetypeDemo;
 
@@ -14,6 +14,6 @@ public class FreetypeTestLauncher {
             assetLoader.loadScript("freetype.js");
         };
 
-        new TeaApplication(new FreetypeDemo(), config);
+        new TeaWebApplication(new FreetypeDemo(), config);
     }
 }
