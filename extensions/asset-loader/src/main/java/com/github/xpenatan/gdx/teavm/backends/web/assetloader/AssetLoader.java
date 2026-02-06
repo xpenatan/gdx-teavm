@@ -29,12 +29,12 @@ public interface AssetLoader {
     /**
      * Load asset and add to FileHandle system. Skip downloading if file already exists
      */
-    void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener);
+    void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener);
 
     /**
      * Load asset and add to FileHandle system. Overwrite true will update the file.
      */
-    void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite);
+    void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener, boolean overwrite);
 
     /**
      * Load script and attach to html document

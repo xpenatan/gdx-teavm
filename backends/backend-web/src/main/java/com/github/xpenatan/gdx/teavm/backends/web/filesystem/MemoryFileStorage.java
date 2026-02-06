@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaFileHandle;
+import com.github.xpenatan.gdx.teavm.backends.web.WebFileHandle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public InputStream read(TeaFileHandle file) {
+    public InputStream read(WebFileHandle file) {
         String path = fixPath(file.path());
         FileData data = getInternal(path);
         if(data == null) {
@@ -44,7 +44,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public byte[] readBytes(TeaFileHandle file) {
+    public byte[] readBytes(WebFileHandle file) {
         String path = fixPath(file.path());
         FileData data = getInternal(path);
         if(data != null) {
@@ -55,7 +55,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    protected void writeInternal(TeaFileHandle file, byte[] data, boolean append, int expectedLength) {
+    protected void writeInternal(WebFileHandle file, byte[] data, boolean append, int expectedLength) {
         String path = fixPath(file.path());
 
         byte[] newBytes = null;
@@ -93,12 +93,12 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    protected String[] paths(TeaFileHandle file) {
+    protected String[] paths(WebFileHandle file) {
         return getAllChildren(file);
     }
 
     @Override
-    public boolean isDirectory(TeaFileHandle file) {
+    public boolean isDirectory(WebFileHandle file) {
         String path = fixPath(file.path());
 
         if(isRootFolder(file)) {
@@ -113,7 +113,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public void mkdirs(TeaFileHandle file) {
+    public void mkdirs(WebFileHandle file) {
         String path = fixPath(file.path());
         putFolderInternal(path);
         FileHandle cur = file.parent();
@@ -127,7 +127,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public boolean exists(TeaFileHandle file) {
+    public boolean exists(WebFileHandle file) {
         String path = fixPath(file.path());
         if(isRootFolder(file)) {
             return true;
@@ -136,7 +136,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public boolean delete(TeaFileHandle file) {
+    public boolean delete(WebFileHandle file) {
         String path = fixPath(file.path());
         if(isRootFolder(file)) {
             return false;
@@ -155,7 +155,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public boolean deleteDirectory(TeaFileHandle file) {
+    public boolean deleteDirectory(WebFileHandle file) {
         String path = fixPath(file.path());
         if(isRootFolder(file)) {
             return false;
@@ -180,7 +180,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public long length(TeaFileHandle file) {
+    public long length(WebFileHandle file) {
         String path = fixPath(file.path());
         FileData data = getInternal(path);
         if(data != null && !data.isDirectory()) {
@@ -191,7 +191,7 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
-    public void rename(TeaFileHandle source, TeaFileHandle target) {
+    public void rename(WebFileHandle source, WebFileHandle target) {
         String sourcePath = fixPath(source.path());
         String targetPath = fixPath(target.path());
 

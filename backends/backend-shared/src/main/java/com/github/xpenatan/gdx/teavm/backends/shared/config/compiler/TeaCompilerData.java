@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.TeaReflectionListener;
 import java.io.File;
 import java.util.ArrayList;
 import org.teavm.tooling.TeaVMSourceFilePolicy;

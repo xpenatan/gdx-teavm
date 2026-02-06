@@ -12,11 +12,11 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoaderListener;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetType;
-import com.github.xpenatan.gdx.teavm.backends.web.assetloader.TeaBlob;
+import com.github.xpenatan.gdx.teavm.backends.web.assetloader.WebBlob;
 import java.nio.ByteBuffer;
 import org.teavm.jso.typedarrays.TypedArray;
 
@@ -72,7 +72,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
     private boolean disposed;
 
     public static void downloadFromUrl(String url, final DownloadPixmapResponseListener responseListener) {
-        AssetLoaderListener<TeaBlob> listener = new AssetLoaderListener<>() {
+        AssetLoaderListener<WebBlob> listener = new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
                 Throwable t = new Exception("Failed to download image");
@@ -80,7 +80,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
             }
 
             @Override
-            public void onSuccess(String url, TeaBlob result) {
+            public void onSuccess(String url, WebBlob result) {
                 TypedArray data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 Pixmap pixmapEmu = new Pixmap(byteArray, 0, byteArray.length);
@@ -92,7 +92,7 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
 
     public Pixmap(FileHandle file) {
         String path = file.path();
-        TeaApplicationConfiguration config = ((TeaWebApplication)Gdx.app).getConfig();
+        WebApplicationConfiguration config = ((WebApplication)Gdx.app).getConfig();
         if(!file.exists()) {
             // Add a way to debug when assets was not loaded in preloader.
             throw new GdxRuntimeException("File is null, it does not exist: " + path);
