@@ -82,6 +82,11 @@ public class TeaCompiler {
         return this;
     }
 
+    public TeaCompiler addReflectionClass(Class<?> type) {
+        data.reflectionListener.addClassOrPackage(type.getName());
+        return this;
+    }
+
     public TeaCompiler addReflectionClass(String classOrPackage) {
         data.reflectionListener.addClassOrPackage(classOrPackage);
         return this;
