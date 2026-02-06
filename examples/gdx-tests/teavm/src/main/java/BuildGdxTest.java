@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
-import com.github.xpenatan.gdx.teavm.backends.web.config.backend.TeaWebBackend;
+import com.github.xpenatan.gdx.teavm.backends.web.config.backend.WebBackend;
 import java.io.File;
 import java.io.IOException;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -11,7 +11,9 @@ public class BuildGdxTest {
         String gdxAssetsPath = args[0];
         System.out.println("gdxAssetsPath: " + gdxAssetsPath);
 
-        new TeaCompiler(new TeaWebBackend())
+        new TeaCompiler(new WebBackend()
+                .setWebAssembly(true)
+                .setStartJettyAfterBuild(true))
                 .addAssets(new AssetFileHandle(gdxAssetsPath))
                 .addAssets(new AssetFileHandle("../../basic/assets"))
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)

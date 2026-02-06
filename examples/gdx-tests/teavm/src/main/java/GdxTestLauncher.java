@@ -1,11 +1,11 @@
-import com.github.xpenatan.gdx.teavm.backends.web.TeaWebApplication;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.imgui.example.tests.wrapper.TeaVMTestWrapper;
 
 public class GdxTestLauncher {
 
     public static void main(String[] args) {
-        TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
+        WebApplicationConfiguration config = new WebApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = false;
@@ -15,6 +15,6 @@ public class GdxTestLauncher {
             assetLoader.loadScript("freetype.js");
         };
 
-        new TeaWebApplication(new TeaVMTestWrapper(), config);
+        new WebApplication(new TeaVMTestWrapper(), config);
     }
 }
