@@ -6,9 +6,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaFileHandle;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.DataTransferWrapper;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.DragEventWrapper;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.FileReaderWrapper;
@@ -47,15 +47,15 @@ public class AssetLoadImpl implements AssetLoader {
 
     private int maxMultiDownloadCount = 5;
 
-    public AssetLoadImpl(String newBaseURL, TeaApplication teaApplication, AssetDownloader assetDownloader) {
+    public AssetLoadImpl(String newBaseURL, WebApplication teaApplication, AssetDownloader assetDownloader) {
         this.assetDownloader = assetDownloader;
         baseUrl = newBaseURL;
         assetInQueue = new Array<>();
         assetDownloading = new HashSet<>();
     }
 
-    public void setupFileDrop(HTMLCanvasElement canvas, TeaApplication teaApplication) {
-        TeaApplicationConfiguration config = teaApplication.getConfig();
+    public void setupFileDrop(HTMLCanvasElement canvas, WebApplication teaApplication) {
+        WebApplicationConfiguration config = teaApplication.getConfig();
         if(config.windowListener != null) {
             HTMLDocument document = canvas.getOwnerDocument();
             document.addEventListener("dragenter", new EventListener() {
@@ -104,7 +104,7 @@ public class AssetLoadImpl implements AssetLoader {
         return success;
     }
 
-    private void downloadDroppedFile(TeaApplicationConfiguration config, FileList files) {
+    private void downloadDroppedFile(WebApplicationConfiguration config, FileList files) {
         int totalDraggedFiles = files.getLength();
         if(totalDraggedFiles > 0) {
             Array<String> droppedFiles = new Array<>();
@@ -149,9 +149,9 @@ public class AssetLoadImpl implements AssetLoader {
 
     @Override
     public void preload(final String assetFileUrl, AssetLoaderListener<Void> preloadListener) {
-        AssetLoaderListener<TeaBlob> listener = new AssetLoaderListener<>() {
+        AssetLoaderListener<WebBlob> listener = new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, TeaBlob result) {
+            public void onSuccess(String url, WebBlob result) {
                 assetDownloading.remove(assetFileUrl);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
@@ -222,12 +222,12 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
-    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener) {
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener) {
         loadAssetInternal(path, assetType, fileType, listener, false);
     }
 
     @Override
-    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
+    public void loadAsset(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener, boolean overwrite) {
         loadAssetInternal(path, assetType, fileType, listener, overwrite);
     }
 
@@ -256,12 +256,12 @@ public class AssetLoadImpl implements AssetLoader {
         return getQueue() > 0 || getDownloadingCount() > 0;
     }
 
-    private void loadAssetInternal(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
+    private void loadAssetInternal(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener, boolean overwrite) {
         addAssetToQueue(path, assetType, fileType, listener, overwrite);
         downloadQueueAssets();
     }
 
-    private void addAssetToQueue(String path, AssetType assetType, FileType fileType, AssetLoaderListener<TeaBlob> listener, boolean overwrite) {
+    private void addAssetToQueue(String path, AssetType assetType, FileType fileType, AssetLoaderListener<WebBlob> listener, boolean overwrite) {
         String path1 = fixPath(path);
 
         if(path1.isEmpty()) {
@@ -272,7 +272,7 @@ public class AssetLoadImpl implements AssetLoader {
             return;
         }
 
-        TeaFileHandle fileHandle = (TeaFileHandle)Gdx.files.getFileHandle(path1, fileType);
+        WebFileHandle fileHandle = (WebFileHandle)Gdx.files.getFileHandle(path1, fileType);
         boolean exists = fileHandle.exists();
         if(!overwrite && exists) {
             return;
@@ -305,19 +305,19 @@ public class AssetLoadImpl implements AssetLoader {
         QueueAsset queueAsset = assetInQueue.removeIndex(0);
         final String assetPath = queueAsset.assetUrl;
         final FileHandle fileHandle = queueAsset.fileHandle;
-        final AssetLoaderListener<TeaBlob> listener = queueAsset.listener;
+        final AssetLoaderListener<WebBlob> listener = queueAsset.listener;
         assetDownloading.add(assetPath);
 
         createAndStartDownload(assetPath, fileHandle, listener);
     }
 
-    private void createAndStartDownload(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<TeaBlob> listener) {
+    private void createAndStartDownload(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<WebBlob> listener) {
         // Create an independent wrapper listener to ensure proper closure capture
-        AssetLoaderListener<TeaBlob> downloadListener = createDownloadListener(assetPath, fileHandle, listener);
+        AssetLoaderListener<WebBlob> downloadListener = createDownloadListener(assetPath, fileHandle, listener);
         assetDownloader.load(true, getAssetUrl() + assetPath, AssetType.Binary, downloadListener);
     }
 
-    private AssetLoaderListener<TeaBlob> createDownloadListener(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<TeaBlob> listener) {
+    private AssetLoaderListener<WebBlob> createDownloadListener(final String assetPath, final FileHandle fileHandle, final AssetLoaderListener<WebBlob> listener) {
         return new AssetLoaderListener<>() {
             @Override
             public void onFailure(String url) {
@@ -329,7 +329,7 @@ public class AssetLoadImpl implements AssetLoader {
             }
 
             @Override
-            public void onSuccess(String url, TeaBlob result) {
+            public void onSuccess(String url, WebBlob result) {
                 assetDownloading.remove(assetPath);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);

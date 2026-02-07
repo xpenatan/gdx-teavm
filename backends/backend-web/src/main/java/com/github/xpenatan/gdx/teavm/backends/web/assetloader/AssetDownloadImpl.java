@@ -25,10 +25,10 @@ public class AssetDownloadImpl implements AssetDownloader {
     }
 
     @Override
-    public void load(boolean async, String url, AssetType type, AssetLoaderListener<TeaBlob> listener) {
-        AssetLoaderListener<TeaBlob> internalListener = new AssetLoaderListener<>() {
+    public void load(boolean async, String url, AssetType type, AssetLoaderListener<WebBlob> listener) {
+        AssetLoaderListener<WebBlob> internalListener = new AssetLoaderListener<>() {
             @Override
-            public void onSuccess(String url, TeaBlob result) {
+            public void onSuccess(String url, WebBlob result) {
                 if(showLogs) {
                     System.out.println("Asset download success: " + url);
                 }
@@ -98,7 +98,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         document.getBody().appendChild(scriptElement);
     }
 
-    private void loadBinary(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
+    private void loadBinary(boolean async, final String url, final AssetLoaderListener<WebBlob> listener, int count) {
         if(count == MAX_DOWNLOAD_ATTEMPT) {
             if(listener != null) {
                 listener.onFailure(url);
@@ -115,7 +115,7 @@ public class AssetDownloadImpl implements AssetDownloader {
         }
     }
 
-    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<TeaBlob> listener, int count) {
+    private void loadBinaryInternally(boolean async, final String url, final AssetLoaderListener<WebBlob> listener, int count) {
         XMLHttpRequest request = new XMLHttpRequest();
         request.setOnReadyStateChange(evt -> {
             if(request.getReadyState() == XMLHttpRequest.DONE) {
@@ -155,7 +155,7 @@ public class AssetDownloadImpl implements AssetDownloader {
                     }
 
                     if(listener != null) {
-                        listener.onSuccess(url, new TeaBlob(arrayBuffer, data));
+                        listener.onSuccess(url, new WebBlob(arrayBuffer, data));
                     }
                 }
             }

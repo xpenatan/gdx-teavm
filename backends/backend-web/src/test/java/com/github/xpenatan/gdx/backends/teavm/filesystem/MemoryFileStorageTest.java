@@ -2,8 +2,8 @@ package com.github.xpenatan.gdx.backends.teavm.filesystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaFiles;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebFiles;
 import com.github.xpenatan.gdx.teavm.backends.web.filesystem.MemoryFileStorage;
 import com.google.common.truth.Truth;
 import org.junit.Before;
@@ -15,8 +15,8 @@ public class MemoryFileStorageTest {
 
     @Before
     public void setUp() {
-        TeaApplicationConfiguration config = new TeaApplicationConfiguration("");
-        TeaFiles teaFiles = new TeaFiles(config, null);
+        WebApplicationConfiguration config = new WebApplicationConfiguration("");
+        WebFiles teaFiles = new WebFiles(config, null);
         internalStorage= new MemoryFileStorage();
         teaFiles.localStorage = internalStorage;
         Gdx.files = teaFiles;

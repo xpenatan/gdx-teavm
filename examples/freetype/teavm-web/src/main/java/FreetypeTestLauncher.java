@@ -1,11 +1,11 @@
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.examples.freetype.FreetypeDemo;
 
 public class FreetypeTestLauncher {
 
     public static void main(String[] args) {
-        TeaApplicationConfiguration config = new TeaApplicationConfiguration("canvas");
+        WebApplicationConfiguration config = new WebApplicationConfiguration("canvas");
         config.width = 0;
         config.height = 0;
         config.showDownloadLogs = true;
@@ -14,6 +14,6 @@ public class FreetypeTestLauncher {
             assetLoader.loadScript("freetype.js");
         };
 
-        new TeaApplication(new FreetypeDemo(), config);
+        new WebApplication(new FreetypeDemo(), config);
     }
 }

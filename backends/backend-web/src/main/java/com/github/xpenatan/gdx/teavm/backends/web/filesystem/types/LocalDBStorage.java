@@ -1,7 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.web.filesystem.types;
 
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplication;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaApplicationConfiguration;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
+import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.typedarray.TypedArrays;
 import com.github.xpenatan.gdx.teavm.backends.web.filesystem.FileData;
 import com.github.xpenatan.gdx.teavm.backends.web.filesystem.MemoryFileStorage;
@@ -24,15 +24,15 @@ public class LocalDBStorage extends MemoryFileStorage {
     private final static String KEY_OBJECT_STORE = "FILE_DATA";
     private IDBDatabase dataBase = null;
 
-    public LocalDBStorage(TeaApplication teaApplication) {
+    public LocalDBStorage(WebApplication teaApplication) {
         setupIndexedDB(teaApplication);
     }
 
-    private void setupIndexedDB(TeaApplication teaApplication) {
+    private void setupIndexedDB(WebApplication teaApplication) {
         if(teaApplication == null) {
             return;
         }
-        TeaApplicationConfiguration config = teaApplication.getConfig();
+        WebApplicationConfiguration config = teaApplication.getConfig();
         teaApplication.addInitQueue();
 
         IDBFactory instance = IDBFactory.getInstance();
@@ -88,7 +88,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         });
     }
 
-    private void readAllFilesAsync(TeaApplication teaApplication) {
+    private void readAllFilesAsync(WebApplication teaApplication) {
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readonly");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
         IDBCursorRequest cursorRequest = objectStore.openCursor();

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Matrix3;
 import emu.com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaTool;
+import com.github.xpenatan.gdx.teavm.backends.web.WebTool;
 import org.teavm.classlib.PlatformDetector;
 import org.teavm.classlib.impl.nio.Buffers;
 
@@ -333,7 +333,7 @@ public final class BufferUtils {
     }
 
     public static FloatBuffer newFloatBuffer(int numFloats) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = newByteBuffer(numFloats * 4);
             return buffer.asFloatBuffer();
         }
@@ -343,7 +343,7 @@ public final class BufferUtils {
     }
 
     public static DoubleBuffer newDoubleBuffer(int numDoubles) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = newByteBuffer(numDoubles * 8);
             return buffer.asDoubleBuffer();
         }
@@ -353,7 +353,7 @@ public final class BufferUtils {
     }
 
     public static ByteBuffer newByteBuffer(int numBytes) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(numBytes);
             buffer.order(ByteOrder.nativeOrder());
             return buffer;
@@ -364,7 +364,7 @@ public final class BufferUtils {
     }
 
     public static ShortBuffer newShortBuffer(int numShorts) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = newByteBuffer(numShorts * 2);
             return buffer.asShortBuffer();
         }
@@ -374,7 +374,7 @@ public final class BufferUtils {
     }
 
     public static CharBuffer newCharBuffer(int numChars) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = newByteBuffer(numChars * 2);
             return buffer.asCharBuffer();
         }
@@ -384,7 +384,7 @@ public final class BufferUtils {
     }
 
     public static IntBuffer newIntBuffer(int numInts) {
-        if(TeaTool.isProdMode()) {
+        if(WebTool.isProdMode()) {
             ByteBuffer buffer = newByteBuffer(numInts * 4);
             return buffer.asIntBuffer();
         }

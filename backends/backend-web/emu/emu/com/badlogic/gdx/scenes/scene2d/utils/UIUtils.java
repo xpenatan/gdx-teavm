@@ -4,15 +4,15 @@ package emu.com.badlogic.gdx.scenes.scene2d.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.github.xpenatan.gdx.teavm.backends.web.utils.TeaNavigator;
+import com.github.xpenatan.gdx.teavm.backends.web.utils.WebNavigator;
 
 public class UIUtils {
-    static public boolean isAndroid = TeaNavigator.getPlatform().contains("Android");
-    static public boolean isMac = TeaNavigator.getPlatform().contains("Mac");
-    static public boolean isWindows = TeaNavigator.getPlatform().contains("Win");
-    static public boolean isLinux = TeaNavigator.getPlatform().contains("Linux") || TeaNavigator.getPlatform().contains("FreeBSD");
-    static public boolean isIos = TeaNavigator.getPlatform().contains("iPhone") || TeaNavigator.getPlatform().contains("iPod")
-            || TeaNavigator.getPlatform().contains("iPad");
+    static public boolean isAndroid = WebNavigator.getPlatform().contains("Android");
+    static public boolean isMac = WebNavigator.getPlatform().contains("Mac");
+    static public boolean isWindows = WebNavigator.getPlatform().contains("Win");
+    static public boolean isLinux = WebNavigator.getPlatform().contains("Linux") || WebNavigator.getPlatform().contains("FreeBSD");
+    static public boolean isIos = WebNavigator.getPlatform().contains("iPhone") || WebNavigator.getPlatform().contains("iPod")
+            || WebNavigator.getPlatform().contains("iPad");
 
     static public boolean left() {
         return Gdx.input.isButtonPressed(Buttons.LEFT);

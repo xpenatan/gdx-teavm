@@ -78,8 +78,8 @@ public abstract class TeaBackend {
             tool.addSourceFileProvider(data.sourceFileProviders.get(i));
         }
         List<String> classesToPreserve = tool.getClassesToPreserve();
-        classesToPreserve.addAll(data.reflectionClasses);
-        TeaReflectionSupplier.addReflectionClass(data.reflectionClasses);
+        classesToPreserve.addAll(data.finalReflectionClasses);
+        TeaReflectionSupplier.addReflectionClass(data.finalReflectionClasses);
         tool.setDebugInformationGenerated(data.debugInformationGenerated);
         tool.setSourceMapsFileGenerated(data.sourceMapsFileGenerated);
         tool.setMinHeapSize(data.minHeapSize);
@@ -162,7 +162,7 @@ public abstract class TeaBackend {
                             add = data.reflectionListener.shouldEnableReflection(name);
                         }
                         if(add) {
-                            data.reflectionClasses.add(name);
+                            data.finalReflectionClasses.add(name);
                         }
                     }
                 }

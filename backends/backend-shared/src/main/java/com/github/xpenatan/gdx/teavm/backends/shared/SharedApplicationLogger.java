@@ -2,7 +2,11 @@ package com.github.xpenatan.gdx.teavm.backends.shared;
 
 import com.badlogic.gdx.ApplicationLogger;
 
+/**
+ * @author xpenatan
+ */
 public class SharedApplicationLogger implements ApplicationLogger {
+
     @Override
     public void log(String tag, String message) {
         System.out.println(tag + ": " + message);

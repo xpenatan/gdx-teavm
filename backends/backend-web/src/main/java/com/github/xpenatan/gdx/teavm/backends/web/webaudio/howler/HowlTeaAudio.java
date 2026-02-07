@@ -6,9 +6,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.xpenatan.gdx.teavm.backends.web.TeaAudio;
+import com.github.xpenatan.gdx.teavm.backends.web.WebAudio;
 
-public class HowlTeaAudio implements TeaAudio {
+public class HowlTeaAudio implements WebAudio {
     private HowlerAudioManager webAudioAPIManager = null;
 
     public HowlTeaAudio() {
