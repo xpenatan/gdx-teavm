@@ -109,7 +109,7 @@ public class WebBackend extends TeaBackend {
     protected void build(TeaCompilerData data) {
         super.build(data);
         if(startJettyAfterBuild) {
-            startJetty(data.output.getPath());
+            startJetty(releasePath.path());
         }
     }
 

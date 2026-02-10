@@ -41,7 +41,7 @@ class JettyServer {
 
     public void startServer(String path) {
         if(!serverStarted && path != null && !path.isEmpty()) {
-            this.webAppDirectory = path + "\\webapp";
+            this.webAppDirectory = path;
             File file = new File(webAppDirectory);
             if(!file.exists()) {
                 //webapp don't exist
