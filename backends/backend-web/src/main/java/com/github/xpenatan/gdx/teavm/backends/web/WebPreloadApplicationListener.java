@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoaderListener;
@@ -67,7 +68,7 @@ public class WebPreloadApplicationListener extends ApplicationAdapter {
             public void onSuccess(String url, WebBlob result) {
                 subtractQueue();
                 addQueue();
-                assetLoader.preload("assets.txt", new AssetLoaderListener<>() {
+                assetLoader.preload(TeaAssets.ASSETS_FILE_NAME, new AssetLoaderListener<>() {
                     @Override
                     public void onSuccess(String url, Void result) {
                         subtractQueue();

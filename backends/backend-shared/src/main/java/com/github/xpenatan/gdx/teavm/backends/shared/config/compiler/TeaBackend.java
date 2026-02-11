@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaVMResourceProperties;
@@ -323,7 +324,7 @@ public abstract class TeaBackend {
 
     protected void copyAssets(TeaCompilerData data) {
         FileHandle assetsFolder = releasePath.child("assets");
-        FileHandle assetFile = assetsFolder.child("assets.txt");
+        FileHandle assetFile = assetsFolder.child(TeaAssets.ASSETS_FILE_NAME);
 
         if(assetFile.exists()) {
             // Delete assets.txt before adding the updated list.
