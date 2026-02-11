@@ -25,6 +25,7 @@ public class WebBackend extends TeaBackend {
     public boolean isWebAssembly;
     public AssetFilter scriptFilter;
     public boolean startJettyAfterBuild = false;
+    public int jettyPort = 8080;
 
     private JettyServer server;
 
@@ -78,9 +79,18 @@ public class WebBackend extends TeaBackend {
         return this;
     }
 
-    public void startJetty(String path) {
+    public WebBackend setJettyPort(int port) {
+        this.jettyPort = port;
+        return this;
+    }
+
+    public void startJetty(int port, String path) {
+        stopJetty();
+        server.startServer(port, path, true);
+    }
+
+    public void stopJetty() {
         server.stopServer();
-        server.startServer(path);
     }
 
     @Override
@@ -109,7 +119,7 @@ public class WebBackend extends TeaBackend {
     protected void build(TeaCompilerData data) {
         super.build(data);
         if(startJettyAfterBuild) {
-            startJetty(releasePath.path());
+            startJetty(jettyPort, releasePath.path());
         }
     }
 
