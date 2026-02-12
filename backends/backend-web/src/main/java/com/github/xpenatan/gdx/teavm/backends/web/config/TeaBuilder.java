@@ -170,7 +170,7 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D_GWT);
         // Move generic backend to be first
-        makeClassPathFirst(acceptedURL, "backend-teavm");
+        makeClassPathFirst(acceptedURL, "backend-web");
     }
 
     private static void makeClassPathFirst(ArrayList<URL> acceptedURL, String module) {
