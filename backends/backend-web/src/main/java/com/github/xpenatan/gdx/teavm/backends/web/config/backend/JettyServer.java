@@ -5,17 +5,18 @@ import java.io.File;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-class JettyServer {
+public class JettyServer {
 
-    Server server;
-    WebAppContext context;
+    private Server server;
+    private WebAppContext context;
 
     private boolean serverStarted = false;
 
     private String webAppDirectory;
 
-    public void runServer() {
-        int port = 8080;
+    private int port;
+
+    private void runServer() {
         server = new Server(port);
         context = new WebAppContext();
         context.setResourceBase(webAppDirectory);
@@ -31,6 +32,7 @@ class JettyServer {
         server.setHandler(context);
         try {
             server.start();
+            serverStarted = true;
             TeaLogHelper.logHeader("Jetty Dev Server started at http://localhost:" + port + "/");
         }
         catch(Exception e) {
@@ -39,21 +41,26 @@ class JettyServer {
         }
     }
 
-    public void startServer(String path) {
+    public void startServer(int port, String path, boolean runInSeparateThread) {
         if(!serverStarted && path != null && !path.isEmpty()) {
-            this.webAppDirectory = path + "\\webapp";
+            this.port = port;
+            this.webAppDirectory = path;
             File file = new File(webAppDirectory);
             if(!file.exists()) {
                 //webapp don't exist
                 throw new RuntimeException("Webapp directory doesn't exist: " + webAppDirectory);
             }
-            serverStarted = true;
-            new Thread() {
-                @Override
-                public void run() {
-                    runServer();
-                }
-            }.start();
+            if(runInSeparateThread) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        runServer();
+                    }
+                }.start();
+            }
+            else {
+                runServer();
+            }
         }
     }
 

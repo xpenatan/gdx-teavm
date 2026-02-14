@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaVMResourceProperties;
@@ -169,7 +170,7 @@ public class TeaBuilder {
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D);
         makeClassPathFirst(acceptedURL, EXTENSION_BOX2D_GWT);
         // Move generic backend to be first
-        makeClassPathFirst(acceptedURL, "backend-teavm");
+        makeClassPathFirst(acceptedURL, "backend-web");
     }
 
     private static void makeClassPathFirst(ArrayList<URL> acceptedURL, String module) {
@@ -331,7 +332,7 @@ public class TeaBuilder {
         FileHandle webappFolder = distFolder.child(webappName);
         FileHandle assetsFolder = webappFolder.child("assets");
         FileHandle scriptsFolder = webappFolder.child("scripts");
-        FileHandle assetFile = assetsFolder.child("assets.txt");
+        FileHandle assetFile = assetsFolder.child(TeaAssets.ASSETS_FILE_NAME);
 
         AssetFilter filter = configuration.assetFilter;
 
