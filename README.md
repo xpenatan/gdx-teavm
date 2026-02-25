@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/xpenatan/gdx-teavm/actions/workflows/snapshot.yml/badge.svg)
 
-[![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-web)](https://central.sonatype.com/search?namespace=com.github.xpenatan.gdx-teavm)
+[![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-web)](https://central.sonatype.com/namespace/com.github.xpenatan.gdx-teavm)
 [![Static Badge](https://img.shields.io/badge/snapshot---SNAPSHOT-red)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/com/github/xpenatan/gdx-teavm/)
 
 **gdx-teavm** is a backend solution for running [libGDX](https://github.com/libgdx/libgdx) games directly in web browsers. It leverages [TeaVM](https://github.com/konsoletyper/teavm), a tool that compiles Java or Kotlin bytecode into JavaScript or WebAssembly, enabling seamless execution of game logic within the browser environment without needing additional plugins or complex setup.
@@ -21,7 +21,9 @@ If you find this project valuable and want to fuel its continued growth, please 
 ### Version:
 | gdx-teavm | LibGDX | TeaVM  |
 |:---------:|:------:|:------:|
-| -SNAPSHOT | 1.14.0 | 0.13.0 |
+| -SNAPSHOT | 1.14.0 | 0.13.1 |
+|   1.5.2   | 1.14.0 | 0.13.1 |
+|   1.5.1   | 1.14.0 | 0.13.0 |
 |   1.5.0   | 1.14.0 | 0.13.0 |
 |   1.4.0   | 1.14.0 | 0.13.0 |
 |   1.3.3   | 1.14.0 | 0.12.3 |
