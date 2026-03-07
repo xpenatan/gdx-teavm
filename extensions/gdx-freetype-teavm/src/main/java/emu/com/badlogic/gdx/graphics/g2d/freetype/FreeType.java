@@ -631,10 +631,10 @@ public class FreeType {
                         }
                         dst.put(dstRow);
                     }
-                    PixmapNativeInterface nativeInterface = (PixmapNativeInterface)pixmap;
-                    Gdx2DPixmapNative nativePixel = nativeInterface.getNative();
-                    nativePixel.copyToHeap();
                 }
+                PixmapNativeInterface nativeInterface = (PixmapNativeInterface)pixmap;
+                Gdx2DPixmapNative nativePixel = nativeInterface.getNative();
+                nativePixel.copyToHeap();
             }
 
             Pixmap converted = pixmap;
