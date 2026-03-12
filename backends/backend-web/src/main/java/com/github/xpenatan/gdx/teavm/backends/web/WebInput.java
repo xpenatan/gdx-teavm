@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.teavm.backends.web;
 import com.badlogic.gdx.AbstractInput;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.NativeInputConfiguration;
 import com.badlogic.gdx.utils.IntMap;
@@ -278,12 +279,31 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
         }
     }
 
+    /**
+     * Resolves a KeyboardEvent to a libGDX {@link com.badlogic.gdx.Input.Keys} constant.
+     * Prefers KeyboardEvent.code (physical key position, layout-independent) and
+     * falls back to the deprecated KeyboardEvent.keyCode for older browsers.
+     */
+    private static int resolveKeyCode(KeyboardEvent keyboardEvent) {
+        // Prefer event.code (physical key location, works on all keyboard layouts)
+        String codeStr = keyboardEvent.getCode();
+        if (codeStr != null && !codeStr.isEmpty()) {
+            int resolved = KeyCodes.keyForCode(codeStr);
+            if (resolved != Keys.UNKNOWN) {
+                return resolved;
+            }
+        }
+        // Fallback to deprecated event.keyCode for unrecognized or missing codes
+        return KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+    }
+
     private void handleKeyboardEvents(Event e) {
         String type = e.getType();
 
         if(type.equals("keydown") && hasFocus) {
             KeyboardEvent keyboardEvent = (KeyboardEvent)e;
-            int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+            int code = resolveKeyCode(keyboardEvent);
+
             char keyChar = 0;
 
             switch(code) {
@@ -338,7 +358,7 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
 
         else if(type.equals("keyup") && hasFocus) {
             KeyboardEvent keyboardEvent = (KeyboardEvent)e;
-            int code = KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+            int code = resolveKeyCode(keyboardEvent);
 
             if(isCatchKey(code)) {
                 e.preventDefault();
