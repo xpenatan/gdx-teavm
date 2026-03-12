@@ -73,6 +73,7 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
         this.application = application;
         this.canvas = canvas;
         hookEvents();
+        KeyCodes.initLayoutLabels();
     }
 
     private void hookEvents() {
@@ -303,6 +304,14 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
         if(type.equals("keydown") && hasFocus) {
             KeyboardEvent keyboardEvent = (KeyboardEvent)e;
             int code = resolveKeyCode(keyboardEvent);
+
+            // Capture the layout-specific label (event.key) for this physical key.
+            // Single-character keys get their label stored so applications can display
+            // the user's actual key cap rather than the QWERTY positional name.
+            String key = keyboardEvent.getKey();
+            if (code != Keys.UNKNOWN && key != null && key.length() == 1) {
+                KeyCodes.setLayoutLabel(code, key.toUpperCase());
+            }
 
             char keyChar = 0;
 

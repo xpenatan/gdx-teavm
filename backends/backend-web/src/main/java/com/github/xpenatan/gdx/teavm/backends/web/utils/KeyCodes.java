@@ -881,4 +881,104 @@ public class KeyCodes {
         if(button == BUTTON_MIDDLE) return Buttons.MIDDLE;
         return Buttons.LEFT;
     }
+
+    // ==================== Layout Label API ====================
+
+    /**
+     * Layout-specific key labels, indexed by libGDX {@link Keys} constant.
+     * Populated at runtime from {@code KeyboardEvent.key} as keys are pressed,
+     * so the map fills incrementally during normal use. On a QWERTY keyboard
+     * the labels match the positional names; on AZERTY, {@link Keys#W} would
+     * store "Z" (the character printed on that physical key).
+     *
+     * <p>Applications can use {@link #getLayoutLabel(int)} to display the
+     * user's actual key cap rather than the QWERTY positional name from
+     * {@link Keys#toString(int)}.</p>
+     */
+    private static final String[] layoutLabels = new String[Keys.MAX_KEYCODE + 1];
+
+    /**
+     * Records a layout-specific label for a libGDX key code. Called by
+     * {@link com.github.xpenatan.gdx.teavm.backends.web.WebInput} on each
+     * {@code keydown} event with the value of {@code KeyboardEvent.key}.
+     *
+     * @param gdxKeyCode a libGDX {@link Keys} constant
+     * @param label the upper-cased single-character label from the user's layout
+     */
+    public static void setLayoutLabel(int gdxKeyCode, String label) {
+        if (gdxKeyCode >= 0 && gdxKeyCode < layoutLabels.length) {
+            layoutLabels[gdxKeyCode] = label;
+        }
+    }
+
+    /**
+     * Returns the layout-specific label for a libGDX key code, or {@code null}
+     * if the key has not been pressed yet (or has no single-character label).
+     *
+     * <p>Use this instead of {@link Keys#toString(int)} when you want to show
+     * the character printed on the user's physical key. For example, on an
+     * AZERTY keyboard this returns "Z" for {@link Keys#W}, whereas
+     * {@code Keys.toString(Keys.W)} always returns "W".</p>
+     *
+     * @param gdxKeyCode a libGDX {@link Keys} constant
+     * @return the layout label, or {@code null} if unknown
+     */
+    public static String getLayoutLabel(int gdxKeyCode) {
+        if (gdxKeyCode >= 0 && gdxKeyCode < layoutLabels.length && layoutLabels[gdxKeyCode] != null) {
+            return layoutLabels[gdxKeyCode];
+        }
+        // Fall back to labels populated eagerly by the Keyboard Layout API
+        String jsLabel = jsGetLayoutLabel(gdxKeyCode);
+        if (jsLabel != null && !jsLabel.isEmpty()) {
+            return jsLabel;
+        }
+        return null;
+    }
+
+    /**
+     * Eagerly populates layout labels using the Keyboard Layout API
+     * (Chrome 69+, Edge 79+). On unsupported browsers this is a no-op;
+     * labels will still be populated incrementally from keydown events.
+     *
+     * <p>Because the Keyboard Layout API is asynchronous, labels are stored
+     * in a JS-side map and read lazily by {@link #getLayoutLabel(int)} as
+     * a fallback when no keydown event has been received for that key yet.</p>
+     */
+    public static void initLayoutLabels() {
+        jsInitLayoutLabels();
+    }
+
+    @org.teavm.jso.JSBody(script =
+        "if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) return;" +
+        "var codeToGdx = {" +
+        "  'KeyA':29,'KeyB':30,'KeyC':31,'KeyD':32,'KeyE':33,'KeyF':34," +
+        "  'KeyG':35,'KeyH':36,'KeyI':37,'KeyJ':38,'KeyK':39,'KeyL':40," +
+        "  'KeyM':41,'KeyN':42,'KeyO':43,'KeyP':44,'KeyQ':45,'KeyR':46," +
+        "  'KeyS':47,'KeyT':48,'KeyU':49,'KeyV':50,'KeyW':51,'KeyX':52," +
+        "  'KeyY':53,'KeyZ':54," +
+        "  'Digit0':7,'Digit1':8,'Digit2':9,'Digit3':10,'Digit4':11," +
+        "  'Digit5':12,'Digit6':13,'Digit7':14,'Digit8':15,'Digit9':16," +
+        "  'Comma':55,'Period':56,'Semicolon':74,'Quote':75," +
+        "  'Slash':76,'Backslash':73,'Minus':69,'Equal':70," +
+        "  'BracketLeft':71,'BracketRight':72,'Backquote':68" +
+        "};" +
+        "window._gdxLayoutLabels = window._gdxLayoutLabels || {};" +
+        "navigator.keyboard.getLayoutMap().then(function(layoutMap) {" +
+        "  for (var code in codeToGdx) {" +
+        "    var label = layoutMap.get(code);" +
+        "    if (label && label.length === 1) {" +
+        "      window._gdxLayoutLabels[codeToGdx[code]] = label.toUpperCase();" +
+        "    }" +
+        "  }" +
+        "}).catch(function() {});")
+    private static native void jsInitLayoutLabels();
+
+    /**
+     * Reads a label from the JS-side Keyboard Layout API map.
+     * Returns empty string if not available.
+     */
+    @org.teavm.jso.JSBody(params = {"gdxKeyCode"}, script =
+        "var m = window._gdxLayoutLabels;" +
+        "return (m && m[gdxKeyCode]) ? m[gdxKeyCode] : '';")
+    private static native String jsGetLayoutLabel(int gdxKeyCode);
 }
