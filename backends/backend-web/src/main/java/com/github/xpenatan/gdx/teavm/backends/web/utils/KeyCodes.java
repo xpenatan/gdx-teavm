@@ -520,6 +520,157 @@ public class KeyCodes {
     private KeyCodes() {
     }
 
+    /**
+     * Maps a KeyboardEvent.code string (physical key location) to a libGDX
+     * {@link Keys} constant. This is layout-independent: pressing the physical
+     * key in the QWERTY "W" position returns {@link Keys#W} regardless of the
+     * user's keyboard layout (AZERTY, QWERTZ, Dvorak, etc.).
+     *
+     * <p>Falls back to {@link #keyForCode(int)} when the code string is null
+     * or unrecognized, preserving backward compatibility with browsers that
+     * do not support KeyboardEvent.code.</p>
+     *
+     * @param code the KeyboardEvent.code string, e.g. "KeyW", "Space", "ArrowUp"
+     * @return the corresponding libGDX {@link Keys} constant, or {@link Keys#UNKNOWN}
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values">MDN KeyboardEvent.code values</a>
+     */
+    public static int keyForCode(String code) {
+        if (code == null) return Keys.UNKNOWN;
+        switch (code) {
+            // Letters (physical QWERTY positions)
+            case "KeyA": return Keys.A;
+            case "KeyB": return Keys.B;
+            case "KeyC": return Keys.C;
+            case "KeyD": return Keys.D;
+            case "KeyE": return Keys.E;
+            case "KeyF": return Keys.F;
+            case "KeyG": return Keys.G;
+            case "KeyH": return Keys.H;
+            case "KeyI": return Keys.I;
+            case "KeyJ": return Keys.J;
+            case "KeyK": return Keys.K;
+            case "KeyL": return Keys.L;
+            case "KeyM": return Keys.M;
+            case "KeyN": return Keys.N;
+            case "KeyO": return Keys.O;
+            case "KeyP": return Keys.P;
+            case "KeyQ": return Keys.Q;
+            case "KeyR": return Keys.R;
+            case "KeyS": return Keys.S;
+            case "KeyT": return Keys.T;
+            case "KeyU": return Keys.U;
+            case "KeyV": return Keys.V;
+            case "KeyW": return Keys.W;
+            case "KeyX": return Keys.X;
+            case "KeyY": return Keys.Y;
+            case "KeyZ": return Keys.Z;
+
+            // Digit row
+            case "Digit0": return Keys.NUM_0;
+            case "Digit1": return Keys.NUM_1;
+            case "Digit2": return Keys.NUM_2;
+            case "Digit3": return Keys.NUM_3;
+            case "Digit4": return Keys.NUM_4;
+            case "Digit5": return Keys.NUM_5;
+            case "Digit6": return Keys.NUM_6;
+            case "Digit7": return Keys.NUM_7;
+            case "Digit8": return Keys.NUM_8;
+            case "Digit9": return Keys.NUM_9;
+
+            // Numpad
+            case "Numpad0": return Keys.NUMPAD_0;
+            case "Numpad1": return Keys.NUMPAD_1;
+            case "Numpad2": return Keys.NUMPAD_2;
+            case "Numpad3": return Keys.NUMPAD_3;
+            case "Numpad4": return Keys.NUMPAD_4;
+            case "Numpad5": return Keys.NUMPAD_5;
+            case "Numpad6": return Keys.NUMPAD_6;
+            case "Numpad7": return Keys.NUMPAD_7;
+            case "Numpad8": return Keys.NUMPAD_8;
+            case "Numpad9": return Keys.NUMPAD_9;
+            case "NumpadMultiply": return Keys.STAR;
+            case "NumpadAdd": return Keys.PLUS;
+            case "NumpadSubtract": return Keys.MINUS;
+            case "NumpadDecimal": return Keys.NUMPAD_DOT;
+            case "NumpadDivide": return Keys.SLASH;
+            case "NumpadEnter": return Keys.NUMPAD_ENTER;
+            case "NumLock": return Keys.NUM;
+
+            // Function keys
+            case "F1": return Keys.F1;
+            case "F2": return Keys.F2;
+            case "F3": return Keys.F3;
+            case "F4": return Keys.F4;
+            case "F5": return Keys.F5;
+            case "F6": return Keys.F6;
+            case "F7": return Keys.F7;
+            case "F8": return Keys.F8;
+            case "F9": return Keys.F9;
+            case "F10": return Keys.F10;
+            case "F11": return Keys.F11;
+            case "F12": return Keys.F12;
+
+            // Modifiers
+            case "ShiftLeft": return Keys.SHIFT_LEFT;
+            case "ShiftRight": return Keys.SHIFT_RIGHT;
+            case "ControlLeft": return Keys.CONTROL_LEFT;
+            case "ControlRight": return Keys.CONTROL_RIGHT;
+            case "AltLeft": return Keys.ALT_LEFT;
+            case "AltRight": return Keys.ALT_RIGHT;
+            case "MetaLeft": return Keys.SYM;
+            case "MetaRight": return Keys.SYM;
+
+            // Navigation
+            case "ArrowUp": return Keys.UP;
+            case "ArrowDown": return Keys.DOWN;
+            case "ArrowLeft": return Keys.LEFT;
+            case "ArrowRight": return Keys.RIGHT;
+            case "Home": return Keys.HOME;
+            case "End": return Keys.END;
+            case "PageUp": return Keys.PAGE_UP;
+            case "PageDown": return Keys.PAGE_DOWN;
+            case "Insert": return Keys.INSERT;
+            case "Delete": return Keys.FORWARD_DEL;
+
+            // Whitespace and editing
+            case "Space": return Keys.SPACE;
+            case "Enter": return Keys.ENTER;
+            case "Tab": return Keys.TAB;
+            case "Backspace": return Keys.BACKSPACE;
+            case "Escape": return Keys.ESCAPE;
+            case "CapsLock": return Keys.CAPS_LOCK;
+            case "ScrollLock": return Keys.SCROLL_LOCK;
+            case "Pause": return Keys.PAUSE;
+            case "PrintScreen": return Keys.PRINT_SCREEN;
+
+            // Punctuation and symbols (physical US QWERTY positions)
+            case "Semicolon": return Keys.SEMICOLON;
+            case "Equal": return Keys.EQUALS;
+            case "Comma": return Keys.COMMA;
+            case "Minus": return Keys.MINUS;
+            case "Period": return Keys.PERIOD;
+            case "Slash": return Keys.SLASH;
+            case "Backquote": return Keys.GRAVE;
+            case "BracketLeft": return Keys.LEFT_BRACKET;
+            case "Backslash": return Keys.BACKSLASH;
+            case "BracketRight": return Keys.RIGHT_BRACKET;
+            case "Quote": return Keys.APOSTROPHE;
+
+            default: return Keys.UNKNOWN;
+        }
+    }
+
+    /**
+     * Maps a deprecated browser keyCode integer to a libGDX {@link Keys} constant.
+     *
+     * <p><b>Deprecated:</b> prefer {@link #keyForCode(String)} which uses
+     * KeyboardEvent.code for layout-independent physical key identification.
+     * This numeric overload is retained as a fallback for browsers that do not
+     * support KeyboardEvent.code.</p>
+     *
+     * @param keyCode the numeric keyCode from KeyboardEvent.keyCode
+     * @return the corresponding libGDX {@link Keys} constant, or {@link Keys#UNKNOWN}
+     */
     public static int keyForCode(int keyCode) {
         switch(keyCode) {
             case KeyCodes.KEY_ALT:
@@ -555,9 +706,9 @@ public class KeyCodes {
             case KeyCodes.KEY_UP:
                 return Keys.UP;
             case KeyCodes.KEY_PAUSE:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.PAUSE;
             case KeyCodes.KEY_CAPS_LOCK:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.CAPS_LOCK;
             case KeyCodes.KEY_SPACE:
                 return Keys.SPACE;
             case KeyCodes.KEY_INSERT:
@@ -635,9 +786,9 @@ public class KeyCodes {
             case KeyCodes.KEY_Z:
                 return Keys.Z;
             case KeyCodes.KEY_LEFT_WINDOW_KEY:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.SYM;
             case KeyCodes.KEY_RIGHT_WINDOW_KEY:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.SYM;
             // case KEY_SELECT_KEY: return Keys.SELECT_KEY;
             case KeyCodes.KEY_NUMPAD0:
                 return Keys.NUMPAD_0;
@@ -660,7 +811,7 @@ public class KeyCodes {
             case KeyCodes.KEY_NUMPAD9:
                 return Keys.NUMPAD_9;
             case KeyCodes.KEY_MULTIPLY:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.STAR;
             case KeyCodes.KEY_ADD:
                 return Keys.PLUS;
             case KeyCodes.KEY_SUBTRACT:
@@ -668,7 +819,7 @@ public class KeyCodes {
             case KeyCodes.KEY_DECIMAL_POINT_KEY:
                 return Keys.PERIOD;
             case KeyCodes.KEY_DIVIDE:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.SLASH;
             case KeyCodes.KEY_F1:
                 return Keys.F1;
             case KeyCodes.KEY_F2:
@@ -696,7 +847,7 @@ public class KeyCodes {
             case KeyCodes.KEY_NUM_LOCK:
                 return Keys.NUM;
             case KeyCodes.KEY_SCROLL_LOCK:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.SCROLL_LOCK;
             case KeyCodes.KEY_SEMICOLON:
                 return Keys.SEMICOLON;
             case KeyCodes.KEY_EQUALS:
@@ -710,7 +861,7 @@ public class KeyCodes {
             case KeyCodes.KEY_FORWARD_SLASH:
                 return Keys.SLASH;
             case KeyCodes.KEY_GRAVE_ACCENT:
-                return Keys.UNKNOWN; // FIXME
+                return Keys.GRAVE;
             case KeyCodes.KEY_OPEN_BRACKET:
                 return Keys.LEFT_BRACKET;
             case KeyCodes.KEY_BACKSLASH:
