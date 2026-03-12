@@ -881,4 +881,52 @@ public class KeyCodes {
         if(button == BUTTON_MIDDLE) return Buttons.MIDDLE;
         return Buttons.LEFT;
     }
+
+    // ==================== Layout Label API ====================
+
+    /**
+     * Layout-specific key labels, indexed by libGDX {@link Keys} constant.
+     * Populated at runtime from {@code KeyboardEvent.key} as keys are pressed,
+     * so the map fills incrementally during normal use. On a QWERTY keyboard
+     * the labels match the positional names; on AZERTY, {@link Keys#W} would
+     * store "Z" (the character printed on that physical key).
+     *
+     * <p>Applications can use {@link #getLayoutLabel(int)} to display the
+     * user's actual key cap rather than the QWERTY positional name from
+     * {@link Keys#toString(int)}.</p>
+     */
+    private static final String[] layoutLabels = new String[Keys.MAX_KEYCODE + 1];
+
+    /**
+     * Records a layout-specific label for a libGDX key code. Called by
+     * {@link com.github.xpenatan.gdx.teavm.backends.web.WebInput} on each
+     * {@code keydown} event with the value of {@code KeyboardEvent.key}.
+     *
+     * @param gdxKeyCode a libGDX {@link Keys} constant
+     * @param label the upper-cased single-character label from the user's layout
+     */
+    public static void setLayoutLabel(int gdxKeyCode, String label) {
+        if (gdxKeyCode >= 0 && gdxKeyCode < layoutLabels.length) {
+            layoutLabels[gdxKeyCode] = label;
+        }
+    }
+
+    /**
+     * Returns the layout-specific label for a libGDX key code, or {@code null}
+     * if the key has not been pressed yet (or has no single-character label).
+     *
+     * <p>Use this instead of {@link Keys#toString(int)} when you want to show
+     * the character printed on the user's physical key. For example, on an
+     * AZERTY keyboard this returns "Z" for {@link Keys#W}, whereas
+     * {@code Keys.toString(Keys.W)} always returns "W".</p>
+     *
+     * @param gdxKeyCode a libGDX {@link Keys} constant
+     * @return the layout label, or {@code null} if unknown
+     */
+    public static String getLayoutLabel(int gdxKeyCode) {
+        if (gdxKeyCode >= 0 && gdxKeyCode < layoutLabels.length) {
+            return layoutLabels[gdxKeyCode];
+        }
+        return null;
+    }
 }
