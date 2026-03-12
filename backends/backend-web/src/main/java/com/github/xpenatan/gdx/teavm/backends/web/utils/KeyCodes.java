@@ -588,11 +588,11 @@ public class KeyCodes {
             case "Numpad7": return Keys.NUMPAD_7;
             case "Numpad8": return Keys.NUMPAD_8;
             case "Numpad9": return Keys.NUMPAD_9;
-            case "NumpadMultiply": return Keys.STAR;
-            case "NumpadAdd": return Keys.PLUS;
-            case "NumpadSubtract": return Keys.MINUS;
+            case "NumpadMultiply": return Keys.NUMPAD_MULTIPLY;
+            case "NumpadAdd": return Keys.NUMPAD_ADD;
+            case "NumpadSubtract": return Keys.NUMPAD_SUBTRACT;
             case "NumpadDecimal": return Keys.NUMPAD_DOT;
-            case "NumpadDivide": return Keys.SLASH;
+            case "NumpadDivide": return Keys.NUMPAD_DIVIDE;
             case "NumpadEnter": return Keys.NUMPAD_ENTER;
             case "NumLock": return Keys.NUM;
 
@@ -811,15 +811,15 @@ public class KeyCodes {
             case KeyCodes.KEY_NUMPAD9:
                 return Keys.NUMPAD_9;
             case KeyCodes.KEY_MULTIPLY:
-                return Keys.STAR;
+                return Keys.NUMPAD_MULTIPLY;
             case KeyCodes.KEY_ADD:
-                return Keys.PLUS;
+                return Keys.NUMPAD_ADD;
             case KeyCodes.KEY_SUBTRACT:
-                return Keys.MINUS;
+                return Keys.NUMPAD_SUBTRACT;
             case KeyCodes.KEY_DECIMAL_POINT_KEY:
-                return Keys.PERIOD;
+                return Keys.NUMPAD_DOT;
             case KeyCodes.KEY_DIVIDE:
-                return Keys.SLASH;
+                return Keys.NUMPAD_DIVIDE;
             case KeyCodes.KEY_F1:
                 return Keys.F1;
             case KeyCodes.KEY_F2:
