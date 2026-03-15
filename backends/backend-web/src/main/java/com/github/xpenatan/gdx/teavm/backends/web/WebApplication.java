@@ -213,7 +213,6 @@ public class WebApplication implements Application {
         Runnable appLoop = new Runnable() {
             @Override
             public void run() {
-                graphics.update();
                 step(curListener);
                 if(stepError) {
                     return;
@@ -226,7 +225,6 @@ public class WebApplication implements Application {
             @Override
             public void run() {
                 AppState state = initState;
-                graphics.update();
                 switch(state) {
                     case APP_LOOP:
                         step(curListener);
@@ -262,6 +260,7 @@ public class WebApplication implements Application {
         boolean resizeBypass = false;
 
         try {
+            graphics.begin();
 
             if(initState == AppState.INIT) {
                 initState = AppState.APP_LOOP;
@@ -294,6 +293,8 @@ public class WebApplication implements Application {
         } catch(Throwable t) {
             stepError = true;
             onError(t);
+        } finally {
+            graphics.end();
         }
     }
 
@@ -568,3 +569,4 @@ public class WebApplication implements Application {
         return new WebGLGraphics(config);
     }
 }
+
