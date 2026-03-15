@@ -8,9 +8,9 @@ dependencies {
 
 val mainClassName = "BuildTeaVMTestDemo"
 
-tasks.register<JavaExec>("basic_build_web") {
+tasks.register<JavaExec>("basic_run_web") {
     group = "examples-teavm"
-    description = "Build basic example"
+    description = "Run basic example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
 }
