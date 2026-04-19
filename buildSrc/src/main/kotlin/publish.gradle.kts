@@ -52,9 +52,9 @@ configure(libProjects) {
                         }
                     }
                     scm {
-                        connection.set("scm:git:git://https://github.com/xpenatan/gdx-teavm.git")
-                        developerConnection.set("scm:git:ssh://https://github.com/xpenatan/gdx-teavm.git")
-                        url.set("http://https://github.com/xpenatan/gdx-teavm/tree/master")
+                        connection.set("scm:git:https://github.com/xpenatan/gdx-teavm.git")
+                        developerConnection.set("scm:git:https://github.com/xpenatan/gdx-teavm.git")
+                        url.set("https://github.com/xpenatan/gdx-teavm")
                     }
                     licenses {
                         license {
