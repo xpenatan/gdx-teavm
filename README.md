@@ -14,7 +14,7 @@ For updated examples on how to run, see the [examples](./examples/) module in th
 
 The [gdx-teavm-examples](https://github.com/xpenatan/gdx-teavm-examples) is an external repository that may not reflect the latest updates.
 
-# Support
+## Support
 
 If you find this project valuable and want to fuel its continued growth, please consider [sponsoring](https://github.com/sponsors/xpenatan) it. Your support keeps the momentum going!
 
@@ -54,3 +54,7 @@ dependencies {
     implementation "com.github.xpenatan.gdx-teavm:gdx-controllers-teavm:$project.gdxTeaVMVersion"
 }
 ```
+
+## License
+
+gdx-teavm is licensed under the [Apache License 2.0](LICENSE).
