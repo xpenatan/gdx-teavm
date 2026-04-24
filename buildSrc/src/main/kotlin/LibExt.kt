@@ -15,7 +15,6 @@ object LibExt {
     const val jMultiplatform = "0.1.3"
 
     const val gdxImGuiVersion = "-SNAPSHOT"
-    const val gdxMultiViewVersion = "-SNAPSHOT"
 
     const val reflectionVersion = "0.10.2"
     const val jettyVersion = "11.0.13"

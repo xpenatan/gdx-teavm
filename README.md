@@ -14,7 +14,7 @@ For updated examples on how to run, see the [examples](./examples/) module in th
 
 The [gdx-teavm-examples](https://github.com/xpenatan/gdx-teavm-examples) is an external repository that may not reflect the latest updates.
 
-# Support
+## Support
 
 If you find this project valuable and want to fuel its continued growth, please consider [sponsoring](https://github.com/sponsors/xpenatan) it. Your support keeps the momentum going!
 
@@ -22,11 +22,7 @@ If you find this project valuable and want to fuel its continued growth, please 
 | gdx-teavm | LibGDX | TeaVM  |
 |:---------:|:------:|:------:|
 | -SNAPSHOT | 1.14.0 | 0.13.1 |
-|   1.5.2   | 1.14.0 | 0.13.1 |
-|   1.5.1   | 1.14.0 | 0.13.0 |
-|   1.5.0   | 1.14.0 | 0.13.0 |
-|   1.4.0   | 1.14.0 | 0.13.0 |
-|   1.3.3   | 1.14.0 | 0.12.3 |
+|   1.5.4   | 1.14.0 | 0.13.1 |
 
 ## Setup:
 ```groovy
@@ -58,3 +54,7 @@ dependencies {
     implementation "com.github.xpenatan.gdx-teavm:gdx-controllers-teavm:$project.gdxTeaVMVersion"
 }
 ```
+
+## License
+
+gdx-teavm is licensed under the [Apache License 2.0](LICENSE).
