@@ -6,11 +6,16 @@ dependencies {
     implementation(project(":extensions:gdx-freetype-teavm"))
 }
 
-val mainClassName = "BuildTeaVMTestDemo"
-
 tasks.register<JavaExec>("basic_run_web") {
     group = "examples-teavm"
     description = "Run basic example"
-    mainClass.set(mainClassName)
+    mainClass.set("BuildTeaVMTestDemo")
+    classpath = sourceSets["main"].runtimeClasspath
+}
+
+tasks.register<JavaExec>("basic_visui_run_web") {
+    group = "examples-teavm"
+    description = "Run basic VisUI example"
+    mainClass.set("BuildTeaVMVisUI")
     classpath = sourceSets["main"].runtimeClasspath
 }

@@ -76,11 +76,19 @@ public class AssetLoadingTask implements AsyncTask<Void> {
         String path = fileHandle.path();
         Files.FileType type = fileHandle.type();
         if(!fileHandle.extension().isEmpty() && !assetLoader.isAssetLoaded(type, path)) {
+            // If a previous download attempt already failed, surface a proper error
+            // (consistent with LWJGL3/GWT) instead of looping forever.
+            if(assetLoader.isAssetFailed(type, path)) {
+                throw new GdxRuntimeException("Couldn't load file: " + path);
+            }
             // Only try to download if contains extension and is not in queue or downloading.
             if(!assetLoader.isAssetInQueueOrDownloading(path)) {
                 count++;
                 if(count == 2) {
+                    // Download was attempted but the file never appeared and was not
+                    // explicitly reported as failed; bail out instead of spinning.
                     cancel = true;
+                    throw new GdxRuntimeException("Couldn't load file: " + path);
                 }
                 else {
                     assetLoader.loadAsset(path, AssetType.Binary, type, null);

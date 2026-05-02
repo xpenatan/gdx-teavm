@@ -40,6 +40,9 @@ public class AssetDownloadImpl implements AssetDownloader {
                 if(showLogs) {
                     System.err.println("Asset download failed: " + url);
                 }
+                if(listener != null) {
+                    listener.onFailure(url);
+                }
             }
 
             @Override

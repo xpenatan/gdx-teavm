@@ -42,6 +42,7 @@ public class AssetLoadImpl implements AssetLoader {
 
     private Array<QueueAsset> assetInQueue;
     private HashSet<String> assetDownloading;
+    private HashSet<String> assetFailed;
 
     private AssetDownloader assetDownloader;
 
@@ -52,6 +53,7 @@ public class AssetLoadImpl implements AssetLoader {
         baseUrl = newBaseURL;
         assetInQueue = new Array<>();
         assetDownloading = new HashSet<>();
+        assetFailed = new HashSet<>();
     }
 
     public void setupFileDrop(HTMLCanvasElement canvas, WebApplication teaApplication) {
@@ -217,6 +219,11 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
+    public boolean isAssetFailed(FileType fileType, String path) {
+        return assetFailed.contains(fixPath(path));
+    }
+
+    @Override
     public void loadAsset(String path, AssetType assetType, FileType fileType) {
         loadAssetInternal(path, assetType, fileType, null, false);
     }
@@ -290,6 +297,8 @@ public class AssetLoadImpl implements AssetLoader {
         queueAsset.fileHandle = fileHandle;
         queueAsset.listener = listener;
         assetInQueue.add(queueAsset);
+        // Clear any prior failure marker so retries can be attempted.
+        assetFailed.remove(path1);
     }
 
     private void downloadMultiAssets() {
@@ -322,6 +331,8 @@ public class AssetLoadImpl implements AssetLoader {
             @Override
             public void onFailure(String url) {
                 assetDownloading.remove(assetPath);
+                assetFailed.add(assetPath);
+                System.err.println("ErrorLoading: " + assetPath);
                 if(listener != null) {
                     listener.onFailure(assetPath);
                 }
@@ -331,6 +342,7 @@ public class AssetLoadImpl implements AssetLoader {
             @Override
             public void onSuccess(String url, WebBlob result) {
                 assetDownloading.remove(assetPath);
+                assetFailed.remove(assetPath);
                 Int8Array data = result.getData();
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 OutputStream output = fileHandle.write(false, 4096);

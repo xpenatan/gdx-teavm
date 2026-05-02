@@ -32,6 +32,27 @@ public class TeaCompiler {
         return this;
     }
 
+    /**
+     * Add an asset entry to be copied into the {@code assets/} folder.
+     *
+     * <p>Two modes, selected by the handle's {@link com.badlogic.gdx.Files.FileType FileType}:</p>
+     * <ul>
+     *   <li><b>Disk folder</b> – any non-classpath {@code FileType}: the handle points
+     *       to a directory on disk that gets recursively copied. Manifest entries are
+     *       emitted with the handle's destination type.</li>
+     *   <li><b>Classpath resource</b> – {@code FileType.Classpath}: the string is treated
+     *       as a classpath path (e.g. {@code "com/kotcrab/vis/ui/skin/x1"} or its dotted
+     *       equivalent {@code "com.kotcrab.vis.ui.skin.x1"}). Files are looked up via
+     *       the build classloader, copied to {@code assets/<resource-path>/...} and
+     *       registered as classpath assets so {@code Gdx.files.classpath(...)} resolves
+     *       them at runtime.</li>
+     * </ul>
+     *
+     * <pre>
+     * teaCompiler.addAssets(new AssetFileHandle("assets"));                                     // disk folder
+     * teaCompiler.addAssets(new AssetFileHandle("com/kotcrab/vis/ui/skin/x1", FileType.Classpath));  // jar resource
+     * </pre>
+     */
     public TeaCompiler addAssets(AssetFileHandle assetsPath) {
         data.assets.add(assetsPath);
         return this;
@@ -69,11 +90,6 @@ public class TeaCompiler {
 
     public TeaCompiler setMinDirectBuffersSize(int minDirectBuffersSize) {
         data.minDirectBuffersSize = minDirectBuffersSize;
-        return this;
-    }
-
-    public TeaCompiler setMaxDirectBuffersSize(int maxDirectBuffersSize) {
-        data.maxDirectBuffersSize = maxDirectBuffersSize;
         return this;
     }
 

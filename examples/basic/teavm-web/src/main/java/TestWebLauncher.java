@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GLTFQuickStartExample;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.VisUITest;
 
 public class TestWebLauncher {
 
@@ -11,7 +11,8 @@ public class TestWebLauncher {
         config.showDownloadLogs = true;
         config.useGL30 = true;
 //        new TeaApplication(new LoadingTest(), config);
-        new WebApplication(new GLTFQuickStartExample(), config);
+//        new WebApplication(new GLTFQuickStartExample(), config);
+        new WebApplication(new VisUITest(), config);
 //        new TeaApplication(new ReflectionTest(), config);
 //        new TeaApplication(new UITest(), config);
 

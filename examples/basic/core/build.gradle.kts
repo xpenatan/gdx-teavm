@@ -1,5 +1,6 @@
 dependencies {
     implementation("io.github.quillraven.fleks:Fleks:2.12")
+    implementation("com.kotcrab.vis:vis-ui:1.5.8")
 
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation("com.badlogicgames.gdx:gdx-box2d:${LibExt.gdxVersion}")
