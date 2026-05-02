@@ -1,9 +1,11 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.ClasspathResourceWalker;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
@@ -332,9 +334,17 @@ public abstract class TeaBackend {
 
         ArrayList<AssetsCopy.Asset> allAssets = new ArrayList<>();
 
-        // 1. Copy user-supplied asset folders (FileType from source -> typically Internal).
+        // 1. Copy user-supplied asset entries.
+        //    - FileType.Classpath  -> resolve through the build classloader (jar walk).
+        //    - any other FileType  -> copy from disk (existing behavior).
         for(AssetFileHandle assetFileHandle : data.assets) {
-            allAssets.addAll(AssetsCopy.copyAssets(assetFileHandle, assetFilter, assetsFolder));
+            if(assetFileHandle.isClasspathResource()) {
+                AssetFilter f = assetFileHandle.filter != null ? assetFileHandle.filter : assetFilter;
+                copyClasspathEntry(assetFileHandle.getClasspathResource(), f, assetsFolder, allAssets);
+            }
+            else {
+                allAssets.addAll(AssetsCopy.copyAssets(assetFileHandle, assetFilter, assetsFolder));
+            }
         }
 
         // 2. Auto-discover resources via META-INF/gdx-teavm.properties.
@@ -342,20 +352,14 @@ public abstract class TeaBackend {
         List<String> internalResources = partitionResources(collected.internalResources);
 
         // 2a. Copy auto-discovered "internal" resources (FileType.Classpath at runtime; matches previous behavior).
-        allAssets.addAll(AssetsCopy.copyResources(classLoader, internalResources, assetFilter, assetsFolder, com.badlogic.gdx.Files.FileType.Classpath));
+        allAssets.addAll(AssetsCopy.copyResources(classLoader, internalResources, assetFilter, assetsFolder, FileType.Classpath));
 
-        // 2b. Copy auto-discovered classpath-resources= entries.
+        // 2b. Copy auto-discovered classpath-resources= entries declared by libraries.
         for(String resourcePath : collected.classpathResourcePaths) {
             copyClasspathEntry(resourcePath, assetFilter, assetsFolder, allAssets);
         }
 
-        // 3. Copy user-supplied addClasspathAssets(...) entries.
-        for(ClasspathAssetEntry entry : data.classpathAssets) {
-            AssetFilter f = entry.filter != null ? entry.filter : assetFilter;
-            copyClasspathEntry(entry.resourcePath, f, assetsFolder, allAssets);
-        }
-
-        // 4. Single manifest write.
+        // 3. Single manifest write.
         AssetsCopy.generateAssetsFile(allAssets, assetsFolder, assetFile);
     }
 
@@ -389,12 +393,12 @@ public abstract class TeaBackend {
      * {@code Gdx.files.classpath(...)} resolves naturally at runtime.
      */
     private void copyClasspathEntry(String resourcePath, AssetFilter filter, FileHandle assetsFolder, ArrayList<AssetsCopy.Asset> out) {
-        List<String> paths = com.github.xpenatan.gdx.teavm.backends.shared.config.ClasspathResourceWalker
-                .listResources(classLoader, resourcePath, com.github.xpenatan.gdx.teavm.backends.shared.config.ClasspathResourceWalker.DEFAULT_FILTER);
+        List<String> paths = ClasspathResourceWalker
+                .listResources(classLoader, resourcePath, ClasspathResourceWalker.DEFAULT_FILTER);
         if(paths.isEmpty()) {
-            TeaLogHelper.log("addClasspathAssets: no resources found for '" + resourcePath + "'");
+            TeaLogHelper.log("Classpath assets: no resources found for '" + resourcePath + "'");
             return;
         }
-        out.addAll(AssetsCopy.copyResources(classLoader, paths, filter, assetsFolder, com.badlogic.gdx.Files.FileType.Classpath));
+        out.addAll(AssetsCopy.copyResources(classLoader, paths, filter, assetsFolder, FileType.Classpath));
     }
 }

@@ -16,7 +16,6 @@ public class TeaCompilerData {
     public File releasePath;
     public File output;
     public final ArrayList<AssetFileHandle> assets = new ArrayList<>();
-    public final ArrayList<ClasspathAssetEntry> classpathAssets = new ArrayList<>();
     public final ArrayList<SourceFileProvider> sourceFileProviders = new ArrayList<>();
     public boolean debugInformationGenerated;
     public boolean sourceMapsFileGenerated;
