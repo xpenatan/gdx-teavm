@@ -86,7 +86,6 @@ public abstract class TeaBackend {
         tool.setMinHeapSize(data.minHeapSize);
         tool.setMaxHeapSize(data.maxHeapSize);
         tool.setMinDirectBuffersSize(data.minDirectBuffersSize);
-        tool.setMaxDirectBuffersSize(data.maxDirectBuffersSize);
         tool.setTargetFileName(data.outputName);
         tool.setProgressListener(obtainProgressListener());
     }

@@ -72,11 +72,6 @@ public class TeaCompiler {
         return this;
     }
 
-    public TeaCompiler setMaxDirectBuffersSize(int maxDirectBuffersSize) {
-        data.maxDirectBuffersSize = maxDirectBuffersSize;
-        return this;
-    }
-
     public TeaCompiler setReflectionListener(DefaultReflectionListener reflectionListener) {
         data.reflectionListener = reflectionListener;
         return this;
