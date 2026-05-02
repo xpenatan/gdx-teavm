@@ -1,9 +1,9 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.web.config.TeaBuilder;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
 import java.io.File;
@@ -176,7 +176,7 @@ public class WebBackend extends TeaBackend {
         FileHandle webXMLFile = releasePath.child("WEB-INF").child("web.xml");
         indexHandler.writeString(indexHtml, false);
         webXMLFile.writeString(webXML, false);
-        AssetsCopy.copyResources(classLoader, rootAssets, null, assetsFolder);
+        AssetsCopy.copyResources(classLoader, rootAssets, null, assetsFolder, FileType.Classpath);
     }
 
     public static void copyRuntime(File setTargetDirectory) {
@@ -184,7 +184,7 @@ public class WebBackend extends TeaBackend {
             var name = new StringBuilder("wasm-gc-runtime.min");
             setTargetDirectory.mkdirs();
             var resourceName = "org/teavm/backend/wasm/" + name + ".js";
-            var classLoader = TeaBuilder.class.getClassLoader();
+            var classLoader = WebBackend.class.getClassLoader();
             try (var input = classLoader.getResourceAsStream(resourceName)) {
                 Files.copy(input, setTargetDirectory.toPath().resolve(name + ".js"), StandardCopyOption.REPLACE_EXISTING);
             }
@@ -197,6 +197,6 @@ public class WebBackend extends TeaBackend {
     protected void copyAssets(TeaCompilerData data) {
         super.copyAssets(data);
         FileHandle scriptsFolder = releasePath.child("scripts");
-        AssetsCopy.copyResources(classLoader, scripts, scriptFilter, scriptsFolder);
+        AssetsCopy.copyResources(classLoader, scripts, scriptFilter, scriptsFolder, FileType.Classpath);
     }
 }

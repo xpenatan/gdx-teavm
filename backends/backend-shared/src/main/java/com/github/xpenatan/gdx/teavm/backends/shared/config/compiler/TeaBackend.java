@@ -322,52 +322,79 @@ public abstract class TeaBackend {
     }
 
     protected void copyAssets(TeaCompilerData data) {
-        FileHandle assetsFolder = releasePath.child("assets");
+        FileHandle assetsFolder = releasePath.child(ASSETS_FOLDER_NAME);
         FileHandle assetFile = assetsFolder.child(TeaAssets.ASSETS_FILE_NAME);
 
+        // Delete previous manifest before regenerating.
         if(assetFile.exists()) {
-            // Delete assets.txt before adding the updated list.
             assetFile.delete();
         }
 
         ArrayList<AssetsCopy.Asset> allAssets = new ArrayList<>();
-        // Copy Assets files
-        ArrayList<AssetFileHandle> assetsPaths = data.assets;
-        for(int i = 0; i < assetsPaths.size(); i++) {
-            AssetFileHandle assetFileHandle = assetsPaths.get(i);
-            ArrayList<AssetsCopy.Asset> assets = AssetsCopy.copyAssets(assetFileHandle, assetFilter, assetsFolder);
-            allAssets.addAll(assets);
+
+        // 1. Copy user-supplied asset folders (FileType from source -> typically Internal).
+        for(AssetFileHandle assetFileHandle : data.assets) {
+            allAssets.addAll(AssetsCopy.copyAssets(assetFileHandle, assetFilter, assetsFolder));
         }
+
+        // 2. Auto-discover resources via META-INF/gdx-teavm.properties.
+        TeaVMResourceProperties.CollectedResources collected = TeaVMResourceProperties.collect(acceptedURL);
+        List<String> internalResources = partitionResources(collected.internalResources);
+
+        // 2a. Copy auto-discovered "internal" resources (FileType.Classpath at runtime; matches previous behavior).
+        allAssets.addAll(AssetsCopy.copyResources(classLoader, internalResources, assetFilter, assetsFolder, com.badlogic.gdx.Files.FileType.Classpath));
+
+        // 2b. Copy auto-discovered classpath-resources= entries.
+        for(String resourcePath : collected.classpathResourcePaths) {
+            copyClasspathEntry(resourcePath, assetFilter, assetsFolder, allAssets);
+        }
+
+        // 3. Copy user-supplied addClasspathAssets(...) entries.
+        for(ClasspathAssetEntry entry : data.classpathAssets) {
+            AssetFilter f = entry.filter != null ? entry.filter : assetFilter;
+            copyClasspathEntry(entry.resourcePath, f, assetsFolder, allAssets);
+        }
+
+        // 4. Single manifest write.
         AssetsCopy.generateAssetsFile(allAssets, assetsFolder, assetFile);
+    }
 
-        // Copy assets from resources
-        List<String> propertiesResources = TeaVMResourceProperties.getResources(acceptedURL);
-
-        // Filter out JavaScript and C code
-        for(int i = 0; i < propertiesResources.size(); i++) {
-            String asset = propertiesResources.get(i);
+    /**
+     * Strip out script/native artifacts from auto-discovered resources, accumulating
+     * them in {@link #scripts} / {@link #cppFiles} for backend-specific handling.
+     */
+    private List<String> partitionResources(List<String> resources) {
+        ArrayList<String> remaining = new ArrayList<>(resources.size());
+        for(String asset : resources) {
             if(asset.endsWith(".js") || asset.endsWith(".wasm")) {
-                propertiesResources.remove(i);
                 scripts.add(asset);
-                i--;
             }
             else if(asset.startsWith("/external_cpp/")) {
-                if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h") || asset.endsWith(".c") || asset.endsWith(".cpp")) {
+                if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h")
+                        || asset.endsWith(".c") || asset.endsWith(".cpp")) {
                     cppFiles.add(asset);
                 }
-                propertiesResources.remove(i);
-                i--;
+                // any other /external_cpp/ payload is intentionally dropped
+            }
+            else {
+                remaining.add(asset);
             }
         }
+        return remaining;
+    }
 
-        // TODO add custom classpath option
-        // Copy additional classpath files
-//        ArrayList<String> classPathAssetsFiles = configuration.assetsClasspath;
-//        ArrayList<AssetsCopy.Asset> classpathAssets = AssetsCopy.copyResources(classLoader, classPathAssetsFiles, filter, assetsFolder);
-//        AssetsCopy.generateAssetsFile(classpathAssets, assetsFolder, assetFile);
-
-        // Copy resources
-        ArrayList<AssetsCopy.Asset> resourceAssets = AssetsCopy.copyResources(classLoader, propertiesResources, assetFilter, assetsFolder);
-        AssetsCopy.generateAssetsFile(resourceAssets, assetsFolder, assetFile);
+    /**
+     * Walk a classpath path (file or directory) found anywhere on the build classpath
+     * and copy every matching file under {@code assets/<resourcePath>/...} so that
+     * {@code Gdx.files.classpath(...)} resolves naturally at runtime.
+     */
+    private void copyClasspathEntry(String resourcePath, AssetFilter filter, FileHandle assetsFolder, ArrayList<AssetsCopy.Asset> out) {
+        List<String> paths = com.github.xpenatan.gdx.teavm.backends.shared.config.ClasspathResourceWalker
+                .listResources(classLoader, resourcePath, com.github.xpenatan.gdx.teavm.backends.shared.config.ClasspathResourceWalker.DEFAULT_FILTER);
+        if(paths.isEmpty()) {
+            TeaLogHelper.log("addClasspathAssets: no resources found for '" + resourcePath + "'");
+            return;
+        }
+        out.addAll(AssetsCopy.copyResources(classLoader, paths, filter, assetsFolder, com.badlogic.gdx.Files.FileType.Classpath));
     }
 }

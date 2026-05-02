@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
 import java.io.File;
 import org.teavm.tooling.TeaVMSourceFilePolicy;
@@ -34,6 +35,33 @@ public class TeaCompiler {
 
     public TeaCompiler addAssets(AssetFileHandle assetsPath) {
         data.assets.add(assetsPath);
+        return this;
+    }
+
+    /**
+     * Copy a classpath resource (file or directory) into the {@code assets/}
+     * folder and register it as {@link com.badlogic.gdx.Files.FileType#Classpath}
+     * so {@code Gdx.files.classpath(resourcePath)} resolves at runtime.
+     *
+     * <p>Example:</p>
+     * <pre>
+     * teaCompiler.addClasspathAssets("com/kotcrab/vis/ui/skin/x1");
+     * </pre>
+     *
+     * <p>The resource is resolved through the build classpath, so any jar that
+     * exposes the path (e.g. {@code vis-ui.jar}) participates automatically.</p>
+     *
+     * @param resourcePath classpath path, e.g. {@code com/kotcrab/vis/ui/skin/x1}
+     *                     or a single file like {@code com/foo/bar.json}.
+     */
+    public TeaCompiler addClasspathAssets(String resourcePath) {
+        data.classpathAssets.add(new ClasspathAssetEntry(resourcePath));
+        return this;
+    }
+
+    /** {@link #addClasspathAssets(String)} with an entry-specific filter. */
+    public TeaCompiler addClasspathAssets(String resourcePath, AssetFilter filter) {
+        data.classpathAssets.add(new ClasspathAssetEntry(resourcePath, filter));
         return this;
     }
 

@@ -11,34 +11,19 @@ public class AssetFileHandle extends FileHandle {
     public String assetsChildDir = "";
     public AssetFilter filter;
 
-    public static AssetFileHandle createHandle(String fileName, FileType type) {
-        return new AssetFileHandle(fileName, FileType.Absolute, type);
-    }
-
-    public static AssetFileHandle createHandle(File file, FileType type) {
-        return new AssetFileHandle(file, FileType.Absolute, type);
-    }
-
-    public static AssetFileHandle createCopyHandle(String fileName, FileType type, String assetsChildDir) {
-        return createCopyHandle(fileName, type, assetsChildDir, null);
-    }
-
-    public static AssetFileHandle createCopyHandle(String fileName, FileType type, String assetsChildDir, AssetFilter filter) {
-        AssetFileHandle assetFileHandle = new AssetFileHandle(fileName, FileType.Absolute, type);
-        assetFileHandle.assetsChildDir = assetsChildDir;
-        assetFileHandle.filter = filter;
-        return assetFileHandle;
-    }
-
     public AssetFileHandle(String fileName) {
         this(new File(fileName), FileType.Absolute, FileType.Internal);
     }
 
-    private AssetFileHandle(String fileName, FileType type, FileType copyType) {
+    public AssetFileHandle(String fileName, FileType type) {
+        this(new File(fileName), type, type);
+    }
+
+    public AssetFileHandle(String fileName, FileType type, FileType copyType) {
         this(new File(fileName), type, copyType);
     }
 
-    private AssetFileHandle(File file, FileType type, FileType copyType) {
+    public AssetFileHandle(File file, FileType type, FileType copyType) {
         this.type = type;
         this.copyType = copyType;
         this.file = file;

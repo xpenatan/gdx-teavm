@@ -3,213 +3,177 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Reads {@code META-INF/gdx-teavm.properties} from libraries on the classpath
+ * to opt-in resources that should be copied to the {@code assets/} folder.
+ *
+ * <p>Supported keys (one per line, repeatable):</p>
+ * <ul>
+ *   <li>{@code resources=<substring>} – additional jar paths whose contents should be copied.</li>
+ *   <li>{@code ignore-resources=<substring>} – substrings to drop from copied resources.</li>
+ *   <li>{@code classpath-resources=<resource-path>} – classpath paths whose contents should
+ *       be copied <i>and registered as {@code FileType.Classpath}</i> in the preload manifest.
+ *       Equivalent to the user calling
+ *       {@code TeaCompiler#addClasspathAssets(String)}.</li>
+ * </ul>
+ */
 public class TeaVMResourceProperties {
     private static final String OPTION_ADDITIONAL_RESOURCES = "resources";
     private static final String OPTION_IGNORE_RESOURCES = "ignore-resources";
+    private static final String OPTION_CLASSPATH_RESOURCES = "classpath-resources";
 
-    public String path;
-
-    public ArrayList<String> additionalPath = new ArrayList<>();
-    public ArrayList<String> ignorePath = new ArrayList<>();
+    public final String path;
+    public final ArrayList<String> additionalPath = new ArrayList<>();
+    public final ArrayList<String> ignorePath = new ArrayList<>();
+    public final ArrayList<String> classpathResources = new ArrayList<>();
 
     public TeaVMResourceProperties(String path, String content) {
         this.path = path;
-
-        Scanner scanner = new Scanner(content);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
-            String[] split = line.split("=");
-            if(split.length == 2) {
-                String option = split[0].trim();
-                String value = split[1].trim();
-                if(!option.isEmpty() && !value.isEmpty()) {
-                    setupOption(option, value);
-                }
+        try(Scanner scanner = new Scanner(content)) {
+            while(scanner.hasNextLine()) {
+                String line = scanner.nextLine().trim();
+                if(line.isEmpty() || line.startsWith("#")) continue;
+                int eq = line.indexOf('=');
+                if(eq <= 0) continue;
+                String option = line.substring(0, eq).trim();
+                String value = line.substring(eq + 1).trim();
+                if(option.isEmpty() || value.isEmpty()) continue;
+                setupOption(option, value);
             }
         }
-        scanner.close();
     }
 
     private void setupOption(String option, String value) {
-        if(option.equals(OPTION_ADDITIONAL_RESOURCES)) {
-            additionalPath.add(value);
-        }
-        if(option.equals(OPTION_IGNORE_RESOURCES)) {
-            ignorePath.add(value);
+        switch(option) {
+            case OPTION_ADDITIONAL_RESOURCES:
+                additionalPath.add(value);
+                break;
+            case OPTION_IGNORE_RESOURCES:
+                ignorePath.add(value);
+                break;
+            case OPTION_CLASSPATH_RESOURCES:
+                classpathResources.add(value);
+                break;
         }
     }
-    public static List<String> getResources(ArrayList<URL> acceptedURL) {
-        // Get all resources
+
+    /** Aggregates everything declared by all {@code gdx-teavm.properties} files on the classpath. */
+    public static class CollectedResources {
+        /** Files to copy as plain {@code FileType.Internal} assets. */
+        public final ArrayList<String> internalResources = new ArrayList<>();
+        /** Resource paths to copy as {@code FileType.Classpath} assets (auto-discovered). */
+        public final ArrayList<String> classpathResourcePaths = new ArrayList<>();
+    }
+
+    /**
+     * Walk all jars looking for {@code META-INF/gdx-teavm.properties}, then resolve
+     * the declared additional jars / ignore filters / classpath resource paths.
+     */
+    public static CollectedResources collect(ArrayList<URL> acceptedURL) {
         ArrayList<TeaVMResourceProperties> propertiesList = getAllProperties(acceptedURL);
-        ArrayList<URI> filteredUrl = new ArrayList<>();
+
+        // Pass 1: aggregate every ignore filter once, regardless of order.
         HashSet<String> ignoreResources = new HashSet<>();
+        for(TeaVMResourceProperties p : propertiesList) {
+            ignoreResources.addAll(p.ignorePath);
+        }
+
+        // Pass 2: determine which classpath URLs we should walk for plain resources.
+        LinkedHashSet<URL> filteredUrls = new LinkedHashSet<>();
         for(URL url : acceptedURL) {
-            String path = url.getPath();
-            boolean accept = false;
-            for(TeaVMResourceProperties properties : propertiesList) {
-                ignoreResources.addAll(properties.ignorePath);
-                // Accept if properties exist in current path
-                if(path.contains(properties.path)) {
-                    accept = true;
-                    break;
-                }
-                for(String additionalPath : properties.additionalPath) {
-                    // Check if the jar path contains in properties
-                    if(path.contains(additionalPath)) {
-                        accept = true;
-                        break;
-                    }
-                }
-
-                if(accept) {
+            String urlPath = decodedPath(url);
+            for(TeaVMResourceProperties p : propertiesList) {
+                if(matches(urlPath, p)) {
+                    filteredUrls.add(url);
                     break;
                 }
             }
-            if(accept) {
-                URI uri = URI.create("jar:file:" + path);
-                filteredUrl.add(uri);
-            }
         }
 
-        ArrayList<String> result = new ArrayList<>();
-        for(URI uri : filteredUrl) {
-            ArrayList<String> pathsFromResource = getPathsFromResource(uri, ".");
-            for(String resource : pathsFromResource) {
-                if(!containsResource(resource, ignoreResources)) {
-                    result.add(resource);
+        CollectedResources out = new CollectedResources();
+        for(URL url : filteredUrls) {
+            List<String> list = ClasspathResourceWalker.listAll(url, ClasspathResourceWalker.DEFAULT_FILTER);
+            for(String res : list) {
+                if(!containsResource(res, ignoreResources)) {
+                    out.internalResources.add(res);
                 }
             }
         }
-        return result;
+
+        // Aggregate explicit classpath-resources= declarations.
+        for(TeaVMResourceProperties p : propertiesList) {
+            out.classpathResourcePaths.addAll(p.classpathResources);
+        }
+        return out;
+    }
+
+    private static boolean matches(String urlPath, TeaVMResourceProperties p) {
+        if(urlPath.contains(p.path)) return true;
+        for(String additional : p.additionalPath) {
+            if(urlPath.contains(additional)) return true;
+        }
+        return false;
     }
 
     private static boolean containsResource(String resource, HashSet<String> ignoreResources) {
         for(String ignore : ignoreResources) {
-            if(resource.contains(ignore)) {
-                return true;
-            }
+            if(resource.contains(ignore)) return true;
         }
         return false;
     }
 
     private static ArrayList<TeaVMResourceProperties> getAllProperties(ArrayList<URL> acceptedURL) {
-        ArrayList<String> filteredUrl = new ArrayList<>();
-        for(URL url : acceptedURL) {
-            String path = url.getPath();
-            path = URLDecoder.decode(path, StandardCharsets.UTF_8);
-            boolean accept = !(
-                    !(path.endsWith(".jar")) ||
-                            path.contains("org.teavm"
-                            ));
-            if(accept) {
-                filteredUrl.add(path);
-            }
-        }
         ArrayList<TeaVMResourceProperties> result = new ArrayList<>();
-        for(String path : filteredUrl) {
-            TeaVMResourceProperties properties = getProperties(path);
-            if(properties != null) {
-                result.add(properties);
-            }
+        for(URL url : acceptedURL) {
+            String urlPath = decodedPath(url);
+            if(!urlPath.endsWith(".jar")) continue;
+            if(urlPath.contains("org.teavm")) continue;
+            TeaVMResourceProperties properties = readProperties(urlPath);
+            if(properties != null) result.add(properties);
         }
         return result;
     }
 
-    private static TeaVMResourceProperties getProperties(String path) {
-        try {
-            try(ZipFile zipFile = new ZipFile(path)) {
-                ZipEntry propertyEntry = zipFile.getEntry("META-INF/gdx-teavm.properties");
-                if(propertyEntry != null) {
-                    InputStream inputStream = zipFile.getInputStream(propertyEntry);
-                    String content = readString(inputStream, null);
-                    inputStream.close();
-                    return new TeaVMResourceProperties(path, content);
-                }
+    private static String decodedPath(URL url) {
+        return URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8);
+    }
+
+    private static TeaVMResourceProperties readProperties(String path) {
+        try(ZipFile zipFile = new ZipFile(path)) {
+            ZipEntry entry = zipFile.getEntry("META-INF/gdx-teavm.properties");
+            if(entry == null) return null;
+            try(InputStream in = zipFile.getInputStream(entry)) {
+                return new TeaVMResourceProperties(path, readString(in, null));
             }
         } catch(IOException e) {
+            return null;
         }
-        return null;
     }
 
     public static String readString(InputStream in, String charset) {
-        StringBuilder output = new StringBuilder(512);
-        InputStreamReader reader = null;
-        try {
-            if(charset == null)
-                reader = new InputStreamReader(in);
-            else
-                reader = new InputStreamReader(in, charset);
-            char[] buffer = new char[256];
-            while(true) {
-                int length = reader.read(buffer);
-                if(length == -1) break;
-                output.append(buffer, 0, length);
+        StringBuilder out = new StringBuilder(512);
+        try(InputStreamReader reader = (charset == null)
+                ? new InputStreamReader(in, StandardCharsets.UTF_8)
+                : new InputStreamReader(in, charset)) {
+            char[] buf = new char[2048];
+            int n;
+            while((n = reader.read(buf)) != -1) {
+                out.append(buf, 0, n);
             }
-        } catch(IOException ex) {
-            throw new RuntimeException("Error reading resource zip file", ex);
-        } finally {
-            try {
-                if(reader != null) reader.close();
-            } catch(IOException ignored) {
-            }
-        }
-        return output.toString();
-    }
-
-    private static ArrayList<String> getPathsFromResource(URI uri, String folder) {
-        ArrayList<String> result = new ArrayList<>();
-        List<Path> resultPath = null;
-
-        try(FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
-            resultPath = Files.walk(fs.getPath(folder))
-                    .filter(Files::isRegularFile)
-                    .filter(new Predicate<Path>() {
-                        @Override
-                        public boolean test(Path path) {
-                            String pathStr = path.toString();
-                            boolean isValid = !(
-                                    pathStr.endsWith(".java") ||
-                                            pathStr.endsWith(".class") ||
-                                            pathStr.contains("META-INF") ||
-                                            pathStr.contains("WEB-INF") ||
-                                            pathStr.endsWith(".html") ||
-                                            pathStr.endsWith(".gwt.xml") ||
-                                            pathStr.endsWith(".rl")
-                            );
-                            return isValid;
-                        }
-                    })
-                    .collect(Collectors.toList());
         } catch(IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error reading resource", e);
         }
-        if(resultPath != null) {
-            for(Path path : resultPath) {
-                String string = path.toString();
-                if(string.startsWith(".")) {
-                    string = string.replaceFirst("\\.", "");
-                }
-                result.add(string);
-            }
-        }
-        return result;
+        return out.toString();
     }
 }

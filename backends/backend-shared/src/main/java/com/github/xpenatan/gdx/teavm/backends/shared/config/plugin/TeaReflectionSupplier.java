@@ -54,7 +54,7 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     /**
-     * Must be called after TeaBuilder.build
+     * Must be called after {@code TeaCompiler.build}.
      */
     public static void printReflectionClasses() {
         TeaLogHelper.logHeader("REFLECTION CLASSES: " + clazzList.size());
