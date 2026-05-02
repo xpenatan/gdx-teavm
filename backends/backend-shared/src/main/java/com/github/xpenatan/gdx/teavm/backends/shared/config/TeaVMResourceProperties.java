@@ -3,6 +3,8 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -120,10 +123,89 @@ public class TeaVMResourceProperties {
 
     private static boolean matches(String urlPath, TeaVMResourceProperties p) {
         if(urlPath.contains(p.path)) return true;
+        if(matchesMainJarArtifact(urlPath, p.path)) return true;
         for(String additional : p.additionalPath) {
-            if(urlPath.contains(additional)) return true;
+            if(matchesSelector(urlPath, additional)) return true;
         }
         return false;
+    }
+
+    /**
+     * If a jar contains gdx-teavm.properties, allow sibling classifier jars
+     * from the same artifact/version (e.g. runtime-web-1.0.jar -> runtime-web-1.0-wasm.jar).
+     */
+    private static boolean matchesMainJarArtifact(String urlPath, String mainJarPath) {
+        String candidateStem = fileStem(urlPath);
+        String mainStem = fileStem(mainJarPath);
+        if(mainStem.isEmpty() || candidateStem.isEmpty()) return false;
+        return candidateStem.startsWith(mainStem + "-");
+    }
+
+    private static String fileStem(String path) {
+        String normalized = normalize(path);
+        int slash = normalized.lastIndexOf('/');
+        String name = slash >= 0 ? normalized.substring(slash + 1) : normalized;
+        if(!name.endsWith(".jar")) return "";
+        return name.substring(0, name.length() - 4);
+    }
+
+    private static boolean matchesSelector(String urlPath, String selector) {
+        if(urlPath.contains(selector)) return true;
+
+        String path = normalize(urlPath);
+        String value = selector == null ? "" : selector.trim();
+        if(value.isEmpty()) return false;
+
+        // Accept maven-ish selectors used in gdx-teavm.properties:
+        // artifact, artifact:classifier, group:artifact, group:artifact:classifier
+        String[] split = value.split(":");
+        if(split.length == 1) {
+            return path.contains(normalize(split[0]));
+        }
+
+        if(split.length == 2) {
+            if(split[0].contains(".")) {
+                return matchesGroupArtifact(path, split[0], split[1]);
+            }
+            return matchesArtifactClassifier(path, split[0], split[1]);
+        }
+
+        if(split[0].contains(".")) {
+            return matchesGroupArtifact(path, split[0], split[1])
+                    && matchesClassifier(path, split[split.length - 1]);
+        }
+
+        return matchesArtifactClassifier(path, split[0], split[split.length - 1]);
+    }
+
+    private static boolean matchesGroupArtifact(String normalizedPath, String group, String artifact) {
+        String groupPath = "/" + normalize(group.replace('.', '/')) + "/";
+        String artifactPath = "/" + normalize(artifact) + "/";
+        return normalizedPath.contains(groupPath + normalize(artifact) + "/")
+                || normalizedPath.contains(groupPath) && normalizedPath.contains(artifactPath)
+                || normalizedPath.contains(normalize(group + ":" + artifact));
+    }
+
+    private static boolean matchesArtifactClassifier(String normalizedPath, String artifact, String classifier) {
+        String artifactToken = normalize(artifact);
+        String classifierToken = normalize(classifier);
+        if(artifactToken.isEmpty() || classifierToken.isEmpty()) return false;
+        return matchesArtifact(normalizedPath, artifactToken) && matchesClassifier(normalizedPath, classifierToken);
+    }
+
+    private static boolean matchesArtifact(String normalizedPath, String artifactToken) {
+        return normalizedPath.contains("/" + artifactToken + "/")
+                || normalizedPath.contains("/" + artifactToken + "-")
+                || normalizedPath.endsWith("/" + artifactToken + ".jar");
+    }
+
+    private static boolean matchesClassifier(String normalizedPath, String classifierToken) {
+        return normalizedPath.contains("-" + classifierToken + ".jar")
+                || normalizedPath.contains("-" + classifierToken + "-");
+    }
+
+    private static String normalize(String value) {
+        return value.toLowerCase(Locale.ROOT).replace('\\', '/');
     }
 
     private static boolean containsResource(String resource, HashSet<String> ignoreResources) {
@@ -146,6 +228,12 @@ public class TeaVMResourceProperties {
     }
 
     private static String decodedPath(URL url) {
+        try {
+            if("file".equals(url.getProtocol())) {
+                return new File(url.toURI()).getAbsolutePath();
+            }
+        } catch(URISyntaxException ignored) {
+        }
         return URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8);
     }
 
