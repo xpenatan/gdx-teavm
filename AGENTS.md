@@ -53,5 +53,3 @@
 ## Conventions discovered from existing docs
 - Root `README.md` positions this repo as libGDX + TeaVM backend with optional Emscripten/JNI glue.
 - `examples/basic/teavm-glfw/README.md` is the authoritative native build doc (CMake + Visual Studio workflow after code generation).
-
-
