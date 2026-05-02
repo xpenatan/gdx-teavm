@@ -21,6 +21,9 @@ public interface AssetLoader {
 
     boolean isAssetLoaded(FileType fileType, String path);
 
+    /** Return true if a previous load attempt for the asset failed (e.g. file not found). */
+    boolean isAssetFailed(FileType fileType, String path);
+
     /**
      * Load asset and add to FileHandle system. Skip downloading if file already exists
      */
