@@ -25,4 +25,5 @@ public class TeaCompilerData {
     public int minDirectBuffersSize = 2 * (1 << 20);
     public final ArrayList<String> finalReflectionClasses = new ArrayList<>(); // used internally
     public DefaultReflectionListener reflectionListener = new DefaultReflectionListener();
+    public boolean shortFileNames;
 }

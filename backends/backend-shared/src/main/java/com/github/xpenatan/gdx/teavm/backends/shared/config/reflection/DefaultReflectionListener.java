@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.reflection;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ public class DefaultReflectionListener implements TeaReflectionListener {
     protected void setupDefaultPatterns() {
         classpathPattern.add("com.badlogic.gdx.scenes.scene2d.**");
         classpathPattern.add("net.mgsx.gltf.data.**");
+        classpathPattern.add(ObjectMap.class.getName());
     }
 
     public void addClassOrPackage(String classOrPackage) {

@@ -90,6 +90,7 @@ public abstract class TeaBackend {
         tool.setMinDirectBuffersSize(data.minDirectBuffersSize);
         tool.setTargetFileName(data.outputName);
         tool.setProgressListener(obtainProgressListener());
+        tool.setShortFileNames(data.shortFileNames);
     }
 
     private void configClasspath(TeaCompilerData data, ArrayList<URL> acceptedURL) {

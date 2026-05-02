@@ -14,6 +14,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
 import com.github.xpenatan.gdx.teavm.backends.web.agent.WebAgentInfo;
 import com.github.xpenatan.gdx.teavm.backends.web.agent.WebWebAgent;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetDownloadImpl;
@@ -135,7 +136,7 @@ public class WebApplication implements Application {
         input = new WebInput(this, graphics.canvas);
         files = new WebFiles(config, this);
         net = new WebNet();
-        logger = new WebApplicationLogger();
+        logger = new SharedApplicationLogger();
         clipboard = new WebClipboard();
 
         initNativeLibraries();

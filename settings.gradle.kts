@@ -14,6 +14,8 @@ pluginManagement {
 
 include(":backends:backend-shared")
 include(":backends:backend-web")
+include(":backends:backend-glfw")
+include(":backends:backend-psp")
 
 include(":extensions:asset-loader")
 include(":extensions:gdx-controllers-teavm")
@@ -26,6 +28,8 @@ include(":extensions:gdx-freetype-teavm")
 include(":examples:basic:core")
 include(":examples:basic:desktop")
 include(":examples:basic:teavm-web")
+include(":examples:basic:teavm-glfw")
+include(":examples:basic:teavm-psp")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
@@ -59,6 +63,9 @@ if(includeTeaVMSource) {
             substitute(module("org.teavm:teavm-jso")).using(project(":jso:core"))
             substitute(module("org.teavm:teavm-jso-apis")).using(project(":jso:apis"))
             substitute(module("org.teavm:teavm-jso-impl")).using(project(":jso:impl"))
+            substitute(module("org.teavm:teavm-interop")).using(project(":interop:core"))
+            substitute(module("org.teavm:teavm-metaprogramming-api")).using(project(":metaprogramming:api"))
+            substitute(module("org.teavm:teavm-metaprogramming-impl")).using(project(":metaprogramming:impl"))
         }
     }
 }
