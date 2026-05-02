@@ -1,7 +1,5 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
-import com.badlogic.gdx.utils.reflect.ConstructorGen;
-import com.badlogic.gdx.utils.reflect.InstanceGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,9 +30,7 @@ public final class TConstructor {
     }
 
     public Object newInstance(Object... args) throws ReflectionException {
-//        return ConstructorGen.newInstance(type, args);
-        return InstanceGen.newInstance(type);
-
+        return null;
 //        if(args == null) {
 //            args = new Object[0];
 //        }

@@ -1,9 +1,8 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
 import com.badlogic.gdx.utils.reflect.ClassGen;
-import com.badlogic.gdx.utils.reflect.Constructor;
-import com.badlogic.gdx.utils.reflect.InstanceGen;
 import com.badlogic.gdx.utils.reflect.ConstructorGen;
+import com.badlogic.gdx.utils.reflect.InstanceGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.Modifier;
 

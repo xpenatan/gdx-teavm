@@ -86,7 +86,8 @@ public final class TField {
     }
 
     public boolean isAnnotationPresent(Class<? extends java.lang.annotation.Annotation> annotationType) {
-        return field.isAnnotationPresent(annotationType);
+//        return field.isAnnotationPresent(annotationType);
+        return false; // TODO not supported in TeaVM C
     }
 
     public TAnnotation[] getDeclaredAnnotations() {

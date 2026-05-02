@@ -14,7 +14,7 @@ public class Main {
 //        new Lwjgl3Application(new Basic3DTest());
 //        new Lwjgl3Application(new SpriteBatchTest());
 //        new Lwjgl3Application(new EmptyApplicationTest(), config);
-        new Lwjgl3Application(new SpriteBatchTest2(), config);
+//        new Lwjgl3Application(new SpriteBatchTest2(), config);
 //        new Lwjgl3Application(new TeaVMInputTest());
 //        new Lwjgl3Application(new ReflectionTest());
 //        new Lwjgl3Application(new ReadPixelsTest());

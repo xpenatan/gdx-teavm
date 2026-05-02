@@ -3,8 +3,10 @@ import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWApplication;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.EmptyApplicationTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GLTFQuickStartExample;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.GearsDemo;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.JsonTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.ReflectionTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest2;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.UITest;
 
 public class TestCLauncher {
 
@@ -17,8 +19,10 @@ public class TestCLauncher {
 //        new GLFWApplication(new EmptyApplicationTest(), config);
 //        new GLFWApplication(new GearsDemo());
 //        new GLFWApplication(new SpriteBatchTest());
-        new GLFWApplication(new SpriteBatchTest2(), config);
+//        new GLFWApplication(new SpriteBatchTest2(), config);
 //        new GLFWApplication(new ReflectionTest(), config);
+        new GLFWApplication(new JsonTest(), config);
+//        new GLFWApplication(new UITest(), config);
 //        new GLFWApplication(new ReadPixelsTest());
 //        new GLFWApplication(new Basic3DTest());
 //        new GLFWApplication(new GLTFQuickStartExample());
