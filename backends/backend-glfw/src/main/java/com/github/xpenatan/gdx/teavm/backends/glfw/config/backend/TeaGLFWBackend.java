@@ -1,19 +1,16 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.teavm.tooling.TeaVMTargetType;
 
 public class TeaGLFWBackend extends TeaBackend {
@@ -242,6 +239,6 @@ public class TeaGLFWBackend extends TeaBackend {
     protected void copyAssets(TeaCompilerData data) {
         super.copyAssets(data);
         FileHandle outputFolder = new FileHandle(buildRootPath + "/c");
-        AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder);
+        AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder, FileType.Classpath);
     }
 }

@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.psp.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
@@ -29,7 +30,6 @@ public class TeaPSPBackend extends TeaBackend {
         data.minHeapSize = 2 * (1 << 20);
         data.maxHeapSize = 8 * (1 << 20);
         data.minDirectBuffersSize = 2 * (1 << 20);
-        data.maxDirectBuffersSize = 12 * (1 << 20);
     }
 
     @Override
@@ -177,6 +177,6 @@ public class TeaPSPBackend extends TeaBackend {
     protected void copyAssets(TeaCompilerData data) {
         super.copyAssets(data);
         FileHandle outputFolder = new FileHandle(buildRootPath + "/c");
-        AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder);
+        AssetsCopy.copyResources(classLoader, cppFiles, null, outputFolder, FileType.Classpath);
     }
 }
