@@ -19,6 +19,8 @@ import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetType;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoader;
 
 public class AssetLoadingTask implements AsyncTask<Void> {
+    private static final int MAX_DOWNLOAD_STUCK_UPDATES = 30;
+
     AssetManager manager;
     final AssetDescriptor assetDesc;
     final com.badlogic.gdx.assets.loaders.AssetLoader loader;
@@ -34,7 +36,8 @@ public class AssetLoadingTask implements AsyncTask<Void> {
 
     volatile boolean cancel;
 
-    int count = 0;
+    boolean downloadRequested;
+    int stuckUpdateCount;
 
     public AssetLoadingTask(AssetManager manager, AssetDescriptor assetDesc, com.badlogic.gdx.assets.loaders.AssetLoader loader, AsyncExecutor threadPool) {
         this.manager = manager;
@@ -81,18 +84,30 @@ public class AssetLoadingTask implements AsyncTask<Void> {
             if(assetLoader.isAssetFailed(type, path)) {
                 throw new GdxRuntimeException("Couldn't load file: " + path);
             }
-            // Only try to download if contains extension and is not in queue or downloading.
-            if(!assetLoader.isAssetInQueueOrDownloading(path)) {
-                count++;
-                if(count == 2) {
-                    // Download was attempted but the file never appeared and was not
-                    // explicitly reported as failed; bail out instead of spinning.
+            boolean inQueueOrDownloading = assetLoader.isAssetInQueueOrDownloading(path);
+
+            // First request happens once; subsequent updates wait for terminal state.
+            if(!downloadRequested && !inQueueOrDownloading) {
+                downloadRequested = true;
+                stuckUpdateCount = 0;
+                assetLoader.loadAsset(path, AssetType.Binary, type, null);
+                return false;
+            }
+
+            if(inQueueOrDownloading) {
+                // Fail deterministically if the loader never reports completion/failure.
+                stuckUpdateCount++;
+                if(stuckUpdateCount > MAX_DOWNLOAD_STUCK_UPDATES) {
                     cancel = true;
                     throw new GdxRuntimeException("Couldn't load file: " + path);
                 }
-                else {
-                    assetLoader.loadAsset(path, AssetType.Binary, type, null);
-                }
+                return false;
+            }
+
+            // Request was issued, but it is neither queued/downloading nor failed nor loaded.
+            if(downloadRequested) {
+                cancel = true;
+                throw new GdxRuntimeException("Couldn't load file: " + path);
             }
         }
         else {
