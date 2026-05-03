@@ -29,7 +29,6 @@ import com.github.xpenatan.gdx.teavm.backends.web.assetloader.WebBlob;
 public class WebPreloadApplicationListener extends ApplicationAdapter {
 
     public String startupLogo = "startup-logo.png";
-    public boolean preloadAssets = true;
     public float animationSpeed = 0.9f;
     protected AssetLoader assetLoader;
 
@@ -68,16 +67,18 @@ public class WebPreloadApplicationListener extends ApplicationAdapter {
             @Override
             public void onSuccess(String url, WebBlob result) {
                 subtractQueue();
-                if(preloadAssets) {
-                    addQueue();
-                    assetLoader.preload(TeaAssets.ASSETS_FILE_NAME, new AssetLoaderListener<>() {
-                        @Override
-                        public void onSuccess(String url, Void result) {
-                            subtractQueue();
-                            assetsCount = assetLoader.getQueue();
-                        }
-                    });
-                }
+                preloadAssetsFile();
+            }
+        });
+    }
+
+    protected void preloadAssetsFile() {
+        addQueue();
+        assetLoader.preload(TeaAssets.ASSETS_FILE_NAME, new AssetLoaderListener<>() {
+            @Override
+            public void onSuccess(String url, Void result) {
+                subtractQueue();
+                assetsCount = assetLoader.getQueue();
             }
         });
     }
