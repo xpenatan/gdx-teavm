@@ -44,7 +44,7 @@ public class WebPreloadApplicationListener extends ApplicationAdapter {
     private float originalHeight;
     private float targetProgress = 0f;
     private float displayedProgress = 0f;
-    private int assetsCount = -1;
+    protected int assetsCount = -1;
     private boolean isAnimation = false;
     private int initStage = 0;
     private WebApplicationConfiguration config;
