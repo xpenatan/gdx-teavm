@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -35,6 +37,7 @@ public class TeaVMResourceProperties {
     private static final String OPTION_ADDITIONAL_RESOURCES = "resources";
     private static final String OPTION_IGNORE_RESOURCES = "ignore-resources";
     private static final String OPTION_CLASSPATH_RESOURCES = "classpath-resources";
+    private static final Pattern VERSIONED_STEM_PATTERN = Pattern.compile("^(.*)-(\\d[0-9a-zA-Z._-]*)$");
 
     public final String path;
     public final ArrayList<String> additionalPath = new ArrayList<>();
@@ -134,11 +137,49 @@ public class TeaVMResourceProperties {
      * If a jar contains gdx-teavm.properties, allow sibling classifier jars
      * from the same artifact/version (e.g. runtime-web-1.0.jar -> runtime-web-1.0-wasm.jar).
      */
-    private static boolean matchesMainJarArtifact(String urlPath, String mainJarPath) {
+    static boolean matchesMainJarArtifact(String urlPath, String mainJarPath) {
         String candidateStem = fileStem(urlPath);
         String mainStem = fileStem(mainJarPath);
         if(mainStem.isEmpty() || candidateStem.isEmpty()) return false;
-        return candidateStem.startsWith(mainStem + "-");
+
+        // Standard case: artifact-version -> artifact-version-classifier
+        if(candidateStem.startsWith(mainStem + "-")) return true;
+
+        VersionBoundary boundary = extractVersionBoundary(mainStem);
+        if(boundary == null) return false;
+
+        // Also support artifact-classifier-version naming (runtime-web-wasm-1.2.3).
+        return candidateStem.startsWith(boundary.base + "-")
+                && candidateStem.endsWith(boundary.suffix)
+                && !candidateStem.equals(mainStem);
+    }
+
+    private static VersionBoundary extractVersionBoundary(String mainStem) {
+        Matcher matcher = VERSIONED_STEM_PATTERN.matcher(mainStem);
+        if(matcher.matches()) {
+            String base = matcher.group(1);
+            String version = matcher.group(2);
+            return new VersionBoundary(base, "-" + version);
+        }
+
+        // Snapshot-like stems may encode version boundary with "--" (artifact--SNAPSHOT).
+        // In this case classifier jars look like artifact-classifier--SNAPSHOT.
+        int versionBoundary = mainStem.indexOf("--");
+        if(versionBoundary <= 0) return null;
+
+        String base = mainStem.substring(0, versionBoundary);
+        String versionSuffix = mainStem.substring(versionBoundary);
+        return new VersionBoundary(base, versionSuffix);
+    }
+
+    private static class VersionBoundary {
+        final String base;
+        final String suffix;
+
+        VersionBoundary(String base, String suffix) {
+            this.base = base;
+            this.suffix = suffix;
+        }
     }
 
     private static String fileStem(String path) {
@@ -249,7 +290,7 @@ public class TeaVMResourceProperties {
         }
     }
 
-    public static String readString(InputStream in, String charset) {
+    private static String readString(InputStream in, String charset) {
         StringBuilder out = new StringBuilder(512);
         try(InputStreamReader reader = (charset == null)
                 ? new InputStreamReader(in, StandardCharsets.UTF_8)
