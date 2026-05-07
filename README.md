@@ -22,6 +22,7 @@ If you find this project valuable and want to fuel its continued growth, please 
 | gdx-teavm | LibGDX | TeaVM  |
 |:---------:|:------:|:------:|
 | -SNAPSHOT | 1.14.0 | 0.14.0 |
+|   1.5.5   | 1.14.0 | 0.14.0 |
 |   1.5.4   | 1.14.0 | 0.13.1 |
 
 ## Setup:
