@@ -143,15 +143,19 @@ public class TeaVMResourceProperties {
         if(mainStem.isEmpty() || candidateStem.isEmpty()) return false;
 
         // Standard case: artifact-version -> artifact-version-classifier
-        if(candidateStem.startsWith(mainStem + "-")) return true;
+        if(candidateStem.startsWith(mainStem + "-") || candidateStem.startsWith(mainStem + "_")) return true;
 
         VersionBoundary boundary = extractVersionBoundary(mainStem);
         if(boundary == null) return false;
 
         // Also support artifact-classifier-version naming (runtime-web-wasm-1.2.3).
-        return candidateStem.startsWith(boundary.base + "-")
+        return startsWithBaseClassifier(candidateStem, boundary.base)
                 && candidateStem.endsWith(boundary.suffix)
                 && !candidateStem.equals(mainStem);
+    }
+
+    private static boolean startsWithBaseClassifier(String candidateStem, String base) {
+        return candidateStem.startsWith(base + "-") || candidateStem.startsWith(base + "_");
     }
 
     private static VersionBoundary extractVersionBoundary(String mainStem) {
