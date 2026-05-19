@@ -12,7 +12,7 @@ public class Main {
         config.setForegroundFPS(0);
 //        new Lwjgl3Application(new GearsDemo());
 //        new Lwjgl3Application(new Basic3DTest());
-//        new Lwjgl3Application(new SpriteBatchTest());
+        new Lwjgl3Application(new SpriteBatchTest2(), config);
 //        new Lwjgl3Application(new EmptyApplicationTest(), config);
 //        new Lwjgl3Application(new SpriteBatchTest2(), config);
 //        new Lwjgl3Application(new TeaVMInputTest());
