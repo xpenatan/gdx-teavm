@@ -2408,31 +2408,31 @@ public class OpenGL {
     public static native void glCopyImageSubData(int srcName, int srcTarget, int srcLevel, int srcX, int srcY, int srcZ, int dstName, int dstTarget, int dstLevel, int dstX, int dstY, int dstZ, int srcWidth, int srcHeight, int srcDepth);
 
     @Import(name = "glDebugMessageControl")
-    public static native void glDebugMessageControl(int source, int type, int severity, Address ids, boolean enabled);
+    public static native void glDebugMessageControl(int source, int type, int severity, int count, Address ids, boolean enabled);
 
     @Import(name = "glDebugMessageInsert")
-    public static native void glDebugMessageInsert(int source, int type, int id, int severity, String buf);
+    public static native void glDebugMessageInsert(int source, int type, int id, int severity, int length, String buf);
 
     @Import(name = "glDebugMessageCallback")
-    public static native void glDebugMessageCallback(GL32.DebugProc callback);
+    public static native void glDebugMessageCallback(Address callback, Address userParam);
 
     @Import(name = "glGetDebugMessageLog")
-    public static native int glGetDebugMessageLog(int count, Address sources, Address types, Address ids, Address severities, Address lengths, Address messageLog);
+    public static native int glGetDebugMessageLog(int count, int bufSize, Address sources, Address types, Address ids, Address severities, Address lengths, Address messageLog);
 
     @Import(name = "glPushDebugGroup")
-    public static native void glPushDebugGroup(int source, int id, String message);
+    public static native void glPushDebugGroup(int source, int id, int length, String message);
 
     @Import(name = "glPopDebugGroup")
     public static native void glPopDebugGroup();
 
     @Import(name = "glObjectLabel")
-    public static native void glObjectLabel(int identifier, int name, String label);
+    public static native void glObjectLabel(int identifier, int name, int length, String label);
 
     @Import(name = "glGetObjectLabel")
-    public static native String glGetObjectLabel(int identifier, int name);
+    public static native void glGetObjectLabel(int identifier, int name, int bufSize, Address length, Address label);
 
     @Import(name = "glGetPointerv")
-    public static native long glGetPointerv(int pname);
+    public static native void glGetPointerv(int pname, Address params);
 
     @Import(name = "glEnablei")
     public static native void glEnablei(int target, int index);
@@ -2480,13 +2480,13 @@ public class OpenGL {
     public static native void glReadnPixels(int x, int y, int width, int height, int format, int type, int bufSize, Address data);
 
     @Import(name = "glGetnUniformfv")
-    public static native void glGetnUniformfv(int program, int location, Address params);
+    public static native void glGetnUniformfv(int program, int location, int bufSize, Address params);
 
     @Import(name = "glGetnUniformiv")
-    public static native void glGetnUniformiv(int program, int location, Address params);
+    public static native void glGetnUniformiv(int program, int location, int bufSize, Address params);
 
     @Import(name = "glGetnUniformuiv")
-    public static native void glGetnUniformuiv(int program, int location, Address params);
+    public static native void glGetnUniformuiv(int program, int location, int bufSize, Address params);
 
     @Import(name = "glMinSampleShading")
     public static native void glMinSampleShading(float value);
@@ -2552,10 +2552,10 @@ public class OpenGL {
     public static native int glGetProgramResourceIndex(int program, int programInterface, String name);
 
     @Import(name = "glGetProgramResourceName")
-    public static native String glGetProgramResourceName(int program, int programInterface, int index);
+    public static native void glGetProgramResourceName(int program, int programInterface, int index, int bufSize, Address length, Address name);
 
     @Import(name = "glGetProgramResourceiv")
-    public static native void glGetProgramResourceiv(int program, int programInterface, int index, Address props, Address length, Address params);
+    public static native void glGetProgramResourceiv(int program, int programInterface, int index, int propCount, Address props, int bufSize, Address length, Address params);
 
     @Import(name = "glGetProgramResourceLocation")
     public static native int glGetProgramResourceLocation(int program, int programInterface, String name);
@@ -2567,7 +2567,7 @@ public class OpenGL {
     public static native void glActiveShaderProgram(int pipeline, int program);
 
     @Import(name = "glCreateShaderProgramv")
-    public static native int glCreateShaderProgramv(int type, String[] strings);
+    public static native int glCreateShaderProgramv(int type, int count, String[] strings);
 
     @Import(name = "glBindProgramPipeline")
     public static native void glBindProgramPipeline(int pipeline);
@@ -2621,73 +2621,73 @@ public class OpenGL {
     public static native void glProgramUniform4f(int program, int location, float v0, float v1, float v2, float v3);
 
     @Import(name = "glProgramUniform1iv")
-    public static native void glProgramUniform1iv(int program, int location, Address value);
+    public static native void glProgramUniform1iv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform2iv")
-    public static native void glProgramUniform2iv(int program, int location, Address value);
+    public static native void glProgramUniform2iv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform3iv")
-    public static native void glProgramUniform3iv(int program, int location, Address value);
+    public static native void glProgramUniform3iv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform4iv")
-    public static native void glProgramUniform4iv(int program, int location, Address value);
+    public static native void glProgramUniform4iv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform1uiv")
-    public static native void glProgramUniform1uiv(int program, int location, Address value);
+    public static native void glProgramUniform1uiv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform2uiv")
-    public static native void glProgramUniform2uiv(int program, int location, Address value);
+    public static native void glProgramUniform2uiv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform3uiv")
-    public static native void glProgramUniform3uiv(int program, int location, Address value);
+    public static native void glProgramUniform3uiv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform4uiv")
-    public static native void glProgramUniform4uiv(int program, int location, Address value);
+    public static native void glProgramUniform4uiv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform1fv")
-    public static native void glProgramUniform1fv(int program, int location, Address value);
+    public static native void glProgramUniform1fv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform2fv")
-    public static native void glProgramUniform2fv(int program, int location, Address value);
+    public static native void glProgramUniform2fv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform3fv")
-    public static native void glProgramUniform3fv(int program, int location, Address value);
+    public static native void glProgramUniform3fv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniform4fv")
-    public static native void glProgramUniform4fv(int program, int location, Address value);
+    public static native void glProgramUniform4fv(int program, int location, int count, Address value);
 
     @Import(name = "glProgramUniformMatrix2fv")
-    public static native void glProgramUniformMatrix2fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix2fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix3fv")
-    public static native void glProgramUniformMatrix3fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix3fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix4fv")
-    public static native void glProgramUniformMatrix4fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix4fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix2x3fv")
-    public static native void glProgramUniformMatrix2x3fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix2x3fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix3x2fv")
-    public static native void glProgramUniformMatrix3x2fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix3x2fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix2x4fv")
-    public static native void glProgramUniformMatrix2x4fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix2x4fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix4x2fv")
-    public static native void glProgramUniformMatrix4x2fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix4x2fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix3x4fv")
-    public static native void glProgramUniformMatrix3x4fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix3x4fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glProgramUniformMatrix4x3fv")
-    public static native void glProgramUniformMatrix4x3fv(int program, int location, boolean transpose, Address value);
+    public static native void glProgramUniformMatrix4x3fv(int program, int location, int count, boolean transpose, Address value);
 
     @Import(name = "glValidateProgramPipeline")
     public static native void glValidateProgramPipeline(int pipeline);
 
     @Import(name = "glGetProgramPipelineInfoLog")
-    public static native String glGetProgramPipelineInfoLog(int program);
+    public static native void glGetProgramPipelineInfoLog(int program, int bufSize, Address length, Address infoLog);
 
     @Import(name = "glBindImageTexture")
     public static native void glBindImageTexture(int unit, int texture, int level, boolean layered, int layer, int access, int format);
@@ -2762,13 +2762,7 @@ public class OpenGL {
     public static native void glCopyTexSubImage3D(int target, int level, int xoffset, int yoffset, int zoffset, int x, int y, int width, int height);
 
     @Import(name = "glGenQueries")
-    public static native void glGenQueries(int n, Address ids, int offset);
-
-    @Import(name = "glGenQueries")
     public static native void glGenQueries(int n, Address ids);
-
-    @Import(name = "glDeleteQueries")
-    public static native void glDeleteQueries(int n, Address ids, int offset);
 
     @Import(name = "glDeleteQueries")
     public static native void glDeleteQueries(int n, Address ids);
@@ -2792,7 +2786,7 @@ public class OpenGL {
     public static native boolean glUnmapBuffer(int target);
 
     @Import(name = "glGetBufferPointerv")
-    public static native Address glGetBufferPointerv(int target, int pname);
+    public static native void glGetBufferPointerv(int target, int pname, Address params);
 
     @Import(name = "glDrawBuffers")
     public static native void glDrawBuffers(int n, Address bufs);
@@ -2855,7 +2849,7 @@ public class OpenGL {
     public static native void glBindBufferBase(int target, int index, int buffer);
 
     @Import(name = "glTransformFeedbackVaryings")
-    public static native void glTransformFeedbackVaryings(int program, String[] varyings, int bufferMode);
+    public static native void glTransformFeedbackVaryings(int program, int count, String[] varyings, int bufferMode);
 
     @Import(name = "glVertexAttribIPointer")
     public static native void glVertexAttribIPointer(int index, int size, int type, int stride, int offset);
@@ -2906,7 +2900,7 @@ public class OpenGL {
     public static native void glCopyBufferSubData(int readTarget, int writeTarget, int readOffset, int writeOffset, int size);
 
     @Import(name = "glGetUniformIndices")
-    public static native void glGetUniformIndices(int program, String[] uniformNames, Address uniformIndices);
+    public static native void glGetUniformIndices(int program, int uniformCount, String[] uniformNames, Address uniformIndices);
 
     @Import(name = "glGetActiveUniformsiv")
     public static native void glGetActiveUniformsiv(int program, int uniformCount, Address uniformIndices, int pname, Address params);
@@ -2918,10 +2912,7 @@ public class OpenGL {
     public static native void glGetActiveUniformBlockiv(int program, int uniformBlockIndex, int pname, Address params);
 
     @Import(name = "glGetActiveUniformBlockName")
-    public static native void glGetActiveUniformBlockName(int program, int uniformBlockIndex, Address length, Address uniformBlockName);
-
-    @Import(name = "glGetActiveUniformBlockName")
-    public static native String glGetActiveUniformBlockName(int program, int uniformBlockIndex);
+    public static native void glGetActiveUniformBlockName(int program, int uniformBlockIndex, int bufSize, Address length, Address uniformBlockName);
 
     @Import(name = "glUniformBlockBinding")
     public static native void glUniformBlockBinding(int program, int uniformBlockIndex, int uniformBlockBinding);
@@ -2939,13 +2930,7 @@ public class OpenGL {
     public static native void glGetBufferParameteri64v(int target, int pname, Address params);
 
     @Import(name = "glGenSamplers")
-    public static native void glGenSamplers(int count, Address samplers, int offset);
-
-    @Import(name = "glGenSamplers")
     public static native void glGenSamplers(int count, Address samplers);
-
-    @Import(name = "glDeleteSamplers")
-    public static native void glDeleteSamplers(int count, Address samplers, int offset);
 
     @Import(name = "glDeleteSamplers")
     public static native void glDeleteSamplers(int count, Address samplers);
@@ -3047,10 +3032,10 @@ public class OpenGL {
     public static native void glColorMask(boolean red, boolean green, boolean blue, boolean alpha);
 
     @Import(name = "glCompressedTexImage2D")
-    public static native void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, ByteBuffer data);
+    public static native void glCompressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, Address data);
 
     @Import(name = "glCompressedTexSubImage2D")
-    public static native void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, ByteBuffer data);
+    public static native void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, Address data);
 
     @Import(name = "glCopyTexImage2D")
     public static native void glCopyTexImage2D(int target, int level, int internalformat, int x, int y, int width, int height, int border);
@@ -3453,9 +3438,6 @@ public class OpenGL {
 
     @Import(name = "glUniform1fv")
     public static native void glUniform1fv(int location, int count, Address v);
-
-    @Import(name = "glUniform1fv")
-    public static native void glUniform1fv(int location, int count, Address v, int offset);
 
     @Import(name = "glUniform1i")
     public static native void glUniform1i(int location, int x);
