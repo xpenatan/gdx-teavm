@@ -12,6 +12,7 @@
  */
 #include "gdx2d.h"
 #include <stdlib.h>
+#include <string.h>
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_FAILURE_USERMSG
 #define STBI_NO_STDIO
@@ -253,6 +254,18 @@ uint32_t gdx2d_bytes_per_pixel(uint32_t format) {
         default:
             return 4;
     }
+}
+
+uint32_t gdx2d_pixel_size(const gdx2d_pixmap* pixmap) {
+    return pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format);
+}
+
+void gdx2d_copy_pixels(const gdx2d_pixmap* pixmap, void* dst) {
+    memcpy(dst, pixmap->pixels, gdx2d_pixel_size(pixmap));
+}
+
+void gdx2d_set_pixels(const gdx2d_pixmap* pixmap, const void* src) {
+    memcpy((void*)pixmap->pixels, src, gdx2d_pixel_size(pixmap));
 }
 
 gdx2d_pixmap* gdx2d_new(uint32_t width, uint32_t height, uint32_t format) {

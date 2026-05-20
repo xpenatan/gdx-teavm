@@ -11,8 +11,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
+import java.nio.charset.StandardCharsets;
 import org.teavm.interop.Address;
-import org.teavm.interop.Strings;
 
 public class GLFWGL32 implements GL32 {
 
@@ -48,14 +48,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 byte[] data = new byte[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add(buffer.arrayOffset() + buffer.position());
             } else {
                 byte[] data = new byte[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -65,14 +67,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 short[] data = new short[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 2);
             } else {
                 short[] data = new short[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -82,14 +86,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 int[] data = new int[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 4);
             } else {
                 int[] data = new int[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -99,14 +105,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 long[] data = new long[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 8);
             } else {
                 long[] data = new long[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -116,14 +124,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 float[] data = new float[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 4);
             } else {
                 float[] data = new float[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -133,14 +143,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 double[] data = new double[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 8);
             } else {
                 double[] data = new double[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -150,14 +162,16 @@ public class GLFWGL32 implements GL32 {
                 int remaining = buffer.remaining();
                 char[] data = new char[remaining];
                 int pos = buffer.position();
-                buffer.get(data, pos, remaining);
-                buffer.position(pos); // Restore position
+                buffer.get(data, 0, remaining);
+                buffer.position(pos);
                 return Address.ofData(data);
             } else if (buffer.hasArray()) {
-                return Address.ofData(buffer.array());
+                return Address.ofData(buffer.array()).add((buffer.arrayOffset() + buffer.position()) * 2);
             } else {
                 char[] data = new char[buffer.remaining()];
+                int pos = buffer.position();
                 buffer.get(data);
+                buffer.position(pos);
                 return Address.ofData(data);
             }
         }
@@ -1652,17 +1666,17 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer pixels) {
-//        if (pixels instanceof ByteBuffer)
-//            OpenGL.glReadPixels(x, y, width, height, format, type, (ByteBuffer)pixels);
-//        else if (pixels instanceof ShortBuffer)
-//            OpenGL.glReadPixels(x, y, width, height, format, type, (ShortBuffer)pixels);
-//        else if (pixels instanceof IntBuffer)
-//            OpenGL.glReadPixels(x, y, width, height, format, type, (IntBuffer)pixels);
-//        else if (pixels instanceof FloatBuffer)
-//            OpenGL.glReadPixels(x, y, width, height, format, type, (FloatBuffer)pixels);
-//        else
-//            throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
-//                    + " with this method. Use ByteBuffer, ShortBuffer, IntBuffer or FloatBuffer instead.");
+        if (pixels instanceof ByteBuffer)
+            OpenGL.glReadPixels(x, y, width, height, format, type, (ByteBuffer)pixels);
+        else if (pixels instanceof ShortBuffer)
+            OpenGL.glReadPixels(x, y, width, height, format, type, (ShortBuffer)pixels);
+        else if (pixels instanceof IntBuffer)
+            OpenGL.glReadPixels(x, y, width, height, format, type, (IntBuffer)pixels);
+        else if (pixels instanceof FloatBuffer)
+            OpenGL.glReadPixels(x, y, width, height, format, type, (FloatBuffer)pixels);
+        else
+            throw new GdxRuntimeException("Can't use " + pixels.getClass().getName()
+                    + " with this method. Use ByteBuffer, ShortBuffer, IntBuffer or FloatBuffer instead.");
     }
 
     @Override
@@ -1712,7 +1726,7 @@ public class GLFWGL32 implements GL32 {
         if (pixels instanceof ByteBuffer || pixels == null)
             OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (ByteBuffer)pixels);
         else if (pixels instanceof ShortBuffer)
-            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (ByteBuffer)pixels);
+            OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (ShortBuffer)pixels);
         else if (pixels instanceof IntBuffer)
             OpenGL.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (IntBuffer)pixels);
         else if (pixels instanceof FloatBuffer)
@@ -2054,10 +2068,10 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public String glGetProgramInfoLog(int program) {
-        CharBuffer buffer = CharBuffer.allocate(8192);
+        byte[] buffer = new byte[8192];
         IntBuffer len = IntBuffer.allocate(1);
         OpenGL.glGetProgramInfoLog(program, 8192, len, buffer);
-        return buffer.limit(len.get(0)).toString();
+        return toLogString(buffer, len.get(0));
     }
 
     @Override
@@ -2086,10 +2100,21 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public String glGetShaderInfoLog(int shader) {
-        CharBuffer buffer = CharBuffer.allocate(8192);
+        byte[] buffer = new byte[8192];
         IntBuffer len = IntBuffer.allocate(1);
         OpenGL.glGetShaderInfoLog(shader, 8192, len, buffer);
-        return buffer.limit(len.get(0)).toString();
+        return toLogString(buffer, len.get(0));
+    }
+
+    private static String toLogString(byte[] buffer, int length) {
+        if (length <= 0) {
+            return "";
+        }
+        int safeLength = Math.min(length, buffer.length);
+        while (safeLength > 0 && buffer[safeLength - 1] == 0) {
+            safeLength--;
+        }
+        return new String(buffer, 0, safeLength, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -2267,12 +2292,15 @@ public class GLFWGL32 implements GL32 {
 
     @Override
     public void glShaderSource(int shader, String string) {
-        Address strings = Address.ofData(new byte[Address.sizeOf()]);
-        Address source = Strings.toC(string);
+        byte[] sourceBytes = string.getBytes(StandardCharsets.UTF_8);
+        byte[] sourceCString = new byte[sourceBytes.length + 1];
+        System.arraycopy(sourceBytes, 0, sourceCString, 0, sourceBytes.length);
+
+        byte[] sourcePointer = new byte[Address.sizeOf()];
+        Address strings = Address.ofData(sourcePointer);
+        Address source = Address.ofData(sourceCString);
         strings.putAddress(source);
-        IntBuffer len = IntBuffer.allocate(1);
-        len.put(0, string.length());
-        OpenGL.glShaderSource(shader, 1, strings, len);
+        OpenGL.glShaderSource(shader, 1, strings, Address.fromInt(0));
     }
 
     @Override

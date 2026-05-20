@@ -85,6 +85,9 @@ void		gdx2d_draw_pixmap (const gdx2d_pixmap* src_pixmap,
 						   int32_t dst_x, int32_t dst_y, uint32_t dst_width, uint32_t dst_height);
 
 uint32_t gdx2d_bytes_per_pixel(uint32_t format);
+uint32_t gdx2d_pixel_size(const gdx2d_pixmap* pixmap);
+void gdx2d_copy_pixels(const gdx2d_pixmap* pixmap, void* dst);
+void gdx2d_set_pixels(const gdx2d_pixmap* pixmap, const void* src);
 
 #ifdef __cplusplus
 }

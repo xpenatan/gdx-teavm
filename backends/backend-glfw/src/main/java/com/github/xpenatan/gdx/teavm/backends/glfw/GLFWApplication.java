@@ -23,6 +23,7 @@ import com.github.xpenatan.gdx.teavm.backends.glfw.audio.GLFWAudio;
 import com.github.xpenatan.gdx.teavm.backends.glfw.audio.mock.MockAudio;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.Callback;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
+import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFWMemoryStats;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLUtil;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.OpenGL;
 import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
@@ -51,6 +52,7 @@ public class GLFWApplication implements GLFWApplicationBase {
     private int targetFramerate = -2;
     private boolean haveWindowsRendered = false;
     private final Array<GLFWWindow> closedWindows = new Array<>();
+    private long lastMemoryStatsLogMillis;
 
     static void initializeGlfw() {
         if (errorCallback == null) {
@@ -145,7 +147,7 @@ public class GLFWApplication implements GLFWApplicationBase {
             audio.update();
 
             haveWindowsRendered = false;
-            closedWindows.clear();
+            closedWindows.size = 0;
             loopWindow();
             GLFW.pollEvents();
 
@@ -157,8 +159,21 @@ public class GLFWApplication implements GLFWApplicationBase {
                 }
             }
             loopClosedWindows();
+            if(config.logMemoryStats) {
+                logMemoryStats();
+            }
             loopSleep();
         }
+    }
+
+    private void logMemoryStats() {
+        long now = System.currentTimeMillis();
+        long intervalMillis = (long)(config.memoryStatsIntervalSeconds * 1000f);
+        if(lastMemoryStatsLogMillis != 0 && now - lastMemoryStatsLogMillis < intervalMillis) {
+            return;
+        }
+        lastMemoryStatsLogMillis = now;
+        log("GLFWMemory", GLFWMemoryStats.getSummary());
     }
 
     private void loopClosedWindows() {

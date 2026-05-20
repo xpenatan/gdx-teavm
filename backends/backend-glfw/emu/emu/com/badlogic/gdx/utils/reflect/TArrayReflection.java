@@ -11,16 +11,16 @@ public class TArrayReflection {
 
     /** Returns the length of the supplied array. */
     static public int getLength (Object array) {
-        return ArrayGen.getLength(array);
+        return ArrayGen.getLength(array.getClass(), array);
     }
 
     /** Returns the value of the indexed component in the supplied array. */
     static public Object get (Object array, int index) {
-        return ArrayGen.get(array.getClass().getComponentType(), array, index);
+        return ArrayGen.get(array.getClass(), array, index);
     }
 
     /** Sets the value of the indexed component in the supplied array to the supplied value. */
     static public void set (Object array, int index, Object value) {
-        ArrayGen.set(array.getClass().getComponentType(), array, index, value);
+        ArrayGen.set(array.getClass(), array, index, value);
     }
 }

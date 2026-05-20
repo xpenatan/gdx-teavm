@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonSkimmer;
+import com.badlogic.gdx.utils.JsonSkimmer.JsonToken;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.Null;
@@ -107,151 +108,151 @@ public class JsonTest extends ApplicationAdapter {
         // {102:14,107:1,10:2,2:1,7:3,101:63,4:2,106:4,1:1,103:2,6:2,3:1,105:6,8:2}
 
         roundTrip(test);
-//        int sum = 0;
-//        // iterate over an IntIntMap so one of its Entries is instantiated
-//        for(IntIntMap.Entry e : test.intsToIntsUnboxed) {
-//            sum += e.value + 1;
-//        }
-//        // also iterate over an Array, which does not have any problems
-//        String concat = "";
-//        for(String s : test.stringArray) {
-//            concat += s;
-//        }
-//        // by round-tripping again, we verify that the Entries is correctly skipped
-//        roundTrip(test);
-//        int sum2 = 0;
-//        // check and make sure that no entries are skipped over or incorrectly added
-//        for(IntIntMap.Entry e : test.intsToIntsUnboxed) {
-//            sum2 += e.value + 1;
-//        }
-//        String concat2 = "";
-//        // also check the Array again
-//        for(String s : test.stringArray) {
-//            concat2 += s;
-//        }
-//
-//        System.out.println("before: " + sum + ", after: " + sum2);
-//        System.out.println("before: " + concat + ", after: " + concat2);
-//
-//        test.someEnum = null;
-//        roundTrip(test);
-//
-//        test = new Test1();
-//        roundTrip(test);
-//
-//        test.stringArray = new Array();
-//        roundTrip(test);
-//
-//        test.stringArray.add("meow");
-//        roundTrip(test);
-//
-//        test.stringArray.add("moo");
-//        roundTrip(test);
-//
-//        TestMapGraph objectGraph = new TestMapGraph();
-//        testObjectGraph(objectGraph, "exoticTypeName");
-//
-//        test = new Test1();
-//        test.map = new ObjectMap();
-//        roundTrip(test);
-//
-//        test.map.put("one", 1);
-//        roundTrip(test);
-//
-//        test.map.put("two", 2);
-//        test.map.put("nine", 9);
-//        roundTrip(test);
-//
-//        test.map.put("\nst\nuff\n", 9);
-//        test.map.put("\r\nst\r\nuff\r\n", 9);
-//        roundTrip(test);
-//
-//        equals(json.toJson("meow"), "meow");
-//        equals(json.toJson("meow "), "\"meow \"");
-//        equals(json.toJson(" meow"), "\" meow\"");
-//        equals(json.toJson(" meow "), "\" meow \"");
-//        equals(json.toJson("\nmeow\n"), "\\nmeow\\n");
-//        equals(json.toJson(Array.with(1, 2, 3), null, int.class), "[1,2,3]");
-//        equals(json.toJson(Array.with("1", "2", "3"), null, String.class), "[1,2,3]");
-//        equals(json.toJson(Array.with(" 1", "2 ", " 3 "), null, String.class), "[\" 1\",\"2 \",\" 3 \"]");
-//        equals(json.toJson(Array.with("1", "", "3"), null, String.class), "[1,\"\",3]");
-//
-//        // Show JsonSkimmer methods are called for all JSON parts:
-//        String text = "{outer:{name1:{},z:{a:true,name2:[value,{\"ok\":v},0 ,1]}}}";
-//        System.out.println(text);
-//        new JsonSkimmer() {
-//            int indent;
-//            boolean object;
-//
-//            void indent() {
-//                for(int i = 0; i < indent; i++)
-//                    System.out.print("   ");
-//            }
-//
-//            @Override
-//            protected void push(@Null JsonToken name, boolean object) {
-//                indent();
-//                if(object)
-//                    System.out.println(name != null ? name + ": {" : "{");
-//                else
-//                    System.out.println(name != null ? name + ": [" : "[");
-//                this.object = object;
-//                indent++;
-//            }
-//
-//            @Override
-//            protected void pop() {
-//                indent--;
-//                indent();
-//                System.out.println(object ? '}' : ']');
-//            }
-//
-//            @Override
-//            protected void value(JsonToken name, JsonToken value) {
-//                indent();
-//                System.out.println(name != null ? name + ": " + value : value);
-//            }
-//        }.parse(text);
-//
-//        // JsonSkimmer usage example/test:
-//        final Array values = new Array();
-//        new JsonSkimmer() {
-//            int level;
-//            String id;
-//            float watts;
-//
-//            @Override
-//            protected void push(JsonToken name, boolean object) {
-//                level++;
-//            }
-//
-//            @Override
-//            protected void pop() {
-//                if(level == 2) {
-//                    values.add(id);
-//                    values.add(watts);
-//                    id = null;
-//                    watts = 0;
-//                }
-//                level--;
-//            }
-//
-//            @Override
-//            protected void value(JsonToken name, JsonToken value) {
-//                if(level == 2) {
-//                    if(name.equalsString("eid"))
-//                        id = value.toString();
-//                    else if(name.equalsString("activePower")) //
-//                        watts = Float.parseFloat(value.toString());
-//                }
-//            }
-//        }.parse(
-//                "[{\"eid\": 704643328, \"timestamp\": 1686961582, \"actEnergyDlvd\": 2485013.736, \"actEnergyRcvd\": 11887.499, \"apparentEnergy\": 3054495.271, \"reactEnergyLagg\": 795783.451, \"reactEnergyLead\": 0.398, \"instantaneousDemand\": 0.543, \"activePower\": 0.543, \"apparentPower\": 254.202, \"reactivePower\": 248.806, \"pwrFactor\": 0.0, \"voltage\": 244.004, \"current\": 1.043, \"freq\": 50.125, \"channels\": [{\"eid\": 1778385169, \"timestamp\": 1686961582, \"actEnergyDlvd\": 2485013.736, \"actEnergyRcvd\": 11887.499, \"apparentEnergy\": 3054495.271, \"reactEnergyLagg\": 795783.451, \"reactEnergyLead\": 0.398, \"instantaneousDemand\": 0.543, \"activePower\": 0.543, \"apparentPower\": 254.202, \"reactivePower\": 248.806, \"pwrFactor\": 0.0, \"voltage\": 244.004, \"current\": 1.043, \"freq\": 50.125}, {\"eid\": 1778385170, \"timestamp\": 1686961582, \"actEnergyDlvd\": 9.464, \"actEnergyRcvd\": 1998.651, \"apparentEnergy\": 3232.019, \"reactEnergyLagg\": 301.011, \"reactEnergyLead\": 2.645, \"instantaneousDemand\": -0.1, \"activePower\": -0.1, \"apparentPower\": 0.75, \"reactivePower\": -0.0, \"pwrFactor\": 0.0, \"voltage\": 5.478, \"current\": 0.137, \"freq\": 50.125}, {\"eid\": 1778385171, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.002, \"actEnergyRcvd\": 4766.67, \"apparentEnergy\": 306.341, \"reactEnergyLagg\": 286.551, \"reactEnergyLead\": 0.293, \"instantaneousDemand\": -0.0, \"activePower\": -0.0, \"apparentPower\": -0.0, \"reactivePower\": 0.0, \"pwrFactor\": 0.0, \"voltage\": 9.968, \"current\": 0.0, \"freq\": 50.125}]}, {\"eid\": 704643584, \"timestamp\": 1686961582, \"actEnergyDlvd\": 1749556.395, \"actEnergyRcvd\": 1601637.637, \"apparentEnergy\": 5069079.041, \"reactEnergyLagg\": 17.665, \"reactEnergyLead\": 2831887.274, \"instantaneousDemand\": 432.435, \"activePower\": 432.435, \"apparentPower\": 971.846, \"reactivePower\": -793.38, \"pwrFactor\": 0.444, \"voltage\": 244.187, \"current\": 3.981, \"freq\": 50.125, \"channels\": [{\"eid\": 1778385425, \"timestamp\": 1686961582, \"actEnergyDlvd\": 1749556.395, \"actEnergyRcvd\": 1601637.637, \"apparentEnergy\": 5069079.041, \"reactEnergyLagg\": 17.665, \"reactEnergyLead\": 2831887.274, \"instantaneousDemand\": 432.435, \"activePower\": 432.435, \"apparentPower\": 971.846, \"reactivePower\": -793.38, \"pwrFactor\": 0.444, \"voltage\": 244.187, \"current\": 3.981, \"freq\": 50.125}, {\"eid\": 1778385426, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.002, \"actEnergyRcvd\": 6887.628, \"apparentEnergy\": 2848.524, \"reactEnergyLagg\": 273.934, \"reactEnergyLead\": 0.183, \"instantaneousDemand\": -0.285, \"activePower\": -0.285, \"apparentPower\": 0.773, \"reactivePower\": 0.0, \"pwrFactor\": -1.0, \"voltage\": 6.849, \"current\": 0.112, \"freq\": 50.125}, {\"eid\": 1778385427, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.005, \"actEnergyRcvd\": 10679.623, \"apparentEnergy\": 2662.289, \"reactEnergyLagg\": 274.727, \"reactEnergyLead\": 0.57, \"instantaneousDemand\": -0.332, \"activePower\": -0.332, \"apparentPower\": 0.711, \"reactivePower\": 0.074, \"pwrFactor\": 0.0, \"voltage\": 6.283, \"current\": 0.113, \"freq\": 50.125}]}]");
-//        System.out.println(values);
-//        if(!values.equals(Array.with("704643328", 0.543f, "704643584", 432.435f))) throw new RuntimeException();
-//
-//        System.out.println();
-//        System.out.println("Success!");
+        int sum = 0;
+        // iterate over an IntIntMap so one of its Entries is instantiated
+        for(IntIntMap.Entry e : test.intsToIntsUnboxed) {
+            sum += e.value + 1;
+        }
+        // also iterate over an Array, which does not have any problems
+        String concat = "";
+        for(String s : test.stringArray) {
+            concat += s;
+        }
+        // by round-tripping again, we verify that the Entries is correctly skipped
+        roundTrip(test);
+        int sum2 = 0;
+        // check and make sure that no entries are skipped over or incorrectly added
+        for(IntIntMap.Entry e : test.intsToIntsUnboxed) {
+            sum2 += e.value + 1;
+        }
+        String concat2 = "";
+        // also check the Array again
+        for(String s : test.stringArray) {
+            concat2 += s;
+        }
+
+        System.out.println("before: " + sum + ", after: " + sum2);
+        System.out.println("before: " + concat + ", after: " + concat2);
+
+        test.someEnum = null;
+        roundTrip(test);
+
+        test = new Test1();
+        roundTrip(test);
+
+        test.stringArray = new Array();
+        roundTrip(test);
+
+        test.stringArray.add("meow");
+        roundTrip(test);
+
+        test.stringArray.add("moo");
+        roundTrip(test);
+
+        TestMapGraph objectGraph = new TestMapGraph();
+        testObjectGraph(objectGraph, "exoticTypeName");
+
+        test = new Test1();
+        test.map = new ObjectMap();
+        roundTrip(test);
+
+        test.map.put("one", 1);
+        roundTrip(test);
+
+        test.map.put("two", 2);
+        test.map.put("nine", 9);
+        roundTrip(test);
+
+        test.map.put("\nst\nuff\n", 9);
+        test.map.put("\r\nst\r\nuff\r\n", 9);
+        roundTrip(test);
+
+        equals(json.toJson("meow"), "meow");
+        equals(json.toJson("meow "), "\"meow \"");
+        equals(json.toJson(" meow"), "\" meow\"");
+        equals(json.toJson(" meow "), "\" meow \"");
+        equals(json.toJson("\nmeow\n"), "\\nmeow\\n");
+        equals(json.toJson(Array.with(1, 2, 3), null, int.class), "[1,2,3]");
+        equals(json.toJson(Array.with("1", "2", "3"), null, String.class), "[1,2,3]");
+        equals(json.toJson(Array.with(" 1", "2 ", " 3 "), null, String.class), "[\" 1\",\"2 \",\" 3 \"]");
+        equals(json.toJson(Array.with("1", "", "3"), null, String.class), "[1,\"\",3]");
+
+        // Show JsonSkimmer methods are called for all JSON parts:
+        String text = "{outer:{name1:{},z:{a:true,name2:[value,{\"ok\":v},0 ,1]}}}";
+        System.out.println(text);
+        new JsonSkimmer() {
+            int indent;
+            boolean object;
+
+            void indent() {
+                for(int i = 0; i < indent; i++)
+                    System.out.print("   ");
+            }
+
+            @Override
+            protected void push(@Null JsonToken name, boolean object) {
+                indent();
+                if(object)
+                    System.out.println(name != null ? name + ": {" : "{");
+                else
+                    System.out.println(name != null ? name + ": [" : "[");
+                this.object = object;
+                indent++;
+            }
+
+            @Override
+            protected void pop() {
+                indent--;
+                indent();
+                System.out.println(object ? '}' : ']');
+            }
+
+            @Override
+            protected void value(JsonToken name, JsonToken value) {
+                indent();
+                System.out.println(name != null ? name + ": " + value : value);
+            }
+        }.parse(text);
+
+        // JsonSkimmer usage example/test:
+        final Array values = new Array();
+        new JsonSkimmer() {
+            int level;
+            String id;
+            float watts;
+
+            @Override
+            protected void push(JsonToken name, boolean object) {
+                level++;
+            }
+
+            @Override
+            protected void pop() {
+                if(level == 2) {
+                    values.add(id);
+                    values.add(watts);
+                    id = null;
+                    watts = 0;
+                }
+                level--;
+            }
+
+            @Override
+            protected void value(JsonToken name, JsonToken value) {
+                if(level == 2) {
+                    if(name.equalsString("eid"))
+                        id = value.toString();
+                    else if(name.equalsString("activePower")) //
+                        watts = Float.parseFloat(value.toString());
+                }
+            }
+        }.parse(
+                "[{\"eid\": 704643328, \"timestamp\": 1686961582, \"actEnergyDlvd\": 2485013.736, \"actEnergyRcvd\": 11887.499, \"apparentEnergy\": 3054495.271, \"reactEnergyLagg\": 795783.451, \"reactEnergyLead\": 0.398, \"instantaneousDemand\": 0.543, \"activePower\": 0.543, \"apparentPower\": 254.202, \"reactivePower\": 248.806, \"pwrFactor\": 0.0, \"voltage\": 244.004, \"current\": 1.043, \"freq\": 50.125, \"channels\": [{\"eid\": 1778385169, \"timestamp\": 1686961582, \"actEnergyDlvd\": 2485013.736, \"actEnergyRcvd\": 11887.499, \"apparentEnergy\": 3054495.271, \"reactEnergyLagg\": 795783.451, \"reactEnergyLead\": 0.398, \"instantaneousDemand\": 0.543, \"activePower\": 0.543, \"apparentPower\": 254.202, \"reactivePower\": 248.806, \"pwrFactor\": 0.0, \"voltage\": 244.004, \"current\": 1.043, \"freq\": 50.125}, {\"eid\": 1778385170, \"timestamp\": 1686961582, \"actEnergyDlvd\": 9.464, \"actEnergyRcvd\": 1998.651, \"apparentEnergy\": 3232.019, \"reactEnergyLagg\": 301.011, \"reactEnergyLead\": 2.645, \"instantaneousDemand\": -0.1, \"activePower\": -0.1, \"apparentPower\": 0.75, \"reactivePower\": -0.0, \"pwrFactor\": 0.0, \"voltage\": 5.478, \"current\": 0.137, \"freq\": 50.125}, {\"eid\": 1778385171, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.002, \"actEnergyRcvd\": 4766.67, \"apparentEnergy\": 306.341, \"reactEnergyLagg\": 286.551, \"reactEnergyLead\": 0.293, \"instantaneousDemand\": -0.0, \"activePower\": -0.0, \"apparentPower\": -0.0, \"reactivePower\": 0.0, \"pwrFactor\": 0.0, \"voltage\": 9.968, \"current\": 0.0, \"freq\": 50.125}]}, {\"eid\": 704643584, \"timestamp\": 1686961582, \"actEnergyDlvd\": 1749556.395, \"actEnergyRcvd\": 1601637.637, \"apparentEnergy\": 5069079.041, \"reactEnergyLagg\": 17.665, \"reactEnergyLead\": 2831887.274, \"instantaneousDemand\": 432.435, \"activePower\": 432.435, \"apparentPower\": 971.846, \"reactivePower\": -793.38, \"pwrFactor\": 0.444, \"voltage\": 244.187, \"current\": 3.981, \"freq\": 50.125, \"channels\": [{\"eid\": 1778385425, \"timestamp\": 1686961582, \"actEnergyDlvd\": 1749556.395, \"actEnergyRcvd\": 1601637.637, \"apparentEnergy\": 5069079.041, \"reactEnergyLagg\": 17.665, \"reactEnergyLead\": 2831887.274, \"instantaneousDemand\": 432.435, \"activePower\": 432.435, \"apparentPower\": 971.846, \"reactivePower\": -793.38, \"pwrFactor\": 0.444, \"voltage\": 244.187, \"current\": 3.981, \"freq\": 50.125}, {\"eid\": 1778385426, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.002, \"actEnergyRcvd\": 6887.628, \"apparentEnergy\": 2848.524, \"reactEnergyLagg\": 273.934, \"reactEnergyLead\": 0.183, \"instantaneousDemand\": -0.285, \"activePower\": -0.285, \"apparentPower\": 0.773, \"reactivePower\": 0.0, \"pwrFactor\": -1.0, \"voltage\": 6.849, \"current\": 0.112, \"freq\": 50.125}, {\"eid\": 1778385427, \"timestamp\": 1686961582, \"actEnergyDlvd\": 0.005, \"actEnergyRcvd\": 10679.623, \"apparentEnergy\": 2662.289, \"reactEnergyLagg\": 274.727, \"reactEnergyLead\": 0.57, \"instantaneousDemand\": -0.332, \"activePower\": -0.332, \"apparentPower\": 0.711, \"reactivePower\": 0.074, \"pwrFactor\": 0.0, \"voltage\": 6.283, \"current\": 0.113, \"freq\": 50.125}]}]");
+        System.out.println(values);
+        if(!values.equals(Array.with("704643328", 0.543f, "704643584", 432.435f))) throw new RuntimeException();
+
+        System.out.println();
+        System.out.println("Success!");
     }
 
     private String roundTrip(Object object) {
@@ -260,7 +261,7 @@ public class JsonTest extends ApplicationAdapter {
         test(text, object);
 
         text = json.prettyPrint(object, 130);
-//        test(text, object);
+        test(text, object);
 
         return text;
     }

@@ -25,16 +25,8 @@ if (UNIX)
 endif()
 
 if (WIN32)
-  # Compiler flags
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -std=c11")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -std=c11")
-
   # Define GLEW_STATIC
   add_definitions(-DGLEW_STATIC)
-endif()
-if (UNIX)
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
 endif()
 
 if (WIN32)
@@ -45,6 +37,7 @@ endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw_stats")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
 
 if (WIN32)
@@ -60,12 +53,26 @@ set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
 file(GLOB_RECURSE EXTERNAL_SOURCES_0 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
 list(APPEND SOURCES ${EXTERNAL_SOURCES_0})
 
-# Collect external C++ sources from etc1
-file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/etc1/*.cpp")
+# Collect GLFW backend diagnostic C sources
+file(GLOB_RECURSE EXTERNAL_SOURCES_1 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/glfw_stats/*.c")
 list(APPEND SOURCES ${EXTERNAL_SOURCES_1})
+
+# Collect external C++ sources from etc1
+file(GLOB_RECURSE EXTERNAL_SOURCES_2 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/etc1/*.cpp")
+list(APPEND SOURCES ${EXTERNAL_SOURCES_2})
 
 # Add executable
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+if (MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE
+      $<$<CONFIG:Debug>:/Od /Zi>
+      $<$<CONFIG:Release>:/O2 /Ob2 /Oi /Ot>)
+elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+  target_compile_options(${PROJECT_NAME} PRIVATE
+      $<$<CONFIG:Debug>:-g>
+      $<$<CONFIG:Release>:-O3>)
+endif()
 
 # Set output name based on build configuration
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -43,6 +43,8 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
 
     public int idleFPS = 60;
     public int foregroundFPS = 0;
+    public boolean logMemoryStats = false;
+    public float memoryStatsIntervalSeconds = 5f;
 
     public  boolean pauseWhenMinimized = true;
     public boolean pauseWhenLostFocus = false;
@@ -80,6 +82,8 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
         transparentFramebuffer = config.transparentFramebuffer;
         idleFPS = config.idleFPS;
         foregroundFPS = config.foregroundFPS;
+        logMemoryStats = config.logMemoryStats;
+        memoryStatsIntervalSeconds = config.memoryStatsIntervalSeconds;
         pauseWhenMinimized = config.pauseWhenMinimized;
         pauseWhenLostFocus = config.pauseWhenLostFocus;
         preferencesDirectory = config.preferencesDirectory;
@@ -184,6 +188,17 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
      */
     public void setForegroundFPS(int fps) {
         this.foregroundFPS = fps;
+    }
+
+    /**
+     * Logs TeaVM heap and registered direct buffer usage periodically from the GLFW application loop.
+     */
+    public void setMemoryStatsLogging(boolean enabled, float intervalSeconds) {
+        this.logMemoryStats = enabled;
+        if(intervalSeconds <= 0) {
+            throw new IllegalArgumentException("intervalSeconds must be > 0");
+        }
+        this.memoryStatsIntervalSeconds = intervalSeconds;
     }
 
     /**

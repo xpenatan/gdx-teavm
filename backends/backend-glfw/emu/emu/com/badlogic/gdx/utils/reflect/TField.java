@@ -2,6 +2,7 @@ package emu.com.badlogic.gdx.utils.reflect;
 
 import com.badlogic.gdx.utils.reflect.FieldGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+import java.lang.reflect.Modifier;
 
 public final class TField {
 
@@ -35,45 +36,31 @@ public final class TField {
     }
 
     public boolean isFinal() {
-        // TODO
-//		return Modifier.isFinal(field.getModifiers());
-        return false;
+        return Modifier.isFinal(field.getModifiers());
     }
 
     public boolean isPrivate() {
-        // TODO
-//		return Modifier.isPrivate(field.getModifiers());
-        return false;
+        return Modifier.isPrivate(field.getModifiers());
     }
 
     public boolean isProtected() {
-        // TODO
-//		return Modifier.isProtected(field.getModifiers());
-        return false;
+        return Modifier.isProtected(field.getModifiers());
     }
 
     public boolean isPublic() {
-        // TODO
-//		return Modifier.isPublic(field.getModifiers());
-        return false;
+        return Modifier.isPublic(field.getModifiers());
     }
 
     public boolean isStatic() {
-        // TODO
-//		return Modifier.isStatic(field.getModifiers());
-        return false;
+        return Modifier.isStatic(field.getModifiers());
     }
 
     public boolean isTransient() {
-        // TODO
-//		return Modifier.isTransient(field.getModifiers());
-        return false;
+        return Modifier.isTransient(field.getModifiers());
     }
 
     public boolean isVolatile() {
-        // TODO
-//		return Modifier.isVolatile(field.getModifiers());
-        return false;
+        return Modifier.isVolatile(field.getModifiers());
     }
 
     public boolean isSynthetic() {

@@ -3346,6 +3346,9 @@ public class OpenGL {
     @Import(name = "glGetProgramInfoLog")
     public static native void glGetProgramInfoLog(int program, int bufsize, IntBuffer length, CharBuffer infolog);
 
+    @Import(name = "glGetProgramInfoLog")
+    public static native void glGetProgramInfoLog(int program, int bufsize, IntBuffer length, byte[] infolog);
+
     @Import(name = "glGetRenderbufferParameteriv")
     public static native void glGetRenderbufferParameteriv(int target, int pname, Address params);
 
@@ -3354,6 +3357,9 @@ public class OpenGL {
 
     @Import(name = "glGetShaderInfoLog")
     public static native void glGetShaderInfoLog(int shader, int bufsize, IntBuffer length, CharBuffer infolog);
+
+    @Import(name = "glGetShaderInfoLog")
+    public static native void glGetShaderInfoLog(int shader, int bufsize, IntBuffer length, byte[] infolog);
 
     @Import(name = "glGetShaderPrecisionFormat")
     public static native void glGetShaderPrecisionFormat(int shadertype, int precisiontype, Address range, Address precision);
@@ -3420,6 +3426,9 @@ public class OpenGL {
 
     @Import(name = "glShaderSource")
     public static native void glShaderSource(int shader, int count, Address strings, IntBuffer length);
+
+    @Import(name = "glShaderSource")
+    public static native void glShaderSource(int shader, int count, Address strings, Address length);
 
     @Import(name = "glStencilFuncSeparate")
     public static native void glStencilFuncSeparate(int face, int func, int ref, int mask);

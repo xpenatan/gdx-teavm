@@ -9,14 +9,11 @@ import java.lang.reflect.Modifier;
 public final class TClassReflection {
 
     static public Class forName(String name) throws ReflectionException {
-        return ClassGen.forName(name);
-
-//        try {
-//            return Class.forName(name);
-//        }
-//        catch(ClassNotFoundException e) {
-//            throw new ReflectionException("Class not found: " + name, e);
-//        }
+        Class type = ClassGen.forName(name);
+        if(type == null) {
+            throw new ReflectionException("Class not found: " + name);
+        }
+        return type;
     }
 
     static public String getSimpleName(Class c) {
@@ -82,6 +79,15 @@ public final class TClassReflection {
 //        catch(IllegalAccessException e) {
 //            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
 //        }
+            if(c == java.util.HashMap.class) {
+                return (T)new java.util.HashMap();
+            }
+            if(c == java.util.LinkedHashMap.class) {
+                return (T)new java.util.LinkedHashMap();
+            }
+            if(c == java.util.ArrayList.class) {
+                return (T)new java.util.ArrayList();
+            }
             Object o = InstanceGen.newInstance(c);
             if(o == null) {
                 throw new ReflectionException("Could not instantiate instance of class: " + c.getName());
@@ -122,17 +128,11 @@ public final class TClassReflection {
 
     static public TConstructor getDeclaredConstructor(Class c, Class... parameterTypes) throws ReflectionException {
         try {
-            //TODO fix this
-//            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes);
-//            return new TConstructor(c, declaredConstructor);
             return new TConstructor(c, null);
         }
         catch(SecurityException e) {
             throw new ReflectionException("Security violation while getting constructor for class: " + c.getName(), e);
         }
-//        catch(NoSuchMethodException e) {
-//            throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
-//        }
         catch(Exception e) {
             throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
         }

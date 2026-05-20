@@ -27,23 +27,37 @@ public class ConstructorGen {
             return;
         }
 
+        ReflectMethod[] methods = cls.getDeclaredMethods();
+        Value<Object> result = Metaprogramming.lazy(() -> null);
+        boolean foundConstructor = false;
+        for (ReflectMethod method : methods) {
+            if (method.isConstructor()) {
+                foundConstructor = true;
+                int parameterCount = method.getParameterCount();
+                ReflectMethod constructor = method;
+                Value<Object> existing = result;
+                result = Metaprogramming.lazy(() -> {
+                    Object[] argArray = args.get();
+                    if(argArray.length == parameterCount) {
+                        return constructor.construct(argArray);
+                    }
+                    return existing.get();
+                });
+            }
+        }
+
+        if(!foundConstructor) {
+            unsupportedCase();
+            return;
+        }
+
+        Value<Object> finalResult = result;
         exit(() -> {
-            Object[] argArray = args.get();
-            ReflectMethod[] methods = cls.getDeclaredMethods();
-            ReflectMethod constructor = null;
-
-            for (ReflectMethod method : methods) {
-                if (method.isConstructor() && method.getParameterCount() == argArray.length) {
-                    constructor = method;
-                    break;
-                }
+            Object object = finalResult.get();
+            if (object == null) {
+                throw new RuntimeException("No constructor found for " + name + " with " + args.get().length + " parameters");
             }
-
-            if (constructor == null) {
-                throw new RuntimeException("No constructor found for " + cls.getName() + " with " + argArray.length + " parameters");
-            }
-
-            return constructor.construct(argArray);
+            return object;
         });
     }
 

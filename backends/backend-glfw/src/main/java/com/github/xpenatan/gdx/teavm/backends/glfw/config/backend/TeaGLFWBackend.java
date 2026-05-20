@@ -5,22 +5,97 @@ import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.teavm.tooling.TeaVMTargetType;
 
 public class TeaGLFWBackend extends TeaBackend {
 
+    private static final String BUILD_SCRIPT_TEMPLATE_ROOT = "templates/glfw/";
+
+    public enum NativeBuildType {
+        DEBUG("Debug", "debug"),
+        RELEASE("Release", "release");
+
+        private final String cmakeConfig;
+        private final String outputSuffix;
+
+        NativeBuildType(String cmakeConfig, String outputSuffix) {
+            this.cmakeConfig = cmakeConfig;
+            this.outputSuffix = outputSuffix;
+        }
+
+        public String getCmakeConfig() {
+            return cmakeConfig;
+        }
+
+        public String getOutputSuffix() {
+            return outputSuffix;
+        }
+
+        public static NativeBuildType fromString(String value) {
+            if(value == null || value.isBlank()) {
+                return DEBUG;
+            }
+            String normalized = value.trim().toLowerCase(Locale.ROOT);
+            if(normalized.equals("debug")) {
+                return DEBUG;
+            }
+            if(normalized.equals("release")) {
+                return RELEASE;
+            }
+            throw new IllegalArgumentException("Unsupported GLFW native build type: " + value);
+        }
+    }
+
     public boolean shouldGenerateSource = true;
+    public boolean buildExecutableAfterBuild;
+    public boolean runExecutableAfterBuild;
+    public boolean runExecutableWithConsoleLog;
     public List<String> additionalSourcePaths = new ArrayList<>();
 
     protected String buildRootPath;
     protected String generatedSources;
     protected String externalSources;
+    protected NativeBuildType nativeBuildType = NativeBuildType.DEBUG;
+
+    public TeaGLFWBackend setBuildType(NativeBuildType buildType) {
+        if(buildType == null) {
+            throw new IllegalArgumentException("buildType cannot be null");
+        }
+        nativeBuildType = buildType;
+        return this;
+    }
+
+    public TeaGLFWBackend setBuildType(String buildType) {
+        nativeBuildType = NativeBuildType.fromString(buildType);
+        return this;
+    }
+
+    public TeaGLFWBackend setBuildExecutableAfterBuild(boolean buildExecutableAfterBuild) {
+        this.buildExecutableAfterBuild = buildExecutableAfterBuild;
+        return this;
+    }
+
+    public TeaGLFWBackend setRunExecutableAfterBuild(boolean runExecutableAfterBuild) {
+        this.runExecutableAfterBuild = runExecutableAfterBuild;
+        if(runExecutableAfterBuild) {
+            this.buildExecutableAfterBuild = true;
+        }
+        return this;
+    }
+
+    public TeaGLFWBackend setRunExecutableWithConsoleLog(boolean runExecutableWithConsoleLog) {
+        this.runExecutableWithConsoleLog = runExecutableWithConsoleLog;
+        return this;
+    }
 
     @Override
     protected void setup(TeaCompilerData data) {
@@ -80,159 +155,176 @@ public class TeaGLFWBackend extends TeaBackend {
             throw new RuntimeException("Failed to setup CMakeLists.txt", e);
         }
 
-        // Generate bat files for building the project
-        generateBuildBatFiles(projectName, releasePathStr);
+        // Generate scripts for building the project
+        generateBuildScripts(projectName);
+
+        if(buildExecutableAfterBuild || runExecutableAfterBuild) {
+            executeBuildScript(nativeBuildType);
+        }
+        if(runExecutableAfterBuild) {
+            runExecutable(data, nativeBuildType);
+        }
     }
 
-    private void generateBuildBatFiles(String projectName, String releasePathStr) {
-        String releaseBatPath = buildRootPath + "/app_release.bat";
-        String debugBatPath = buildRootPath + "/app_debug.bat";
-
+    private void generateBuildScripts(String projectName) {
         // Ensure the dist directory exists
         File distDir = new File(buildRootPath);
         if (!distDir.exists() && !distDir.mkdirs()) {
-            System.err.println("Dist directory could not be created");
-            return;
+            throw new RuntimeException("Dist directory could not be created");
         }
 
         // Generate app_release.bat
-        String releaseBatContent = generateBatContent(projectName, "Release");
-        try {
-            Files.write(Paths.get(releaseBatPath), releaseBatContent.getBytes());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        writeBuildScript("app_release.bat", projectName, "Release", false);
 
         // Generate app_debug.bat
-        String debugBatContent = generateBatContent(projectName, "Debug");
-        try {
-            Files.write(Paths.get(debugBatPath), debugBatContent.getBytes());
+        writeBuildScript("app_debug.bat", projectName, "Debug", false);
+
+        // Generate app_release.sh
+        writeBuildScript("app_release.sh", projectName, "Release", true);
+
+        // Generate app_debug.sh
+        writeBuildScript("app_debug.sh", projectName, "Debug", true);
+    }
+
+    private void writeBuildScript(String scriptName, String projectName, String buildConfig, boolean executable) {
+        String path = buildRootPath + "/" + scriptName;
+        String templatePath = BUILD_SCRIPT_TEMPLATE_ROOT + scriptName;
+        try (var input = getClass().getClassLoader().getResourceAsStream(templatePath)) {
+            if (input == null) {
+                throw new RuntimeException(templatePath + " template not found in resources");
+            }
+            String template = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            String content = template
+                    .replace("${PROJECT_NAME}", scriptName.endsWith(".sh") ? escapeShellValue(projectName) : projectName)
+                    .replace("${BUILD_CONFIG}", buildConfig);
+
+            Files.write(Paths.get(path), content.getBytes(StandardCharsets.UTF_8));
+            if(executable) {
+                new File(path).setExecutable(true, false);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to setup " + path, e);
         }
     }
 
-    private String generateBatContent(String projectName, String buildConfig) {
-        StringBuilder batContent = new StringBuilder();
-        batContent.append("@echo off\n");
-        batContent.append("setlocal enabledelayedexpansion\n");
-        batContent.append("\n");
-        batContent.append(":: Build ").append(buildConfig).append(" Configuration\n");
-        batContent.append("set NAME=").append(projectName).append("\n");
-        batContent.append("set BUILD_CONFIG=").append(buildConfig).append("\n");
-        batContent.append("\n");
-        batContent.append(":: Change to the c directory where CMakeLists.txt is located\n");
-        batContent.append("cd /d \"%~dp0\"\n");
-        batContent.append("if errorlevel 1 (\n");
-        batContent.append("    echo Failed to change directory\n");
-        batContent.append("    exit /b 1\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append(":: Use CMake to create build files\n");
-        batContent.append("echo Generating CMake build files for !BUILD_CONFIG!...\n");
-        batContent.append("\n");
-        batContent.append(":: Try to find cmake\n");
-        batContent.append("set CMAKE_PATH=cmake\n");
-        batContent.append("where cmake >nul 2>&1\n");
-        batContent.append("if errorlevel 1 (\n");
-        batContent.append("    echo cmake not found in PATH, trying Visual Studio paths...\n");
-        batContent.append("    if exist \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\" (\n");
-        batContent.append("        set \"CMAKE_PATH=C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\"\n");
-        batContent.append("    ) else (\n");
-        batContent.append("        if exist \"C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\" (\n");
-        batContent.append("            set \"CMAKE_PATH=C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe\"\n");
-        batContent.append("        ) else (\n");
-        batContent.append("            echo cmake could not be found. Please install CMake or add it to PATH.\n");
-        batContent.append("            exit /b 1\n");
-        batContent.append("        )\n");
-        batContent.append("    )\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append("!CMAKE_PATH! -S . -B build\\cmake\n");
-        batContent.append("if errorlevel 1 (\n");
-        batContent.append("    echo CMake build generation failed\n");
-        batContent.append("    exit /b 1\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append("echo Changing directory to build\\cmake...\n");
-        batContent.append("cd build\\cmake\n");
-        batContent.append("if errorlevel 1 (\n");
-        batContent.append("    echo Failed to change directory\n");
-        batContent.append("    exit /b 1\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append(":: Initialize MSBuild path variable\n");
-        batContent.append("set MSBUILD_PATH=\n");
-        batContent.append("set VS_EDITION=\n");
-        batContent.append("\n");
-        batContent.append(":: Search Visual Studio installations (two levels deep)\n");
-        batContent.append("for %%R in (\"%ProgramFiles%\" \"%ProgramFiles(x86)%\") do (\n");
-        batContent.append("    for /d %%Y in (\"%%~R\\Microsoft Visual Studio\\*\") do (\n");
-        batContent.append("        for /d %%E in (\"%%~Y\\*\") do (\n");
-        batContent.append("            set \"EDITION_DIR=%%~nxE\"\n");
-        batContent.append("            set \"CHECK_PATH=%%~fE\\MSBuild\\Current\\Bin\"\n");
-        batContent.append("\n");
-        batContent.append("            if exist \"!CHECK_PATH!\\MSBuild.exe\" (\n");
-        batContent.append("                set \"MSBUILD_PATH=!CHECK_PATH!\\MSBuild.exe\"\n");
-        batContent.append("                set \"VS_EDITION=!EDITION_DIR!\"\n");
-        batContent.append("                goto :found\n");
-        batContent.append("            )\n");
-        batContent.append("            if exist \"!CHECK_PATH!\\amd64\\MSBuild.exe\" (\n");
-        batContent.append("                set \"MSBUILD_PATH=!CHECK_PATH!\\amd64\\MSBuild.exe\"\n");
-        batContent.append("                set \"VS_EDITION=!EDITION_DIR!\"\n");
-        batContent.append("                goto :found\n");
-        batContent.append("            )\n");
-        batContent.append("            if exist \"!CHECK_PATH!\\x86\\MSBuild.exe\" (\n");
-        batContent.append("                set \"MSBUILD_PATH=!CHECK_PATH!\\x86\\MSBuild.exe\"\n");
-        batContent.append("                set \"VS_EDITION=!EDITION_DIR!\"\n");
-        batContent.append("                goto :found\n");
-        batContent.append("            )\n");
-        batContent.append("        )\n");
-        batContent.append("    )\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append(":: If MSBuild path is not found, check in the registry for installations\n");
-        batContent.append("echo MSBuild not found in default paths. Checking registry for installation...\n");
-        batContent.append("\n");
-        batContent.append("for /f \"tokens=2* delims=    \" %%A in ('reg query \"HKCU\\Software\\Microsoft\\VisualStudio\" /s /f \"MSBuild.exe\" 2^>nul') do (\n");
-        batContent.append("    if \"%%B\" neq \"\" (\n");
-        batContent.append("        set MSBUILD_PATH=%%B\n");
-        batContent.append("        set VS_EDITION=Unknown\n");
-        batContent.append("        goto :found\n");
-        batContent.append("    )\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append(":: If MSBuild is still not found, display an error\n");
-        batContent.append("echo Error: MSBuild not found on your system.\n");
-        batContent.append("exit /b 1\n");
-        batContent.append("\n");
-        batContent.append(":found\n");
-        batContent.append(":: Display the found MSBuild path and edition\n");
-        batContent.append("echo MSBuild found at: %MSBUILD_PATH%\n");
-        batContent.append("echo Visual Studio Edition Detected: %VS_EDITION%\n");
-        batContent.append("\n");
-        batContent.append("if /i \"%VS_EDITION%\"==\"BuildTools\" (\n");
-        batContent.append("    echo Error: Visual Studio Build Tools edition is not supported.\n");
-        batContent.append("    exit /b 1\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append(":: Set the solution/project file and build configuration\n");
-        batContent.append("set SOLUTION_FILE=\".\\!NAME!.slnx\"\n");
-        batContent.append("\n");
-        batContent.append(":: Run MSBuild with the specified configuration\n");
-        batContent.append("echo Running MSBuild for !BUILD_CONFIG! configuration...\n");
-        batContent.append("\"!MSBUILD_PATH!\" !SOLUTION_FILE! /p:Configuration=!BUILD_CONFIG! /p:Platform=x64\n");
-        batContent.append("\n");
-        batContent.append("if errorlevel 1 (\n");
-        batContent.append("    echo Failed to build solution\n");
-        batContent.append("    exit /b 1\n");
-        batContent.append(")\n");
-        batContent.append("\n");
-        batContent.append("echo Build completed successfully for !BUILD_CONFIG! configuration.\n");
-        batContent.append("cd /d \"%~dp0\"\n");
-        batContent.append("endlocal\n");
+    private String escapeShellValue(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("$", "\\$")
+                .replace("`", "\\`");
+    }
 
-        return batContent.toString();
+    private void executeBuildScript(NativeBuildType buildType) {
+        File scriptFile = new File(buildRootPath, getBuildScriptName(buildType));
+        if(!scriptFile.isFile()) {
+            throw new RuntimeException("Expected GLFW build script was not generated: " + scriptFile.getAbsolutePath());
+        }
+
+        ProcessBuilder processBuilder;
+        if(isWindows()) {
+            processBuilder = new ProcessBuilder("cmd", "/c", scriptFile.getAbsolutePath());
+        }
+        else {
+            processBuilder = new ProcessBuilder("bash", scriptFile.getAbsolutePath());
+        }
+        processBuilder.directory(new File(buildRootPath));
+        executeProcess(processBuilder, "GLFW native build failed");
+    }
+
+    private void runExecutable(TeaCompilerData data, NativeBuildType buildType) {
+        File executableFile = releasePath.child(getExecutableName(data.outputName, buildType)).file();
+        if(!executableFile.isFile()) {
+            throw new RuntimeException("Expected GLFW executable was not built: " + executableFile.getAbsolutePath());
+        }
+
+        if(runExecutableWithConsoleLog && isWindows()) {
+            ProcessBuilder processBuilder = createWindowsConsoleProcess(executableFile);
+            executeProcess(processBuilder, "GLFW executable failed");
+        }
+        else {
+            ProcessBuilder processBuilder = new ProcessBuilder(executableFile.getAbsolutePath());
+            processBuilder.directory(releasePath.file());
+            executeProcess(processBuilder, "GLFW executable failed", runExecutableWithConsoleLog);
+        }
+    }
+
+    private ProcessBuilder createWindowsConsoleProcess(File executableFile) {
+        File consoleScript = writeWindowsConsoleRunScript(executableFile);
+        String title = "GLFW " + executableFile.getName();
+        return new ProcessBuilder("cmd", "/c", "start", title, "/wait", consoleScript.getAbsolutePath());
+    }
+
+    private File writeWindowsConsoleRunScript(File executableFile) {
+        File scriptFile = new File(buildRootPath, removeExtension(executableFile.getName()) + "_console.bat");
+        String templatePath = BUILD_SCRIPT_TEMPLATE_ROOT + "app_console.bat";
+        try (var input = getClass().getClassLoader().getResourceAsStream(templatePath)) {
+            if (input == null) {
+                throw new RuntimeException(templatePath + " template not found in resources");
+            }
+            String template = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            String content = template
+                    .replace("${WINDOW_TITLE}", escapeBatchValue("GLFW " + executableFile.getName()))
+                    .replace("${WORKING_DIRECTORY}", escapeBatchValue(releasePath.file().getAbsolutePath()))
+                    .replace("${EXECUTABLE_PATH}", escapeBatchValue(executableFile.getAbsolutePath()));
+            Files.write(Paths.get(scriptFile.getAbsolutePath()), content.getBytes(StandardCharsets.UTF_8));
+            return scriptFile;
+        } catch(Exception e) {
+            throw new RuntimeException("Failed to setup " + scriptFile.getAbsolutePath(), e);
+        }
+    }
+
+    private String removeExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        if(dotIndex == -1) {
+            return fileName;
+        }
+        return fileName.substring(0, dotIndex);
+    }
+
+    private String escapeBatchValue(String value) {
+        return value.replace("%", "%%");
+    }
+
+    private void executeProcess(ProcessBuilder processBuilder, String failureMessage) {
+        executeProcess(processBuilder, failureMessage, false);
+    }
+
+    private void executeProcess(ProcessBuilder processBuilder, String failureMessage, boolean inheritIO) {
+        processBuilder.redirectErrorStream(true);
+        try {
+            if(inheritIO) {
+                processBuilder.inheritIO();
+            }
+            Process process = processBuilder.start();
+            if(!inheritIO) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                }
+            }
+
+            int exitCode = process.waitFor();
+            if(exitCode != 0) {
+                throw new RuntimeException(failureMessage + " with exit code " + exitCode);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException(failureMessage, e);
+        }
+    }
+
+    private String getBuildScriptName(NativeBuildType buildType) {
+        return "app_" + buildType.getOutputSuffix() + (isWindows() ? ".bat" : ".sh");
+    }
+
+    private String getExecutableName(String outputName, NativeBuildType buildType) {
+        return outputName + "_" + buildType.getOutputSuffix() + (isWindows() ? ".exe" : "");
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows");
     }
 
     @Override
