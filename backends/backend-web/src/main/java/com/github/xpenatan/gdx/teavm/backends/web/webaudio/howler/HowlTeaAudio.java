@@ -44,4 +44,8 @@ public class HowlTeaAudio implements WebAudio {
     public String[] getAvailableOutputDevices() {
         return new String[0];
     }
+
+    @Override
+    public void dispose() {
+    }
 }

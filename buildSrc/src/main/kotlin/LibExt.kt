@@ -10,7 +10,7 @@ object LibExt {
             return getVersion()
         }
 
-    const val gdxVersion = "1.14.0"
+    const val gdxVersion = "1.14.1"
     const val teaVMVersion = "0.14.0"
     const val jMultiplatform = "0.1.3"
 
@@ -19,7 +19,7 @@ object LibExt {
     const val reflectionVersion = "0.10.2"
     const val jettyVersion = "11.0.13"
 
-    const val gdxGltfVersion = "2.2.1"
+    const val gdxGltfVersion = "2.3.0"
     const val aiVersion = "1.8.2"
     const val gdxControllerVersion = "2.2.4"
 
