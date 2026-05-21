@@ -3,14 +3,15 @@ package com.github.xpenatan.gdx.teavm.backends.web.config.backend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import java.io.File;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 public class JettyServer {
 
-    private Server server;
-    private WebAppContext context;
+    private volatile Server server;
+    private volatile WebAppContext context;
 
-    private boolean serverStarted = false;
+    private volatile boolean serverStarted = false;
 
     private String webAppDirectory;
 
@@ -23,7 +24,9 @@ public class JettyServer {
 
         context.setCopyWebDir(false);
         context.setContextPath("/");
+        context.setWelcomeFiles(new String[] { "index.html" });
         context.setParentLoaderPriority(false);
+        context.addServlet(DefaultServlet.class, "/");
 
         // Prevent windows file locking
         context.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false");
@@ -37,12 +40,13 @@ public class JettyServer {
         }
         catch(Exception e) {
             e.printStackTrace();
-            serverStarted = false;
+            stopServer();
         }
     }
 
-    public void startServer(int port, String path, boolean runInSeparateThread) {
+    public synchronized void startServer(int port, String path, boolean runInSeparateThread) {
         if(!serverStarted && path != null && !path.isEmpty()) {
+            stopServer();
             this.port = port;
             this.webAppDirectory = path;
             File file = new File(webAppDirectory);
@@ -64,11 +68,14 @@ public class JettyServer {
         }
     }
 
-    public void stopServer() {
-        if(this.server != null) {
-            Server server = this.server;
-            this.server = null;
+    public synchronized void stopServer() {
+        Server server = this.server;
+        WebAppContext context = this.context;
+        this.server = null;
+        this.context = null;
+        serverStarted = false;
 
+        if(context != null) {
             try {
                 context.stop();
                 context.destroy();
@@ -76,7 +83,9 @@ public class JettyServer {
             catch(Exception e) {
                 e.printStackTrace();
             }
+        }
 
+        if(server != null) {
             try {
                 server.stop();
             }
@@ -85,7 +94,6 @@ public class JettyServer {
             }
             server.setHandler(null);
             server.destroy();
-            serverStarted = false;
         }
     }
 

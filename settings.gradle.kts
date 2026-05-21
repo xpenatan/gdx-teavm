@@ -1,6 +1,8 @@
 import java.util.*
 
 pluginManagement {
+    includeBuild("tools/gdx-teavm-plugin")
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -26,15 +28,16 @@ include(":extensions:gdx-freetype-teavm")
 //include(":tools:generator:desktop")
 
 include(":examples:basic:core")
-include(":examples:basic:desktop")
-include(":examples:basic:desktop-graalvm")
-include(":examples:basic:teavm-web")
-include(":examples:basic:teavm-glfw")
-include(":examples:basic:teavm-psp")
+include(":examples:basic:lwjgl3")
+include(":examples:basic:graalvm")
+include(":examples:basic:plugin")
+include(":examples:basic:web")
+include(":examples:basic:glfw")
+include(":examples:basic:psp")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
-include(":examples:freetype:teavm-web")
+include(":examples:freetype:web")
 
 val file = File(settingsDir, "gradle.properties")
 

@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.Files.FileType;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
@@ -176,7 +176,12 @@ public class WebBackend extends TeaBackend {
         FileHandle webXMLFile = releasePath.child("WEB-INF").child("web.xml");
         indexHandler.writeString(indexHtml, false);
         webXMLFile.writeString(webXML, false);
-        AssetsCopy.copyResources(classLoader, rootAssets, null, assetsFolder, FileType.Classpath);
+        try {
+            AssetsCopy.copyClasspathResources(classLoader, rootAssets, null,
+                    AssetOutput.fileHandle(assetsFolder), "");
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void copyRuntime(File setTargetDirectory) {
@@ -197,6 +202,11 @@ public class WebBackend extends TeaBackend {
     protected void copyAssets(TeaCompilerData data) {
         super.copyAssets(data);
         FileHandle scriptsFolder = releasePath.child("scripts");
-        AssetsCopy.copyResources(classLoader, scripts, scriptFilter, scriptsFolder, FileType.Classpath);
+        try {
+            AssetsCopy.copyClasspathResources(classLoader, scripts, scriptFilter,
+                    AssetOutput.fileHandle(scriptsFolder), "");
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

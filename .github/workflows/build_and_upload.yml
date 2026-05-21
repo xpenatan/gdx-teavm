@@ -49,6 +49,17 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Prepare Release deploy files
+        if: ${{ inputs.shouldUpload && inputs.isRelease }}
+        run: ./gradlew prepareReleaseDeploy
+
+      - name: Upload Release deploy files artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.shouldUpload && inputs.isRelease }}
+        with:
+          name: release-staging-deploy-${{ steps.version.outputs.value }}
+          path: ./build/staging-deploy/
+
       - name: Upload Release to repository
         uses: nick-fields/retry@v3
         if: ${{ inputs.shouldUpload && inputs.isRelease }}
@@ -57,6 +68,17 @@ jobs:
           timeout_minutes: 10
           retry_on: error
           command: ./gradlew publishRelease
+
+      - name: Prepare Snapshot deploy files
+        if: ${{ inputs.shouldUpload && !inputs.isRelease }}
+        run: ./gradlew prepareSnapshotDeploy
+
+      - name: Upload Snapshot deploy files artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.shouldUpload && !inputs.isRelease }}
+        with:
+          name: snapshot-deploy-${{ steps.version.outputs.value }}-${{ github.run_number }}
+          path: ./build/snapshot-deploy/
 
       - name: Upload Snapshot to repository
         uses: nick-fields/retry@v3
@@ -73,11 +95,11 @@ jobs:
         with:
           script: |
             const versionOutputs = ${{ toJSON(steps.version.outputs) }};
-            
+
             var version = versionOutputs.value;
-            
+
             console.log("Version: " + version);
-            
+
             var ref = "refs/tags/" + version
             github.rest.git.createRef({
               owner: context.repo.owner,

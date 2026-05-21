@@ -32,7 +32,7 @@ import org.teavm.jso.webgl.WebGLUniformLocation;
  */
 public class WebGL20 implements GL20 {
 
-    @JSClass
+    @JSClass(transparent = true)
     static class CustomIntMap<T extends JSObject> implements JSObject {
         @JSBody(script = "return [undefined];")
         public static native <T extends JSObject> CustomIntMap<T> create();

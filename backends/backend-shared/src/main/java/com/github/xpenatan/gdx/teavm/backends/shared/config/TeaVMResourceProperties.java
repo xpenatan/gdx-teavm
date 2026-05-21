@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -264,7 +266,6 @@ public class TeaVMResourceProperties {
         ArrayList<TeaVMResourceProperties> result = new ArrayList<>();
         for(URL url : acceptedURL) {
             String urlPath = decodedPath(url);
-            if(!urlPath.endsWith(".jar")) continue;
             if(urlPath.contains("org.teavm")) continue;
             TeaVMResourceProperties properties = readProperties(urlPath);
             if(properties != null) result.add(properties);
@@ -283,6 +284,19 @@ public class TeaVMResourceProperties {
     }
 
     private static TeaVMResourceProperties readProperties(String path) {
+        File file = new File(path);
+        if(file.isDirectory()) {
+            Path propertiesPath = file.toPath().resolve("META-INF").resolve("gdx-teavm.properties");
+            if(!Files.exists(propertiesPath)) return null;
+            try(InputStream in = Files.newInputStream(propertiesPath)) {
+                return new TeaVMResourceProperties(path, readString(in, null));
+            } catch(IOException e) {
+                return null;
+            }
+        }
+        if(!path.endsWith(".jar")) {
+            return null;
+        }
         try(ZipFile zipFile = new ZipFile(path)) {
             ZipEntry entry = zipFile.getEntry("META-INF/gdx-teavm.properties");
             if(entry == null) return null;

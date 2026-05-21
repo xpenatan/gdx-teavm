@@ -30,4 +30,5 @@ subprojects {
     }
 }
 
+extra["gdxTeaVMPublishTarget"] = GdxTeaVMPublishTarget.LIBRARIES
 apply(plugin = "publish")
