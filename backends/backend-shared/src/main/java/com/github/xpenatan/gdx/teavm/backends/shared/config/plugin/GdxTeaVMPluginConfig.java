@@ -17,6 +17,7 @@ public class GdxTeaVMPluginConfig {
     public static final String HTML_HEIGHT = "gdx.teavm.html.height";
     public static final String LOGO_PATH = "gdx.teavm.logoPath";
     public static final String COPY_LOADING_ASSET = "gdx.teavm.copyLoadingAsset";
+    public static final String CLASSPATH = "gdx.teavm.classpath";
     public static final String ASSETS = "gdx.teavm.assets";
     public static final String CLASSPATH_ASSETS = "gdx.teavm.classpathAssets";
     public static final String REFLECTION_ENABLED = "gdx.teavm.reflection.enabled";
@@ -43,6 +44,7 @@ public class GdxTeaVMPluginConfig {
     public final int htmlHeight;
     public final String logoPath;
     public final boolean copyLoadingAsset;
+    public final List<String> classpath;
     public final List<String> assets;
     public final List<String> classpathAssets;
     public final boolean reflectionEnabled;
@@ -70,6 +72,7 @@ public class GdxTeaVMPluginConfig {
         htmlHeight = getInt(properties, HTML_HEIGHT, 600);
         logoPath = getString(properties, LOGO_PATH, "startup-logo.png");
         copyLoadingAsset = getBoolean(properties, COPY_LOADING_ASSET, true);
+        classpath = Collections.unmodifiableList(readPathList(properties, CLASSPATH));
         assets = Collections.unmodifiableList(readPathList(properties, ASSETS));
         classpathAssets = Collections.unmodifiableList(readTokenList(properties, CLASSPATH_ASSETS));
         reflectionEnabled = getBoolean(properties, REFLECTION_ENABLED, true);

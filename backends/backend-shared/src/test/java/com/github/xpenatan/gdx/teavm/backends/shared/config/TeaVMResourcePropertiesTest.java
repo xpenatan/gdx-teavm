@@ -1,9 +1,46 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TeaVMResourcePropertiesTest {
+
+    @Test
+    public void createAssetPlan_discoversScriptFromDependencyJar() throws Exception {
+        Path jar = Files.createTempFile("gdx-freetype-teavm", ".jar");
+        try {
+            try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(jar))) {
+                zip.putNextEntry(new ZipEntry("META-INF/gdx-teavm.properties"));
+                zip.write("# marker\n".getBytes(StandardCharsets.UTF_8));
+                zip.closeEntry();
+                zip.putNextEntry(new ZipEntry("freetype.js"));
+                zip.write("window.freetype = true;\n".getBytes(StandardCharsets.UTF_8));
+                zip.closeEntry();
+            }
+
+            URL jarUrl = jar.toUri().toURL();
+            ArrayList<URL> classpath = new ArrayList<>();
+            classpath.add(jarUrl);
+
+            try(URLClassLoader classLoader = new URLClassLoader(new URL[] { jarUrl })) {
+                AssetsCopy.AssetPlan plan = AssetsCopy.createAssetPlan(classLoader, classpath, Collections.emptyList(), null);
+
+                Assert.assertTrue(plan.scripts.contains("/freetype.js"));
+            }
+        }
+        finally {
+            Files.deleteIfExists(jar);
+        }
+    }
 
     @Test
     public void matchesMainJarArtifact_matchesRealVersionSiblingArtifact() {

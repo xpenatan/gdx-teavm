@@ -30,7 +30,7 @@ public class WebPlugin implements TeaVMPlugin {
         host.add(new JavaObjectExporterDependency());
 
         GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(host.getProperties());
-        ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader());
+        ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
         TeaVMPluginReflectionSupport.install(host, config, classPathURLs);
 
         if(config.webappEnabled) {

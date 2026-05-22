@@ -157,11 +157,23 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(targetBackend == null) {
             return
         }
-        val sourceSets = project.extensions.findByType(SourceSetContainer::class.java) ?: return
-        val teavmRuntimeClasspath = sourceSets.getByName(TeaVMPlugin.SOURCE_SET_NAME).runtimeClasspath
-        getClasspath().setFrom(teavmRuntimeClasspath.filter { file ->
-            isAllowedBackendClasspathEntry(file, targetBackend)
+        val classpath = targetClasspath(project, targetBackend)
+        getClasspath().setFrom(classpath)
+        getProperties().put(PLUGIN_CLASSPATH, project.provider {
+            classpath.files.joinToString(File.pathSeparator) { file -> file.absolutePath }
         })
+    }
+
+    private fun targetClasspath(project: Project, targetBackend: String): FileCollection {
+        val sourceSets = project.extensions.findByType(SourceSetContainer::class.java)
+            ?: return project.files()
+        val mainRuntimeClasspath = sourceSets.getByName("main").runtimeClasspath
+        val teavmRuntimeClasspath = sourceSets.getByName(TeaVMPlugin.SOURCE_SET_NAME).runtimeClasspath
+        val teavmConfiguration = project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+
+        return project.files(mainRuntimeClasspath, teavmRuntimeClasspath, teavmConfiguration).filter { file ->
+            isAllowedBackendClasspathEntry(file, targetBackend)
+        }
     }
 
     private fun configureCommonTarget(
@@ -182,24 +194,21 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun registerTasks(project: Project, extension: GdxTeaVMExtension) {
-        val sourceSets = project.extensions.getByType<SourceSetContainer>()
-        val teavmRuntimeClasspath = sourceSets.getByName(TeaVMPlugin.SOURCE_SET_NAME).runtimeClasspath
-
         if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
-            registerJsTasks(project, extension, teavmRuntimeClasspath)
+            registerJsTasks(project, extension)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
-            registerWasmTasks(project, extension, teavmRuntimeClasspath)
+            registerWasmTasks(project, extension)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
-            registerGlfwTasks(project, extension, teavmRuntimeClasspath)
+            registerGlfwTasks(project, extension)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
             registerPspTasks(project, extension)
         }
     }
 
-    private fun registerJsTasks(project: Project, extension: GdxTeaVMExtension, teavmRuntimeClasspath: FileCollection) {
+    private fun registerJsTasks(project: Project, extension: GdxTeaVMExtension) {
         val jsBuild = project.tasks.register("gdx_teavm_web_js_build") {
             group = TASK_GROUP
             description = "Build the gdx-teavm JavaScript web application."
@@ -211,13 +220,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             dependsOn(jsBuild)
             webappDir.convention(extension.js.webappDir())
             port.convention(extension.js.serverPort)
-            serverClasspath.from(teavmRuntimeClasspath.filter { file ->
-                isAllowedBackendClasspathEntry(file, WEB_BACKEND)
-            })
+            serverClasspath.from(targetClasspath(project, WEB_BACKEND))
         }
     }
 
-    private fun registerWasmTasks(project: Project, extension: GdxTeaVMExtension, teavmRuntimeClasspath: FileCollection) {
+    private fun registerWasmTasks(project: Project, extension: GdxTeaVMExtension) {
         val wasmBuild = project.tasks.register("gdx_teavm_web_wasm_build") {
             group = TASK_GROUP
             description = "Build the gdx-teavm Wasm web application."
@@ -229,13 +236,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             dependsOn(wasmBuild)
             webappDir.convention(extension.wasm.webappDir())
             port.convention(extension.wasm.serverPort)
-            serverClasspath.from(teavmRuntimeClasspath.filter { file ->
-                isAllowedBackendClasspathEntry(file, WEB_BACKEND)
-            })
+            serverClasspath.from(targetClasspath(project, WEB_BACKEND))
         }
     }
 
-    private fun registerGlfwTasks(project: Project, extension: GdxTeaVMExtension, teavmRuntimeClasspath: FileCollection) {
+    private fun registerGlfwTasks(project: Project, extension: GdxTeaVMExtension) {
         val glfwGenerate = project.tasks.register("gdx_teavm_glfw_generate") {
             group = TASK_GROUP
             description = "Generate the gdx-teavm GLFW native C project."
@@ -260,9 +265,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             projectName.convention(extension.glfw.targetFileName)
             buildType.convention(extension.glfw.buildType)
             consoleLog.convention(extension.glfw.consoleLog)
-            backendClasspath.from(teavmRuntimeClasspath.filter { file ->
-                isAllowedBackendClasspathEntry(file, GLFW_BACKEND)
-            })
+            backendClasspath.from(targetClasspath(project, GLFW_BACKEND))
         }
     }
 
@@ -318,5 +321,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val WEB_BACKEND = "web"
         const val GLFW_BACKEND = "glfw"
         const val PSP_BACKEND = "psp"
+        const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
     }
 }

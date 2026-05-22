@@ -6,13 +6,18 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class TeaVMPluginClasspath {
 
     public static ArrayList<URL> getURLs(ClassLoader classLoader) {
+        return getURLs(classLoader, null);
+    }
+
+    public static ArrayList<URL> getURLs(ClassLoader classLoader, List<String> classPathEntries) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
-        collectURLClassLoader(urls, classLoader, false);
+        collectConfiguredClasspath(urls, classPathEntries);
         if(urls.isEmpty()) {
             collectURLClassLoader(urls, classLoader, true);
         }
@@ -20,6 +25,18 @@ public class TeaVMPluginClasspath {
             collectJavaClassPath(urls);
         }
         return new ArrayList<>(urls);
+    }
+
+    private static void collectConfiguredClasspath(LinkedHashSet<URL> urls, List<String> classPathEntries) {
+        if(classPathEntries == null || classPathEntries.isEmpty()) {
+            return;
+        }
+        for(String entry : classPathEntries) {
+            if(entry == null || entry.trim().isEmpty()) {
+                continue;
+            }
+            addFileURL(urls, entry);
+        }
     }
 
     private static void collectURLClassLoader(LinkedHashSet<URL> urls, ClassLoader classLoader, boolean includeParents) {
@@ -48,11 +65,15 @@ public class TeaVMPluginClasspath {
             if(entry == null || entry.trim().isEmpty()) {
                 continue;
             }
-            try {
-                urls.add(new File(entry).toURI().toURL());
-            } catch(MalformedURLException e) {
-                throw new RuntimeException("Invalid classpath entry: " + entry, e);
-            }
+            addFileURL(urls, entry);
+        }
+    }
+
+    private static void addFileURL(LinkedHashSet<URL> urls, String entry) {
+        try {
+            urls.add(new File(entry).toURI().toURL());
+        } catch(MalformedURLException e) {
+            throw new RuntimeException("Invalid classpath entry: " + entry, e);
         }
     }
 }

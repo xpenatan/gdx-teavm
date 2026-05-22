@@ -18,7 +18,7 @@ public class PSPPlugin implements TeaVMPlugin {
         }
         TeaVMCHost cHost = host.getExtension(TeaVMCHost.class);
         if(cHost != null) {
-            ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader());
+            ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
             TeaVMPluginReflectionSupport.install(host, config, classPathURLs);
             GdxPSPTargetWrapper.install(host, config, classPathURLs);
         }
