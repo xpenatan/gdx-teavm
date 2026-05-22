@@ -55,9 +55,19 @@ public class DefaultReflectionListener implements TeaReflectionListener {
     }
 
     protected boolean matchesPattern(String className, String pattern) {
-        String path = className.replace(".", "/");
         String globPattern = "glob:" + pattern.replace(".", "/");
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
-        return matcher.matches(Paths.get(path));
+        String currentClassName = className;
+        while(true) {
+            String path = currentClassName.replace(".", "/");
+            if(matcher.matches(Paths.get(path))) {
+                return true;
+            }
+            int nestedIndex = currentClassName.lastIndexOf('$');
+            if(nestedIndex < 0) {
+                return false;
+            }
+            currentClassName = currentClassName.substring(0, nestedIndex);
+        }
     }
 }

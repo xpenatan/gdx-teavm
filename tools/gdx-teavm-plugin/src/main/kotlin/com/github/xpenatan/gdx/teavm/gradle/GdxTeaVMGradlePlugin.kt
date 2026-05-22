@@ -319,8 +319,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun matchesReflectionPattern(className: String, matchers: List<PathMatcher>): Boolean {
-        val path = Paths.get(className.replace('.', '/'))
-        return matchers.any { matcher -> matcher.matches(path) }
+        var currentClassName = className
+        while(true) {
+            val path = Paths.get(currentClassName.replace('.', '/'))
+            if(matchers.any { matcher -> matcher.matches(path) }) {
+                return true
+            }
+            val nestedIndex = currentClassName.lastIndexOf('$')
+            if(nestedIndex < 0) {
+                return false
+            }
+            currentClassName = currentClassName.substring(0, nestedIndex)
+        }
     }
 
     private fun isExactClassName(pattern: String): Boolean {
