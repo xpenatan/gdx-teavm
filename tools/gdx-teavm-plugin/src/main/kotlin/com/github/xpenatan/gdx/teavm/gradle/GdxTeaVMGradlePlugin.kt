@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -16,6 +17,13 @@ import org.teavm.gradle.api.TeaVMExtension
 import org.teavm.gradle.tasks.GenerateCTask
 import org.teavm.gradle.tasks.TeaVMTask
 import java.io.File
+import java.io.IOException
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.PathMatcher
+import java.nio.file.Paths
+import java.util.zip.ZipFile
 
 class GdxTeaVMGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -96,9 +104,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
             val js = teavm.getJs()
-            configureCommonTarget(js, extension.js)
+            val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
+            configureCommonTarget(js, extension.js, reflectionClasses)
             js.properties.putAll(globalProperties)
             js.properties.putAll(extension.toWebProperties(project, extension.js))
+            js.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
             js.entryPointName.convention(extension.js.entryPointName)
             js.targetFileName.convention(extension.js.targetFileName)
             js.obfuscated.convention(extension.js.obfuscated)
@@ -107,9 +117,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
             val wasm = teavm.getWasmGC()
-            configureCommonTarget(wasm, extension.wasm)
+            val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
+            configureCommonTarget(wasm, extension.wasm, reflectionClasses)
             wasm.properties.putAll(globalProperties)
             wasm.properties.putAll(extension.toWebProperties(project, extension.wasm))
+            wasm.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
             wasm.targetFileName.convention(extension.wasm.targetFileName)
             wasm.obfuscated.convention(extension.wasm.obfuscated)
             wasm.strict.convention(extension.wasm.strict)
@@ -122,9 +134,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val nativeTarget = extension.selectedNativeTargetOrNull(project) ?: return
         val teavm = project.extensions.getByType<TeaVMExtension>()
         val c = teavm.getC()
-        configureCommonTarget(c, nativeTarget)
+        val reflectionClasses = reflectionClasses(project, extension, nativeTarget.backendName)
+        configureCommonTarget(c, nativeTarget, reflectionClasses)
         c.properties.putAll(extension.toGlobalProperties(project))
         c.properties.putAll(extension.toNativeProperties(project, nativeTarget))
+        c.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         c.minHeapSize.convention(nativeTarget.minHeapSizeMb)
         c.maxHeapSize.convention(nativeTarget.maxHeapSizeMb)
         c.heapDump.convention(nativeTarget.heapDump)
@@ -178,7 +192,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
     private fun configureCommonTarget(
         teavmConfig: TeaVMCommonConfiguration,
-        target: GdxTeaVMTargetExtension
+        target: GdxTeaVMTargetExtension,
+        reflectionClasses: Provider<List<String>>
     ) {
         teavmConfig.mainClass.convention(target.mainClass)
         teavmConfig.outputDir.convention(target.outputDir)
@@ -188,9 +203,132 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         teavmConfig.outOfProcess.convention(target.outOfProcess)
         teavmConfig.processMemory.convention(target.processMemory)
         teavmConfig.preservedClasses.addAll(target.preservedClasses)
+        teavmConfig.preservedClasses.addAll(reflectionClasses)
         if(teavmConfig is TeaVMConfiguration) {
             teavmConfig.relativePathInOutputDir.convention(target.relativePathInOutputDir)
         }
+    }
+
+    private fun reflectionClasses(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        targetBackend: String
+    ) = project.provider {
+        if(!extension.reflectionEnabled.get()) {
+            return@provider emptyList()
+        }
+
+        val patterns = reflectionPatterns(extension)
+        if(patterns.isEmpty()) {
+            return@provider emptyList()
+        }
+
+        val classes = linkedSetOf<String>()
+        if(extension.reflectionScan.get()) {
+            val matchers = patterns.map { pattern ->
+                FileSystems.getDefault().getPathMatcher("glob:" + pattern.replace('.', '/'))
+            }
+            for(file in targetClasspath(project, targetBackend).files) {
+                scanReflectionClasses(file, matchers, classes)
+            }
+        }
+        else {
+            classes.addAll(patterns.filter(::isExactClassName))
+        }
+        classes.toList()
+    }
+
+    private fun reflectionPatterns(extension: GdxTeaVMExtension): List<String> {
+        val patterns = linkedSetOf<String>()
+        if(extension.reflectionDefaults.get()) {
+            patterns.addAll(DEFAULT_REFLECTION_PATTERNS)
+        }
+        patterns.addAll(extension.reflection.get().map(String::trim).filter(String::isNotEmpty))
+        return patterns.toList()
+    }
+
+    private fun scanReflectionClasses(
+        file: File,
+        matchers: List<PathMatcher>,
+        out: MutableSet<String>
+    ) {
+        if(!file.exists()) {
+            return
+        }
+        if(file.isDirectory) {
+            scanReflectionDirectory(file.toPath(), matchers, out)
+        }
+        else if(file.isFile && file.name.endsWith(".jar")) {
+            scanReflectionJar(file, matchers, out)
+        }
+    }
+
+    private fun scanReflectionDirectory(
+        root: Path,
+        matchers: List<PathMatcher>,
+        out: MutableSet<String>
+    ) {
+        try {
+            Files.walk(root).use { stream ->
+                stream.filter { path -> Files.isRegularFile(path) }
+                    .filter { path -> path.fileName.toString().endsWith(".class") }
+                    .forEach { path ->
+                        addReflectionClass(root.relativize(path).toString(), matchers, out)
+                    }
+            }
+        }
+        catch(ignored: IOException) {
+        }
+    }
+
+    private fun scanReflectionJar(
+        file: File,
+        matchers: List<PathMatcher>,
+        out: MutableSet<String>
+    ) {
+        try {
+            ZipFile(file).use { zipFile ->
+                val entries = zipFile.entries()
+                while(entries.hasMoreElements()) {
+                    val entry = entries.nextElement()
+                    if(!entry.isDirectory && entry.name.endsWith(".class")) {
+                        addReflectionClass(entry.name, matchers, out)
+                    }
+                }
+            }
+        }
+        catch(ignored: IOException) {
+        }
+    }
+
+    private fun addReflectionClass(
+        classFileName: String,
+        matchers: List<PathMatcher>,
+        out: MutableSet<String>
+    ) {
+        val className = classFileName
+            .removeSuffix(".class")
+            .replace('\\', '.')
+            .replace('/', '.')
+        if(className == "module-info" || className.endsWith(".package-info")) {
+            return
+        }
+        if(matchesReflectionPattern(className, matchers)) {
+            out.add(className)
+        }
+    }
+
+    private fun matchesReflectionPattern(className: String, matchers: List<PathMatcher>): Boolean {
+        val path = Paths.get(className.replace('.', '/'))
+        return matchers.any { matcher -> matcher.matches(path) }
+    }
+
+    private fun isExactClassName(pattern: String): Boolean {
+        return pattern.none { char -> char == '*' || char == '?' || char == '[' || char == '{' }
+    }
+
+    private fun joinTokenList(values: Iterable<String>): String {
+        return values.map(String::trim).filter(String::isNotEmpty).joinToString(",")
     }
 
     private fun registerTasks(project: Project, extension: GdxTeaVMExtension) {
@@ -322,5 +460,21 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val GLFW_BACKEND = "glfw"
         const val PSP_BACKEND = "psp"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
+        const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
+        val DEFAULT_REFLECTION_PATTERNS = listOf(
+            "com.badlogic.gdx.scenes.scene2d.**",
+            "net.mgsx.gltf.data.**",
+            "com.badlogic.gdx.utils.Array",
+            "com.badlogic.gdx.utils.ArrayMap",
+            "com.badlogic.gdx.utils.IntIntMap",
+            "com.badlogic.gdx.utils.IntMap",
+            "com.badlogic.gdx.utils.IntSet",
+            "com.badlogic.gdx.utils.LongMap",
+            "com.badlogic.gdx.utils.ObjectFloatMap",
+            "com.badlogic.gdx.utils.ObjectIntMap",
+            "com.badlogic.gdx.utils.ObjectMap",
+            "com.badlogic.gdx.utils.ObjectSet",
+            "com.badlogic.gdx.utils.Queue"
+        )
     }
 }

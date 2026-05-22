@@ -24,6 +24,7 @@ public class GdxTeaVMPluginConfig {
     public static final String REFLECTION_DEFAULTS = "gdx.teavm.reflection.defaults";
     public static final String REFLECTION_SCAN = "gdx.teavm.reflection.scan";
     public static final String REFLECTION = "gdx.teavm.reflection";
+    public static final String REFLECTION_CLASSES = "gdx.teavm.reflection.classes";
     public static final String REFLECTION_DEBUG = "gdx.teavm.reflection.debug";
     public static final String NATIVE_BACKEND = "gdx.teavm.native.backend";
     public static final String NATIVE_OUTPUT_ROOT = "gdx.teavm.native.outputRoot";
@@ -51,6 +52,7 @@ public class GdxTeaVMPluginConfig {
     public final boolean reflectionDefaults;
     public final boolean reflectionScan;
     public final List<String> reflectionPatterns;
+    public final List<String> reflectionClasses;
     public final boolean reflectionDebug;
     public final String nativeBackend;
     public final String nativeOutputRoot;
@@ -79,6 +81,7 @@ public class GdxTeaVMPluginConfig {
         reflectionDefaults = getBoolean(properties, REFLECTION_DEFAULTS, true);
         reflectionScan = getBoolean(properties, REFLECTION_SCAN, true);
         reflectionPatterns = Collections.unmodifiableList(readTokenList(properties, REFLECTION));
+        reflectionClasses = Collections.unmodifiableList(readTokenList(properties, REFLECTION_CLASSES));
         reflectionDebug = getBoolean(properties, REFLECTION_DEBUG, false);
         nativeBackend = getString(properties, NATIVE_BACKEND, "");
         nativeOutputRoot = getString(properties, NATIVE_OUTPUT_ROOT, "");

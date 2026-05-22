@@ -25,8 +25,11 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     public static void addReflectionClass(ArrayList<String> classes) {
-        for(int i = 0; i < classes.size(); i++) {
-            String className = classes.get(i);
+        addReflectionClass((Collection<String>)classes);
+    }
+
+    public static void addReflectionClass(Collection<String> classes) {
+        for(String className : classes) {
             addReflectionClass(className);
         }
     }
