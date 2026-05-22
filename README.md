@@ -9,7 +9,7 @@
 The project provides two build styles:
 
 - **Gradle plugin**: the recommended workflow for application projects. It applies TeaVM, configures the selected backend, copies assets, prepares generated output, and creates `gdx_teavm_*` tasks.
-- **Manual builder API**: a Java launcher API for advanced builds and custom tooling. It directly uses `TeaCompiler` with `WebBackend`, `TeaGLFWBackend`, or `TeaPSPBackend`.
+- **Manual builder API**: a Java launcher API for advanced builds and custom tooling. It directly uses `TeaBuilder` with `WebBackend`, `TeaGLFWBackend`, or `TeaPSPBackend`.
 
 ## Status
 

@@ -59,8 +59,8 @@
 
 ## Core Compiler Pipeline
 - The manual builder API lives in `backends/backend-shared`.
-- `TeaCompiler` is the fluent public entry point. It stores configuration in `TeaCompilerData`.
-- `TeaCompiler.build(File output)` delegates to a concrete `TeaBackend`.
+- `TeaBuilder` is the fluent public entry point. It stores configuration in `TeaBuilderData`.
+- `TeaBuilder.build(File output)` delegates to a concrete `TeaBackend`.
 - `TeaBackend.compile(...)` performs shared setup:
   - classpath collection
   - TeaVM tool configuration
@@ -185,9 +185,9 @@
 ## Reflection
 - libGDX reflection emulation is backed by generated TeaVM metadata.
 - Builder API:
-  - `TeaCompiler.addReflectionClass(Class<?>)`
-  - `TeaCompiler.addReflectionClass(String)`
-  - `TeaCompiler.setReflectionListener(DefaultReflectionListener)`
+  - `TeaBuilder.addReflectionClass(Class<?>)`
+  - `TeaBuilder.addReflectionClass(String)`
+  - `TeaBuilder.setReflectionListener(DefaultReflectionListener)`
 - Gradle plugin API:
   - `reflection("com.example.Type")`
   - `reflection("com.example.package**")`

@@ -200,7 +200,7 @@ See the [plugin property reference](plugin-properties.md) for every `gdxTeaVM` p
 
 ## Manual Builder API
 
-The builder API is based on `TeaCompiler` and a concrete backend.
+The builder API is based on `TeaBuilder` and a concrete backend.
 
 ### Web Builder
 
@@ -213,7 +213,7 @@ dependencies {
 
 ```java
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import com.github.xpenatan.gdx.teavm.backends.web.config.backend.WebBackend;
 import java.io.File;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -226,7 +226,7 @@ public class BuildWeb {
                 .setHtmlHeight(720)
                 .setStartJettyAfterBuild(true);
 
-        new TeaCompiler(backend)
+        new TeaBuilder(backend)
                 .addAssets(new AssetFileHandle("assets"))
                 .setMainClass("com.example.game.teavm.WebLauncher")
                 .setOutputName("app")
@@ -257,7 +257,7 @@ dependencies {
 ```java
 import com.github.xpenatan.gdx.teavm.backends.glfw.config.backend.TeaGLFWBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
@@ -268,7 +268,7 @@ public class BuildGlfw {
                 .setBuildExecutableAfterBuild(false)
                 .setRunExecutableAfterBuild(false);
 
-        new TeaCompiler(backend)
+        new TeaBuilder(backend)
                 .addAssets(new AssetFileHandle("assets"))
                 .setMainClass("com.example.game.teavm.GlfwLauncher")
                 .setOptimizationLevel(TeaVMOptimizationLevel.FULL)
@@ -292,7 +292,7 @@ dependencies {
 ```java
 import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
@@ -302,7 +302,7 @@ public class BuildPsp {
         backend.debugMemory = true;
         backend.autoExecuteBuild = false;
 
-        new TeaCompiler(backend)
+        new TeaBuilder(backend)
                 .addAssets(new AssetFileHandle("assets"))
                 .setMainClass("com.example.game.teavm.PspLauncher")
                 .setDebugInformationGenerated(true)
@@ -324,8 +324,8 @@ All build paths share the same asset planner/copy logic.
 Builder examples:
 
 ```java
-teaCompiler.addAssets(new AssetFileHandle("assets"));
-teaCompiler.addAssets(new AssetFileHandle("com/example/game/skin", FileType.Classpath));
+teaBuilder.addAssets(new AssetFileHandle("assets"));
+teaBuilder.addAssets(new AssetFileHandle("com/example/game/skin", FileType.Classpath));
 ```
 
 Plugin examples:
@@ -352,7 +352,7 @@ TeaVM needs ahead-of-time metadata for reflection. gdx-teavm generates the metad
 Builder:
 
 ```java
-new TeaCompiler(backend)
+new TeaBuilder(backend)
         .addReflectionClass("com.example.game.save**")
         .addReflectionClass("com.badlogic.gdx.math.Vector2");
 ```

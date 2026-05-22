@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.builder;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
@@ -8,7 +8,7 @@ import org.teavm.tooling.TeaVMSourceFilePolicy;
 import org.teavm.tooling.sources.SourceFileProvider;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
-public class TeaCompilerData {
+public class TeaBuilderData {
     public String outputName = "app";
     public boolean obfuscated;
     public TeaVMOptimizationLevel optimizationLevel;

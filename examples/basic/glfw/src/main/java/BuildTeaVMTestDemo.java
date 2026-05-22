@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.glfw.config.backend.TeaGLFWBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -21,7 +21,7 @@ public class BuildTeaVMTestDemo {
                 .setRunExecutableAfterBuild(buildOptions.shouldRunExecutable())
                 .setRunExecutableWithConsoleLog(buildOptions.consoleLog);
 
-        new TeaCompiler(cBackend)
+        new TeaBuilder(cBackend)
                 .addAssets(assetsPath)
                 .setObfuscated(false)
                 .setOptimizationLevel(TeaVMOptimizationLevel.FULL)

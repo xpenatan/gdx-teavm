@@ -3,8 +3,8 @@ package com.github.xpenatan.gdx.teavm.backends.glfw.config.backend;
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaBackend;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class TeaGLFWBackend extends TeaBackend {
     }
 
     @Override
-    protected void setup(TeaCompilerData data) {
+    protected void setup(TeaBuilderData data) {
         targetType = TeaVMTargetType.C;
         if(data.releasePath != null) {
             releasePath = new FileHandle(data.releasePath.getAbsolutePath().replace("\\", "/"));
@@ -108,7 +108,7 @@ public class TeaGLFWBackend extends TeaBackend {
     }
 
     @Override
-    protected void build(TeaCompilerData data) {
+    protected void build(TeaBuilderData data) {
         if(shouldGenerateSource) {
             super.build(data);
         }
@@ -131,7 +131,7 @@ public class TeaGLFWBackend extends TeaBackend {
     }
 
     @Override
-    protected void copyAssets(TeaCompilerData data) {
+    protected void copyAssets(TeaBuilderData data) {
         super.copyAssets(data);
         FileHandle outputFolder = new FileHandle(buildRootPath + "/c");
         try {

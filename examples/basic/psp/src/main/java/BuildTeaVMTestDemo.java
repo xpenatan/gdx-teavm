@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompiler;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
@@ -13,7 +13,7 @@ public class BuildTeaVMTestDemo {
 
             pspBackend.debugMemory = true;
 
-            new TeaCompiler(pspBackend)
+            new TeaBuilder(pspBackend)
                     .addAssets(assetsPath)
                     .setObfuscated(false)
                     .setDebugInformationGenerated(true) // Generates .prx file for debugging

@@ -4,8 +4,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.compiler.TeaCompilerData;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaBackend;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -94,7 +94,7 @@ public class WebBackend extends TeaBackend {
     }
 
     @Override
-    protected void setup(TeaCompilerData data) {
+    protected void setup(TeaBuilderData data) {
         server = new JettyServer();
 
         if(isWebAssembly) {
@@ -116,14 +116,14 @@ public class WebBackend extends TeaBackend {
     }
 
     @Override
-    protected void build(TeaCompilerData data) {
+    protected void build(TeaBuilderData data) {
         super.build(data);
         if(startJettyAfterBuild) {
             startJetty(jettyPort, releasePath.path());
         }
     }
 
-    protected void setupWebapp(TeaCompilerData data) {
+    protected void setupWebapp(TeaBuilderData data) {
         InputStream indexSteam = classLoader.getResourceAsStream("webapp/index.html");
         InputStream webXMLStream = classLoader.getResourceAsStream("webapp/WEB-INF/web.xml");
 
@@ -199,7 +199,7 @@ public class WebBackend extends TeaBackend {
     }
 
     @Override
-    protected void copyAssets(TeaCompilerData data) {
+    protected void copyAssets(TeaBuilderData data) {
         super.copyAssets(data);
         FileHandle scriptsFolder = releasePath.child("scripts");
         try {

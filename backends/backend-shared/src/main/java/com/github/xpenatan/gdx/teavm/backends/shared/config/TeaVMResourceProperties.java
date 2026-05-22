@@ -31,8 +31,8 @@ import java.util.zip.ZipFile;
  *   <li>{@code ignore-resources=<substring>} – substrings to drop from copied resources.</li>
  *   <li>{@code classpath-resources=<resource-path>} – classpath paths whose contents should
  *       be copied <i>and registered as {@code FileType.Classpath}</i> in the preload manifest.
- *       Equivalent to the user calling
- *       {@code TeaCompiler#addClasspathAssets(String)}.</li>
+ *       Equivalent to adding an {@link AssetFileHandle} with {@code FileType.Classpath}
+ *       through {@code TeaBuilder#addAssets(AssetFileHandle)}.</li>
  * </ul>
  */
 public class TeaVMResourceProperties {

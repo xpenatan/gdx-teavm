@@ -37,7 +37,7 @@ public class WebClassFilter implements ElementFilter {
     }
 
     /**
-     * Must be called after {@code TeaCompiler.build}.
+     * Must be called after {@code TeaBuilder.build}.
      */
     public static void printAllowedClasses() {
         TeaLogHelper.logHeader("EXCLUDED CLASSES: " + ALLOWED_CLASSES.size());
@@ -48,7 +48,7 @@ public class WebClassFilter implements ElementFilter {
     }
 
     /**
-     * Must be called after {@code TeaCompiler.build}.
+     * Must be called after {@code TeaBuilder.build}.
      */
     public static void printExcludedClasses() {
         TeaLogHelper.logHeader("ALLOWED CLASES: " + EXCLUDED_CLASSES.size());

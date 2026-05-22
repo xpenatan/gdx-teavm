@@ -6,7 +6,7 @@ This document is for contributors and automation agents that need to understand 
 
 `gdx-teavm` has two entry points that share backend logic:
 
-- Manual builder API: Java code creates `TeaCompiler` and a concrete backend.
+- Manual builder API: Java code creates `TeaBuilder` and a concrete backend.
 - Gradle plugin: Gradle configures TeaVM tasks and passes gdx-teavm properties into TeaVM runtime plugins.
 
 Both paths use the same backend modules, asset planner, resource metadata, and reflection support.
@@ -16,7 +16,7 @@ Both paths use the same backend modules, asset planner, resource metadata, and r
 The manual builder starts with:
 
 ```java
-new TeaCompiler(new WebBackend())
+new TeaBuilder(new WebBackend())
         .addAssets(new AssetFileHandle("assets"))
         .setMainClass("com.example.WebLauncher")
         .build(new File("build/dist"));
@@ -24,8 +24,8 @@ new TeaCompiler(new WebBackend())
 
 The flow is:
 
-1. `TeaCompiler` stores configuration in `TeaCompilerData`.
-2. `TeaCompiler.build(...)` calls `TeaBackend.compile(...)`.
+1. `TeaBuilder` stores configuration in `TeaBuilderData`.
+2. `TeaBuilder.build(...)` calls `TeaBackend.compile(...)`.
 3. `TeaBackend` configures TeaVM, reflection, source providers, assets, and resources.
 4. The concrete backend customizes the target and packaging.
 
@@ -120,7 +120,7 @@ Responsibilities:
 Builder path:
 
 ```text
-TeaCompiler.addAssets(...)
+TeaBuilder.addAssets(...)
 TeaBackend.copyAssets(...)
 AssetsCopy
 ```
@@ -155,7 +155,7 @@ Reflection metadata is required because TeaVM compiles ahead of time.
 Builder path:
 
 ```text
-TeaCompiler.addReflectionClass(...)
+TeaBuilder.addReflectionClass(...)
 DefaultReflectionListener
 TeaBackend.setupReflection(...)
 TeaReflectionSupplier

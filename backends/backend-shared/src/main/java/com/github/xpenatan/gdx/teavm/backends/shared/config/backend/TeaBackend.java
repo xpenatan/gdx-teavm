@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.shared.config.compiler;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.backend;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
@@ -7,6 +7,7 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import java.io.File;
 import java.io.IOException;
@@ -51,10 +52,22 @@ public abstract class TeaBackend {
     protected List<String> scripts = new ArrayList<>();
     protected List<String> cppFiles = new ArrayList<>();
 
-    protected void preSetup(TeaCompilerData data) {}
-    protected abstract void setup(TeaCompilerData data);
+    /**
+     * Called by TeaBuilder before user configuration is applied so a backend can install default values.
+     * Backend implementations should override {@link #preSetup(TeaBuilderData)} instead of this method.
+     */
+    public final void setupDefaults(TeaBuilderData data) {
+        preSetup(data);
+    }
 
-    final void compile(TeaCompilerData data) {
+    protected void preSetup(TeaBuilderData data) {}
+    protected abstract void setup(TeaBuilderData data);
+
+    /**
+     * Called by TeaBuilder to execute the shared backend pipeline.
+     * Backend implementations should override the protected lifecycle hooks instead of this method.
+     */
+    public final void compile(TeaBuilderData data) {
         acceptedURL = new ArrayList<>();
         configClasspath(data, acceptedURL);
         URL[] classPaths = acceptedURL.toArray(new URL[acceptedURL.size()]);
@@ -67,7 +80,7 @@ public abstract class TeaBackend {
         build(data);
     }
 
-    private void initializeTeavmTool(TeaCompilerData data) {
+    private void initializeTeavmTool(TeaBuilderData data) {
         tool = new TeaVMTool();
         tool.setObfuscated(data.obfuscated);
         tool.setOptimizationLevel(data.optimizationLevel);
@@ -90,7 +103,7 @@ public abstract class TeaBackend {
         tool.setShortFileNames(data.shortFileNames);
     }
 
-    private void configClasspath(TeaCompilerData data, ArrayList<URL> acceptedURL) {
+    private void configClasspath(TeaBuilderData data, ArrayList<URL> acceptedURL) {
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathEntries = System.getProperty("java.class.path").split(pathSeparator);
 
@@ -144,7 +157,7 @@ public abstract class TeaBackend {
         }
     }
 
-    private void setupReflection(TeaCompilerData data, ArrayList<URL> acceptedURL) {
+    private void setupReflection(TeaBuilderData data, ArrayList<URL> acceptedURL) {
         for(URL classPath : acceptedURL) {
             try {
                 if(!new File(classPath.getFile()).exists()) {
@@ -172,7 +185,7 @@ public abstract class TeaBackend {
         }
     }
 
-    protected void build(TeaCompilerData data) {
+    protected void build(TeaBuilderData data) {
         try {
             tool.setTargetType(targetType);
             tool.generate();
@@ -268,7 +281,7 @@ public abstract class TeaBackend {
         };
     }
 
-    private void setupSources(TeaCompilerData data) {
+    private void setupSources(TeaBuilderData data) {
         HashSet<String> set = new HashSet<>();
         for(int i = 0; i < acceptedURL.size(); i++) {
             URL url = acceptedURL.get(i);
@@ -315,13 +328,13 @@ public abstract class TeaBackend {
         return null;
     }
 
-    private void configAssets(TeaCompilerData data) {
+    private void configAssets(TeaBuilderData data) {
         TeaLogHelper.logHeader("COPYING ASSETS");
         copyAssets(data);
         TeaLogHelper.log("");
     }
 
-    protected void copyAssets(TeaCompilerData data) {
+    protected void copyAssets(TeaBuilderData data) {
         try {
             scripts.clear();
             cppFiles.clear();
