@@ -29,8 +29,14 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     }
 
     public static void addReflectionClass(Collection<String> classes) {
+        if(printDebugLogs) {
+            TeaLogHelper.logHeader("ADD REFLECTION CLASSES: " + classes.size());
+        }
         for(String className : classes) {
             addReflectionClass(className);
+        }
+        if(printDebugLogs) {
+            TeaLogHelper.logEnd();
         }
     }
 
@@ -53,6 +59,12 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     public static void addReflectionClass(String className) {
         if(!clazzList.contains(className)) {
             clazzList.add(className);
+            if(printDebugLogs) {
+                TeaLogHelper.log("Added [Reflection] " + className);
+            }
+        }
+        else if(printDebugLogs) {
+            TeaLogHelper.log("Skipped duplicate [Reflection] " + className);
         }
     }
 

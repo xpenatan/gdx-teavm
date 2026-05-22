@@ -214,28 +214,70 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         extension: GdxTeaVMExtension,
         targetBackend: String
     ) = project.provider {
+        val debug = extension.reflectionDebug.get()
         if(!extension.reflectionEnabled.get()) {
+            if(debug) {
+                project.logger.lifecycle("[gdx-teavm] Reflection disabled for target '$targetBackend'")
+            }
             return@provider emptyList()
         }
 
         val patterns = reflectionPatterns(extension)
         if(patterns.isEmpty()) {
+            if(debug) {
+                project.logger.lifecycle("[gdx-teavm] Reflection enabled for target '$targetBackend', but no patterns were configured")
+            }
             return@provider emptyList()
         }
 
         val classes = linkedSetOf<String>()
+        val classpathFiles = if(extension.reflectionScan.get()) {
+            targetClasspath(project, targetBackend).files
+        }
+        else {
+            emptySet()
+        }
         if(extension.reflectionScan.get()) {
             val matchers = patterns.map { pattern ->
                 FileSystems.getDefault().getPathMatcher("glob:" + pattern.replace('.', '/'))
             }
-            for(file in targetClasspath(project, targetBackend).files) {
+            for(file in classpathFiles) {
                 scanReflectionClasses(file, matchers, classes)
             }
         }
         else {
             classes.addAll(patterns.filter(::isExactClassName))
         }
+        if(debug) {
+            logReflectionClasses(project, targetBackend, extension.reflectionScan.get(), patterns, classpathFiles, classes)
+        }
         classes.toList()
+    }
+
+    private fun logReflectionClasses(
+        project: Project,
+        targetBackend: String,
+        scanEnabled: Boolean,
+        patterns: List<String>,
+        classpathFiles: Collection<File>,
+        classes: Collection<String>
+    ) {
+        project.logger.lifecycle("[gdx-teavm] Reflection debug for target '$targetBackend'")
+        project.logger.lifecycle("[gdx-teavm]   scan: $scanEnabled")
+        project.logger.lifecycle("[gdx-teavm]   patterns (${patterns.size}):")
+        for(pattern in patterns) {
+            project.logger.lifecycle("[gdx-teavm]     pattern: $pattern")
+        }
+        if(scanEnabled) {
+            project.logger.lifecycle("[gdx-teavm]   scanned classpath entries (${classpathFiles.size}):")
+            for(file in classpathFiles.sortedBy(File::getAbsolutePath)) {
+                project.logger.lifecycle("[gdx-teavm]     classpath: ${file.absolutePath}")
+            }
+        }
+        project.logger.lifecycle("[gdx-teavm]   classes added to TeaVM preservedClasses (${classes.size}):")
+        for(className in classes.sorted()) {
+            project.logger.lifecycle("[gdx-teavm]     class: $className")
+        }
     }
 
     private fun reflectionPatterns(extension: GdxTeaVMExtension): List<String> {

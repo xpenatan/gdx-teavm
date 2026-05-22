@@ -19,9 +19,12 @@ public class GLFWPlugin implements TeaVMPlugin {
         TeaVMCHost cHost = host.getExtension(TeaVMCHost.class);
         if(cHost != null) {
             ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
+            TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
             if(config.reflectionEnabled) {
                 TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
-                TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
+                if(config.reflectionDebug) {
+                    TeaReflectionSupplier.printReflectionClasses();
+                }
             }
             GdxGLFWTargetWrapper.install(host, config, classPathURLs);
         }

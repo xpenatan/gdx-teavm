@@ -44,7 +44,11 @@ open class GdxTeaVMExtension @Inject constructor(
      *
      * Default: `false`.
      */
-    val reflectionDebug: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val reflectionDebug: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(
+        project.providers.gradleProperty(REFLECTION_DEBUG)
+            .map(String::toBoolean)
+            .orElse(false)
+    )
 
     /**
      * Local files or directories copied as libGDX internal assets.

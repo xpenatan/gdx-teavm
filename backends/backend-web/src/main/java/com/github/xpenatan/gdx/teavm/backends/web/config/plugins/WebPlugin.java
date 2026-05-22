@@ -39,9 +39,12 @@ public class WebPlugin implements TeaVMPlugin {
 
         GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(host.getProperties());
         ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
+        TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
         if(config.reflectionEnabled) {
             TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
-            TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
+            if(config.reflectionDebug) {
+                TeaReflectionSupplier.printReflectionClasses();
+            }
         }
         if(javaScriptHost != null) {
             installJavaScriptAbstractConstructorFix(host, javaScriptHost);
