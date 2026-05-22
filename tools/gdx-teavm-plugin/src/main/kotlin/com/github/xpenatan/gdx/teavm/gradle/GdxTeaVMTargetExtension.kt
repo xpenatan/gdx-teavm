@@ -142,9 +142,9 @@ open class GdxTeaVMWasmExtension @Inject constructor(
     /**
      * Enables TeaVM strict Wasm generation checks.
      *
-     * Default: `true`.
+     * Default: `false`.
      */
-    val strict: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val strict: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
 
     /**
      * Copies TeaVM's Wasm runtime JavaScript next to the generated `.wasm` file.

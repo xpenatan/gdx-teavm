@@ -158,7 +158,7 @@ gdxTeaVM {
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `obfuscated` | `Property<Boolean>` | `true` | Minifies and renames generated Wasm runtime support output. |
-| `strict` | `Property<Boolean>` | `true` | Enables TeaVM strict Wasm generation checks. |
+| `strict` | `Property<Boolean>` | `false` | Enables TeaVM strict Wasm generation checks. |
 | `copyRuntime` | `Property<Boolean>` | `true` | Copies TeaVM's Wasm runtime JavaScript next to the generated `.wasm` file. |
 | `modularRuntime` | `Property<Boolean>` | `false` | Copies TeaVM's ES module Wasm runtime instead of the global script runtime. The generated gdx-teavm web app expects the default global runtime. |
 
@@ -170,9 +170,6 @@ gdxTeaVM {
         mainClass.set("com.example.game.teavm.WebLauncher")
         optimization.set(OptimizationLevel.AGGRESSIVE)
         obfuscated.set(false)
-        strict.set(true)
-        copyRuntime.set(true)
-        modularRuntime.set(false)
     }
 }
 ```
