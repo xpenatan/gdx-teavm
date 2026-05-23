@@ -13,11 +13,12 @@ import java.text.DecimalFormat;
 
 public class SpriteBatchTest2 extends ApplicationAdapter {
     private static final String TAG = "SpriteBatchTest";
-    private static final boolean BENCHMARK_SWEEP = false;
+    private static final boolean BENCHMARK_SWEEP = true;
     private static final boolean BENCHMARK_EXIT_AFTER_MEASURE = true;
     private static final int BENCHMARK_WARMUP_SECONDS = 1;
     private static final int BENCHMARK_MEASURE_SECONDS = 12;
     private static final int MODE_DEFAULT = 0;
+    private static final int MODE_FAST_SPRITE_BATCH = 11;
     private static final int MODE_DIRECT_SPRITE_GETTERS = 1;
     private static final int MODE_DIRECT_ARRAY_STATE = 2;
     private static final int MODE_SIMPLE_DIRECT = 3;
@@ -30,12 +31,8 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
     private static final int MODE_BEGIN_END_ONLY = 10;
     private static final int[] BENCHMARK_MODES = {
             MODE_DEFAULT,
-            MODE_FRAME_ONLY,
-            MODE_CLEAR_ONLY,
-            MODE_EMPTY_LOOP,
-            MODE_ARRAY_READ_LOOP,
-            MODE_MANUAL_VERTEX_WRITE,
-            MODE_BEGIN_END_ONLY,
+            MODE_FAST_SPRITE_BATCH,
+            MODE_DIRECT_ARRAY_STATE,
             MODE_SIMPLE_DIRECT
     };
 
@@ -46,6 +43,7 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
     int frames = 0;
     Texture texture;
     SpriteBatch spriteBatch;
+    FastSpriteBatch fastSpriteBatch;
     ScreenViewport viewport;
     Sprite[] sprites = new Sprite[SPRITES];
     float[] spriteX = new float[SPRITES];
@@ -75,6 +73,7 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
 
         viewport = new ScreenViewport();
         spriteBatch = new SpriteBatch(SPRITES);
+        fastSpriteBatch = new FastSpriteBatch(SPRITES);
 
         // TODO need to support texture constructor that calls native ETC1 methods
         texture = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
@@ -127,6 +126,7 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
         float draw1 = 0;
         float drawText = 0;
         long start;
+        SpriteBatch activeBatch = benchmarkMode == MODE_FAST_SPRITE_BATCH ? fastSpriteBatch : spriteBatch;
 
         if (benchmarkMode == MODE_FRAME_ONLY) {
             // Intentionally empty: measures application loop and benchmark bookkeeping.
@@ -152,10 +152,10 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
         else {
             ScreenUtils.clear(0, 0, 0, 1);
             viewport.apply();
-            spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+            activeBatch.setProjectionMatrix(viewport.getCamera().combined);
 
             start = TimeUtils.nanoTime();
-            spriteBatch.begin();
+            activeBatch.begin();
             begin = (TimeUtils.nanoTime() - start) / 1000000000.0f;
 
             float angleInc = ROTATION_SPEED * Gdx.graphics.getDeltaTime();
@@ -171,10 +171,19 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
             if (benchmarkMode == MODE_PRECOMPUTED_ARRAYCOPY) {
                 prepareSharedTransform(angleInc);
             }
+            else if (benchmarkMode == MODE_SIMPLE_DIRECT) {
+                sharedRotation += angleInc;
+            }
 
             start = TimeUtils.nanoTime();
             if (benchmarkMode == MODE_BEGIN_END_ONLY) {
                 // Nothing to draw; isolates SpriteBatch begin/end and projection setup.
+            }
+            else if (benchmarkMode == MODE_FAST_SPRITE_BATCH) {
+                drawFastSprites(angleInc);
+            }
+            else if (benchmarkMode == MODE_DEFAULT) {
+                drawDefaultSprites(angleInc);
             }
             else {
                 for (int i = 0; i < SPRITES; i++) {
@@ -187,13 +196,13 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
             drawText = (TimeUtils.nanoTime() - start) / 1000000000.0f;
 
             start = TimeUtils.nanoTime();
-            spriteBatch.end();
+            activeBatch.end();
             end = (TimeUtils.nanoTime() - start) / 1000000000.0f;
         }
 
         if (TimeUtils.nanoTime() - startTime > 1000000000) {
             Gdx.app.log(TAG,
-                    "mode: " + benchmarkModeName(benchmarkMode) + ", fps: " + frames + ", render calls: " + spriteBatch.renderCalls + ", begin: " + df.format(begin)
+                    "mode: " + benchmarkModeName(benchmarkMode) + ", fps: " + frames + ", render calls: " + activeBatch.renderCalls + ", begin: " + df.format(begin)
                             + ", " + df.format(draw1) + ", " + df.format(drawText) + ", end: " + df.format(end));
             frames = 0;
             startTime = TimeUtils.nanoTime();
@@ -263,13 +272,34 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
         benchmarkFloatSink = vertices[idx - 20];
     }
 
+    private void drawFastSprites(float angleInc) {
+        fastSpriteBatch.drawSprites(sprites, SPRITES, angleInc, scale);
+    }
+
+    private void drawDefaultSprites(float angleInc) {
+        Sprite[] sprites = this.sprites;
+        SpriteBatch spriteBatch = this.spriteBatch;
+        float scale = this.scale;
+        boolean rotate = angleInc != 0;
+        boolean scaleChanged = scale != 1;
+        for (int i = 0; i < SPRITES; i++) {
+            Sprite sprite = sprites[i];
+            if (rotate)
+                sprite.rotate(angleInc);
+            if (scaleChanged)
+                sprite.setScale(scale);
+            sprite.draw(spriteBatch);
+        }
+    }
+
     private void drawSprite(int i, float angleInc) {
         if (benchmarkMode == MODE_DEFAULT) {
+            Sprite sprite = sprites[i];
             if (angleInc != 0)
-                sprites[i].rotate(angleInc);
+                sprite.rotate(angleInc);
             if (scale != 1)
-                sprites[i].setScale(scale);
-            sprites[i].draw(spriteBatch);
+                sprite.setScale(scale);
+            sprite.draw(spriteBatch);
         }
         else if (benchmarkMode == MODE_DIRECT_SPRITE_GETTERS) {
             Sprite sprite = sprites[i];
@@ -290,6 +320,10 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
         else if (benchmarkMode == MODE_PRECOMPUTED_ARRAYCOPY) {
             setSharedVertices(spriteX[i] + 16, spriteY[i] + 16);
             spriteBatch.draw(texture, sharedVertices, 0, 20);
+        }
+        else if (benchmarkMode == MODE_SIMPLE_DIRECT) {
+            spriteBatch.draw(texture, spriteX[i], spriteY[i], 16, 16, 32, 32, scale, scale, sharedRotation,
+                    0, 0, 32, 32, false, false);
         }
         else {
             spriteBatch.draw(texture, spriteX[i], spriteY[i], 32, 32);
@@ -396,6 +430,8 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
     private String benchmarkModeName(int mode) {
         if (mode == MODE_DEFAULT)
             return "default";
+        if (mode == MODE_FAST_SPRITE_BATCH)
+            return "fast_sprite_batch";
         if (mode == MODE_DIRECT_SPRITE_GETTERS)
             return "direct_sprite_getters";
         if (mode == MODE_DIRECT_ARRAY_STATE)
@@ -426,9 +462,33 @@ public class SpriteBatchTest2 extends ApplicationAdapter {
             spriteBatch.dispose();
             spriteBatch = null;
         }
+        if (fastSpriteBatch != null) {
+            fastSpriteBatch.dispose();
+            fastSpriteBatch = null;
+        }
         if (texture != null) {
             texture.dispose();
             texture = null;
+        }
+    }
+
+    public static class FastSpriteBatch extends SpriteBatch {
+
+        public FastSpriteBatch(int size) {
+            super(size);
+        }
+
+        public void drawSprites(Sprite[] sprites, int count, float angleInc, float scale) {
+            boolean rotate = angleInc != 0;
+            boolean scaleChanged = scale != 1;
+            for (int i = 0; i < count; i++) {
+                Sprite sprite = sprites[i];
+                if (rotate)
+                    sprite.rotate(angleInc);
+                if (scaleChanged)
+                    sprite.setScale(scale);
+                sprite.draw(this);
+            }
         }
     }
 }

@@ -212,6 +212,13 @@
 - Prefer proving changes through existing Gradle tasks instead of ad-hoc commands.
 - On Windows, Gradle daemons can hold `backend-web` JARs open. If `:backends:backend-web:clean` fails on a locked JAR, run `./gradlew --stop` and retry.
 
+## TeaVM C Performance Work
+- For GLFW TeaVM C performance work, first identify a hot generated-C or Java method through benchmark/profile evidence.
+- If that hot path repeatedly pays TeaVM null checks, bounds checks, type checks, primitive array access, or tiny Java calls inside a per-frame, per-sprite, or per-vertex loop, prefer an internal C helper exposed through `@Import` and installed by a transformer/substitution.
+- Keep public libGDX APIs unchanged. Do not require users to switch to custom public classes for performance work.
+- Do not optimize benchmark-only classes as the real solution. Benchmark-only C paths are acceptable only when explicitly marked as comparison code.
+- Preserve semantics with cold Java fallback/error paths where needed, and validate with the smallest Gradle compile task plus bounded native benchmark runs that force-close stuck apps.
+
 ## Documentation Entry Points
 - Root README: `README.md`
 - Usage guide: `docs/usage.md`

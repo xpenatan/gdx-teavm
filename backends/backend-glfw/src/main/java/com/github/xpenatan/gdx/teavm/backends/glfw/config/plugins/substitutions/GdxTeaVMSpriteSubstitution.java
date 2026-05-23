@@ -1,8 +1,10 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import org.teavm.interop.Address;
 
-public final class GdxTeaVMSpriteSubstitution {
+public final class GdxTeaVMSpriteSubstitution extends Sprite {
 
     private static final int X1 = 0;
     private static final int Y1 = 4;
@@ -14,18 +16,30 @@ public final class GdxTeaVMSpriteSubstitution {
     private static final int Y4 = 64;
 
     final float[] vertices = null;
-    private float x;
-    private float y;
+    float x;
+    float y;
     float width;
     float height;
-    private float originX;
-    private float originY;
-    private float rotation;
-    private float scaleX = 1;
-    private float scaleY = 1;
-    private boolean dirty = true;
+    float originX;
+    float originY;
+    float rotation;
+    float scaleX = 1;
+    float scaleY = 1;
+    boolean dirty = true;
 
     private GdxTeaVMSpriteSubstitution() {
+        super();
+    }
+
+    @Override
+    public void draw(Batch batch) {
+        if (batch instanceof GdxTeaVMSpriteBatchSubstitution) {
+            ((GdxTeaVMSpriteBatchSubstitution)batch).drawSprite(this);
+        }
+        else {
+            float[] vertices = getVertices();
+            batch.draw(getTexture(), vertices, 0, 20);
+        }
     }
 
     public float[] getVertices() {
