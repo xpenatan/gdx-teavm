@@ -89,9 +89,8 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
         } else {
             try {
                 if (window.getConfig().glEmulation == GLFWApplicationConfiguration.GLEmulation.GL20) {
-                    // Even for GL20, set gl30 to enable VAO-based meshes with GLFWGL32
-                    // GLFWGL32 supports both GL20 and GL30 features
-                    this.gl20 = this.gl30 = new GLFWGL32();
+                    this.gl20 = new GLFWGL32();
+                    this.gl30 = null;
                 } else {
                     throw new GdxRuntimeException("Unknown GLES version: " + window.getConfig().glEmulation);
                 }

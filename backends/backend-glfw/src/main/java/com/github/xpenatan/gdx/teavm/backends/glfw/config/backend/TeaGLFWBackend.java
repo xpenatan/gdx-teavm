@@ -5,6 +5,7 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class TeaGLFWBackend extends TeaBackend {
         generatedSources = buildRootPath +  "/c/src";
         externalSources = buildRootPath +  "/c/external_cpp";
         additionalSourcePaths.add(externalSources + "/gdx");
+        tool.getProperties().setProperty(GdxTeaVMPluginConfig.NATIVE_BACKEND, "glfw");
         tool.setTargetDirectory(new File(generatedSources));
     }
 

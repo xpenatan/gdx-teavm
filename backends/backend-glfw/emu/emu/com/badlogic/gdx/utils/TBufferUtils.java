@@ -14,8 +14,19 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import org.teavm.classlib.impl.nio.Buffers;
+import org.teavm.classlib.java.nio.TBuffer;
+import org.teavm.classlib.java.nio.TNativeBufferUtil;
+import org.teavm.interop.Address;
 
 public final class TBufferUtils {
+
+    private static final int BUFFER_BYTE = 0;
+    private static final int BUFFER_CHAR = 1;
+    private static final int BUFFER_SHORT = 2;
+    private static final int BUFFER_INT = 3;
+    private static final int BUFFER_LONG = 4;
+    private static final int BUFFER_FLOAT = 5;
+    private static final int BUFFER_DOUBLE = 6;
 
     private static boolean useDirectBuffer = true;
 
@@ -23,184 +34,134 @@ public final class TBufferUtils {
     static int allocatedUnsafe = 0;
 
     public static void copy(float[] src, Buffer dst, int numFloats, int offset) {
-        if (dst instanceof ByteBuffer)
-            dst.limit(numFloats << 2);
-        else if (dst instanceof FloatBuffer) dst.limit(numFloats);
-        FloatBuffer floatBuffer = asFloatBuffer(dst);
-        floatBuffer.position(0);
-        floatBuffer.limit(numFloats);
-        dst.position(0);
-        floatBuffer.put(src, offset, numFloats);
-        floatBuffer.position(0);
-        dst.position(0);
-        if(dst instanceof ByteBuffer)
+        checkArrayCopy(src, src == null ? 0 : src.length, offset, dst, numFloats);
+        int dstKind = requireDestination(dst, BUFFER_FLOAT, "FloatBuffer");
+        if (dstKind == BUFFER_BYTE)
             dst.limit(numFloats << 2);
         else
             dst.limit(numFloats);
+        dst.position(0);
+        copyToBuffer(Address.ofData(src).add(offset << 2), dst, dstKind, 0, numFloats << 2);
+        dst.position(0);
     }
 
     public static void copy(byte[] src, int srcOffset, Buffer dst, int numElements) {
-        if(!(dst instanceof ByteBuffer)) throw new GdxRuntimeException("dst must be a ByteBuffer");
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        if (!(dst instanceof ByteBuffer))
+            throw new GdxRuntimeException("dst must be a ByteBuffer");
+        requireWritable(dst, BUFFER_BYTE);
 
-        ByteBuffer byteBuffer = (ByteBuffer)dst;
-        int oldPosition = byteBuffer.position();
-        byteBuffer.limit(oldPosition + numElements);
-        byteBuffer.put(src, srcOffset, numElements);
-        byteBuffer.position(oldPosition);
+        int oldPosition = dst.position();
+        dst.limit(oldPosition + numElements);
+        copyToBuffer(Address.ofData(src).add(srcOffset), dst, BUFFER_BYTE, oldPosition, numElements);
     }
 
     public static void copy(short[] src, int srcOffset, Buffer dst, int numElements) {
-        ShortBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asShortBuffer();
-        else if(dst instanceof ShortBuffer) buffer = (ShortBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or ShortBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_SHORT, "ShortBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 1), dst, dstKind, dstByteOffset, numElements << 1);
     }
 
     public static void copy(char[] src, int srcOffset, Buffer dst, int numElements) {
-        CharBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asCharBuffer();
-        else if(dst instanceof CharBuffer) buffer = (CharBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or CharBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_CHAR, "CharBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 1), dst, dstKind, dstByteOffset, numElements << 1);
     }
 
     public static void copy(int[] src, int srcOffset, Buffer dst, int numElements) {
-        IntBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asIntBuffer();
-        else if(dst instanceof IntBuffer) buffer = (IntBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or IntBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_INT, "IntBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 2), dst, dstKind, dstByteOffset, numElements << 2);
     }
 
     public static void copy(long[] src, int srcOffset, Buffer dst, int numElements) {
-        LongBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asLongBuffer();
-        else if(dst instanceof LongBuffer) buffer = (LongBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or LongBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_LONG, "LongBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 3), dst, dstKind, dstByteOffset, numElements << 3);
     }
 
     public static void copy(float[] src, int srcOffset, Buffer dst, int numElements) {
-        FloatBuffer buffer = asFloatBuffer(dst);
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_FLOAT, "FloatBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 2), dst, dstKind, dstByteOffset, numElements << 2);
     }
 
     public static void copy(double[] src, int srcOffset, Buffer dst, int numElements) {
-        DoubleBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asDoubleBuffer();
-        else if(dst instanceof DoubleBuffer) buffer = (DoubleBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or DoubleBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.limit(oldPosition + numElements);
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_DOUBLE, "DoubleBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, true);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 3), dst, dstKind, dstByteOffset, numElements << 3);
     }
 
     public static void copy(char[] src, int srcOffset, int numElements, Buffer dst) {
-        CharBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asCharBuffer();
-        else if(dst instanceof CharBuffer) buffer = (CharBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or CharBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_CHAR, "CharBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, false);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 1), dst, dstKind, dstByteOffset, numElements << 1);
     }
 
     public static void copy(int[] src, int srcOffset, int numElements, Buffer dst) {
-        IntBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asIntBuffer();
-        else if(dst instanceof IntBuffer) buffer = (IntBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or IntBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_INT, "IntBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, false);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 2), dst, dstKind, dstByteOffset, numElements << 2);
     }
 
     public static void copy(long[] src, int srcOffset, int numElements, Buffer dst) {
-        LongBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asLongBuffer();
-        else if(dst instanceof LongBuffer) buffer = (LongBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or LongBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_LONG, "LongBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, false);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 3), dst, dstKind, dstByteOffset, numElements << 3);
     }
 
     public static void copy(float[] src, int srcOffset, int numElements, Buffer dst) {
-        FloatBuffer buffer = asFloatBuffer(dst);
-        int oldPosition = buffer.position();
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_FLOAT, "FloatBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, false);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 2), dst, dstKind, dstByteOffset, numElements << 2);
     }
 
     public static void copy(double[] src, int srcOffset, int numElements, Buffer dst) {
-        DoubleBuffer buffer = null;
-        if(dst instanceof ByteBuffer)
-            buffer = ((ByteBuffer)dst).asDoubleBuffer();
-        else if(dst instanceof DoubleBuffer) buffer = (DoubleBuffer)dst;
-        if(buffer == null) throw new GdxRuntimeException("dst must be a ByteBuffer or DoubleBuffer");
-
-        int oldPosition = buffer.position();
-        buffer.put(src, srcOffset, numElements);
-        buffer.position(oldPosition);
+        checkArrayCopy(src, src == null ? 0 : src.length, srcOffset, dst, numElements);
+        int dstKind = requireDestination(dst, BUFFER_DOUBLE, "DoubleBuffer");
+        int dstByteOffset = prepareArrayDestination(dst, dstKind, numElements, false);
+        copyToBuffer(Address.ofData(src).add(srcOffset << 3), dst, dstKind, dstByteOffset, numElements << 3);
     }
 
     public static void copy(Buffer src, Buffer dst, int numElements) {
+        if (src == null)
+            throw new NullPointerException("src");
+        if (dst == null)
+            throw new NullPointerException("dst");
+        if (numElements < 0)
+            throw new IndexOutOfBoundsException();
+
         int srcPos = src.position();
         int dstPos = dst.position();
-        src.limit(srcPos + numElements);
-        final boolean srcIsByte = src instanceof ByteBuffer;
-        final boolean dstIsByte = dst instanceof ByteBuffer;
-        dst.limit(dst.capacity());
-        if(srcIsByte && dstIsByte)
-            ((ByteBuffer)dst).put((ByteBuffer)src);
-        else if((srcIsByte || src instanceof CharBuffer) && (dstIsByte || dst instanceof CharBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asCharBuffer() : (CharBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asCharBuffer() : (CharBuffer)src));
-        else if((srcIsByte || src instanceof ShortBuffer) && (dstIsByte || dst instanceof ShortBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asShortBuffer() : (ShortBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asShortBuffer() : (ShortBuffer)src));
-        else if((srcIsByte || src instanceof IntBuffer) && (dstIsByte || dst instanceof IntBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asIntBuffer() : (IntBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asIntBuffer() : (IntBuffer)src));
-        else if((srcIsByte || src instanceof LongBuffer) && (dstIsByte || dst instanceof LongBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asLongBuffer() : (LongBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asLongBuffer() : (LongBuffer)src));
-        else if((srcIsByte || src instanceof FloatBuffer) && (dstIsByte || dst instanceof FloatBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asFloatBuffer() : (FloatBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asFloatBuffer() : (FloatBuffer)src));
-        else if((srcIsByte || src instanceof DoubleBuffer) && (dstIsByte || dst instanceof DoubleBuffer))
-            (dstIsByte ? ((ByteBuffer)dst).asDoubleBuffer() : (DoubleBuffer)dst).put((srcIsByte ? ((ByteBuffer)src).asDoubleBuffer() : (DoubleBuffer)src));
-        else
+        int srcKind = bufferKind(src);
+        int dstKind = bufferKind(dst);
+        if (srcKind != dstKind && srcKind != BUFFER_BYTE && dstKind != BUFFER_BYTE)
             throw new GdxRuntimeException("Buffers must be of same type or ByteBuffer");
+        requireWritable(dst, dstKind);
+
+        src.limit(srcPos + numElements);
+        dst.limit(dst.capacity());
+
+        int copyBytes = bufferCopyBytes(srcKind, dstKind, numElements);
+        int srcByteOffset = bufferByteOffset(srcKind, srcPos);
+        int dstByteOffset = bufferByteOffset(dstKind, dstPos);
+        int dstLimitBytes = bufferLimitBytes(dst, dstKind);
+        if (dstByteOffset < 0 || dstByteOffset + copyBytes > dstLimitBytes)
+            throw new IndexOutOfBoundsException();
+
+        Address srcAddress = TNativeBufferUtil.getAddress((TBuffer)(Object)src).add(srcByteOffset);
+        Address dstAddress = TNativeBufferUtil.getAddress((TBuffer)(Object)dst).add(dstByteOffset);
+        Address.moveMemoryBlock(srcAddress, dstAddress, copyBytes);
         src.position(srcPos);
         dst.position(dstPos);
     }
@@ -212,6 +173,101 @@ public final class TBufferUtils {
         else if(data instanceof FloatBuffer) buffer = (FloatBuffer)data;
         if(buffer == null) throw new GdxRuntimeException("data must be a ByteBuffer or FloatBuffer");
         return buffer;
+    }
+
+    private static void checkArrayCopy(Object src, int srcLength, int srcOffset, Buffer dst, int numElements) {
+        if (src == null)
+            throw new NullPointerException("src");
+        if (dst == null)
+            throw new NullPointerException("dst");
+        if (numElements < 0 || srcOffset < 0 || srcOffset + numElements > srcLength)
+            throw new IndexOutOfBoundsException();
+    }
+
+    private static int requireDestination(Buffer dst, int kind, String typedName) {
+        int dstKind = bufferKind(dst);
+        if (dstKind != BUFFER_BYTE && dstKind != kind)
+            throw new GdxRuntimeException("dst must be a ByteBuffer or " + typedName);
+        requireWritable(dst, dstKind);
+        return dstKind;
+    }
+
+    private static void requireWritable(Buffer dst, int kind) {
+        if (kind == BUFFER_BYTE && ((ByteBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_CHAR && ((CharBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_SHORT && ((ShortBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_INT && ((IntBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_LONG && ((LongBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_FLOAT && ((FloatBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+        if (kind == BUFFER_DOUBLE && ((DoubleBuffer)dst).isReadOnly())
+            throw new GdxRuntimeException("dst must not be read-only");
+    }
+
+    private static int prepareArrayDestination(Buffer dst, int dstKind, int numElements, boolean updateTypedLimit) {
+        int position = dst.position();
+        if (updateTypedLimit && dstKind != BUFFER_BYTE)
+            dst.limit(position + numElements);
+        return bufferByteOffset(dstKind, position);
+    }
+
+    private static void copyToBuffer(Address srcAddress, Buffer dst, int dstKind, int dstByteOffset, int numBytes) {
+        int dstLimitBytes = bufferLimitBytes(dst, dstKind);
+        if (dstByteOffset < 0 || dstByteOffset + numBytes > dstLimitBytes)
+            throw new IndexOutOfBoundsException();
+        Address dstAddress = TNativeBufferUtil.getAddress((TBuffer)(Object)dst).add(dstByteOffset);
+        Address.moveMemoryBlock(srcAddress, dstAddress, numBytes);
+    }
+
+    private static int bufferCopyBytes(int srcKind, int dstKind, int numElements) {
+        if (srcKind == BUFFER_BYTE && dstKind != BUFFER_BYTE) {
+            int elementSize = bufferElementSize(dstKind);
+            return (numElements / elementSize) * elementSize;
+        }
+        return numElements * bufferElementSize(srcKind);
+    }
+
+    private static int bufferByteOffset(int kind, int position) {
+        return position * bufferElementSize(kind);
+    }
+
+    private static int bufferLimitBytes(Buffer buffer, int kind) {
+        return buffer.limit() * bufferElementSize(kind);
+    }
+
+    private static int bufferKind(Buffer buffer) {
+        if (buffer instanceof ByteBuffer)
+            return BUFFER_BYTE;
+        if (buffer instanceof CharBuffer)
+            return BUFFER_CHAR;
+        if (buffer instanceof ShortBuffer)
+            return BUFFER_SHORT;
+        if (buffer instanceof IntBuffer)
+            return BUFFER_INT;
+        if (buffer instanceof LongBuffer)
+            return BUFFER_LONG;
+        if (buffer instanceof FloatBuffer)
+            return BUFFER_FLOAT;
+        if (buffer instanceof DoubleBuffer)
+            return BUFFER_DOUBLE;
+        throw new GdxRuntimeException("Can't copy to a " + buffer.getClass().getName() + " instance");
+    }
+
+    private static int bufferElementSize(int kind) {
+        if (kind == BUFFER_BYTE)
+            return 1;
+        if (kind == BUFFER_CHAR || kind == BUFFER_SHORT)
+            return 2;
+        if (kind == BUFFER_INT || kind == BUFFER_FLOAT)
+            return 4;
+        if (kind == BUFFER_LONG || kind == BUFFER_DOUBLE)
+            return 8;
+        throw new GdxRuntimeException("Unsupported buffer type");
     }
 
     private final static float[] asFloatArray(final FloatBuffer buffer) {

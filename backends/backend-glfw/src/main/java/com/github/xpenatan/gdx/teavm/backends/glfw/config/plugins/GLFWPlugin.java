@@ -18,6 +18,11 @@ public class GLFWPlugin implements TeaVMPlugin {
         }
         TeaVMCHost cHost = host.getExtension(TeaVMCHost.class);
         if(cHost != null) {
+            host.add(new SpriteBatchDrawTransformer());
+            host.add(new SmartArrayFastPathTransformer());
+            if(config.nativeOutputRoot.isBlank()) {
+                return;
+            }
             ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
             TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
             if(config.reflectionEnabled) {
