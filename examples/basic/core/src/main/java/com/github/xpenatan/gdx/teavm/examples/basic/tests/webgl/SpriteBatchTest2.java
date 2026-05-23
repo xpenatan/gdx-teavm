@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
 
 public class SpriteBatchTest2 extends ApplicationAdapter {
     private static final String TAG = "SpriteBatchTest";
-    private static final boolean BENCHMARK_SWEEP = true;
+    private static final boolean BENCHMARK_SWEEP = false;
     private static final boolean BENCHMARK_EXIT_AFTER_MEASURE = true;
     private static final int BENCHMARK_WARMUP_SECONDS = 1;
     private static final int BENCHMARK_MEASURE_SECONDS = 12;
