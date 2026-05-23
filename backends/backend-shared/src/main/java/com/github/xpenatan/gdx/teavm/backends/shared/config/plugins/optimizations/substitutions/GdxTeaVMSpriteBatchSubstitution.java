@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,11 +23,11 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
         drawSpriteNative(this, sprite);
     }
 
-    @Import(name = "gdx_teavm_spritebatch_draw_sprite")
+    @Import(name = "teavm_spritebatch_draw_sprite")
     private static native void drawSpriteNative(GdxTeaVMSpriteBatchSubstitution batch,
             GdxTeaVMSpriteSubstitution sprite);
 
-    @Import(name = "gdx_teavm_spritebatch_draw_sprite_array")
+    @Import(name = "teavm_spritebatch_draw_sprite_array")
     public static native void drawSpriteArrayNative(GdxTeaVMSpriteBatchSubstitution batch,
             GdxTeaVMSpriteSubstitution[] sprites, int count, float rotationDelta, float scale);
 
@@ -39,7 +39,7 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
                 srcX, srcY, srcWidth, srcHeight, flipX, flipY);
     }
 
-    @Import(name = "gdx_teavm_spritebatch_draw_texture_transform")
+    @Import(name = "teavm_spritebatch_draw_texture_transform")
     private static native void drawTextureTransformNative(GdxTeaVMSpriteBatchSubstitution batch, Texture texture,
             float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY,
             float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY);
@@ -49,7 +49,7 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
         drawTextureRectNative(this, texture, x, y, width, height);
     }
 
-    @Import(name = "gdx_teavm_spritebatch_draw_texture_rect")
+    @Import(name = "teavm_spritebatch_draw_texture_rect")
     private static native void drawTextureRectNative(GdxTeaVMSpriteBatchSubstitution batch, Texture texture,
             float x, float y, float width, float height);
 

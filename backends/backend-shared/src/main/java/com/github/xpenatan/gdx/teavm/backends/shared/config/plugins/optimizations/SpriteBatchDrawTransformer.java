@@ -1,11 +1,11 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions.GdxTeaVMSpriteBatchSubstitution;
-import com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions.GdxTeaVMSpriteSubstitution;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions.GdxTeaVMSpriteBatchSubstitution;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions.GdxTeaVMSpriteSubstitution;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;

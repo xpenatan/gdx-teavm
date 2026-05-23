@@ -1283,25 +1283,25 @@ public class TMatrix4 implements Serializable {
         return inv().tra();
     }
 
-    @Import(name = "gdx_teavm_matrix4_mul")
+    @Import(name = "teavm_matrix4_mul")
     private static native void matrix4_mul_native(Object mata, Object matb);
 
-    @Import(name = "gdx_teavm_matrix4_mul_left")
+    @Import(name = "teavm_matrix4_mul_left")
     private static native void matrix4_mul_left_native(Object target, Object left);
 
-    @Import(name = "gdx_teavm_matrix4_det")
+    @Import(name = "teavm_matrix4_det")
     private static native float matrix4_det_native(Object values);
 
-    @Import(name = "gdx_teavm_matrix4_inv")
+    @Import(name = "teavm_matrix4_inv")
     private static native boolean matrix4_inv_native(Object values);
 
-    @Import(name = "gdx_teavm_matrix4_mul_vec")
+    @Import(name = "teavm_matrix4_mul_vec")
     private static native void matrix4_mul_vec_native(Object mat, Object vecs, int offset, int numVecs, int stride);
 
-    @Import(name = "gdx_teavm_matrix4_prj")
+    @Import(name = "teavm_matrix4_prj")
     private static native void matrix4_prj_native(Object mat, Object vecs, int offset, int numVecs, int stride);
 
-    @Import(name = "gdx_teavm_matrix4_rot")
+    @Import(name = "teavm_matrix4_rot")
     private static native void matrix4_rot_native(Object mat, Object vecs, int offset, int numVecs, int stride);
 
     static void matrix4_mul(float[] mata, float[] matb) {

@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions;
 
 import org.teavm.interop.StaticInit;
 

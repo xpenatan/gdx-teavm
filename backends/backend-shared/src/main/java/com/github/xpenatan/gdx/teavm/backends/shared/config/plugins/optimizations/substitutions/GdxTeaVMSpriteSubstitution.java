@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;

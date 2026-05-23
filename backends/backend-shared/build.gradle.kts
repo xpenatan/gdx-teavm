@@ -4,6 +4,8 @@ plugins {
 
 val moduleName = "backend-shared"
 
+sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
+
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     api(project(":extensions:asset-loader"))

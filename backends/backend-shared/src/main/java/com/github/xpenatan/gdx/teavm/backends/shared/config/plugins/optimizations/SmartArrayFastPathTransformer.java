@@ -1,6 +1,6 @@
-package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins;
+package com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations;
 
-import com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins.substitutions.GdxTeaVMArrayFastPaths;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.substitutions.GdxTeaVMArrayFastPaths;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
