@@ -220,6 +220,8 @@
 - Do not put all optimized logic directly into TeaVM C bridge files. TeaVM generated C types, fields, and method names are hard to read, so bridge code should stay small.
 - Put readable, reusable CPU-heavy native kernels in `backends/backend-shared/src/main/resources/external_cpp/teavm_optimizations/pure`.
 - Pure C files may have `.c` and `.h` files with clean function names and normal C signatures.
+- For measured per-frame, per-sprite, or per-vertex hot kernels, prioritize pure header-inline helpers (`static inline`, `__forceinline`, or compiler-specific `always_inline`) so TeaVM bridge callers can inline the work into the hot loop.
+- Use a separate pure `.c` function only for cold/medium paths, large code where size/readability matters more than call overhead, or when benchmark evidence shows no regression from the function boundary.
 - Pure C files must not include TeaVM generated headers, access TeaVM object layouts, throw TeaVM exceptions, or use TeaVM GC barriers.
 - Put TeaVM-dependent wrapper code in `backends/backend-shared/src/main/resources/external_cpp/teavm_optimizations/teavm`.
 - TeaVM C bridge files should only unpack TeaVM objects/arrays, validate inputs, handle exceptions/barriers/flush calls, and call pure C kernels.

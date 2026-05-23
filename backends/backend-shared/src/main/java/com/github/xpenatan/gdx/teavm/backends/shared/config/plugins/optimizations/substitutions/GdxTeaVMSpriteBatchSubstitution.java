@@ -53,25 +53,6 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
     private static native void drawTextureRectNative(GdxTeaVMSpriteBatchSubstitution batch, Texture texture,
             float x, float y, float width, float height);
 
-    public void drawSpriteVertices(Texture texture, float[] spriteVertices) {
-        if (!drawing)
-            throw new IllegalStateException("SpriteBatch.begin must be called before draw.");
-        float[] vertices = this.vertices;
-        int currentIdx = idx;
-        if (texture != lastTexture) {
-            switchTexture(texture);
-            currentIdx = idx;
-        }
-        if (currentIdx > vertices.length - 20) {
-            flush();
-            currentIdx = idx;
-        }
-        Address srcAddress = Address.ofData(spriteVertices);
-        Address dstAddress = Address.ofData(vertices).add(currentIdx * 4);
-        Address.moveMemoryBlock(srcAddress, dstAddress, SPRITE_SIZE_BYTES);
-        idx = currentIdx + 20;
-    }
-
     @Override
     public void draw(Texture texture, float[] spriteVertices, int offset, int count) {
         if (!drawing)

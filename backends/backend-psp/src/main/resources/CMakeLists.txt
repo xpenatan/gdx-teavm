@@ -27,8 +27,7 @@ endif()
 
 # Collect shared TeaVM optimization C sources
 list(APPEND SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/pure/matrix4.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/pure/spritebatch.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_fastmath.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_matrix4.c"
 )
 set(TEAVM_SPRITEBATCH_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_spritebatch.c")

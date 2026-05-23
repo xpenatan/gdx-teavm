@@ -81,9 +81,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             float.class, float.class, float.class, float.class, float.class, int.class, int.class, int.class,
             int.class, boolean.class, boolean.class, void.class)
             .getDescriptor();
-    private static final MethodDescriptor DRAW_SPRITE_VERTICES = new MethodReference(
-            GdxTeaVMSpriteBatchSubstitution.class, "drawSpriteVertices", Texture.class, float[].class, void.class)
-            .getDescriptor();
     private static final MethodDescriptor DRAW_SPRITE = new MethodReference(
             GdxTeaVMSpriteBatchSubstitution.class, "drawSprite", GdxTeaVMSpriteSubstitution.class, void.class)
             .getDescriptor();
@@ -114,6 +111,9 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
     private static final MethodDescriptor GET_VERTICES = new MethodReference(
             Sprite.class, "getVertices", float[].class)
             .getDescriptor();
+    private static final MethodDescriptor UPDATE_VERTICES_NATIVE = new MethodReference(
+            GdxTeaVMSpriteSubstitution.class, "updateVerticesNative", GdxTeaVMSpriteSubstitution.class, void.class)
+            .getDescriptor();
     private static final MethodDescriptor DRAW_BATCH = new MethodReference(
             Sprite.class, "draw", Batch.class, void.class)
             .getDescriptor();
@@ -136,8 +136,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_TEXTURE_ARRAY);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_TEXTURE_RECT);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_TEXTURE_TRANSFORM);
-            replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,
-                    DRAW_SPRITE_VERTICES);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_SPRITE);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_SPRITE_NATIVE);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,
@@ -149,6 +147,7 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
         }
         else if (SPRITE_CLASS.equals(cls.getName())) {
             replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, GET_VERTICES);
+            replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, UPDATE_VERTICES_NATIVE);
             replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, DRAW_BATCH);
         }
         else if (BENCHMARK_FAST_SPRITE_BATCH_CLASS.equals(cls.getName())) {
