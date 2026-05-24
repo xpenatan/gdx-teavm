@@ -2,7 +2,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest2;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest;
 
 public class Main {
 
@@ -18,7 +18,7 @@ public class Main {
         config.useVsync(false);
         config.setForegroundFPS(0);
 
-        ApplicationListener listener = new SpriteBatchTest2();
+        ApplicationListener listener = new SpriteBatchTest();
         float exitAfterSeconds = getExitAfterSeconds(args);
         if (exitAfterSeconds > 0) {
             listener = new AutoExitListener(listener, exitAfterSeconds);

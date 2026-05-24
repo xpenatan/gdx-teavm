@@ -2,7 +2,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.EmptyApplicationTest;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest2;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.UITest;
 
 public class Main {
@@ -13,10 +12,8 @@ public class Main {
         config.setForegroundFPS(0);
 //        new Lwjgl3Application(new GearsDemo());
 //        new Lwjgl3Application(new Basic3DTest());
-//        new Lwjgl3Application(new SpriteBatchTest());
-        new Lwjgl3Application(new SpriteBatchTest2(), config);
+        new Lwjgl3Application(new SpriteBatchTest(), config);
 //        new Lwjgl3Application(new EmptyApplicationTest(), config);
-//        new Lwjgl3Application(new SpriteBatchTest2(), config);
 //        new Lwjgl3Application(new TeaVMInputTest());
 //        new Lwjgl3Application(new ReflectionTest());
 //        new Lwjgl3Application(new ReadPixelsTest());

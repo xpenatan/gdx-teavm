@@ -64,8 +64,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
     private static final String SPRITE_BATCH_SUBSTITUTION_CLASS = GdxTeaVMSpriteBatchSubstitution.class.getName();
     private static final String SPRITE_CLASS = Sprite.class.getName();
     private static final String SPRITE_SUBSTITUTION_CLASS = GdxTeaVMSpriteSubstitution.class.getName();
-    private static final String BENCHMARK_FAST_SPRITE_BATCH_CLASS =
-            "com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest2$FastSpriteBatch";
     private static final FieldReference SPRITE_ROTATION_FIELD = new FieldReference(SPRITE_CLASS, "rotation");
     private static final FieldReference SPRITE_SCALE_X_FIELD = new FieldReference(SPRITE_CLASS, "scaleX");
     private static final FieldReference SPRITE_SCALE_Y_FIELD = new FieldReference(SPRITE_CLASS, "scaleY");
@@ -123,11 +121,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
     private static final MethodDescriptor SPRITE_SET_SCALE = new MethodReference(
             Sprite.class, "setScale", float.class, void.class)
             .getDescriptor();
-    private static final MethodDescriptor BENCHMARK_FAST_DRAW_SPRITES = new MethodReference(
-            BENCHMARK_FAST_SPRITE_BATCH_CLASS, "drawSprites", ValueType.arrayOf(ValueType.object(SPRITE_CLASS)),
-            ValueType.INTEGER, ValueType.FLOAT, ValueType.FLOAT, ValueType.VOID)
-            .getDescriptor();
-
     private final ReferenceCache referenceCache = new ReferenceCache();
 
     @Override
@@ -149,9 +142,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, GET_VERTICES);
             replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, UPDATE_VERTICES_NATIVE);
             replaceMethod(cls, context, SPRITE_SUBSTITUTION_CLASS, SPRITE_CLASS, DRAW_BATCH);
-        }
-        else if (BENCHMARK_FAST_SPRITE_BATCH_CLASS.equals(cls.getName())) {
-            rewriteBenchmarkFastSpriteBatch(cls);
         }
         rewriteSpriteArrayLoops(cls, context);
         rewriteSpriteDrawCallSites(cls, context);
@@ -188,28 +178,6 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             return SPRITE_CLASS;
         }
         return substitutionClass.equals(name) ? targetClass : name;
-    }
-
-    private void rewriteBenchmarkFastSpriteBatch(ClassHolder cls) {
-        MethodHolder method = cls.getMethod(BENCHMARK_FAST_DRAW_SPRITES);
-        if (method == null) {
-            return;
-        }
-
-        Program replacement = new Program();
-        for (int i = 0; i < 5; i++) {
-            replacement.createVariable();
-        }
-
-        BasicBlock block = replacement.createBasicBlock();
-        InvokeInstruction invoke = new InvokeInstruction();
-        invoke.setType(InvocationType.SPECIAL);
-        invoke.setMethod(DRAW_SPRITE_ARRAY_NATIVE_TARGET);
-        invoke.setArguments(replacement.variableAt(0), replacement.variableAt(1), replacement.variableAt(2),
-                replacement.variableAt(3), replacement.variableAt(4));
-        block.add(invoke);
-        block.add(new ExitInstruction());
-        method.setProgram(replacement);
     }
 
     private void rewriteSpriteArrayLoops(ClassHolder cls, ClassHolderTransformerContext context) {

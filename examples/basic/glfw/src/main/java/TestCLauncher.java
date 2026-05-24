@@ -7,7 +7,6 @@ import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.JsonTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.ReadPixelsTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.ReflectionTest;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.SpriteBatchTest2;
 import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.UITest;
 
 public class TestCLauncher {
@@ -21,8 +20,7 @@ public class TestCLauncher {
         System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
 //        new GLFWApplication(new EmptyApplicationTest(), config);
 //        new GLFWApplication(new GearsDemo());
-//        new GLFWApplication(new SpriteBatchTest());
-        new GLFWApplication(new SpriteBatchTest2(), config);
+        new GLFWApplication(new SpriteBatchTest(), config);
 //        new GLFWApplication(new ReflectionTest(), config);
 //        new GLFWApplication(new JsonTest(), config);
 //        new GLFWApplication(new UITest(), config);
