@@ -20,8 +20,8 @@ include(":backends:backend-glfw")
 include(":backends:backend-psp")
 
 include(":extensions:asset-loader")
-include(":extensions:gdx-controllers-teavm")
-include(":extensions:gdx-freetype-teavm")
+include(":extensions:web:gdx-controllers-web")
+include(":extensions:web:gdx-freetype-web")
 
 //include(":tools:generator:core")
 //include(":tools:generator:ui")

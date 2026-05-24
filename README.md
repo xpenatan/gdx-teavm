@@ -27,8 +27,8 @@ The project provides two build styles:
 | `backend-web` | libGDX web runtime plus JavaScript and Wasm build support |
 | `backend-glfw` | TeaVM C output for desktop GLFW native builds |
 | `backend-psp` | TeaVM C output for PSP builds |
-| `gdx-freetype-teavm` | FreeType support for TeaVM builds |
-| `gdx-controllers-teavm` | Controller support for TeaVM builds |
+| `gdx-freetype-web` | FreeType support for TeaVM web builds |
+| `gdx-controllers-web` | Controller support for TeaVM web builds |
 | `tools/gdx-teavm-plugin` | Gradle plugin implementation |
 
 ## Documentation

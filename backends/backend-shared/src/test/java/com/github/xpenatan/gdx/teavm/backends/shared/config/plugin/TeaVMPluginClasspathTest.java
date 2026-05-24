@@ -13,7 +13,7 @@ public class TeaVMPluginClasspathTest {
     @Test
     public void getURLs_usesConfiguredClasspathBeforeClassLoaderFallback() throws Exception {
         List<String> configuredClasspath = Arrays.asList(
-                "E:/deps/gdx-freetype-teavm.jar",
+                "E:/deps/gdx-freetype-web.jar",
                 "E:/classes/main"
         );
 

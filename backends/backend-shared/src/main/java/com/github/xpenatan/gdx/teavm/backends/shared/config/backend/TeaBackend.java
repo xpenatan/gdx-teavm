@@ -134,7 +134,7 @@ public abstract class TeaBackend {
         // 0 - TeaVM backend - Contains all teavm api stuff to make it work.
         // 1 - Extensions - Emulate native extension classes
 //
-//        final String EXTENSION_FREETYPE = "gdx-freetype-teavm";
+//        final String EXTENSION_FREETYPE = "gdx-freetype-web";
 //        final String EXTENSION_BOX2D_GWT = "gdx-box2d-gwt";
 //
 //        // TODO make a better sort. Lazy to do it now

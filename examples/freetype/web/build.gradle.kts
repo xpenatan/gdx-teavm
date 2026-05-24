@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:freetype:core"))
-    implementation(project(":extensions:gdx-freetype-teavm"))
+    implementation(project(":extensions:web:gdx-freetype-web"))
 }
 
 gdxTeaVM {

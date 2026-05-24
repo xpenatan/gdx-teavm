@@ -3,7 +3,7 @@ dependencies {
     implementation(project(":examples:gdx-tests:core"))
 
     implementation(project(":backends:backend-web"))
-    implementation(project(":extensions:gdx-freetype-teavm"))
+    implementation(project(":extensions:web:gdx-freetype-web"))
 }
 
 val mainClassName = "BuildGdxTest"

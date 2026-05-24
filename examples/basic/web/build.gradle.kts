@@ -3,7 +3,7 @@ dependencies {
 //    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
     implementation(project(":examples:basic:core"))
     implementation(project(":backends:backend-web"))
-    implementation(project(":extensions:gdx-freetype-teavm"))
+    implementation(project(":extensions:web:gdx-freetype-web"))
 }
 
 tasks.register<JavaExec>("basic_run_web") {

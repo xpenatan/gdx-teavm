@@ -16,7 +16,7 @@ public class TeaVMResourcePropertiesTest {
 
     @Test
     public void createAssetPlan_discoversScriptFromDependencyJar() throws Exception {
-        Path jar = Files.createTempFile("gdx-freetype-teavm", ".jar");
+        Path jar = Files.createTempFile("gdx-freetype-web", ".jar");
         try {
             try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(jar))) {
                 zip.putNextEntry(new ZipEntry("META-INF/gdx-teavm.properties"));
