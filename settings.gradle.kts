@@ -35,6 +35,12 @@ include(":examples:basic:web")
 include(":examples:basic:glfw")
 include(":examples:basic:psp")
 
+include(":benchmark")
+include(":benchmark:core")
+include(":benchmark:lwjgl3")
+include(":benchmark:graalvm")
+include(":benchmark:glfw")
+
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
 include(":examples:freetype:web")
