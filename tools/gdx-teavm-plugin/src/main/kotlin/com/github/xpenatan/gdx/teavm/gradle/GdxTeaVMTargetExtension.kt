@@ -8,6 +8,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.teavm.gradle.api.OptimizationLevel
+import org.teavm.gradle.api.SourceFilePolicy
 import javax.inject.Inject
 
 open class GdxTeaVMTargetExtension @Inject constructor(
@@ -171,6 +172,24 @@ open class GdxTeaVMWebExtension @Inject constructor(
     outputDirName: String,
     targetFileNameValue: String
 ) : GdxTeaVMTargetExtension(objects, project, outputDirName, targetFileNameValue) {
+    /**
+     * Generates browser source maps for TeaVM web output.
+     *
+     * Default: `false`.
+     */
+    val sourceMap: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+
+    /**
+     * Controls how Java source files referenced by source maps are exposed to the browser.
+     *
+     * Use [SourceFilePolicy.COPY] for browser DevTools validation, [SourceFilePolicy.LINK_LOCAL_FILES]
+     * for local IDE-oriented paths, or [SourceFilePolicy.DO_NOTHING] to leave sources out.
+     *
+     * Default: [SourceFilePolicy.LINK_LOCAL_FILES], matching TeaVM's Gradle defaults.
+     */
+    val sourceFilePolicy: Property<SourceFilePolicy> = objects.property(SourceFilePolicy::class.java)
+        .convention(SourceFilePolicy.LINK_LOCAL_FILES)
+
     /**
      * JavaScript entry point function name emitted by TeaVM and called by the generated web app.
      *

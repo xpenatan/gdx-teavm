@@ -2,6 +2,8 @@ package com.github.xpenatan.gdx.teavm.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
@@ -15,6 +17,8 @@ import org.teavm.gradle.api.TeaVMConfiguration
 import org.teavm.gradle.api.TeaVMCommonConfiguration
 import org.teavm.gradle.api.TeaVMExtension
 import org.teavm.gradle.tasks.GenerateCTask
+import org.teavm.gradle.tasks.GenerateJavaScriptTask
+import org.teavm.gradle.tasks.GenerateWasmGCTask
 import org.teavm.gradle.tasks.TeaVMTask
 import java.io.File
 import java.io.IOException
@@ -113,6 +117,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             js.targetFileName.convention(extension.js.targetFileName)
             js.obfuscated.convention(extension.js.obfuscated)
             js.strict.convention(extension.js.strict)
+            js.sourceMap.convention(extension.js.sourceMap)
+            js.sourceFilePolicy.convention(extension.js.sourceFilePolicy)
         }
 
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
@@ -127,6 +133,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             wasm.strict.convention(extension.wasm.strict)
             wasm.copyRuntime.convention(extension.wasm.copyRuntime)
             wasm.modularRuntime.convention(extension.wasm.modularRuntime)
+            wasm.sourceMap.convention(extension.wasm.sourceMap)
+            wasm.sourceFilePolicy.convention(extension.wasm.sourceFilePolicy)
         }
     }
 
@@ -151,13 +159,15 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
     private fun configureTeaVMTaskClasspaths(project: Project, extension: GdxTeaVMExtension) {
         if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
-            project.tasks.named(TeaVMPlugin.JS_TASK_NAME, TeaVMTask::class.java).configure {
+            project.tasks.named(TeaVMPlugin.JS_TASK_NAME, GenerateJavaScriptTask::class.java).configure {
                 filterBackendClasspath(WEB_BACKEND)
+                getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
-            project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME, TeaVMTask::class.java).configure {
+            project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME, GenerateWasmGCTask::class.java).configure {
                 filterBackendClasspath(WEB_BACKEND)
+                getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW) || extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
@@ -187,6 +197,33 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         return project.files(mainRuntimeClasspath, teavmRuntimeClasspath, teavmConfiguration).filter { file ->
             isAllowedBackendClasspathEntry(file, targetBackend)
+        }
+    }
+
+    private fun runtimeProjectSourceDirs(project: Project): Provider<List<File>> {
+        return project.provider {
+            val result = linkedSetOf<File>()
+            val runtimeClasspath = project.configurations.getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME)
+            for(dependencyResult in runtimeClasspath.incoming.resolutionResult.allDependencies) {
+                if(dependencyResult !is ResolvedDependencyResult) {
+                    continue
+                }
+                val componentId = dependencyResult.selected.id
+                if(componentId is ProjectComponentIdentifier) {
+                    val dependencyProject = project.rootProject.findProject(componentId.projectPath)
+                    if(dependencyProject != null) {
+                        addSourceDirs(dependencyProject, result)
+                    }
+                }
+            }
+            result.toList()
+        }
+    }
+
+    private fun addSourceDirs(project: Project, result: MutableSet<File>) {
+        val sourceSets = project.extensions.findByType(SourceSetContainer::class.java) ?: return
+        for(sourceSet in sourceSets) {
+            result.addAll(sourceSet.allJava.sourceDirectories.files)
         }
     }
 

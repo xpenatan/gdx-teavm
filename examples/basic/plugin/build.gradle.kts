@@ -1,4 +1,5 @@
 import org.teavm.gradle.api.OptimizationLevel
+import org.teavm.gradle.api.SourceFilePolicy
 
 plugins {
     id("com.github.xpenatan.gdx-teavm")
@@ -20,6 +21,9 @@ gdxTeaVM {
         targetFileName.set("app.js")
         optimization.set(OptimizationLevel.NONE)
         obfuscated.set(false)
+        debugInformation.set(true)
+        sourceMap.set(true)
+        sourceFilePolicy.set(SourceFilePolicy.COPY)
     }
     wasm {
         mainClass.set("TestWebLauncher")
