@@ -9,91 +9,90 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.teavm.gradle.api.OptimizationLevel
 import org.teavm.gradle.api.SourceFilePolicy
+import org.teavm.gradle.api.TeaVMConfiguration
+import org.teavm.gradle.api.TeaVMJSConfiguration
+import org.teavm.gradle.api.TeaVMWasmGCConfiguration
 import javax.inject.Inject
 
-open class GdxTeaVMTargetExtension @Inject constructor(
-    objects: ObjectFactory,
-    private val project: Project,
-    outputDirName: String,
-    targetFileNameValue: String
+@Suppress("UNCHECKED_CAST")
+open class GdxTeaVMTargetExtension internal constructor(
+    internal val teavmConfig: TeaVMConfiguration
 ) {
     /**
      * Root directory for generated files for this target.
      *
-     * Default: JS `build/dist/web`, Wasm `build/dist/wasm`, GLFW `build/dist/glfw`, PSP `build/dist/psp`.
+     * Default: JS `build/dist/web`, Wasm `build/dist/wasm`.
      */
-    val outputDir: DirectoryProperty = objects.directoryProperty()
-        .convention(project.layout.buildDirectory.dir(outputDirName))
+    val outputDir: DirectoryProperty
+        get() = teavmConfig.outputDir
 
     /**
      * Fully qualified launcher class used as this target's TeaVM main class.
      *
-     * JS and Wasm usually share a web launcher, while GLFW and PSP usually need native-specific launchers.
+     * JS and Wasm usually share a web launcher.
      *
      * Default: none. This must be set for every target you build.
      */
-    val mainClass: Property<String> = objects.property(String::class.java)
+    val mainClass: Property<String>
+        get() = teavmConfig.mainClass as Property<String>
 
     /**
      * Path inside [outputDir] where TeaVM writes generated target files.
      *
-     * Web targets default to `webapp`; native targets override this to `c/src`.
-     *
-     * Default: JS and Wasm `webapp`, GLFW and PSP `c/src`.
+     * Default: `webapp`.
      */
-    val relativePathInOutputDir: Property<String> = objects.property(String::class.java).convention("webapp")
-
-    /**
-     * Name of the main generated output file, such as `app.js`, `app.wasm`, or `app`.
-     *
-     * Default: JS `app.js`, Wasm `app.wasm`, GLFW `app`, PSP `app`.
-     */
-    val targetFileName: Property<String> = objects.property(String::class.java).convention(targetFileNameValue)
+    val relativePathInOutputDir: Property<String>
+        get() = teavmConfig.relativePathInOutputDir as Property<String>
 
     /**
      * TeaVM optimization level used for this target.
      *
-     * Default: JS `BALANCED`, Wasm `AGGRESSIVE`, GLFW `AGGRESSIVE`, PSP `AGGRESSIVE`.
+     * Default: JS `BALANCED`, Wasm `AGGRESSIVE`.
      */
-    val optimization: Property<OptimizationLevel> = objects.property(OptimizationLevel::class.java)
-        .convention(OptimizationLevel.BALANCED)
+    val optimization: Property<OptimizationLevel>
+        get() = teavmConfig.optimization as Property<OptimizationLevel>
 
     /**
      * Includes TeaVM debug information in generated output when supported by the target.
      *
      * Default: `false`.
      */
-    val debugInformation: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val debugInformation: Property<Boolean>
+        get() = teavmConfig.debugInformation as Property<Boolean>
 
     /**
      * Enables TeaVM fast global analysis, trading precision for faster compilation.
      *
      * Default: `false`.
      */
-    val fastGlobalAnalysis: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val fastGlobalAnalysis: Property<Boolean>
+        get() = teavmConfig.fastGlobalAnalysis as Property<Boolean>
 
     /**
      * Runs TeaVM compilation out of the Gradle process when supported by TeaVM.
      *
      * Default: `false`.
      */
-    val outOfProcess: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val outOfProcess: Property<Boolean>
+        get() = teavmConfig.outOfProcess as Property<Boolean>
 
     /**
      * Memory limit in megabytes for out-of-process TeaVM compilation.
      *
      * Default: `512`.
      */
-    val processMemory: Property<Int> = objects.property(Int::class.javaObjectType).convention(512)
+    val processMemory: Property<Int>
+        get() = teavmConfig.processMemory as Property<Int>
 
     /**
      * Classes TeaVM should preserve from aggressive removal or renaming.
      *
      * Default: empty list.
      */
-    val preservedClasses: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
+    val preservedClasses: ListProperty<String>
+        get() = teavmConfig.preservedClasses as ListProperty<String>
 
-    internal fun webappDir(): Provider<Directory> {
+    internal fun outputSubDir(): Provider<Directory> {
         return outputDir.flatMap { output ->
             relativePathInOutputDir.map { relativePath ->
                 output.dir(relativePath)
@@ -102,50 +101,133 @@ open class GdxTeaVMTargetExtension @Inject constructor(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 open class GdxTeaVMJsExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
-    outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMWebExtension(objects, project, outputDirName, targetFileNameValue) {
+    private val jsConfig: TeaVMJSConfiguration
+) : GdxTeaVMWebExtension(objects, project, jsConfig) {
+    init {
+        outputDir.convention(project.layout.buildDirectory.dir("dist/web"))
+        relativePathInOutputDir.convention("webapp")
+        targetFileName.convention("app.js")
+        optimization.convention(OptimizationLevel.BALANCED)
+        debugInformation.convention(false)
+        fastGlobalAnalysis.convention(false)
+        outOfProcess.convention(false)
+        processMemory.convention(512)
+        entryPointName.convention("main")
+        obfuscated.convention(true)
+        strict.convention(false)
+        sourceMap.convention(false)
+        sourceFilePolicy.convention(SourceFilePolicy.LINK_LOCAL_FILES)
+    }
+
+    /**
+     * JavaScript entry point function name emitted by TeaVM and called by the generated web app.
+     *
+     * Default: `main`.
+     */
+    override val entryPointName: Property<String>
+        get() = jsConfig.entryPointName as Property<String>
+
+    /**
+     * Name of the generated JavaScript output file.
+     *
+     * Default: `app.js`.
+     */
+    val targetFileName: Property<String>
+        get() = jsConfig.targetFileName as Property<String>
+
     /**
      * Minifies and renames generated JavaScript output when true.
      *
      * Default: `true`.
      */
-    val obfuscated: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val obfuscated: Property<Boolean>
+        get() = jsConfig.obfuscated as Property<Boolean>
 
     /**
      * Enables TeaVM strict JavaScript generation checks.
      *
      * Default: `false`.
      */
-    val strict: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val strict: Property<Boolean>
+        get() = jsConfig.strict as Property<Boolean>
+
+    /**
+     * Generates browser source maps for TeaVM web output.
+     *
+     * Default: `false`.
+     */
+    val sourceMap: Property<Boolean>
+        get() = jsConfig.sourceMap as Property<Boolean>
+
+    /**
+     * Controls how Java source files referenced by source maps are exposed to the browser.
+     *
+     * Use [SourceFilePolicy.COPY] for browser DevTools validation, [SourceFilePolicy.LINK_LOCAL_FILES]
+     * for local IDE-oriented paths, or [SourceFilePolicy.DO_NOTHING] to leave sources out.
+     *
+     * Default: [SourceFilePolicy.LINK_LOCAL_FILES].
+     */
+    val sourceFilePolicy: Property<SourceFilePolicy>
+        get() = jsConfig.sourceFilePolicy as Property<SourceFilePolicy>
 }
 
+@Suppress("UNCHECKED_CAST")
 open class GdxTeaVMWasmExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
-    outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMWebExtension(objects, project, outputDirName, targetFileNameValue) {
+    private val wasmConfig: TeaVMWasmGCConfiguration
+) : GdxTeaVMWebExtension(objects, project, wasmConfig) {
     init {
+        outputDir.convention(project.layout.buildDirectory.dir("dist/wasm"))
+        relativePathInOutputDir.convention("webapp")
+        targetFileName.convention("app.wasm")
         optimization.convention(OptimizationLevel.AGGRESSIVE)
+        debugInformation.convention(false)
+        fastGlobalAnalysis.convention(false)
+        outOfProcess.convention(false)
+        processMemory.convention(512)
+        obfuscated.convention(true)
+        strict.convention(false)
+        copyRuntime.convention(true)
+        modularRuntime.convention(false)
+        sourceMap.convention(false)
+        sourceFilePolicy.convention(SourceFilePolicy.LINK_LOCAL_FILES)
     }
+
+    /**
+     * JavaScript export function name called by the generated Wasm web app.
+     *
+     * Default: `main`.
+     */
+    override val entryPointName: Property<String> = objects.property(String::class.java).convention("main")
+
+    /**
+     * Name of the generated Wasm output file.
+     *
+     * Default: `app.wasm`.
+     */
+    val targetFileName: Property<String>
+        get() = wasmConfig.targetFileName as Property<String>
 
     /**
      * Minifies and renames generated Wasm runtime support output when true.
      *
      * Default: `true`.
      */
-    val obfuscated: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val obfuscated: Property<Boolean>
+        get() = wasmConfig.obfuscated as Property<Boolean>
 
     /**
      * Enables TeaVM strict Wasm generation checks.
      *
      * Default: `false`.
      */
-    val strict: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val strict: Property<Boolean>
+        get() = wasmConfig.strict as Property<Boolean>
 
     /**
      * Copies TeaVM's Wasm runtime JavaScript next to the generated `.wasm` file.
@@ -154,7 +236,8 @@ open class GdxTeaVMWasmExtension @Inject constructor(
      *
      * Default: `true`.
      */
-    val copyRuntime: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val copyRuntime: Property<Boolean>
+        get() = wasmConfig.copyRuntime as Property<Boolean>
 
     /**
      * Copies TeaVM's ES module Wasm runtime instead of the global script runtime.
@@ -163,21 +246,16 @@ open class GdxTeaVMWasmExtension @Inject constructor(
      *
      * Default: `false`.
      */
-    val modularRuntime: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
-}
+    val modularRuntime: Property<Boolean>
+        get() = wasmConfig.modularRuntime as Property<Boolean>
 
-open class GdxTeaVMWebExtension @Inject constructor(
-    objects: ObjectFactory,
-    project: Project,
-    outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMTargetExtension(objects, project, outputDirName, targetFileNameValue) {
     /**
      * Generates browser source maps for TeaVM web output.
      *
      * Default: `false`.
      */
-    val sourceMap: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val sourceMap: Property<Boolean>
+        get() = wasmConfig.sourceMap as Property<Boolean>
 
     /**
      * Controls how Java source files referenced by source maps are exposed to the browser.
@@ -185,17 +263,23 @@ open class GdxTeaVMWebExtension @Inject constructor(
      * Use [SourceFilePolicy.COPY] for browser DevTools validation, [SourceFilePolicy.LINK_LOCAL_FILES]
      * for local IDE-oriented paths, or [SourceFilePolicy.DO_NOTHING] to leave sources out.
      *
-     * Default: [SourceFilePolicy.LINK_LOCAL_FILES], matching TeaVM's Gradle defaults.
+     * Default: [SourceFilePolicy.LINK_LOCAL_FILES].
      */
-    val sourceFilePolicy: Property<SourceFilePolicy> = objects.property(SourceFilePolicy::class.java)
-        .convention(SourceFilePolicy.LINK_LOCAL_FILES)
+    val sourceFilePolicy: Property<SourceFilePolicy>
+        get() = wasmConfig.sourceFilePolicy as Property<SourceFilePolicy>
+}
 
+open class GdxTeaVMWebExtension @Inject constructor(
+    objects: ObjectFactory,
+    project: Project,
+    teavmConfig: TeaVMConfiguration
+) : GdxTeaVMTargetExtension(teavmConfig) {
     /**
-     * JavaScript entry point function name emitted by TeaVM and called by the generated web app.
+     * JavaScript entry point function name called by the generated web app.
      *
      * Default: `main`.
      */
-    val entryPointName: Property<String> = objects.property(String::class.java).convention("main")
+    open val entryPointName: Property<String> = objects.property(String::class.java).convention("main")
 
     /**
      * Arguments passed by the generated web app to the TeaVM entry point.
@@ -258,15 +342,101 @@ open class GdxTeaVMWebExtension @Inject constructor(
      */
     val serverPort: Property<Int> = objects.property(Int::class.javaObjectType)
         .convention(project.providers.gradleProperty("teavmPluginPort").map(String::toInt).orElse(8080))
+
+    internal fun webappDir(): Provider<Directory> {
+        return outputSubDir()
+    }
 }
 
-open class GdxTeaVMNativeExtension @Inject constructor(
+open class GdxTeaVMNativeTargetExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     outputDirName: String,
     targetFileNameValue: String,
     val backendName: String
-) : GdxTeaVMTargetExtension(objects, project, outputDirName, targetFileNameValue) {
+) {
+    /**
+     * Root directory for generated files for this native target.
+     *
+     * Default: GLFW `build/dist/glfw`, PSP `build/dist/psp`.
+     */
+    val outputDir: DirectoryProperty = objects.directoryProperty()
+        .convention(project.layout.buildDirectory.dir(outputDirName))
+
+    /**
+     * Fully qualified launcher class used as this native target's TeaVM main class.
+     *
+     * GLFW and PSP usually need native-specific launchers.
+     *
+     * Default: none. This must be set for every native target you build.
+     */
+    val mainClass: Property<String> = objects.property(String::class.java)
+
+    /**
+     * Path inside [outputDir] where TeaVM writes generated C source files.
+     *
+     * Default: `c/src`.
+     */
+    val relativePathInOutputDir: Property<String> = objects.property(String::class.java).convention("c/src")
+
+    /**
+     * Name of the generated native target.
+     *
+     * Default: `app`.
+     */
+    val targetFileName: Property<String> = objects.property(String::class.java).convention(targetFileNameValue)
+
+    /**
+     * Directory where native runtime assets and build output support files are prepared.
+     *
+     * Default: `[outputDir]/c/release`.
+     */
+    val releasePath: DirectoryProperty = objects.directoryProperty()
+        .convention(outputDir.map { it.dir("c/release") })
+
+    /**
+     * TeaVM C optimization level used for this native target.
+     *
+     * Default: `AGGRESSIVE`.
+     */
+    val optimization: Property<OptimizationLevel> = objects.property(OptimizationLevel::class.java)
+        .convention(OptimizationLevel.AGGRESSIVE)
+
+    /**
+     * Includes TeaVM C debug information in generated output when supported.
+     *
+     * Default: `false`.
+     */
+    val debugInformation: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+
+    /**
+     * Enables TeaVM fast global analysis, trading precision for faster native compilation.
+     *
+     * Default: `false`.
+     */
+    val fastGlobalAnalysis: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+
+    /**
+     * Runs TeaVM C compilation out of the Gradle process when supported by TeaVM.
+     *
+     * Default: `false`.
+     */
+    val outOfProcess: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+
+    /**
+     * Memory limit in megabytes for out-of-process TeaVM C compilation.
+     *
+     * Default: `512`.
+     */
+    val processMemory: Property<Int> = objects.property(Int::class.javaObjectType).convention(512)
+
+    /**
+     * Classes TeaVM should preserve from aggressive removal or renaming for this native target.
+     *
+     * Default: empty list.
+     */
+    val preservedClasses: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
+
     /**
      * Initial native heap size in megabytes.
      *
@@ -289,7 +459,9 @@ open class GdxTeaVMNativeExtension @Inject constructor(
     val heapDump: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
 
     /**
-     * Asks TeaVM to generate shorter C file names. Useful for native toolchains with path limits.
+     * Asks TeaVM to generate shorter C file names.
+     *
+     * Useful for native toolchains with path limits.
      *
      * Default: `true`.
      */
@@ -302,21 +474,12 @@ open class GdxTeaVMNativeExtension @Inject constructor(
      */
     val obfuscated: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
 
-    /**
-     * Directory where native runtime assets and build output support files are prepared.
-     *
-     * Default: `[outputDir]/c/release`.
-     */
-    val releasePath: DirectoryProperty = objects.directoryProperty()
-        .convention(outputDir.map { it.dir("c/release") })
-
-    init {
-        relativePathInOutputDir.convention("c/src")
-        optimization.convention(OptimizationLevel.AGGRESSIVE)
-    }
-
     internal fun generatedSourcesDir(): Provider<Directory> {
-        return webappDir()
+        return outputDir.flatMap { output ->
+            relativePathInOutputDir.map { relativePath ->
+                output.dir(relativePath)
+            }
+        }
     }
 }
 
@@ -325,7 +488,7 @@ open class GdxTeaVMGlfwExtension @Inject constructor(
     project: Project,
     outputDirName: String,
     targetFileNameValue: String
-) : GdxTeaVMNativeExtension(objects, project, outputDirName, targetFileNameValue, "glfw") {
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "glfw") {
     /**
      * Native build type used by generated GLFW build scripts, typically `Debug` or `Release`.
      *
@@ -360,7 +523,7 @@ open class GdxTeaVMPspExtension @Inject constructor(
     project: Project,
     outputDirName: String,
     targetFileNameValue: String
-) : GdxTeaVMNativeExtension(objects, project, outputDirName, targetFileNameValue, "psp") {
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "psp") {
     /**
      * Enables PSP memory debug support in generated native glue code.
      *

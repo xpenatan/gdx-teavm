@@ -57,7 +57,7 @@ The plugin:
 6. Hides raw TeaVM tasks from the default task groups.
 7. Registers user-facing `gdx_teavm_*` tasks.
 
-Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created.
+Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside `glfw {}` and `psp {}` because those logical targets can have different launchers and native options.
 
 ## Gradle Plugin Tasks
 
@@ -88,7 +88,7 @@ The Gradle plugin writes the properties consumed by these runtime plugins. The r
 
 - `WebClassTransformer`
 - `JavaObjectExporterDependency`
-- `TeaVMPluginReflectionSupport`
+- `TeaReflectionSupplier` reflection metadata setup
 - `GdxWebTargetWrapper` when webapp generation is enabled
 
 For JavaScript and Wasm, the same wrapper path is used so asset copying and web app generation do not diverge.
@@ -103,7 +103,7 @@ They install:
 - target-specific render/build listeners
 - native asset and external C/C++ resource copying
 
-The native backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)`. Running GLFW and PSP tasks in the same Gradle invocation is rejected because TeaVM has one C task.
+The native backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)`. Running GLFW and PSP tasks in the same Gradle invocation is rejected because TeaVM has one C task. The selected `glfw {}` or `psp {}` block is applied to TeaVM's C configuration for that Gradle invocation.
 
 ## Assets
 
@@ -166,11 +166,11 @@ Plugin path:
 ```text
 gdxTeaVM.reflection(...)
 GdxTeaVMPluginConfig
-TeaVMPluginReflectionSupport
+WebPlugin / GLFWPlugin / PSPPlugin
 TeaReflectionSupplier
 ```
 
-Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSupplier`.
+Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSupplier`. Built-in default reflection patterns are owned by `TeaReflectionSupplier`; the Gradle plugin only passes the `reflectionDefaults` flag and user-provided `reflection(...)` patterns.
 
 ## JSO Overlay Notes
 

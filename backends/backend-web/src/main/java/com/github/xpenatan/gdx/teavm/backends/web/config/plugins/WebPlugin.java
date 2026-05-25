@@ -42,6 +42,10 @@ public class WebPlugin implements TeaVMPlugin {
         TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
         if(config.reflectionEnabled) {
             TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
+            if(config.reflectionDefaults) {
+                TeaReflectionSupplier.addDefaultReflectionClasses(classPathURLs);
+            }
+            TeaReflectionSupplier.installReflectionDependencySupport(host);
             if(config.reflectionDebug) {
                 TeaReflectionSupplier.printReflectionClasses();
             }

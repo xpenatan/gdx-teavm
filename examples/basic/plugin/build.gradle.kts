@@ -17,8 +17,6 @@ gdxTeaVM {
 
     js {
         mainClass.set("TestWebLauncher")
-        relativePathInOutputDir.set("webapp")
-        targetFileName.set("app.js")
         optimization.set(OptimizationLevel.NONE)
         obfuscated.set(false)
         debugInformation.set(true)
@@ -33,18 +31,18 @@ gdxTeaVM {
     }
     glfw {
         mainClass.set("TestCLauncher")
-        buildType.set("Debug")
         optimization.set(OptimizationLevel.AGGRESSIVE)
         obfuscated.set(false)
         minHeapSizeMb.set(64)
         maxHeapSizeMb.set(512)
+        buildType.set("Debug")
         consoleLog.set(true)
     }
     psp {
         mainClass.set("PSPLauncherTest")
         optimization.set(OptimizationLevel.NONE)
-        obfuscated.set(false)
         debugInformation.set(true)
+        obfuscated.set(false)
         minHeapSizeMb.set(2)
         maxHeapSizeMb.set(8)
         debugMemory.set(true)

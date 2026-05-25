@@ -7,12 +7,14 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.teavm.gradle.api.TeaVMExtension
 import java.io.File
 import javax.inject.Inject
 
 open class GdxTeaVMExtension @Inject constructor(
     objects: ObjectFactory,
-    private val project: Project
+    private val project: Project,
+    teavm: TeaVMExtension
 ) {
     private val declaredTargets = linkedSetOf<GdxTeaVMTarget>()
 
@@ -85,8 +87,7 @@ open class GdxTeaVMExtension @Inject constructor(
     val js: GdxTeaVMJsExtension = objects.newInstance(
         GdxTeaVMJsExtension::class.java,
         project,
-        "dist/web",
-        "app.js"
+        teavm.getJs()
     )
 
     /**
@@ -97,8 +98,7 @@ open class GdxTeaVMExtension @Inject constructor(
     val wasm: GdxTeaVMWasmExtension = objects.newInstance(
         GdxTeaVMWasmExtension::class.java,
         project,
-        "dist/wasm",
-        "app.wasm"
+        teavm.getWasmGC()
     )
 
     /**
@@ -209,7 +209,7 @@ open class GdxTeaVMExtension @Inject constructor(
         }
     }
 
-    internal fun toNativeProperties(project: Project, native: GdxTeaVMNativeExtension): Provider<Map<String, String>> {
+    internal fun toNativeProperties(project: Project, native: GdxTeaVMNativeTargetExtension): Provider<Map<String, String>> {
         return project.provider {
             linkedMapOf<String, String>().also { properties ->
                 properties[NATIVE_BACKEND] = native.backendName
@@ -230,7 +230,7 @@ open class GdxTeaVMExtension @Inject constructor(
         }
     }
 
-    internal fun selectedNativeTargetOrNull(project: Project): GdxTeaVMNativeExtension? {
+    internal fun selectedNativeTargetOrNull(project: Project): GdxTeaVMNativeTargetExtension? {
         return when(selectedNativeBackendName(project)) {
             "glfw" -> if(isTargetDeclared(GdxTeaVMTarget.GLFW)) glfw else null
             "psp" -> if(isTargetDeclared(GdxTeaVMTarget.PSP)) psp else null

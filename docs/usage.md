@@ -145,7 +145,7 @@ The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server i
 
 ## Native Targets
 
-Use `glfw {}` and `psp {}` for TeaVM C output.
+Declare `glfw {}` or `psp {}` for native backend tasks. Each native target block contains its own TeaVM C settings, so GLFW and PSP can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
 
 ```kotlin
 import org.teavm.gradle.api.OptimizationLevel
@@ -155,16 +155,16 @@ gdxTeaVM {
 
     glfw {
         mainClass.set("com.example.game.teavm.GlfwLauncher")
-        buildType.set("Debug")
         optimization.set(OptimizationLevel.AGGRESSIVE)
         minHeapSizeMb.set(64)
         maxHeapSizeMb.set(512)
+        buildType.set("Debug")
         consoleLog.set(false)
     }
 
     psp {
         mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
+        optimization.set(OptimizationLevel.NONE)
         minHeapSizeMb.set(2)
         maxHeapSizeMb.set(8)
         debugMemory.set(false)

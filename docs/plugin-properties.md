@@ -2,7 +2,7 @@
 
 This page lists the properties available in the `gdxTeaVM` Gradle extension.
 
-The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring `psp {}` adds `backend-psp`. These backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
+The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring `psp {}` adds `backend-psp`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
 
 ## Minimal Shape
 
@@ -61,17 +61,16 @@ gdxTeaVM {
 | `glfw { ... }` | `backend-glfw` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
 | `psp { ... }` | `backend-psp` | `gdx_teavm_psp_generate`, `gdx_teavm_psp_build` |
 
-## Common Target Properties
+## Common TeaVM Target Properties
 
-Every target block has these properties.
+The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. The native `glfw {}` and `psp {}` blocks expose the matching TeaVM C settings and apply only the selected backend to TeaVM's C task.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files for this target. |
+| `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files. |
 | `mainClass` | `Property<String>` | none | Fully qualified launcher class used as TeaVM main class. This must be set for every target you build. |
-| `relativePathInOutputDir` | `Property<String>` | web `webapp`, native `c/src` | Path inside `outputDir` where TeaVM writes generated target files. |
-| `targetFileName` | `Property<String>` | target-specific | Name of the main generated output file, such as `app.js`, `app.wasm`, or `app`. |
-| `optimization` | `Property<OptimizationLevel>` | JS `BALANCED`, Wasm/GLFW/PSP `AGGRESSIVE` | TeaVM optimization level. |
+| `relativePathInOutputDir` | `Property<String>` | web `webapp`, native `c/src` | Path inside `outputDir` where TeaVM writes generated files. |
+| `optimization` | `Property<OptimizationLevel>` | JS `BALANCED`, Wasm/native `AGGRESSIVE` | TeaVM optimization level. |
 | `debugInformation` | `Property<Boolean>` | `false` | Includes TeaVM debug information when supported by the target. |
 | `fastGlobalAnalysis` | `Property<Boolean>` | `false` | Enables faster TeaVM global analysis, trading precision for speed. |
 | `outOfProcess` | `Property<Boolean>` | `false` | Runs TeaVM compilation out of the Gradle process when supported by TeaVM. |
@@ -137,6 +136,7 @@ gdxTeaVM {
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `targetFileName` | `Property<String>` | `app.js` | Name of the generated JavaScript output file. |
 | `obfuscated` | `Property<Boolean>` | `true` | Minifies and renames generated JavaScript output. |
 | `strict` | `Property<Boolean>` | `false` | Enables TeaVM strict JavaScript generation checks. |
 
@@ -157,6 +157,7 @@ gdxTeaVM {
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `targetFileName` | `Property<String>` | `app.wasm` | Name of the generated Wasm output file. |
 | `obfuscated` | `Property<Boolean>` | `true` | Minifies and renames generated Wasm runtime support output. |
 | `strict` | `Property<Boolean>` | `false` | Enables TeaVM strict Wasm generation checks. |
 | `copyRuntime` | `Property<Boolean>` | `true` | Copies TeaVM's Wasm runtime JavaScript next to the generated `.wasm` file. |
@@ -176,20 +177,30 @@ gdxTeaVM {
 
 ## Native Targets
 
-Native targets use TeaVM C output. GLFW and PSP normally need their own launcher classes because each starts a different backend application type.
+Native targets use TeaVM C output. Declare `glfw {}` or `psp {}` to create backend tasks and configure that target's TeaVM C settings. GLFW and PSP normally need their own launcher classes because each starts a different backend application type.
 
-### Native Common Properties
+### Native Target Properties
 
-These properties are shared by `glfw {}` and `psp {}`.
+These properties exist in `glfw {}` and `psp {}`.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `mainClass` | `Property<String>` | none | Native launcher class used as the TeaVM C main class. |
+| `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files for this native backend. |
+| `relativePathInOutputDir` | `Property<String>` | `c/src` | Path inside `outputDir` where TeaVM writes C source files. |
+| `targetFileName` | `Property<String>` | `app` | Name of the generated native target. |
+| `releasePath` | `DirectoryProperty` | `[outputDir]/c/release` | Directory where native runtime assets and build output support files are prepared. |
+| `optimization` | `Property<OptimizationLevel>` | `AGGRESSIVE` | TeaVM C optimization level. |
+| `debugInformation` | `Property<Boolean>` | `false` | Includes TeaVM C debug information when supported. |
+| `fastGlobalAnalysis` | `Property<Boolean>` | `false` | Enables faster TeaVM global analysis, trading precision for speed. |
+| `outOfProcess` | `Property<Boolean>` | `false` | Runs TeaVM C compilation out of the Gradle process when supported by TeaVM. |
+| `processMemory` | `Property<Int>` | `512` | Memory limit in megabytes for out-of-process TeaVM compilation. |
+| `preservedClasses` | `ListProperty<String>` | empty | Classes TeaVM should preserve from aggressive removal or renaming. |
 | `minHeapSizeMb` | `Property<Int>` | `4` | Initial native heap size in megabytes. |
 | `maxHeapSizeMb` | `Property<Int>` | `128` | Maximum native heap size in megabytes. |
 | `heapDump` | `Property<Boolean>` | `false` | Enables TeaVM heap dump support for native output when supported. |
 | `shortFileNames` | `Property<Boolean>` | `true` | Asks TeaVM to generate shorter C file names, useful for native toolchains with path limits. |
 | `obfuscated` | `Property<Boolean>` | `true` | Obfuscates generated native C symbols. |
-| `releasePath` | `DirectoryProperty` | `[outputDir]/c/release` | Directory where native runtime assets and build output support files are prepared. |
 
 ### GLFW Properties
 
@@ -206,10 +217,10 @@ Example:
 gdxTeaVM {
     glfw {
         mainClass.set("com.example.game.teavm.GlfwLauncher")
-        buildType.set("Release")
         optimization.set(OptimizationLevel.AGGRESSIVE)
         minHeapSizeMb.set(64)
         maxHeapSizeMb.set(512)
+        buildType.set("Release")
         consoleLog.set(true)
     }
 }
@@ -235,7 +246,7 @@ Example:
 gdxTeaVM {
     psp {
         mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
+        optimization.set(OptimizationLevel.NONE)
         minHeapSizeMb.set(2)
         maxHeapSizeMb.set(8)
         debugMemory.set(true)
@@ -277,15 +288,19 @@ gdxTeaVM {
 
     glfw {
         mainClass.set("com.example.game.teavm.GlfwLauncher")
+        optimization.set(OptimizationLevel.AGGRESSIVE)
         minHeapSizeMb.set(64)
         maxHeapSizeMb.set(512)
+        obfuscated.set(false)
         consoleLog.set(false)
     }
 
     psp {
         mainClass.set("com.example.game.teavm.PspLauncher")
+        optimization.set(OptimizationLevel.NONE)
         minHeapSizeMb.set(2)
         maxHeapSizeMb.set(8)
+        obfuscated.set(false)
         debugMemory.set(false)
     }
 }

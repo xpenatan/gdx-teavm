@@ -13,8 +13,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.teavm.gradle.TeaVMPlugin
-import org.teavm.gradle.api.TeaVMConfiguration
-import org.teavm.gradle.api.TeaVMCommonConfiguration
+import org.teavm.gradle.api.TeaVMCConfiguration
 import org.teavm.gradle.api.TeaVMExtension
 import org.teavm.gradle.tasks.GenerateCTask
 import org.teavm.gradle.tasks.GenerateJavaScriptTask
@@ -34,7 +33,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class.java)
         project.pluginManager.apply(TeaVMPlugin::class.java)
 
-        val extension = project.extensions.create<GdxTeaVMExtension>("gdxTeaVM", project)
+        val teavm = project.extensions.getByType<TeaVMExtension>()
+        val extension = project.extensions.create<GdxTeaVMExtension>("gdxTeaVM", project, teavm)
         project.afterEvaluate {
             configureBackendDependencies(project, extension)
             configureTeaVM(project, extension)
@@ -109,32 +109,19 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
             val js = teavm.getJs()
             val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
-            configureCommonTarget(js, extension.js, reflectionClasses)
+            js.preservedClasses.addAll(reflectionClasses)
             js.properties.putAll(globalProperties)
             js.properties.putAll(extension.toWebProperties(project, extension.js))
             js.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
-            js.entryPointName.convention(extension.js.entryPointName)
-            js.targetFileName.convention(extension.js.targetFileName)
-            js.obfuscated.convention(extension.js.obfuscated)
-            js.strict.convention(extension.js.strict)
-            js.sourceMap.convention(extension.js.sourceMap)
-            js.sourceFilePolicy.convention(extension.js.sourceFilePolicy)
         }
 
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
             val wasm = teavm.getWasmGC()
             val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
-            configureCommonTarget(wasm, extension.wasm, reflectionClasses)
+            wasm.preservedClasses.addAll(reflectionClasses)
             wasm.properties.putAll(globalProperties)
             wasm.properties.putAll(extension.toWebProperties(project, extension.wasm))
             wasm.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
-            wasm.targetFileName.convention(extension.wasm.targetFileName)
-            wasm.obfuscated.convention(extension.wasm.obfuscated)
-            wasm.strict.convention(extension.wasm.strict)
-            wasm.copyRuntime.convention(extension.wasm.copyRuntime)
-            wasm.modularRuntime.convention(extension.wasm.modularRuntime)
-            wasm.sourceMap.convention(extension.wasm.sourceMap)
-            wasm.sourceFilePolicy.convention(extension.wasm.sourceFilePolicy)
         }
     }
 
@@ -143,18 +130,36 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val teavm = project.extensions.getByType<TeaVMExtension>()
         val c = teavm.getC()
         val reflectionClasses = reflectionClasses(project, extension, nativeTarget.backendName)
-        configureCommonTarget(c, nativeTarget, reflectionClasses)
+        applyNativeTargetConfiguration(c, nativeTarget)
+        c.preservedClasses.addAll(reflectionClasses)
         c.properties.putAll(extension.toGlobalProperties(project))
         c.properties.putAll(extension.toNativeProperties(project, nativeTarget))
         c.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
-        c.minHeapSize.convention(nativeTarget.minHeapSizeMb)
-        c.maxHeapSize.convention(nativeTarget.maxHeapSizeMb)
-        c.heapDump.convention(nativeTarget.heapDump)
-        c.shortFileNames.convention(nativeTarget.shortFileNames)
-        c.obfuscated.convention(nativeTarget.obfuscated)
         project.tasks.named(TeaVMPlugin.C_TASK_NAME, GenerateCTask::class.java).configure {
-            getTargetFileName().convention(nativeTarget.targetFileName)
+            getTargetFileName().set(nativeTarget.targetFileName)
         }
+    }
+
+    private fun applyNativeTargetConfiguration(
+        c: TeaVMCConfiguration,
+        nativeTarget: GdxTeaVMNativeTargetExtension
+    ) {
+        if(nativeTarget.mainClass.isPresent) {
+            c.mainClass.set(nativeTarget.mainClass)
+        }
+        c.outputDir.set(nativeTarget.outputDir)
+        c.relativePathInOutputDir.set(nativeTarget.relativePathInOutputDir)
+        c.optimization.set(nativeTarget.optimization)
+        c.debugInformation.set(nativeTarget.debugInformation)
+        c.fastGlobalAnalysis.set(nativeTarget.fastGlobalAnalysis)
+        c.outOfProcess.set(nativeTarget.outOfProcess)
+        c.processMemory.set(nativeTarget.processMemory)
+        c.preservedClasses.addAll(nativeTarget.preservedClasses)
+        c.minHeapSize.set(nativeTarget.minHeapSizeMb)
+        c.maxHeapSize.set(nativeTarget.maxHeapSizeMb)
+        c.heapDump.set(nativeTarget.heapDump)
+        c.shortFileNames.set(nativeTarget.shortFileNames)
+        c.obfuscated.set(nativeTarget.obfuscated)
     }
 
     private fun configureTeaVMTaskClasspaths(project: Project, extension: GdxTeaVMExtension) {
@@ -227,25 +232,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun configureCommonTarget(
-        teavmConfig: TeaVMCommonConfiguration,
-        target: GdxTeaVMTargetExtension,
-        reflectionClasses: Provider<List<String>>
-    ) {
-        teavmConfig.mainClass.convention(target.mainClass)
-        teavmConfig.outputDir.convention(target.outputDir)
-        teavmConfig.optimization.convention(target.optimization)
-        teavmConfig.debugInformation.convention(target.debugInformation)
-        teavmConfig.fastGlobalAnalysis.convention(target.fastGlobalAnalysis)
-        teavmConfig.outOfProcess.convention(target.outOfProcess)
-        teavmConfig.processMemory.convention(target.processMemory)
-        teavmConfig.preservedClasses.addAll(target.preservedClasses)
-        teavmConfig.preservedClasses.addAll(reflectionClasses)
-        if(teavmConfig is TeaVMConfiguration) {
-            teavmConfig.relativePathInOutputDir.convention(target.relativePathInOutputDir)
-        }
-    }
-
     private fun reflectionClasses(
         project: Project,
         extension: GdxTeaVMExtension,
@@ -262,7 +248,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val patterns = reflectionPatterns(extension)
         if(patterns.isEmpty()) {
             if(debug) {
-                project.logger.lifecycle("[gdx-teavm] Reflection enabled for target '$targetBackend', but no patterns were configured")
+                project.logger.lifecycle("[gdx-teavm] Reflection enabled for target '$targetBackend', but no Gradle reflection patterns were configured")
             }
             return@provider emptyList()
         }
@@ -318,12 +304,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun reflectionPatterns(extension: GdxTeaVMExtension): List<String> {
-        val patterns = linkedSetOf<String>()
-        if(extension.reflectionDefaults.get()) {
-            patterns.addAll(DEFAULT_REFLECTION_PATTERNS)
-        }
-        patterns.addAll(extension.reflection.get().map(String::trim).filter(String::isNotEmpty))
-        return patterns.toList()
+        return extension.reflection.get()
+            .map(String::trim)
+            .filter(String::isNotEmpty)
+            .distinct()
     }
 
     private fun scanReflectionClasses(
@@ -550,20 +534,5 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val PSP_BACKEND = "psp"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
         const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
-        val DEFAULT_REFLECTION_PATTERNS = listOf(
-            "com.badlogic.gdx.scenes.scene2d.**",
-            "net.mgsx.gltf.data.**",
-            "com.badlogic.gdx.utils.Array",
-            "com.badlogic.gdx.utils.ArrayMap",
-            "com.badlogic.gdx.utils.IntIntMap",
-            "com.badlogic.gdx.utils.IntMap",
-            "com.badlogic.gdx.utils.IntSet",
-            "com.badlogic.gdx.utils.LongMap",
-            "com.badlogic.gdx.utils.ObjectFloatMap",
-            "com.badlogic.gdx.utils.ObjectIntMap",
-            "com.badlogic.gdx.utils.ObjectMap",
-            "com.badlogic.gdx.utils.ObjectSet",
-            "com.badlogic.gdx.utils.Queue"
-        )
     }
 }

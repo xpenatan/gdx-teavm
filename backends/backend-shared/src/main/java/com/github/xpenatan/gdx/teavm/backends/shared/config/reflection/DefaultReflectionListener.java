@@ -1,16 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.reflection;
 
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.IntIntMap;
-import com.badlogic.gdx.utils.IntMap;
-import com.badlogic.gdx.utils.IntSet;
-import com.badlogic.gdx.utils.LongMap;
-import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.badlogic.gdx.utils.ObjectIntMap;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.Queue;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
@@ -25,19 +15,7 @@ public class DefaultReflectionListener implements TeaReflectionListener {
     }
 
     protected void setupDefaultPatterns() {
-        classpathPattern.add("com.badlogic.gdx.scenes.scene2d.**");
-        classpathPattern.add("net.mgsx.gltf.data.**");
-        classpathPattern.add(Array.class.getName());
-        classpathPattern.add(ArrayMap.class.getName());
-        classpathPattern.add(IntIntMap.class.getName());
-        classpathPattern.add(IntMap.class.getName());
-        classpathPattern.add(IntSet.class.getName());
-        classpathPattern.add(LongMap.class.getName());
-        classpathPattern.add(ObjectFloatMap.class.getName());
-        classpathPattern.add(ObjectIntMap.class.getName());
-        classpathPattern.add(ObjectMap.class.getName());
-        classpathPattern.add(ObjectSet.class.getName());
-        classpathPattern.add(Queue.class.getName());
+        classpathPattern.addAll(TeaReflectionSupplier.getDefaultReflectionPatterns());
     }
 
     public void addClassOrPackage(String classOrPackage) {
