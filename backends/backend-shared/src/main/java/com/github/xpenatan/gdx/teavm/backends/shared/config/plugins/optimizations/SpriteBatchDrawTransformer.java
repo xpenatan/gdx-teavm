@@ -86,7 +86,7 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             SpriteBatch.class.getName(), "drawSprite", ValueType.object(Sprite.class.getName()), ValueType.VOID);
     private static final MethodDescriptor DRAW_SPRITE_NATIVE = new MethodReference(
             GdxTeaVMSpriteBatchSubstitution.class, "drawSpriteNative", GdxTeaVMSpriteBatchSubstitution.class,
-            GdxTeaVMSpriteSubstitution.class, void.class)
+            GdxTeaVMSpriteSubstitution.class, int.class, int.class, void.class)
             .getDescriptor();
     private static final MethodDescriptor DRAW_SPRITE_ARRAY_NATIVE = new MethodReference(
             GdxTeaVMSpriteBatchSubstitution.class, "drawSpriteArrayNative", GdxTeaVMSpriteBatchSubstitution.class,
@@ -98,13 +98,13 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             ValueType.VOID);
     private static final MethodDescriptor DRAW_TEXTURE_TRANSFORM_NATIVE = new MethodReference(
             GdxTeaVMSpriteBatchSubstitution.class, "drawTextureTransformNative",
-            GdxTeaVMSpriteBatchSubstitution.class, Texture.class, float.class, float.class, float.class, float.class,
-            float.class, float.class, float.class, float.class, float.class, int.class, int.class, int.class,
-            int.class, boolean.class, boolean.class, void.class)
+            GdxTeaVMSpriteBatchSubstitution.class, Texture.class, int.class, int.class, float.class, float.class,
+            float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class,
+            int.class, int.class, int.class, boolean.class, boolean.class, void.class)
             .getDescriptor();
     private static final MethodDescriptor DRAW_TEXTURE_RECT_NATIVE = new MethodReference(
             GdxTeaVMSpriteBatchSubstitution.class, "drawTextureRectNative", GdxTeaVMSpriteBatchSubstitution.class,
-            Texture.class, float.class, float.class, float.class, float.class, void.class)
+            Texture.class, int.class, int.class, float.class, float.class, float.class, float.class, void.class)
             .getDescriptor();
     private static final MethodDescriptor GET_VERTICES = new MethodReference(
             Sprite.class, "getVertices", float[].class)

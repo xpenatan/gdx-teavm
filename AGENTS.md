@@ -224,6 +224,7 @@
 - Use a separate pure `.c` function only for cold/medium paths, large code where size/readability matters more than call overhead, or when benchmark evidence shows no regression from the function boundary.
 - Pure C files must not include TeaVM generated headers, access TeaVM object layouts, throw TeaVM exceptions, or use TeaVM GC barriers.
 - Put TeaVM-dependent wrapper code in `backends/backend-shared/src/main/resources/external_cpp/teavm_optimizations/teavm`.
+- When adding a new TeaVM-dependent optimization bridge, remember that native targets default to TeaVM `shortFileNames=true`. Any C includes, generated-header checks, and CMake source gating must support both long paths such as `c/src/classes/com/example/Foo.h` and shortened paths such as `c/src/c/e/Foo.h`; prefer detecting generated classes through `c/src/all.txt` when possible.
 - TeaVM C bridge files should only unpack TeaVM objects/arrays, validate inputs, handle exceptions/barriers/flush calls, and call pure C kernels.
 - When optimizing a hot method, move only the expensive computation into pure C. Keep simple getters, setters, and lightweight state changes in Java unless profiling proves otherwise.
 - Preserve semantics with cold Java fallback/error paths where needed, and validate with the smallest Gradle compile task plus bounded native benchmark runs that force-close stuck apps.

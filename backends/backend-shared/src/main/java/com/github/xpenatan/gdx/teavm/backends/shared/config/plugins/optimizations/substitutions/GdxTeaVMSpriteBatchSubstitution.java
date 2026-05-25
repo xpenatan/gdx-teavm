@@ -20,12 +20,16 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
     }
 
     public void drawSprite(GdxTeaVMSpriteSubstitution sprite) {
-        drawSpriteNative(this, sprite);
+        Texture texture = sprite.getTexture();
+        if (texture != lastTexture) {
+            switchTexture(texture);
+        }
+        drawSpriteNative(this, sprite, 0, 0);
     }
 
     @Import(name = "teavm_spritebatch_draw_sprite")
     private static native void drawSpriteNative(GdxTeaVMSpriteBatchSubstitution batch,
-            GdxTeaVMSpriteSubstitution sprite);
+            GdxTeaVMSpriteSubstitution sprite, int textureWidth, int textureHeight);
 
     @Import(name = "teavm_spritebatch_draw_sprite_array")
     public static native void drawSpriteArrayNative(GdxTeaVMSpriteBatchSubstitution batch,
@@ -35,23 +39,34 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
     public void draw(Texture texture, float x, float y, float originX, float originY, float width, float height,
             float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
             boolean flipX, boolean flipY) {
-        drawTextureTransformNative(this, texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation,
-                srcX, srcY, srcWidth, srcHeight, flipX, flipY);
+        int textureWidth = texture.getWidth();
+        int textureHeight = texture.getHeight();
+        if (texture != lastTexture) {
+            switchTexture(texture);
+        }
+        drawTextureTransformNative(this, texture, textureWidth, textureHeight, x, y, originX, originY, width, height,
+                scaleX, scaleY, rotation, srcX, srcY, srcWidth, srcHeight, flipX, flipY);
     }
 
     @Import(name = "teavm_spritebatch_draw_texture_transform")
     private static native void drawTextureTransformNative(GdxTeaVMSpriteBatchSubstitution batch, Texture texture,
-            float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY,
-            float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY);
+            int textureWidth, int textureHeight, float x, float y, float originX, float originY, float width,
+            float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth,
+            int srcHeight, boolean flipX, boolean flipY);
 
     @Override
     public void draw(Texture texture, float x, float y, float width, float height) {
-        drawTextureRectNative(this, texture, x, y, width, height);
+        int textureWidth = texture.getWidth();
+        int textureHeight = texture.getHeight();
+        if (texture != lastTexture) {
+            switchTexture(texture);
+        }
+        drawTextureRectNative(this, texture, textureWidth, textureHeight, x, y, width, height);
     }
 
     @Import(name = "teavm_spritebatch_draw_texture_rect")
     private static native void drawTextureRectNative(GdxTeaVMSpriteBatchSubstitution batch, Texture texture,
-            float x, float y, float width, float height);
+            int textureWidth, int textureHeight, float x, float y, float width, float height);
 
     @Override
     public void draw(Texture texture, float[] spriteVertices, int offset, int count) {

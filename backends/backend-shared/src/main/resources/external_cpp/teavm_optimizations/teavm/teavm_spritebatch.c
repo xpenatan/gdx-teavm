@@ -2,14 +2,25 @@
 #include <string.h>
 #include "../../../src/core.h"
 #include "../../../src/exceptions.h"
+
+#ifdef TEAVM_GENERATED_SHORT_FILE_NAMES
+#include "../../../src/c/c/b/g/g/Texture.h"
+#include "../../../src/c/c/b/g/g/g/Sprite.h"
+#include "../../../src/c/c/b/g/g/g/SpriteBatch.h"
+#include "../../../src/c/j/l/IllegalStateException.h"
+#include "../../../src/c/j/l/RuntimeException.h"
+#include "../../../src/c/o/t/r/Allocator.h"
+#include "../../../src/c/o/t/r/ExceptionHandling.h"
+#else
 #include "../../../src/classes/com/badlogic/gdx/graphics/Texture.h"
-#include "../../../src/classes/com/badlogic/gdx/graphics/TextureData.h"
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/Sprite.h"
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/SpriteBatch.h"
 #include "../../../src/classes/java/lang/IllegalStateException.h"
 #include "../../../src/classes/java/lang/RuntimeException.h"
 #include "../../../src/classes/org/teavm/runtime/Allocator.h"
 #include "../../../src/classes/org/teavm/runtime/ExceptionHandling.h"
+#endif
+
 #include "../pure/spritebatch.h"
 
 #if defined(_MSC_VER)
@@ -26,15 +37,20 @@ static void teavm_throw_spritebatch_not_drawing(void) {
     meth_otr_ExceptionHandling_throwException(exception);
 }
 
+TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_apply_texture_size(cls_cbggg_SpriteBatch* batch,
+        int32_t texture_width, int32_t texture_height) {
+    if (texture_width > 0 && texture_height > 0) {
+        batch->fld_invTexWidth = 1.0f / (float)texture_width;
+        batch->fld_invTexHeight = 1.0f / (float)texture_height;
+    }
+}
+
 TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_switch_texture(void* batch_obj,
-        cls_cbggg_SpriteBatch* batch, void* texture) {
+        cls_cbggg_SpriteBatch* batch, void* texture, int32_t texture_width, int32_t texture_height) {
     meth_cbggg_SpriteBatch_flush(batch_obj);
     teavm_gc_writeBarrier(batch_obj);
     batch->fld_lastTexture = texture;
-
-    void* texture_data = TEAVM_FIELD(texture, cls_cbgg_Texture, fld_data);
-    batch->fld_invTexWidth = 1.0f / (float)TEAVM_METHOD(texture_data, cbgg_TextureData_VT, virt_getWidth)(texture_data);
-    batch->fld_invTexHeight = 1.0f / (float)TEAVM_METHOD(texture_data, cbgg_TextureData_VT, virt_getHeight)(texture_data);
+    teavm_spritebatch_apply_texture_size(batch, texture_width, texture_height);
 }
 
 TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_prepare_sprite(cls_cbggg_Sprite* sprite,
@@ -75,13 +91,14 @@ TEAVM_SPRITEBATCH_INLINE cls_cbggg_Sprite* teavm_spritebatch_sprite_at(TeaVM_Arr
 }
 
 TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_append_sprite(void* batch_obj, cls_cbggg_SpriteBatch* batch,
-        cls_cbggg_Sprite* sprite, TeaVM_Array* batch_vertices_array, int32_t* current_idx_ptr) {
+        cls_cbggg_Sprite* sprite, TeaVM_Array* batch_vertices_array, int32_t* current_idx_ptr,
+        int32_t texture_width, int32_t texture_height) {
     void* texture = sprite->parent.fld_texture;
     int32_t current_idx = *current_idx_ptr;
 
     if (texture != batch->fld_lastTexture) {
         batch->fld_idx = current_idx;
-        teavm_spritebatch_switch_texture(batch_obj, batch, texture);
+        teavm_spritebatch_switch_texture(batch_obj, batch, texture, texture_width, texture_height);
         current_idx = batch->fld_idx;
     }
 
@@ -113,7 +130,7 @@ void teavm_sprite_update_vertices(void* sprite_obj) {
     teavm_spritebatch_sprite_vertices_data(sprite);
 }
 
-void teavm_spritebatch_draw_sprite(void* batch_obj, void* sprite_obj) {
+void teavm_spritebatch_draw_sprite(void* batch_obj, void* sprite_obj, int32_t texture_width, int32_t texture_height) {
     batch_obj = teavm_nullCheck(batch_obj);
     sprite_obj = teavm_nullCheck(sprite_obj);
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
@@ -125,7 +142,8 @@ void teavm_spritebatch_draw_sprite(void* batch_obj, void* sprite_obj) {
 
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;
-    teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx);
+    teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx,
+            texture_width, texture_height);
     batch->fld_idx = current_idx;
 }
 
@@ -151,18 +169,19 @@ void teavm_spritebatch_draw_sprite_array(void* batch_obj, void* sprites_array_ob
     }
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;
-    teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx);
+    teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx, 0, 0);
 
     for (int32_t i = 1; i < count; i++) {
         sprite = teavm_spritebatch_sprite_at(sprites_array, i, check_bounds,
                 rotate, rotation_delta, scale_changed, scale);
-        teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx);
+        teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx, 0, 0);
     }
 
     batch->fld_idx = current_idx;
 }
 
-void teavm_spritebatch_draw_texture_transform(void* batch_obj, void* texture, float x, float y,
+void teavm_spritebatch_draw_texture_transform(void* batch_obj, void* texture,
+        int32_t texture_width, int32_t texture_height, float x, float y,
         float origin_x, float origin_y, float width, float height, float scale_x, float scale_y, float rotation,
         int32_t src_x, int32_t src_y, int32_t src_width, int32_t src_height, int32_t flip_x, int32_t flip_y) {
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
@@ -175,8 +194,11 @@ void teavm_spritebatch_draw_texture_transform(void* batch_obj, void* texture, fl
     int32_t current_idx = batch->fld_idx;
 
     if (texture != batch->fld_lastTexture) {
-        teavm_spritebatch_switch_texture(batch_obj, batch, texture);
+        teavm_spritebatch_switch_texture(batch_obj, batch, texture, texture_width, texture_height);
         current_idx = batch->fld_idx;
+    }
+    else {
+        teavm_spritebatch_apply_texture_size(batch, texture_width, texture_height);
     }
 
     if (current_idx > TEAVM_ARRAY_LENGTH(batch_vertices_array) - SPRITEBATCH_SPRITE_SIZE) {
@@ -191,7 +213,8 @@ void teavm_spritebatch_draw_texture_transform(void* batch_obj, void* texture, fl
     batch->fld_idx = current_idx + SPRITEBATCH_SPRITE_SIZE;
 }
 
-void teavm_spritebatch_draw_texture_rect(void* batch_obj, void* texture, float x, float y,
+void teavm_spritebatch_draw_texture_rect(void* batch_obj, void* texture,
+        int32_t texture_width, int32_t texture_height, float x, float y,
         float width, float height) {
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
     if (!batch->fld_drawing) {
@@ -204,12 +227,16 @@ void teavm_spritebatch_draw_texture_rect(void* batch_obj, void* texture, float x
     int32_t vertices_length = TEAVM_ARRAY_LENGTH(batch_vertices_array);
 
     if (texture != batch->fld_lastTexture) {
-        teavm_spritebatch_switch_texture(batch_obj, batch, texture);
+        teavm_spritebatch_switch_texture(batch_obj, batch, texture, texture_width, texture_height);
         current_idx = batch->fld_idx;
     }
     else if (current_idx == vertices_length) {
+        teavm_spritebatch_apply_texture_size(batch, texture_width, texture_height);
         meth_cbggg_SpriteBatch_flush(batch_obj);
         current_idx = batch->fld_idx;
+    }
+    else {
+        teavm_spritebatch_apply_texture_size(batch, texture_width, texture_height);
     }
 
     float* out = TEAVM_ARRAY_DATA(batch_vertices_array, float) + current_idx;

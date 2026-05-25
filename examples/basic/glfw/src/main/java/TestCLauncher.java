@@ -20,10 +20,10 @@ public class TestCLauncher {
         System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
 //        new GLFWApplication(new EmptyApplicationTest(), config);
 //        new GLFWApplication(new GearsDemo());
-        new GLFWApplication(new SpriteBatchTest(), config);
+//        new GLFWApplication(new SpriteBatchTest(), config);
 //        new GLFWApplication(new ReflectionTest(), config);
 //        new GLFWApplication(new JsonTest(), config);
-//        new GLFWApplication(new UITest(), config);
+        new GLFWApplication(new UITest(), config);
 //        new GLFWApplication(new ReadPixelsTest());
 //        new GLFWApplication(new Basic3DTest());
 //        new GLFWApplication(new GLTFQuickStartExample(), config);
