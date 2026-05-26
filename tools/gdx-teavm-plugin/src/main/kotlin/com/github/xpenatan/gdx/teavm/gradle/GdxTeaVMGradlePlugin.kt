@@ -7,8 +7,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RelativePath
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.create
@@ -60,6 +62,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
     private fun applyAndroidProject(project: Project) {
         registerAndroidTeaVMConfigurations(project)
+        configureAndroidRuntimeSourceRoot(project)
         configureAndroidNativeSourceRoot(project)
         configureAndroidIdeaModel(project)
         val extension = project.extensions.create<GdxTeaVMExtension>("gdxTeaVM", project)
@@ -89,22 +92,95 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).extendsFrom(ideClasspath)
     }
 
+    private fun configureAndroidRuntimeSourceRoot(project: Project) {
+        val runtimeSourceDir = project.layout.buildDirectory.dir(ANDROID_RUNTIME_GENERATED_SOURCE_DIR)
+        addAndroidMainJavaSourceDir(project, runtimeSourceDir)
+        val generateTask = project.tasks.register<Copy>("generateGdxTeaVMAndroidRuntimeJava") {
+            description = "Internal task used by Android javac to compile the gdx-teavm Android runtime bridge."
+            into(runtimeSourceDir)
+            val localRuntimeSourceDir = localAndroidRuntimeSourceDir(project)
+            if(localRuntimeSourceDir != null) {
+                from(localRuntimeSourceDir)
+            }
+            else {
+                from(androidRuntimeSourceArchive(project)) {
+                    eachFile {
+                        stripAndroidRuntimeResourcePrefix()
+                    }
+                    includeEmptyDirs = false
+                }
+            }
+        }
+
+        project.tasks.withType(JavaCompile::class.java).configureEach {
+            if(isAndroidJavacTask(name)) {
+                dependsOn(generateTask)
+            }
+        }
+    }
+
+    private fun localAndroidRuntimeSourceDir(project: Project): File? {
+        val localBackendProject = project.rootProject.findProject(":backends:$BACKEND_ANDROID_MODULE")
+            ?: return null
+        val sourceDir = localBackendProject.layout.projectDirectory.dir(ANDROID_RUNTIME_SOURCE_DIR).asFile
+        return if(sourceDir.isDirectory) sourceDir else null
+    }
+
+    private fun androidRuntimeSourceArchive(project: Project): Provider<Any> {
+        return project.provider {
+            val backendFile = project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+                .resolve()
+                .firstOrNull { file -> backendNameFromClasspathEntry(file) == ANDROID_BACKEND }
+                ?: throw IllegalStateException("Unable to find backend-android runtime sources on the gdx-teavm Android classpath")
+
+            if(backendFile.isDirectory) {
+                File(backendFile, ANDROID_RUNTIME_RESOURCE_DIR)
+            }
+            else {
+                project.zipTree(backendFile).matching {
+                    include("$ANDROID_RUNTIME_RESOURCE_DIR/**")
+                }
+            }
+        }
+    }
+
+    private fun org.gradle.api.file.FileCopyDetails.stripAndroidRuntimeResourcePrefix() {
+        val segments = relativePath.segments
+        if(segments.size < ANDROID_RUNTIME_RESOURCE_PREFIX_SEGMENTS.size) {
+            return
+        }
+        for(i in ANDROID_RUNTIME_RESOURCE_PREFIX_SEGMENTS.indices) {
+            if(segments[i] != ANDROID_RUNTIME_RESOURCE_PREFIX_SEGMENTS[i]) {
+                return
+            }
+        }
+        relativePath = RelativePath(true, *segments.drop(ANDROID_RUNTIME_RESOURCE_PREFIX_SEGMENTS.size).toTypedArray())
+    }
+
     private fun configureAndroidNativeSourceRoot(project: Project) {
         val nativeSourceDir = project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR).asFile
-        val android = project.extensions.findByName("android") ?: return
-        val sourceSets = android.javaClass.getMethod("getSourceSets").invoke(android)
-        val mainSourceSet = sourceSets.javaClass.getMethod("getByName", String::class.java).invoke(sourceSets, "main")
-        val javaSourceSet = mainSourceSet.javaClass.getMethod("getJava").invoke(mainSourceSet)
-        javaSourceSet.javaClass.getMethod("srcDir", Any::class.java).invoke(javaSourceSet, nativeSourceDir)
+        addAndroidMainJavaSourceDir(project, nativeSourceDir)
 
         val nativeSourcePath = nativeSourceDir.toPath().toAbsolutePath().normalize()
         project.tasks.withType(JavaCompile::class.java).configureEach {
-            if(name.startsWith("compile") && name.endsWith("JavaWithJavac")) {
+            if(isAndroidJavacTask(name)) {
                 exclude { element ->
                     element.file.toPath().toAbsolutePath().normalize().startsWith(nativeSourcePath)
                 }
             }
         }
+    }
+
+    private fun addAndroidMainJavaSourceDir(project: Project, sourceDir: Any) {
+        val android = project.extensions.findByName("android") ?: return
+        val sourceSets = android.javaClass.getMethod("getSourceSets").invoke(android)
+        val mainSourceSet = sourceSets.javaClass.getMethod("getByName", String::class.java).invoke(sourceSets, "main")
+        val javaSourceSet = mainSourceSet.javaClass.getMethod("getJava").invoke(mainSourceSet)
+        javaSourceSet.javaClass.getMethod("srcDir", Any::class.java).invoke(javaSourceSet, sourceDir)
+    }
+
+    private fun isAndroidJavacTask(taskName: String): Boolean {
+        return taskName.startsWith("compile") && taskName.endsWith("JavaWithJavac")
     }
 
     private fun configureAndroidIdeaModel(project: Project) {
@@ -765,6 +841,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val ANDROID_LIBRARY_PLUGIN = "com.android.library"
         const val ANDROID_IDE_CONFIGURATION_NAME = "gdxTeaVMAndroidIde"
         const val ANDROID_NATIVE_SOURCE_DIR = "src/native/java"
+        const val ANDROID_RUNTIME_SOURCE_DIR = "src/android/java"
+        const val ANDROID_RUNTIME_GENERATED_SOURCE_DIR = "generated/source/gdx-teavm/android/runtime/java"
+        const val ANDROID_RUNTIME_RESOURCE_DIR = "gdx-teavm/android/runtime/java"
+        val ANDROID_RUNTIME_RESOURCE_PREFIX_SEGMENTS = ANDROID_RUNTIME_RESOURCE_DIR.split('/')
         const val TEAVM_GROUP = "org.teavm"
         const val TEAVM_CLASSLIB_MODULE = "teavm-classlib"
         val TEAVM_SOURCE_SET_TASK_NAMES = setOf(

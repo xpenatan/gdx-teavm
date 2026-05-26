@@ -202,6 +202,8 @@ Android builds use a real Android application module, not a generated Android pr
 
 The TeaVM launcher lives in `src/native/java` so it is used for TeaVM C generation. The gdx-teavm plugin registers this folder with Android's main Java source model so Android Studio imports it as source code, mirrors the `teavm` dependencies onto Android's compile-only IDE classpath, and excludes the folder from Android's APK Java compile. This keeps imports and completion working after a Gradle sync without packaging the launcher into the APK.
 
+The Android runtime bridge is provided by `backend-android`. The plugin adds generated Java sources for `com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity` and `TeaAndroidView` to the Android app compile, so projects can use a minimal Activity subclass for the default full-screen app case.
+
 ```kotlin
 plugins {
     id("com.android.application")
@@ -218,6 +220,15 @@ android {
         applicationId = "com.example.game.android"
         minSdk = 21
         targetSdk = 36
+    }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            isUniversalApk = false
+        }
     }
 
     externalNativeBuild {
@@ -263,10 +274,67 @@ Common Android tasks:
 | Task | Description |
 | --- | --- |
 | `assembleDebug` | Generate TeaVM C, build native Debug code, and package a debug APK |
-| `assembleRelease` | Generate TeaVM C, build native Release code, and package a release APK |
+| `assembleRelease` | Generate TeaVM C, build native Release code, and package release APKs |
 | `installDebug` | Build and install the debug APK on the visible device or emulator |
 
 The Android module should point assets at the normal asset source directory. The gdx-teavm Android generation step does not copy game assets into the generated native payload.
+
+Default Activity subclass:
+
+```java
+package com.example.game.android;
+
+import com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity;
+
+public class MainActivity extends TeaAndroidActivity {
+}
+```
+
+Manifest entry:
+
+```xml
+<activity
+    android:name="com.example.game.android.MainActivity"
+    android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
+    android:exported="true"
+    android:screenOrientation="landscape">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+```
+
+For embedded usage, add `TeaAndroidView` to your own Activity or layout instead of using the default full-screen Activity:
+
+```java
+TeaAndroidView gdxView = new TeaAndroidView(this);
+container.addView(gdxView);
+```
+
+Forward the host Activity lifecycle to the view:
+
+```java
+@Override
+protected void onPause() {
+    gdxView.onPause();
+    super.onPause();
+}
+
+@Override
+protected void onResume() {
+    super.onResume();
+    gdxView.onResume();
+}
+
+@Override
+protected void onDestroy() {
+    gdxView.dispose();
+    super.onDestroy();
+}
+```
+
+Only one active `TeaAndroidView` is supported per process for now because libGDX globals such as `Gdx.app`, `Gdx.graphics`, and the TeaVM Android application instance are process-global.
 
 ### Testing The Basic Android Example
 
@@ -291,21 +359,33 @@ Install it on the connected device or running emulator:
 Launch it from the Android launcher as `gdx-teavm basic`, or start the Activity directly with ADB:
 
 ```shell
-adb shell am start -n com.github.xpenatan.gdx.teavm.examples.basic.android/com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity
+adb shell am start -n com.github.xpenatan.gdx.teavm.examples.basic.android/com.github.xpenatan.gdx.teavm.examples.basic.android.MainActivity
 ```
 
-Build the release APK:
+Build the release APKs:
 
 ```shell
 ./gradlew :examples:basic:android:assembleRelease
 ```
 
-APK outputs:
+The basic Android demo enables ABI APK splits and disables the universal APK. Debug and release outputs use one APK per ABI:
 
-| Build type | APK |
-| --- | --- |
-| Debug | `examples/basic/android/build/outputs/apk/debug/android-debug.apk` |
-| Release | `examples/basic/android/build/outputs/apk/release/android-release.apk` |
+| Build type | ABI | APK |
+| --- | --- | --- |
+| Debug | `arm64-v8a` | `examples/basic/android/build/outputs/apk/debug/android-arm64-v8a-debug.apk` |
+| Debug | `armeabi-v7a` | `examples/basic/android/build/outputs/apk/debug/android-armeabi-v7a-debug.apk` |
+| Debug | `x86` | `examples/basic/android/build/outputs/apk/debug/android-x86-debug.apk` |
+| Debug | `x86_64` | `examples/basic/android/build/outputs/apk/debug/android-x86_64-debug.apk` |
+| Release | `arm64-v8a` | `examples/basic/android/build/outputs/apk/release/android-arm64-v8a-release.apk` |
+| Release | `armeabi-v7a` | `examples/basic/android/build/outputs/apk/release/android-armeabi-v7a-release.apk` |
+| Release | `x86` | `examples/basic/android/build/outputs/apk/release/android-x86-release.apk` |
+| Release | `x86_64` | `examples/basic/android/build/outputs/apk/release/android-x86_64-release.apk` |
+
+For Play Store distribution, prefer `bundleRelease` and upload the generated Android App Bundle so Play can serve the right ABI split to each device:
+
+```shell
+./gradlew :examples:basic:android:bundleRelease
+```
 
 Generated TeaVM C output is written under `examples/basic/android/build/generated/gdx-teavm/android`. Android CMake/Ninja staging is configured under the root build folder at `build/android-cxx/examples-basic-android` so AGP's native intermediates do not create an untracked `.cxx` folder in the Android module root.
 

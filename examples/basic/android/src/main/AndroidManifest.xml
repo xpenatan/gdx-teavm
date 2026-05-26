@@ -4,7 +4,7 @@
         android:label="gdx-teavm basic"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity"
+            android:name="com.github.xpenatan.gdx.teavm.examples.basic.android.MainActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="landscape">

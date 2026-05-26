@@ -1,8 +1,8 @@
 package com.github.xpenatan.gdx.teavm.android;
 
-import android.app.Activity;
+import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class TeaAndroidActivity extends Activity implements GLSurfaceView.Renderer, View.OnTouchListener {
+public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Renderer, View.OnTouchListener {
     private static final int TOUCH_DOWN = 0;
     private static final int TOUCH_UP = 1;
     private static final int TOUCH_DRAGGED = 2;
@@ -19,47 +19,62 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
     private static final int KEY_DOWN = 0;
     private static final int KEY_UP = 1;
 
-    private GLSurfaceView view;
     private boolean started;
+    private boolean disposed;
 
     static {
         System.loadLibrary("app");
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        view = new GLSurfaceView(this);
-        view.setEGLContextClientVersion(2);
-        view.setRenderer(this);
-        view.setFocusable(true);
-        view.setFocusableInTouchMode(true);
-        view.setOnTouchListener(this);
-        setContentView(view);
+    public TeaAndroidView(Context context) {
+        super(context);
+        initialize();
+    }
+
+    public TeaAndroidView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize();
+    }
+
+    private void initialize() {
+        setEGLContextClientVersion(2);
+        setRenderer(this);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        setOnTouchListener(this);
+        requestFocus();
     }
 
     @Override
-    protected void onPause() {
-        nativePause();
-        if(view != null) {
-            view.onPause();
+    public void onPause() {
+        if(started && !disposed) {
+            nativePause();
         }
         super.onPause();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        if(view != null) {
-            view.onResume();
+        if(started && !disposed) {
+            nativeResume();
         }
-        nativeResume();
+    }
+
+    public void dispose() {
+        if(disposed) {
+            return;
+        }
+        disposed = true;
+        if(started) {
+            nativeDispose();
+        }
     }
 
     @Override
-    protected void onDestroy() {
-        nativeDispose();
-        super.onDestroy();
+    protected void onDetachedFromWindow() {
+        dispose();
+        super.onDetachedFromWindow();
     }
 
     @Override
@@ -69,23 +84,30 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
             started = true;
             nativeStart(prepareAssetRoot().getAbsolutePath());
         }
-        else {
+        else if(!disposed) {
             nativeResume();
         }
     }
 
     @Override
     public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
-        nativeResize(width, height);
+        if(!disposed) {
+            nativeResize(width, height);
+        }
     }
 
     @Override
     public void onDrawFrame(javax.microedition.khronos.opengles.GL10 gl) {
-        nativeRender();
+        if(!disposed) {
+            nativeRender();
+        }
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
+        if(disposed) {
+            return true;
+        }
         final int action = event.getActionMasked();
         final int actionIndex = event.getActionIndex();
         if(action == MotionEvent.ACTION_MOVE) {
@@ -114,7 +136,7 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
         final int x = (int)event.getX(pointerIndex);
         final int y = (int)event.getY(pointerIndex);
         final float pressure = event.getPressure(pointerIndex);
-        view.queueEvent(new Runnable() {
+        queueEvent(new Runnable() {
             @Override
             public void run() {
                 nativeTouch(type, pointerId, x, y, pressure);
@@ -124,7 +146,10 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
 
     @Override
     public boolean onKeyDown(final int keyCode, KeyEvent event) {
-        view.queueEvent(new Runnable() {
+        if(disposed) {
+            return true;
+        }
+        queueEvent(new Runnable() {
             @Override
             public void run() {
                 nativeKey(KEY_DOWN, keyCode);
@@ -135,7 +160,10 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
 
     @Override
     public boolean onKeyUp(final int keyCode, KeyEvent event) {
-        view.queueEvent(new Runnable() {
+        if(disposed) {
+            return true;
+        }
+        queueEvent(new Runnable() {
             @Override
             public void run() {
                 nativeKey(KEY_UP, keyCode);
@@ -145,7 +173,8 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
     }
 
     private File prepareAssetRoot() {
-        File root = getFilesDir();
+        Context context = getContext();
+        File root = context.getFilesDir();
         File assetRoot = new File(root, "assets");
         try {
             copyAssets("", assetRoot);
@@ -157,7 +186,7 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
     }
 
     private void copyAssets(String path, File root) throws IOException {
-        String[] children = getAssets().list(path);
+        String[] children = getContext().getAssets().list(path);
         if(children == null || children.length == 0) {
             copyAssetFile(path, new File(root, path));
             return;
@@ -176,7 +205,7 @@ public class TeaAndroidActivity extends Activity implements GLSurfaceView.Render
         if(parent != null && !parent.exists() && !parent.mkdirs()) {
             throw new IOException("Unable to create asset directory: " + parent);
         }
-        try(InputStream input = getAssets().open(path);
+        try(InputStream input = getContext().getAssets().open(path);
             FileOutputStream outputStream = new FileOutputStream(output)) {
             byte[] buffer = new byte[16 * 1024];
             while(true) {

@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.Copy
+
 plugins {
     id("java-library")
 }
@@ -9,6 +11,12 @@ sourceSets["main"].java.setSrcDirs(mutableSetOf("../backend-glfw/emu", "emu", "s
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     api(project(":backends:backend-shared"))
+}
+
+tasks.named<Copy>("processResources") {
+    from("src/android/java") {
+        into("gdx-teavm/android/runtime/java")
+    }
 }
 
 publishing {
