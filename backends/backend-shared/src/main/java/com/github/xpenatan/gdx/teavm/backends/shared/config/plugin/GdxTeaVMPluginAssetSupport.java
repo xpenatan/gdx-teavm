@@ -39,4 +39,15 @@ public class GdxTeaVMPluginAssetSupport {
                 AssetOutput.fileHandle(new FileHandle(cOutputPath)), "");
         return plan;
     }
+
+    public static AssetsCopy.AssetPlan copyNativeCppResources(
+            ClassLoader classLoader,
+            ArrayList<URL> classPathURLs,
+            File cOutputPath
+    ) throws IOException {
+        AssetsCopy.AssetPlan plan = AssetsCopy.createAssetPlan(classLoader, classPathURLs, null, null);
+        AssetsCopy.copyClasspathResources(classLoader, plan.cppFiles, null,
+                AssetOutput.fileHandle(new FileHandle(cOutputPath)), "");
+        return plan;
+    }
 }

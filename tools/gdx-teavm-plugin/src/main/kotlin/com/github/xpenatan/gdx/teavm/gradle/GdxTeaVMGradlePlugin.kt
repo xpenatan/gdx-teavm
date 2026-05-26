@@ -2,12 +2,15 @@ package com.github.xpenatan.gdx.teavm.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.JavaVersion
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
@@ -15,6 +18,7 @@ import org.gradle.kotlin.dsl.register
 import org.teavm.gradle.TeaVMPlugin
 import org.teavm.gradle.api.TeaVMCConfiguration
 import org.teavm.gradle.api.TeaVMExtension
+import org.teavm.gradle.config.ArtifactCoordinates
 import org.teavm.gradle.tasks.GenerateCTask
 import org.teavm.gradle.tasks.GenerateJavaScriptTask
 import org.teavm.gradle.tasks.GenerateWasmGCTask
@@ -30,6 +34,14 @@ import java.util.zip.ZipFile
 
 class GdxTeaVMGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        if(isAndroidProject(project)) {
+            applyAndroidProject(project)
+            return
+        }
+        applyJavaProject(project)
+    }
+
+    private fun applyJavaProject(project: Project) {
         project.pluginManager.apply(JavaPlugin::class.java)
         project.pluginManager.apply(TeaVMPlugin::class.java)
 
@@ -43,6 +55,117 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             forceTeaVMGenerationTasksToRun(project, extension)
             hideTeaVMTasks(project)
             registerTasks(project, extension)
+        }
+    }
+
+    private fun applyAndroidProject(project: Project) {
+        registerAndroidTeaVMConfigurations(project)
+        configureAndroidNativeSourceRoot(project)
+        configureAndroidIdeaModel(project)
+        val extension = project.extensions.create<GdxTeaVMExtension>("gdxTeaVM", project)
+        project.afterEvaluate {
+            validateAndroidTargets(extension)
+            addAndroidBackendDependency(project, extension)
+            registerAndroidProjectTasks(project, extension)
+        }
+    }
+
+    private fun isAndroidProject(project: Project): Boolean {
+        return project.pluginManager.hasPlugin(ANDROID_APPLICATION_PLUGIN) ||
+            project.pluginManager.hasPlugin(ANDROID_LIBRARY_PLUGIN)
+    }
+
+    private fun registerAndroidTeaVMConfigurations(project: Project) {
+        val teavm = project.configurations.maybeCreate(TeaVMPlugin.CONFIGURATION_NAME)
+        teavm.isCanBeConsumed = false
+        teavm.isCanBeResolved = true
+        project.dependencies.add(TeaVMPlugin.CONFIGURATION_NAME, ArtifactCoordinates.CLASSLIB)
+
+        val ideClasspath = project.configurations.maybeCreate(ANDROID_IDE_CONFIGURATION_NAME)
+        ideClasspath.isCanBeConsumed = false
+        ideClasspath.isCanBeResolved = false
+        ideClasspath.extendsFrom(teavm)
+        ideClasspath.exclude(mapOf("group" to TEAVM_GROUP, "module" to TEAVM_CLASSLIB_MODULE))
+        project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).extendsFrom(ideClasspath)
+    }
+
+    private fun configureAndroidNativeSourceRoot(project: Project) {
+        val nativeSourceDir = project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR).asFile
+        val android = project.extensions.findByName("android") ?: return
+        val sourceSets = android.javaClass.getMethod("getSourceSets").invoke(android)
+        val mainSourceSet = sourceSets.javaClass.getMethod("getByName", String::class.java).invoke(sourceSets, "main")
+        val javaSourceSet = mainSourceSet.javaClass.getMethod("getJava").invoke(mainSourceSet)
+        javaSourceSet.javaClass.getMethod("srcDir", Any::class.java).invoke(javaSourceSet, nativeSourceDir)
+
+        val nativeSourcePath = nativeSourceDir.toPath().toAbsolutePath().normalize()
+        project.tasks.withType(JavaCompile::class.java).configureEach {
+            if(name.startsWith("compile") && name.endsWith("JavaWithJavac")) {
+                exclude { element ->
+                    element.file.toPath().toAbsolutePath().normalize().startsWith(nativeSourcePath)
+                }
+            }
+        }
+    }
+
+    private fun configureAndroidIdeaModel(project: Project) {
+        project.pluginManager.apply("idea")
+        project.plugins.withId("idea") {
+            val ideaModel = project.extensions.findByName("idea") ?: return@withId
+            val module = ideaModel.javaClass.getMethod("getModule").invoke(ideaModel)
+            val nativeSourceDir = project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR).asFile
+
+            @Suppress("UNCHECKED_CAST")
+            val sourceDirs = module.javaClass.getMethod("getSourceDirs").invoke(module) as Set<File>
+            val updatedSourceDirs = LinkedHashSet(sourceDirs)
+            updatedSourceDirs.add(nativeSourceDir)
+            module.javaClass.getMethod("setSourceDirs", Set::class.java).invoke(module, updatedSourceDirs)
+
+            addIdeaScopeConfiguration(
+                module,
+                "PROVIDED",
+                "plus",
+                project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+            )
+        }
+    }
+
+    private fun addIdeaScopeConfiguration(
+        module: Any,
+        scopeName: String,
+        mappingName: String,
+        configuration: Configuration
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        val scopes = module.javaClass.getMethod("getScopes").invoke(module)
+            as Map<String, Map<String, Collection<Configuration>>>
+        val updatedScopes = linkedMapOf<String, MutableMap<String, MutableCollection<Configuration>>>()
+        for((name, mappings) in scopes) {
+            val updatedMappings = linkedMapOf<String, MutableCollection<Configuration>>()
+            for((mapping, configurations) in mappings) {
+                updatedMappings[mapping] = LinkedHashSet(configurations)
+            }
+            updatedScopes[name] = updatedMappings
+        }
+        val scope = updatedScopes.getOrPut(scopeName) { linkedMapOf() }
+        val configurations = scope.getOrPut(mappingName) { linkedSetOf() }
+        configurations.add(configuration)
+        module.javaClass.getMethod("setScopes", Map::class.java).invoke(module, updatedScopes)
+    }
+
+    private fun validateAndroidTargets(extension: GdxTeaVMExtension) {
+        val supported = extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)
+        val unsupported = extension.isTargetDeclared(GdxTeaVMTarget.JS)
+            || extension.isTargetDeclared(GdxTeaVMTarget.WASM)
+            || extension.isTargetDeclared(GdxTeaVMTarget.GLFW)
+            || extension.isTargetDeclared(GdxTeaVMTarget.PSP)
+        if(unsupported) {
+            throw IllegalStateException("Android Gradle projects currently support only the gdxTeaVM android target")
+        }
+        if(!supported) {
+            return
+        }
+        if(!extension.android.mainClass.isPresent) {
+            throw IllegalStateException("gdxTeaVM.android.mainClass must be set to generate Android TeaVM C code")
         }
     }
 
@@ -66,7 +189,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
             forceTaskToRun(project, TeaVMPlugin.WASM_GC_TASK_NAME)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW) || extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
+        if(extension.isNativeTargetDeclared()) {
             forceTaskToRun(project, TeaVMPlugin.C_TASK_NAME)
         }
     }
@@ -87,11 +210,20 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
             addBackendDependency(project, BACKEND_PSP_MODULE)
         }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
+            addBackendDependency(project, BACKEND_ANDROID_MODULE)
+        }
     }
 
     private fun addBackendDependency(project: Project, moduleName: String) {
         project.dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, backendDependency(project, moduleName))
         project.dependencies.add(TeaVMPlugin.CONFIGURATION_NAME, backendDependency(project, moduleName))
+    }
+
+    private fun addAndroidBackendDependency(project: Project, extension: GdxTeaVMExtension) {
+        if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
+            project.dependencies.add(TeaVMPlugin.CONFIGURATION_NAME, backendDependency(project, BACKEND_ANDROID_MODULE))
+        }
     }
 
     private fun backendDependency(project: Project, moduleName: String): Any {
@@ -126,17 +258,26 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun configureNativeTeaVM(project: Project, extension: GdxTeaVMExtension) {
-        val nativeTarget = extension.selectedNativeTargetOrNull(project) ?: return
+        val selectedNativeBackend = extension.selectedNativeBackendName(project)
+        val nativeTarget = extension.nativeTargetForBackendName(selectedNativeBackend)
+            ?: extension.defaultNativeTargetOrNull()
+            ?: return
         val teavm = project.extensions.getByType<TeaVMExtension>()
         val c = teavm.getC()
         val reflectionClasses = reflectionClasses(project, extension, nativeTarget.backendName)
         applyNativeTargetConfiguration(c, nativeTarget)
+        if(!nativeTarget.mainClass.isPresent) {
+            c.mainClass.set(VALIDATION_ONLY_MAIN_CLASS)
+        }
         c.preservedClasses.addAll(reflectionClasses)
         c.properties.putAll(extension.toGlobalProperties(project))
         c.properties.putAll(extension.toNativeProperties(project, nativeTarget))
         c.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         project.tasks.named(TeaVMPlugin.C_TASK_NAME, GenerateCTask::class.java).configure {
             getTargetFileName().set(nativeTarget.targetFileName)
+            if(selectedNativeBackend == null) {
+                onlyIf("a gdx-teavm native backend task is selected") { false }
+            }
         }
     }
 
@@ -175,7 +316,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW) || extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
+        if(extension.isNativeTargetDeclared()) {
             project.tasks.named(TeaVMPlugin.C_TASK_NAME, TeaVMTask::class.java).configure {
                 filterBackendClasspath(extension.selectedNativeBackendName(project))
             }
@@ -202,6 +343,19 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         return project.files(mainRuntimeClasspath, teavmRuntimeClasspath, teavmConfiguration).filter { file ->
             isAllowedBackendClasspathEntry(file, targetBackend)
+        }
+    }
+
+    private fun androidTeaVMClasspath(
+        project: Project,
+        compileTask: Provider<JavaCompile>
+    ): FileCollection {
+        val teavmConfiguration = project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+        return project.files(
+            compileTask.flatMap { it.destinationDirectory },
+            teavmConfiguration
+        ).filter { file ->
+            isAllowedBackendClasspathEntry(file, ANDROID_BACKEND)
         }
     }
 
@@ -236,6 +390,17 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         targetBackend: String
+    ): Provider<List<String>> {
+        return reflectionClasses(project, extension, targetBackend, project.provider {
+            targetClasspath(project, targetBackend).files
+        })
+    }
+
+    private fun reflectionClasses(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        targetBackend: String,
+        classpathProvider: Provider<Set<File>>
     ) = project.provider {
         val debug = extension.reflectionDebug.get()
         if(!extension.reflectionEnabled.get()) {
@@ -255,7 +420,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         val classes = linkedSetOf<String>()
         val classpathFiles = if(extension.reflectionScan.get()) {
-            targetClasspath(project, targetBackend).files
+            classpathProvider.get()
         }
         else {
             emptySet()
@@ -417,6 +582,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
             registerPspTasks(project, extension)
         }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
+            registerAndroidTasks(project)
+        }
     }
 
     private fun registerJsTasks(project: Project, extension: GdxTeaVMExtension) {
@@ -495,6 +663,71 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
+    private fun registerAndroidTasks(project: Project) {
+        project.tasks.register("gdx_teavm_android_generate") {
+            group = TASK_GROUP
+            description = "Generate the gdx-teavm Android native C/CMake payload."
+            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+    }
+
+    private fun registerAndroidProjectTasks(project: Project, extension: GdxTeaVMExtension) {
+        if(!extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
+            return
+        }
+        val compilerConfiguration = project.configurations.detachedConfiguration(
+            project.dependencies.create(ArtifactCoordinates.TOOLS)
+        )
+        val compileTask = project.tasks.register<JavaCompile>("compileGdxTeaVMAndroidJava") {
+            description = "Internal task used by gdx_teavm_android_generate to compile Android TeaVM launcher sources."
+            source(project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR))
+            classpath = project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+            destinationDirectory.set(project.layout.buildDirectory.dir("classes/java/gdxTeaVMAndroid"))
+            sourceCompatibility = JavaVersion.VERSION_11.toString()
+            targetCompatibility = JavaVersion.VERSION_11.toString()
+        }
+        val classpath = androidTeaVMClasspath(project, compileTask)
+        val reflectionClasses = reflectionClasses(project, extension, ANDROID_BACKEND, project.provider {
+            classpath.files
+        })
+        val generateTask = project.tasks.register<GenerateCTask>("gdx_teavm_android_generate") {
+            group = TASK_GROUP
+            description = "Generate the gdx-teavm Android native C/CMake payload."
+            dependsOn(compileTask)
+            getMainClass().set(extension.android.mainClass)
+            getClasspath().from(classpath)
+            getDaemonClasspath().from(compilerConfiguration)
+            getOutputDir().set(extension.android.generatedSourcesDir().map { it.asFile })
+            getTargetFileName().set(extension.android.targetFileName)
+            getDebugInformation().set(extension.android.debugInformation)
+            getOptimization().set(extension.android.optimization)
+            getFastGlobalAnalysis().set(extension.android.fastGlobalAnalysis)
+            getOutOfProcess().set(extension.android.outOfProcess)
+            getProcessMemory().set(extension.android.processMemory)
+            getPreservedClasses().addAll(extension.android.preservedClasses)
+            getPreservedClasses().addAll(reflectionClasses)
+            getProperties().putAll(extension.toGlobalProperties(project))
+            getProperties().putAll(extension.toNativeProperties(project, extension.android))
+            getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
+            getProperties().put(PLUGIN_CLASSPATH, project.provider {
+                classpath.files.joinToString(File.pathSeparator) { file -> file.absolutePath }
+            })
+            getMinHeapSize().set(extension.android.minHeapSizeMb)
+            getMaxHeapSize().set(extension.android.maxHeapSizeMb)
+            getHeapDump().set(extension.android.heapDump)
+            getShortFileNames().set(extension.android.shortFileNames)
+            getObfuscated().set(extension.android.obfuscated)
+        }
+        project.tasks.configureEach {
+            if(name == "preBuild"
+                || name.startsWith("configureCMake")
+                || name.startsWith("buildCMake")
+                || (name.startsWith("externalNativeBuild") && !name.startsWith("externalNativeBuildClean"))) {
+                dependsOn(generateTask)
+            }
+        }
+    }
+
     private fun isAllowedBackendClasspathEntry(file: File, targetBackend: String): Boolean {
         val backendName = backendNameFromClasspathEntry(file) ?: return true
         return backendName == targetBackend
@@ -506,8 +739,15 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             path.contains("/backends/$BACKEND_WEB_MODULE/") || path.contains("/$BACKEND_WEB_MODULE/") || path.contains("$BACKEND_WEB_MODULE-") -> WEB_BACKEND
             path.contains("/backends/$BACKEND_GLFW_MODULE/") || path.contains("/$BACKEND_GLFW_MODULE/") || path.contains("$BACKEND_GLFW_MODULE-") -> GLFW_BACKEND
             path.contains("/backends/$BACKEND_PSP_MODULE/") || path.contains("/$BACKEND_PSP_MODULE/") || path.contains("$BACKEND_PSP_MODULE-") -> PSP_BACKEND
+            path.contains("/backends/$BACKEND_ANDROID_MODULE/") || path.contains("/$BACKEND_ANDROID_MODULE/") || path.contains("$BACKEND_ANDROID_MODULE-") -> ANDROID_BACKEND
             else -> null
         }
+    }
+
+    private fun GdxTeaVMExtension.isNativeTargetDeclared(): Boolean {
+        return isTargetDeclared(GdxTeaVMTarget.GLFW)
+            || isTargetDeclared(GdxTeaVMTarget.PSP)
+            || isTargetDeclared(GdxTeaVMTarget.ANDROID)
     }
 
     private fun glfwBuildScriptBaseName(buildType: String): String {
@@ -521,6 +761,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     private companion object {
         const val TASK_GROUP = "gdx-teavm"
         const val TEAVM_TASK_GROUP = "teavm"
+        const val ANDROID_APPLICATION_PLUGIN = "com.android.application"
+        const val ANDROID_LIBRARY_PLUGIN = "com.android.library"
+        const val ANDROID_IDE_CONFIGURATION_NAME = "gdxTeaVMAndroidIde"
+        const val ANDROID_NATIVE_SOURCE_DIR = "src/native/java"
+        const val TEAVM_GROUP = "org.teavm"
+        const val TEAVM_CLASSLIB_MODULE = "teavm-classlib"
         val TEAVM_SOURCE_SET_TASK_NAMES = setOf(
             "teavmClasses",
             "compileTeavmJava",
@@ -529,10 +775,13 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val BACKEND_WEB_MODULE = "backend-web"
         const val BACKEND_GLFW_MODULE = "backend-glfw"
         const val BACKEND_PSP_MODULE = "backend-psp"
+        const val BACKEND_ANDROID_MODULE = "backend-android"
         const val WEB_BACKEND = "web"
         const val GLFW_BACKEND = "glfw"
         const val PSP_BACKEND = "psp"
+        const val ANDROID_BACKEND = "android"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
         const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
+        const val VALIDATION_ONLY_MAIN_CLASS = "com.github.xpenatan.gdx.teavm.gradle.ValidationOnlyMainClass"
     }
 }

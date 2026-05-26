@@ -4,15 +4,20 @@ plugins {
 
 LibExt.initProperties(rootDir)
 
+val androidApplicationProjects = setOf(":examples:basic:android")
+
 subprojects {
-    apply {
-        plugin("java")
+    if(path !in androidApplicationProjects) {
+        apply {
+            plugin("java")
+        }
+
+        java.sourceCompatibility = JavaVersion.VERSION_11
+        java.targetCompatibility = JavaVersion.VERSION_11
     }
 
-    java.sourceCompatibility = JavaVersion.VERSION_11
-    java.targetCompatibility = JavaVersion.VERSION_11
-
     repositories {
+        google()
         mavenLocal()
         mavenCentral()
         maven { url = uri("https://central.sonatype.com/repository/maven-snapshots/") }

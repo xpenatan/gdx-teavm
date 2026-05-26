@@ -4,7 +4,7 @@
 [![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-web)](https://central.sonatype.com/namespace/com.github.xpenatan.gdx-teavm)
 [![Snapshot](https://img.shields.io/badge/snapshot--SNAPSHOT-red)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/com/github/xpenatan/gdx-teavm/)
 
-`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, and native C projects for GLFW and PSP.
+`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, native C projects for GLFW and PSP, and Android native app builds through an Android application module.
 
 The project provides two build styles:
 
@@ -13,9 +13,9 @@ The project provides two build styles:
 
 ## Status
 
-| gdx-teavm | libGDX | TeaVM |
-|:---------:|:------:|:-----:|
-| -SNAPSHOT | 1.14.1 | 0.14.0 |
+| gdx-teavm | libGDX | TeaVM  |
+|:---------:|:------:|:------:|
+| -SNAPSHOT | 1.14.1 | 0.14.1 |
 | 1.5.5 | 1.14.0 | 0.14.0 |
 | 1.5.4 | 1.14.0 | 0.13.1 |
 
@@ -27,6 +27,7 @@ The project provides two build styles:
 | `backend-web` | libGDX web runtime plus JavaScript and Wasm build support |
 | `backend-glfw` | TeaVM C output for desktop GLFW native builds |
 | `backend-psp` | TeaVM C output for PSP builds |
+| `backend-android` | TeaVM C output and runtime support for Android app modules |
 | `gdx-freetype-web` | FreeType support for TeaVM web builds |
 | `gdx-controllers-web` | Controller support for TeaVM web builds |
 | `tools/gdx-teavm-plugin` | Gradle plugin implementation |
@@ -127,6 +128,10 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 ./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
 ./gradlew :examples:basic:plugin:gdx_teavm_psp_generate
+
+# Android workflow
+./gradlew :examples:basic:android:assembleDebug
+./gradlew :examples:basic:android:installDebug
 
 # FreeType plugin workflow
 ./gradlew :examples:freetype:web:gdx_teavm_web_js_run

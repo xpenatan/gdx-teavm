@@ -12,11 +12,19 @@ import java.io.File
 import javax.inject.Inject
 
 open class GdxTeaVMExtension @Inject constructor(
-    objects: ObjectFactory,
-    private val project: Project,
-    teavm: TeaVMExtension
+    private val objects: ObjectFactory,
+    private val project: Project
 ) {
+    private var teavm: TeaVMExtension? = null
     private val declaredTargets = linkedSetOf<GdxTeaVMTarget>()
+
+    constructor(
+        objects: ObjectFactory,
+        project: Project,
+        teavm: TeaVMExtension
+    ) : this(objects, project) {
+        this.teavm = teavm
+    }
 
     /**
      * Enables gdx-teavm reflection metadata generation.
@@ -84,22 +92,26 @@ open class GdxTeaVMExtension @Inject constructor(
      *
      * Default: output directory `build/dist/web`, target file `app.js`.
      */
-    val js: GdxTeaVMJsExtension = objects.newInstance(
-        GdxTeaVMJsExtension::class.java,
-        project,
-        teavm.getJs()
-    )
+    val js: GdxTeaVMJsExtension by lazy {
+        objects.newInstance(
+            GdxTeaVMJsExtension::class.java,
+            project,
+            requireTeaVMExtension().getJs()
+        )
+    }
 
     /**
      * Wasm web target configuration.
      *
      * Default: output directory `build/dist/wasm`, target file `app.wasm`.
      */
-    val wasm: GdxTeaVMWasmExtension = objects.newInstance(
-        GdxTeaVMWasmExtension::class.java,
-        project,
-        teavm.getWasmGC()
-    )
+    val wasm: GdxTeaVMWasmExtension by lazy {
+        objects.newInstance(
+            GdxTeaVMWasmExtension::class.java,
+            project,
+            requireTeaVMExtension().getWasmGC()
+        )
+    }
 
     /**
      * GLFW native target configuration.
@@ -122,6 +134,18 @@ open class GdxTeaVMExtension @Inject constructor(
         GdxTeaVMPspExtension::class.java,
         project,
         "dist/psp",
+        "app"
+    )
+
+    /**
+     * Android native target configuration.
+     *
+     * Default: output directory `build/generated/gdx-teavm/android`, target file `app`.
+     */
+    val android: GdxTeaVMAndroidExtension = objects.newInstance(
+        GdxTeaVMAndroidExtension::class.java,
+        project,
+        "generated/gdx-teavm/android",
         "app"
     )
 
@@ -165,6 +189,16 @@ open class GdxTeaVMExtension @Inject constructor(
         action.execute(psp)
     }
 
+    /**
+     * Configures and declares the Android native target.
+     *
+     * The plugin creates Android gdx-teavm tasks only when this block is declared.
+     */
+    fun android(action: Action<in GdxTeaVMAndroidExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.ANDROID)
+        action.execute(android)
+    }
+
     /** Adds local asset files or directories to [assets]. */
     fun assets(vararg paths: Any) {
         assets.from(*paths)
@@ -178,6 +212,13 @@ open class GdxTeaVMExtension @Inject constructor(
     /** Adds reflection class names or package patterns to [reflection]. */
     fun reflection(vararg patterns: String) {
         reflection.addAll(patterns.toList())
+    }
+
+    private fun requireTeaVMExtension(): TeaVMExtension {
+        return teavm ?: throw IllegalStateException(
+            "This gdx-teavm project is configured for Android-only generation. " +
+                "Move js/wasm/glfw/psp targets to a Java project or apply gdx-teavm to a non-Android module."
+        )
     }
 
     internal fun toGlobalProperties(project: Project): Provider<Map<String, String>> {
@@ -231,9 +272,37 @@ open class GdxTeaVMExtension @Inject constructor(
     }
 
     internal fun selectedNativeTargetOrNull(project: Project): GdxTeaVMNativeTargetExtension? {
-        return when(selectedNativeBackendName(project)) {
+        return nativeTargetForBackendName(selectedNativeBackendName(project))
+    }
+
+    internal fun nativeTargetForBackendName(backendName: String?): GdxTeaVMNativeTargetExtension? {
+        return when(backendName) {
             "glfw" -> if(isTargetDeclared(GdxTeaVMTarget.GLFW)) glfw else null
             "psp" -> if(isTargetDeclared(GdxTeaVMTarget.PSP)) psp else null
+            "android" -> if(isTargetDeclared(GdxTeaVMTarget.ANDROID)) android else null
+            else -> null
+        }
+    }
+
+    internal fun defaultNativeTargetOrNull(): GdxTeaVMNativeTargetExtension? {
+        var firstNativeTarget: GdxTeaVMNativeTargetExtension? = null
+        for(target in declaredTargets) {
+            val nativeTarget = nativeTargetForDeclaredTarget(target) ?: continue
+            if(firstNativeTarget == null) {
+                firstNativeTarget = nativeTarget
+            }
+            if(nativeTarget.mainClass.isPresent) {
+                return nativeTarget
+            }
+        }
+        return firstNativeTarget
+    }
+
+    private fun nativeTargetForDeclaredTarget(target: GdxTeaVMTarget): GdxTeaVMNativeTargetExtension? {
+        return when(target) {
+            GdxTeaVMTarget.GLFW -> glfw
+            GdxTeaVMTarget.PSP -> psp
+            GdxTeaVMTarget.ANDROID -> android
             else -> null
         }
     }
@@ -248,15 +317,18 @@ open class GdxTeaVMExtension @Inject constructor(
 
     internal fun selectedNativeBackendName(project: Project): String? {
         val requestedTasks = project.gradle.startParameter.taskNames
-            .map { it.substringAfterLast(':').lowercase() }
+            .map { it.lowercase() }
         val glfwRequested = requestedTasks.any { it.contains("glfw") }
         val pspRequested = requestedTasks.any { it.contains("psp") }
-        if(glfwRequested && pspRequested) {
+        val androidRequested = requestedTasks.any { it.contains("android") }
+        val requestedNativeTargets = listOf(glfwRequested, pspRequested, androidRequested).count { it }
+        if(requestedNativeTargets > 1) {
             throw IllegalStateException("Only one gdx-teavm native backend can be selected in a single Gradle invocation")
         }
         return when {
             glfwRequested -> "glfw"
             pspRequested -> "psp"
+            androidRequested -> "android"
             else -> null
         }
     }
@@ -308,5 +380,6 @@ internal enum class GdxTeaVMTarget {
     JS,
     WASM,
     GLFW,
-    PSP
+    PSP,
+    ANDROID
 }

@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(project(":examples:basic:core"))
     implementation(project(":examples:basic:web"))
     implementation(project(":examples:basic:glfw"))
     implementation(project(":examples:basic:psp"))

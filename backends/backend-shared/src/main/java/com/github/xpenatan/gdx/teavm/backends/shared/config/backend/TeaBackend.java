@@ -42,7 +42,7 @@ import org.teavm.vm.TeaVMProgressListener;
 
 public abstract class TeaBackend {
     final public static String ASSETS_FOLDER_NAME = "assets";
-    private ArrayList<URL> acceptedURL;
+    protected ArrayList<URL> acceptedURL;
     protected TeaClassLoader classLoader;
     protected TeaVMTool tool;
     protected TeaVMTargetType targetType;

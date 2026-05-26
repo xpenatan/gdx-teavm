@@ -89,6 +89,8 @@ The plugin adds the required backend dependency for every declared target. For e
 
 Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication`, `GLFWApplication`, or `PSPApplication` without manually declaring the backend artifacts.
 
+Android is different because the Android Gradle Plugin owns APK packaging, install tasks, build types, signing, manifests, resources, and native CMake execution. Apply `gdx-teavm` to a real Android application module and declare an `android {}` target there; the plugin generates the TeaVM C/CMake payload, while Android Gradle tasks build and install the APK.
+
 ## Web Targets
 
 Use `js {}` for JavaScript and `wasm {}` for Wasm.
@@ -193,6 +195,121 @@ Default output:
 | --- | --- |
 | GLFW | `build/dist/glfw` |
 | PSP | `build/dist/psp` |
+
+## Android Target
+
+Android builds use a real Android application module, not a generated Android project. The Android module applies both `com.android.application` and `com.github.xpenatan.gdx-teavm`, owns normal Android settings, and points Android's external native build at the generated TeaVM CMake project.
+
+The TeaVM launcher lives in `src/native/java` so it is used for TeaVM C generation. The gdx-teavm plugin registers this folder with Android's main Java source model so Android Studio imports it as source code, mirrors the `teavm` dependencies onto Android's compile-only IDE classpath, and excludes the folder from Android's APK Java compile. This keeps imports and completion working after a Gradle sync without packaging the launcher into the APK.
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("com.github.xpenatan.gdx-teavm")
+}
+
+val generatedAndroidCMakeFile = layout.buildDirectory.file("generated/gdx-teavm/android/CMakeLists.txt")
+val androidCxxDir = rootProject.layout.buildDirectory.dir("android-cxx/my-game-android")
+
+android {
+    namespace = "com.example.game.android"
+
+    defaultConfig {
+        applicationId = "com.example.game.android"
+        minSdk = 21
+        targetSdk = 36
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = generatedAndroidCMakeFile.get().asFile
+            buildStagingDirectory = androidCxxDir.get().asFile
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDir(file("../assets"))
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    add("teavm", project(":core"))
+}
+
+gdxTeaVM {
+    android {
+        mainClass.set("com.example.game.teavm.AndroidLauncher")
+    }
+}
+```
+
+Generated Android plugin task:
+
+| Task | Description |
+| --- | --- |
+| `gdx_teavm_android_generate` | Generate the TeaVM C/CMake payload for the Android module |
+
+There is no `gdx_teavm_android_run` task. Android Debug, Release, install, launch, signing, and emulator/device behavior use standard Android Gradle Plugin and ADB tooling.
+
+Common Android tasks:
+
+| Task | Description |
+| --- | --- |
+| `assembleDebug` | Generate TeaVM C, build native Debug code, and package a debug APK |
+| `assembleRelease` | Generate TeaVM C, build native Release code, and package a release APK |
+| `installDebug` | Build and install the debug APK on the visible device or emulator |
+
+The Android module should point assets at the normal asset source directory. The gdx-teavm Android generation step does not copy game assets into the generated native payload.
+
+### Testing The Basic Android Example
+
+Start a visible emulator from Android Studio Device Manager, or plug in a real Android device. Then verify that ADB sees one device in the `device` state:
+
+```shell
+adb devices -l
+```
+
+Build the debug APK:
+
+```shell
+./gradlew :examples:basic:android:assembleDebug
+```
+
+Install it on the connected device or running emulator:
+
+```shell
+./gradlew :examples:basic:android:installDebug
+```
+
+Launch it from the Android launcher as `gdx-teavm basic`, or start the Activity directly with ADB:
+
+```shell
+adb shell am start -n com.github.xpenatan.gdx.teavm.examples.basic.android/com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity
+```
+
+Build the release APK:
+
+```shell
+./gradlew :examples:basic:android:assembleRelease
+```
+
+APK outputs:
+
+| Build type | APK |
+| --- | --- |
+| Debug | `examples/basic/android/build/outputs/apk/debug/android-debug.apk` |
+| Release | `examples/basic/android/build/outputs/apk/release/android-release.apk` |
+
+Generated TeaVM C output is written under `examples/basic/android/build/generated/gdx-teavm/android`. Android CMake/Ninja staging is configured under the root build folder at `build/android-cxx/examples-basic-android` so AGP's native intermediates do not create an untracked `.cxx` folder in the Android module root.
+
+The Android app module uses Java 8 source and target compatibility for APK-side Java code. This avoids Android Gradle Plugin's Java 9+ `androidJdkImage` transform, which can fail when Gradle is running on newer JDKs such as GraalVM JDK 25. The TeaVM launcher source in `src/native/java` is compiled separately for TeaVM generation.
 
 ## Plugin Properties
 
@@ -379,6 +496,14 @@ Plugin examples:
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_build
 ./gradlew :examples:basic:plugin:gdx_teavm_psp_generate
 ./gradlew :examples:basic:plugin:gdx_teavm_psp_build
+```
+
+Android example:
+
+```shell
+./gradlew :examples:basic:android:assembleDebug
+./gradlew :examples:basic:android:installDebug
+./gradlew :examples:basic:android:assembleRelease
 ```
 
 Manual builder examples:

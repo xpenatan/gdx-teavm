@@ -538,3 +538,10 @@ open class GdxTeaVMPspExtension @Inject constructor(
      */
     val autoExecuteBuild: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
 }
+
+open class GdxTeaVMAndroidExtension @Inject constructor(
+    objects: ObjectFactory,
+    project: Project,
+    outputDirName: String,
+    targetFileNameValue: String
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "android")

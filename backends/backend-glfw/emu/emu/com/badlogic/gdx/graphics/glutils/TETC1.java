@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGL32;
+import com.github.xpenatan.gdx.teavm.backends.shared.utils.BufferAddressUtils;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -241,7 +241,7 @@ public class TETC1 {
      * @param height the height in pixels
      */
     public static void formatHeader(ByteBuffer header, int offset, int width, int height) {
-        Address address = GLFWGL32.AddressUtils.ofInternal(header).add(offset);
+        Address address = BufferAddressUtils.ofInternal(header).add(offset);
         etc1_pkm_format_header(address, width, height);
     }
     /*
@@ -254,7 +254,7 @@ public class TETC1 {
      * @return the width stored in the PKM header
      */
     static int getWidthPKM(ByteBuffer header, int offset) {
-//        Address address = GLFWGL32.AddressUtils.ofInternal(header).add(offset);
+//        Address address = BufferAddressUtils.ofInternal(header).add(offset);
 //        return etc1_pkm_get_width(address);
         return 0;
     }
@@ -268,7 +268,7 @@ public class TETC1 {
      * @return the height stored in the PKM header
      */
     static int getHeightPKM(ByteBuffer header, int offset) {
-//        Address address = GLFWGL32.AddressUtils.ofInternal(header).add(offset);
+//        Address address = BufferAddressUtils.ofInternal(header).add(offset);
 //        return etc1_pkm_get_height(address);
         return 0;
     }
@@ -282,7 +282,7 @@ public class TETC1 {
      * @return the width stored in the PKM header
      */
     static boolean isValidPKM(ByteBuffer header, int offset) {
-        Address address = GLFWGL32.AddressUtils.ofInternal(header).add(offset);
+        Address address = BufferAddressUtils.ofInternal(header).add(offset);
         return etc1_pkm_is_valid(address);
     }
     /*
@@ -303,8 +303,8 @@ public class TETC1 {
      */
     private static void decodeImage(ByteBuffer compressedData, int offset, ByteBuffer decodedData, int offsetDec,
                                            int width, int height, int pixelSize) {
-//        Address compressedDataAddress = GLFWGL32.AddressUtils.ofInternal(compressedData).add(offset);
-//        Address decodedDataAddress = GLFWGL32.AddressUtils.ofInternal(decodedData).add(offsetDec);
+//        Address compressedDataAddress = BufferAddressUtils.ofInternal(compressedData).add(offset);
+//        Address decodedDataAddress = BufferAddressUtils.ofInternal(decodedData).add(offsetDec);
 //        etc1_decode_image(compressedDataAddress, decodedDataAddress, width, height, pixelSize, width * pixelSize);
     }
     /*
@@ -324,7 +324,7 @@ public class TETC1 {
     private static ByteBuffer encodeImage(ByteBuffer imageData, int offset, int width, int height, int pixelSize) {
         int compressedSize = etc1_get_encoded_data_size(width, height);
         ByteBuffer compressedData = ByteBuffer.allocate(compressedSize);
-        Address imageDataAddress = GLFWGL32.AddressUtils.ofInternal(imageData).add(offset);
+        Address imageDataAddress = BufferAddressUtils.ofInternal(imageData).add(offset);
         etc1_encode_image(imageDataAddress, width, height, pixelSize, width * pixelSize, compressedData);
         return compressedData;
     }
@@ -349,9 +349,9 @@ public class TETC1 {
         int ETC_PKM_HEADER_SIZE = 16;
         int compressedSize = etc1_get_encoded_data_size(width, height);
         ByteBuffer compressedData = ByteBuffer.allocate(compressedSize + ETC_PKM_HEADER_SIZE);
-        Address compressedDataAddress = GLFWGL32.AddressUtils.of(compressedData);
+        Address compressedDataAddress = BufferAddressUtils.of(compressedData);
         etc1_pkm_format_header(compressedDataAddress, width, height);
-        Address imageDataAddress = GLFWGL32.AddressUtils.ofInternal(imageData).add(offset);
+        Address imageDataAddress = BufferAddressUtils.ofInternal(imageData).add(offset);
         etc1_encode_image(imageDataAddress, width, height, pixelSize, width * pixelSize, compressedData); // TODO FIX
         return compressedData;
     }

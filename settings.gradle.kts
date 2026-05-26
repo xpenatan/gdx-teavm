@@ -4,6 +4,7 @@ pluginManagement {
     includeBuild("tools/gdx-teavm-plugin")
 
     repositories {
+        google()
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
@@ -18,6 +19,7 @@ include(":backends:backend-shared")
 include(":backends:backend-web")
 include(":backends:backend-glfw")
 include(":backends:backend-psp")
+include(":backends:backend-android")
 
 include(":extensions:asset-loader")
 include(":extensions:web:gdx-controllers-web")
@@ -31,6 +33,7 @@ include(":examples:basic:core")
 include(":examples:basic:lwjgl3")
 include(":examples:basic:graalvm")
 include(":examples:basic:plugin")
+include(":examples:basic:android")
 include(":examples:basic:web")
 include(":examples:basic:glfw")
 include(":examples:basic:psp")
