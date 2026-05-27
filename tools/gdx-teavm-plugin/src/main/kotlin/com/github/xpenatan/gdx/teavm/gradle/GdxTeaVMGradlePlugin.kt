@@ -234,6 +234,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             || extension.isTargetDeclared(GdxTeaVMTarget.WASM)
             || extension.isTargetDeclared(GdxTeaVMTarget.GLFW)
             || extension.isTargetDeclared(GdxTeaVMTarget.PSP)
+            || extension.isTargetDeclared(GdxTeaVMTarget.IOS)
         if(unsupported) {
             throw IllegalStateException("Android Gradle projects currently support only the gdxTeaVM android target")
         }
@@ -288,6 +289,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             addBackendDependency(project, BACKEND_ANDROID_MODULE)
+        }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
+            addBackendDependency(project, BACKEND_IOS_MODULE)
         }
     }
 
@@ -661,6 +665,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             registerAndroidTasks(project)
         }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
+            registerIosTasks(project)
+        }
     }
 
     private fun registerJsTasks(project: Project, extension: GdxTeaVMExtension) {
@@ -747,6 +754,14 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
+    private fun registerIosTasks(project: Project) {
+        project.tasks.register("gdx_teavm_ios_generate") {
+            group = TASK_GROUP
+            description = "Generate the gdx-teavm iOS native C payload."
+            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+    }
+
     private fun registerAndroidProjectTasks(project: Project, extension: GdxTeaVMExtension) {
         if(!extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             return
@@ -816,6 +831,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             path.contains("/backends/$BACKEND_GLFW_MODULE/") || path.contains("/$BACKEND_GLFW_MODULE/") || path.contains("$BACKEND_GLFW_MODULE-") -> GLFW_BACKEND
             path.contains("/backends/$BACKEND_PSP_MODULE/") || path.contains("/$BACKEND_PSP_MODULE/") || path.contains("$BACKEND_PSP_MODULE-") -> PSP_BACKEND
             path.contains("/backends/$BACKEND_ANDROID_MODULE/") || path.contains("/$BACKEND_ANDROID_MODULE/") || path.contains("$BACKEND_ANDROID_MODULE-") -> ANDROID_BACKEND
+            path.contains("/backends/$BACKEND_IOS_MODULE/") || path.contains("/$BACKEND_IOS_MODULE/") || path.contains("$BACKEND_IOS_MODULE-") -> IOS_BACKEND
             else -> null
         }
     }
@@ -824,6 +840,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         return isTargetDeclared(GdxTeaVMTarget.GLFW)
             || isTargetDeclared(GdxTeaVMTarget.PSP)
             || isTargetDeclared(GdxTeaVMTarget.ANDROID)
+            || isTargetDeclared(GdxTeaVMTarget.IOS)
     }
 
     private fun glfwBuildScriptBaseName(buildType: String): String {
@@ -856,10 +873,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val BACKEND_GLFW_MODULE = "backend-glfw"
         const val BACKEND_PSP_MODULE = "backend-psp"
         const val BACKEND_ANDROID_MODULE = "backend-android"
+        const val BACKEND_IOS_MODULE = "backend-ios"
         const val WEB_BACKEND = "web"
         const val GLFW_BACKEND = "glfw"
         const val PSP_BACKEND = "psp"
         const val ANDROID_BACKEND = "android"
+        const val IOS_BACKEND = "ios"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
         const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
         const val VALIDATION_ONLY_MAIN_CLASS = "com.github.xpenatan.gdx.teavm.gradle.ValidationOnlyMainClass"

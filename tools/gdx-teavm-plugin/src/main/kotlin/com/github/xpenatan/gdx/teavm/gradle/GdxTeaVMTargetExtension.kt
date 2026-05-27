@@ -545,3 +545,10 @@ open class GdxTeaVMAndroidExtension @Inject constructor(
     outputDirName: String,
     targetFileNameValue: String
 ) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "android")
+
+open class GdxTeaVMIosExtension @Inject constructor(
+    objects: ObjectFactory,
+    project: Project,
+    outputDirName: String,
+    targetFileNameValue: String
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "ios")
