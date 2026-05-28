@@ -1,6 +1,12 @@
 # Generated iOS Smoke Project
 
-Open this project after running:
+Create this project with:
+
+```bash
+./gradlew :examples:basic:ios:gdx_teavm_ios_init_xcode
+```
+
+Generate or refresh the TeaVM C/assets with:
 
 ```bash
 ./gradlew :examples:basic:ios:gdx_teavm_ios_generate
@@ -14,4 +20,6 @@ examples/basic/ios/build/dist/ios/xcode/GdxTeaVMIOSSpike.xcodeproj
 
 Run the `GdxTeaVMIOSSpike` target on an iOS simulator first. For a physical device, set your Apple development team in Xcode's Signing & Capabilities tab.
 
-This is a smoke project. It proves Swift can start TeaVM C and drive resize, render, pause, resume, dispose, and touch callbacks. It does not include GL/Metal, audio, packaged app assets, or a production bundle setup yet.
+This is a smoke project. It proves Swift can start TeaVM C and drive resize, render, pause, resume, dispose, touch callbacks, packaged assets, and the selected graphics API.
+
+The default generated graphics API is ANGLE through MetalANGLEKit. Set `ios.graphicsApi` or Gradle property `gdx.teavm.ios.graphicsApi` to `gles` and run `gdx_teavm_ios_regenerate_xcode` to generate the native OpenGL ES / GLKit project instead.

@@ -20,8 +20,11 @@ public class TGdx2DPixmapNative implements Disposable {
     private GDX2D_pixmap gdx2DPixmap;
 
     public TGdx2DPixmapNative(byte[] encodedData, int offset, int len, int requestedFormat) {
-        Address address = Address.ofData(encodedData).add(offset);
-        gdx2DPixmap = gdx2d_load(address, len);
+        int[] compactData = new int[len];
+        for (int i = 0; i < len; i++) {
+            compactData[i] = encodedData[offset + i] & 0xff;
+        }
+        gdx2DPixmap = gdx2d_load_teavm_bytes(Address.ofData(compactData), 0, len);
         if (gdx2DPixmap == null) {
             throw new GdxRuntimeException("Couldn't load pixmap: " + gdx2d_get_failure_reason());
         }
@@ -203,6 +206,9 @@ public class TGdx2DPixmapNative implements Disposable {
 
     @Import(name = "gdx2d_load")
     private static native GDX2D_pixmap gdx2d_load(Address address, int len);
+
+    @Import(name = "gdx2d_load_teavm_bytes")
+    private static native GDX2D_pixmap gdx2d_load_teavm_bytes(Address address, int offset, int len);
 
     @Import(name = "gdx2d_new")
     private static native GDX2D_pixmap gdx2d_new(int width, int height, int format);

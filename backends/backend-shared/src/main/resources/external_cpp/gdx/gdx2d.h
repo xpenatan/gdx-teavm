@@ -63,6 +63,7 @@ typedef struct {
 } gdx2d_pixmap;
 
 gdx2d_pixmap* gdx2d_load (const unsigned char *buffer, uint32_t len);
+gdx2d_pixmap* gdx2d_load_teavm_bytes (const int32_t *buffer, uint32_t offset, uint32_t len);
 gdx2d_pixmap* gdx2d_new  (uint32_t width, uint32_t height, uint32_t format);
 void 		 gdx2d_free (const gdx2d_pixmap* pixmap);
 

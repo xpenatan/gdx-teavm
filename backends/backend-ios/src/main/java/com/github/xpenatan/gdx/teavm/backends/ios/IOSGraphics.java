@@ -10,10 +10,12 @@ import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
+import com.github.xpenatan.gdx.teavm.backends.ios.graphics.IOSGL20;
 
 public class IOSGraphics extends AbstractGraphics {
     private final BufferFormat bufferFormat;
     private GLVersion glVersion = new GLVersion(Application.ApplicationType.iOS, "OpenGL ES 2.0", "", "");
+    private boolean glInitialized;
     private int width;
     private int height;
     private float backBufferScale = 1;
@@ -36,12 +38,29 @@ public class IOSGraphics extends AbstractGraphics {
                 config.numSamples, config.coverageSampling);
         continuousRendering = config.continuousRendering;
         foregroundFPS = config.foregroundFPS;
+        setGL20(new IOSGL20());
     }
 
     void resize(int width, int height, float scale) {
         this.width = width;
         this.height = height;
         this.backBufferScale = scale <= 0 ? 1 : scale;
+    }
+
+    void initiateGL() {
+        if(glInitialized || gl20 == null) {
+            return;
+        }
+        glInitialized = true;
+        String versionString = safeGLString(GL20.GL_VERSION);
+        String vendorString = safeGLString(GL20.GL_VENDOR);
+        String rendererString = safeGLString(GL20.GL_RENDERER);
+        glVersion = new GLVersion(Application.ApplicationType.iOS, versionString, vendorString, rendererString);
+    }
+
+    private String safeGLString(int name) {
+        String value = gl20.glGetString(name);
+        return value == null ? "" : value;
     }
 
     void update() {

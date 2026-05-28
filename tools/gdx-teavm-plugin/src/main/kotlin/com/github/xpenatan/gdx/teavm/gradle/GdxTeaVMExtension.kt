@@ -289,6 +289,10 @@ open class GdxTeaVMExtension @Inject constructor(
                     properties[PSP_DEBUG_MEMORY] = native.debugMemory.get().toString()
                     properties[PSP_AUTO_EXECUTE_BUILD] = native.autoExecuteBuild.get().toString()
                 }
+                if(native is GdxTeaVMIosExtension) {
+                    properties[IOS_XCODE_PROJECT_DIR] = native.xcodeProjectDir.get().asFile.absolutePath
+                    properties[IOS_GRAPHICS_API] = normalizeIosGraphicsApi(native.graphicsApi.get())
+                }
             }
         }
     }
@@ -373,6 +377,16 @@ open class GdxTeaVMExtension @Inject constructor(
         }
     }
 
+    internal fun normalizeIosGraphicsApi(value: String): String {
+        return when(value.trim().lowercase()) {
+            "angle", "metalangle", "metal-angle" -> "angle"
+            "gles", "opengles", "open-gles", "opengl-es" -> "gles"
+            else -> throw IllegalArgumentException(
+                "Unsupported iOS graphics API '$value'. Supported values are 'angle' and 'gles'."
+            )
+        }
+    }
+
     private companion object {
         const val WEBAPP_ENABLED = "gdx.teavm.webapp.enabled"
         const val ENTRY_POINT_NAME = "gdx.teavm.entryPointName"
@@ -399,6 +413,8 @@ open class GdxTeaVMExtension @Inject constructor(
         const val NATIVE_CONSOLE_LOG = "gdx.teavm.native.consoleLog"
         const val PSP_DEBUG_MEMORY = "gdx.teavm.psp.debugMemory"
         const val PSP_AUTO_EXECUTE_BUILD = "gdx.teavm.psp.autoExecuteBuild"
+        const val IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir"
+        const val IOS_GRAPHICS_API = "gdx.teavm.ios.graphicsApi"
     }
 }
 

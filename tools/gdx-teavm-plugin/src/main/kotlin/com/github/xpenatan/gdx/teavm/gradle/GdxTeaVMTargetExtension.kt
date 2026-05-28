@@ -551,4 +551,95 @@ open class GdxTeaVMIosExtension @Inject constructor(
     project: Project,
     outputDirName: String,
     targetFileNameValue: String
-) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "ios")
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "ios") {
+    /**
+     * Generated Xcode project name.
+     *
+     * Default: `GdxTeaVMIOSSpike`.
+     */
+    val xcodeProjectName: Property<String> = objects.property(String::class.java).convention("GdxTeaVMIOSSpike")
+
+    /**
+     * Directory containing the generated Xcode project and Swift sources.
+     *
+     * Set this to a source-controlled directory, such as `layout.projectDirectory.dir("xcode")`,
+     * when the project should be committed and reused by other developers.
+     *
+     * Default: `[outputDir]/xcode`.
+     */
+    val xcodeProjectDir: DirectoryProperty = objects.directoryProperty()
+        .convention(outputDir.map { it.dir("xcode") })
+
+    /**
+     * Graphics implementation used by the generated Xcode project.
+     *
+     * Supported values:
+     * - `angle`: MetalANGLEKit-backed GLES over Metal.
+     * - `gles`: Apple's native OpenGL ES / GLKit path.
+     *
+     * Default: `angle`.
+     */
+    val graphicsApi: Property<String> = objects.property(String::class.java).convention(
+        project.providers.gradleProperty("gdx.teavm.ios.graphicsApi")
+            .orElse("angle")
+    )
+
+    /**
+     * Xcode scheme used by simulator build tasks.
+     *
+     * Default: `GdxTeaVMIOSSpike`.
+     */
+    val xcodeScheme: Property<String> = objects.property(String::class.java).convention("GdxTeaVMIOSSpike")
+
+    /**
+     * Xcode build configuration used by simulator build tasks.
+     *
+     * Default: `Debug`.
+     */
+    val xcodeConfiguration: Property<String> = objects.property(String::class.java).convention("Debug")
+
+    /**
+     * Simulator device name or UDID used by `gdx_teavm_ios_run_simulator`.
+     *
+     * Default: `iPhone 12 Pro`.
+     */
+    val simulatorDevice: Property<String> = objects.property(String::class.java).convention("iPhone 12 Pro")
+
+    /**
+     * App bundle identifier used by `gdx_teavm_ios_run_simulator`.
+     *
+     * Default: `com.github.xpenatan.gdxteavm.ios.spike`.
+     */
+    val bundleIdentifier: Property<String> = objects.property(String::class.java)
+        .convention("com.github.xpenatan.gdxteavm.ios.spike")
+
+    /**
+     * Derived data directory used by simulator build and run tasks.
+     *
+     * Default: `build/xcode-derived/ios`.
+     */
+    val xcodeDerivedDataPath: DirectoryProperty = objects.directoryProperty()
+        .convention(project.layout.buildDirectory.dir("xcode-derived/ios"))
+
+    /**
+     * Opens Simulator.app when running the simulator task.
+     *
+     * Default: `true`.
+     */
+    val openSimulator: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+
+    /**
+     * Rewrites the generated Xcode project during Xcode initialization when true.
+     *
+     * Keep this disabled for normal development so Xcode signing, teams, capabilities, and other
+     * manual project settings survive. Enable only when intentionally refreshing the generated
+     * Xcode template, or use `gdx_teavm_ios_regenerate_xcode`.
+     *
+     * Default: `false`.
+     */
+    val overwriteXcodeProject: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(
+        project.providers.gradleProperty("gdx.teavm.ios.xcode.overwrite")
+            .map(String::toBoolean)
+            .orElse(false)
+    )
+}

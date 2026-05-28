@@ -1,12 +1,12 @@
-import GLKit
+import MetalANGLEKit
 import UIKit
 
-final class TeaVMViewController: UIViewController, GLKViewDelegate {
+final class TeaVMViewController: UIViewController, MGLKViewDelegate {
     private let maxPointers = 20
     private let statusLabel = UILabel()
-    private var glContext: EAGLContext!
-    private var glView: GLKView {
-        view as! GLKView
+    private var glContext: MGLContext!
+    private var glView: MGLKView {
+        view as! MGLKView
     }
     private var displayLink: CADisplayLink?
     private var started = false
@@ -14,18 +14,21 @@ final class TeaVMViewController: UIViewController, GLKViewDelegate {
     private var availablePointers: [Int32] = Array(0..<20).map(Int32.init)
 
     override func loadView() {
-        guard let context = EAGLContext(api: .openGLES3) ?? EAGLContext(api: .openGLES2) else {
-            fatalError("Unable to create OpenGL ES context")
-        }
+        let context = MGLContext(api: MGLRenderingAPI(rawValue: 2))
         glContext = context
-        EAGLContext.setCurrent(context)
+        MGLContext.setCurrent(context)
 
-        let glView = GLKView(frame: UIScreen.main.bounds, context: context)
-        glView.drawableColorFormat = .RGBA8888
-        glView.drawableDepthFormat = .format16
-        glView.drawableStencilFormat = .format8
+        guard let glView = MGLKView(frame: UIScreen.main.bounds, context: context) else {
+            fatalError("Unable to create ANGLE view")
+        }
+        glView.contentScaleFactor = UIScreen.main.scale
+        glView.drawableColorFormat = MGLDrawableColorFormat(rawValue: 32)
+        glView.drawableDepthFormat = MGLDrawableDepthFormat(rawValue: 16)
+        glView.drawableStencilFormat = MGLDrawableStencilFormat(rawValue: 8)
+        glView.drawableMultisample = MGLDrawableMultisample(rawValue: 0)
         glView.enableSetNeedsDisplay = false
         glView.delegate = self
+        updateDrawableLayer(for: glView)
         view = glView
     }
 
@@ -44,6 +47,7 @@ final class TeaVMViewController: UIViewController, GLKViewDelegate {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        updateDrawableLayer(for: glView)
         resizeTeaVM()
     }
 
@@ -62,8 +66,8 @@ final class TeaVMViewController: UIViewController, GLKViewDelegate {
     deinit {
         displayLink?.invalidate()
         gdx_teavm_ios_dispose()
-        if EAGLContext.current() === glContext {
-            EAGLContext.setCurrent(nil)
+        if MGLContext.current() === glContext {
+            MGLContext.setCurrent(nil)
         }
     }
 
@@ -103,20 +107,38 @@ final class TeaVMViewController: UIViewController, GLKViewDelegate {
     }
 
     private func resizeTeaVM() {
-        let scale = glView.contentScaleFactor
-        let pixelWidth = Int32(glView.drawableWidth)
-        let pixelHeight = Int32(glView.drawableHeight)
+        let scale = glView.window?.screen.scale ?? UIScreen.main.scale
+        let pixelWidth = Int32(max(1, (glView.bounds.width * scale).rounded()))
+        let pixelHeight = Int32(max(1, (glView.bounds.height * scale).rounded()))
         gdx_teavm_ios_resize(pixelWidth, pixelHeight, Float(scale))
+    }
+
+    private func updateDrawableLayer(for view: MGLKView) {
+        let scale = view.window?.screen.scale ?? UIScreen.main.scale
+        view.contentScaleFactor = scale
+        view.layer.contentsScale = scale
+        view.glLayer.contentsScale = scale
+        view.glLayer.frame = view.bounds
+    }
+
+    private func drawablePixelSize(for view: MGLKView) -> (width: Int32, height: Int32) {
+        let scale = view.window?.screen.scale ?? UIScreen.main.scale
+        let width = Int32(max(1, (view.bounds.width * scale).rounded()))
+        let height = Int32(max(1, (view.bounds.height * scale).rounded()))
+        return (width, height)
     }
 
     @objc private func renderFrame() {
         glView.display()
     }
 
-    func glkView(_ view: GLKView, drawIn rect: CGRect) {
-        EAGLContext.setCurrent(glContext)
+    func mglkView(_ view: MGLKView, drawIn rect: CGRect) {
+        MGLContext.setCurrent(glContext, for: view.glLayer)
+        updateDrawableLayer(for: view)
+        view.bindDrawable()
         resizeTeaVM()
-        gdx_teavm_ios_set_viewport(Int32(view.drawableWidth), Int32(view.drawableHeight))
+        let pixelSize = drawablePixelSize(for: view)
+        gdx_teavm_ios_set_viewport(pixelSize.width, pixelSize.height)
         gdx_teavm_ios_render()
         updateStatusLabel()
     }

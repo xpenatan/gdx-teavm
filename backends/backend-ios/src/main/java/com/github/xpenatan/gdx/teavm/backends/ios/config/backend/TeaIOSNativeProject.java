@@ -12,16 +12,18 @@ public class TeaIOSNativeProject extends TeaNativeProject {
         super(classLoader, buildRoot, generatedSources);
     }
 
-    public void write(String projectName) throws IOException {
+    public void write(String projectName, File xcodeProjectDir) throws IOException {
         ensureDirectory(buildRoot, "iOS output root");
         ensureDirectory(generatedSources, "iOS generated sources");
 
         copyResource("app_include.c", new File(generatedSources, "app_include.c"));
+        copyResource("fiber.c", new File(generatedSources, "fiber.c"));
+        copyResource("file.c", new File(generatedSources, "file.c"));
+        copyResource("uchar.h", new File(generatedSources, "uchar.h"));
         copyResource("ios_bridge.c", new File(generatedSources, "ios_bridge.c"));
         copyResource("ios_bridge.h", new File(generatedSources, "ios_bridge.h"));
         writeCMakeLists(projectName);
-        writeXcodeProject();
-        writeMetadata(projectName);
+        writeMetadata(projectName, xcodeProjectDir);
     }
 
     private void writeCMakeLists(String projectName) throws IOException {
@@ -29,25 +31,12 @@ public class TeaIOSNativeProject extends TeaNativeProject {
                 Map.of("${PROJECT_NAME}", projectName), false);
     }
 
-    private void writeMetadata(String projectName) throws IOException {
+    private void writeMetadata(String projectName, File xcodeProjectDir) throws IOException {
         String content = "library.name=" + projectName + System.lineSeparator()
                 + "cmake.path=" + new File(buildRoot, "CMakeLists.txt").getAbsolutePath().replace('\\', '/') + System.lineSeparator()
                 + "generated.sources=" + generatedSources.getAbsolutePath().replace('\\', '/') + System.lineSeparator()
                 + "bridge.header=" + new File(generatedSources, "ios_bridge.h").getAbsolutePath().replace('\\', '/') + System.lineSeparator()
-                + "xcode.project=" + new File(buildRoot, "xcode/GdxTeaVMIOSSpike.xcodeproj").getAbsolutePath().replace('\\', '/') + System.lineSeparator();
+                + "xcode.project.dir=" + xcodeProjectDir.getAbsolutePath().replace('\\', '/') + System.lineSeparator();
         Files.writeString(new File(buildRoot, "metadata.properties").toPath(), content);
-    }
-
-    private void writeXcodeProject() throws IOException {
-        File xcodeRoot = new File(buildRoot, "xcode");
-        copyResource("templates/ios/xcode/GdxTeaVMIOSSpike.xcodeproj/project.pbxproj",
-                new File(xcodeRoot, "GdxTeaVMIOSSpike.xcodeproj/project.pbxproj"));
-        copyResource("templates/ios/xcode/Sources/GdxTeaVMIOSSpikeApp.swift",
-                new File(xcodeRoot, "Sources/GdxTeaVMIOSSpikeApp.swift"));
-        copyResource("templates/ios/xcode/Sources/TeaVMViewController.swift",
-                new File(xcodeRoot, "Sources/TeaVMViewController.swift"));
-        copyResource("templates/ios/xcode/Sources/GdxTeaVMIOSSpike-Bridging-Header.h",
-                new File(xcodeRoot, "Sources/GdxTeaVMIOSSpike-Bridging-Header.h"));
-        copyResource("templates/ios/xcode/README.md", new File(xcodeRoot, "README.md"));
     }
 }

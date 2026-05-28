@@ -6,7 +6,17 @@ import java.io.File;
 
 public final class IOSFiles implements Files {
     static public final String externalPath = System.getProperty("user.home") + File.separator;
-    static public final String localPath = new File("").getAbsolutePath() + File.separator;
+    static public String localPath = normalizePath(new File("").getAbsolutePath());
+
+    public static void setLocalPath(String path) {
+        if(path != null && !path.isEmpty()) {
+            localPath = normalizePath(path);
+        }
+    }
+
+    private static String normalizePath(String path) {
+        return path.endsWith(File.separator) ? path : path + File.separator;
+    }
 
     @Override
     public FileHandle getFileHandle(String fileName, FileType type) {

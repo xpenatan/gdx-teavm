@@ -239,6 +239,26 @@ gdx2d_pixmap* gdx2d_load(const unsigned char *buffer, uint32_t len) {
     return pixmap;
 }
 
+gdx2d_pixmap* gdx2d_load_teavm_bytes(const int32_t *buffer, uint32_t offset, uint32_t len) {
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    unsigned char* compact = (unsigned char*)malloc(len);
+    if (compact == NULL) {
+        return NULL;
+    }
+
+    uint32_t i;
+    for (i = 0; i < len; i++) {
+        compact[i] = (unsigned char)buffer[offset + i];
+    }
+
+    gdx2d_pixmap* pixmap = gdx2d_load(compact, len);
+    free(compact);
+    return pixmap;
+}
+
 uint32_t gdx2d_bytes_per_pixel(uint32_t format) {
     switch(format) {
         case GDX2D_FORMAT_ALPHA:

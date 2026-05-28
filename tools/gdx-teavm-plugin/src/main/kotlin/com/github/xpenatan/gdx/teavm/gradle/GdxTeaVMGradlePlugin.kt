@@ -666,7 +666,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             registerAndroidTasks(project)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
-            registerIosTasks(project)
+            registerIosTasks(project, extension)
         }
     }
 
@@ -754,11 +754,75 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun registerIosTasks(project: Project) {
-        project.tasks.register("gdx_teavm_ios_generate") {
+    private fun registerIosTasks(project: Project, extension: GdxTeaVMExtension) {
+        val iosGenerate = project.tasks.register("gdx_teavm_ios_generate") {
             group = TASK_GROUP
-            description = "Generate the gdx-teavm iOS native C payload."
+            description = "Generate the gdx-teavm iOS native C/assets."
             dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+        val iosPrepareAngle = project.tasks.register<GdxTeaVMIosPrepareAngleTask>("gdx_teavm_ios_prepare_angle") {
+            group = TASK_GROUP
+            description = "Download and extract the MetalANGLEKit frameworks used by the iOS ANGLE graphics API."
+            frameworksDir.convention(extension.ios.xcodeProjectDir.map { it.dir("Frameworks/ANGLE") })
+            onlyIf("ios.graphicsApi is angle") {
+                extension.normalizeIosGraphicsApi(extension.ios.graphicsApi.get()) == "angle"
+            }
+        }
+        val iosInitXcode = project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_init_xcode") {
+            group = TASK_GROUP
+            description = "Create the gdx-teavm iOS Xcode project if missing, preserving an existing project."
+            dependsOn(iosPrepareAngle)
+            backendClasspath.from(targetClasspath(project, IOS_BACKEND))
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
+            releasePath.convention(extension.ios.releasePath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            overwrite.convention(extension.ios.overwriteXcodeProject)
+            graphicsApi.convention(extension.ios.graphicsApi)
+            outputs.upToDateWhen { false }
+        }
+        project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_regenerate_xcode") {
+            group = TASK_GROUP
+            description = "Regenerate the gdx-teavm iOS Xcode project from the template, overwriting manual project edits."
+            dependsOn(iosPrepareAngle)
+            backendClasspath.from(targetClasspath(project, IOS_BACKEND))
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
+            releasePath.convention(extension.ios.releasePath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            overwrite.convention(true)
+            graphicsApi.convention(extension.ios.graphicsApi)
+            outputs.upToDateWhen { false }
+        }
+        project.tasks.register<GdxTeaVMIosOpenXcodeTask>("gdx_teavm_ios_open_xcode") {
+            group = TASK_GROUP
+            description = "Create the gdx-teavm iOS Xcode project if missing and open it in Xcode."
+            dependsOn(iosInitXcode)
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+        }
+        val iosBuildSimulator = project.tasks.register<GdxTeaVMIosBuildSimulatorTask>("gdx_teavm_ios_build_simulator") {
+            group = TASK_GROUP
+            description = "Generate and build the gdx-teavm iOS app for the simulator."
+            dependsOn(iosGenerate, iosInitXcode)
+            buildRoot.convention(extension.ios.outputDir)
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            scheme.convention(extension.ios.xcodeScheme)
+            configuration.convention(extension.ios.xcodeConfiguration)
+        }
+        project.tasks.register<GdxTeaVMIosRunSimulatorTask>("gdx_teavm_ios_run_simulator") {
+            group = TASK_GROUP
+            description = "Generate, build, install, and launch the gdx-teavm iOS app on a simulator."
+            dependsOn(iosBuildSimulator)
+            buildRoot.convention(extension.ios.outputDir)
+            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            configuration.convention(extension.ios.xcodeConfiguration)
+            simulatorDevice.convention(extension.ios.simulatorDevice)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
+            openSimulator.convention(extension.ios.openSimulator)
         }
     }
 

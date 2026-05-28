@@ -10,7 +10,12 @@
 		1E2A00000000000000000001 /* GdxTeaVMIOSSpikeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */; };
 		1E2A00000000000000000002 /* TeaVMViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000012 /* TeaVMViewController.swift */; };
 		1E2A00000000000000000003 /* app_include.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000014 /* app_include.c */; };
+		1E2A00000000000000000004 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000015 /* LaunchScreen.storyboard */; };
+${IOS_GLES_BUILD_FILES}
+		1E2A00000000000000000006 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000017 /* assets */; };
+${IOS_ANGLE_BUILD_FILES}
 /* End PBXBuildFile section */
+${IOS_ANGLE_COPY_BUILD_PHASE}
 
 /* Begin PBXFileReference section */
 		1E2A00000000000000000010 /* GdxTeaVMIOSSpike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GdxTeaVMIOSSpike.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +23,10 @@
 		1E2A00000000000000000012 /* TeaVMViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaVMViewController.swift; sourceTree = "<group>"; };
 		1E2A00000000000000000013 /* GdxTeaVMIOSSpike-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GdxTeaVMIOSSpike-Bridging-Header.h"; sourceTree = "<group>"; };
 		1E2A00000000000000000014 /* app_include.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = app_include.c; path = "../c/src/app_include.c"; sourceTree = SOURCE_ROOT; };
+		1E2A00000000000000000015 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+${IOS_GLES_FILE_REFERENCES}
+		1E2A00000000000000000017 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../c/release/assets"; sourceTree = SOURCE_ROOT; };
+${IOS_ANGLE_FILE_REFERENCES}
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -25,6 +34,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+${IOS_GLES_FRAMEWORK_FILES}
+${IOS_ANGLE_FRAMEWORK_FILES}
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -36,6 +47,7 @@
 			children = (
 				1E2A00000000000000000031 /* Sources */,
 				1E2A00000000000000000032 /* Generated TeaVM C */,
+				1E2A00000000000000000034 /* Frameworks */,
 				1E2A00000000000000000033 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +58,7 @@
 				1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */,
 				1E2A00000000000000000012 /* TeaVMViewController.swift */,
 				1E2A00000000000000000013 /* GdxTeaVMIOSSpike-Bridging-Header.h */,
+				1E2A00000000000000000015 /* LaunchScreen.storyboard */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -66,6 +79,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1E2A00000000000000000034 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+${IOS_ANGLE_FRAMEWORK_GROUP_FILES}
+${IOS_GLES_FRAMEWORK_GROUP_FILES}
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -76,6 +98,7 @@
 				1E2A00000000000000000050 /* Sources */,
 				1E2A00000000000000000020 /* Frameworks */,
 				1E2A00000000000000000051 /* Resources */,
+${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 			);
 			buildRules = (
 			);
@@ -124,6 +147,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E2A00000000000000000004 /* LaunchScreen.storyboard in Resources */,
+				1E2A00000000000000000006 /* assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,7 +210,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -231,7 +256,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -242,14 +267,15 @@
 		};
 		1E2A00000000000000000072 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
+				buildSettings = {
+					CODE_SIGN_STYLE = Automatic;
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = "";
+${IOS_FRAMEWORK_SEARCH_PATHS}
+					GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../c/src",
 					"$(PROJECT_DIR)/../c/external_cpp/gdx",
 					"$(PROJECT_DIR)/../c/external_cpp/etc1",
 					"$(PROJECT_DIR)/../c/external_cpp/stb/include",
@@ -257,12 +283,8 @@
 					"$(PROJECT_DIR)/../c/external_cpp/teavm_optimizations/teavm",
 					"$(PROJECT_DIR)/../c/external_cpp/teavm_stats",
 				);
-				INFOPLIST_KEY_CFBundleDisplayName = GdxTeaVMIOSSpike;
-				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_FILE = Sources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -288,14 +310,15 @@
 		};
 		1E2A00000000000000000073 /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
+				buildSettings = {
+					CODE_SIGN_STYLE = Automatic;
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = "";
+${IOS_FRAMEWORK_SEARCH_PATHS}
+					GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../c/src",
 					"$(PROJECT_DIR)/../c/external_cpp/gdx",
 					"$(PROJECT_DIR)/../c/external_cpp/etc1",
 					"$(PROJECT_DIR)/../c/external_cpp/stb/include",
@@ -303,12 +326,8 @@
 					"$(PROJECT_DIR)/../c/external_cpp/teavm_optimizations/teavm",
 					"$(PROJECT_DIR)/../c/external_cpp/teavm_stats",
 				);
-				INFOPLIST_KEY_CFBundleDisplayName = GdxTeaVMIOSSpike;
-				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_FILE = Sources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

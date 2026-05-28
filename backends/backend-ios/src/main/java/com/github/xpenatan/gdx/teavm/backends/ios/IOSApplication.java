@@ -18,11 +18,14 @@ import com.github.xpenatan.gdx.teavm.backends.shared.SharedApplicationLogger;
 import com.github.xpenatan.gdx.teavm.backends.shared.mock.SharedClipboard;
 import com.github.xpenatan.gdx.teavm.backends.shared.mock.TeaMemoryPreferences;
 import org.teavm.interop.Export;
+import org.teavm.interop.Import;
 import org.teavm.runtime.Fiber;
 
 public class IOSApplication implements Application {
     private static IOSApplication current;
     private static boolean preserveCallbackExports;
+    private static int statusCode;
+    private static int statusStage;
 
     private final ApplicationListener listener;
     private final IOSGraphics graphics;
@@ -77,7 +80,7 @@ public class IOSApplication implements Application {
     @Export(name = "gdx_teavm_ios_render")
     public static void render() {
         IOSApplication app = current;
-        if(app != null) {
+        if(app != null && statusCode >= 0) {
             runOnTeaVMFiber(app::onRender);
         }
     }
@@ -122,8 +125,50 @@ public class IOSApplication implements Application {
         }
     }
 
+    @Export(name = "gdx_teavm_ios_status_code")
+    public static int statusCode() {
+        return statusCode;
+    }
+
+    public static void diagnosticStage(int stage) {
+        statusStage = stage;
+    }
+
     private static void runOnTeaVMFiber(Fiber.FiberRunner runner) {
-        Fiber.start(runner, true);
+        Fiber.start(() -> {
+            try {
+                runner.run();
+            }
+            catch(Throwable throwable) {
+                int stage = statusStage == 0 ? 1 : statusStage;
+                statusCode = -(stage * 100 + exceptionCode(throwable));
+                IOSApplication app = current;
+                if(app != null) {
+                    app.paused = true;
+                }
+                iosLog(throwable.toString());
+                throwable.printStackTrace();
+            }
+        }, true);
+    }
+
+    @Import(name = "gdx_teavm_ios_log")
+    private static native void iosLog(String message);
+
+    private static int exceptionCode(Throwable throwable) {
+        if(throwable instanceof NullPointerException) {
+            return 1;
+        }
+        if(throwable instanceof IllegalStateException) {
+            return 2;
+        }
+        if(throwable instanceof IllegalArgumentException) {
+            return 3;
+        }
+        if(throwable instanceof com.badlogic.gdx.utils.GdxRuntimeException) {
+            return 4;
+        }
+        return 99;
     }
 
     private static void preserveCallbackExports() {
@@ -135,6 +180,7 @@ public class IOSApplication implements Application {
             dispose();
             touch(0, 0, 0, 0, 0);
             key(0, 0);
+            statusCode();
         }
     }
 
@@ -150,13 +196,20 @@ public class IOSApplication implements Application {
             return;
         }
         loopRunnables();
+        graphics.initiateGL();
         graphics.update();
         if(!created) {
             created = true;
+            statusStage = 10;
             listener.create();
+            statusCode = 1;
+            statusStage = 11;
             listener.resize(graphics.getWidth(), graphics.getHeight());
         }
+        statusStage = 20;
         listener.render();
+        statusCode = 2;
+        statusStage = 0;
         input.endFrame();
     }
 

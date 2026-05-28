@@ -10,6 +10,8 @@ dependencies {
 }
 
 gdxTeaVM {
+    assets.from(file("../assets"))
+
     ios {
         mainClass.set("TestIOSLauncher")
         optimization.set(OptimizationLevel.NONE)

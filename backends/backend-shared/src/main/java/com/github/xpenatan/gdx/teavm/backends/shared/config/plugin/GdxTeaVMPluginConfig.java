@@ -36,6 +36,7 @@ public class GdxTeaVMPluginConfig {
     public static final String NATIVE_CONSOLE_LOG = "gdx.teavm.native.consoleLog";
     public static final String PSP_DEBUG_MEMORY = "gdx.teavm.psp.debugMemory";
     public static final String PSP_AUTO_EXECUTE_BUILD = "gdx.teavm.psp.autoExecuteBuild";
+    public static final String IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir";
 
     public final boolean webappEnabled;
     public final String entryPointName;
@@ -64,6 +65,7 @@ public class GdxTeaVMPluginConfig {
     public final boolean nativeConsoleLog;
     public final boolean pspDebugMemory;
     public final boolean pspAutoExecuteBuild;
+    public final String iosXcodeProjectDir;
 
     private GdxTeaVMPluginConfig(Properties properties) {
         webappEnabled = getBoolean(properties, WEBAPP_ENABLED, false);
@@ -93,6 +95,7 @@ public class GdxTeaVMPluginConfig {
         nativeConsoleLog = getBoolean(properties, NATIVE_CONSOLE_LOG, false);
         pspDebugMemory = getBoolean(properties, PSP_DEBUG_MEMORY, false);
         pspAutoExecuteBuild = getBoolean(properties, PSP_AUTO_EXECUTE_BUILD, false);
+        iosXcodeProjectDir = getString(properties, IOS_XCODE_PROJECT_DIR, "");
     }
 
     public static GdxTeaVMPluginConfig from(Properties properties) {

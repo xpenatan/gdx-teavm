@@ -93,7 +93,7 @@ TEAVM_SPRITEBATCH_INLINE cls_cbggg_Sprite* teavm_spritebatch_sprite_at(TeaVM_Arr
 TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_append_sprite(void* batch_obj, cls_cbggg_SpriteBatch* batch,
         cls_cbggg_Sprite* sprite, TeaVM_Array* batch_vertices_array, int32_t* current_idx_ptr,
         int32_t texture_width, int32_t texture_height) {
-    void* texture = sprite->parent.fld_texture;
+    void* texture = TEAVM_METHOD((void*)sprite, cbggg_Sprite_VT, virt_getTexture)((void*)sprite);
     int32_t current_idx = *current_idx_ptr;
 
     if (texture != batch->fld_lastTexture) {
