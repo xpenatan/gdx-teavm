@@ -136,12 +136,12 @@ fun Project.configureLibraryPublishing() {
         project(":backends:backend-web"),
         project(":backends:backend-glfw"),
         project(":backends:backend-psp"),
-        project(":backends:backend-android"),
         project(":backends:backend-ios"),
         project(":extensions:web:gdx-controllers-web"),
         project(":extensions:web:gdx-freetype-web"),
         project(":extensions:asset-loader")
     )
+    findProject(":backends:backend-android")?.let(libProjects::add)
 
     configure(libProjects) {
         apply(plugin = "signing")

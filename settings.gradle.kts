@@ -15,12 +15,38 @@ pluginManagement {
     }
 }
 
+val localPropertiesFile = File(settingsDir, "local.properties")
+val localProperties = Properties()
+if(localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+fun isAndroidSdkDir(path: String?): Boolean {
+    if(path.isNullOrBlank()) {
+        return false
+    }
+    val sdkDir = File(path)
+    return sdkDir.isDirectory &&
+        File(sdkDir, "platforms").isDirectory &&
+        File(sdkDir, "platform-tools").isDirectory
+}
+
+val hasAndroidSdk = isAndroidSdkDir(System.getenv("ANDROID_HOME")) ||
+    isAndroidSdkDir(System.getenv("ANDROID_SDK_ROOT")) ||
+    isAndroidSdkDir(localProperties.getProperty("sdk.dir"))
+
 include(":backends:backend-shared")
 include(":backends:backend-web")
 include(":backends:backend-glfw")
 include(":backends:backend-psp")
-include(":backends:backend-android")
 include(":backends:backend-ios")
+
+if(hasAndroidSdk) {
+    include(":backends:backend-android")
+}
+else {
+    logger.lifecycle("Android SDK not found. Skipping Android modules. Set ANDROID_HOME, ANDROID_SDK_ROOT, or local.properties sdk.dir to enable them.")
+}
 
 include(":extensions:asset-loader")
 include(":extensions:web:gdx-controllers-web")
@@ -34,11 +60,14 @@ include(":examples:basic:core")
 include(":examples:basic:lwjgl3")
 include(":examples:basic:graalvm")
 include(":examples:basic:plugin")
-include(":examples:basic:android")
 include(":examples:basic:ios")
 include(":examples:basic:web")
 include(":examples:basic:glfw")
 include(":examples:basic:psp")
+
+if(hasAndroidSdk) {
+    include(":examples:basic:android")
+}
 
 include(":benchmark")
 include(":benchmark:core")
