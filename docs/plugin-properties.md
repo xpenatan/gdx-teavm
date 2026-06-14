@@ -241,7 +241,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:1.14.1")
+    implementation("com.badlogicgames.gdx:gdx:1.14.2")
     implementation(project(":core"))
 }
 

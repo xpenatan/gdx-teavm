@@ -15,7 +15,7 @@ The project provides two build styles:
 
 | gdx-teavm | libGDX | TeaVM  |
 |:---------:|:------:|:------:|
-| -SNAPSHOT | 1.14.1 | 0.15.0-dev-6 |
+| -SNAPSHOT | 1.14.2 | 0.15.0-dev-6 |
 | 1.5.5 | 1.14.0 | 0.14.0 |
 | 1.5.4 | 1.14.0 | 0.13.1 |
 
@@ -77,7 +77,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:1.14.1")
+    implementation("com.badlogicgames.gdx:gdx:1.14.2")
     implementation(project(":core"))
 }
 
