@@ -4,7 +4,7 @@
 [![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-web)](https://central.sonatype.com/namespace/com.github.xpenatan.gdx-teavm)
 [![Snapshot](https://img.shields.io/badge/snapshot--SNAPSHOT-red)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/com/github/xpenatan/gdx-teavm/)
 
-`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, native C projects for GLFW and PSP, and Android native app builds through an Android application module.
+`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, native C projects for GLFW, and Android native app builds through an Android application module. PSP and iOS support are kept as local experimental paths.
 
 The project provides two build styles:
 
@@ -15,7 +15,7 @@ The project provides two build styles:
 
 | gdx-teavm | libGDX | TeaVM  |
 |:---------:|:------:|:------:|
-| -SNAPSHOT | 1.14.1 | 0.14.1 |
+| -SNAPSHOT | 1.14.1 | 0.15.0-dev-6 |
 | 1.5.5 | 1.14.0 | 0.14.0 |
 | 1.5.4 | 1.14.0 | 0.13.1 |
 
@@ -26,7 +26,8 @@ The project provides two build styles:
 | `backend-shared` | Shared compiler, asset, resource, and reflection support |
 | `backend-web` | libGDX web runtime plus JavaScript and Wasm build support |
 | `backend-glfw` | TeaVM C output for desktop GLFW native builds |
-| `backend-psp` | TeaVM C output for PSP builds |
+| `backend-psp` | Experimental local-only TeaVM C output for PSP builds |
+| `backend-ios` | Experimental local-only TeaVM C output and runtime support for iOS builds |
 | `backend-android` | TeaVM C output and runtime support for Android app modules |
 | `gdx-freetype-web` | FreeType support for TeaVM web builds |
 | `gdx-controllers-web` | Controller support for TeaVM web builds |
@@ -35,7 +36,7 @@ The project provides two build styles:
 ## Documentation
 
 - [Usage guide](docs/usage.md): setup, plugin examples, builder examples, tasks, and publishing notes.
-- [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared, web, JS, Wasm, GLFW, and PSP settings.
+- [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared, web, JS, Wasm, GLFW, and Android settings.
 - [Backend architecture](docs/backend-architecture.md): how the builder, Gradle plugin, TeaVM plugins, assets, and reflection work together.
 - [GLFW native build guide](examples/basic/glfw/README.md): native toolchain requirements and manual CMake workflow.
 
@@ -127,7 +128,6 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 ./gradlew :examples:basic:plugin:gdx_teavm_web_js_run
 ./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:plugin:gdx_teavm_psp_generate
 
 # Android workflow
 ./gradlew :examples:basic:android:assembleDebug

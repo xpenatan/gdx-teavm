@@ -3,6 +3,7 @@ package com.github.xpenatan.gdx.teavm.backends.glfw.config.plugins;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.ClassResourceTransformer;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.SmartArrayFastPathTransformer;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.SpriteBatchDrawTransformer;
 import java.net.URL;
@@ -20,6 +21,7 @@ public class GLFWPlugin implements TeaVMPlugin {
         }
         TeaVMCHost cHost = host.getExtension(TeaVMCHost.class);
         if(cHost != null) {
+            host.add(new ClassResourceTransformer());
             host.add(new SpriteBatchDrawTransformer());
             host.add(new SmartArrayFastPathTransformer());
             if(config.nativeOutputRoot.isBlank()) {

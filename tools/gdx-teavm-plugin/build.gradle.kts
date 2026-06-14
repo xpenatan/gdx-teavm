@@ -10,8 +10,8 @@ extra["gdxTeaVMPublishTarget"] = GdxTeaVMPublishTarget.GRADLE_PLUGIN
 apply(from = "../../buildSrc/src/main/kotlin/publish.gradle.kts")
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -53,7 +53,7 @@ kotlin {
 
 tasks.withType<KotlinCompile>().configureEach {
     dependsOn(generateGdxTeaVMPluginInfo)
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
 }
 
 tasks.named("sourcesJar").configure {

@@ -2,7 +2,7 @@
 
 This page lists the properties available in the `gdxTeaVM` Gradle extension.
 
-The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring `psp {}` adds `backend-psp`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
+The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring `android {}` adds `backend-android`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
 
 ## Minimal Shape
 
@@ -59,12 +59,10 @@ gdxTeaVM {
 | `js { ... }` | `backend-web` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
 | `wasm { ... }` | `backend-web` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
 | `glfw { ... }` | `backend-glfw` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
-| `psp { ... }` | `backend-psp` | `gdx_teavm_psp_generate`, `gdx_teavm_psp_build` |
-| `ios { ... }` | `backend-ios` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator`, `gdx_teavm_ios_regenerate_xcode` |
 
 ## Common TeaVM Target Properties
 
-The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. The native `glfw {}` and `psp {}` blocks expose the matching TeaVM C settings and apply only the selected backend to TeaVM's C task.
+The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. Native target blocks expose the matching TeaVM C settings and apply only the selected backend to TeaVM's C task.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -85,8 +83,6 @@ Target-specific default output:
 | JS | `build/dist/web` | `webapp` | `app.js` |
 | Wasm | `build/dist/wasm` | `webapp` | `app.wasm` |
 | GLFW | `build/dist/glfw` | `c/src` | `app` |
-| PSP | `build/dist/psp` | `c/src` | `app` |
-| iOS | `build/dist/ios` | `c/src` | `app` |
 
 ## Web Targets
 
@@ -179,11 +175,11 @@ gdxTeaVM {
 
 ## Native Targets
 
-Native targets use TeaVM C output. Declare `glfw {}`, `psp {}`, or `ios {}` to create backend tasks and configure that target's TeaVM C settings. Native targets normally need their own launcher classes because each starts a different backend application type.
+Native targets use TeaVM C output. Declare `glfw {}` to create backend tasks and configure that target's TeaVM C settings. Native targets normally need their own launcher classes because each starts a different backend application type.
 
 ### Native Target Properties
 
-These properties exist in `glfw {}` and `psp {}`.
+These properties exist in native target blocks.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -235,70 +231,6 @@ Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 | `gdx_teavm_glfw_build` | `glfw.buildType` |
 | `gdx_teavm_glfw_run` | `glfw.buildType` |
 
-### PSP Properties
-
-| Property | Type | Default | Purpose |
-| --- | --- | --- | --- |
-| `debugMemory` | `Property<Boolean>` | `false` | Enables PSP memory debug support in generated native glue code. |
-| `autoExecuteBuild` | `Property<Boolean>` | `false` | Lets the backend execute the generated PSP build script after generating sources. |
-
-Example:
-
-```kotlin
-gdxTeaVM {
-    psp {
-        mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        minHeapSizeMb.set(2)
-        maxHeapSizeMb.set(8)
-        debugMemory.set(true)
-    }
-}
-```
-
-### iOS Properties
-
-The iOS Xcode project can be initialized separately from TeaVM C generation. This lets a project create and commit Xcode files once, preserve signing, teams, capabilities, icons, and other manual project settings, then regenerate only TeaVM C/assets during day-to-day Java changes.
-
-| Property | Type | Default | Purpose |
-| --- | --- | --- | --- |
-| `xcodeProjectName` | `Property<String>` | `GdxTeaVMIOSSpike` | Generated Xcode project and app target name. |
-| `xcodeProjectDir` | `DirectoryProperty` | `[outputDir]/xcode` | Directory containing the `.xcodeproj` and Swift sources. Set this outside `build` when the Xcode project should be committed. |
-| `graphicsApi` | `Property<String>` | `angle` | Graphics implementation used by the generated Xcode project. Use `angle` for MetalANGLEKit-backed GLES over Metal, or `gles` for Apple's native OpenGL ES / GLKit path. Can also be set with Gradle property `gdx.teavm.ios.graphicsApi`. |
-| `xcodeScheme` | `Property<String>` | `GdxTeaVMIOSSpike` | Xcode scheme used by simulator build tasks. |
-| `xcodeConfiguration` | `Property<String>` | `Debug` | Xcode build configuration used by simulator build tasks. |
-| `simulatorDevice` | `Property<String>` | `iPhone 12 Pro` | Simulator name or UDID used by `gdx_teavm_ios_run_simulator`. |
-| `bundleIdentifier` | `Property<String>` | `com.github.xpenatan.gdxteavm.ios.spike` | Bundle identifier used by simulator install/launch. |
-| `xcodeDerivedDataPath` | `DirectoryProperty` | `build/xcode-derived/ios` | Derived data directory used by Xcode build tasks. |
-| `openSimulator` | `Property<Boolean>` | `true` | Opens Simulator.app before install/launch when true. |
-| `overwriteXcodeProject` | `Property<Boolean>` | `false` | Rewrites the generated Xcode project during Xcode initialization. Keep false for normal development. |
-
-Example:
-
-```kotlin
-gdxTeaVM {
-    ios {
-        mainClass.set("com.example.game.teavm.IosLauncher")
-        graphicsApi.set("angle")
-        xcodeProjectDir.set(layout.projectDirectory.dir("xcode"))
-        bundleIdentifier.set("com.example.game")
-        simulatorDevice.set("iPhone 15")
-    }
-}
-```
-
-iOS workflow:
-
-| Task | Purpose |
-| --- | --- |
-| `gdx_teavm_ios_prepare_angle` | Downloads and extracts the pinned MetalANGLEKit framework bundle when `ios.graphicsApi` is `angle`. |
-| `gdx_teavm_ios_init_xcode` | Creates the Xcode project if missing and preserves an existing project. Does not run TeaVM C generation. |
-| `gdx_teavm_ios_generate` | Regenerates TeaVM C/assets only. |
-| `gdx_teavm_ios_open_xcode` | Ensures the Xcode project exists, then opens it. |
-| `gdx_teavm_ios_build_simulator` | Ensures the Xcode project exists, generates C/assets, then builds the project for the simulator. |
-| `gdx_teavm_ios_run_simulator` | Generates C/assets, builds, installs, and launches on the simulator. |
-| `gdx_teavm_ios_regenerate_xcode` | Rewrites the Xcode project from the template. This can overwrite manual Xcode edits. |
-
 ## Complete Multi-Target Example
 
 ```kotlin
@@ -340,13 +272,5 @@ gdxTeaVM {
         consoleLog.set(false)
     }
 
-    psp {
-        mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        minHeapSizeMb.set(2)
-        maxHeapSizeMb.set(8)
-        obfuscated.set(false)
-        debugMemory.set(false)
-    }
 }
 ```

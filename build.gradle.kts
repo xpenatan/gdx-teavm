@@ -12,8 +12,8 @@ subprojects {
             plugin("java")
         }
 
-        java.sourceCompatibility = JavaVersion.VERSION_11
-        java.targetCompatibility = JavaVersion.VERSION_11
+        java.sourceCompatibility = JavaVersion.VERSION_17
+        java.targetCompatibility = JavaVersion.VERSION_17
     }
 
     repositories {

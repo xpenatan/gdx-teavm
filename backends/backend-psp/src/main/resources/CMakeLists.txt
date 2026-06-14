@@ -11,6 +11,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
 
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
 
+set(TEAVM_PSP_FILE_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/psp/teavm_psp_file.c")
+if(EXISTS "${TEAVM_PSP_FILE_SOURCE}")
+  list(APPEND SOURCES "${TEAVM_PSP_FILE_SOURCE}")
+endif()
+
 # Collect external C sources from gdx
 #file(GLOB_RECURSE EXTERNAL_SOURCES_0 "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
 #list(APPEND SOURCES ${EXTERNAL_SOURCES_0})

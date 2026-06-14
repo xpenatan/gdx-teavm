@@ -12,7 +12,7 @@ The repository keeps dependency versions in `buildSrc/src/main/kotlin/LibExt.kt`
 | Component | Current version |
 | --- | --- |
 | libGDX | `1.14.1` |
-| TeaVM | `0.14.0` |
+| TeaVM | `0.15.0-dev-6` |
 | gdx-teavm snapshot | `-SNAPSHOT` |
 
 ## Repositories
@@ -85,9 +85,9 @@ gdxTeaVM {
 
 ### Automatic Backend Dependencies
 
-The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, and `psp {}` adds `backend-psp`.
+The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, and `android {}` adds `backend-android`.
 
-Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication`, `GLFWApplication`, or `PSPApplication` without manually declaring the backend artifacts.
+Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication` or `GLFWApplication` without manually declaring the backend artifacts.
 
 Android is different because the Android Gradle Plugin owns APK packaging, install tasks, build types, signing, manifests, resources, and native CMake execution. Apply `gdx-teavm` to a real Android application module and declare an `android {}` target there; the plugin generates the TeaVM C/CMake payload, while Android Gradle tasks build and install the APK.
 
@@ -147,7 +147,7 @@ The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server i
 
 ## Native Targets
 
-Declare `glfw {}` or `psp {}` for native backend tasks. Each native target block contains its own TeaVM C settings, so GLFW and PSP can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
+Declare `glfw {}` for desktop native backend tasks. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
 
 ```kotlin
 import org.teavm.gradle.api.OptimizationLevel
@@ -164,13 +164,6 @@ gdxTeaVM {
         consoleLog.set(false)
     }
 
-    psp {
-        mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        minHeapSizeMb.set(2)
-        maxHeapSizeMb.set(8)
-        debugMemory.set(false)
-    }
 }
 ```
 
@@ -182,19 +175,11 @@ Generated GLFW tasks:
 | `gdx_teavm_glfw_build` | Generate and build using `glfw.buildType` |
 | `gdx_teavm_glfw_run` | Generate, build, and run using `glfw.buildType` |
 
-Generated PSP tasks:
-
-| Task | Description |
-| --- | --- |
-| `gdx_teavm_psp_generate` | Generate the PSP C project |
-| `gdx_teavm_psp_build` | Generate and run the PSP build script |
-
 Default output:
 
 | Target | Output |
 | --- | --- |
 | GLFW | `build/dist/glfw` |
-| PSP | `build/dist/psp` |
 
 ## Android Target
 
@@ -479,12 +464,27 @@ public class BuildGlfw {
 
 ### PSP Builder
 
+PSP is experimental and local-only. It is not exposed by the Gradle plugin and is not part of the published artifact set. Inside this repository, use the local backend project directly.
+
 ```kotlin
 dependencies {
-    implementation("com.github.xpenatan.gdx-teavm:backend-psp:-SNAPSHOT")
+    implementation(project(":backends:backend-psp"))
     implementation(project(":core"))
 }
 ```
+
+### iOS Local Backend
+
+iOS is experimental and local-only. It is not exposed by the Gradle plugin and is not part of the published artifact set. Inside this repository, the basic iOS example compiles against the local backend project directly.
+
+```kotlin
+dependencies {
+    implementation(project(":backends:backend-ios"))
+    implementation(project(":core"))
+}
+```
+
+The iOS runtime and Xcode template resources remain under `backends/backend-ios` for local experimentation.
 
 ```java
 import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
@@ -574,8 +574,6 @@ Plugin examples:
 ./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_build
-./gradlew :examples:basic:plugin:gdx_teavm_psp_generate
-./gradlew :examples:basic:plugin:gdx_teavm_psp_build
 ```
 
 Android example:

@@ -57,7 +57,7 @@ The plugin:
 6. Hides raw TeaVM tasks from the default task groups.
 7. Registers user-facing `gdx_teavm_*` tasks.
 
-Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside `glfw {}` and `psp {}` because those logical targets can have different launchers and native options.
+Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options.
 
 ## Gradle Plugin Tasks
 
@@ -66,7 +66,6 @@ Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx
 | `js {}` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
 | `wasm {}` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
 | `glfw {}` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
-| `psp {}` | `gdx_teavm_psp_generate`, `gdx_teavm_psp_build` |
 
 The web run tasks use `GdxTeaVMRunWebTask`, which loads `backend-web`'s `JettyServer` by reflection from the target runtime classpath. This keeps server behavior shared with `WebBackend`.
 
@@ -78,7 +77,8 @@ Backend modules include `TeaVMPlugin` implementations registered under `META-INF
 | --- | --- | --- |
 | `backend-web` | `WebPlugin` | `TeaVMJavaScriptHost` or `TeaVMWasmGCHost` exists |
 | `backend-glfw` | `GLFWPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=glfw` |
-| `backend-psp` | `PSPPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=psp` |
+| `backend-psp` | `PSPPlugin` | Experimental local-only manual builder path |
+| `backend-ios` | `IOSPlugin` | Experimental local-only backend path |
 
 The Gradle plugin writes the properties consumed by these runtime plugins. The runtime plugins parse those properties with `GdxTeaVMPluginConfig`.
 
@@ -95,7 +95,7 @@ For JavaScript and Wasm, the same wrapper path is used so asset copying and web 
 
 ## Native Runtime Plugins
 
-`GLFWPlugin` and `PSPPlugin` run only during TeaVM C generation and only when the selected native backend matches their name.
+`GLFWPlugin` runs during plugin TeaVM C generation when the selected native backend is GLFW. `PSPPlugin` and `IOSPlugin` remain available only for experimental local backend paths.
 
 They install:
 
@@ -103,7 +103,7 @@ They install:
 - target-specific render/build listeners
 - native asset and external C/C++ resource copying
 
-The native backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)`. Running GLFW and PSP tasks in the same Gradle invocation is rejected because TeaVM has one C task. The selected `glfw {}` or `psp {}` block is applied to TeaVM's C configuration for that Gradle invocation.
+The native backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)`. Running multiple native plugin targets in the same Gradle invocation is rejected because TeaVM has one C task. The selected native block is applied to TeaVM's C configuration for that Gradle invocation.
 
 ## Assets
 
@@ -166,7 +166,7 @@ Plugin path:
 ```text
 gdxTeaVM.reflection(...)
 GdxTeaVMPluginConfig
-WebPlugin / GLFWPlugin / PSPPlugin
+WebPlugin / GLFWPlugin
 TeaReflectionSupplier
 ```
 
@@ -193,7 +193,6 @@ Plugin defaults:
 | JS | `build/dist/web` | `webapp` |
 | Wasm | `build/dist/wasm` | `webapp` |
 | GLFW | `build/dist/glfw` | `c/src`, `c/release`, build scripts |
-| PSP | `build/dist/psp` | `c/src`, PSP build scripts |
 
 Builder defaults depend on the `build(new File(...))` output directory and the concrete backend. For example, `WebBackend` defaults to a `webapp` folder and native backends default to `c/src` plus `c/release`.
 
@@ -202,6 +201,8 @@ Builder defaults depend on the `build(new File(...))` output directory and the c
 Publishing is centralized in `buildSrc/src/main/kotlin/publish.gradle.kts`.
 
 The root build publishes library modules. It also delegates plugin marker and plugin implementation publishing to the included plugin build under `tools/gdx-teavm-plugin`.
+
+The experimental PSP and iOS backends are local-only and are not part of the published library set.
 
 Key root tasks:
 
