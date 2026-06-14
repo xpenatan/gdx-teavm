@@ -12,7 +12,7 @@ The repository keeps dependency versions in `buildSrc/src/main/kotlin/LibExt.kt`
 | Component | Current version |
 | --- | --- |
 | libGDX | `1.14.2` |
-| TeaVM | `0.15.0-dev-6` |
+| TeaVM | `0.15.0` |
 | gdx-teavm snapshot | `-SNAPSHOT` |
 
 ## Repositories
