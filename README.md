@@ -50,9 +50,7 @@ repositories {
     maven("https://central.sonatype.com/repository/maven-snapshots/")
 
     // TeaVM artifacts may be needed while using TeaVM snapshots or non-central builds.
-    maven("http://teavm.org/maven/repository/") {
-        isAllowInsecureProtocol = true
-    }
+    maven("https://teavm.org/maven/repository/")
 }
 ```
 

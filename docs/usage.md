@@ -37,9 +37,7 @@ repositories {
 If Gradle cannot resolve TeaVM artifacts from Central, add the TeaVM repository:
 
 ```kotlin
-maven("http://teavm.org/maven/repository/") {
-    isAllowInsecureProtocol = true
-}
+maven("https://teavm.org/maven/repository/")
 ```
 
 For plugin resolution, put the repositories in `pluginManagement` in `settings.gradle.kts`:

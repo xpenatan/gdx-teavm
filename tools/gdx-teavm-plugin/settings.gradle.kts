@@ -4,8 +4,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url = uri("http://teavm.org/maven/repository/")
-            isAllowInsecureProtocol = true
+            url = uri("https://teavm.org/maven/repository/")
         }
     }
 }
@@ -17,8 +16,7 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url = uri("http://teavm.org/maven/repository/")
-            isAllowInsecureProtocol = true
+            url = uri("https://teavm.org/maven/repository/")
         }
     }
 }

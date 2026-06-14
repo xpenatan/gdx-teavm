@@ -24,8 +24,7 @@ subprojects {
         maven { url = uri("https://jitpack.io") }
 
         maven {
-            url = uri("http://teavm.org/maven/repository/")
-            isAllowInsecureProtocol = true
+            url = uri("https://teavm.org/maven/repository/")
         }
     }
 
