@@ -1,15 +1,30 @@
 # gdx-teavm iOS Spike
 
 This module is a local experiment for the iOS runtime classes in `backend-ios`.
-The iOS backend is not exposed by the Gradle plugin and is not part of the
-published artifact set.
+iOS plugin support is exposed as experimental WIP code. It can generate the TeaVM C/assets payload and create an Xcode project from the backend templates.
 
-Use the module as a compile check for the current launcher/runtime wiring:
+Generate the TeaVM C payload:
 
 ```bash
-./gradlew :examples:basic:ios:compileJava
+./gradlew :examples:basic:ios:gdx_teavm_ios_generate
 ```
 
-The Swift/Xcode template resources remain in
-`backends/backend-ios/src/main/resources/templates/ios/xcode` for local
-experimentation.
+Initialize the Xcode project:
+
+```bash
+./gradlew :examples:basic:ios:gdx_teavm_ios_init_xcode
+```
+
+Open the generated Xcode project:
+
+```bash
+./gradlew :examples:basic:ios:gdx_teavm_ios_open_xcode
+```
+
+Command-line simulator test on macOS:
+
+```bash
+./gradlew :examples:basic:ios:gdx_teavm_ios_run_simulator
+```
+
+Generated output is written under `build/dist/ios`. The default graphics API is `angle`, which downloads the pinned MetalANGLEKit framework bundle. Set `ios.graphicsApi` or Gradle property `gdx.teavm.ios.graphicsApi=gles` to use the older OpenGL ES / GLKit template.

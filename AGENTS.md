@@ -99,6 +99,7 @@
   - `wasm { ... }`
   - `glfw { ... }`
   - `psp { ... }`
+  - `ios { ... }`
 - Plugin-generated tasks use group `gdx-teavm`.
 - TeaVM's own low-level tasks still exist internally, but the plugin clears their task group so normal users are guided toward the `gdx_teavm_*` tasks.
 - The plugin forces TeaVM generation tasks to run each invocation so assets and generated web/native wrappers are refreshed.
@@ -106,6 +107,7 @@
   - web targets add `backend-web`
   - GLFW adds `backend-glfw`
   - PSP adds `backend-psp`
+  - iOS adds `backend-ios`
 - In the repository build, backend dependencies resolve to local projects. In a published build, they resolve from Maven using the generated plugin version in `GdxTeaVMPluginInfo`.
 
 ## Plugin Tasks
@@ -122,6 +124,14 @@
 - PSP native:
   - `gdx_teavm_psp_generate`
   - `gdx_teavm_psp_build`
+- iOS native:
+  - `gdx_teavm_ios_generate`
+  - `gdx_teavm_ios_prepare_angle`
+  - `gdx_teavm_ios_init_xcode`
+  - `gdx_teavm_ios_regenerate_xcode`
+  - `gdx_teavm_ios_open_xcode`
+  - `gdx_teavm_ios_build_simulator`
+  - `gdx_teavm_ios_run_simulator`
 
 ## Plugin Configuration Model
 - Shared plugin properties are defined in `GdxTeaVMExtension`.
@@ -132,15 +142,18 @@
   - `GdxTeaVMWasmExtension`
   - `GdxTeaVMGlfwExtension`
   - `GdxTeaVMPspExtension`
+  - `GdxTeaVMIosExtension`
 - Web-only settings such as `htmlTitle`, `htmlWidth`, `htmlHeight`, `entryPointName`, `mainClassArgs`, `logoPath`, `copyLoadingAsset`, `webappEnabled`, and `serverPort` belong in `js {}` or `wasm {}`, not in the root extension.
 - GLFW build mode is selected with `glfw.buildType` (`Debug` or `Release`); plugin tasks are not split by build type.
 - Web targets usually share the same launcher class.
 - GLFW and PSP usually need native-specific launcher classes because they start different backend application classes.
+- iOS is an experimental native plugin target with TeaVM C/assets generation plus WIP Xcode and simulator tasks.
 - Default output directories:
   - JS: `build/dist/web`
   - Wasm: `build/dist/wasm`
   - GLFW: `build/dist/glfw`
   - PSP: `build/dist/psp`
+  - iOS: `build/dist/ios`
 - Default generated app subdirectories:
   - Web targets: `webapp`
   - Native targets: `c/src`
@@ -155,8 +168,8 @@
   - `JavaObjectExporterDependency`
   - reflection support
   - `GdxWebTargetWrapper` when webapp generation is enabled
-- `GLFWPlugin` and `PSPPlugin` support TeaVM C output by checking `TeaVMCHost`.
-- Native plugins use `gdx.teavm.native.backend` to decide whether the current C generation is for GLFW or PSP.
+- `GLFWPlugin`, `PSPPlugin`, `AndroidPlugin`, and `IOSPlugin` support TeaVM C output by checking `TeaVMCHost`.
+- Native plugins use `gdx.teavm.native.backend` to decide which native backend is selected.
 - Plugin properties are transported through `TeaVMHost.getProperties()` and parsed by `GdxTeaVMPluginConfig`.
 
 ## Assets And Resources

@@ -77,8 +77,8 @@ Backend modules include `TeaVMPlugin` implementations registered under `META-INF
 | --- | --- | --- |
 | `backend-web` | `WebPlugin` | `TeaVMJavaScriptHost` or `TeaVMWasmGCHost` exists |
 | `backend-glfw` | `GLFWPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=glfw` |
-| `backend-psp` | `PSPPlugin` | Experimental local-only manual builder path |
-| `backend-ios` | `IOSPlugin` | Experimental local-only backend path |
+| `backend-psp` | `PSPPlugin` | Experimental TeaVM C output when `gdx.teavm.native.backend=psp` |
+| `backend-ios` | `IOSPlugin` | Experimental TeaVM C output when `gdx.teavm.native.backend=ios` |
 
 The Gradle plugin writes the properties consumed by these runtime plugins. The runtime plugins parse those properties with `GdxTeaVMPluginConfig`.
 
@@ -95,7 +95,7 @@ For JavaScript and Wasm, the same wrapper path is used so asset copying and web 
 
 ## Native Runtime Plugins
 
-`GLFWPlugin` runs during plugin TeaVM C generation when the selected native backend is GLFW. `PSPPlugin` and `IOSPlugin` remain available only for experimental local backend paths.
+`GLFWPlugin`, `PSPPlugin`, `AndroidPlugin`, and `IOSPlugin` run during TeaVM C generation when their native backend is selected.
 
 They install:
 
@@ -203,7 +203,7 @@ Publishing is centralized in `buildSrc/src/main/kotlin/publish.gradle.kts`.
 
 The root build publishes library modules. It also delegates plugin marker and plugin implementation publishing to the included plugin build under `tools/gdx-teavm-plugin`.
 
-The experimental PSP and iOS backends are local-only and are not part of the published library set.
+The experimental PSP and iOS backends are included in the library set so the plugin can resolve their backend artifacts, but their runtime/tooling surface remains WIP.
 
 Key root tasks:
 

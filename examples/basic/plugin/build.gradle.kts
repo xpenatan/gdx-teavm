@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":examples:basic:core"))
     implementation(project(":examples:basic:web"))
     implementation(project(":examples:basic:glfw"))
+    implementation(project(":examples:basic:psp"))
 }
 
 gdxTeaVM {
@@ -38,5 +39,14 @@ gdxTeaVM {
         maxHeapSizeMb.set(512)
         buildType.set("Debug")
         consoleLog.set(true)
+    }
+    psp {
+        mainClass.set("PSPLauncherTest")
+        optimization.set(OptimizationLevel.NONE)
+        debugInformation.set(true)
+        obfuscated.set(false)
+        minHeapSizeMb.set(2)
+        maxHeapSizeMb.set(8)
+        debugMemory.set(true)
     }
 }

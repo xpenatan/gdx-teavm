@@ -233,6 +233,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val unsupported = extension.isTargetDeclared(GdxTeaVMTarget.JS)
             || extension.isTargetDeclared(GdxTeaVMTarget.WASM)
             || extension.isTargetDeclared(GdxTeaVMTarget.GLFW)
+            || extension.isTargetDeclared(GdxTeaVMTarget.PSP)
+            || extension.isTargetDeclared(GdxTeaVMTarget.IOS)
         if(unsupported) {
             throw IllegalStateException("Android Gradle projects currently support only the gdxTeaVM android target")
         }
@@ -282,8 +284,14 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
             addBackendDependency(project, BACKEND_GLFW_MODULE)
         }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
+            addBackendDependency(project, BACKEND_PSP_MODULE)
+        }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             addBackendDependency(project, BACKEND_ANDROID_MODULE)
+        }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
+            addBackendDependency(project, BACKEND_IOS_MODULE)
         }
     }
 
@@ -654,8 +662,14 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
             registerGlfwTasks(project, extension)
         }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
+            registerPspTasks(project, extension)
+        }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             registerAndroidTasks(project)
+        }
+        if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
+            registerIosTasks(project, extension)
         }
     }
 
@@ -720,11 +734,98 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
+    private fun registerPspTasks(project: Project, extension: GdxTeaVMExtension) {
+        val pspGenerate = project.tasks.register("gdx_teavm_psp_generate") {
+            group = TASK_GROUP
+            description = "Generate the experimental gdx-teavm PSP native C project."
+            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+        project.tasks.register<GdxTeaVMNativeBuildTask>("gdx_teavm_psp_build") {
+            group = TASK_GROUP
+            description = "Generate and build the experimental PSP native project."
+            dependsOn(pspGenerate)
+            buildRoot.convention(extension.psp.outputDir)
+            scriptBaseName.set("build")
+        }
+    }
+
     private fun registerAndroidTasks(project: Project) {
         project.tasks.register("gdx_teavm_android_generate") {
             group = TASK_GROUP
             description = "Generate the gdx-teavm Android native C/CMake payload."
             dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+    }
+
+    private fun registerIosTasks(project: Project, extension: GdxTeaVMExtension) {
+        val iosGenerate = project.tasks.register("gdx_teavm_ios_generate") {
+            group = TASK_GROUP
+            description = "Generate the experimental gdx-teavm iOS native C/assets."
+            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+        }
+        val iosPrepareAngle = project.tasks.register<GdxTeaVMIosPrepareAngleTask>("gdx_teavm_ios_prepare_angle") {
+            group = TASK_GROUP
+            description = "Download and extract the MetalANGLEKit frameworks used by the iOS ANGLE graphics API."
+            frameworksDir.convention(extension.ios.xcodeProjectDir.map { it.dir("Frameworks/ANGLE") })
+            onlyIf("ios.graphicsApi is angle") {
+                extension.normalizeIosGraphicsApi(extension.ios.graphicsApi.get()) == "angle"
+            }
+        }
+        val iosInitXcode = project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_init_xcode") {
+            group = TASK_GROUP
+            description = "Create the experimental gdx-teavm iOS Xcode project if missing, preserving an existing project."
+            dependsOn(iosPrepareAngle)
+            backendClasspath.from(targetClasspath(project, IOS_BACKEND))
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
+            releasePath.convention(extension.ios.releasePath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            overwrite.convention(extension.ios.overwriteXcodeProject)
+            graphicsApi.convention(extension.ios.graphicsApi)
+            outputs.upToDateWhen { false }
+        }
+        project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_regenerate_xcode") {
+            group = TASK_GROUP
+            description = "Regenerate the experimental gdx-teavm iOS Xcode project from the template, overwriting manual project edits."
+            dependsOn(iosPrepareAngle)
+            backendClasspath.from(targetClasspath(project, IOS_BACKEND))
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
+            releasePath.convention(extension.ios.releasePath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            overwrite.convention(true)
+            graphicsApi.convention(extension.ios.graphicsApi)
+            outputs.upToDateWhen { false }
+        }
+        project.tasks.register<GdxTeaVMIosOpenXcodeTask>("gdx_teavm_ios_open_xcode") {
+            group = TASK_GROUP
+            description = "Create the experimental gdx-teavm iOS Xcode project if missing and open it in Xcode."
+            dependsOn(iosInitXcode)
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+        }
+        val iosBuildSimulator = project.tasks.register<GdxTeaVMIosBuildSimulatorTask>("gdx_teavm_ios_build_simulator") {
+            group = TASK_GROUP
+            description = "Generate and build the experimental gdx-teavm iOS app for the simulator."
+            dependsOn(iosGenerate, iosInitXcode)
+            buildRoot.convention(extension.ios.outputDir)
+            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
+            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            scheme.convention(extension.ios.xcodeScheme)
+            configuration.convention(extension.ios.xcodeConfiguration)
+        }
+        project.tasks.register<GdxTeaVMIosRunSimulatorTask>("gdx_teavm_ios_run_simulator") {
+            group = TASK_GROUP
+            description = "Generate, build, install, and launch the experimental gdx-teavm iOS app on a simulator."
+            dependsOn(iosBuildSimulator)
+            buildRoot.convention(extension.ios.outputDir)
+            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
+            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            configuration.convention(extension.ios.xcodeConfiguration)
+            simulatorDevice.convention(extension.ios.simulatorDevice)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
+            openSimulator.convention(extension.ios.openSimulator)
         }
     }
 
@@ -795,14 +896,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         return when {
             path.contains("/backends/$BACKEND_WEB_MODULE/") || path.contains("/$BACKEND_WEB_MODULE/") || path.contains("$BACKEND_WEB_MODULE-") -> WEB_BACKEND
             path.contains("/backends/$BACKEND_GLFW_MODULE/") || path.contains("/$BACKEND_GLFW_MODULE/") || path.contains("$BACKEND_GLFW_MODULE-") -> GLFW_BACKEND
+            path.contains("/backends/$BACKEND_PSP_MODULE/") || path.contains("/$BACKEND_PSP_MODULE/") || path.contains("$BACKEND_PSP_MODULE-") -> PSP_BACKEND
             path.contains("/backends/$BACKEND_ANDROID_MODULE/") || path.contains("/$BACKEND_ANDROID_MODULE/") || path.contains("$BACKEND_ANDROID_MODULE-") -> ANDROID_BACKEND
+            path.contains("/backends/$BACKEND_IOS_MODULE/") || path.contains("/$BACKEND_IOS_MODULE/") || path.contains("$BACKEND_IOS_MODULE-") -> IOS_BACKEND
             else -> null
         }
     }
 
     private fun GdxTeaVMExtension.isNativeTargetDeclared(): Boolean {
         return isTargetDeclared(GdxTeaVMTarget.GLFW)
+            || isTargetDeclared(GdxTeaVMTarget.PSP)
             || isTargetDeclared(GdxTeaVMTarget.ANDROID)
+            || isTargetDeclared(GdxTeaVMTarget.IOS)
     }
 
     private fun glfwBuildScriptBaseName(buildType: String): String {
@@ -833,10 +938,14 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         )
         const val BACKEND_WEB_MODULE = "backend-web"
         const val BACKEND_GLFW_MODULE = "backend-glfw"
+        const val BACKEND_PSP_MODULE = "backend-psp"
         const val BACKEND_ANDROID_MODULE = "backend-android"
+        const val BACKEND_IOS_MODULE = "backend-ios"
         const val WEB_BACKEND = "web"
         const val GLFW_BACKEND = "glfw"
+        const val PSP_BACKEND = "psp"
         const val ANDROID_BACKEND = "android"
+        const val IOS_BACKEND = "ios"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
         const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
         const val VALIDATION_ONLY_MAIN_CLASS = "com.github.xpenatan.gdx.teavm.gradle.ValidationOnlyMainClass"

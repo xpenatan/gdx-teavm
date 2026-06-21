@@ -126,6 +126,18 @@ open class GdxTeaVMExtension @Inject constructor(
     )
 
     /**
+     * PSP native target configuration.
+     *
+     * Default: output directory `build/dist/psp`, target file `app`.
+     */
+    val psp: GdxTeaVMPspExtension = objects.newInstance(
+        GdxTeaVMPspExtension::class.java,
+        project,
+        "dist/psp",
+        "app"
+    )
+
+    /**
      * Android native target configuration.
      *
      * Default: output directory `build/generated/gdx-teavm/android`, target file `app`.
@@ -134,6 +146,18 @@ open class GdxTeaVMExtension @Inject constructor(
         GdxTeaVMAndroidExtension::class.java,
         project,
         "generated/gdx-teavm/android",
+        "app"
+    )
+
+    /**
+     * iOS native target configuration.
+     *
+     * Default: output directory `build/dist/ios`, target file `app`.
+     */
+    val ios: GdxTeaVMIosExtension = objects.newInstance(
+        GdxTeaVMIosExtension::class.java,
+        project,
+        "dist/ios",
         "app"
     )
 
@@ -168,6 +192,16 @@ open class GdxTeaVMExtension @Inject constructor(
     }
 
     /**
+     * Configures and declares the experimental PSP native target.
+     *
+     * The plugin creates PSP gdx-teavm tasks only when this block is declared.
+     */
+    fun psp(action: Action<in GdxTeaVMPspExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.PSP)
+        action.execute(psp)
+    }
+
+    /**
      * Configures and declares the Android native target.
      *
      * The plugin creates Android gdx-teavm tasks only when this block is declared.
@@ -175,6 +209,16 @@ open class GdxTeaVMExtension @Inject constructor(
     fun android(action: Action<in GdxTeaVMAndroidExtension>) {
         declaredTargets.add(GdxTeaVMTarget.ANDROID)
         action.execute(android)
+    }
+
+    /**
+     * Configures and declares the experimental iOS native target.
+     *
+     * The plugin creates iOS gdx-teavm tasks only when this block is declared.
+     */
+    fun ios(action: Action<in GdxTeaVMIosExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.IOS)
+        action.execute(ios)
     }
 
     /** Adds local asset files or directories to [assets]. */
@@ -195,7 +239,7 @@ open class GdxTeaVMExtension @Inject constructor(
     private fun requireTeaVMExtension(): TeaVMExtension {
         return teavm ?: throw IllegalStateException(
             "This gdx-teavm project is configured for Android-only generation. " +
-                "Move js/wasm/glfw targets to a Java project or apply gdx-teavm to a non-Android module."
+                "Move js/wasm/glfw/psp/ios targets to a Java project or apply gdx-teavm to a non-Android module."
         )
     }
 
@@ -241,6 +285,14 @@ open class GdxTeaVMExtension @Inject constructor(
                     properties[NATIVE_RUN_EXECUTABLE] = native.runExecutable.get().toString()
                     properties[NATIVE_CONSOLE_LOG] = native.consoleLog.get().toString()
                 }
+                if(native is GdxTeaVMPspExtension) {
+                    properties[PSP_DEBUG_MEMORY] = native.debugMemory.get().toString()
+                    properties[PSP_AUTO_EXECUTE_BUILD] = native.autoExecuteBuild.get().toString()
+                }
+                if(native is GdxTeaVMIosExtension) {
+                    properties[IOS_XCODE_PROJECT_DIR] = native.xcodeProjectDir.get().asFile.absolutePath
+                    properties[IOS_GRAPHICS_API] = normalizeIosGraphicsApi(native.graphicsApi.get())
+                }
             }
         }
     }
@@ -252,7 +304,9 @@ open class GdxTeaVMExtension @Inject constructor(
     internal fun nativeTargetForBackendName(backendName: String?): GdxTeaVMNativeTargetExtension? {
         return when(backendName) {
             "glfw" -> if(isTargetDeclared(GdxTeaVMTarget.GLFW)) glfw else null
+            "psp" -> if(isTargetDeclared(GdxTeaVMTarget.PSP)) psp else null
             "android" -> if(isTargetDeclared(GdxTeaVMTarget.ANDROID)) android else null
+            "ios" -> if(isTargetDeclared(GdxTeaVMTarget.IOS)) ios else null
             else -> null
         }
     }
@@ -274,7 +328,9 @@ open class GdxTeaVMExtension @Inject constructor(
     private fun nativeTargetForDeclaredTarget(target: GdxTeaVMTarget): GdxTeaVMNativeTargetExtension? {
         return when(target) {
             GdxTeaVMTarget.GLFW -> glfw
+            GdxTeaVMTarget.PSP -> psp
             GdxTeaVMTarget.ANDROID -> android
+            GdxTeaVMTarget.IOS -> ios
             else -> null
         }
     }
@@ -292,14 +348,18 @@ open class GdxTeaVMExtension @Inject constructor(
             .map { it.lowercase() }
             .map { it.substringAfterLast(':') }
         val glfwRequested = requestedTasks.any { it.startsWith("gdx_teavm_glfw") }
+        val pspRequested = requestedTasks.any { it.startsWith("gdx_teavm_psp") }
         val androidRequested = requestedTasks.any { it.startsWith("gdx_teavm_android") }
-        val requestedNativeTargets = listOf(glfwRequested, androidRequested).count { it }
+        val iosRequested = requestedTasks.any { it.startsWith("gdx_teavm_ios") }
+        val requestedNativeTargets = listOf(glfwRequested, pspRequested, androidRequested, iosRequested).count { it }
         if(requestedNativeTargets > 1) {
             throw IllegalStateException("Only one gdx-teavm native backend can be selected in a single Gradle invocation")
         }
         return when {
             glfwRequested -> "glfw"
+            pspRequested -> "psp"
             androidRequested -> "android"
+            iosRequested -> "ios"
             else -> null
         }
     }
@@ -315,6 +375,16 @@ open class GdxTeaVMExtension @Inject constructor(
         val filtered = values.map(String::trim).filter(String::isNotEmpty)
         if(filtered.isNotEmpty()) {
             properties[key] = filtered.joinToString(",")
+        }
+    }
+
+    internal fun normalizeIosGraphicsApi(value: String): String {
+        return when(value.trim().lowercase()) {
+            "angle", "metalangle", "metal-angle" -> "angle"
+            "gles", "opengles", "open-gles", "opengl-es" -> "gles"
+            else -> throw IllegalArgumentException(
+                "Unsupported iOS graphics API '$value'. Supported values are 'angle' and 'gles'."
+            )
         }
     }
 
@@ -342,6 +412,10 @@ open class GdxTeaVMExtension @Inject constructor(
         const val NATIVE_BUILD_EXECUTABLE = "gdx.teavm.native.buildExecutable"
         const val NATIVE_RUN_EXECUTABLE = "gdx.teavm.native.runExecutable"
         const val NATIVE_CONSOLE_LOG = "gdx.teavm.native.consoleLog"
+        const val PSP_DEBUG_MEMORY = "gdx.teavm.psp.debugMemory"
+        const val PSP_AUTO_EXECUTE_BUILD = "gdx.teavm.psp.autoExecuteBuild"
+        const val IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir"
+        const val IOS_GRAPHICS_API = "gdx.teavm.ios.graphicsApi"
     }
 }
 
@@ -349,5 +423,7 @@ internal enum class GdxTeaVMTarget {
     JS,
     WASM,
     GLFW,
-    ANDROID
+    PSP,
+    ANDROID,
+    IOS
 }

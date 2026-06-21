@@ -83,7 +83,7 @@ gdxTeaVM {
 
 ### Automatic Backend Dependencies
 
-The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, and `android {}` adds `backend-android`.
+The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, `psp {}` adds `backend-psp`, `ios {}` adds `backend-ios`, and `android {}` adds `backend-android`.
 
 Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication` or `GLFWApplication` without manually declaring the backend artifacts.
 
@@ -145,7 +145,7 @@ The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server i
 
 ## Native Targets
 
-Declare `glfw {}` for desktop native backend tasks. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
+Declare `glfw {}` for desktop native backend tasks. Experimental `psp {}` and `ios {}` blocks are also available for WIP TeaVM C payloads. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
 
 ```kotlin
 import org.teavm.gradle.api.OptimizationLevel
@@ -162,22 +162,46 @@ gdxTeaVM {
         consoleLog.set(false)
     }
 
+    psp {
+        mainClass.set("com.example.game.teavm.PspLauncher")
+        optimization.set(OptimizationLevel.NONE)
+        minHeapSizeMb.set(2)
+        maxHeapSizeMb.set(8)
+        debugMemory.set(false)
+    }
+
+    ios {
+        mainClass.set("com.example.game.teavm.IosLauncher")
+        optimization.set(OptimizationLevel.NONE)
+        xcodeProjectDir.set(layout.buildDirectory.dir("dist/ios/xcode"))
+    }
 }
 ```
 
-Generated GLFW tasks:
+Generated native plugin tasks:
 
 | Task | Description |
 | --- | --- |
 | `gdx_teavm_glfw_generate` | Generate the C project |
 | `gdx_teavm_glfw_build` | Generate and build using `glfw.buildType` |
 | `gdx_teavm_glfw_run` | Generate, build, and run using `glfw.buildType` |
+| `gdx_teavm_psp_generate` | Generate the experimental PSP C project |
+| `gdx_teavm_psp_build` | Generate and run the generated PSP build script |
+| `gdx_teavm_ios_generate` | Generate the experimental iOS C/assets |
+| `gdx_teavm_ios_prepare_angle` | Download and extract the MetalANGLEKit frameworks used by `ios.graphicsApi=angle` |
+| `gdx_teavm_ios_init_xcode` | Create the experimental iOS Xcode project if missing |
+| `gdx_teavm_ios_regenerate_xcode` | Regenerate the experimental iOS Xcode project, overwriting manual project edits |
+| `gdx_teavm_ios_open_xcode` | Create the experimental iOS Xcode project if missing and open it in Xcode |
+| `gdx_teavm_ios_build_simulator` | Generate and build the experimental iOS app for the simulator |
+| `gdx_teavm_ios_run_simulator` | Generate, build, install, and launch the experimental iOS app on a simulator |
 
 Default output:
 
 | Target | Output |
 | --- | --- |
 | GLFW | `build/dist/glfw` |
+| PSP | `build/dist/psp` |
+| iOS | `build/dist/ios` |
 
 ## Android Target
 
@@ -462,7 +486,7 @@ public class BuildGlfw {
 
 ### PSP Builder
 
-PSP is experimental and local-only. It is not exposed by the Gradle plugin and is not part of the published artifact set. Inside this repository, use the local backend project directly.
+PSP is experimental. The Gradle plugin exposes `psp {}` and the backend is also available through the manual builder API.
 
 ```kotlin
 dependencies {
@@ -471,18 +495,20 @@ dependencies {
 }
 ```
 
-### iOS Local Backend
+### iOS Plugin Target
 
-iOS is experimental and local-only. It is not exposed by the Gradle plugin and is not part of the published artifact set. Inside this repository, the basic iOS example compiles against the local backend project directly.
+iOS is experimental. The Gradle plugin exposes `ios {}` for TeaVM C/assets generation, Xcode project initialization, and simulator build/run tasks. Xcode and simulator tasks require macOS.
 
 ```kotlin
-dependencies {
-    implementation(project(":backends:backend-ios"))
-    implementation(project(":core"))
+gdxTeaVM {
+    ios {
+        mainClass.set("com.example.game.teavm.IosLauncher")
+        graphicsApi.set("angle")
+    }
 }
 ```
 
-The iOS runtime and Xcode template resources remain under `backends/backend-ios` for local experimentation.
+Use `gdx_teavm_ios_init_xcode` to create the Xcode project from the templates under `backend-ios`. The default `graphicsApi` is `angle`, which downloads libGDX's pinned MetalANGLEKit bundle and renders GLES through Metal. Set `graphicsApi` to `gles` to generate the older native OpenGL ES / GLKit project.
 
 ```java
 import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
