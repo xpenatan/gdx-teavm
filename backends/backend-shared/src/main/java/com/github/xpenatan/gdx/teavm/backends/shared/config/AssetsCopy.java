@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -153,27 +152,43 @@ public class AssetsCopy {
         }
     }
 
-    public static void writeManifest(AssetPlan plan,
-                                     AssetOutput output,
-                                     String manifestPath) throws IOException {
-        String manifest = generateManifest(plan);
-        byte[] bytes = manifest.getBytes(StandardCharsets.UTF_8);
-        try(OutputStream out = output.create(manifestPath)) {
-            out.write(bytes);
-        }
-        logCopied("Manifest", TeaAssets.ASSETS_FILE_NAME, output, manifestPath, bytes.length);
-    }
-
     public static String generateManifest(AssetPlan plan) {
         StringBuilder buffer = new StringBuilder();
-        if(plan == null) {
-            return "";
-        }
-        for(PlannedAsset asset : plan.assets) {
-            appendManifestEntry(buffer, asset.runtimeType, asset.assetType, "/" + asset.outputPath,
-                    asset.length, asset.op);
+        for(String entry : generateManifestEntries(plan)) {
+            buffer.append(entry).append("\n");
         }
         return buffer.toString();
+    }
+
+    public static String[] generateManifestEntries(AssetPlan plan) {
+        if(plan == null || plan.assets.isEmpty()) {
+            return new String[0];
+        }
+        String[] entries = new String[plan.assets.size()];
+        for(int i = 0; i < plan.assets.size(); i++) {
+            PlannedAsset asset = plan.assets.get(i);
+            entries[i] = formatManifestEntry(asset.runtimeType, asset.assetType, "/" + asset.outputPath,
+                    asset.length, asset.op);
+        }
+        return entries;
+    }
+
+    public static void measureAssetLengths(ClassLoader classLoader, AssetPlan plan) throws IOException {
+        if(plan == null) {
+            return;
+        }
+        for(PlannedAsset asset : plan.assets) {
+            if(asset.sourceType == PlannedAsset.SourceType.Disk) {
+                asset.length = Files.size(asset.diskFile.toPath());
+            }
+            else {
+                try(InputStream input = classLoader.getResourceAsStream(asset.classpathPath)) {
+                    if(input != null) {
+                        asset.length = measure(input);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -187,9 +202,7 @@ public class AssetsCopy {
     /**
      * Copy a list of classpath resource paths (e.g. {@code /com/foo/bar.json})
      * into {@code assetsOutputPath}, preserving the package layout. The returned
-     * {@link Asset} entries are tagged with the supplied {@code destinationType}
-     * so {@link #generateAssetsFile} writes them into the preload manifest with
-     * the matching {@code i:}/{@code c:}/{@code l:} marker.
+     * {@link Asset} entries are tagged with the supplied {@code destinationType}.
      */
     public static ArrayList<Asset> copyResources(ClassLoader classLoader,
                                                  List<String> classPathAssetsFiles,
@@ -258,44 +271,17 @@ public class AssetsCopy {
         return assets;
     }
 
-    public static void generateAssetsFile(ArrayList<Asset> assets, FileHandle location, FileHandle assetFile) {
-        StringBuilder buffer = new StringBuilder();
-        String assetsOutputPath = location.path();
-        for(int i = 0; i < assets.size(); i++) {
-            setupPreloadAssetFileFormat(assets.get(i), buffer, assetsOutputPath);
-        }
-        assetFile.writeString(buffer.toString(), true);
-    }
-
-    private static void setupPreloadAssetFileFormat(Asset asset, StringBuilder buffer, String assetsOutputPath) {
-        FileHandle fileHandle = asset.file;
-        FileType type = fileHandle.type();
-        String path = fileHandle.path();
-        path = path.replace(assetsOutputPath, "");
+    private static String formatManifestEntry(FileType type, AssetType assetType, String path, long length,
+                                              AssetFilterOption op) {
         String fileTypeStr = "i";
         if(type == FileType.Local) fileTypeStr = "l";
         else if(type == FileType.Classpath) fileTypeStr = "c";
 
-        buffer.append(fileTypeStr)
-                .append(":").append(asset.type.code)
-                .append(":").append(path)
-                .append(":").append(asset.file.isDirectory() ? 0 : asset.file.length())
-                .append(":").append(asset.op.shouldOverwriteLocalData ? 1 : 0)
-                .append("\n");
-    }
-
-    private static void appendManifestEntry(StringBuilder buffer, FileType type, AssetType assetType, String path,
-                                            long length, AssetFilterOption op) {
-        String fileTypeStr = "i";
-        if(type == FileType.Local) fileTypeStr = "l";
-        else if(type == FileType.Classpath) fileTypeStr = "c";
-
-        buffer.append(fileTypeStr)
-                .append(":").append(assetType.code)
-                .append(":").append(path)
-                .append(":").append(length)
-                .append(":").append(op.shouldOverwriteLocalData ? 1 : 0)
-                .append("\n");
+        return fileTypeStr
+                + ":" + assetType.code
+                + ":" + path
+                + ":" + length
+                + ":" + (op.shouldOverwriteLocalData ? 1 : 0);
     }
 
     private static void planDiskAssets(AssetFileHandle assetsPath, AssetFilter filter, AssetPlan plan) {
@@ -411,6 +397,16 @@ public class AssetsCopy {
             }
             return total;
         }
+    }
+
+    private static long measure(InputStream input) throws IOException {
+        byte[] buffer = new byte[8192];
+        long total = 0;
+        int read;
+        while((read = input.read(buffer)) != -1) {
+            total += read;
+        }
+        return total;
     }
 
     private static String joinPath(String left, String right) {

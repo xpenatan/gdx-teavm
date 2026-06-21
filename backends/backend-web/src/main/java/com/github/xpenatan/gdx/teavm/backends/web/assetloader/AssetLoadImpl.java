@@ -170,6 +170,12 @@ public class AssetLoadImpl implements AssetLoader {
     }
 
     @Override
+    public void preload(AssetLoaderListener<Void> preloadListener) {
+        log("preload", "generated manifest");
+        preloadManifest("generated", TeaAssetManifest.getAssets(), preloadListener);
+    }
+
+    @Override
     public void preload(final String assetFileUrl, AssetLoaderListener<Void> preloadListener) {
         log("preload", "assetFileUrl=" + assetFileUrl);
         AssetLoaderListener<WebBlob> listener = new AssetLoaderListener<>() {
@@ -181,40 +187,7 @@ public class AssetLoadImpl implements AssetLoader {
                 byte[] byteArray = TypedArrays.toByteArray(data);
                 String assets = new String(byteArray);
                 String[] lines = assets.split("\n");
-
-                assetTotal = lines.length;
-
-                for(String line : lines) {
-                    log("preload.onSuccess", "assets.txt line=" + line);
-                    String[] tokens = line.split(":");
-                    if(tokens.length != 5) {
-                        throw new GdxRuntimeException("Invalid assets description file. " + tokens.length + " " + line);
-                    }
-                    String fileTypeStr = tokens[0];
-                    String assetTypeStr = tokens[1];
-                    String assetUrl = tokens[2].trim();
-                    String fileLength = tokens[3];
-                    boolean shouldOverwriteLocalData = tokens[4].equals("1");
-                    assetUrl = assetUrl.trim();
-                    if(assetUrl.isEmpty()) {
-                        continue;
-                    }
-
-                    FileType fileType = FileType.Internal;
-                    if(fileTypeStr.equals("c")) {
-                        fileType = FileType.Classpath;
-                    }
-                    else if(fileTypeStr.equals("l")) {
-                        fileType = FileType.Local;
-                    }
-                    AssetType assetType = AssetType.Binary;
-                    if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
-
-                    addAssetToQueue(assetUrl, assetType, fileType, null, shouldOverwriteLocalData);
-                }
-                logState("preload.onSuccess.afterQueuePopulate");
-                preloadListener.onSuccess(assetFileUrl, null);
-                downloadMultiAssets();
+                preloadManifest(assetFileUrl, lines, preloadListener);
             }
 
             @Override
@@ -228,6 +201,41 @@ public class AssetLoadImpl implements AssetLoader {
         assetDownloading.add(assetFileUrl);
         logState("preload.beforeLoad");
         assetDownloader.load(true, getAssetUrl() + assetFileUrl, AssetType.Binary, listener);
+    }
+
+    private void preloadManifest(String name, String[] lines, AssetLoaderListener<Void> preloadListener) {
+        assetTotal = lines.length;
+
+        for(String line : lines) {
+            log("preloadManifest", "line=" + line);
+            String[] tokens = line.split(":");
+            if(tokens.length != 5) {
+                throw new GdxRuntimeException("Invalid assets description. " + tokens.length + " " + line);
+            }
+            String fileTypeStr = tokens[0];
+            String assetTypeStr = tokens[1];
+            String assetUrl = tokens[2].trim();
+            boolean shouldOverwriteLocalData = tokens[4].equals("1");
+            assetUrl = assetUrl.trim();
+            if(assetUrl.isEmpty()) {
+                continue;
+            }
+
+            FileType fileType = FileType.Internal;
+            if(fileTypeStr.equals("c")) {
+                fileType = FileType.Classpath;
+            }
+            else if(fileTypeStr.equals("l")) {
+                fileType = FileType.Local;
+            }
+            AssetType assetType = AssetType.Binary;
+            if(assetTypeStr.equals("d")) assetType = AssetType.Directory;
+
+            addAssetToQueue(assetUrl, assetType, fileType, null, shouldOverwriteLocalData);
+        }
+        logState("preloadManifest.afterQueuePopulate");
+        preloadListener.onSuccess(name, null);
+        downloadMultiAssets();
     }
 
     @Override

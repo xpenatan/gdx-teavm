@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetInstance;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoaderListener;
@@ -74,7 +73,7 @@ public class WebPreloadApplicationListener extends ApplicationAdapter {
 
     protected void preloadAssetsFile() {
         addQueue();
-        assetLoader.preload(TeaAssets.ASSETS_FILE_NAME, new AssetLoaderListener<>() {
+        assetLoader.preload(new AssetLoaderListener<>() {
             @Override
             public void onSuccess(String url, Void result) {
                 subtractQueue();
@@ -189,6 +188,11 @@ public class WebPreloadApplicationListener extends ApplicationAdapter {
             stage.draw();
 
             if(assetsCount >= 0) {
+                if(assetsCount == 0 && !assetLoader.isDownloading()) {
+                    clearScreen();
+                    teaApplication.setPreloadReady();
+                    return;
+                }
                 int queue = assetLoader.getQueue();
                 float progress = (float)(assetsCount - queue) / assetsCount;
                 if(!isAnimation) {

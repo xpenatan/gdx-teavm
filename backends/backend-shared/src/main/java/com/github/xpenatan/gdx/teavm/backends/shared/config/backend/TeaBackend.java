@@ -4,7 +4,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFilter;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
@@ -344,7 +343,6 @@ public abstract class TeaBackend {
 
             AssetOutput output = AssetOutput.fileHandle(releasePath);
             AssetsCopy.copyPlanAssets(classLoader, plan, output, ASSETS_FOLDER_NAME);
-            AssetsCopy.writeManifest(plan, output, ASSETS_FOLDER_NAME + "/" + TeaAssets.ASSETS_FILE_NAME);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }

@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaAssets;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginAssetSupport;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
@@ -24,11 +23,18 @@ public class GdxWebRendererListener {
     private final GdxTeaVMPluginConfig config;
     private final ClassLoader classLoader;
     private final ArrayList<URL> classPathURLs;
+    private final AssetsCopy.AssetPlan assetPlan;
 
-    public GdxWebRendererListener(GdxTeaVMPluginConfig config, ClassLoader classLoader, ArrayList<URL> classPathURLs) {
+    public GdxWebRendererListener(
+            GdxTeaVMPluginConfig config,
+            ClassLoader classLoader,
+            ArrayList<URL> classPathURLs,
+            AssetsCopy.AssetPlan assetPlan
+    ) {
         this.config = config;
         this.classLoader = classLoader;
         this.classPathURLs = classPathURLs;
+        this.assetPlan = assetPlan;
     }
 
     public void write(BuildTarget buildTarget, TargetType targetType, String outputName) throws IOException {
@@ -71,10 +77,10 @@ public class GdxWebRendererListener {
                     null, output, "assets");
         }
 
-        AssetsCopy.AssetPlan plan = AssetsCopy.createAssetPlan(classLoader, classPathURLs,
-                GdxTeaVMPluginAssetSupport.toAssetHandles(config), null);
+        AssetsCopy.AssetPlan plan = assetPlan != null
+                ? assetPlan
+                : GdxTeaVMPluginAssetSupport.createWebAssetPlan(config, classLoader, classPathURLs);
         AssetsCopy.copyPlanAssets(classLoader, plan, output, "assets");
-        AssetsCopy.writeManifest(plan, output, "assets/" + TeaAssets.ASSETS_FILE_NAME);
         AssetsCopy.copyClasspathResources(classLoader, plan.scripts, null, output, "scripts");
     }
 

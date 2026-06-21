@@ -6,6 +6,8 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetOutput;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaBackend;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginAssetSupport;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,7 +202,21 @@ public class WebBackend extends TeaBackend {
 
     @Override
     protected void copyAssets(TeaBuilderData data) {
-        super.copyAssets(data);
+        try {
+            scripts.clear();
+            cppFiles.clear();
+            AssetsCopy.AssetPlan plan = AssetsCopy.createAssetPlan(classLoader, acceptedURL, data.assets, assetFilter);
+            scripts.addAll(plan.scripts);
+            cppFiles.addAll(plan.cppFiles);
+
+            AssetOutput output = AssetOutput.fileHandle(releasePath);
+            AssetsCopy.copyPlanAssets(classLoader, plan, output, ASSETS_FOLDER_NAME);
+            tool.getProperties().setProperty(GdxTeaVMPluginConfig.ASSET_MANIFEST,
+                    GdxTeaVMPluginAssetSupport.encodeManifest(plan));
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+
         FileHandle scriptsFolder = releasePath.child("scripts");
         try {
             AssetsCopy.copyClasspathResources(classLoader, scripts, scriptFilter,

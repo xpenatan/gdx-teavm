@@ -20,6 +20,7 @@ public class GdxTeaVMPluginConfig {
     public static final String CLASSPATH = "gdx.teavm.classpath";
     public static final String ASSETS = "gdx.teavm.assets";
     public static final String CLASSPATH_ASSETS = "gdx.teavm.classpathAssets";
+    public static final String ASSET_MANIFEST = "gdx.teavm.assets.manifest";
     public static final String REFLECTION_ENABLED = "gdx.teavm.reflection.enabled";
     public static final String REFLECTION_DEFAULTS = "gdx.teavm.reflection.defaults";
     public static final String REFLECTION_SCAN = "gdx.teavm.reflection.scan";

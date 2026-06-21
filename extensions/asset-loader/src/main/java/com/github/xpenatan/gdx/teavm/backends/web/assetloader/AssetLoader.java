@@ -10,6 +10,8 @@ import com.badlogic.gdx.Files.FileType;
  */
 public interface AssetLoader {
 
+    void preload(AssetLoaderListener<Void> preloadListener);
+
     void preload(String assetFileUrl, AssetLoaderListener<Void> preloadListener);
 
     String getAssetUrl();

@@ -512,8 +512,9 @@ public class BuildPsp {
 All build paths share the same asset planner/copy logic.
 
 - Disk assets are copied as libGDX internal assets.
-- Classpath assets are copied and marked as classpath assets in the preload manifest.
-- The generated manifest is `assets/preload.txt`.
+- Classpath assets are copied and marked as classpath assets in the generated preload manifest.
+- Web targets compile the preload manifest into the TeaVM output through a generated runtime class instead of writing an `assets/preload.txt` file.
+- Native targets copy assets directly and do not create a preload manifest file.
 - The manifest stores enough file type information for runtime loading to preserve `Gdx.files.internal(...)` and `Gdx.files.classpath(...)` behavior.
 
 Builder examples:

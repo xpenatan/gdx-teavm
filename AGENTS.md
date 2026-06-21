@@ -163,7 +163,7 @@
 - Asset copying is centralized in `AssetsCopy`.
 - Do not create a second asset-copy implementation unless there is a strong reason.
 - Builder and plugin paths both use the same planning/copying logic.
-- Output always includes a preload manifest named `assets/preload.txt` by default (`TeaAssets.ASSETS_FILE_NAME`).
+- Web targets compile preload metadata into TeaVM output through `TeaAssetManifest`; native targets copy assets directly and do not create a preload manifest file.
 - Asset entries preserve libGDX file type:
   - disk assets are normally `Internal`
   - classpath resources are `Classpath`

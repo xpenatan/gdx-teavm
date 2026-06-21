@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.DelegatingTeaVMTarget;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMTargetInstaller;
 import java.io.IOException;
@@ -29,10 +30,12 @@ public class GdxWebTargetWrapper extends DelegatingTeaVMTarget {
             TeaVMHost host,
             GdxWebRendererListener.TargetType targetType,
             GdxTeaVMPluginConfig config,
-            ArrayList<URL> classPathURLs
+            ArrayList<URL> classPathURLs,
+            AssetsCopy.AssetPlan assetPlan
     ) {
         TeaVMTargetInstaller.install(host, GdxWebTargetWrapper.class, target -> {
-            GdxWebRendererListener webOutput = new GdxWebRendererListener(config, host.getClassLoader(), classPathURLs);
+            GdxWebRendererListener webOutput = new GdxWebRendererListener(config, host.getClassLoader(), classPathURLs,
+                    assetPlan);
             return new GdxWebTargetWrapper(target, webOutput, targetType);
         });
     }

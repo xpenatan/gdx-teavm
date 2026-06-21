@@ -114,7 +114,8 @@ Responsibilities:
 - Plan disk assets and classpath assets.
 - Preserve libGDX file type in the preload manifest.
 - Copy files to the target output.
-- Write `assets/preload.txt`.
+- For web targets, provide manifest entries through the generated TeaVM `TeaAssetManifest` class.
+- For native targets, copy assets directly without a preload manifest file.
 - Log copied asset source type and size.
 
 Builder path:

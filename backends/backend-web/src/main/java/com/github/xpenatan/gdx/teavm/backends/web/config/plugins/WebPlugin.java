@@ -1,8 +1,11 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
 
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginAssetSupport;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import org.teavm.backend.javascript.TeaVMJavaScriptHost;
@@ -39,6 +42,15 @@ public class WebPlugin implements TeaVMPlugin {
 
         GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(host.getProperties());
         ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
+        AssetsCopy.AssetPlan webAssetPlan = null;
+        String[] manifestEntries = GdxTeaVMPluginAssetSupport.decodeManifest(
+                host.getProperties().getProperty(GdxTeaVMPluginConfig.ASSET_MANIFEST));
+        if(manifestEntries.length == 0 && config.webappEnabled) {
+            webAssetPlan = createWebAssetPlan(config, host.getClassLoader(), classPathURLs);
+            manifestEntries = GdxTeaVMPluginAssetSupport.manifestEntries(webAssetPlan);
+        }
+        host.add(new TeaAssetManifestTransformer(manifestEntries));
+
         TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
         if(config.reflectionEnabled) {
             TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
@@ -56,11 +68,25 @@ public class WebPlugin implements TeaVMPlugin {
 
         if(config.webappEnabled) {
             if(javaScriptHost != null) {
-                GdxWebTargetWrapper.install(host, GdxWebRendererListener.TargetType.JAVASCRIPT, config, classPathURLs);
+                GdxWebTargetWrapper.install(host, GdxWebRendererListener.TargetType.JAVASCRIPT, config, classPathURLs,
+                        webAssetPlan);
             }
             else if(wasmGCHost != null) {
-                GdxWebTargetWrapper.install(host, GdxWebRendererListener.TargetType.WASM_GC, config, classPathURLs);
+                GdxWebTargetWrapper.install(host, GdxWebRendererListener.TargetType.WASM_GC, config, classPathURLs,
+                        webAssetPlan);
             }
+        }
+    }
+
+    private static AssetsCopy.AssetPlan createWebAssetPlan(
+            GdxTeaVMPluginConfig config,
+            ClassLoader classLoader,
+            ArrayList<URL> classPathURLs
+    ) {
+        try {
+            return GdxTeaVMPluginAssetSupport.createWebAssetPlan(config, classLoader, classPathURLs);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
