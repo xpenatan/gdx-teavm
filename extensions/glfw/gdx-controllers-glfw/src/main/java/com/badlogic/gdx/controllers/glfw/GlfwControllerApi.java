@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package emu.com.badlogic.gdx.controllers.glfw;
+package com.badlogic.gdx.controllers.glfw;
 
 import org.teavm.interop.Import;
 import org.teavm.interop.Structure;

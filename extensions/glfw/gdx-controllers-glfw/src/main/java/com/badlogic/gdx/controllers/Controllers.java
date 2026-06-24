@@ -14,17 +14,14 @@
  * limitations under the License.
  ******************************************************************************/
 
-package emu.com.badlogic.gdx.controllers;
+package com.badlogic.gdx.controllers;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import emu.com.badlogic.gdx.controllers.glfw.GlfwControllers;
+import com.badlogic.gdx.controllers.glfw.GlfwControllers;
 
 /** Provides access to connected {@link Controller} instances. Query the available controllers via {@link #getControllers()}, add
  * and remove global {@link ControllerListener} instances via {@link #addListener(ControllerListener)} and

@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package emu.com.badlogic.gdx.controllers.glfw;
+package com.badlogic.gdx.controllers.glfw;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
