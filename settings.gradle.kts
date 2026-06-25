@@ -48,6 +48,7 @@ else {
 }
 
 include(":extensions:asset-loader")
+include(":extensions:glfw:gdx-controllers-glfw")
 include(":extensions:web:gdx-controllers-web")
 include(":extensions:web:gdx-freetype-web")
 
