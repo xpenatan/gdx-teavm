@@ -233,7 +233,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val unsupported = extension.isTargetDeclared(GdxTeaVMTarget.JS)
             || extension.isTargetDeclared(GdxTeaVMTarget.WASM)
             || extension.isTargetDeclared(GdxTeaVMTarget.GLFW)
-            || extension.isTargetDeclared(GdxTeaVMTarget.PSP)
             || extension.isTargetDeclared(GdxTeaVMTarget.IOS)
         if(unsupported) {
             throw IllegalStateException("Android Gradle projects currently support only the gdxTeaVM android target")
@@ -283,9 +282,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
             addBackendDependency(project, BACKEND_GLFW_MODULE)
-        }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
-            addBackendDependency(project, BACKEND_PSP_MODULE)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             addBackendDependency(project, BACKEND_ANDROID_MODULE)
@@ -662,9 +658,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
             registerGlfwTasks(project, extension)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.PSP)) {
-            registerPspTasks(project, extension)
-        }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             registerAndroidTasks(project)
         }
@@ -731,21 +724,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             buildType.convention(extension.glfw.buildType)
             consoleLog.convention(extension.glfw.consoleLog)
             backendClasspath.from(targetClasspath(project, GLFW_BACKEND))
-        }
-    }
-
-    private fun registerPspTasks(project: Project, extension: GdxTeaVMExtension) {
-        val pspGenerate = project.tasks.register("gdx_teavm_psp_generate") {
-            group = TASK_GROUP
-            description = "Generate the experimental gdx-teavm PSP native C project."
-            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
-        }
-        project.tasks.register<GdxTeaVMNativeBuildTask>("gdx_teavm_psp_build") {
-            group = TASK_GROUP
-            description = "Generate and build the experimental PSP native project."
-            dependsOn(pspGenerate)
-            buildRoot.convention(extension.psp.outputDir)
-            scriptBaseName.set("build")
         }
     }
 
@@ -896,7 +874,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         return when {
             path.contains("/backends/$BACKEND_WEB_MODULE/") || path.contains("/$BACKEND_WEB_MODULE/") || path.contains("$BACKEND_WEB_MODULE-") -> WEB_BACKEND
             path.contains("/backends/$BACKEND_GLFW_MODULE/") || path.contains("/$BACKEND_GLFW_MODULE/") || path.contains("$BACKEND_GLFW_MODULE-") -> GLFW_BACKEND
-            path.contains("/backends/$BACKEND_PSP_MODULE/") || path.contains("/$BACKEND_PSP_MODULE/") || path.contains("$BACKEND_PSP_MODULE-") -> PSP_BACKEND
             path.contains("/backends/$BACKEND_ANDROID_MODULE/") || path.contains("/$BACKEND_ANDROID_MODULE/") || path.contains("$BACKEND_ANDROID_MODULE-") -> ANDROID_BACKEND
             path.contains("/backends/$BACKEND_IOS_MODULE/") || path.contains("/$BACKEND_IOS_MODULE/") || path.contains("$BACKEND_IOS_MODULE-") -> IOS_BACKEND
             else -> null
@@ -905,7 +882,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
     private fun GdxTeaVMExtension.isNativeTargetDeclared(): Boolean {
         return isTargetDeclared(GdxTeaVMTarget.GLFW)
-            || isTargetDeclared(GdxTeaVMTarget.PSP)
             || isTargetDeclared(GdxTeaVMTarget.ANDROID)
             || isTargetDeclared(GdxTeaVMTarget.IOS)
     }
@@ -938,12 +914,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         )
         const val BACKEND_WEB_MODULE = "backend-web"
         const val BACKEND_GLFW_MODULE = "backend-glfw"
-        const val BACKEND_PSP_MODULE = "backend-psp"
         const val BACKEND_ANDROID_MODULE = "backend-android"
         const val BACKEND_IOS_MODULE = "backend-ios"
         const val WEB_BACKEND = "web"
         const val GLFW_BACKEND = "glfw"
-        const val PSP_BACKEND = "psp"
         const val ANDROID_BACKEND = "android"
         const val IOS_BACKEND = "ios"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"

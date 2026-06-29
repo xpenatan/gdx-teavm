@@ -2,7 +2,7 @@
 
 This page lists the properties available in the `gdxTeaVM` Gradle extension.
 
-The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring experimental `psp {}` adds `backend-psp`; declaring experimental `ios {}` adds `backend-ios`; declaring `android {}` adds `backend-android`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
+The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring experimental `ios {}` adds `backend-ios`; declaring `android {}` adds `backend-android`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
 
 ## Minimal Shape
 
@@ -59,7 +59,6 @@ gdxTeaVM {
 | `js { ... }` | `backend-web` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
 | `wasm { ... }` | `backend-web` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
 | `glfw { ... }` | `backend-glfw` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
-| `psp { ... }` | `backend-psp` | `gdx_teavm_psp_generate`, `gdx_teavm_psp_build` |
 | `ios { ... }` | `backend-ios` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_regenerate_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator` |
 | `android { ... }` | `backend-android` | `gdx_teavm_android_generate` |
 
@@ -86,7 +85,6 @@ Target-specific default output:
 | JS | `build/dist/web` | `webapp` | `app.js` |
 | Wasm | `build/dist/wasm` | `webapp` | `app.wasm` |
 | GLFW | `build/dist/glfw` | `c/src` | `app` |
-| PSP | `build/dist/psp` | `c/src` | `app` |
 | iOS | `build/dist/ios` | `c/src` | `app` |
 | Android | `build/generated/gdx-teavm/android` | `c/src` | `app` |
 
@@ -181,7 +179,7 @@ gdxTeaVM {
 
 ## Native Targets
 
-Native targets use TeaVM C output. Declare `glfw {}` for the desktop backend, or experimental `psp {}` / `ios {}` for WIP native payloads. Native targets normally need their own launcher classes because each starts a different backend application type.
+Native targets use TeaVM C output. Declare `glfw {}` for the desktop backend, or experimental `ios {}` for WIP native payloads. Native targets normally need their own launcher classes because each starts a different backend application type.
 
 ### Native Target Properties
 
@@ -236,13 +234,6 @@ Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 | --- | --- |
 | `gdx_teavm_glfw_build` | `glfw.buildType` |
 | `gdx_teavm_glfw_run` | `glfw.buildType` |
-
-### PSP Properties
-
-| Property | Type | Default | Purpose |
-| --- | --- | --- | --- |
-| `debugMemory` | `Property<Boolean>` | `false` | Enables PSP memory debug support in generated native glue code. |
-| `autoExecuteBuild` | `Property<Boolean>` | `false` | Lets the backend execute the generated PSP build script after generating sources. |
 
 ### iOS Properties
 

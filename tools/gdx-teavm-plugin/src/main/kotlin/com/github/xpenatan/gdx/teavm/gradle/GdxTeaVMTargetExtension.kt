@@ -518,27 +518,6 @@ open class GdxTeaVMGlfwExtension @Inject constructor(
     val consoleLog: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
 }
 
-open class GdxTeaVMPspExtension @Inject constructor(
-    objects: ObjectFactory,
-    project: Project,
-    outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "psp") {
-    /**
-     * Enables PSP memory debug support in generated native glue code.
-     *
-     * Default: `false`.
-     */
-    val debugMemory: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
-
-    /**
-     * Lets the backend execute the generated PSP build script after generating sources when true.
-     *
-     * Default: `false`.
-     */
-    val autoExecuteBuild: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
-}
-
 open class GdxTeaVMAndroidExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,

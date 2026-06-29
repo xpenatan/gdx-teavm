@@ -83,7 +83,7 @@ gdxTeaVM {
 
 ### Automatic Backend Dependencies
 
-The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, `psp {}` adds `backend-psp`, `ios {}` adds `backend-ios`, and `android {}` adds `backend-android`.
+The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, `ios {}` adds `backend-ios`, and `android {}` adds `backend-android`.
 
 Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication` or `GLFWApplication` without manually declaring the backend artifacts.
 
@@ -145,7 +145,7 @@ The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server i
 
 ## Native Targets
 
-Declare `glfw {}` for desktop native backend tasks. Experimental `psp {}` and `ios {}` blocks are also available for WIP TeaVM C payloads. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
+Declare `glfw {}` for desktop native backend tasks. An experimental `ios {}` block is also available for WIP TeaVM C payloads. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
 
 ```kotlin
 import org.teavm.gradle.api.OptimizationLevel
@@ -160,14 +160,6 @@ gdxTeaVM {
         maxHeapSizeMb.set(512)
         buildType.set("Debug")
         consoleLog.set(false)
-    }
-
-    psp {
-        mainClass.set("com.example.game.teavm.PspLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        minHeapSizeMb.set(2)
-        maxHeapSizeMb.set(8)
-        debugMemory.set(false)
     }
 
     ios {
@@ -185,8 +177,6 @@ Generated native plugin tasks:
 | `gdx_teavm_glfw_generate` | Generate the C project |
 | `gdx_teavm_glfw_build` | Generate and build using `glfw.buildType` |
 | `gdx_teavm_glfw_run` | Generate, build, and run using `glfw.buildType` |
-| `gdx_teavm_psp_generate` | Generate the experimental PSP C project |
-| `gdx_teavm_psp_build` | Generate and run the generated PSP build script |
 | `gdx_teavm_ios_generate` | Generate the experimental iOS C/assets |
 | `gdx_teavm_ios_prepare_angle` | Download and extract the MetalANGLEKit frameworks used by `ios.graphicsApi=angle` |
 | `gdx_teavm_ios_init_xcode` | Create the experimental iOS Xcode project if missing |
@@ -200,7 +190,6 @@ Default output:
 | Target | Output |
 | --- | --- |
 | GLFW | `build/dist/glfw` |
-| PSP | `build/dist/psp` |
 | iOS | `build/dist/ios` |
 
 ## Android Target
@@ -484,17 +473,6 @@ public class BuildGlfw {
 }
 ```
 
-### PSP Builder
-
-PSP is experimental. The Gradle plugin exposes `psp {}` and the backend is also available through the manual builder API.
-
-```kotlin
-dependencies {
-    implementation(project(":backends:backend-psp"))
-    implementation(project(":core"))
-}
-```
-
 ### iOS Plugin Target
 
 iOS is experimental. The Gradle plugin exposes `ios {}` for TeaVM C/assets generation, Xcode project initialization, and simulator build/run tasks. Xcode and simulator tasks require macOS.
@@ -509,29 +487,6 @@ gdxTeaVM {
 ```
 
 Use `gdx_teavm_ios_init_xcode` to create the Xcode project from the templates under `backend-ios`. The default `graphicsApi` is `angle`, which downloads libGDX's pinned MetalANGLEKit bundle and renders GLES through Metal. Set `graphicsApi` to `gles` to generate the older native OpenGL ES / GLKit project.
-
-```java
-import com.github.xpenatan.gdx.teavm.backends.psp.config.backend.TeaPSPBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
-import java.io.File;
-import org.teavm.vm.TeaVMOptimizationLevel;
-
-public class BuildPsp {
-    public static void main(String[] args) {
-        TeaPSPBackend backend = new TeaPSPBackend();
-        backend.debugMemory = true;
-        backend.autoExecuteBuild = false;
-
-        new TeaBuilder(backend)
-                .addAssets(new AssetFileHandle("assets"))
-                .setMainClass("com.example.game.teavm.PspLauncher")
-                .setDebugInformationGenerated(true)
-                .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
-                .build(new File("build/dist"));
-    }
-}
-```
 
 ## Assets
 
@@ -619,7 +574,6 @@ Manual builder examples:
 ./gradlew :examples:controllers:web:controllers_web_run
 ./gradlew :examples:basic:desktop-c:basic_desktop_c_generate
 ./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
-./gradlew :examples:basic:psp:basic_psp_build
 ```
 
 ## Snapshot Testing In A Standalone Project

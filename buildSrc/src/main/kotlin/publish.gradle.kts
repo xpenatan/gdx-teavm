@@ -135,7 +135,6 @@ fun Project.configureLibraryPublishing() {
         project(":backends:backend-shared"),
         project(":backends:backend-web"),
         project(":backends:backend-glfw"),
-        project(":backends:backend-psp"),
         project(":backends:backend-ios"),
         project(":extensions:c:gdx-freetype-c"),
         project(":extensions:c:gdx-controllers-glfw"),
