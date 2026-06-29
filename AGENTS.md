@@ -18,7 +18,7 @@
 - Compile the shared/web backends:
   - `./gradlew :backends:backend-shared:compileJava :backends:backend-web:compileJava`
 - Compile native backends:
-  - `./gradlew :backends:backend-glfw:compileJava :backends:backend-psp:compileJava`
+  - `./gradlew :backends:backend-glfw:compileJava :backends:backend-ios:compileJava`
 
 ## Example Tasks
 - Manual builder web example:
@@ -27,16 +27,12 @@
   - `./gradlew :examples:basic:desktop-c:basic_desktop_c_generate`
   - `./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build`
   - `./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_run`
-- Manual builder PSP example:
-  - `./gradlew :examples:basic:psp:basic_psp_build`
 - Gradle plugin basic example:
   - `./gradlew :examples:basic:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run`
   - `./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate`
   - `./gradlew :examples:basic:plugin:gdx_teavm_glfw_build`
   - `./gradlew :examples:basic:plugin:gdx_teavm_glfw_run`
-  - `./gradlew :examples:basic:plugin:gdx_teavm_psp_generate`
-  - `./gradlew :examples:basic:plugin:gdx_teavm_psp_build`
 - Gradle plugin FreeType web example:
   - `./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:freetype:plugin:gdx_teavm_web_wasm_run`
@@ -73,7 +69,6 @@
 - Put behavior in `TeaBackend` only when it is shared by all targets. Keep target-specific behavior in:
   - `WebBackend`
   - `TeaGLFWBackend`
-  - `TeaPSPBackend`
 
 ## Backends
 - `backends/backend-web`
@@ -86,12 +81,6 @@
   - Builder backend: `TeaGLFWBackend`.
   - Targets TeaVM C output and writes a native CMake project with debug/release build scripts.
   - Output is typically under `build/dist/glfw/c` in plugin mode or `build/dist/c` in builder mode.
-- `backends/backend-psp`
-  - Runtime classes: `PSPApplication`, PSP native APIs, PSP glue.
-  - Builder backend: `TeaPSPBackend`.
-  - Targets TeaVM C output and writes PSP build scripts.
-  - PSP defaults are smaller heap/direct-buffer sizes than desktop native targets.
-
 ## Gradle Plugin
 - Plugin source lives in `tools/gdx-teavm-plugin`.
 - Plugin id: `com.github.xpenatan.gdx-teavm`.
@@ -101,7 +90,6 @@
   - `js { ... }`
   - `wasm { ... }`
   - `glfw { ... }`
-  - `psp { ... }`
   - `ios { ... }`
 - Plugin-generated tasks use group `gdx-teavm`.
 - TeaVM's own low-level tasks still exist internally, but the plugin clears their task group so normal users are guided toward the `gdx_teavm_*` tasks.
@@ -109,7 +97,6 @@
 - The plugin adds the selected backend artifact to both Java `implementation` and TeaVM's generation classpath:
   - web targets add `backend-web`
   - GLFW adds `backend-glfw`
-  - PSP adds `backend-psp`
   - iOS adds `backend-ios`
 - In the repository build, backend dependencies resolve to local projects. In a published build, they resolve from Maven using the generated plugin version in `GdxTeaVMPluginInfo`.
 
@@ -124,9 +111,6 @@
   - `gdx_teavm_glfw_generate`
   - `gdx_teavm_glfw_build`
   - `gdx_teavm_glfw_run`
-- PSP native:
-  - `gdx_teavm_psp_generate`
-  - `gdx_teavm_psp_build`
 - iOS native:
   - `gdx_teavm_ios_generate`
   - `gdx_teavm_ios_prepare_angle`
@@ -144,18 +128,16 @@
   - `GdxTeaVMJsExtension`
   - `GdxTeaVMWasmExtension`
   - `GdxTeaVMGlfwExtension`
-  - `GdxTeaVMPspExtension`
   - `GdxTeaVMIosExtension`
 - Web-only settings such as `htmlTitle`, `htmlWidth`, `htmlHeight`, `entryPointName`, `mainClassArgs`, `logoPath`, `copyLoadingAsset`, `webappEnabled`, and `serverPort` belong in `js {}` or `wasm {}`, not in the root extension.
 - GLFW build mode is selected with `glfw.buildType` (`Debug` or `Release`); plugin tasks are not split by build type.
 - Web targets usually share the same launcher class.
-- GLFW and PSP usually need native-specific launcher classes because they start different backend application classes.
+- Native targets usually need native-specific launcher classes because they start different backend application classes.
 - iOS is an experimental native plugin target with TeaVM C/assets generation plus WIP Xcode and simulator tasks.
 - Default output directories:
   - JS: `build/dist/web`
   - Wasm: `build/dist/wasm`
   - GLFW: `build/dist/glfw`
-  - PSP: `build/dist/psp`
   - iOS: `build/dist/ios`
 - Default generated app subdirectories:
   - Web targets: `webapp`
@@ -171,7 +153,7 @@
   - `JavaObjectExporterDependency`
   - reflection support
   - `GdxWebTargetWrapper` when webapp generation is enabled
-- `GLFWPlugin`, `PSPPlugin`, `AndroidPlugin`, and `IOSPlugin` support TeaVM C output by checking `TeaVMCHost`.
+- `GLFWPlugin`, `AndroidPlugin`, and `IOSPlugin` support TeaVM C output by checking `TeaVMCHost`.
 - Native plugins use `gdx.teavm.native.backend` to decide which native backend is selected.
 - Plugin properties are transported through `TeaVMHost.getProperties()` and parsed by `GdxTeaVMPluginConfig`.
 
@@ -196,7 +178,6 @@
   - `backends/backend-shared/src/main/resources/META-INF/gdx-teavm.properties`
   - `backends/backend-web/src/main/resources/META-INF/gdx-teavm.properties`
   - `backends/backend-glfw/src/main/resources/META-INF/gdx-teavm.properties`
-  - `backends/backend-psp/src/main/resources/META-INF/gdx-teavm.properties`
 
 ## Reflection
 - libGDX reflection emulation is backed by generated TeaVM metadata.
@@ -222,7 +203,7 @@
 - Do not annotate real JavaScript classes such as browser constructors or library constructors as transparent without checking their TeaVM usage.
 
 ## Development Notes
-- Source sets for `backend-web`, `backend-glfw`, and `backend-psp` intentionally compile from both `emu` and `src/main/java`.
+- Source sets for `backend-web` and `backend-glfw` intentionally compile from both `emu` and `src/main/java`.
 - If adding packaged resources, update the module's `META-INF/gdx-teavm.properties` so assets are discoverable.
 - Preserve fluent API style in compiler and backend config classes; setters return `this`.
 - Prefer proving changes through existing Gradle tasks instead of ad-hoc commands.

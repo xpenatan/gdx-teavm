@@ -37,7 +37,6 @@ val hasAndroidSdk = isAndroidSdkDir(System.getenv("ANDROID_HOME")) ||
 include(":backends:backend-shared")
 include(":backends:backend-web")
 include(":backends:backend-glfw")
-include(":backends:backend-psp")
 include(":backends:backend-ios")
 
 if(hasAndroidSdk) {
@@ -64,7 +63,6 @@ include(":examples:basic:plugin")
 include(":examples:basic:ios")
 include(":examples:basic:web")
 include(":examples:basic:desktop-c")
-include(":examples:basic:psp")
 
 if(hasAndroidSdk) {
     include(":examples:basic:android")

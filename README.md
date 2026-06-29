@@ -4,12 +4,12 @@
 [![Maven Central Version](https://img.shields.io/maven-central/v/com.github.xpenatan.gdx-teavm/backend-web)](https://central.sonatype.com/namespace/com.github.xpenatan.gdx-teavm)
 [![Snapshot](https://img.shields.io/badge/snapshot--SNAPSHOT-red)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/com/github/xpenatan/gdx-teavm/)
 
-`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, native C projects for GLFW, experimental PSP and iOS native payloads, and Android native app builds through an Android application module.
+`gdx-teavm` is a TeaVM backend set for running [libGDX](https://libgdx.com/) applications outside the JVM. It can generate browser builds with JavaScript or Wasm, native C projects for GLFW, experimental iOS native payloads, and Android native app builds through an Android application module.
 
 The project provides two build styles:
 
 - **Gradle plugin**: the recommended workflow for application projects. It applies TeaVM, configures the selected backend, copies assets, prepares generated output, and creates `gdx_teavm_*` tasks.
-- **Manual builder API**: a Java launcher API for advanced builds and custom tooling. It directly uses `TeaBuilder` with `WebBackend`, `TeaGLFWBackend`, or `TeaPSPBackend`.
+- **Manual builder API**: a Java launcher API for advanced builds and custom tooling. It directly uses `TeaBuilder` with `WebBackend` or `TeaGLFWBackend`.
 
 ## Status
 
@@ -26,7 +26,6 @@ The project provides two build styles:
 | `backend-shared` | Shared compiler, asset, resource, and reflection support |
 | `backend-web` | libGDX web runtime plus JavaScript and Wasm build support |
 | `backend-glfw` | TeaVM C output for desktop GLFW native builds |
-| `backend-psp` | Experimental TeaVM C output for PSP builds |
 | `backend-ios` | Experimental TeaVM C output and runtime support for iOS builds |
 | `backend-android` | TeaVM C output and runtime support for Android app modules |
 | `gdx-freetype-web` | FreeType support for TeaVM web builds |
@@ -118,7 +117,7 @@ dependencies {
 }
 ```
 
-Run the Java launcher from Gradle or your IDE. Builder projects add the concrete backend dependency they use, such as `backend-web`, `backend-glfw`, or `backend-psp`.
+Run the Java launcher from Gradle or your IDE. Builder projects add the concrete backend dependency they use, such as `backend-web` or `backend-glfw`.
 
 ## Examples In This Repository
 
@@ -127,7 +126,6 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 ./gradlew :examples:basic:plugin:gdx_teavm_web_js_run
 ./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:plugin:gdx_teavm_psp_generate
 ./gradlew :examples:basic:ios:gdx_teavm_ios_generate
 ./gradlew :examples:basic:ios:gdx_teavm_ios_init_xcode
 
@@ -148,7 +146,6 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 ./gradlew :examples:freetype:web:freetype_web_run
 ./gradlew :examples:controllers:web:controllers_web_run
 ./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
-./gradlew :examples:basic:psp:basic_psp_build
 ```
 
 ## Support
