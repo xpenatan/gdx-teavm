@@ -6,6 +6,7 @@ public class FreetypeCLauncher {
 
     public static void main(String[] args) {
         GLFWApplicationConfiguration config = new GLFWApplicationConfiguration();
+        config.setTitle("gdx-freetype desktop-c");
         config.useVsync(false);
         config.setForegroundFPS(0);
 
