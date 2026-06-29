@@ -5,10 +5,9 @@ dependencies {
 }
 
 val mainClassName = "BuildTeaVMTestDemo"
-tasks.register<JavaExec>("basic_build_teavm_psp") {
-    description = "Build teavm test example"
-    group = "example-teavm"
-    description = "Build teavm psp example"
+tasks.register<JavaExec>("basic_psp_build") {
+    group = "example-psp"
+    description = "Build PSP native example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
 }

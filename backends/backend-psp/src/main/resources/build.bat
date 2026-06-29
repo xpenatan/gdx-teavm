@@ -16,7 +16,6 @@ wsl --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: WSL not found!
     echo Please install WSL and PSP toolchain.
-    pause
     exit /b 1
 )
 

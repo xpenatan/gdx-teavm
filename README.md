@@ -30,6 +30,7 @@ The project provides two build styles:
 | `backend-ios` | Experimental TeaVM C output and runtime support for iOS builds |
 | `backend-android` | TeaVM C output and runtime support for Android app modules |
 | `gdx-freetype-web` | FreeType support for TeaVM web builds |
+| `gdx-freetype-c` | FreeType support for TeaVM C native builds |
 | `gdx-controllers-web` | Controller support for TeaVM web builds |
 | `tools/gdx-teavm-plugin` | Gradle plugin implementation |
 
@@ -38,7 +39,7 @@ The project provides two build styles:
 - [Usage guide](docs/usage.md): setup, plugin examples, builder examples, tasks, and publishing notes.
 - [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared, web, JS, Wasm, GLFW, and Android settings.
 - [Backend architecture](docs/backend-architecture.md): how the builder, Gradle plugin, TeaVM plugins, assets, and reflection work together.
-- [GLFW native build guide](examples/basic/glfw/README.md): native toolchain requirements and manual CMake workflow.
+- [Desktop C native build guide](examples/basic/desktop-c/README.md): native toolchain requirements and manual CMake workflow.
 
 ## Repositories
 
@@ -135,13 +136,19 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 ./gradlew :examples:basic:android:installDebug
 
 # FreeType plugin workflow
-./gradlew :examples:freetype:web:gdx_teavm_web_js_run
-./gradlew :examples:freetype:web:gdx_teavm_web_wasm_run
+./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run
+./gradlew :examples:freetype:plugin:gdx_teavm_web_wasm_run
+
+# gdx-controllers plugin workflow
+./gradlew :examples:controllers:plugin:gdx_teavm_web_js_run
+./gradlew :examples:controllers:plugin:gdx_teavm_web_wasm_run
 
 # Manual builder workflow
-./gradlew :examples:basic:web:basic_run_web
-./gradlew :examples:basic:glfw:basic_build_teavm_glfw_debug
-./gradlew :examples:basic:psp:basic_build_teavm_psp
+./gradlew :examples:basic:web:basic_web_run
+./gradlew :examples:freetype:web:freetype_web_run
+./gradlew :examples:controllers:web:controllers_web_run
+./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
+./gradlew :examples:basic:psp:basic_psp_build
 ```
 
 ## Support

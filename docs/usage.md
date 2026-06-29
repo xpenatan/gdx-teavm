@@ -599,6 +599,8 @@ Plugin examples:
 ./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
 ./gradlew :examples:basic:plugin:gdx_teavm_glfw_build
+./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run
+./gradlew :examples:controllers:plugin:gdx_teavm_web_js_run
 ```
 
 Android example:
@@ -612,10 +614,12 @@ Android example:
 Manual builder examples:
 
 ```shell
-./gradlew :examples:basic:web:basic_run_web
-./gradlew :examples:basic:glfw:basic_generate_teavm_glfw
-./gradlew :examples:basic:glfw:basic_build_teavm_glfw_debug
-./gradlew :examples:basic:psp:basic_build_teavm_psp
+./gradlew :examples:basic:web:basic_web_run
+./gradlew :examples:freetype:web:freetype_web_run
+./gradlew :examples:controllers:web:controllers_web_run
+./gradlew :examples:basic:desktop-c:basic_desktop_c_generate
+./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
+./gradlew :examples:basic:psp:basic_psp_build
 ```
 
 ## Snapshot Testing In A Standalone Project

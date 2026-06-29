@@ -48,7 +48,8 @@ else {
 }
 
 include(":extensions:asset-loader")
-include(":extensions:glfw:gdx-controllers-glfw")
+include(":extensions:c:gdx-freetype-c")
+include(":extensions:c:gdx-controllers-glfw")
 include(":extensions:web:gdx-controllers-web")
 include(":extensions:web:gdx-freetype-web")
 
@@ -57,12 +58,12 @@ include(":extensions:web:gdx-freetype-web")
 //include(":tools:generator:desktop")
 
 include(":examples:basic:core")
-include(":examples:basic:lwjgl3")
+include(":examples:basic:desktop")
 include(":examples:basic:graalvm")
 include(":examples:basic:plugin")
 include(":examples:basic:ios")
 include(":examples:basic:web")
-include(":examples:basic:glfw")
+include(":examples:basic:desktop-c")
 include(":examples:basic:psp")
 
 if(hasAndroidSdk) {
@@ -77,7 +78,15 @@ include(":benchmark:glfw")
 
 include(":examples:freetype:core")
 include(":examples:freetype:desktop")
+include(":examples:freetype:desktop-c")
+include(":examples:freetype:plugin")
 include(":examples:freetype:web")
+
+include(":examples:controllers:core")
+include(":examples:controllers:desktop")
+include(":examples:controllers:desktop-c")
+include(":examples:controllers:plugin")
+include(":examples:controllers:web")
 
 val file = File(settingsDir, "gradle.properties")
 

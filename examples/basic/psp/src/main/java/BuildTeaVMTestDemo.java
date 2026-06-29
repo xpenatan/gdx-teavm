@@ -7,22 +7,18 @@ import org.teavm.vm.TeaVMOptimizationLevel;
 public class BuildTeaVMTestDemo {
 
     public static void main(String[] args) {
-        try {
-            AssetFileHandle assetsPath = new AssetFileHandle("../assets");
-            TeaPSPBackend pspBackend = new TeaPSPBackend();
+        AssetFileHandle assetsPath = new AssetFileHandle("../assets");
+        TeaPSPBackend pspBackend = new TeaPSPBackend();
 
-            pspBackend.debugMemory = true;
+        pspBackend.debugMemory = true;
 
-            new TeaBuilder(pspBackend)
-                    .addAssets(assetsPath)
-                    .setObfuscated(false)
-                    .setDebugInformationGenerated(true) // Generates .prx file for debugging
-                    .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
-                    .setMainClass(PSPLauncherTest.class.getName())
-                    .build(new File("build/dist"));
-            System.out.println("Build successful");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new TeaBuilder(pspBackend)
+                .addAssets(assetsPath)
+                .setObfuscated(false)
+                .setDebugInformationGenerated(true) // Generates .prx file for debugging
+                .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
+                .setMainClass(PSPLauncherTest.class.getName())
+                .build(new File("build/dist"));
+        System.out.println("Build successful");
     }
 }

@@ -22,13 +22,13 @@
 
 ## Example Tasks
 - Manual builder web example:
-  - `./gradlew :examples:basic:web:basic_run_web`
-- Manual builder GLFW example:
-  - `./gradlew :examples:basic:glfw:basic_generate_teavm_glfw`
-  - `./gradlew :examples:basic:glfw:basic_build_teavm_glfw_debug`
-  - `./gradlew :examples:basic:glfw:basic_run_teavm_glfw_debug`
+  - `./gradlew :examples:basic:web:basic_web_run`
+- Manual builder desktop C example:
+  - `./gradlew :examples:basic:desktop-c:basic_desktop_c_generate`
+  - `./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build`
+  - `./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_run`
 - Manual builder PSP example:
-  - `./gradlew :examples:basic:psp:basic_build_teavm_psp`
+  - `./gradlew :examples:basic:psp:basic_psp_build`
 - Gradle plugin basic example:
   - `./gradlew :examples:basic:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run`
@@ -38,8 +38,11 @@
   - `./gradlew :examples:basic:plugin:gdx_teavm_psp_generate`
   - `./gradlew :examples:basic:plugin:gdx_teavm_psp_build`
 - Gradle plugin FreeType web example:
-  - `./gradlew :examples:freetype:web:gdx_teavm_web_js_run`
-  - `./gradlew :examples:freetype:web:gdx_teavm_web_wasm_run`
+  - `./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run`
+  - `./gradlew :examples:freetype:plugin:gdx_teavm_web_wasm_run`
+- Gradle plugin gdx-controllers web example:
+  - `./gradlew :examples:controllers:plugin:gdx_teavm_web_js_run`
+  - `./gradlew :examples:controllers:plugin:gdx_teavm_web_wasm_run`
 - Publishing entry points are root tasks from `buildSrc/src/main/kotlin/publish.gradle.kts`:
   - `publishSnapshot`
   - `publishRelease`
@@ -247,4 +250,4 @@
 - Usage guide: `docs/usage.md`
 - Plugin property reference: `docs/plugin-properties.md`
 - Backend architecture guide: `docs/backend-architecture.md`
-- GLFW native build notes: `examples/basic/glfw/README.md`
+- Desktop C native build notes: `examples/basic/desktop-c/README.md`

@@ -1,0 +1,19 @@
+dependencies {
+    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
+    implementation("com.badlogicgames.gdx-controllers:gdx-controllers-desktop:${LibExt.gdxControllerVersion}")
+    implementation(project(":examples:controllers:core"))
+}
+
+tasks.register<JavaExec>("controllers_desktop_run") {
+    dependsOn("classes")
+    group = "example-desktop"
+    description = "Run gdx-controllers desktop example"
+    mainClass.set("ControllerDesktopLauncher")
+    classpath = sourceSets["main"].runtimeClasspath
+    workingDir = file(".")
+
+    if(org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
+        jvmArgs?.add("-XstartOnFirstThread")
+    }
+}

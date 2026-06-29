@@ -1,26 +1,25 @@
-import org.teavm.gradle.api.OptimizationLevel
-
-plugins {
-    id("com.github.xpenatan.gdx-teavm")
-}
-
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:freetype:core"))
+    implementation(project(":backends:backend-web"))
     implementation(project(":extensions:web:gdx-freetype-web"))
 }
 
-gdxTeaVM {
-    assets.from(file("../desktop/assets"))
+val mainClassName = "BuildTeaVMFreetypeWeb"
+val webTaskGroup = "example-web"
 
-    js {
-        mainClass.set("FreetypeTestLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
-    }
-    wasm {
-        mainClass.set("FreetypeTestLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
-    }
+tasks.register<JavaExec>("freetype_web_run") {
+    group = webTaskGroup
+    description = "Generate and serve the FreeType JavaScript web example"
+    mainClass.set(mainClassName)
+    classpath = sourceSets["main"].runtimeClasspath
+    args("js")
+}
+
+tasks.register<JavaExec>("freetype_web_wasm_run") {
+    group = webTaskGroup
+    description = "Generate and serve the FreeType Wasm web example"
+    mainClass.set(mainClassName)
+    classpath = sourceSets["main"].runtimeClasspath
+    args("wasm")
 }

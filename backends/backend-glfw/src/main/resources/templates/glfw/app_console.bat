@@ -8,4 +8,4 @@ if errorlevel 1 (
 )
 
 "${EXECUTABLE_PATH}"
-exit /b %ERRORLEVEL%
+exit %ERRORLEVEL%

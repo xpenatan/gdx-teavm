@@ -38,80 +38,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Changing directory to build\cmake...
-cd build\cmake
+echo Building !BUILD_CONFIG! configuration...
+!CMAKE_PATH! --build build\cmake --config !BUILD_CONFIG!
 if errorlevel 1 (
-    echo Failed to change directory
-    exit /b 1
-)
-
-:: Initialize MSBuild path variable
-set MSBUILD_PATH=
-set VS_EDITION=
-
-:: Search Visual Studio installations (two levels deep)
-for %%R in ("%ProgramFiles%" "%ProgramFiles(x86)%") do (
-    for /d %%Y in ("%%~R\Microsoft Visual Studio\*") do (
-        for /d %%E in ("%%~Y\*") do (
-            set "EDITION_DIR=%%~nxE"
-            set "CHECK_PATH=%%~fE\MSBuild\Current\Bin"
-
-            if exist "!CHECK_PATH!\MSBuild.exe" (
-                set "MSBUILD_PATH=!CHECK_PATH!\MSBuild.exe"
-                set "VS_EDITION=!EDITION_DIR!"
-                goto :found
-            )
-            if exist "!CHECK_PATH!\amd64\MSBuild.exe" (
-                set "MSBUILD_PATH=!CHECK_PATH!\amd64\MSBuild.exe"
-                set "VS_EDITION=!EDITION_DIR!"
-                goto :found
-            )
-            if exist "!CHECK_PATH!\x86\MSBuild.exe" (
-                set "MSBUILD_PATH=!CHECK_PATH!\x86\MSBuild.exe"
-                set "VS_EDITION=!EDITION_DIR!"
-                goto :found
-            )
-        )
-    )
-)
-
-:: If MSBuild path is not found, check in the registry for installations
-echo MSBuild not found in default paths. Checking registry for installation...
-
-for /f "tokens=2* delims=    " %%A in ('reg query "HKCU\Software\Microsoft\VisualStudio" /s /f "MSBuild.exe" 2^>nul') do (
-    if "%%B" neq "" (
-        set MSBUILD_PATH=%%B
-        set VS_EDITION=Unknown
-        goto :found
-    )
-)
-
-:: If MSBuild is still not found, display an error
-echo Error: MSBuild not found on your system.
-exit /b 1
-
-:found
-:: Display the found MSBuild path and edition
-echo MSBuild found at: %MSBUILD_PATH%
-echo Visual Studio Edition Detected: %VS_EDITION%
-
-if /i "%VS_EDITION%"=="BuildTools" (
-    echo Error: Visual Studio Build Tools edition is not supported.
-    exit /b 1
-)
-
-:: Set the solution/project file and build configuration
-set SOLUTION_FILE=".\!NAME!.slnx"
-
-:: Run MSBuild with the specified configuration
-echo Running MSBuild for !BUILD_CONFIG! configuration...
-"!MSBUILD_PATH!" !SOLUTION_FILE! /p:Configuration=!BUILD_CONFIG! /p:Platform=x64
-
-if errorlevel 1 (
-    echo Failed to build solution
+    echo Failed to build CMake project
     exit /b 1
 )
 
 echo Build completed successfully for !BUILD_CONFIG! configuration.
-cd /d "%~dp0"
 endlocal
