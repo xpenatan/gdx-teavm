@@ -174,6 +174,12 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
             File(sourcesDir, "$projectName-Bridging-Header.h"),
             replacements
         )
+        writeTemplate("templates/ios/xcode/Sources/Info.plist", File(sourcesDir, "Info.plist"), replacements)
+        writeTemplate(
+            "templates/ios/xcode/Sources/LaunchScreen.storyboard",
+            File(sourcesDir, "LaunchScreen.storyboard"),
+            replacements
+        )
         writeTemplate("templates/ios/xcode/README.md", File(xcodeRoot, "README.md"), replacements)
     }
 

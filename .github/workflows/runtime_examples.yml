@@ -1,0 +1,488 @@
+name: Runtime Examples
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freetype-desktop-c-linux:
+    name: FreeType desktop-c Linux runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      APP_PATH: examples/freetype/desktop-c/build/dist/c/release/freetype_debug
+      PROOF_DIR: runtime-proof/linux
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Install native runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ffmpeg \
+            imagemagick \
+            libglew-dev \
+            libglfw3-dev \
+            libgl1-mesa-dev \
+            mesa-utils \
+            x11-apps \
+            xvfb
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build FreeType desktop-c debug executable
+        run: |
+          mkdir -p "$PROOF_DIR"
+          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_debug_build --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
+          exit "${PIPESTATUS[0]}"
+
+      - name: Run and capture proof
+        env:
+          DISPLAY: :99
+          LIBGL_ALWAYS_SOFTWARE: 1
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$PROOF_DIR"
+          Xvfb "$DISPLAY" -screen 0 1280x720x24 +extension GLX +render -noreset > "$PROOF_DIR/xvfb.log" 2>&1 &
+          XVFB_PID=$!
+
+          cleanup() {
+            if [ -n "${APP_PID:-}" ] && kill -0 "$APP_PID" 2>/dev/null; then
+              kill "$APP_PID" 2>/dev/null || true
+              wait "$APP_PID" 2>/dev/null || true
+            fi
+            if kill -0 "$XVFB_PID" 2>/dev/null; then
+              kill "$XVFB_PID" 2>/dev/null || true
+              wait "$XVFB_PID" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          sleep 2
+          glxinfo -B > "$PROOF_DIR/graphics-info.txt" 2>&1 || true
+
+          APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
+          APP_DIR="$(dirname "$APP_ABS")"
+          APP_NAME="$(basename "$APP_ABS")"
+          chmod +x "$APP_ABS"
+
+          pushd "$APP_DIR"
+          "./$APP_NAME" > "$GITHUB_WORKSPACE/$PROOF_DIR/app.log" 2>&1 &
+          APP_PID=$!
+          popd
+
+          sleep 8
+          if ! kill -0 "$APP_PID" 2>/dev/null; then
+            echo "FreeType desktop-c process exited before proof capture."
+            cat "$PROOF_DIR/app.log" || true
+            exit 1
+          fi
+
+          ffmpeg -y -f x11grab -video_size 1280x720 -i "$DISPLAY.0" -frames:v 1 "$PROOF_DIR/screenshot.png"
+          ffmpeg -y -f x11grab -video_size 1280x720 -framerate 15 -i "$DISPLAY.0" -t 5 "$PROOF_DIR/video.mp4" || true
+          test -s "$PROOF_DIR/screenshot.png"
+
+      - name: Upload runtime proof
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: freetype-desktop-c-linux-runtime-proof
+          path: runtime-proof/linux
+          if-no-files-found: warn
+
+  freetype-desktop-c-macos:
+    name: FreeType desktop-c macOS runtime
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      APP_PATH: examples/freetype/desktop-c/build/dist/c/release/freetype_debug
+      PROOF_DIR: runtime-proof/macos
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Install native runtime dependencies
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+        run: brew install glew
+
+      - name: Build GLFW with macOS software renderer retry
+        run: |
+          set -euo pipefail
+
+          GLFW_SRC="$RUNNER_TEMP/glfw"
+          GLFW_BUILD="$RUNNER_TEMP/glfw-build"
+          GLFW_PREFIX="$GITHUB_WORKSPACE/.deps/glfw"
+
+          git init "$GLFW_SRC"
+          git -C "$GLFW_SRC" remote add origin https://github.com/glfw/glfw.git
+          git -C "$GLFW_SRC" fetch --depth 1 origin pull/2571/head
+          git -C "$GLFW_SRC" checkout FETCH_HEAD
+
+          cmake -S "$GLFW_SRC" -B "$GLFW_BUILD" \
+            -DCMAKE_INSTALL_PREFIX="$GLFW_PREFIX" \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DGLFW_BUILD_EXAMPLES=OFF \
+            -DGLFW_BUILD_TESTS=OFF \
+            -DGLFW_BUILD_DOCS=OFF
+          cmake --build "$GLFW_BUILD" --target install --parallel 3
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Record runner info
+        run: |
+          mkdir -p "$PROOF_DIR"
+          {
+            sw_vers
+            uname -a
+            sysctl -n machdep.cpu.brand_string
+            brew --prefix
+            cmake --version
+            clang --version
+          } > "$PROOF_DIR/system-info.txt" 2>&1
+          system_profiler SPDisplaysDataType > "$PROOF_DIR/graphics-info.txt" 2>&1 || true
+
+      - name: Build FreeType desktop-c debug executable
+        env:
+          CMAKE_PREFIX_PATH: ${{ github.workspace }}/.deps/glfw
+        run: |
+          mkdir -p "$PROOF_DIR"
+          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_debug_build --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
+          exit "${PIPESTATUS[0]}"
+
+      - name: Run and capture proof
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$PROOF_DIR"
+
+          emit_github_error() {
+            local title="$1"
+            local message
+            message="$(
+              {
+                echo "$title"
+                cat "$PROOF_DIR/app.log" "$PROOF_DIR/lldb.log" "$PROOF_DIR/screencapture.log" 2>/dev/null || true
+              } | tail -n 80 | tr '\r\n' '  ' | head -c 3500
+            )"
+            message="${message//'%'/'%25'}"
+            echo "::error title=$title::$message"
+          }
+
+          cleanup() {
+            if [ -n "${APP_PID:-}" ] && kill -0 "$APP_PID" 2>/dev/null; then
+              pkill -P "$APP_PID" 2>/dev/null || true
+              kill "$APP_PID" 2>/dev/null || true
+              wait "$APP_PID" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
+          APP_DIR="$(dirname "$APP_ABS")"
+          APP_NAME="$(basename "$APP_ABS")"
+          chmod +x "$APP_ABS"
+
+          pushd "$APP_DIR"
+          "./$APP_NAME" > "$GITHUB_WORKSPACE/$PROOF_DIR/app.log" 2>&1 &
+          APP_PID=$!
+          popd
+
+          sleep 12
+          if ! kill -0 "$APP_PID" 2>/dev/null; then
+            echo "FreeType desktop-c process exited before proof capture."
+            cat "$PROOF_DIR/app.log" || true
+            pushd "$APP_DIR"
+            lldb --batch -o run -o "bt all" -- "./$APP_NAME" > "$GITHUB_WORKSPACE/$PROOF_DIR/lldb.log" 2>&1 || true
+            popd
+            emit_github_error "FreeType desktop-c macOS app exited before proof"
+            exit 1
+          fi
+
+          if ! screencapture -x "$PROOF_DIR/screenshot.png" 2> "$PROOF_DIR/screencapture.log"; then
+            emit_github_error "FreeType desktop-c macOS screencapture failed"
+            exit 1
+          fi
+          if [ ! -s "$PROOF_DIR/screenshot.png" ]; then
+            emit_github_error "FreeType desktop-c macOS screenshot was empty"
+            exit 1
+          fi
+
+      - name: Upload runtime proof
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: freetype-desktop-c-macos-runtime-proof
+          path: runtime-proof/macos
+          if-no-files-found: warn
+
+  basic-ios-simulator:
+    name: Basic backend-ios simulator runtime
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      APP_PATH: examples/basic/ios/build/xcode-derived/ios/Build/Products/Debug-iphonesimulator/GdxTeaVMIOSSpike.app
+      BUNDLE_ID: com.github.xpenatan.gdxteavm.ios.spike
+      PROOF_DIR: runtime-proof/ios
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Record runner and simulator info
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$PROOF_DIR"
+          {
+            sw_vers
+            uname -a
+            xcode-select -p
+            xcodebuild -version
+            xcrun simctl list runtimes available
+            xcrun simctl list devices available
+          } > "$PROOF_DIR/system-info.txt" 2>&1
+          xcrun simctl list devices available -j > "$PROOF_DIR/devices.json"
+
+      - name: Build basic backend-ios simulator app
+        run: |
+          set -uo pipefail
+
+          mkdir -p "$PROOF_DIR"
+
+          emit_github_error() {
+            local title="$1"
+            local message
+            set +e
+            message="$(
+              {
+                echo "$title"
+                if [ -f "$PROOF_DIR/xcodebuild.log" ]; then
+                  echo "--- xcodebuild.log errors ---"
+                  grep -Ei "error:|fatal error|undefined symbols|ld:|clang:|swift|provision|signing|failed|BUILD FAILED" "$PROOF_DIR/xcodebuild.log" | tail -n 160 || true
+                  echo "--- xcodebuild.log tail ---"
+                  tail -n 120 "$PROOF_DIR/xcodebuild.log"
+                fi
+                echo "--- gradle build.log errors ---"
+                grep -Ei "error:|fatal error|undefined symbols|ld:|clang:|swift|xcodebuild|failed|BUILD FAILED|Command failed" "$PROOF_DIR/build.log" | tail -n 160 || true
+                echo "--- gradle build.log tail ---"
+                tail -n 220 "$PROOF_DIR/build.log" 2>/dev/null || true
+              } | tail -n 260 | tr '\r\n' '  ' | tail -c 12000
+            )"
+            set -e
+            message="${message//'%'/'%25'}"
+            echo "::error title=$title::$message"
+          }
+
+          emit_text_error() {
+            local title="$1"
+            local message="$2"
+            message="$(printf '%s' "$message" | tr '\r\n' '  ' | tail -c 3500)"
+            message="${message//'%'/'%25'}"
+            echo "::error title=$title::$message"
+          }
+
+          emit_file_tail_error() {
+            local title="$1"
+            local file="$2"
+            if [ -f "$file" ]; then
+              emit_text_error "$title" "$(tail -n 80 "$file" 2>&1)"
+            else
+              emit_text_error "$title" "Missing expected log file: $file"
+            fi
+          }
+
+          set +e
+          ./gradlew :examples:basic:ios:gdx_teavm_ios_build_simulator --console=plain 2>&1 | tee "$PROOF_DIR/build.log"
+          status="${PIPESTATUS[0]}"
+          set -e
+
+          if [ "$status" -ne 0 ]; then
+            XCODE_PROJECT="$GITHUB_WORKSPACE/examples/basic/ios/build/dist/ios/xcode/GdxTeaVMIOSSpike.xcodeproj"
+            if [ -d "$XCODE_PROJECT" ]; then
+              xcodebuild \
+                -project "$XCODE_PROJECT" \
+                -scheme GdxTeaVMIOSSpike \
+                -sdk iphonesimulator \
+                -configuration Debug \
+                -derivedDataPath "$GITHUB_WORKSPACE/examples/basic/ios/build/xcode-derived/ios" \
+                CODE_SIGNING_ALLOWED=NO \
+                build > "$PROOF_DIR/xcodebuild.log" 2>&1 || true
+            fi
+            emit_text_error "backend-ios generated Xcode project" "$(find "$GITHUB_WORKSPACE/examples/basic/ios/build/dist/ios" -maxdepth 3 -print 2>&1 | tail -n 80)"
+            emit_file_tail_error "backend-ios direct xcodebuild tail" "$PROOF_DIR/xcodebuild.log"
+            emit_file_tail_error "backend-ios Gradle build tail" "$PROOF_DIR/build.log"
+            emit_github_error "backend-ios simulator build failed"
+            exit "$status"
+          fi
+
+      - name: Run iOS simulator and capture proof
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$PROOF_DIR"
+
+          emit_github_error() {
+            local title="$1"
+            local message
+            set +e
+            message="$(
+              {
+                echo "$title"
+                cat \
+                  "$PROOF_DIR/simulator.log" \
+                  "$PROOF_DIR/launch.log" \
+                  "$PROOF_DIR/app.log" \
+                  "$PROOF_DIR/processes.txt" \
+                  "$PROOF_DIR/screenshot.log" \
+                  "$PROOF_DIR/video.log" \
+                  2>/dev/null || true
+              } | tail -n 160 | tr '\r\n' '  ' | tail -c 8000
+            )"
+            set -e
+            message="${message//'%'/'%25'}"
+            echo "::error title=$title::$message"
+          }
+          trap 'emit_github_error "backend-ios simulator proof failed at line $LINENO"' ERR
+
+          select_simulator() {
+            python3 - "$PROOF_DIR/devices.json" "$PROOF_DIR/selected-device.txt" <<'PY'
+          import json
+          import re
+          import sys
+
+          devices_path = sys.argv[1]
+          selected_path = sys.argv[2]
+          data = json.load(open(devices_path, encoding="utf-8"))
+          choices = []
+          for runtime, devices in data.get("devices", {}).items():
+              if "iOS" not in runtime:
+                  continue
+              version = tuple(int(part) for part in re.findall(r"\d+", runtime))
+              for device in devices:
+                  name = device.get("name", "")
+                  if not device.get("isAvailable") or "iPhone" not in name:
+                      continue
+                  score = 0
+                  for index, prefix in enumerate(("iPhone 16", "iPhone 15", "iPhone 14", "iPhone 13", "iPhone 12")):
+                      if name.startswith(prefix):
+                          score = 100 - index
+                          break
+                  if "Pro Max" in name:
+                      score -= 10
+                  choices.append((version, score, runtime, name, device["udid"]))
+
+          if not choices:
+              raise SystemExit("No available iPhone simulator device found")
+
+          choices.sort(reverse=True)
+          version, score, runtime, name, udid = choices[0]
+          with open(selected_path, "w", encoding="utf-8") as output:
+              output.write(f"{name} ({runtime}) {udid}\n")
+          print(udid)
+          PY
+          }
+
+          cleanup() {
+            if [ -n "${VIDEO_PID:-}" ] && kill -0 "$VIDEO_PID" 2>/dev/null; then
+              kill -INT "$VIDEO_PID" 2>/dev/null || true
+              wait "$VIDEO_PID" 2>/dev/null || true
+            fi
+            if [ -n "${DEVICE_UDID:-}" ]; then
+              xcrun simctl terminate "$DEVICE_UDID" "$BUNDLE_ID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+              xcrun simctl shutdown "$DEVICE_UDID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+            fi
+          }
+          trap cleanup EXIT
+
+          APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
+          if [ ! -d "$APP_ABS" ]; then
+            echo "iOS simulator app was not built at $APP_ABS" > "$PROOF_DIR/simulator.log"
+            emit_github_error "backend-ios simulator app bundle missing"
+            exit 1
+          fi
+
+          DEVICE_UDID="$(select_simulator)"
+          echo "Selected simulator: $(cat "$PROOF_DIR/selected-device.txt")" | tee -a "$PROOF_DIR/simulator.log"
+
+          xcrun simctl shutdown "$DEVICE_UDID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+          xcrun simctl boot "$DEVICE_UDID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+          xcrun simctl bootstatus "$DEVICE_UDID" -b >> "$PROOF_DIR/simulator.log" 2>&1
+          open -a Simulator --args -CurrentDeviceUDID "$DEVICE_UDID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+
+          xcrun simctl terminate "$DEVICE_UDID" "$BUNDLE_ID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+          xcrun simctl uninstall "$DEVICE_UDID" "$BUNDLE_ID" >> "$PROOF_DIR/simulator.log" 2>&1 || true
+          xcrun simctl install "$DEVICE_UDID" "$APP_ABS" >> "$PROOF_DIR/simulator.log" 2>&1
+
+          xcrun simctl spawn "$DEVICE_UDID" log stream --style compact --level debug \
+            --predicate "process == 'GdxTeaVMIOSSpike'" > "$PROOF_DIR/app.log" 2>&1 &
+          LOG_PID=$!
+
+          xcrun simctl launch --console-pty "$DEVICE_UDID" "$BUNDLE_ID" > "$PROOF_DIR/launch.log" 2>&1 &
+          APP_PID=$!
+
+          sleep 12
+          xcrun simctl spawn "$DEVICE_UDID" ps -A > "$PROOF_DIR/processes.txt" 2>&1 || true
+          if ! grep -q "GdxTeaVMIOSSpike" "$PROOF_DIR/processes.txt"; then
+            echo "GdxTeaVMIOSSpike was not visible in simulator ps output; continuing to screenshot proof." >> "$PROOF_DIR/simulator.log"
+          fi
+
+          xcrun simctl io "$DEVICE_UDID" recordVideo "$PROOF_DIR/video.mp4" > "$PROOF_DIR/video.log" 2>&1 &
+          VIDEO_PID=$!
+          sleep 6
+
+          if ! xcrun simctl io "$DEVICE_UDID" screenshot "$PROOF_DIR/screenshot.png" > "$PROOF_DIR/screenshot.log" 2>&1; then
+            emit_github_error "backend-ios simulator screenshot failed"
+            exit 1
+          fi
+          if [ ! -s "$PROOF_DIR/screenshot.png" ]; then
+            emit_github_error "backend-ios simulator screenshot was empty"
+            exit 1
+          fi
+
+          kill -INT "$VIDEO_PID" 2>/dev/null || true
+          wait "$VIDEO_PID" 2>/dev/null || true
+          if [ -n "${LOG_PID:-}" ] && kill -0 "$LOG_PID" 2>/dev/null; then
+            kill "$LOG_PID" 2>/dev/null || true
+            wait "$LOG_PID" 2>/dev/null || true
+          fi
+          if [ -n "${APP_PID:-}" ] && kill -0 "$APP_PID" 2>/dev/null; then
+            kill "$APP_PID" 2>/dev/null || true
+            wait "$APP_PID" 2>/dev/null || true
+          fi
+
+      - name: Upload runtime proof
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: basic-ios-simulator-runtime-proof
+          path: runtime-proof/ios
+          if-no-files-found: warn

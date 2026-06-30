@@ -4,7 +4,6 @@
 #include "../../../src/exceptions.h"
 
 #ifdef TEAVM_GENERATED_SHORT_FILE_NAMES
-#include "../../../src/c/c/b/g/g/Texture.h"
 #include "../../../src/c/c/b/g/g/g/Sprite.h"
 #include "../../../src/c/c/b/g/g/g/SpriteBatch.h"
 #include "../../../src/c/j/l/IllegalStateException.h"
@@ -12,7 +11,6 @@
 #include "../../../src/c/o/t/r/Allocator.h"
 #include "../../../src/c/o/t/r/ExceptionHandling.h"
 #else
-#include "../../../src/classes/com/badlogic/gdx/graphics/Texture.h"
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/Sprite.h"
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/SpriteBatch.h"
 #include "../../../src/classes/java/lang/IllegalStateException.h"

@@ -62,6 +62,21 @@ static void gdx_teavm_ios_log(const char* message) {
 #include "../external_cpp/gdx/gdx2d.c"
 #include "../external_cpp/teavm_optimizations/teavm/teavm_fastmath.c"
 #include "../external_cpp/teavm_optimizations/teavm/teavm_matrix4.c"
+
+#if defined(__has_include)
+#if defined(TEAVM_GENERATED_SHORT_FILE_NAMES)
+#if __has_include("c/c/b/g/g/g/SpriteBatch.h") && __has_include("c/c/b/g/g/g/Sprite.h")
+#define GDX_TEA_INCLUDE_SPRITEBATCH 1
+#endif
+#else
+#if __has_include("classes/com/badlogic/gdx/graphics/g2d/SpriteBatch.h") && __has_include("classes/com/badlogic/gdx/graphics/g2d/Sprite.h")
+#define GDX_TEA_INCLUDE_SPRITEBATCH 1
+#endif
+#endif
+#endif
+
+#if defined(GDX_TEA_INCLUDE_SPRITEBATCH)
 #include "../external_cpp/teavm_optimizations/teavm/teavm_spritebatch.c"
+#endif
 
 #include "ios_bridge.c"

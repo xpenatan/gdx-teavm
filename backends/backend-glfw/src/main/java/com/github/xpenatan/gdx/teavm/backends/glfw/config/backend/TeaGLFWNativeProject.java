@@ -29,6 +29,8 @@ public class TeaGLFWNativeProject {
         ensureDirectory(releasePath, "GLFW release path");
 
         copyAppInclude();
+        copyUCharCompatibilityHeader();
+        copyMacOSFiberCompatibilitySource();
         writeCMakeLists(projectName);
         writeBuildScripts(projectName);
     }
@@ -82,6 +84,29 @@ public class TeaGLFWNativeProject {
                 throw new IOException("app_include.c not found in resources");
             }
             Files.writeString(new File(generatedSources, "app_include.c").toPath(),
+                    new String(input.readAllBytes(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        }
+    }
+
+    private void copyUCharCompatibilityHeader() throws IOException {
+        try(var input = classLoader.getResourceAsStream("uchar.h")) {
+            if(input == null) {
+                throw new IOException("uchar.h not found in resources");
+            }
+            Files.writeString(new File(generatedSources, "uchar.h").toPath(),
+                    new String(input.readAllBytes(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        }
+    }
+
+    private void copyMacOSFiberCompatibilitySource() throws IOException {
+        if(!isMacOS()) {
+            return;
+        }
+        try(var input = classLoader.getResourceAsStream("fiber.c")) {
+            if(input == null) {
+                throw new IOException("fiber.c not found in resources");
+            }
+            Files.writeString(new File(generatedSources, "fiber.c").toPath(),
                     new String(input.readAllBytes(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
         }
     }
@@ -202,5 +227,10 @@ public class TeaGLFWNativeProject {
 
     private static boolean isWindows() {
         return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows");
+    }
+
+    private static boolean isMacOS() {
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        return osName.contains("mac") || osName.contains("darwin");
     }
 }
