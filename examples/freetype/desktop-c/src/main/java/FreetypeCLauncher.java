@@ -10,7 +10,6 @@ public class FreetypeCLauncher {
         config.useVsync(false);
         config.setForegroundFPS(0);
 
-        System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
         new GLFWApplication(new FreetypeDemo(), config);
     }
 }

@@ -582,7 +582,7 @@ public class GLFW {
     }
 
     public static abstract class GLFWErrorCallback extends Function {
-        public abstract void invoke(int error, String description);
+        public abstract void invoke(int error, Address description);
     }
 
     public static abstract class GLFWKeyCallback extends Function {

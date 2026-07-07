@@ -6,6 +6,9 @@ public final class GLFWNativesLoader {
     }
 
     static public void load() {
-        // Do not load
+        String nativeOsName = GLFWNativeRuntime.getOsName();
+        if(nativeOsName != null) {
+            System.setProperty("os.name", nativeOsName);
+        }
     }
 }
