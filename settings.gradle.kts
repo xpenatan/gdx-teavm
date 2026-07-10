@@ -16,33 +16,32 @@ pluginManagement {
 
 val localPropertiesFile = File(settingsDir, "local.properties")
 val localProperties = Properties()
-if(localPropertiesFile.exists()) {
+if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
 fun isAndroidSdkDir(path: String?): Boolean {
-    if(path.isNullOrBlank()) {
+    if (path.isNullOrBlank()) {
         return false
     }
     val sdkDir = File(path)
     return sdkDir.isDirectory &&
-        File(sdkDir, "platforms").isDirectory &&
-        File(sdkDir, "platform-tools").isDirectory
+            File(sdkDir, "platforms").isDirectory &&
+            File(sdkDir, "platform-tools").isDirectory
 }
 
 val hasAndroidSdk = isAndroidSdkDir(System.getenv("ANDROID_HOME")) ||
-    isAndroidSdkDir(System.getenv("ANDROID_SDK_ROOT")) ||
-    isAndroidSdkDir(localProperties.getProperty("sdk.dir"))
+        isAndroidSdkDir(System.getenv("ANDROID_SDK_ROOT")) ||
+        isAndroidSdkDir(localProperties.getProperty("sdk.dir"))
 
 include(":backends:backend-shared")
 include(":backends:backend-web")
 include(":backends:backend-glfw")
 include(":backends:backend-ios")
 
-if(hasAndroidSdk) {
+if (hasAndroidSdk) {
     include(":backends:backend-android")
-}
-else {
+} else {
     logger.lifecycle("Android SDK not found. Skipping Android modules. Set ANDROID_HOME, ANDROID_SDK_ROOT, or local.properties sdk.dir to enable them.")
 }
 
@@ -64,7 +63,7 @@ include(":examples:basic:ios")
 include(":examples:basic:web")
 include(":examples:basic:desktop-c")
 
-if(hasAndroidSdk) {
+if (hasAndroidSdk) {
     include(":examples:basic:android")
 }
 
@@ -86,10 +85,13 @@ include(":examples:controllers:desktop-c")
 include(":examples:controllers:plugin")
 include(":examples:controllers:web")
 
+include(":examples:websockets:core")
+include(":examples:websockets:web")
+
 val file = File(settingsDir, "gradle.properties")
 
 val properties = Properties()
-if(file.exists()) {
+if (file.exists()) {
     properties.load(file.inputStream())
 }
 
@@ -98,14 +100,14 @@ val teavmPath = properties.getOrDefault("teavmPath", "") as String
 val includeLibgdxSource = (properties.getOrDefault("includeLibgdxSource", "false") as String).toBoolean()
 val includeTeaVMSource = (properties.getOrDefault("includeTeaVMSource", "false") as String).toBoolean()
 
-if(includeLibgdxSource) {
+if (includeLibgdxSource) {
     include(":examples:gdx-tests:core")
     include(":examples:gdx-tests:desktop")
     include(":examples:gdx-tests:teavm")
     includeBuild(gdxSourcePath)
 }
 
-if(includeTeaVMSource) {
+if (includeTeaVMSource) {
     includeBuild(teavmPath) {
         dependencySubstitution {
             substitute(module("org.teavm:teavm-tooling")).using(project(":tools:core"))
