@@ -1,6 +1,6 @@
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.github.deedywu.gdx-websockets:teavm:${LibExt.wsVersion2}")
+    implementation("com.github.deedywu.gdx-websockets:teavm:${LibExt.wsVersion}")
     implementation(project(":examples:websockets:core"))
     implementation(project(":backends:backend-web"))
 }

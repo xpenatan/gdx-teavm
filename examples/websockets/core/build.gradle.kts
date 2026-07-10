@@ -1,4 +1,4 @@
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.github.deedywu.gdx-websockets:core:${LibExt.wsVersion2}")
+    implementation("com.github.deedywu.gdx-websockets:core:${LibExt.wsVersion}")
 }

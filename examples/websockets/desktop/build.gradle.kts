@@ -1,7 +1,7 @@
 dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
-    implementation("com.github.deedywu.gdx-websockets:common:${LibExt.wsVersion2}")
+    implementation("com.github.deedywu.gdx-websockets:common:${LibExt.wsVersion}")
     implementation(project(":examples:websockets:core"))
 }
 
