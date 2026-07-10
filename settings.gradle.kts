@@ -86,6 +86,7 @@ include(":examples:controllers:plugin")
 include(":examples:controllers:web")
 
 include(":examples:websockets:core")
+include(":examples:websockets:desktop")
 include(":examples:websockets:web")
 
 val file = File(settingsDir, "gradle.properties")
