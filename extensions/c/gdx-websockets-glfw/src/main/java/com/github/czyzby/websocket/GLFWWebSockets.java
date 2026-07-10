@@ -3,7 +3,7 @@ package com.github.czyzby.websocket;
 import com.github.czyzby.websocket.impl.GLFWWebSocket;
 
 /** Initializes the TeaVM C GLFW websocket implementation.
- * Current native backend support is Windows-only. */
+ * Native backend support currently includes Windows and Linux. */
 public class GLFWWebSockets {
 
     private GLFWWebSockets() {

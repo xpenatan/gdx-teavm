@@ -2,6 +2,9 @@ import com.github.xpenatan.gdx.teavm.backends.glfw.config.backend.TeaGLFWBackend
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
@@ -10,9 +13,15 @@ public class BuildTeaVMWebSocketsDemo {
     private static final int NATIVE_MIN_HEAP_SIZE = 64 * 1024 * 1024;
     private static final int NATIVE_MAX_HEAP_SIZE = 512 * 1024 * 1024;
     private static final int NATIVE_MIN_DIRECT_BUFFER_SIZE = 64 * 1024 * 1024;
+    private static final File OUTPUT_ROOT = new File("build/dist");
+    private static final File RELEASE_PATH = new File(OUTPUT_ROOT, "c/release");
+    private static final String LINUX_CURL_PROPERTY = "gdxTeaVMLinuxCurlPath";
+    private static final String LINUX_CURL_ENV = "GDX_TEAVM_LINUX_CURL_PATH";
+    private static final String LINUX_CURL_OUTPUT_NAME = "libcurl.so.4";
 
     public static void main(String[] args) throws IOException {
         BuildOptions buildOptions = BuildOptions.fromArgs(args);
+        packageLinuxCurlRuntime();
         TeaGLFWBackend cBackend = new TeaGLFWBackend()
                 .setBuildType(buildOptions.buildType)
                 .setBuildExecutableAfterBuild(buildOptions.shouldBuildExecutable())
@@ -27,7 +36,47 @@ public class BuildTeaVMWebSocketsDemo {
                 .setMaxHeapSize(NATIVE_MAX_HEAP_SIZE)
                 .setMinDirectBuffersSize(NATIVE_MIN_DIRECT_BUFFER_SIZE)
                 .setMainClass(WebSocketsCLauncher.class.getName())
-                .build(new File("build/dist"));
+                .setReleasePath(RELEASE_PATH)
+                .build(OUTPUT_ROOT);
+    }
+
+    private static void packageLinuxCurlRuntime() throws IOException {
+        if(!isLinuxHost()) {
+            return;
+        }
+
+        String configuredPath = resolveLinuxCurlPath();
+        if(configuredPath == null) {
+            return;
+        }
+
+        Path sourcePath = Path.of(configuredPath);
+        if(!Files.isRegularFile(sourcePath)) {
+            throw new IllegalArgumentException("Configured Linux libcurl runtime was not found: " + configuredPath);
+        }
+
+        Path releaseDirectory = RELEASE_PATH.toPath();
+        Files.createDirectories(releaseDirectory);
+        Path targetPath = releaseDirectory.resolve(LINUX_CURL_OUTPUT_NAME);
+        Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("Packaged Linux libcurl runtime: " + sourcePath + " -> " + targetPath);
+    }
+
+    private static String resolveLinuxCurlPath() {
+        String configuredProperty = System.getProperty(LINUX_CURL_PROPERTY);
+        if(configuredProperty != null && !configuredProperty.isBlank()) {
+            return configuredProperty.trim();
+        }
+        String configuredEnv = System.getenv(LINUX_CURL_ENV);
+        if(configuredEnv != null && !configuredEnv.isBlank()) {
+            return configuredEnv.trim();
+        }
+        return null;
+    }
+
+    private static boolean isLinuxHost() {
+        String osName = System.getProperty("os.name");
+        return osName != null && osName.toLowerCase(Locale.ROOT).contains("linux");
     }
 
     private static class BuildOptions {

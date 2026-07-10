@@ -14,7 +14,6 @@ public class WebSocketsCLauncher {
         config.useVsync(true);
         config.setForegroundFPS(60);
 
-        System.setProperty("os.name", "Windows"); // TODO figure out how to obtain OS name
         new GLFWApplication(new WebSocketDemo(), config);
     }
 }

@@ -123,6 +123,10 @@ public class GLFWWebSocket extends AbstractWebSocket {
             }
             if(eventType == EVENT_ERROR) {
                 postErrorEvent(new WebSocketException(readMessageBuffer(EVENT_DATA[1])));
+                if(getState() == WebSocketState.CLOSED) {
+                    disposeNativeHandle();
+                    return;
+                }
                 continue;
             }
             if(eventType == EVENT_CLOSE) {

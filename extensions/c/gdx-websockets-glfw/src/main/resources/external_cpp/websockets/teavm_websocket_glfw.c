@@ -505,6 +505,662 @@ int gdx_teavm_ws_glfw_last_error(void* target_buffer, int target_buffer_capacity
     return teavm_ws_copy_string((char*)target_buffer, target_buffer_capacity, g_last_error);
 }
 
+#elif defined(__linux__)
+
+#include <dlfcn.h>
+#include <limits.h>
+#include <pthread.h>
+#include <stdatomic.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+#define WS_EVENT_NONE 0
+#define WS_EVENT_OPEN 1
+#define WS_EVENT_MESSAGE_TEXT 2
+#define WS_EVENT_ERROR 3
+#define WS_EVENT_CLOSE 4
+
+#define WS_STATE_CONNECTING 0
+#define WS_STATE_OPEN 1
+#define WS_STATE_CLOSING 2
+#define WS_STATE_CLOSED 3
+
+#define TEAVM_WS_LINUX_RECV_BUFFER_SIZE 16384
+#define TEAVM_WS_LINUX_ERROR_BUFFER_SIZE 512
+#define TEAVM_WS_LINUX_CLOSE_REASON_LIMIT 123
+#define TEAVM_WS_LINUX_CLOSE_CODE_NORMAL 1000
+#define TEAVM_WS_LINUX_POLL_DELAY_MILLIS 5
+#define TEAVM_WS_LINUX_RUNTIME_CURL_ENV "GDX_TEAVM_LIBCURL_PATH"
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
+typedef struct CURL CURL;
+typedef int CURLcode;
+typedef int CURLoption;
+typedef long long curl_off_t;
+
+struct curl_ws_frame {
+    int age;
+    int flags;
+    curl_off_t offset;
+    curl_off_t bytesleft;
+    size_t len;
+};
+
+#define CURLWS_TEXT (1 << 0)
+#define CURLWS_CLOSE (1 << 3)
+
+#define CURLOPTTYPE_LONG 0
+#define CURLOPTTYPE_OBJECTPOINT 10000
+#define CURLOPTTYPE_STRINGPOINT CURLOPTTYPE_OBJECTPOINT
+
+#define CURLOPT_URL (CURLOPTTYPE_STRINGPOINT + 2)
+#define CURLOPT_ERRORBUFFER (CURLOPTTYPE_OBJECTPOINT + 10)
+#define CURLOPT_USERAGENT (CURLOPTTYPE_STRINGPOINT + 18)
+#define CURLOPT_CONNECT_ONLY (CURLOPTTYPE_LONG + 141)
+#define CURLOPT_TIMEOUT_MS (CURLOPTTYPE_LONG + 155)
+
+#define CURL_GLOBAL_DEFAULT 3L
+
+#define CURLE_OK 0
+#define CURLE_GOT_NOTHING 52
+#define CURLE_AGAIN 81
+
+typedef struct TeavmWsEvent {
+    int type;
+    int data0;
+    int data1;
+    char* message;
+} TeavmWsEvent;
+
+typedef struct TeavmWsHandle {
+    CURL* curl;
+    pthread_t thread;
+    int thread_started;
+    pthread_mutex_t event_lock;
+    atomic_int state;
+    atomic_int stop_requested;
+    int close_code;
+    char* close_reason;
+    char error_buffer[TEAVM_WS_LINUX_ERROR_BUFFER_SIZE];
+    TeavmWsEvent event;
+} TeavmWsHandle;
+
+typedef CURLcode (*TeavmCurlGlobalInitFn)(long flags);
+typedef void (*TeavmCurlEasyCleanupFn)(CURL* curl);
+typedef CURL* (*TeavmCurlEasyInitFn)(void);
+typedef CURLcode (*TeavmCurlEasySetoptFn)(CURL* curl, CURLoption option, ...);
+typedef CURLcode (*TeavmCurlEasyPerformFn)(CURL* curl);
+typedef const char* (*TeavmCurlEasyStrerrorFn)(CURLcode code);
+typedef CURLcode (*TeavmCurlWsRecvFn)(CURL* curl, void* buffer, size_t buflen, size_t* recv,
+                                      const struct curl_ws_frame** meta);
+typedef CURLcode (*TeavmCurlWsSendFn)(CURL* curl, const void* buffer, size_t buflen, size_t* sent,
+                                      curl_off_t fragsize, unsigned int flags);
+
+typedef struct TeavmCurlApi {
+    void* library;
+    int load_state;
+    pthread_mutex_t lock;
+    TeavmCurlGlobalInitFn global_init;
+    TeavmCurlEasyInitFn easy_init;
+    TeavmCurlEasyCleanupFn easy_cleanup;
+    TeavmCurlEasySetoptFn easy_setopt;
+    TeavmCurlEasyPerformFn easy_perform;
+    TeavmCurlEasyStrerrorFn easy_strerror;
+    TeavmCurlWsRecvFn ws_recv;
+    TeavmCurlWsSendFn ws_send;
+} TeavmCurlApi;
+
+static char g_last_error[2048];
+static TeavmCurlApi g_curl = {
+        .library = NULL,
+        .load_state = 0,
+        .lock = PTHREAD_MUTEX_INITIALIZER,
+        .global_init = NULL,
+        .easy_init = NULL,
+        .easy_cleanup = NULL,
+        .easy_setopt = NULL,
+        .easy_perform = NULL,
+        .easy_strerror = NULL,
+        .ws_recv = NULL,
+        .ws_send = NULL
+};
+
+static void teavm_ws_set_error(const char* message) {
+    if(message == NULL) {
+        g_last_error[0] = '\0';
+        return;
+    }
+    strncpy(g_last_error, message, sizeof(g_last_error) - 1);
+    g_last_error[sizeof(g_last_error) - 1] = '\0';
+}
+
+static int teavm_ws_copy_string(char* target, int capacity, const char* value) {
+    if(target == NULL || capacity <= 0) {
+        return 0;
+    }
+    if(value == NULL) {
+        target[0] = '\0';
+        return 0;
+    }
+    int length = (int)strlen(value);
+    int copy_length = length < capacity ? length : capacity - 1;
+    memcpy(target, value, copy_length);
+    target[copy_length] = '\0';
+    return copy_length;
+}
+
+static void teavm_ws_sleep_millis(long millis) {
+    struct timespec delay;
+    delay.tv_sec = millis / 1000;
+    delay.tv_nsec = (millis % 1000) * 1000000L;
+    nanosleep(&delay, NULL);
+}
+
+static void teavm_ws_destroy_event(TeavmWsEvent* event) {
+    if(event->message != NULL) {
+        free(event->message);
+        event->message = NULL;
+    }
+    event->type = WS_EVENT_NONE;
+    event->data0 = 0;
+    event->data1 = 0;
+}
+
+static void teavm_ws_push_event_bytes(TeavmWsHandle* handle, int type, int data0, int data1,
+                                      const char* message, size_t message_length) {
+    pthread_mutex_lock(&handle->event_lock);
+    teavm_ws_destroy_event(&handle->event);
+    handle->event.type = type;
+    handle->event.data0 = data0;
+    handle->event.data1 = data1;
+    if(message != NULL && message_length > 0) {
+        handle->event.message = (char*)calloc(message_length + 1, sizeof(char));
+        if(handle->event.message != NULL) {
+            memcpy(handle->event.message, message, message_length);
+            handle->event.message[message_length] = '\0';
+        }
+    }
+    pthread_mutex_unlock(&handle->event_lock);
+}
+
+static void teavm_ws_push_event(TeavmWsHandle* handle, int type, int data0, int data1, const char* message) {
+    size_t message_length = message == NULL ? 0 : strlen(message);
+    teavm_ws_push_event_bytes(handle, type, data0, data1, message, message_length);
+}
+
+static void teavm_ws_push_error_event(TeavmWsHandle* handle, const char* message) {
+    size_t message_length = message == NULL ? 0 : strlen(message);
+    teavm_ws_push_event_bytes(handle, WS_EVENT_ERROR, (int)message_length, 0, message, message_length);
+}
+
+static void teavm_ws_clear_close_reason(TeavmWsHandle* handle) {
+    if(handle->close_reason != NULL) {
+        free(handle->close_reason);
+        handle->close_reason = NULL;
+    }
+}
+
+static void teavm_ws_store_close_reason(TeavmWsHandle* handle, const char* reason, size_t reason_length) {
+    teavm_ws_clear_close_reason(handle);
+    if(reason == NULL || reason_length == 0) {
+        return;
+    }
+    handle->close_reason = (char*)calloc(reason_length + 1, sizeof(char));
+    if(handle->close_reason != NULL) {
+        memcpy(handle->close_reason, reason, reason_length);
+        handle->close_reason[reason_length] = '\0';
+    }
+}
+
+static void teavm_ws_set_error_from_curl(TeavmWsHandle* handle, CURLcode code, const char* fallback) {
+    if(handle != NULL && handle->error_buffer[0] != '\0') {
+        teavm_ws_set_error(handle->error_buffer);
+        return;
+    }
+    if(g_curl.easy_strerror != NULL) {
+        const char* curl_message = g_curl.easy_strerror(code);
+        if(curl_message != NULL && curl_message[0] != '\0') {
+            teavm_ws_set_error(curl_message);
+            return;
+        }
+    }
+    teavm_ws_set_error(fallback);
+}
+
+static int teavm_ws_load_symbol(void* library, void** target, const char* symbol) {
+    *target = dlsym(library, symbol);
+    if(*target != NULL) {
+        return 1;
+    }
+    const char* error = dlerror();
+    teavm_ws_set_error(error == NULL ? "Failed to load a libcurl websocket symbol." : error);
+    return 0;
+}
+
+static void* teavm_ws_linux_try_dlopen(const char* libraryPath) {
+    if(libraryPath == NULL || libraryPath[0] == '\0') {
+        return NULL;
+    }
+    dlerror();
+    return dlopen(libraryPath, RTLD_LAZY | RTLD_LOCAL);
+}
+
+static void* teavm_ws_linux_try_dlopen_from_executable_dir(const char* libraryName) {
+    char executablePath[PATH_MAX];
+    ssize_t executablePathLength = readlink("/proc/self/exe", executablePath, sizeof(executablePath) - 1);
+    if(executablePathLength <= 0) {
+        return NULL;
+    }
+    executablePath[executablePathLength] = '\0';
+
+    char* slash = strrchr(executablePath, '/');
+    if(slash == NULL) {
+        return NULL;
+    }
+    *slash = '\0';
+
+    char localLibraryPath[PATH_MAX];
+    int written = snprintf(localLibraryPath, sizeof(localLibraryPath), "%s/%s", executablePath, libraryName);
+    if(written <= 0 || written >= (int)sizeof(localLibraryPath)) {
+        return NULL;
+    }
+    return teavm_ws_linux_try_dlopen(localLibraryPath);
+}
+
+static void* teavm_ws_linux_open_curl_library(void) {
+    const char* configuredPath = getenv(TEAVM_WS_LINUX_RUNTIME_CURL_ENV);
+    if(configuredPath != NULL && configuredPath[0] != '\0') {
+        void* library = teavm_ws_linux_try_dlopen(configuredPath);
+        if(library != NULL) {
+            return library;
+        }
+    }
+
+    void* library = teavm_ws_linux_try_dlopen_from_executable_dir("libcurl.so.4");
+    if(library != NULL) {
+        return library;
+    }
+
+    library = teavm_ws_linux_try_dlopen_from_executable_dir("libcurl.so");
+    if(library != NULL) {
+        return library;
+    }
+
+    library = teavm_ws_linux_try_dlopen("libcurl.so.4");
+    if(library != NULL) {
+        return library;
+    }
+
+    return teavm_ws_linux_try_dlopen("libcurl.so");
+}
+
+static int teavm_ws_linux_load_curl(void) {
+    pthread_mutex_lock(&g_curl.lock);
+    if(g_curl.load_state == 1) {
+        pthread_mutex_unlock(&g_curl.lock);
+        return 1;
+    }
+    if(g_curl.load_state == -1) {
+        pthread_mutex_unlock(&g_curl.lock);
+        return 0;
+    }
+
+    void* library = teavm_ws_linux_open_curl_library();
+    if(library == NULL) {
+        const char* error = dlerror();
+        teavm_ws_set_error(error == NULL ? "Unable to load libcurl on Linux." : error);
+        g_curl.load_state = -1;
+        pthread_mutex_unlock(&g_curl.lock);
+        return 0;
+    }
+
+    if(!teavm_ws_load_symbol(library, (void**)&g_curl.global_init, "curl_global_init")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.easy_init, "curl_easy_init")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.easy_cleanup, "curl_easy_cleanup")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.easy_setopt, "curl_easy_setopt")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.easy_perform, "curl_easy_perform")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.easy_strerror, "curl_easy_strerror")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.ws_recv, "curl_ws_recv")
+            || !teavm_ws_load_symbol(library, (void**)&g_curl.ws_send, "curl_ws_send")) {
+        dlclose(library);
+        g_curl.library = NULL;
+        g_curl.load_state = -1;
+        pthread_mutex_unlock(&g_curl.lock);
+        return 0;
+    }
+
+    CURLcode init_result = g_curl.global_init(CURL_GLOBAL_DEFAULT);
+    if(init_result != CURLE_OK) {
+        teavm_ws_set_error("libcurl global initialization failed.");
+        dlclose(library);
+        g_curl.library = NULL;
+        g_curl.load_state = -1;
+        pthread_mutex_unlock(&g_curl.lock);
+        return 0;
+    }
+
+    g_curl.library = library;
+    g_curl.load_state = 1;
+    pthread_mutex_unlock(&g_curl.lock);
+    return 1;
+}
+
+static int teavm_ws_easy_setopt_string(TeavmWsHandle* handle, CURLoption option, const char* value,
+                                       const char* fallback_message) {
+    handle->error_buffer[0] = '\0';
+    CURLcode result = g_curl.easy_setopt(handle->curl, option, value);
+    if(result == CURLE_OK) {
+        return 1;
+    }
+    teavm_ws_set_error_from_curl(handle, result, fallback_message);
+    return 0;
+}
+
+static int teavm_ws_easy_setopt_long(TeavmWsHandle* handle, CURLoption option, long value,
+                                     const char* fallback_message) {
+    handle->error_buffer[0] = '\0';
+    CURLcode result = g_curl.easy_setopt(handle->curl, option, value);
+    if(result == CURLE_OK) {
+        return 1;
+    }
+    teavm_ws_set_error_from_curl(handle, result, fallback_message);
+    return 0;
+}
+
+static void teavm_ws_finalize_close(TeavmWsHandle* handle, int close_code, const char* reason, size_t reason_length) {
+    atomic_store(&handle->state, WS_STATE_CLOSED);
+    teavm_ws_push_event_bytes(handle, WS_EVENT_CLOSE, close_code, (int)reason_length, reason, reason_length);
+}
+
+static void teavm_ws_finalize_error(TeavmWsHandle* handle, const char* fallback_message, CURLcode code) {
+    atomic_store(&handle->state, WS_STATE_CLOSED);
+    teavm_ws_set_error_from_curl(handle, code, fallback_message);
+    teavm_ws_push_error_event(handle, g_last_error);
+}
+
+static void* teavm_ws_reader_thread(void* parameter) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)parameter;
+    unsigned char buffer[TEAVM_WS_LINUX_RECV_BUFFER_SIZE];
+
+    for(;;) {
+        if(atomic_load(&handle->stop_requested) != 0) {
+            return NULL;
+        }
+
+        size_t bytes_received = 0;
+        const struct curl_ws_frame* meta = NULL;
+        handle->error_buffer[0] = '\0';
+        CURLcode result = g_curl.ws_recv(handle->curl, buffer, sizeof(buffer) - 1, &bytes_received, &meta);
+
+        if(result == CURLE_AGAIN) {
+            teavm_ws_sleep_millis(TEAVM_WS_LINUX_POLL_DELAY_MILLIS);
+            continue;
+        }
+        if(result == CURLE_GOT_NOTHING) {
+            if(atomic_load(&handle->state) == WS_STATE_CLOSING) {
+                const char* close_reason = handle->close_reason == NULL ? "" : handle->close_reason;
+                teavm_ws_finalize_close(handle, handle->close_code, close_reason, strlen(close_reason));
+            }
+            else {
+                teavm_ws_finalize_close(handle, TEAVM_WS_LINUX_CLOSE_CODE_NORMAL, "", 0);
+            }
+            return NULL;
+        }
+        if(result != CURLE_OK) {
+            teavm_ws_finalize_error(handle, "libcurl websocket receive failed.", result);
+            return NULL;
+        }
+        if(meta == NULL) {
+            continue;
+        }
+
+        buffer[bytes_received] = '\0';
+
+        if((meta->flags & CURLWS_CLOSE) != 0) {
+            int close_code = TEAVM_WS_LINUX_CLOSE_CODE_NORMAL;
+            const char* close_reason = "";
+            size_t close_reason_length = 0;
+            if(bytes_received >= 2) {
+                close_code = ((int)buffer[0] << 8) | (int)buffer[1];
+                close_reason = (const char*)(buffer + 2);
+                close_reason_length = bytes_received - 2;
+            }
+            else if(atomic_load(&handle->state) == WS_STATE_CLOSING) {
+                close_code = handle->close_code;
+                if(handle->close_reason != NULL) {
+                    close_reason = handle->close_reason;
+                    close_reason_length = strlen(handle->close_reason);
+                }
+            }
+            teavm_ws_finalize_close(handle, close_code, close_reason, close_reason_length);
+            return NULL;
+        }
+
+        if((meta->flags & CURLWS_TEXT) != 0) {
+            teavm_ws_push_event_bytes(handle, WS_EVENT_MESSAGE_TEXT, (int)bytes_received, 0,
+                    (const char*)buffer, bytes_received);
+        }
+    }
+}
+
+int gdx_teavm_ws_glfw_supported(void) {
+    return teavm_ws_linux_load_curl();
+}
+
+int64_t gdx_teavm_ws_glfw_create(const char* url) {
+    teavm_ws_set_error(NULL);
+    if(url == NULL || url[0] == '\0') {
+        teavm_ws_set_error("A websocket URL is required.");
+        return 0;
+    }
+    if(!teavm_ws_linux_load_curl()) {
+        return 0;
+    }
+
+    TeavmWsHandle* handle = (TeavmWsHandle*)calloc(1, sizeof(TeavmWsHandle));
+    if(handle == NULL) {
+        teavm_ws_set_error("Failed to allocate websocket handle.");
+        return 0;
+    }
+
+    pthread_mutex_init(&handle->event_lock, NULL);
+    atomic_init(&handle->state, WS_STATE_CONNECTING);
+    atomic_init(&handle->stop_requested, 0);
+    handle->close_code = TEAVM_WS_LINUX_CLOSE_CODE_NORMAL;
+
+    handle->curl = g_curl.easy_init();
+    if(handle->curl == NULL) {
+        teavm_ws_set_error("libcurl easy handle creation failed.");
+        gdx_teavm_ws_glfw_destroy((int64_t)(intptr_t)handle);
+        return 0;
+    }
+
+    if(!teavm_ws_easy_setopt_string(handle, CURLOPT_URL, url, "Failed to set websocket URL.")
+            || !teavm_ws_easy_setopt_string(handle, CURLOPT_USERAGENT, "gdx-teavm-websocket/1.0",
+                    "Failed to set libcurl user agent.")
+            || !teavm_ws_easy_setopt_string(handle, CURLOPT_ERRORBUFFER, handle->error_buffer,
+                    "Failed to configure libcurl error buffer.")
+            || !teavm_ws_easy_setopt_long(handle, CURLOPT_CONNECT_ONLY, 2L,
+                    "Failed to enable libcurl websocket mode.")
+            || !teavm_ws_easy_setopt_long(handle, CURLOPT_TIMEOUT_MS, 10000L,
+                    "Failed to configure websocket connection timeout.")) {
+        gdx_teavm_ws_glfw_destroy((int64_t)(intptr_t)handle);
+        return 0;
+    }
+
+    handle->error_buffer[0] = '\0';
+    CURLcode perform_result = g_curl.easy_perform(handle->curl);
+    if(perform_result != CURLE_OK) {
+        teavm_ws_set_error_from_curl(handle, perform_result, "libcurl websocket handshake failed.");
+        gdx_teavm_ws_glfw_destroy((int64_t)(intptr_t)handle);
+        return 0;
+    }
+
+    if(pthread_create(&handle->thread, NULL, teavm_ws_reader_thread, handle) != 0) {
+        teavm_ws_set_error("Failed to start Linux websocket receive thread.");
+        gdx_teavm_ws_glfw_destroy((int64_t)(intptr_t)handle);
+        return 0;
+    }
+    handle->thread_started = 1;
+
+    atomic_store(&handle->state, WS_STATE_OPEN);
+    teavm_ws_push_event(handle, WS_EVENT_OPEN, 0, 0, NULL);
+    return (int64_t)(intptr_t)handle;
+}
+
+int gdx_teavm_ws_glfw_state(int64_t handle_value) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)(intptr_t)handle_value;
+    if(handle == NULL) {
+        return WS_STATE_CLOSED;
+    }
+    return atomic_load(&handle->state);
+}
+
+int gdx_teavm_ws_glfw_send_text(int64_t handle_value, const char* text) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)(intptr_t)handle_value;
+    if(handle == NULL || handle->curl == NULL) {
+        teavm_ws_set_error("WebSocket handle is not open.");
+        return 0;
+    }
+    if(text == NULL) {
+        text = "";
+    }
+
+    size_t total_length = strlen(text);
+    size_t offset = 0;
+    while(offset < total_length || (total_length == 0 && offset == 0)) {
+        size_t sent = 0;
+        handle->error_buffer[0] = '\0';
+        CURLcode result = g_curl.ws_send(handle->curl, text + offset, total_length - offset, &sent, 0, CURLWS_TEXT);
+        if(result == CURLE_AGAIN) {
+            teavm_ws_sleep_millis(TEAVM_WS_LINUX_POLL_DELAY_MILLIS);
+            continue;
+        }
+        if(result != CURLE_OK) {
+            teavm_ws_set_error_from_curl(handle, result, "libcurl websocket send failed.");
+            return 0;
+        }
+        if(sent == 0 && total_length > offset) {
+            teavm_ws_set_error("libcurl websocket send made no progress.");
+            return 0;
+        }
+        offset += sent;
+        if(total_length == 0) {
+            break;
+        }
+    }
+    return 1;
+}
+
+int gdx_teavm_ws_glfw_close(int64_t handle_value, int code, const char* reason) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)(intptr_t)handle_value;
+    if(handle == NULL || handle->curl == NULL) {
+        return 1;
+    }
+    if(reason == NULL) {
+        reason = "";
+    }
+
+    size_t reason_length = strlen(reason);
+    if(reason_length > TEAVM_WS_LINUX_CLOSE_REASON_LIMIT) {
+        reason_length = TEAVM_WS_LINUX_CLOSE_REASON_LIMIT;
+    }
+    teavm_ws_store_close_reason(handle, reason, reason_length);
+    handle->close_code = code;
+    atomic_store(&handle->state, WS_STATE_CLOSING);
+
+    unsigned char payload[2 + TEAVM_WS_LINUX_CLOSE_REASON_LIMIT];
+    payload[0] = (unsigned char)((code >> 8) & 0xFF);
+    payload[1] = (unsigned char)(code & 0xFF);
+    if(reason_length > 0) {
+        memcpy(payload + 2, reason, reason_length);
+    }
+
+    size_t total_length = 2 + reason_length;
+    size_t offset = 0;
+    while(offset < total_length) {
+        size_t sent = 0;
+        handle->error_buffer[0] = '\0';
+        CURLcode result = g_curl.ws_send(handle->curl, payload + offset, total_length - offset, &sent, 0, CURLWS_CLOSE);
+        if(result == CURLE_AGAIN) {
+            teavm_ws_sleep_millis(TEAVM_WS_LINUX_POLL_DELAY_MILLIS);
+            continue;
+        }
+        if(result != CURLE_OK) {
+            teavm_ws_set_error_from_curl(handle, result, "libcurl websocket close failed.");
+            return 0;
+        }
+        if(sent == 0 && total_length > offset) {
+            teavm_ws_set_error("libcurl websocket close made no progress.");
+            return 0;
+        }
+        offset += sent;
+    }
+    return 1;
+}
+
+int gdx_teavm_ws_glfw_poll_event(int64_t handle_value, int32_t* event_data, void* message_buffer, int message_buffer_capacity) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)(intptr_t)handle_value;
+    if(handle == NULL || event_data == NULL) {
+        return 0;
+    }
+
+    event_data[0] = WS_EVENT_NONE;
+    event_data[1] = 0;
+    event_data[2] = 0;
+    event_data[3] = 0;
+
+    pthread_mutex_lock(&handle->event_lock);
+    if(handle->event.type != WS_EVENT_NONE) {
+        event_data[0] = handle->event.type;
+        event_data[1] = handle->event.data0;
+        event_data[2] = handle->event.data1;
+        if(message_buffer != NULL && message_buffer_capacity > 0 && handle->event.message != NULL) {
+            teavm_ws_copy_string((char*)message_buffer, message_buffer_capacity, handle->event.message);
+        }
+        teavm_ws_destroy_event(&handle->event);
+        pthread_mutex_unlock(&handle->event_lock);
+        return 1;
+    }
+    pthread_mutex_unlock(&handle->event_lock);
+    return 0;
+}
+
+void gdx_teavm_ws_glfw_destroy(int64_t handle_value) {
+    TeavmWsHandle* handle = (TeavmWsHandle*)(intptr_t)handle_value;
+    if(handle == NULL) {
+        return;
+    }
+
+    atomic_store(&handle->stop_requested, 1);
+    if(handle->thread_started) {
+        pthread_join(handle->thread, NULL);
+        handle->thread_started = 0;
+    }
+    if(handle->curl != NULL) {
+        g_curl.easy_cleanup(handle->curl);
+        handle->curl = NULL;
+    }
+
+    pthread_mutex_lock(&handle->event_lock);
+    teavm_ws_destroy_event(&handle->event);
+    pthread_mutex_unlock(&handle->event_lock);
+    pthread_mutex_destroy(&handle->event_lock);
+    teavm_ws_clear_close_reason(handle);
+    free(handle);
+}
+
+int gdx_teavm_ws_glfw_last_error(void* target_buffer, int target_buffer_capacity) {
+    return teavm_ws_copy_string((char*)target_buffer, target_buffer_capacity, g_last_error);
+}
+
 #else
 
 int gdx_teavm_ws_glfw_supported(void) { return 0; }
@@ -526,7 +1182,7 @@ int gdx_teavm_ws_glfw_poll_event(int64_t handle, int32_t* event_data, void* mess
 }
 void gdx_teavm_ws_glfw_destroy(int64_t handle) { (void)handle; }
 int gdx_teavm_ws_glfw_last_error(void* target_buffer, int target_buffer_capacity) {
-    const char* message = "TeaVM GLFW websocket backend is currently implemented only for Windows.";
+    const char* message = "TeaVM GLFW websocket backend is not implemented for this platform.";
     if(target_buffer != NULL && target_buffer_capacity > 0) {
         size_t length = strlen(message);
         size_t copy_length = length < (size_t)target_buffer_capacity ? length : (size_t)target_buffer_capacity - 1;
