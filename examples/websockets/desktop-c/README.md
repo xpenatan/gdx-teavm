@@ -88,3 +88,62 @@ If you want to override the runtime path manually instead of keeping the library
 ```shell
 GDX_TEAVM_LIBCURL_PATH=/absolute/path/to/libcurl.so.4 ./websockets_release
 ```
+
+## macOS `wss` Support
+
+The TeaVM GLFW websocket backend now compiles and links on macOS, but the system `libcurl.4.dylib` on some macOS installs can still fail at runtime with:
+
+```text
+Protocol "wss" not supported
+```
+
+The desktop-c build now supports bootstrapping its own `libcurl.4.dylib` on macOS. The build uses this order:
+
+1. `-PgdxTeaVMMacCurlPath=...`
+2. `GDX_TEAVM_MAC_CURL_PATH`
+3. cached local runtime at `build/libcurl-wss-macos/install/lib/libcurl.4.dylib`
+4. automatic download + compile through `build-mac-libcurl-wss.sh`
+
+### Automatic Build
+
+If no explicit macOS runtime is configured and no cached local runtime exists, this task now downloads and builds curl automatically:
+
+```shell
+gradlew :examples:websockets:desktop-c:websockets_desktop_c_debug_run
+```
+
+The helper script is:
+
+```shell
+examples/websockets/desktop-c/build-mac-libcurl-wss.sh
+```
+
+and the generated runtime is cached at:
+
+```text
+examples/websockets/desktop-c/build/libcurl-wss-macos/install/lib/libcurl.4.dylib
+```
+
+### Package a Custom macOS `libcurl`
+
+If you already have a known-good `libcurl.4.dylib`, you can still override the automatic path:
+
+```shell
+gradlew \
+  -PgdxTeaVMMacCurlPath="$(brew --prefix curl)/lib/libcurl.4.dylib" \
+  :examples:websockets:desktop-c:websockets_desktop_c_debug_run
+```
+
+The build copies that runtime into:
+
+```text
+examples/websockets/desktop-c/build/dist/c/release/libcurl.4.dylib
+```
+
+### Runtime Override
+
+The native macOS executable also honors:
+
+```shell
+GDX_TEAVM_LIBCURL_PATH=/absolute/path/to/libcurl.4.dylib ./websockets_debug
+```

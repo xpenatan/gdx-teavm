@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Locale;
 import org.teavm.vm.TeaVMOptimizationLevel;
 
@@ -18,10 +19,16 @@ public class BuildTeaVMWebSocketsDemo {
     private static final String LINUX_CURL_PROPERTY = "gdxTeaVMLinuxCurlPath";
     private static final String LINUX_CURL_ENV = "GDX_TEAVM_LINUX_CURL_PATH";
     private static final String LINUX_CURL_OUTPUT_NAME = "libcurl.so.4";
+    private static final String MAC_CURL_PROPERTY = "gdxTeaVMMacCurlPath";
+    private static final String MAC_CURL_ENV = "GDX_TEAVM_MAC_CURL_PATH";
+    private static final String MAC_CURL_OUTPUT_NAME = "libcurl.4.dylib";
+    private static final Path DEFAULT_MAC_CURL_BUILD_ROOT = Path.of("build", "libcurl-wss-macos");
+    private static final Path DEFAULT_MAC_CURL_RUNTIME = DEFAULT_MAC_CURL_BUILD_ROOT.resolve(Path.of("install", "lib", MAC_CURL_OUTPUT_NAME));
+    private static final Path MAC_CURL_BUILD_SCRIPT = Path.of("build-mac-libcurl-wss.sh");
 
     public static void main(String[] args) throws IOException {
         BuildOptions buildOptions = BuildOptions.fromArgs(args);
-        packageLinuxCurlRuntime();
+        packageHostCurlRuntime();
         TeaGLFWBackend cBackend = new TeaGLFWBackend()
                 .setBuildType(buildOptions.buildType)
                 .setBuildExecutableAfterBuild(buildOptions.shouldBuildExecutable())
@@ -40,34 +47,87 @@ public class BuildTeaVMWebSocketsDemo {
                 .build(OUTPUT_ROOT);
     }
 
-    private static void packageLinuxCurlRuntime() throws IOException {
-        if(!isLinuxHost()) {
+    private static void packageHostCurlRuntime() throws IOException {
+        if(isLinuxHost()) {
+            packageConfiguredCurlRuntime(resolveConfiguredPath(LINUX_CURL_PROPERTY, LINUX_CURL_ENV),
+                    LINUX_CURL_OUTPUT_NAME,
+                    "Linux");
             return;
         }
 
-        String configuredPath = resolveLinuxCurlPath();
+        if(isMacHost()) {
+            packageConfiguredCurlRuntime(resolveOrBuildMacCurlPath(),
+                    MAC_CURL_OUTPUT_NAME,
+                    "macOS");
+        }
+    }
+
+    private static String resolveOrBuildMacCurlPath() throws IOException {
+        String configuredPath = resolveConfiguredPath(MAC_CURL_PROPERTY, MAC_CURL_ENV);
+        if(configuredPath != null) {
+            return configuredPath;
+        }
+
+        if(Files.isRegularFile(DEFAULT_MAC_CURL_RUNTIME)) {
+            return DEFAULT_MAC_CURL_RUNTIME.toString();
+        }
+
+        buildMacCurlRuntime();
+        if(Files.isRegularFile(DEFAULT_MAC_CURL_RUNTIME)) {
+            return DEFAULT_MAC_CURL_RUNTIME.toString();
+        }
+
+        throw new IOException("macOS libcurl runtime build completed but no runtime was produced at: " + DEFAULT_MAC_CURL_RUNTIME);
+    }
+
+    private static void buildMacCurlRuntime() throws IOException {
+        if(!Files.isRegularFile(MAC_CURL_BUILD_SCRIPT)) {
+            throw new IOException("macOS libcurl build script was not found: " + MAC_CURL_BUILD_SCRIPT);
+        }
+
+        Files.createDirectories(DEFAULT_MAC_CURL_BUILD_ROOT.getParent());
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                Arrays.asList("bash", MAC_CURL_BUILD_SCRIPT.toString(), DEFAULT_MAC_CURL_BUILD_ROOT.toAbsolutePath().toString())
+        );
+        processBuilder.inheritIO();
+        processBuilder.directory(new File("."));
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if(exitCode != 0) {
+                throw new IOException("macOS libcurl build script failed with exit code " + exitCode);
+            }
+        }
+        catch(InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Interrupted while building the macOS libcurl runtime.", e);
+        }
+    }
+
+    private static void packageConfiguredCurlRuntime(String configuredPath, String outputName, String platformName) throws IOException {
         if(configuredPath == null) {
             return;
         }
 
         Path sourcePath = Path.of(configuredPath);
         if(!Files.isRegularFile(sourcePath)) {
-            throw new IllegalArgumentException("Configured Linux libcurl runtime was not found: " + configuredPath);
+            throw new IllegalArgumentException("Configured libcurl runtime was not found: " + configuredPath);
         }
 
         Path releaseDirectory = RELEASE_PATH.toPath();
         Files.createDirectories(releaseDirectory);
-        Path targetPath = releaseDirectory.resolve(LINUX_CURL_OUTPUT_NAME);
+        Path targetPath = releaseDirectory.resolve(outputName);
         Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("Packaged Linux libcurl runtime: " + sourcePath + " -> " + targetPath);
+        System.out.println("Packaged " + platformName + " libcurl runtime: " + sourcePath + " -> " + targetPath);
     }
 
-    private static String resolveLinuxCurlPath() {
-        String configuredProperty = System.getProperty(LINUX_CURL_PROPERTY);
+    private static String resolveConfiguredPath(String propertyName, String envName) {
+        String configuredProperty = System.getProperty(propertyName);
         if(configuredProperty != null && !configuredProperty.isBlank()) {
             return configuredProperty.trim();
         }
-        String configuredEnv = System.getenv(LINUX_CURL_ENV);
+        String configuredEnv = System.getenv(envName);
         if(configuredEnv != null && !configuredEnv.isBlank()) {
             return configuredEnv.trim();
         }
@@ -77,6 +137,11 @@ public class BuildTeaVMWebSocketsDemo {
     private static boolean isLinuxHost() {
         String osName = System.getProperty("os.name");
         return osName != null && osName.toLowerCase(Locale.ROOT).contains("linux");
+    }
+
+    private static boolean isMacHost() {
+        String osName = System.getProperty("os.name");
+        return osName != null && osName.toLowerCase(Locale.ROOT).contains("mac");
     }
 
     private static class BuildOptions {

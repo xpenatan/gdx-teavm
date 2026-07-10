@@ -5,6 +5,12 @@ dependencies {
     implementation(project(":examples:websockets:core"))
 }
 
+tasks.withType<JavaExec>().configureEach {
+    if(org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+        jvmArgs("-XstartOnFirstThread")
+    }
+}
+
 tasks.register<JavaExec>("websockets_desktop_run") {
     dependsOn("classes")
     group = "example-desktop"
@@ -12,8 +18,4 @@ tasks.register<JavaExec>("websockets_desktop_run") {
     mainClass.set("WebSocketsDesktopLauncher")
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = file(".")
-
-    if(org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
-        jvmArgs?.add("-XstartOnFirstThread")
-    }
 }

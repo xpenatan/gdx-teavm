@@ -8,11 +8,17 @@ dependencies {
 val mainClassName = "BuildTeaVMWebSocketsDemo"
 val desktopCTaskGroup = "example-desktop-c"
 val linuxCurlPath = providers.gradleProperty("gdxTeaVMLinuxCurlPath")
+val macCurlPath = providers.gradleProperty("gdxTeaVMMacCurlPath")
 
-fun JavaExec.configureLinuxCurlRuntime() {
-    val configuredPath = linuxCurlPath.orNull
-    if(!configuredPath.isNullOrBlank()) {
-        systemProperty("gdxTeaVMLinuxCurlPath", configuredPath)
+fun JavaExec.configureNativeCurlRuntime() {
+    val configuredLinuxPath = linuxCurlPath.orNull
+    if(!configuredLinuxPath.isNullOrBlank()) {
+        systemProperty("gdxTeaVMLinuxCurlPath", configuredLinuxPath)
+    }
+
+    val configuredMacPath = macCurlPath.orNull
+    if(!configuredMacPath.isNullOrBlank()) {
+        systemProperty("gdxTeaVMMacCurlPath", configuredMacPath)
     }
 }
 
@@ -21,7 +27,7 @@ tasks.register<JavaExec>("websockets_desktop_c_generate") {
     description = "Generate TeaVM C sources for the websocket GLFW example"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Debug")
 }
 
@@ -30,7 +36,7 @@ val buildDesktopCDebug = tasks.register<JavaExec>("websockets_desktop_c_debug_bu
     description = "Generate TeaVM C sources and build the Debug websocket GLFW executable"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Debug", "build")
 }
 
@@ -39,7 +45,7 @@ tasks.register<JavaExec>("websockets_desktop_c_release_build") {
     description = "Generate TeaVM C sources and build the Release websocket GLFW executable"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Release", "build")
 }
 
@@ -54,7 +60,7 @@ tasks.register<JavaExec>("websockets_desktop_c_debug_run") {
     description = "Generate, build, and run the Debug websocket GLFW executable with native console log output"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Debug", "run", "console")
 }
 
@@ -63,7 +69,7 @@ tasks.register<JavaExec>("websockets_desktop_c_release_run") {
     description = "Generate, build, and run the Release websocket GLFW executable"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Release", "run")
 }
 
@@ -72,6 +78,6 @@ tasks.register<JavaExec>("websockets_desktop_c_release_console_run") {
     description = "Generate, build, and run the Release websocket GLFW executable with native console log output"
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
-    configureLinuxCurlRuntime()
+    configureNativeCurlRuntime()
     args("Release", "run", "console")
 }

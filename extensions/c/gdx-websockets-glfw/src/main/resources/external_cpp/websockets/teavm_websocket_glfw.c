@@ -505,10 +505,13 @@ int gdx_teavm_ws_glfw_last_error(void* target_buffer, int target_buffer_capacity
     return teavm_ws_copy_string((char*)target_buffer, target_buffer_capacity, g_last_error);
 }
 
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__APPLE__)
 
 #include <dlfcn.h>
 #include <limits.h>
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#endif
 #include <pthread.h>
 #include <stdatomic.h>
 #include <stdint.h>
@@ -752,13 +755,37 @@ static void* teavm_ws_linux_try_dlopen(const char* libraryPath) {
     return dlopen(libraryPath, RTLD_LAZY | RTLD_LOCAL);
 }
 
-static void* teavm_ws_linux_try_dlopen_from_executable_dir(const char* libraryName) {
-    char executablePath[PATH_MAX];
-    ssize_t executablePathLength = readlink("/proc/self/exe", executablePath, sizeof(executablePath) - 1);
+static int teavm_ws_linux_read_executable_path(char* executablePath, size_t executablePathCapacity) {
+    if(executablePath == NULL || executablePathCapacity < 2) {
+        return 0;
+    }
+
+#if defined(__APPLE__)
+    uint32_t pathCapacity = (uint32_t)executablePathCapacity;
+    if(_NSGetExecutablePath(executablePath, &pathCapacity) != 0) {
+        return 0;
+    }
+#else
+    ssize_t executablePathLength = readlink("/proc/self/exe", executablePath, executablePathCapacity - 1);
     if(executablePathLength <= 0) {
-        return NULL;
+        return 0;
     }
     executablePath[executablePathLength] = '\0';
+#endif
+
+    char resolvedExecutablePath[PATH_MAX];
+    if(realpath(executablePath, resolvedExecutablePath) != NULL) {
+        strncpy(executablePath, resolvedExecutablePath, executablePathCapacity - 1);
+        executablePath[executablePathCapacity - 1] = '\0';
+    }
+    return 1;
+}
+
+static void* teavm_ws_linux_try_dlopen_from_executable_dir(const char* libraryName) {
+    char executablePath[PATH_MAX];
+    if(!teavm_ws_linux_read_executable_path(executablePath, sizeof(executablePath))) {
+        return NULL;
+    }
 
     char* slash = strrchr(executablePath, '/');
     if(slash == NULL) {
@@ -783,6 +810,24 @@ static void* teavm_ws_linux_open_curl_library(void) {
         }
     }
 
+#if defined(__APPLE__)
+    void* library = teavm_ws_linux_try_dlopen_from_executable_dir("libcurl.4.dylib");
+    if(library != NULL) {
+        return library;
+    }
+
+    library = teavm_ws_linux_try_dlopen_from_executable_dir("libcurl.dylib");
+    if(library != NULL) {
+        return library;
+    }
+
+    library = teavm_ws_linux_try_dlopen("libcurl.4.dylib");
+    if(library != NULL) {
+        return library;
+    }
+
+    return teavm_ws_linux_try_dlopen("libcurl.dylib");
+#else
     void* library = teavm_ws_linux_try_dlopen_from_executable_dir("libcurl.so.4");
     if(library != NULL) {
         return library;
@@ -799,6 +844,7 @@ static void* teavm_ws_linux_open_curl_library(void) {
     }
 
     return teavm_ws_linux_try_dlopen("libcurl.so");
+#endif
 }
 
 static int teavm_ws_linux_load_curl(void) {
@@ -815,7 +861,7 @@ static int teavm_ws_linux_load_curl(void) {
     void* library = teavm_ws_linux_open_curl_library();
     if(library == NULL) {
         const char* error = dlerror();
-        teavm_ws_set_error(error == NULL ? "Unable to load libcurl on Linux." : error);
+        teavm_ws_set_error(error == NULL ? "Unable to load a libcurl runtime." : error);
         g_curl.load_state = -1;
         pthread_mutex_unlock(&g_curl.lock);
         return 0;
@@ -1004,7 +1050,7 @@ int64_t gdx_teavm_ws_glfw_create(const char* url) {
     }
 
     if(pthread_create(&handle->thread, NULL, teavm_ws_reader_thread, handle) != 0) {
-        teavm_ws_set_error("Failed to start Linux websocket receive thread.");
+        teavm_ws_set_error("Failed to start native websocket receive thread.");
         gdx_teavm_ws_glfw_destroy((int64_t)(intptr_t)handle);
         return 0;
     }
