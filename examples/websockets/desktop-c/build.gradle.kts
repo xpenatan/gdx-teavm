@@ -2,7 +2,7 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
     implementation(project(":examples:websockets:core"))
     implementation(project(":backends:backend-glfw"))
-    implementation(project(":extensions:c:gdx-websockets-glfw"))
+    implementation("com.github.deedywu.gdx-websockets:teavm-desktop-c:${LibExt.wsVersion}")
 }
 
 val mainClassName = "BuildTeaVMWebSocketsDemo"

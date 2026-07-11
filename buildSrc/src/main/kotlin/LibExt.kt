@@ -25,7 +25,7 @@ object LibExt {
 
     const val truthVersion = "1.4.2"
 
-    const val wsVersion = "2.0.1"
+    const val wsVersion = "2.0.2"
 
     var gdxSourcePath = ""
     var gdxTestsAssetsPath = ""

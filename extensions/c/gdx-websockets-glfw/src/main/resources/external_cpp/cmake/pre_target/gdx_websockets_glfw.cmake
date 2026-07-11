@@ -1,6 +1,0 @@
-if(WIN32 OR UNIX)
-  set(TEAVM_WEBSOCKETS_GLFW_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/websockets/teavm_websocket_glfw.c")
-  if(EXISTS "${TEAVM_WEBSOCKETS_GLFW_SOURCE}")
-    list(APPEND SOURCES "${TEAVM_WEBSOCKETS_GLFW_SOURCE}")
-  endif()
-endif()

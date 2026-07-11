@@ -48,7 +48,6 @@ if (hasAndroidSdk) {
 include(":extensions:asset-loader")
 include(":extensions:c:gdx-freetype-c")
 include(":extensions:c:gdx-controllers-glfw")
-include(":extensions:c:gdx-websockets-glfw")
 include(":extensions:web:gdx-controllers-web")
 include(":extensions:web:gdx-freetype-web")
 

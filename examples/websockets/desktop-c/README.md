@@ -2,6 +2,8 @@
 
 This example runs the shared `examples:websockets:core` demo through the TeaVM C GLFW backend.
 
+The websocket TeaVM desktop-c backend is provided by `gdx-websockets:teavm-desktop-c`; this example only shows how to consume it from a `gdx-teavm` desktop-c build.
+
 ## Build and Run
 
 Generate C sources:
@@ -35,27 +37,11 @@ Some Linux distributions ship a system `libcurl.so.4` that exposes the WebSocket
 Protocol "wss" not supported or disabled in libcurl
 ```
 
-The desktop-c launcher now supports packaging a caller-provided `libcurl.so.4` next to the native executable. The Linux runtime loader prefers that local copy before falling back to the system library.
+The `gdx-websockets:teavm-desktop-c` build helper supports packaging a caller-provided `libcurl.so.4` next to the native executable. The Linux runtime loader prefers that local copy before falling back to the system library.
 
 ### Build a `ws`/`wss`-Capable `libcurl.so.4`
 
-On a Linux machine with a C toolchain, OpenSSL development headers, and zlib development headers installed, run:
-
-```shell
-examples/websockets/desktop-c/build-linux-libcurl-wss.sh
-```
-
-That script downloads curl, configures it with:
-
-```text
---with-openssl --enable-websockets --disable-static
-```
-
-and installs the runtime under:
-
-```text
-examples/websockets/desktop-c/build/libcurl-wss/install/lib/libcurl.so.4
-```
+The `gdx-websockets:teavm-desktop-c` module owns the helper scripts and documentation for building a `ws`/`wss`-capable `libcurl` runtime. See `gdx-websockets/teavm-desktop-c/README.md`.
 
 ### Use the Custom Runtime During Build/Run
 
@@ -63,7 +49,7 @@ Pass the generated library path to Gradle:
 
 ```shell
 gradlew \
-  -PgdxTeaVMLinuxCurlPath=$PWD/examples/websockets/desktop-c/build/libcurl-wss/install/lib/libcurl.so.4 \
+  -PgdxTeaVMLinuxCurlPath=/absolute/path/to/libcurl.so.4 \
   :examples:websockets:desktop-c:websockets_desktop_c_debug_run
 ```
 
@@ -97,36 +83,18 @@ The TeaVM GLFW websocket backend now compiles and links on macOS, but the system
 Protocol "wss" not supported
 ```
 
-The desktop-c build now supports bootstrapping its own `libcurl.4.dylib` on macOS. The build uses this order:
+The `gdx-websockets:teavm-desktop-c` build helper can package a caller-provided `libcurl.4.dylib` next to the native executable. The build uses this order:
 
 1. `-PgdxTeaVMMacCurlPath=...`
 2. `GDX_TEAVM_MAC_CURL_PATH`
-3. cached local runtime at `build/libcurl-wss-macos/install/lib/libcurl.4.dylib`
-4. automatic download + compile through `build-mac-libcurl-wss.sh`
 
-### Automatic Build
+### Build a `ws`/`wss`-Capable `libcurl.4.dylib`
 
-If no explicit macOS runtime is configured and no cached local runtime exists, this task now downloads and builds curl automatically:
-
-```shell
-gradlew :examples:websockets:desktop-c:websockets_desktop_c_debug_run
-```
-
-The helper script is:
-
-```shell
-examples/websockets/desktop-c/build-mac-libcurl-wss.sh
-```
-
-and the generated runtime is cached at:
-
-```text
-examples/websockets/desktop-c/build/libcurl-wss-macos/install/lib/libcurl.4.dylib
-```
+The `gdx-websockets:teavm-desktop-c` module owns the helper scripts and documentation for building a `ws`/`wss`-capable macOS `libcurl` runtime. See `gdx-websockets/teavm-desktop-c/README.md`.
 
 ### Package a Custom macOS `libcurl`
 
-If you already have a known-good `libcurl.4.dylib`, you can still override the automatic path:
+Pass a known-good `libcurl.4.dylib` to Gradle:
 
 ```shell
 gradlew \
