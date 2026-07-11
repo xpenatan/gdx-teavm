@@ -119,6 +119,9 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
     @get:Input
     abstract val graphicsApi: Property<String>
 
+    @get:Input
+    abstract val bundleIdentifier: Property<String>
+
     @TaskAction
     fun initXcode() {
         val xcodeRoot = xcodeProjectDir.get().asFile
@@ -151,7 +154,8 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
             "\${IOS_ANGLE_FRAMEWORK_GROUP_FILES}" to angleFrameworkGroupFiles(api),
             "\${IOS_ANGLE_COPY_BUILD_PHASE}" to angleCopyBuildPhase(api),
             "\${IOS_ANGLE_COPY_BUILD_PHASE_REF}" to angleCopyBuildPhaseRef(api),
-            "\${IOS_ANGLE_EMBED_FILES}" to angleEmbedFiles(api)
+            "\${IOS_ANGLE_EMBED_FILES}" to angleEmbedFiles(api),
+            "\${IOS_BUNDLE_IDENTIFIER}" to bundleIdentifier.get()
         )
 
         writeTemplate(

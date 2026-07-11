@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.18)
-project(${PROJECT_NAME} C CXX)
+project(${PROJECT_NAME} C CXX OBJC)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/src")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/pure")
@@ -12,7 +13,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizati
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_stats")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
 
-set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
+set(TEAVM_APP_INCLUDE_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
+set_source_files_properties("${TEAVM_APP_INCLUDE_SOURCE}" PROPERTIES
+    LANGUAGE OBJC
+    COMPILE_FLAGS "-fobjc-arc")
+set(SOURCES "${TEAVM_APP_INCLUDE_SOURCE}")
 
 file(GLOB_RECURSE GDX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
 list(APPEND SOURCES ${GDX_SOURCES})
@@ -61,6 +66,15 @@ if(EXISTS "${TEAVM_SPRITEBATCH_SOURCE}" AND TEAVM_SPRITEBATCH_GENERATED)
   list(APPEND SOURCES "${TEAVM_SPRITEBATCH_SOURCE}")
 endif()
 
+set(TEAVM_EXTENSION_PRE_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/pre_target")
+if(EXISTS "${TEAVM_EXTENSION_PRE_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_PRE_TARGET_FILES "${TEAVM_EXTENSION_PRE_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_PRE_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_PRE_TARGET_FILE IN LISTS TEAVM_EXTENSION_PRE_TARGET_FILES)
+    include("${TEAVM_EXTENSION_PRE_TARGET_FILE}")
+  endforeach()
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
@@ -73,4 +87,13 @@ endif()
 
 if(TEAVM_SPRITEBATCH_SHORT_HEADERS)
   target_compile_definitions(${PROJECT_NAME} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
+endif()
+
+set(TEAVM_EXTENSION_POST_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/post_target")
+if(EXISTS "${TEAVM_EXTENSION_POST_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_POST_TARGET_FILES "${TEAVM_EXTENSION_POST_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_POST_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_POST_TARGET_FILE IN LISTS TEAVM_EXTENSION_POST_TARGET_FILES)
+    include("${TEAVM_EXTENSION_POST_TARGET_FILE}")
+  endforeach()
 endif()

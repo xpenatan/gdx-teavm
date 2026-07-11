@@ -375,7 +375,8 @@ public class AssetsCopy {
             }
             else if(asset.startsWith("/external_cpp/")) {
                 if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h")
-                        || asset.endsWith(".c") || asset.endsWith(".cpp") || asset.endsWith(".cmake")) {
+                        || asset.endsWith(".c") || asset.endsWith(".cpp") || asset.endsWith(".m")
+                        || asset.endsWith(".mm") || asset.endsWith(".cmake")) {
                     plan.cppFiles.add(asset);
                 }
             }

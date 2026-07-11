@@ -88,6 +88,7 @@ include(":examples:controllers:web")
 include(":examples:websockets:core")
 include(":examples:websockets:desktop")
 include(":examples:websockets:desktop-c")
+include(":examples:websockets:ios")
 include(":examples:websockets:web")
 
 if (hasAndroidSdk) {

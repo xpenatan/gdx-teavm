@@ -22,7 +22,7 @@ ${IOS_ANGLE_COPY_BUILD_PHASE}
 		1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdxTeaVMIOSSpikeApp.swift; sourceTree = "<group>"; };
 		1E2A00000000000000000012 /* TeaVMViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaVMViewController.swift; sourceTree = "<group>"; };
 		1E2A00000000000000000013 /* GdxTeaVMIOSSpike-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GdxTeaVMIOSSpike-Bridging-Header.h"; sourceTree = "<group>"; };
-		1E2A00000000000000000014 /* app_include.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = app_include.c; path = "../c/src/app_include.c"; sourceTree = SOURCE_ROOT; };
+		1E2A00000000000000000014 /* app_include.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; name = app_include.c; path = "../c/src/app_include.c"; sourceTree = SOURCE_ROOT; };
 		1E2A00000000000000000015 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 ${IOS_GLES_FILE_REFERENCES}
 		1E2A00000000000000000017 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../c/release/assets"; sourceTree = SOURCE_ROOT; };
@@ -215,6 +215,7 @@ ${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -260,6 +261,7 @@ ${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -276,6 +278,8 @@ ${IOS_FRAMEWORK_SEARCH_PATHS}
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/../c/external_cpp",
+					"$(PROJECT_DIR)/../c/external_cpp/**",
 					"$(PROJECT_DIR)/../c/external_cpp/gdx",
 					"$(PROJECT_DIR)/../c/external_cpp/etc1",
 					"$(PROJECT_DIR)/../c/external_cpp/stb/include",
@@ -297,7 +301,7 @@ ${IOS_FRAMEWORK_SEARCH_PATHS}
 					"-Wno-pointer-sign",
 					"-Wno-unused-value",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.xpenatan.gdxteavm.ios.spike;
+				PRODUCT_BUNDLE_IDENTIFIER = "${IOS_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -319,6 +323,8 @@ ${IOS_FRAMEWORK_SEARCH_PATHS}
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/../c/external_cpp",
+					"$(PROJECT_DIR)/../c/external_cpp/**",
 					"$(PROJECT_DIR)/../c/external_cpp/gdx",
 					"$(PROJECT_DIR)/../c/external_cpp/etc1",
 					"$(PROJECT_DIR)/../c/external_cpp/stb/include",
@@ -340,7 +346,7 @@ ${IOS_FRAMEWORK_SEARCH_PATHS}
 					"-Wno-pointer-sign",
 					"-Wno-unused-value",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.xpenatan.gdxteavm.ios.spike;
+				PRODUCT_BUNDLE_IDENTIFIER = "${IOS_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

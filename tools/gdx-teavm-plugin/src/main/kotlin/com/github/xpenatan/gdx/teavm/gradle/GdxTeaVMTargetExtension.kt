@@ -580,9 +580,12 @@ open class GdxTeaVMIosExtension @Inject constructor(
     /**
      * Simulator device name or UDID used by `gdx_teavm_ios_run_simulator`.
      *
-     * Default: `iPhone 12 Pro`.
+     * Default: `iPhone 15 Pro`.
      */
-    val simulatorDevice: Property<String> = objects.property(String::class.java).convention("iPhone 12 Pro")
+    val simulatorDevice: Property<String> = objects.property(String::class.java).convention(
+        project.providers.gradleProperty("gdx.teavm.ios.simulatorDevice")
+            .orElse("iPhone 15 Pro")
+    )
 
     /**
      * App bundle identifier used by `gdx_teavm_ios_run_simulator`.

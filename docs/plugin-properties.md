@@ -244,7 +244,7 @@ Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 | `graphicsApi` | `Property<String>` | Gradle property `gdx.teavm.ios.graphicsApi`, otherwise `angle` | Generated Xcode graphics bridge. Supported values are `angle` and `gles`. |
 | `xcodeScheme` | `Property<String>` | `GdxTeaVMIOSSpike` | Xcode scheme used by simulator build tasks. |
 | `xcodeConfiguration` | `Property<String>` | `Debug` | Xcode build configuration used by simulator build tasks. |
-| `simulatorDevice` | `Property<String>` | `iPhone 12 Pro` | Simulator device name or UDID used by `gdx_teavm_ios_run_simulator`. |
+| `simulatorDevice` | `Property<String>` | `iPhone 15 Pro` | Simulator device name or UDID used by `gdx_teavm_ios_run_simulator`. Can also be set with `-Pgdx.teavm.ios.simulatorDevice=<name-or-udid>`. |
 | `bundleIdentifier` | `Property<String>` | `com.github.xpenatan.gdxteavm.ios.spike` | App bundle identifier used by `gdx_teavm_ios_run_simulator`. |
 | `xcodeDerivedDataPath` | `DirectoryProperty` | `build/xcode-derived/ios` | Derived data directory used by simulator build and run tasks. |
 | `openSimulator` | `Property<Boolean>` | `true` | Opens Simulator.app when running the simulator task. |

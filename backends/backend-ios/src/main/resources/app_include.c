@@ -79,4 +79,6 @@ static void gdx_teavm_ios_log(const char* message) {
 #include "../external_cpp/teavm_optimizations/teavm/teavm_spritebatch.c"
 #endif
 
+${IOS_EXTENSION_APP_INCLUDES}
+
 #include "ios_bridge.c"

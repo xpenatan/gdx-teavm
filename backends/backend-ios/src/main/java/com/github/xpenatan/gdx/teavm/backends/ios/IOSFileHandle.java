@@ -63,6 +63,26 @@ public final class IOSFileHandle extends FileHandle {
     }
 
     @Override
+    public boolean exists() {
+        return file().exists();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return file().isDirectory();
+    }
+
+    @Override
+    public long length() {
+        return file().length();
+    }
+
+    @Override
+    public long lastModified() {
+        return file().lastModified();
+    }
+
+    @Override
     public InputStream read() {
         File resolvedFile = file();
         try {

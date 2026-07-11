@@ -760,6 +760,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             xcodeProjectName.convention(extension.ios.xcodeProjectName)
             overwrite.convention(extension.ios.overwriteXcodeProject)
             graphicsApi.convention(extension.ios.graphicsApi)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
             outputs.upToDateWhen { false }
         }
         project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_regenerate_xcode") {
@@ -773,6 +774,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             xcodeProjectName.convention(extension.ios.xcodeProjectName)
             overwrite.convention(true)
             graphicsApi.convention(extension.ios.graphicsApi)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
             outputs.upToDateWhen { false }
         }
         project.tasks.register<GdxTeaVMIosOpenXcodeTask>("gdx_teavm_ios_open_xcode") {

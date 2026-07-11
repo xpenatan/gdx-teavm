@@ -4,6 +4,8 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaNativePro
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 public class TeaIOSNativeProject extends TeaNativeProject {
@@ -16,7 +18,8 @@ public class TeaIOSNativeProject extends TeaNativeProject {
         ensureDirectory(buildRoot, "iOS output root");
         ensureDirectory(generatedSources, "iOS generated sources");
 
-        copyResource("app_include.c", new File(generatedSources, "app_include.c"));
+        writeTemplate("app_include.c", new File(generatedSources, "app_include.c"),
+                Map.of("${IOS_EXTENSION_APP_INCLUDES}", extensionAppIncludes()), false);
         copyResource("fiber.c", new File(generatedSources, "fiber.c"));
         copyResource("file.c", new File(generatedSources, "file.c"));
         copyResource("uchar.h", new File(generatedSources, "uchar.h"));
@@ -38,5 +41,52 @@ public class TeaIOSNativeProject extends TeaNativeProject {
                 + "bridge.header=" + new File(generatedSources, "ios_bridge.h").getAbsolutePath().replace('\\', '/') + System.lineSeparator()
                 + "xcode.project.dir=" + xcodeProjectDir.getAbsolutePath().replace('\\', '/') + System.lineSeparator();
         Files.writeString(new File(buildRoot, "metadata.properties").toPath(), content);
+    }
+
+    private String extensionAppIncludes() {
+        File includeRoot = new File(buildRoot, "c/external_cpp/app_include/ios");
+        if(!includeRoot.isDirectory()) {
+            return "";
+        }
+
+        ArrayList<File> files = new ArrayList<>();
+        collectExtensionAppIncludes(includeRoot, files);
+        files.sort(Comparator.comparing(this::normalizedIncludePath));
+
+        StringBuilder builder = new StringBuilder();
+        for(File file : files) {
+            builder.append("#include \"")
+                    .append(normalizedIncludePath(file))
+                    .append("\"")
+                    .append(System.lineSeparator());
+        }
+        return builder.toString();
+    }
+
+    private void collectExtensionAppIncludes(File directory, ArrayList<File> out) {
+        File[] children = directory.listFiles();
+        if(children == null) {
+            return;
+        }
+        for(File child : children) {
+            if(child.isDirectory()) {
+                collectExtensionAppIncludes(child, out);
+            }
+            else if(isExtensionAppInclude(child)) {
+                out.add(child);
+            }
+        }
+    }
+
+    private boolean isExtensionAppInclude(File file) {
+        String name = file.getName();
+        return name.endsWith(".c") || name.endsWith(".m");
+    }
+
+    private String normalizedIncludePath(File file) {
+        return generatedSources.toPath()
+                .relativize(file.toPath())
+                .toString()
+                .replace('\\', '/');
     }
 }
