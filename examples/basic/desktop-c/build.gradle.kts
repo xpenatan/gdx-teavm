@@ -16,7 +16,7 @@ tasks.register<JavaExec>("basic_desktop_c_generate") {
     args("Debug")
 }
 
-val buildDesktopCDebug = tasks.register<JavaExec>("basic_desktop_c_debug_build") {
+tasks.register<JavaExec>("basic_desktop_c_debug_build") {
     group = desktopCTaskGroup
     description = "Generate TeaVM C sources and build the Debug GLFW executable"
     mainClass.set(mainClassName)
@@ -30,12 +30,6 @@ tasks.register<JavaExec>("basic_desktop_c_release_build") {
     mainClass.set(mainClassName)
     classpath = sourceSets["main"].runtimeClasspath
     args("Release", "build")
-}
-
-tasks.register("basic_desktop_c_build") {
-    group = desktopCTaskGroup
-    description = "Compatibility alias for basic_desktop_c_debug_build"
-    dependsOn(buildDesktopCDebug)
 }
 
 tasks.register<JavaExec>("basic_desktop_c_debug_run") {

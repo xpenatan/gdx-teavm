@@ -12,11 +12,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.math.GridPoint2;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.GLFWGraphicsFactory;
 import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import java.io.PrintStream;
 
 public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
+    private static final GLFWGraphicsFactory DEFAULT_GRAPHICS_FACTORY = GLFWGLGraphics::new;
+
     boolean disableAudio = false;
 
     /**
@@ -32,7 +35,13 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
         ANGLE_GLES20, GL20, GL30, GL31, GL32
     }
 
+    public enum ClientApi {
+        OPENGL, NO_API
+    }
+
     public GLEmulation glEmulation = GLEmulation.GL20;
+    private ClientApi clientApi = ClientApi.OPENGL;
+    private GLFWGraphicsFactory graphicsFactory = DEFAULT_GRAPHICS_FACTORY;
     int gles30ContextMajorVersion = 3;
     int gles30ContextMinorVersion = 2;
 
@@ -70,6 +79,8 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
         audioDeviceBufferSize = config.audioDeviceBufferSize;
         audioDeviceBufferCount = config.audioDeviceBufferCount;
         glEmulation = config.glEmulation;
+        clientApi = config.clientApi;
+        graphicsFactory = config.graphicsFactory;
         gles30ContextMajorVersion = config.gles30ContextMajorVersion;
         gles30ContextMinorVersion = config.gles30ContextMinorVersion;
         r = config.r;
@@ -141,8 +152,35 @@ public class GLFWApplicationConfiguration extends GLFWWindowConfiguration {
      */
     public void setOpenGLEmulation(GLEmulation glVersion, int gles3MajorVersion, int gles3MinorVersion) {
         this.glEmulation = glVersion;
+        this.clientApi = ClientApi.OPENGL;
+        this.graphicsFactory = DEFAULT_GRAPHICS_FACTORY;
         this.gles30ContextMajorVersion = gles3MajorVersion;
         this.gles30ContextMinorVersion = gles3MinorVersion;
+    }
+
+    /**
+     * Uses a custom renderer with a {@link GLFW#GLFW_NO_API} window. The factory is invoked after GLFW creates the native window.
+     */
+    public void setGraphicsFactory(GLFWGraphicsFactory graphicsFactory) {
+        setGraphicsFactory(graphicsFactory, ClientApi.NO_API);
+    }
+
+    /**
+     * Uses a custom graphics implementation and selects whether GLFW creates an OpenGL context for its windows.
+     */
+    public void setGraphicsFactory(GLFWGraphicsFactory graphicsFactory, ClientApi clientApi) {
+        if (graphicsFactory == null) throw new IllegalArgumentException("graphicsFactory cannot be null");
+        if (clientApi == null) throw new IllegalArgumentException("clientApi cannot be null");
+        this.graphicsFactory = graphicsFactory;
+        this.clientApi = clientApi;
+    }
+
+    GLFWGraphicsFactory getGraphicsFactory() {
+        return graphicsFactory;
+    }
+
+    ClientApi getClientApi() {
+        return clientApi;
     }
 
     /**

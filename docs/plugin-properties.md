@@ -212,6 +212,7 @@ These properties exist in native target blocks.
 | `buildExecutable` | `Property<Boolean>` | `false` | Lets the backend invoke the generated GLFW build script when true. |
 | `runExecutable` | `Property<Boolean>` | `false` | Lets the backend run the generated GLFW executable after building when true. |
 | `consoleLog` | `Property<Boolean>` | `false` | Opens or attaches native console logging for GLFW run tasks when supported by the platform. |
+| `cmakeDefinitions` | `MapProperty<String, String>` | empty | Advanced ordered CMake cache definitions passed to the generated GLFW configure scripts. Use `cmakeDefinition(name, value)` to add one definition. |
 
 Example:
 
@@ -227,6 +228,8 @@ gdxTeaVM {
     }
 }
 ```
+
+`cmakeDefinitions` is a low-level integration hook for arbitrary CMake cache entries. Libraries should expose typed settings for user-facing choices instead of requiring consumers to know internal cache keys or values.
 
 Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 

@@ -16,6 +16,7 @@ java {
 
 dependencies {
     implementation("org.teavm:teavm-gradle-plugin:${LibExt.teaVMVersion}")
+    testImplementation("junit:junit:4.13.2")
 }
 
 val generatedPluginInfoDir = layout.buildDirectory.dir("generated/sources/gdxTeaVMPluginInfo/kotlin")

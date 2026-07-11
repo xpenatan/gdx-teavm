@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class TeaGLFWNativeProject {
     private static final String BUILD_SCRIPT_TEMPLATE_ROOT = "templates/glfw/";
@@ -15,12 +18,23 @@ public class TeaGLFWNativeProject {
     private final File buildRoot;
     private final File generatedSources;
     private final File releasePath;
+    private final LinkedHashMap<String, String> cmakeDefinitions;
 
     public TeaGLFWNativeProject(ClassLoader classLoader, File buildRoot, File generatedSources, File releasePath) {
+        this(classLoader, buildRoot, generatedSources, releasePath, Collections.emptyMap());
+    }
+
+    public TeaGLFWNativeProject(
+            ClassLoader classLoader,
+            File buildRoot,
+            File generatedSources,
+            File releasePath,
+            Map<String, String> cmakeDefinitions) {
         this.classLoader = classLoader;
         this.buildRoot = buildRoot;
         this.generatedSources = generatedSources;
         this.releasePath = releasePath;
+        this.cmakeDefinitions = copyCMakeDefinitions(cmakeDefinitions);
     }
 
     public void write(String projectName) throws IOException {
@@ -139,7 +153,8 @@ public class TeaGLFWNativeProject {
             }
             String content = new String(input.readAllBytes(), StandardCharsets.UTF_8)
                     .replace("${PROJECT_NAME}", scriptName.endsWith(".sh") ? escapeShellValue(projectName) : projectName)
-                    .replace("${BUILD_CONFIG}", buildConfig);
+                    .replace("${BUILD_CONFIG}", buildConfig)
+                    .replace("${CMAKE_DEFINITIONS}", renderCMakeDefinitions(scriptName.endsWith(".sh")));
             File script = new File(buildRoot, scriptName);
             Files.writeString(script.toPath(), content, StandardCharsets.UTF_8);
             if(executable) {
@@ -223,6 +238,43 @@ public class TeaGLFWNativeProject {
 
     private String escapeBatchValue(String value) {
         return value.replace("%", "%%");
+    }
+
+    private LinkedHashMap<String, String> copyCMakeDefinitions(Map<String, String> definitions) {
+        if(definitions == null) {
+            throw new IllegalArgumentException("CMake definitions cannot be null");
+        }
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        for(Map.Entry<String, String> entry : definitions.entrySet()) {
+            String name = entry.getKey();
+            if(name == null || name.isBlank()) {
+                throw new IllegalArgumentException("CMake definition name cannot be blank");
+            }
+            String value = entry.getValue();
+            if(value == null) {
+                throw new IllegalArgumentException("CMake definition value cannot be null");
+            }
+            result.put(name.trim(), value);
+        }
+        return result;
+    }
+
+    private String renderCMakeDefinitions(boolean shellScript) {
+        StringBuilder result = new StringBuilder();
+        for(Map.Entry<String, String> entry : cmakeDefinitions.entrySet()) {
+            result.append(' ');
+            String argument = "-D" + entry.getKey() + "=" + entry.getValue();
+            result.append(shellScript ? quoteShellArgument(argument) : quoteBatchArgument(argument));
+        }
+        return result.toString();
+    }
+
+    private String quoteShellArgument(String value) {
+        return "'" + value.replace("'", "'\"'\"'") + "'";
+    }
+
+    private String quoteBatchArgument(String value) {
+        return "\"" + value.replace("%", "%%").replace("\"", "\\\"") + "\"";
     }
 
     private static boolean isWindows() {

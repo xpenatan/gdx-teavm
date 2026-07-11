@@ -97,7 +97,8 @@ public class GLFWApplication implements GLFWApplicationBase {
     }
 
     public GLFWApplication(ApplicationListener listener, GLFWApplicationConfiguration config) {
-        if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) loadANGLE();
+        if (config.getClientApi() == GLFWApplicationConfiguration.ClientApi.OPENGL
+                && config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) loadANGLE();
         initializeGlfw();
         setApplicationLogger(new SharedApplicationLogger());
 
@@ -121,7 +122,8 @@ public class GLFWApplication implements GLFWApplicationBase {
         this.clipboard = new GLFWClipboard();
 
         GLFWWindow window = createWindow(config, listener, 0);
-        if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) postLoadANGLE();
+        if (config.getClientApi() == GLFWApplicationConfiguration.ClientApi.OPENGL
+                && config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) postLoadANGLE();
         windows.add(window);
         try {
             loop();
@@ -155,7 +157,7 @@ public class GLFWApplication implements GLFWApplicationBase {
                 // Must follow Runnables execution so changes done by Runnables are reflected
                 // in the following render.
                 for (GLFWWindow window : windows) {
-                    if (!window.getGraphics().isContinuousRendering()) window.requestRendering();
+                    if (!window.getRendererGraphics().isContinuousRendering()) window.requestRendering();
                 }
             }
             loopClosedWindows();
@@ -283,7 +285,7 @@ public class GLFWApplication implements GLFWApplicationBase {
 
     @Override
     public Graphics getGraphics() {
-        return currentWindow.getGraphics();
+        return currentWindow.getRendererGraphics();
     }
 
     @Override
@@ -464,64 +466,61 @@ public class GLFWApplication implements GLFWApplicationBase {
         long windowHandle = createwindow(config, sharedContext);
         window.create(windowHandle);
 
-        for (int i = 0; i < 2; i++) {
-            window.getGraphics().gl20.glClearColor(config.initialBackgroundColor.r, config.initialBackgroundColor.g,
-                    config.initialBackgroundColor.b, config.initialBackgroundColor.a);
-            window.getGraphics().gl20.glClear(OpenGL.GL_COLOR_BUFFER_BIT);
-            GLFW.swapBuffers(windowHandle);
-        }
-
         if (currentWindow != null) {
-            // the call above to createwindow switches the OpenGL context to the newly created window,
-            // ensure that the invariant "currentWindow is the window with the current active OpenGL context" holds
+            // Creating a window can change renderer-specific current state. Restore the current application window.
             currentWindow.makeCurrent();
         }
-
-        OpenGL.glewInit();
+        if (window.isRendererInitialized()
+                && config.getClientApi() == GLFWApplicationConfiguration.ClientApi.OPENGL) {
+            OpenGL.glewInit();
+        }
     }
 
     static long createwindow(GLFWApplicationConfiguration config, long sharedContextWindow) {
         GLFW.defaultWindowHints();
+        boolean openGL = config.getClientApi() == GLFWApplicationConfiguration.ClientApi.OPENGL;
+        if (!openGL) {
+            GLFW.windowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_NO_API);
+        }
         GLFW.windowHint(GLFW.GLFW_VISIBLE, config.initialVisible ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
         GLFW.windowHint(GLFW.GLFW_RESIZABLE, config.windowResizable ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
         GLFW.windowHint(GLFW.GLFW_MAXIMIZED, config.windowMaximized ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
         GLFW.windowHint(GLFW.GLFW_AUTO_ICONIFY, config.autoIconify ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
 
-        GLFW.windowHint(GLFW.GLFW_RED_BITS, config.r);
-        GLFW.windowHint(GLFW.GLFW_GREEN_BITS, config.g);
-        GLFW.windowHint(GLFW.GLFW_BLUE_BITS, config.b);
-        GLFW.windowHint(GLFW.GLFW_ALPHA_BITS, config.a);
-        GLFW.windowHint(GLFW.GLFW_STENCIL_BITS, config.stencil);
-        GLFW.windowHint(GLFW.GLFW_DEPTH_BITS, config.depth);
-        GLFW.windowHint(GLFW.GLFW_SAMPLES, config.samples);
+        if (openGL) {
+            GLFW.windowHint(GLFW.GLFW_RED_BITS, config.r);
+            GLFW.windowHint(GLFW.GLFW_GREEN_BITS, config.g);
+            GLFW.windowHint(GLFW.GLFW_BLUE_BITS, config.b);
+            GLFW.windowHint(GLFW.GLFW_ALPHA_BITS, config.a);
+            GLFW.windowHint(GLFW.GLFW_STENCIL_BITS, config.stencil);
+            GLFW.windowHint(GLFW.GLFW_DEPTH_BITS, config.depth);
+            GLFW.windowHint(GLFW.GLFW_SAMPLES, config.samples);
 
-        if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL30
-                || config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL31
-                || config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL32) {
-            GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, config.gles30ContextMajorVersion);
-            GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, config.gles30ContextMinorVersion);
-            if (SharedLibraryLoader.os == Os.MacOsX) {
-                // hints mandatory on OS X for GL 3.2+ context creation, but fail on Windows if the
-                // WGL_ARB_create_context extension is not available
-                // see: http://www.glfw.org/docs/latest/compat.html
-                GLFW.windowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
-                GLFW.windowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-            }
-        } else {
-            if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
+            if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL30
+                    || config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL31
+                    || config.glEmulation == GLFWApplicationConfiguration.GLEmulation.GL32) {
+                GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, config.gles30ContextMajorVersion);
+                GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, config.gles30ContextMinorVersion);
+                if (SharedLibraryLoader.os == Os.MacOsX) {
+                    // hints mandatory on OS X for GL 3.2+ context creation, but fail on Windows if the
+                    // WGL_ARB_create_context extension is not available
+                    // see: http://www.glfw.org/docs/latest/compat.html
+                    GLFW.windowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
+                    GLFW.windowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+                }
+            } else if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
                 GLFW.windowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_EGL_CONTEXT_API);
                 GLFW.windowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_OPENGL_ES_API);
                 GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 2);
                 GLFW.windowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
             }
-        }
 
-        if (config.transparentFramebuffer) {
-            GLFW.windowHint(GLFW.GLFW_TRANSPARENT_FRAMEBUFFER, GLFW.GLFW_TRUE);
-        }
-
-        if (config.debug) {
-            GLFW.windowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
+            if (config.transparentFramebuffer) {
+                GLFW.windowHint(GLFW.GLFW_TRANSPARENT_FRAMEBUFFER, GLFW.GLFW_TRUE);
+            }
+            if (config.debug) {
+                GLFW.windowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
+            }
         }
 
         long windowHandle = 0;
@@ -529,10 +528,11 @@ public class GLFWApplication implements GLFWApplicationBase {
         if (config.fullscreenMode != null) {
             GLFW.windowHint(GLFW.GLFW_REFRESH_RATE, config.fullscreenMode.refreshRate);
             windowHandle = GLFW.createWindow(config.fullscreenMode.width, config.fullscreenMode.height, config.title,
-                    config.fullscreenMode.getMonitor(), sharedContextWindow);
+                    config.fullscreenMode.getMonitor(), openGL ? sharedContextWindow : 0);
         } else {
             GLFW.windowHint(GLFW.GLFW_DECORATED, config.windowDecorated ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-            windowHandle = GLFW.createWindow(config.windowWidth, config.windowHeight, config.title, 0, sharedContextWindow);
+            windowHandle = GLFW.createWindow(config.windowWidth, config.windowHeight, config.title, 0,
+                    openGL ? sharedContextWindow : 0);
         }
         if (windowHandle == 0) {
             throw new GdxRuntimeException("Couldn't create window");
@@ -568,34 +568,36 @@ public class GLFWApplication implements GLFWApplicationBase {
         if (config.windowIconPaths != null) {
             GLFWWindow.setIcon(windowHandle, config.windowIconPaths, config.windowIconFileType);
         }
-        GLFW.makeContextCurrent(windowHandle);
-        GLFW.swapInterval(config.vSyncEnabled ? 1 : 0);
-        if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
-            try {
-                Class gles = Class.forName("org.lwjgl.opengles.GLES");
-                gles.getMethod("createCapabilities").invoke(gles);
-            } catch (Throwable e) {
-                throw new GdxRuntimeException("Couldn't initialize GLES", e);
-            }
-        }
-
-        initiateGL(config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20);
-        if (!glVersion.isVersionEqualToOrHigher(2, 0))
-            throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
-                    + glVersion.getVersionString() + "\n" + glVersion.getDebugVersionString());
-
-        if (config.glEmulation != GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20 && !supportsFBO()) {
-            throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
-                    + glVersion.getVersionString() + ", FBO extension: false\n" + glVersion.getDebugVersionString());
-        }
-
-        if (config.debug) {
+        if (openGL) {
+            GLFW.makeContextCurrent(windowHandle);
+            GLFW.swapInterval(config.vSyncEnabled ? 1 : 0);
             if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
-                throw new IllegalStateException(
-                        "ANGLE currently can't be used with with Lwjgl3ApplicationConfiguration#enableGLDebugOutput");
+                try {
+                    Class gles = Class.forName("org.lwjgl.opengles.GLES");
+                    gles.getMethod("createCapabilities").invoke(gles);
+                } catch (Throwable e) {
+                    throw new GdxRuntimeException("Couldn't initialize GLES", e);
+                }
             }
-            glDebugCallback = GLUtil.setupDebugMessageCallback(config.debugStream);
-//			setGLDebugMessageControl(GLDebugMessageSeverity.NOTIFICATION, false);
+
+            initiateGL(config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20);
+            if (!glVersion.isVersionEqualToOrHigher(2, 0))
+                throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
+                        + glVersion.getVersionString() + "\n" + glVersion.getDebugVersionString());
+
+            if (config.glEmulation != GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20 && !supportsFBO()) {
+                throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
+                        + glVersion.getVersionString() + ", FBO extension: false\n" + glVersion.getDebugVersionString());
+            }
+
+            if (config.debug) {
+                if (config.glEmulation == GLFWApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
+                    throw new IllegalStateException(
+                            "ANGLE currently can't be used with with Lwjgl3ApplicationConfiguration#enableGLDebugOutput");
+                }
+                glDebugCallback = GLUtil.setupDebugMessageCallback(config.debugStream);
+//              setGLDebugMessageControl(GLDebugMessageSeverity.NOTIFICATION, false);
+            }
         }
 
         return windowHandle;

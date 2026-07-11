@@ -39,11 +39,6 @@ The launcher always uses `TeaVMOptimizationLevel.FULL`.
 gradlew :examples:basic:desktop-c:basic_desktop_c_generate
 ```
 
-The short build task is a debug-build alias:
-```
-gradlew :examples:basic:desktop-c:basic_desktop_c_build
-```
-
 **Using IntelliJ Run Configuration**
 
 <img src="images/config.png" width="300" alt="Run configuration" />

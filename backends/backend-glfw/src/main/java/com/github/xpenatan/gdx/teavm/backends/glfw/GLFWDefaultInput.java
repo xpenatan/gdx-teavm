@@ -39,7 +39,7 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
 
             if ((codepoint & 0xff00) == 0xf700) return;
             input.lastCharacter = (char) codepoint;
-            input.window.getGraphics().requestRendering();
+            input.window.getRendererGraphics().requestRendering();
             input.eventQueue.keyTyped((char) codepoint, System.nanoTime());
         } catch (Throwable t) {
             Gdx.app.error("NativeInput", "Error in charCallback", t);
@@ -51,7 +51,7 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
     public static void scrollCallback(Address window, double scrollX, double scrollY) {
         try {
             GLFWDefaultInput input = GLFWDefaultInput.byWindow(window);
-            input.window.getGraphics().requestRendering();
+            input.window.getRendererGraphics().requestRendering();
             input.eventQueue.scrolled(-(float) scrollX, -(float) scrollY, System.nanoTime());
         } catch (Throwable t) {
             Gdx.app.error("NativeInput", "Error in scrollCallback", t);
@@ -71,15 +71,17 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
             input.mouseY = logicalMouseY;
 
             if (input.window.getConfig().hdpiMode == HdpiMode.Pixels) {
-                float xScale = input.window.getGraphics().getBackBufferWidth() / (float) input.window.getGraphics().getLogicalWidth();
-                float yScale = input.window.getGraphics().getBackBufferHeight() / (float) input.window.getGraphics().getLogicalHeight();
+                float xScale = input.window.getRendererGraphics().getBackBufferWidth()
+                        / (float)input.window.getRendererGraphics().getLogicalWidth();
+                float yScale = input.window.getRendererGraphics().getBackBufferHeight()
+                        / (float)input.window.getRendererGraphics().getLogicalHeight();
                 input.deltaX = (int) (input.deltaX * xScale);
                 input.deltaY = (int) (input.deltaY * yScale);
                 input.mouseX = (int) (input.mouseX * xScale);
                 input.mouseY = (int) (input.mouseY * yScale);
             }
 
-            input.window.getGraphics().requestRendering();
+            input.window.getRendererGraphics().requestRendering();
             long time = System.nanoTime();
             if (input.mousePressed > 0) {
                 input.eventQueue.touchDragged(input.mouseX, input.mouseY, 0, time);
@@ -104,11 +106,11 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
                 input.mousePressed++;
                 input.justTouched = true;
                 input.justPressedButtons[gdxButton] = true;
-                input.window.getGraphics().requestRendering();
+                input.window.getRendererGraphics().requestRendering();
                 input.eventQueue.touchDown(input.mouseX, input.mouseY, 0, gdxButton, time);
             } else {
                 input.mousePressed = Math.max(0, input.mousePressed - 1);
-                input.window.getGraphics().requestRendering();
+                input.window.getRendererGraphics().requestRendering();
                 input.eventQueue.touchUp(input.mouseX, input.mouseY, 0, gdxButton, time);
             }
         } catch (Throwable t) {
@@ -141,7 +143,7 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
                     input.keyJustPressed = true;
                     input.pressedKeys[key] = true;
                     input.justPressedKeys[key] = true;
-                    input.window.getGraphics().requestRendering();
+                    input.window.getRendererGraphics().requestRendering();
                     input.lastCharacter = 0;
                     char character = input.characterForKeyCode(key);
                     if (character != 0) input.charCallback.invoke(window, character);
@@ -150,12 +152,12 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
                     key = input.getGdxKeyCode(key);
                     input.pressedKeyCount--;
                     input.pressedKeys[key] = false;
-                    input.window.getGraphics().requestRendering();
+                    input.window.getRendererGraphics().requestRendering();
                     input.eventQueue.keyUp(key, System.nanoTime());
                     break;
                 case GLFW.GLFW_REPEAT:
                     if (input.lastCharacter != 0) {
-                        input.window.getGraphics().requestRendering();
+                        input.window.getRendererGraphics().requestRendering();
                         input.eventQueue.keyTyped(input.lastCharacter, System.nanoTime());
                     }
                     break;
@@ -345,8 +347,10 @@ public class GLFWDefaultInput extends AbstractInput implements GLFWInput {
     @Override
     public void setCursorPosition(int x, int y) {
         if (window.getConfig().hdpiMode == HdpiMode.Pixels) {
-            float xScale = window.getGraphics().getLogicalWidth() / (float) window.getGraphics().getBackBufferWidth();
-            float yScale = window.getGraphics().getLogicalHeight() / (float) window.getGraphics().getBackBufferHeight();
+            float xScale = window.getRendererGraphics().getLogicalWidth()
+                    / (float)window.getRendererGraphics().getBackBufferWidth();
+            float yScale = window.getRendererGraphics().getLogicalHeight()
+                    / (float)window.getRendererGraphics().getBackBufferHeight();
             x = (int) (x * xScale);
             y = (int) (y * yScale);
         }

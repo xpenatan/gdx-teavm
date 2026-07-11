@@ -176,6 +176,10 @@ public class GLFWWindowConfiguration {
         initialBackgroundColor = color;
     }
 
+    public Color getInitialBackgroundColor() {
+        return initialBackgroundColor;
+    }
+
     /**
      * Sets whether to use vsync. This setting can be changed anytime at runtime via {@link Graphics#setVSync(boolean)}.
      * <p>

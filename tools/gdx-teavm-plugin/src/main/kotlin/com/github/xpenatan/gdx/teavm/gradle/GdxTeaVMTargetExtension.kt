@@ -5,6 +5,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.teavm.gradle.api.OptimizationLevel
@@ -516,6 +517,23 @@ open class GdxTeaVMGlfwExtension @Inject constructor(
      * Default: `false`.
      */
     val consoleLog: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+
+    /**
+     * CMake cache definitions passed to the generated GLFW configure scripts.
+     *
+     * Definitions retain their declaration order.
+     *
+     * Default: empty map.
+     */
+    val cmakeDefinitions: MapProperty<String, String> =
+        objects.mapProperty(String::class.java, String::class.java).convention(emptyMap())
+
+    /** Adds or replaces one CMake cache definition. */
+    fun cmakeDefinition(name: String?, value: String?) {
+        require(!name.isNullOrBlank()) { "CMake definition name cannot be blank" }
+        require(value != null) { "CMake definition value cannot be null" }
+        cmakeDefinitions.put(name.trim(), value)
+    }
 }
 
 open class GdxTeaVMAndroidExtension @Inject constructor(

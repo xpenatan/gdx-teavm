@@ -3,7 +3,9 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config.plugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +37,7 @@ public class GdxTeaVMPluginConfig {
     public static final String NATIVE_BUILD_EXECUTABLE = "gdx.teavm.native.buildExecutable";
     public static final String NATIVE_RUN_EXECUTABLE = "gdx.teavm.native.runExecutable";
     public static final String NATIVE_CONSOLE_LOG = "gdx.teavm.native.consoleLog";
+    public static final String NATIVE_CMAKE_DEFINITIONS = "gdx.teavm.native.cmakeDefinitions";
     public static final String IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir";
 
     public final boolean webappEnabled;
@@ -62,6 +65,7 @@ public class GdxTeaVMPluginConfig {
     public final boolean nativeBuildExecutable;
     public final boolean nativeRunExecutable;
     public final boolean nativeConsoleLog;
+    public final Map<String, String> nativeCMakeDefinitions;
     public final String iosXcodeProjectDir;
 
     private GdxTeaVMPluginConfig(Properties properties) {
@@ -90,6 +94,7 @@ public class GdxTeaVMPluginConfig {
         nativeBuildExecutable = getBoolean(properties, NATIVE_BUILD_EXECUTABLE, false);
         nativeRunExecutable = getBoolean(properties, NATIVE_RUN_EXECUTABLE, false);
         nativeConsoleLog = getBoolean(properties, NATIVE_CONSOLE_LOG, false);
+        nativeCMakeDefinitions = Collections.unmodifiableMap(readIndexedMap(properties, NATIVE_CMAKE_DEFINITIONS));
         iosXcodeProjectDir = getString(properties, IOS_XCODE_PROJECT_DIR, "");
     }
 
@@ -183,6 +188,32 @@ public class GdxTeaVMPluginConfig {
             String propertyKey = String.valueOf(objectKey);
             if(propertyKey.startsWith(prefix)) {
                 result.add(propertyKey);
+            }
+        }
+        return result;
+    }
+
+    private static LinkedHashMap<String, String> readIndexedMap(Properties properties, String key) {
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        String prefix = key + ".";
+        TreeSet<String> indexes = new TreeSet<>();
+        for(Object objectKey : properties.keySet()) {
+            String propertyKey = String.valueOf(objectKey);
+            if(!propertyKey.startsWith(prefix)) {
+                continue;
+            }
+            String childKey = propertyKey.substring(prefix.length());
+            int separatorIndex = childKey.indexOf('.');
+            if(separatorIndex > 0 && childKey.substring(separatorIndex + 1).equals("name")) {
+                indexes.add(childKey.substring(0, separatorIndex));
+            }
+        }
+        for(String index : indexes) {
+            String entryPrefix = prefix + index;
+            String name = properties.getProperty(entryPrefix + ".name");
+            String value = properties.getProperty(entryPrefix + ".value");
+            if(name != null && value != null) {
+                result.put(name, value);
             }
         }
         return result;

@@ -50,7 +50,7 @@ public class GdxGLFWTargetWrapper extends DelegatingTeaVMTarget {
         GdxTeaVMPluginAssetSupport.copyNativeAssets(config, classLoader, classPathURLs, releasePath, cOutputPath);
 
         TeaGLFWNativeProject nativeProject = new TeaGLFWNativeProject(
-                classLoader, buildRoot, generatedSources, releasePath);
+                classLoader, buildRoot, generatedSources, releasePath, config.nativeCMakeDefinitions);
         nativeProject.write(projectName);
 
         TeaGLFWBackend.NativeBuildType buildType = TeaGLFWBackend.NativeBuildType.fromString(config.nativeBuildType);

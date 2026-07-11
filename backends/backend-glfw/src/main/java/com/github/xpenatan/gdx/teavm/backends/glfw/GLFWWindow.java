@@ -8,8 +8,10 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Os;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.GLFWGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import java.util.HashMap;
@@ -24,8 +26,9 @@ public class GLFWWindow implements Disposable {
     private final Array<LifecycleListener> lifecycleListeners;
     final GLFWApplicationBase application;
     private boolean listenerInitialized = false;
+    private boolean rendererInitialized = false;
     GLFWWindowListener windowListener;
-    private GLFWGLGraphics graphics;
+    private GLFWGraphics graphics;
     private GLFWInput input;
     private final GLFWApplicationConfiguration config;
     private final Array<Runnable> runnables = new Array<>();
@@ -36,6 +39,7 @@ public class GLFWWindow implements Disposable {
     boolean focused = false;
     boolean asyncResized = false;
     private boolean requestRendering = false;
+    private boolean closeRequested = false;
     private boolean visible = false;
 
     public static GLFWWindow byAddress(Address windowHandle) {
@@ -174,13 +178,9 @@ public class GLFWWindow implements Disposable {
     public static void closeCallback(Address windowHandle) {
         try {
             GLFWWindow window = windows.get(windowHandle.toLong());
-            window.postRunnable(() -> {
-                if (window.windowListener != null) {
-                    if (!window.windowListener.closeRequested()) {
-                        GLFW.setWindowShouldClose(windowHandle.toLong(), false);
-                    }
-                }
-            });
+            synchronized (window) {
+                window.closeRequested = true;
+            }
         } catch (Throwable t) {
             Gdx.app.error("NativeWindow", "Error in closeCallback", t);
         }
@@ -226,7 +226,8 @@ public class GLFWWindow implements Disposable {
     void create(long windowHandle) {
         this.windowHandle = windowHandle;
         this.input = application.createInput(this);
-        this.graphics = new GLFWGLGraphics(this);
+        this.graphics = config.getGraphicsFactory().create(this);
+        if (graphics == null) throw new GdxRuntimeException("The GLFW graphics factory returned null");
 
         windows.put(windowHandle, this);
 
@@ -237,9 +238,7 @@ public class GLFWWindow implements Disposable {
         GLFW.setDropCallback(windowHandle, dropCallback);
         GLFW.setWindowRefreshCallback(windowHandle, refreshCallback);
 
-        if (windowListener != null) {
-            windowListener.created(this);
-        }
+        initializeRendererIfReady();
     }
 
     /**
@@ -438,8 +437,30 @@ public class GLFWWindow implements Disposable {
                 maxHeight > -1 ? maxHeight : GLFW.GLFW_DONT_CARE);
     }
 
+    /**
+     * Returns the default OpenGL graphics implementation.
+     *
+     * @throws GdxRuntimeException if this window uses a custom graphics implementation
+     */
     public GLFWGLGraphics getGraphics() {
+        return getGLGraphics();
+    }
+
+    /** Returns the renderer-neutral graphics implementation associated with this window. */
+    public GLFWGraphics getRendererGraphics() {
         return graphics;
+    }
+
+    /**
+     * Returns the default OpenGL graphics implementation.
+     *
+     * @throws GdxRuntimeException if this window uses a custom graphics implementation
+     */
+    public GLFWGLGraphics getGLGraphics() {
+        if (!(graphics instanceof GLFWGLGraphics)) {
+            throw new GdxRuntimeException("This GLFW window does not use GLFWGLGraphics");
+        }
+        return (GLFWGLGraphics) graphics;
     }
 
     public GLFWInput getInput() {
@@ -456,18 +477,32 @@ public class GLFWWindow implements Disposable {
     }
 
     boolean update() {
-        if (!listenerInitialized) {
-            initializeListener();
+        processCloseRequest();
+
+        boolean initializeListener = !listenerInitialized;
+        boolean graphicsUpdated = false;
+        if (!rendererInitialized || initializeListener || !graphics.isReady()) {
+            graphics.update();
+            graphicsUpdated = true;
+            if (!graphics.isReady()) return false;
+            if (!initializeRendererIfReady()) return false;
         }
+
+        boolean resized = asyncResized;
+        if (resized) {
+            asyncResized = false;
+            graphics.updateFramebufferInfo();
+            if (!initializeListener) {
+                listener.resize(graphics.getWidth(), graphics.getHeight());
+            }
+        }
+
         synchronized (runnables) {
             executedRunnables.addAll(runnables);
             runnables.clear();
         }
-        for (Runnable runnable : executedRunnables) {
-            runnable.run();
-        }
-        boolean shouldRender = executedRunnables.size > 0 || graphics.isContinuousRendering();
-        executedRunnables.clear();
+        boolean shouldRender = initializeListener || resized || executedRunnables.size > 0
+                || graphics.isContinuousRendering();
 
         if (!iconified) input.update();
 
@@ -476,27 +511,44 @@ public class GLFWWindow implements Disposable {
             requestRendering = false;
         }
 
-        // In case glfw_async is used, we need to resize outside the GLFW
-        if (asyncResized) {
-            asyncResized = false;
-            graphics.updateFramebufferInfo();
-            graphics.gl20.glViewport(0, 0, graphics.getBackBufferWidth(), graphics.getBackBufferHeight());
-            listener.resize(graphics.getWidth(), graphics.getHeight());
-            graphics.update();
-            listener.render();
-            GLFW.swapBuffers(windowHandle);
-            return true;
-        }
+        boolean frameStarted = false;
+        try {
+            if (shouldRender) {
+                // The first frame starts before listener creation so renderer resources can be created safely.
+                if (!graphicsUpdated) graphics.update();
+                graphics.beginFrame();
+                frameStarted = true;
+            }
 
-        if (shouldRender) {
-            graphics.update();
-            listener.render();
-            GLFW.swapBuffers(windowHandle);
+            if (initializeListener) {
+                initializeListener();
+            }
+
+            for (Runnable runnable : executedRunnables) {
+                runnable.run();
+            }
+            executedRunnables.clear();
+
+            if (shouldRender) {
+                listener.render();
+            }
+        } finally {
+            if (frameStarted) graphics.endFrame();
         }
 
         if (!iconified) input.prepareNext();
 
         return shouldRender;
+    }
+
+    private void processCloseRequest() {
+        synchronized (this) {
+            if (!closeRequested) return;
+            closeRequested = false;
+        }
+        if (windowListener != null && !windowListener.closeRequested()) {
+            GLFW.setWindowShouldClose(windowHandle, false);
+        }
     }
 
     public void requestRendering() {
@@ -517,8 +569,25 @@ public class GLFWWindow implements Disposable {
         return listenerInitialized;
     }
 
+    boolean isRendererInitialized() {
+        return rendererInitialized;
+    }
+
+    boolean initializeRendererIfReady() {
+        if (rendererInitialized) return true;
+        if (!graphics.isReady()) return false;
+
+        graphics.makeCurrent();
+        graphics.initialClear();
+        rendererInitialized = true;
+        if (windowListener != null) {
+            windowListener.created(this);
+        }
+        return true;
+    }
+
     void initializeListener() {
-        if (!listenerInitialized) {
+        if (!listenerInitialized && graphics.isReady()) {
             listener.create();
             listener.resize(graphics.getWidth(), graphics.getHeight());
             listenerInitialized = true;
@@ -534,13 +603,12 @@ public class GLFWWindow implements Disposable {
         Gdx.gl = Gdx.gl20;
         Gdx.input = input;
 
-        GLFW.makeContextCurrent(windowHandle);
+        if (rendererInitialized) graphics.makeCurrent();
     }
 
     @Override
     public void dispose() {
-        listener.pause();
-        listener.dispose();
+        disposeListener();
         GLFWCursor.dispose(this);
         graphics.dispose();
         input.dispose();
@@ -549,6 +617,19 @@ public class GLFWWindow implements Disposable {
         GLFW.setWindowCloseCallback(windowHandle, null);
         GLFW.setDropCallback(windowHandle, null);
         GLFW.destroyWindow(windowHandle);
+    }
+
+    void disposeListener() {
+        if (listenerInitialized) {
+            makeCurrent();
+            graphics.beginFrame();
+            try {
+                listener.pause();
+                listener.dispose();
+            } finally {
+                graphics.endFrame();
+            }
+        }
     }
 
     @Override

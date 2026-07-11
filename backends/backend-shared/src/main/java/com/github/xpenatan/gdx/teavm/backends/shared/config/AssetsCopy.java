@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author xpenatan
@@ -374,8 +375,12 @@ public class AssetsCopy {
                 plan.scripts.add(asset);
             }
             else if(asset.startsWith("/external_cpp/")) {
-                if(asset.endsWith(".lib") || asset.endsWith(".a") || asset.endsWith(".h")
-                        || asset.endsWith(".c") || asset.endsWith(".cpp") || asset.endsWith(".cmake")) {
+                String lowercaseAsset = asset.toLowerCase(Locale.ROOT);
+                if(lowercaseAsset.endsWith(".lib") || lowercaseAsset.endsWith(".a")
+                        || lowercaseAsset.endsWith(".dll") || lowercaseAsset.endsWith(".so")
+                        || lowercaseAsset.endsWith(".dylib") || lowercaseAsset.endsWith(".h")
+                        || lowercaseAsset.endsWith(".c") || lowercaseAsset.endsWith(".cpp")
+                        || lowercaseAsset.endsWith(".cmake")) {
                     plan.cppFiles.add(asset);
                 }
             }

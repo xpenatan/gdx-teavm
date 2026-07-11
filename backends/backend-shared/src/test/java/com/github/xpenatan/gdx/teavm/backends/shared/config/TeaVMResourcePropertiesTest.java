@@ -43,6 +43,48 @@ public class TeaVMResourcePropertiesTest {
     }
 
     @Test
+    public void createAssetPlan_preservesPortableSharedLibrariesAsCppResources() throws Exception {
+        Path jar = Files.createTempFile("native-shared-libraries", ".jar");
+        try {
+            try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(jar))) {
+                writeEntry(zip, "META-INF/gdx-teavm.properties", "# marker\n");
+                writeEntry(zip, "external_cpp/native/windows/jWebGPU64.DLL", "windows");
+                writeEntry(zip, "external_cpp/native/linux/libjWebGPU.so", "linux");
+                writeEntry(zip, "external_cpp/native/macos/libjWebGPU.DyLiB", "macos");
+                writeEntry(zip, "external_cpp/cmake/linkage.CMAKE", "cmake");
+                writeEntry(zip, "external_cpp/native/README.txt", "not a native build resource");
+                writeEntry(zip, "application/config.json", "{}");
+            }
+
+            URL jarUrl = jar.toUri().toURL();
+            ArrayList<URL> classpath = new ArrayList<>();
+            classpath.add(jarUrl);
+
+            try(URLClassLoader classLoader = new URLClassLoader(new URL[] { jarUrl })) {
+                AssetsCopy.AssetPlan plan = AssetsCopy.createAssetPlan(
+                        classLoader, classpath, Collections.emptyList(), null);
+
+                Assert.assertTrue(plan.cppFiles.contains("/external_cpp/native/windows/jWebGPU64.DLL"));
+                Assert.assertTrue(plan.cppFiles.contains("/external_cpp/native/linux/libjWebGPU.so"));
+                Assert.assertTrue(plan.cppFiles.contains("/external_cpp/native/macos/libjWebGPU.DyLiB"));
+                Assert.assertTrue(plan.cppFiles.contains("/external_cpp/cmake/linkage.CMAKE"));
+                Assert.assertFalse(plan.cppFiles.contains("/external_cpp/native/README.txt"));
+                Assert.assertEquals(1, plan.assets.size());
+                Assert.assertEquals("application/config.json", plan.assets.get(0).classpathPath);
+            }
+        }
+        finally {
+            Files.deleteIfExists(jar);
+        }
+    }
+
+    private static void writeEntry(ZipOutputStream zip, String path, String content) throws Exception {
+        zip.putNextEntry(new ZipEntry(path));
+        zip.write(content.getBytes(StandardCharsets.UTF_8));
+        zip.closeEntry();
+    }
+
+    @Test
     public void matchesMainJarArtifact_matchesRealVersionSiblingArtifact() {
         boolean matches = TeaVMResourceProperties.matchesMainJarArtifact(
                 "E:/cache/runtime-web-wasm-1.2.3.jar",

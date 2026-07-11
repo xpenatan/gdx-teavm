@@ -9,8 +9,11 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPlugi
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.teavm.tooling.TeaVMTargetType;
 
 public class TeaGLFWBackend extends TeaBackend {
@@ -55,6 +58,7 @@ public class TeaGLFWBackend extends TeaBackend {
     public boolean runExecutableAfterBuild;
     public boolean runExecutableWithConsoleLog;
     public List<String> additionalSourcePaths = new ArrayList<>();
+    private final LinkedHashMap<String, String> cmakeDefinitions = new LinkedHashMap<>();
 
     protected String buildRootPath;
     protected String generatedSources;
@@ -92,6 +96,25 @@ public class TeaGLFWBackend extends TeaBackend {
         return this;
     }
 
+    /**
+     * Adds or replaces a CMake cache definition passed to the generated native configure scripts.
+     */
+    public TeaGLFWBackend cmakeDefinition(String name, String value) {
+        String normalizedName = requireCMakeDefinitionName(name);
+        if(value == null) {
+            throw new IllegalArgumentException("CMake definition value cannot be null");
+        }
+        cmakeDefinitions.put(normalizedName, value);
+        return this;
+    }
+
+    /**
+     * Returns the configured CMake definitions in configure-command order.
+     */
+    public Map<String, String> getCMakeDefinitions() {
+        return Collections.unmodifiableMap(cmakeDefinitions);
+    }
+
     @Override
     protected void setup(TeaBuilderData data) {
         targetType = TeaVMTargetType.C;
@@ -118,7 +141,8 @@ public class TeaGLFWBackend extends TeaBackend {
                 getClass().getClassLoader(),
                 new File(buildRootPath),
                 new File(generatedSources),
-                releasePath.file());
+                releasePath.file(),
+                cmakeDefinitions);
         try {
             nativeProject.write(data.outputName);
         } catch(IOException e) {
@@ -141,5 +165,12 @@ public class TeaGLFWBackend extends TeaBackend {
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String requireCMakeDefinitionName(String name) {
+        if(name == null || name.isBlank()) {
+            throw new IllegalArgumentException("CMake definition name cannot be blank");
+        }
+        return name.trim();
     }
 }

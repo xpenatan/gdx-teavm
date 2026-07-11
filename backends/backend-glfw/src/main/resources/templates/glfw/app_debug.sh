@@ -14,7 +14,7 @@ if ! command -v cmake >/dev/null 2>&1; then
 fi
 
 echo "Generating CMake build files for $BUILD_CONFIG..."
-cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE="$BUILD_CONFIG"
+cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE="$BUILD_CONFIG"${CMAKE_DEFINITIONS}
 
 echo "Building $NAME $BUILD_CONFIG configuration..."
 cmake --build build/cmake --config "$BUILD_CONFIG"

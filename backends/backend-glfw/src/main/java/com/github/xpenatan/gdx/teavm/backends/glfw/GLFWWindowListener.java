@@ -1,6 +1,7 @@
 package com.github.xpenatan.gdx.teavm.backends.glfw;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.GLFWGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 
 /**
@@ -13,11 +14,12 @@ import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.gl.GLFWGLGraphics;
 public interface GLFWWindowListener {
 
     /**
-     * Called after the GLFW window is created. Before this callback is received, it's unsafe to use any {@link GLFWWindow}
-     * member functions which, for their part, involve calling GLFW functions.
+     * Called after the GLFW window is created and its {@link GLFWGraphics} implementation is ready. Before this callback is
+     * received, it's unsafe to use any {@link GLFWWindow} member functions which, for their part, involve calling GLFW functions.
      * <p>
-     * For the main window, this is an immediate callback from inside
-     * {@link GLFWApplication#GLFWApplication(ApplicationListener, GLFWApplicationConfiguration)}.
+     * For the default OpenGL renderer, the main window receives this callback immediately from inside
+     * {@link GLFWApplication#GLFWApplication(ApplicationListener, GLFWApplicationConfiguration)}. Renderers which initialize
+     * asynchronously receive it on the first update after becoming ready.
      *
      * @param window the window instance
      * @see GLFWApplication#newWindow(ApplicationListener, GLFWWindowConfiguration)

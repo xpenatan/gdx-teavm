@@ -262,6 +262,11 @@ open class GdxTeaVMExtension @Inject constructor(
                     properties[NATIVE_BUILD_EXECUTABLE] = native.buildExecutable.get().toString()
                     properties[NATIVE_RUN_EXECUTABLE] = native.runExecutable.get().toString()
                     properties[NATIVE_CONSOLE_LOG] = native.consoleLog.get().toString()
+                    native.cmakeDefinitions.get().entries.forEachIndexed { index, definition ->
+                        val definitionKey = "$NATIVE_CMAKE_DEFINITIONS.${index.toString().padStart(8, '0')}"
+                        properties["$definitionKey.name"] = definition.key
+                        properties["$definitionKey.value"] = definition.value
+                    }
                 }
                 if(native is GdxTeaVMIosExtension) {
                     properties[IOS_XCODE_PROJECT_DIR] = native.xcodeProjectDir.get().asFile.absolutePath
@@ -382,6 +387,7 @@ open class GdxTeaVMExtension @Inject constructor(
         const val NATIVE_BUILD_EXECUTABLE = "gdx.teavm.native.buildExecutable"
         const val NATIVE_RUN_EXECUTABLE = "gdx.teavm.native.runExecutable"
         const val NATIVE_CONSOLE_LOG = "gdx.teavm.native.consoleLog"
+        const val NATIVE_CMAKE_DEFINITIONS = "gdx.teavm.native.cmakeDefinitions"
         const val IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir"
         const val IOS_GRAPHICS_API = "gdx.teavm.ios.graphicsApi"
     }

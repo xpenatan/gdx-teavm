@@ -5,6 +5,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.GL31;
@@ -13,17 +14,17 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWApplicationConfiguration;
 import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWCursor;
 import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWWindow;
+import com.github.xpenatan.gdx.teavm.backends.glfw.graphics.GLFWGraphics;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFW;
 import com.github.xpenatan.gdx.teavm.backends.glfw.utils.OpenGL;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;
 
-public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
+public class GLFWGLGraphics extends AbstractGraphics implements GLFWGraphics {
     final GLFWWindow window;
     public GL20 gl20;
     private GL30 gl30;
@@ -57,7 +58,7 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
     public static void resizeCallback(Address windowHandle, int width, int height) {
         try {
             GLFWWindow window = GLFWWindow.byAddress(windowHandle);
-            GLFWGLGraphics graphics = window.getGraphics();
+            GLFWGLGraphics graphics = window.getGLGraphics();
 //        if (!"glfw_async".equals(Configuration.GLFW_LIBRARY_NAME.get())) {
             graphics.updateFramebufferInfo();
             if (!window.isListenerInitialized()) {
@@ -67,8 +68,9 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
             graphics.gl20.glViewport(0, 0, graphics.backBufferWidth, graphics.backBufferHeight);
             window.getListener().resize(graphics.getWidth(), graphics.getHeight());
             graphics.update();
+            graphics.beginFrame();
             window.getListener().render();
-            GLFW.swapBuffers(windowHandle.toLong());
+            graphics.endFrame();
 //        } else {
 //            window.asyncResized = true;
 //        }
@@ -134,10 +136,17 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
         }
     }
 
+    @Override
     public GLFWWindow getWindow() {
         return window;
     }
 
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
     public void updateFramebufferInfo() {
         GLFW.getFramebufferSize(window.getWindowHandle(), tmpBuffer, tmpBuffer2);
         this.backBufferWidth = tmpBuffer[0];
@@ -150,6 +159,7 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
                 false);
     }
 
+    @Override
     public void update() {
         long time = System.nanoTime();
         if (lastFrameTime == -1) lastFrameTime = time;
@@ -167,6 +177,31 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
         }
         frames++;
         frameId++;
+    }
+
+    @Override
+    public void beginFrame() {
+    }
+
+    @Override
+    public void endFrame() {
+        GLFW.swapBuffers(window.getWindowHandle());
+    }
+
+    @Override
+    public void makeCurrent() {
+        GLFW.makeContextCurrent(window.getWindowHandle());
+    }
+
+    @Override
+    public void initialClear() {
+        GLFWApplicationConfiguration config = window.getConfig();
+        Color backgroundColor = config.getInitialBackgroundColor();
+        for (int i = 0; i < 2; i++) {
+            gl20.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+            gl20.glClear(OpenGL.GL_COLOR_BUFFER_BIT);
+            GLFW.swapBuffers(window.getWindowHandle());
+        }
     }
 
     @Override
@@ -252,10 +287,12 @@ public class GLFWGLGraphics extends AbstractGraphics implements Disposable {
         return backBufferHeight;
     }
 
+    @Override
     public int getLogicalWidth() {
         return logicalWidth;
     }
 
+    @Override
     public int getLogicalHeight() {
         return logicalHeight;
     }
