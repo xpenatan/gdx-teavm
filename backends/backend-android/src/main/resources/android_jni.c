@@ -10,6 +10,7 @@ void gdx_teavm_android_resume(void);
 void gdx_teavm_android_dispose(void);
 void gdx_teavm_android_touch(int32_t type, int32_t pointer, int32_t x, int32_t y, float pressure);
 void gdx_teavm_android_key(int32_t type, int32_t keycode);
+void gdx_teavm_android_key_typed(int32_t character);
 
 JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeStart(
         JNIEnv* env, jobject obj, jstring workingDirectory) {
@@ -70,4 +71,11 @@ JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView
     (void) env;
     (void) obj;
     gdx_teavm_android_key((int32_t) type, (int32_t) keycode);
+}
+
+JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeKeyTyped(
+        JNIEnv* env, jobject obj, jchar character) {
+    (void) env;
+    (void) obj;
+    gdx_teavm_android_key_typed((int32_t) character);
 }

@@ -122,6 +122,14 @@ public class AndroidApplication implements Application {
         }
     }
 
+    @Export(name = "gdx_teavm_android_key_typed")
+    public static void keyTyped(char character) {
+        AndroidApplication app = current;
+        if(app != null) {
+            runOnTeaVMFiber(() -> app.input.onKeyTyped(character));
+        }
+    }
+
     private static void runOnTeaVMFiber(Fiber.FiberRunner runner) {
         Fiber.start(runner, true);
     }
@@ -135,6 +143,7 @@ public class AndroidApplication implements Application {
             dispose();
             touch(0, 0, 0, 0, 0);
             key(0, 0);
+            keyTyped((char)0);
         }
     }
 

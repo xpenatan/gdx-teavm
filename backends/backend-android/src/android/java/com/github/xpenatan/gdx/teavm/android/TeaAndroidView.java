@@ -2,10 +2,16 @@ package com.github.xpenatan.gdx.teavm.android;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.BaseInputConnection;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
+import com.github.xpenatan.gdx.teavm.backends.android.AndroidInputBridge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +27,33 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
 
     private boolean started;
     private boolean disposed;
+
+    private final AndroidInputBridge.OnscreenKeyboardController keyboardController =
+            new AndroidInputBridge.OnscreenKeyboardController() {
+                @Override
+                public void setVisible(final boolean visible) {
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(disposed) {
+                                return;
+                            }
+                            InputMethodManager inputMethodManager =
+                                    (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if(inputMethodManager == null) {
+                                return;
+                            }
+                            requestFocus();
+                            if(visible) {
+                                inputMethodManager.showSoftInput(TeaAndroidView.this, InputMethodManager.SHOW_IMPLICIT);
+                            }
+                            else {
+                                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
+                            }
+                        }
+                    });
+                }
+            };
 
     static {
         System.loadLibrary("app");
@@ -43,6 +76,7 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
         setFocusableInTouchMode(true);
         setOnTouchListener(this);
         requestFocus();
+        AndroidInputBridge.setOnscreenKeyboardController(keyboardController);
     }
 
     @Override
@@ -66,6 +100,7 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
             return;
         }
         disposed = true;
+        AndroidInputBridge.clearOnscreenKeyboardController(keyboardController);
         if(started) {
             nativeDispose();
         }
@@ -75,6 +110,20 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
     protected void onDetachedFromWindow() {
         dispose();
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    public boolean onCheckIsTextEditor() {
+        return true;
+    }
+
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        outAttrs.imeOptions = EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+        outAttrs.inputType = InputType.TYPE_CLASS_TEXT;
+        outAttrs.initialSelStart = 0;
+        outAttrs.initialSelEnd = 0;
+        return new TeaAndroidInputConnection(this);
     }
 
     @Override
@@ -149,10 +198,14 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
         if(disposed) {
             return true;
         }
+        final char typedCharacter = resolveTypedCharacter(keyCode, event);
         queueEvent(new Runnable() {
             @Override
             public void run() {
                 nativeKey(KEY_DOWN, keyCode);
+                if(typedCharacter != 0) {
+                    nativeKeyTyped(typedCharacter);
+                }
             }
         });
         return true;
@@ -170,6 +223,18 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
             }
         });
         return true;
+    }
+
+    @Override
+    public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+        if(disposed) {
+            return true;
+        }
+        if(event != null && event.getCharacters() != null && !event.getCharacters().isEmpty()) {
+            queueTypedText(event.getCharacters());
+            return true;
+        }
+        return super.onKeyMultiple(keyCode, repeatCount, event);
     }
 
     private File prepareAssetRoot() {
@@ -218,6 +283,61 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
         }
     }
 
+    private char resolveTypedCharacter(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_DEL) {
+            return '\b';
+        }
+        if(keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER) {
+            return '\n';
+        }
+        if(keyCode == KeyEvent.KEYCODE_TAB) {
+            return '\t';
+        }
+        if(event == null || event.isCtrlPressed() || event.isAltPressed() || event.isMetaPressed()) {
+            return 0;
+        }
+        int unicodeChar = event.getUnicodeChar();
+        return unicodeChar == 0 ? 0 : (char)unicodeChar;
+    }
+
+    private void queueTypedText(CharSequence text) {
+        if(text == null || text.length() == 0) {
+            return;
+        }
+        final String value = text.toString();
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < value.length(); i++) {
+                    nativeKeyTyped(value.charAt(i));
+                }
+            }
+        });
+    }
+
+    private void queueBackspace(int count) {
+        if(count <= 0) {
+            return;
+        }
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < count; i++) {
+                    nativeKeyTyped('\b');
+                }
+            }
+        });
+    }
+
+    private void queueNewline() {
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                nativeKeyTyped('\n');
+            }
+        });
+    }
+
     private native void nativeStart(String workingDirectory);
     private native void nativeResize(int width, int height);
     private native void nativeRender();
@@ -226,4 +346,57 @@ public class TeaAndroidView extends GLSurfaceView implements GLSurfaceView.Rende
     private native void nativeDispose();
     private native void nativeTouch(int type, int pointer, int x, int y, float pressure);
     private native void nativeKey(int type, int keycode);
+    private native void nativeKeyTyped(char character);
+
+    private class TeaAndroidInputConnection extends BaseInputConnection {
+        TeaAndroidInputConnection(View targetView) {
+            super(targetView, false);
+        }
+
+        @Override
+        public boolean commitText(CharSequence text, int newCursorPosition) {
+            queueTypedText(text);
+            return true;
+        }
+
+        @Override
+        public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+            if(beforeLength > 0) {
+                queueBackspace(beforeLength);
+                return true;
+            }
+            return super.deleteSurroundingText(beforeLength, afterLength);
+        }
+
+        @Override
+        public boolean sendKeyEvent(KeyEvent event) {
+            if(event == null) {
+                return false;
+            }
+            int keyCode = event.getKeyCode();
+            if(event.getAction() == KeyEvent.ACTION_DOWN) {
+                if(keyCode == KeyEvent.KEYCODE_DEL) {
+                    queueBackspace(1);
+                    return true;
+                }
+                if(keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER) {
+                    queueNewline();
+                    return true;
+                }
+            }
+            return super.sendKeyEvent(event);
+        }
+
+        @Override
+        public boolean performEditorAction(int actionCode) {
+            if(actionCode == EditorInfo.IME_ACTION_DONE
+                    || actionCode == EditorInfo.IME_ACTION_GO
+                    || actionCode == EditorInfo.IME_ACTION_SEND
+                    || actionCode == EditorInfo.IME_ACTION_NEXT) {
+                queueNewline();
+                return true;
+            }
+            return super.performEditorAction(actionCode);
+        }
+    }
 }

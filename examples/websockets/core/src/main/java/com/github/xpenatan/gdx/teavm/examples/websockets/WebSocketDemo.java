@@ -32,6 +32,7 @@ public class WebSocketDemo extends ApplicationAdapter implements InputProcessor 
     private String helperText = "Type text, press Enter to send, F5 reconnect, Esc clear";
     private int width = 800;
     private int height = 480;
+    private float uiScale = 1f;
 
     public WebSocketDemo() {
         this(DEFAULT_URL);
@@ -90,26 +91,29 @@ public class WebSocketDemo extends ApplicationAdapter implements InputProcessor 
         socket.connect();
     }
 
-    private void sendMessage(String message) {
+    private boolean sendMessage(String message) {
         String trimmed = message == null ? "" : message.trim();
         if(trimmed.isEmpty()) {
             log("Nothing to send");
-            return;
+            return false;
         }
         if(socket == null) {
             log("Socket not created yet");
-            return;
+            return false;
         }
         if(!socket.isOpen()) {
             log("Socket is not open yet");
-            return;
+            return false;
         }
         socket.send(trimmed);
         log("Sent: " + trimmed);
+        return true;
     }
 
     private void sendTypedMessage() {
-        sendMessage(inputBuffer.toString());
+        if(sendMessage(inputBuffer.toString())) {
+            inputBuffer.setLength(0);
+        }
     }
 
     private void appendTypedChar(char character) {
@@ -148,6 +152,10 @@ public class WebSocketDemo extends ApplicationAdapter implements InputProcessor 
     public void resize(int width, int height) {
         this.width = Math.max(1, width);
         this.height = Math.max(1, height);
+        if(font != null) {
+            uiScale = Math.max(1f, Math.min(this.width / 800f, this.height / 480f));
+            font.getData().setScale(uiScale);
+        }
     }
 
     @Override
@@ -155,9 +163,9 @@ public class WebSocketDemo extends ApplicationAdapter implements InputProcessor 
         ScreenUtils.clear(0.08f, 0.1f, 0.14f, 1f);
 
         batch.begin();
-        float x = 24f;
-        float y = height - 24f;
-        float lineHeight = 26f;
+        float x = 24f * uiScale;
+        float y = height - 24f * uiScale;
+        float lineHeight = font.getLineHeight() + 10f * uiScale;
 
         font.setColor(Color.WHITE);
         font.draw(batch, "gdx-teavm websocket demo", x, y);
@@ -214,10 +222,6 @@ public class WebSocketDemo extends ApplicationAdapter implements InputProcessor 
         }
         if(keycode == Input.Keys.F5) {
             connect();
-            return true;
-        }
-        if(keycode == Input.Keys.BACKSPACE) {
-            deleteTypedChar();
             return true;
         }
         return false;

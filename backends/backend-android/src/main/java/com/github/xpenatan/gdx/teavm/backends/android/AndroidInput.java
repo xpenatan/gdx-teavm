@@ -81,6 +81,17 @@ public class AndroidInput extends TeaMockInput {
         }
     }
 
+    void onKeyTyped(char character) {
+        if(character == 0) {
+            return;
+        }
+        currentEventTime = System.nanoTime();
+        InputProcessor processor = getInputProcessor();
+        if(processor != null) {
+            processor.keyTyped(character);
+        }
+    }
+
     void endFrame() {
         justTouched = false;
         for(int i = 0; i < MAX_POINTERS; i++) {
@@ -218,5 +229,15 @@ public class AndroidInput extends TeaMockInput {
     @Override
     public boolean isCatchKey(int keycode) {
         return keycode >= 0 && keycode < MAX_KEYS && catchKeys[keycode];
+    }
+
+    @Override
+    public void setOnscreenKeyboardVisible(boolean visible) {
+        AndroidInputBridge.setOnscreenKeyboardVisible(visible);
+    }
+
+    @Override
+    public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
+        AndroidInputBridge.setOnscreenKeyboardVisible(visible);
     }
 }

@@ -4,7 +4,10 @@ plugins {
 
 LibExt.initProperties(rootDir)
 
-val androidApplicationProjects = setOf(":examples:basic:android")
+val androidApplicationProjects = setOf(
+    ":examples:basic:android",
+    ":examples:websockets:android",
+)
 
 subprojects {
     if(path !in androidApplicationProjects) {

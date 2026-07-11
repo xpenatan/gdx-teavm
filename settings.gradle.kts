@@ -90,6 +90,10 @@ include(":examples:websockets:desktop")
 include(":examples:websockets:desktop-c")
 include(":examples:websockets:web")
 
+if (hasAndroidSdk) {
+    include(":examples:websockets:android")
+}
+
 val file = File(settingsDir, "gradle.properties")
 
 val properties = Properties()
