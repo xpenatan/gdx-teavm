@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(${PROJECT_NAME} C)
 
 set(CMAKE_C_STANDARD 11)
+
+if(MSVC)
+  # Packaged Windows native archives use the release static CRT in every configuration.
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+endif()
 
 # Output directory configuration
 if(CMAKE_CONFIGURATION_TYPES)
@@ -120,6 +125,10 @@ list(APPEND SOURCES ${EXTERNAL_SOURCES_2})
 set(TEAVM_APP_TARGET "${PROJECT_NAME}_app")
 add_executable(${TEAVM_APP_TARGET} ${SOURCES})
 
+if(MSVC)
+  target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE _ITERATOR_DEBUG_LEVEL=0)
+endif()
+
 if(TEAVM_SPRITEBATCH_SHORT_HEADERS)
   target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
 endif()
@@ -152,7 +161,7 @@ if (WIN32)
   set_target_properties(${TEAVM_APP_TARGET} PROPERTIES
       VS_DEBUGGER_WORKING_DIRECTORY "${RELEASE_PATH}")
   # Link libraries
-  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE glfw3 opengl32 glew32s)
+  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE glfw3_mt opengl32 glew32s)
 
   # Set startup project for Visual Studio
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TEAVM_APP_TARGET})

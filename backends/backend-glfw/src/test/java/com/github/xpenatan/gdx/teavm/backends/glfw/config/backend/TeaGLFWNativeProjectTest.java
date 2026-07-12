@@ -62,6 +62,25 @@ public class TeaGLFWNativeProjectTest {
     }
 
     @Test
+    public void windowsNativeProjectUsesStaticRuntimeDependencies() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("static-runtime-project");
+        TeaGLFWNativeProject project = new TeaGLFWNativeProject(
+                TeaGLFWNativeProject.class.getClassLoader(),
+                buildRoot,
+                new File(buildRoot, "c/src"),
+                new File(buildRoot, "release"));
+
+        project.write("test_app");
+
+        String cmake = read(buildRoot, "CMakeLists.txt");
+        assertThat(cmake).contains("set(CMAKE_MSVC_RUNTIME_LIBRARY \"MultiThreaded\")");
+        assertThat(cmake).contains("_ITERATOR_DEBUG_LEVEL=0");
+        assertThat(cmake).contains("glfw3_mt opengl32 glew32s");
+        assertThat(TeaGLFWNativeProject.class.getClassLoader().getResource(
+                "external_cpp/glfw/lib-vc2022/glfw3_mt.lib")).isNotNull();
+    }
+
+    @Test
     public void rejectsBlankNamesAndNullValues() {
         TeaGLFWBackend backend = new TeaGLFWBackend();
         assertThrows(IllegalArgumentException.class, () -> backend.cmakeDefinition(" ", "value"));
