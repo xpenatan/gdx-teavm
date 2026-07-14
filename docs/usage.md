@@ -138,7 +138,7 @@ Default output:
 
 | Target | Output |
 | --- | --- |
-| JS | `build/dist/web/webapp` |
+| JS | `build/dist/js/webapp` |
 | Wasm | `build/dist/wasm/webapp` |
 
 The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server implementation.

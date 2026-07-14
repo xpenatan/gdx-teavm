@@ -189,7 +189,7 @@ Plugin defaults:
 
 | Target | Root | Generated files |
 | --- | --- | --- |
-| JS | `build/dist/web` | `webapp` |
+| JS | `build/dist/js` | `webapp` |
 | Wasm | `build/dist/wasm` | `webapp` |
 | GLFW | `build/dist/glfw` | `c/src`, `c/release`, build scripts |
 

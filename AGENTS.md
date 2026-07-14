@@ -135,7 +135,7 @@
 - Native targets usually need native-specific launcher classes because they start different backend application classes.
 - iOS is an experimental native plugin target with TeaVM C/assets generation plus WIP Xcode and simulator tasks.
 - Default output directories:
-  - JS: `build/dist/web`
+  - JS: `build/dist/js`
   - Wasm: `build/dist/wasm`
   - GLFW: `build/dist/glfw`
   - iOS: `build/dist/ios`

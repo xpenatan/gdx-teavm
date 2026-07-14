@@ -82,7 +82,7 @@ Target-specific default output:
 
 | Target | `outputDir` | `relativePathInOutputDir` | `targetFileName` |
 | --- | --- | --- | --- |
-| JS | `build/dist/web` | `webapp` | `app.js` |
+| JS | `build/dist/js` | `webapp` | `app.js` |
 | Wasm | `build/dist/wasm` | `webapp` | `app.wasm` |
 | GLFW | `build/dist/glfw` | `c/src` | `app` |
 | iOS | `build/dist/ios` | `c/src` | `app` |

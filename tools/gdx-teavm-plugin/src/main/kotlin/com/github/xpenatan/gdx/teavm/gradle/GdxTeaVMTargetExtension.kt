@@ -22,7 +22,7 @@ open class GdxTeaVMTargetExtension internal constructor(
     /**
      * Root directory for generated files for this target.
      *
-     * Default: JS `build/dist/web`, Wasm `build/dist/wasm`.
+     * Default: JS `build/dist/js`, Wasm `build/dist/wasm`.
      */
     val outputDir: DirectoryProperty
         get() = teavmConfig.outputDir
@@ -109,7 +109,7 @@ open class GdxTeaVMJsExtension @Inject constructor(
     private val jsConfig: TeaVMJSConfiguration
 ) : GdxTeaVMWebExtension(objects, project, jsConfig) {
     init {
-        outputDir.convention(project.layout.buildDirectory.dir("dist/web"))
+        outputDir.convention(project.layout.buildDirectory.dir("dist/js"))
         relativePathInOutputDir.convention("webapp")
         targetFileName.convention("app.js")
         optimization.convention(OptimizationLevel.BALANCED)

@@ -90,7 +90,7 @@ open class GdxTeaVMExtension @Inject constructor(
     /**
      * JavaScript web target configuration.
      *
-     * Default: output directory `build/dist/web`, target file `app.js`.
+     * Default: output directory `build/dist/js`, target file `app.js`.
      */
     val js: GdxTeaVMJsExtension by lazy {
         objects.newInstance(
