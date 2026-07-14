@@ -81,6 +81,23 @@ public class TeaGLFWNativeProjectTest {
     }
 
     @Test
+    public void nativeProjectProvidesWin32WindowHandleBridge() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("win32-window-handle-project");
+        TeaGLFWNativeProject project = new TeaGLFWNativeProject(
+                TeaGLFWNativeProject.class.getClassLoader(),
+                buildRoot,
+                new File(buildRoot, "c/src"),
+                new File(buildRoot, "release"));
+
+        project.write("test_app");
+
+        String appInclude = read(new File(buildRoot, "c/src"), "app_include.c");
+        assertThat(appInclude).contains("GLFW_EXPOSE_NATIVE_WIN32");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_win32_window");
+        assertThat(appInclude).contains("glfwGetWin32Window");
+    }
+
+    @Test
     public void rejectsBlankNamesAndNullValues() {
         TeaGLFWBackend backend = new TeaGLFWBackend();
         assertThrows(IllegalArgumentException.class, () -> backend.cmakeDefinition(" ", "value"));
