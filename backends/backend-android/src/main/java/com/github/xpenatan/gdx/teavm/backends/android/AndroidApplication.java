@@ -122,6 +122,38 @@ public class AndroidApplication implements Application {
         }
     }
 
+    @Export(name = "gdx_teavm_android_controller_connect")
+    public static void controllerConnect(int deviceId) {
+        AndroidApplication app = current;
+        if(app != null) {
+            runOnTeaVMFiber(() -> AndroidControllerSupport.connect(deviceId));
+        }
+    }
+
+    @Export(name = "gdx_teavm_android_controller_disconnect")
+    public static void controllerDisconnect(int deviceId) {
+        AndroidApplication app = current;
+        if(app != null) {
+            runOnTeaVMFiber(() -> AndroidControllerSupport.disconnect(deviceId));
+        }
+    }
+
+    @Export(name = "gdx_teavm_android_controller_button")
+    public static void controllerButton(int deviceId, int buttonCode, float value) {
+        AndroidApplication app = current;
+        if(app != null) {
+            runOnTeaVMFiber(() -> AndroidControllerSupport.buttonChanged(deviceId, buttonCode, value));
+        }
+    }
+
+    @Export(name = "gdx_teavm_android_controller_axis")
+    public static void controllerAxis(int deviceId, int axisCode, float value) {
+        AndroidApplication app = current;
+        if(app != null) {
+            runOnTeaVMFiber(() -> AndroidControllerSupport.axisChanged(deviceId, axisCode, value));
+        }
+    }
+
     private static void runOnTeaVMFiber(Fiber.FiberRunner runner) {
         Fiber.start(runner, true);
     }
@@ -135,6 +167,10 @@ public class AndroidApplication implements Application {
             dispose();
             touch(0, 0, 0, 0, 0);
             key(0, 0);
+            controllerConnect(0);
+            controllerDisconnect(0);
+            controllerButton(0, 0, 0);
+            controllerAxis(0, 0, 0);
         }
     }
 

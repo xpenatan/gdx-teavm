@@ -10,6 +10,10 @@ void gdx_teavm_android_resume(void);
 void gdx_teavm_android_dispose(void);
 void gdx_teavm_android_touch(int32_t type, int32_t pointer, int32_t x, int32_t y, float pressure);
 void gdx_teavm_android_key(int32_t type, int32_t keycode);
+void gdx_teavm_android_controller_connect(int32_t deviceId);
+void gdx_teavm_android_controller_disconnect(int32_t deviceId);
+void gdx_teavm_android_controller_button(int32_t deviceId, int32_t buttonCode, float value);
+void gdx_teavm_android_controller_axis(int32_t deviceId, int32_t axisCode, float value);
 
 JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeStart(
         JNIEnv* env, jobject obj, jstring workingDirectory) {
@@ -70,4 +74,32 @@ JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView
     (void) env;
     (void) obj;
     gdx_teavm_android_key((int32_t) type, (int32_t) keycode);
+}
+
+JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeControllerConnected(
+        JNIEnv* env, jobject obj, jint deviceId) {
+    (void) env;
+    (void) obj;
+    gdx_teavm_android_controller_connect((int32_t) deviceId);
+}
+
+JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeControllerDisconnected(
+        JNIEnv* env, jobject obj, jint deviceId) {
+    (void) env;
+    (void) obj;
+    gdx_teavm_android_controller_disconnect((int32_t) deviceId);
+}
+
+JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeControllerButton(
+        JNIEnv* env, jobject obj, jint deviceId, jint buttonCode, jfloat value) {
+    (void) env;
+    (void) obj;
+    gdx_teavm_android_controller_button((int32_t) deviceId, (int32_t) buttonCode, value);
+}
+
+JNIEXPORT void JNICALL Java_com_github_xpenatan_gdx_teavm_android_TeaAndroidView_nativeControllerAxis(
+        JNIEnv* env, jobject obj, jint deviceId, jint axisCode, jfloat value) {
+    (void) env;
+    (void) obj;
+    gdx_teavm_android_controller_axis((int32_t) deviceId, (int32_t) axisCode, value);
 }
