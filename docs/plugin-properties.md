@@ -2,7 +2,7 @@
 
 This page lists the properties available in the `gdxTeaVM` Gradle extension.
 
-The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring experimental `ios {}` adds `backend-ios`; declaring `android {}` adds `backend-android`. Backend dependencies are added to both Java `implementation` and TeaVM's generation classpath.
+The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring experimental `ios {}` adds `backend-ios`; declaring `android {}` adds `backend-android`. Regular Java targets add their backend to both `implementation` and TeaVM's generation classpath. Android modules use the dedicated TeaVM configuration and generated runtime bridge sources described in the usage guide.
 
 ## Minimal Shape
 
@@ -179,7 +179,7 @@ gdxTeaVM {
 
 ## Native Targets
 
-Native targets use TeaVM C output. Declare `glfw {}` for the desktop backend, or experimental `ios {}` for WIP native payloads. Native targets normally need their own launcher classes because each starts a different backend application type.
+Native targets use TeaVM C output. Declare `glfw {}` for the desktop backend, experimental `ios {}` for WIP native payloads, or `android {}` in an Android application module. Native targets normally need their own launcher classes because each starts a different backend application type.
 
 ### Native Target Properties
 

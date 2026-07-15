@@ -46,7 +46,7 @@ plugins {
 }
 ```
 
-The plugin:
+For regular Java projects, the plugin:
 
 1. Applies Java and TeaVM's Gradle plugin.
 2. Creates the `gdxTeaVM` extension.
@@ -56,7 +56,9 @@ The plugin:
 6. Hides raw TeaVM tasks from the default task groups.
 7. Registers user-facing `gdx_teavm_*` tasks.
 
-Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options.
+Android projects use a dedicated path instead: the Android Gradle Plugin remains responsible for the application build, while gdx-teavm creates its TeaVM configuration, adds `backend-android`, registers the runtime bridge sources, and generates the native C/CMake payload.
+
+Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options. Android projects currently support only the `android {}` target.
 
 ## Gradle Plugin Tasks
 
@@ -65,6 +67,8 @@ Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx
 | `js {}` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
 | `wasm {}` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
 | `glfw {}` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
+| `ios {}` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_regenerate_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator` |
+| `android {}` | `gdx_teavm_android_generate` |
 
 The web run tasks use `GdxTeaVMRunWebTask`, which loads `backend-web`'s `JettyServer` by reflection from the target runtime classpath. This keeps server behavior shared with `WebBackend`.
 
@@ -76,7 +80,8 @@ Backend modules include `TeaVMPlugin` implementations registered under `META-INF
 | --- | --- | --- |
 | `backend-web` | `WebPlugin` | `TeaVMJavaScriptHost` or `TeaVMWasmGCHost` exists |
 | `backend-glfw` | `GLFWPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=glfw` |
-| `backend-ios` | `IOSPlugin` | Experimental TeaVM C output when `gdx.teavm.native.backend=ios` |
+| `backend-ios` | `IOSPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=ios` |
+| `backend-android` | `AndroidPlugin` | `TeaVMCHost` exists and `gdx.teavm.native.backend=android` |
 
 The Gradle plugin writes the properties consumed by these runtime plugins. The runtime plugins parse those properties with `GdxTeaVMPluginConfig`.
 
@@ -165,7 +170,7 @@ Plugin path:
 ```text
 gdxTeaVM.reflection(...)
 GdxTeaVMPluginConfig
-WebPlugin / GLFWPlugin
+WebPlugin / native runtime plugin
 TeaReflectionSupplier
 ```
 
@@ -192,25 +197,7 @@ Plugin defaults:
 | JS | `build/dist/js` | `webapp` |
 | Wasm | `build/dist/wasm` | `webapp` |
 | GLFW | `build/dist/glfw` | `c/src`, `c/release`, build scripts |
+| iOS | `build/dist/ios` | `c/src`, `c/release`, generated Xcode project |
+| Android | `build/generated/gdx-teavm/android` | `c/src`, `CMakeLists.txt`, native resources |
 
-Builder defaults depend on the `build(new File(...))` output directory and the concrete backend. For example, `WebBackend` defaults to a `webapp` folder and native backends default to `c/src` plus `c/release`.
-
-## Publishing
-
-Publishing is centralized in `buildSrc/src/main/kotlin/publish.gradle.kts`.
-
-The root build publishes library modules. It also delegates plugin marker and plugin implementation publishing to the included plugin build under `tools/gdx-teavm-plugin`.
-
-The experimental iOS backend is included in the library set so the plugin can resolve its backend artifact, but its runtime/tooling surface remains WIP.
-
-Key root tasks:
-
-- `prepareSnapshotDeploy`
-- `prepareReleaseDeploy`
-- `publishSnapshot`
-- `publishRelease`
-
-Local prepare tasks generate local Maven repository layouts in:
-
-- `build/snapshot-deploy`
-- `build/staging-deploy`
+Builder defaults depend on the `build(new File(...))` output directory and the concrete backend. `WebBackend` defaults to a `webapp` folder, while `TeaGLFWBackend` defaults to `c/src` plus `c/release`.

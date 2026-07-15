@@ -5,16 +5,6 @@ This guide covers the two supported ways to build with `gdx-teavm`:
 - The Gradle plugin, recommended for normal application projects.
 - The manual builder API, useful for custom build launchers and backend development.
 
-## Versions
-
-The repository keeps dependency versions in `buildSrc/src/main/kotlin/LibExt.kt`.
-
-| Component | Current version |
-| --- | --- |
-| libGDX | `1.14.2` |
-| TeaVM | `0.15.0` |
-| gdx-teavm snapshot | `-SNAPSHOT` |
-
 ## Repositories
 
 For releases:
@@ -59,9 +49,11 @@ Apply the plugin to the module that should produce TeaVM output.
 
 ```kotlin
 plugins {
-    id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
+    id("com.github.xpenatan.gdx-teavm") version "<latest-release>"
 }
 ```
+
+For normal projects, always use the latest released version listed in the [README status table](../README.md#status). Use `-SNAPSHOT` only when you need work-in-progress changes; snapshot builds also require the snapshot repository configured above.
 
 The extension block is named `gdxTeaVM`.
 
@@ -85,9 +77,9 @@ gdxTeaVM {
 
 The plugin adds the required backend dependency for every declared target. For example, `js {}` or `wasm {}` adds `backend-web`, `glfw {}` adds `backend-glfw`, `ios {}` adds `backend-ios`, and `android {}` adds `backend-android`.
 
-Those dependencies are added to both the normal Java `implementation` configuration and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication` or `GLFWApplication` without manually declaring the backend artifacts.
+For regular Java modules, those dependencies are added to both `implementation` and TeaVM's generation configuration. This means a standalone plugin module can compile launchers that import `WebApplication` or `GLFWApplication` without manually declaring the backend artifacts.
 
-Android is different because the Android Gradle Plugin owns APK packaging, install tasks, build types, signing, manifests, resources, and native CMake execution. Apply `gdx-teavm` to a real Android application module and declare an `android {}` target there; the plugin generates the TeaVM C/CMake payload, while Android Gradle tasks build and install the APK.
+Android uses a dedicated integration path: `backend-android` is added to TeaVM's configuration, and the plugin registers generated runtime bridge sources with the Android compile. The Android Gradle Plugin owns APK packaging, install tasks, build types, signing, manifests, resources, and native CMake execution. Apply `gdx-teavm` to a real Android application module and declare an `android {}` target there; the plugin generates the TeaVM C/CMake payload, while Android Gradle tasks build and install the APK.
 
 ## Web Targets
 
@@ -211,6 +203,7 @@ val androidCxxDir = rootProject.layout.buildDirectory.dir("android-cxx/my-game-a
 
 android {
     namespace = "com.example.game.android"
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.game.android"
@@ -594,27 +587,3 @@ plugins {
     id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
 }
 ```
-
-The plugin marker and implementation artifacts are published to Maven with the rest of the project artifacts.
-
-## Publishing
-
-Root publishing tasks:
-
-```shell
-./gradlew prepareSnapshotDeploy
-./gradlew prepareReleaseDeploy
-./gradlew publishSnapshot
-./gradlew publishRelease
-```
-
-Local prepare tasks write Maven repository files under `build/snapshot-deploy` or `build/staging-deploy`.
-
-Required environment variables for remote publishing/signing:
-
-| Variable | Purpose |
-| --- | --- |
-| `CENTRAL_PORTAL_USERNAME` | Central Portal username/token username |
-| `CENTRAL_PORTAL_PASSWORD` | Central Portal password/token password |
-| `SIGNING_KEY` | ASCII-armored PGP private key |
-| `SIGNING_PASSWORD` | PGP private key password |

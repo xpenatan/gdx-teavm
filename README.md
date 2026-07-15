@@ -36,8 +36,8 @@ The project provides two build styles:
 
 ## Documentation
 
-- [Usage guide](docs/usage.md): setup, plugin examples, builder examples, tasks, and publishing notes.
-- [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared, web, JS, Wasm, GLFW, and Android settings.
+- [Usage guide](docs/usage.md): setup, plugin examples, builder examples, and tasks.
+- [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared and target-specific settings.
 - [Backend architecture](docs/backend-architecture.md): how the builder, Gradle plugin, TeaVM plugins, assets, and reflection work together.
 - [Desktop C native build guide](examples/basic/desktop-c/README.md): native toolchain requirements and manual CMake workflow.
 
