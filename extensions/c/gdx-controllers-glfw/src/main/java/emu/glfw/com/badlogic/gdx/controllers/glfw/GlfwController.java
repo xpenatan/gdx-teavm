@@ -126,39 +126,42 @@ final class GlfwController implements Controller {
     }
 
     private void notifyButtonDown(int buttonCode) {
-        for (ControllerListener listener : manager.getListeners()) {
-            if (listener.buttonDown(this, buttonCode)) {
+        Array<ControllerListener> managerListeners = manager.getListeners();
+        for (int i = 0, n = managerListeners.size; i < n; i++) {
+            if (managerListeners.get(i).buttonDown(this, buttonCode)) {
                 return;
             }
         }
-        for (ControllerListener listener : listeners) {
-            if (listener.buttonDown(this, buttonCode)) {
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            if (listeners.get(i).buttonDown(this, buttonCode)) {
                 break;
             }
         }
     }
 
     private void notifyButtonUp(int buttonCode) {
-        for (ControllerListener listener : manager.getListeners()) {
-            if (listener.buttonUp(this, buttonCode)) {
+        Array<ControllerListener> managerListeners = manager.getListeners();
+        for (int i = 0, n = managerListeners.size; i < n; i++) {
+            if (managerListeners.get(i).buttonUp(this, buttonCode)) {
                 return;
             }
         }
-        for (ControllerListener listener : listeners) {
-            if (listener.buttonUp(this, buttonCode)) {
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            if (listeners.get(i).buttonUp(this, buttonCode)) {
                 break;
             }
         }
     }
 
     private void notifyAxisMoved(int axisCode, float value) {
-        for (ControllerListener listener : manager.getListeners()) {
-            if (listener.axisMoved(this, axisCode, value)) {
+        Array<ControllerListener> managerListeners = manager.getListeners();
+        for (int i = 0, n = managerListeners.size; i < n; i++) {
+            if (managerListeners.get(i).axisMoved(this, axisCode, value)) {
                 return;
             }
         }
-        for (ControllerListener listener : listeners) {
-            if (listener.axisMoved(this, axisCode, value)) {
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            if (listeners.get(i).axisMoved(this, axisCode, value)) {
                 break;
             }
         }

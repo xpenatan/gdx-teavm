@@ -139,20 +139,22 @@ public final class GlfwControllerManager extends AbstractControllerManager {
     }
 
     private void notifyConnected(GlfwController controller) {
-        for (ControllerListener listener : listeners) {
-            listener.connected(controller);
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            listeners.get(i).connected(controller);
         }
-        for (ControllerListener listener : controller.getListeners()) {
-            listener.connected(controller);
+        Array<ControllerListener> controllerListeners = controller.getListeners();
+        for (int i = 0, n = controllerListeners.size; i < n; i++) {
+            controllerListeners.get(i).connected(controller);
         }
     }
 
     private void notifyDisconnected(GlfwController controller) {
-        for (ControllerListener listener : listeners) {
-            listener.disconnected(controller);
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            listeners.get(i).disconnected(controller);
         }
-        for (ControllerListener listener : controller.getListeners()) {
-            listener.disconnected(controller);
+        Array<ControllerListener> controllerListeners = controller.getListeners();
+        for (int i = 0, n = controllerListeners.size; i < n; i++) {
+            controllerListeners.get(i).disconnected(controller);
         }
     }
 }
