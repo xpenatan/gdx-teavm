@@ -116,7 +116,7 @@ These properties exist inside `js {}` and `wasm {}` only.
 | `htmlTitle` | `Property<String>` | `gdx-teavm` | Browser document title used by generated `index.html`. |
 | `htmlWidth` | `Property<Int>` | `800` | Initial canvas width written to generated `index.html`. |
 | `htmlHeight` | `Property<Int>` | `600` | Initial canvas height written to generated `index.html`. |
-| `logoPath` | `Property<String>` | `startup-logo.png` | Classpath resource path for the loading logo copied into web app assets. |
+| `logoPath` | `Property<String>` | `startup-logo.png` | Default startup-logo asset path compiled into `WebPreloadApplicationListener`; when `copyLoadingAsset` is true, the same path is copied from the build classpath. |
 | `copyLoadingAsset` | `Property<Boolean>` | `true` | Copies `logoPath` into the generated web app when true. |
 | `serverPort` | `Property<Int>` | Gradle property `teavmPluginPort`, otherwise `8080` | Port used by this target's Jetty or TeaVM development server. |
 | `devServer` | `GdxTeaVMDevServerExtension` | disabled | Configures TeaVM's persistent development server for this target's existing run task. |

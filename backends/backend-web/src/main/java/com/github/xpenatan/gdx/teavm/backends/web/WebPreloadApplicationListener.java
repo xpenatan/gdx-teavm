@@ -24,10 +24,16 @@ import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoader;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetLoaderListener;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.AssetType;
 import com.github.xpenatan.gdx.teavm.backends.web.assetloader.WebBlob;
+import com.github.xpenatan.gdx.teavm.backends.web.config.TeaWebRuntimeConfig;
 
 public class WebPreloadApplicationListener extends ApplicationAdapter {
 
-    public String startupLogo = "startup-logo.png";
+    /**
+     * Asset path displayed while the application assets are preloaded.
+     * The default is supplied by the web backend's compiled {@code logoPath}; callers may assign a different path
+     * when constructing a custom preload listener.
+     */
+    public String startupLogo = TeaWebRuntimeConfig.getStartupLogo();
     public float animationSpeed = 0.9f;
     protected AssetLoader assetLoader;
 

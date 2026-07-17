@@ -54,6 +54,7 @@ public class WebPlugin implements TeaVMPlugin {
             manifestEntries = GdxTeaVMPluginAssetSupport.manifestEntries(webAssetPlan);
         }
         host.add(new TeaAssetManifestTransformer(manifestEntries));
+        host.add(new TeaWebRuntimeConfigTransformer(config.logoPath));
 
         TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
         if(config.reflectionEnabled) {

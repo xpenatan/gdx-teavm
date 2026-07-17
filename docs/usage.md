@@ -462,6 +462,7 @@ public class BuildWeb {
                 .setHtmlTitle("My Game")
                 .setHtmlWidth(1280)
                 .setHtmlHeight(720)
+                .setLogoPath("images/loading.png")
                 .setStartJettyAfterBuild(true);
 
         new TeaBuilder(backend)
@@ -473,6 +474,17 @@ public class BuildWeb {
                 .build(new File("build/dist"));
     }
 }
+```
+
+`setLogoPath(...)` sets the default asset path requested by `WebPreloadApplicationListener`. Assets added with
+`TeaBuilder.addAssets(...)` are copied by the regular asset pipeline. When `copyLoadingAsset` is enabled, the builder
+also tries to copy `logoPath` as a classpath resource. A custom preload listener can override the compiled default
+without changing the builder configuration:
+
+```java
+WebPreloadApplicationListener preload = new WebPreloadApplicationListener();
+preload.startupLogo = "images/alternate-loading.png";
+new WebApplication(game, preload, config);
 ```
 
 For Wasm with the builder:

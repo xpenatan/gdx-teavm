@@ -326,7 +326,10 @@ open class GdxTeaVMWebExtension @Inject constructor(
     val htmlHeight: Property<Int> = objects.property(Int::class.javaObjectType).convention(600)
 
     /**
-     * Classpath resource path for the loading logo copied into the web app assets folder.
+     * Default startup-logo asset path compiled into `WebPreloadApplicationListener`.
+     *
+     * When [copyLoadingAsset] is enabled, the same path is copied from the build classpath into the web app assets
+     * folder. A custom preload listener can override its public `startupLogo` field at runtime.
      *
      * Default: `startup-logo.png`.
      */

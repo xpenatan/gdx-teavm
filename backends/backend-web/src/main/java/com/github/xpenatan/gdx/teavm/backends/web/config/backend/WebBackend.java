@@ -36,6 +36,11 @@ public class WebBackend extends TeaBackend {
         return this;
     }
 
+    /**
+     * Sets the default startup-logo asset path compiled into
+     * {@link com.github.xpenatan.gdx.teavm.backends.web.WebPreloadApplicationListener}.
+     * When {@link #copyLoadingAsset} is enabled, the same path is also copied from the build classpath.
+     */
     public WebBackend setLogoPath(String logoPath) {
         this.logoPath = logoPath;
         return this;
@@ -98,6 +103,7 @@ public class WebBackend extends TeaBackend {
     @Override
     protected void setup(TeaBuilderData data) {
         server = new JettyServer();
+        tool.getProperties().setProperty(GdxTeaVMPluginConfig.LOGO_PATH, logoPath);
 
         if(isWebAssembly) {
             targetType = TeaVMTargetType.WEBASSEMBLY_GC;

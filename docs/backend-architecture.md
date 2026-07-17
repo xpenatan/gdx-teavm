@@ -93,6 +93,8 @@ The Gradle plugin writes the properties consumed by these runtime plugins. The r
 
 - `WebClassTransformer`
 - `JavaObjectExporterDependency`
+- `TeaAssetManifestTransformer` for the compiled preload manifest
+- `TeaWebRuntimeConfigTransformer` for web runtime defaults such as `logoPath`
 - `TeaReflectionSupplier` reflection metadata setup
 - `GdxWebTargetWrapper` when webapp generation is enabled
 
