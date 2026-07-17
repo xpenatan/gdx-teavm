@@ -76,6 +76,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project.afterEvaluate {
             validateAndroidTargets(extension)
             addAndroidBackendDependency(project, extension)
+            ensureAndroidBootstrapProject(extension)
             registerAndroidProjectTasks(project, extension)
         }
     }
@@ -1082,6 +1083,16 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 dependsOn(generateTask)
             }
         }
+    }
+
+    private fun ensureAndroidBootstrapProject(extension: GdxTeaVMExtension) {
+        if(!extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
+            return
+        }
+        val buildRoot = extension.android.outputDir.get().asFile
+        val generatedSourcesDir = extension.android.generatedSourcesDir().get().asFile
+        val libraryName = extension.android.targetFileName.get()
+        AndroidBootstrapProject.ensure(buildRoot, generatedSourcesDir, libraryName)
     }
 
     private fun isAllowedBackendClasspathEntry(file: File, targetBackend: String): Boolean {

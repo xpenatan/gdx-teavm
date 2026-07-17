@@ -19,17 +19,25 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
 
     private static final float DEAD_ZONE = 0.2f;
     private static final float MOVE_SPEED = 260f;
-    private static final float MARKER_SIZE = 44f;
+    private static final float BASE_WIDTH = 800f;
+    private static final float BASE_HEIGHT = 480f;
+    private static final float BASE_MARKER_SIZE = 44f;
+    private static final float BASE_PLAY_AREA_PADDING = 28f;
+    private static final float BASE_TEXT_X = 36f;
+    private static final float BASE_TEXT_TOP = 42f;
+    private static final float BASE_TEXT_LINE_HEIGHT = 28f;
+    private static final float BASE_CENTER_DOT_RADIUS = 7f;
 
     private ShapeRenderer shapes;
     private SpriteBatch batch;
     private BitmapFont font;
-    private float width = 800f;
-    private float height = 480f;
+    private float width = BASE_WIDTH;
+    private float height = BASE_HEIGHT;
     private float markerX = 378f;
     private float markerY = 218f;
     private float axisX;
     private float axisY;
+    private float uiScale = 1f;
     private int lastControllerCount = -1;
     private int lastButton = ControllerMapping.UNDEFINED;
     private String lastEvent = "Waiting for controller input";
@@ -40,6 +48,7 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
         shapes = new ShapeRenderer();
         batch = new SpriteBatch();
         font = new BitmapFont();
+        updateUiScale();
         Controllers.addListener(this);
         refreshControllerSummary();
     }
@@ -48,8 +57,9 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
     public void resize(int width, int height) {
         this.width = Math.max(1, width);
         this.height = Math.max(1, height);
-        markerX = MathUtils.clamp(markerX, 0f, this.width - MARKER_SIZE);
-        markerY = MathUtils.clamp(markerY, 0f, this.height - MARKER_SIZE);
+        updateUiScale();
+        markerX = MathUtils.clamp(markerX, 0f, this.width - markerSize());
+        markerY = MathUtils.clamp(markerY, 0f, this.height - markerSize());
     }
 
     @Override
@@ -59,24 +69,29 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
 
         ScreenUtils.clear(0.08f, 0.09f, 0.11f, 1f);
 
+        float playAreaPadding = playAreaPadding();
+        float markerSize = markerSize();
+
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.16f, 0.19f, 0.23f, 1f);
-        shapes.rect(28f, 28f, width - 56f, height - 56f);
+        shapes.rect(playAreaPadding, playAreaPadding, width - playAreaPadding * 2f, height - playAreaPadding * 2f);
         shapes.setColor(0.1f, 0.58f, 0.82f, 1f);
-        shapes.rect(markerX, markerY, MARKER_SIZE, MARKER_SIZE);
+        shapes.rect(markerX, markerY, markerSize, markerSize);
         shapes.setColor(0.9f, 0.78f, 0.3f, 1f);
-        shapes.circle(markerX + MARKER_SIZE * 0.5f, markerY + MARKER_SIZE * 0.5f, 7f, 24);
+        shapes.circle(markerX + markerSize * 0.5f, markerY + markerSize * 0.5f, scaled(BASE_CENTER_DOT_RADIUS), 24);
         shapes.end();
 
         batch.begin();
         font.setColor(Color.WHITE);
-        float textY = height - 42f;
-        font.draw(batch, "gdx-controllers example", 36f, textY);
-        font.draw(batch, controllerSummary, 36f, textY - 28f);
-        font.draw(batch, "Move with left stick or arrow keys", 36f, textY - 56f);
-        font.draw(batch, "Axis: " + round(axisX) + ", " + round(axisY), 36f, textY - 84f);
-        font.draw(batch, "Button: " + buttonText(), 36f, textY - 112f);
-        font.draw(batch, "Event: " + lastEvent, 36f, textY - 140f);
+        float textX = scaled(BASE_TEXT_X);
+        float textY = height - scaled(BASE_TEXT_TOP);
+        float lineHeight = scaled(BASE_TEXT_LINE_HEIGHT);
+        font.draw(batch, "gdx-controllers example", textX, textY);
+        font.draw(batch, controllerSummary, textX, textY - lineHeight);
+        font.draw(batch, "Move with left stick or arrow keys", textX, textY - lineHeight * 2f);
+        font.draw(batch, "Axis: " + round(axisX) + ", " + round(axisY), textX, textY - lineHeight * 3f);
+        font.draw(batch, "Button: " + buttonText(), textX, textY - lineHeight * 4f);
+        font.draw(batch, "Event: " + lastEvent, textX, textY - lineHeight * 5f);
         batch.end();
     }
 
@@ -98,6 +113,8 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
     private void updateMarker() {
         float moveX = axisX;
         float moveY = -axisY;
+        float playAreaPadding = playAreaPadding();
+        float markerSize = markerSize();
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             moveX -= 1f;
@@ -112,9 +129,9 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
             moveY += 1f;
         }
 
-        float delta = Gdx.graphics.getDeltaTime() * MOVE_SPEED;
-        markerX = MathUtils.clamp(markerX + moveX * delta, 28f, width - 28f - MARKER_SIZE);
-        markerY = MathUtils.clamp(markerY + moveY * delta, 28f, height - 28f - MARKER_SIZE);
+        float delta = Gdx.graphics.getDeltaTime() * MOVE_SPEED * uiScale;
+        markerX = MathUtils.clamp(markerX + moveX * delta, playAreaPadding, width - playAreaPadding - markerSize);
+        markerY = MathUtils.clamp(markerY + moveY * delta, playAreaPadding, height - playAreaPadding - markerSize);
     }
 
     private float readAxis(Controller controller, boolean horizontal) {
@@ -164,6 +181,23 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
 
     private String round(float value) {
         return String.valueOf(Math.round(value * 100f) / 100f);
+    }
+
+    private void updateUiScale() {
+        uiScale = Math.max(1f, Math.min(width / BASE_WIDTH, height / BASE_HEIGHT));
+        font.getData().setScale(uiScale);
+    }
+
+    private float markerSize() {
+        return scaled(BASE_MARKER_SIZE);
+    }
+
+    private float playAreaPadding() {
+        return scaled(BASE_PLAY_AREA_PADDING);
+    }
+
+    private float scaled(float value) {
+        return value * uiScale;
     }
 
     @Override

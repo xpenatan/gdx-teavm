@@ -49,6 +49,9 @@ else {
 include(":extensions:asset-loader")
 include(":extensions:c:gdx-freetype-c")
 include(":extensions:c:gdx-controllers-glfw")
+if(hasAndroidSdk) {
+    include(":extensions:android:gdx-controllers-android")
+}
 include(":extensions:web:gdx-controllers-web")
 include(":extensions:web:gdx-freetype-web")
 
@@ -85,6 +88,9 @@ include(":examples:controllers:desktop")
 include(":examples:controllers:desktop-c")
 include(":examples:controllers:plugin")
 include(":examples:controllers:web")
+if(hasAndroidSdk) {
+    include(":examples:controllers:android")
+}
 
 val file = File(settingsDir, "gradle.properties")
 

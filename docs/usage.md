@@ -242,6 +242,8 @@ The TeaVM launcher lives in `src/native/java` so it is used for TeaVM C generati
 
 The Android runtime bridge is provided by `backend-android`. The plugin adds generated Java sources for `com.github.xpenatan.gdx.teavm.android.TeaAndroidActivity` and `TeaAndroidView` to the Android app compile, so projects can use a minimal Activity subclass for the default full-screen app case.
 
+During Gradle configuration, the plugin also writes a tiny bootstrap `CMakeLists.txt` into `build/generated/gdx-teavm/android` when the real TeaVM native payload is not there yet. This lets Android Studio sync a fresh project before `gdx_teavm_android_generate` has run. Normal Android build tasks still replace that bootstrap project with the real TeaVM-generated C/CMake output before compilation.
+
 ```kotlin
 plugins {
     id("com.android.application")
