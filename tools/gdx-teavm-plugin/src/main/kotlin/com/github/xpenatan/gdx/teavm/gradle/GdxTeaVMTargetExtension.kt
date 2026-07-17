@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.gradle
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -11,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.teavm.gradle.api.OptimizationLevel
 import org.teavm.gradle.api.SourceFilePolicy
 import org.teavm.gradle.api.TeaVMConfiguration
+import org.teavm.gradle.api.TeaVMDevServerConfiguration
 import org.teavm.gradle.api.TeaVMJSConfiguration
 import org.teavm.gradle.api.TeaVMWasmGCConfiguration
 import javax.inject.Inject
@@ -107,7 +109,7 @@ open class GdxTeaVMJsExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     private val jsConfig: TeaVMJSConfiguration
-) : GdxTeaVMWebExtension(objects, project, jsConfig) {
+) : GdxTeaVMWebExtension(objects, project, jsConfig, jsConfig.devServer) {
     init {
         outputDir.convention(project.layout.buildDirectory.dir("dist/js"))
         relativePathInOutputDir.convention("webapp")
@@ -181,7 +183,7 @@ open class GdxTeaVMWasmExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     private val wasmConfig: TeaVMWasmGCConfiguration
-) : GdxTeaVMWebExtension(objects, project, wasmConfig) {
+) : GdxTeaVMWebExtension(objects, project, wasmConfig, wasmConfig.devServer) {
     init {
         outputDir.convention(project.layout.buildDirectory.dir("dist/wasm"))
         relativePathInOutputDir.convention("webapp")
@@ -273,7 +275,8 @@ open class GdxTeaVMWasmExtension @Inject constructor(
 open class GdxTeaVMWebExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
-    teavmConfig: TeaVMConfiguration
+    teavmConfig: TeaVMConfiguration,
+    teavmDevServerConfig: TeaVMDevServerConfiguration
 ) : GdxTeaVMTargetExtension(teavmConfig) {
     /**
      * JavaScript entry point function name called by the generated web app.
@@ -343,6 +346,24 @@ open class GdxTeaVMWebExtension @Inject constructor(
      */
     val serverPort: Property<Int> = objects.property(Int::class.javaObjectType)
         .convention(project.providers.gradleProperty("teavmPluginPort").map(String::toInt).orElse(8080))
+
+    /**
+     * Configures TeaVM's persistent development server for this web target.
+     *
+     * When enabled, the target's existing `gdx_teavm_web_*_run` task delegates to TeaVM's
+     * development server instead of performing the normal build-and-serve workflow.
+     */
+    val devServer: GdxTeaVMDevServerExtension = GdxTeaVMDevServerExtension(objects, teavmDevServerConfig)
+
+    init {
+        teavmDevServerConfig.port.convention(serverPort)
+        teavmDevServerConfig.processMemory.convention(processMemory)
+    }
+
+    /** Configures [devServer]. */
+    fun devServer(action: Action<in GdxTeaVMDevServerExtension>) {
+        action.execute(devServer)
+    }
 
     internal fun webappDir(): Provider<Directory> {
         return outputSubDir()

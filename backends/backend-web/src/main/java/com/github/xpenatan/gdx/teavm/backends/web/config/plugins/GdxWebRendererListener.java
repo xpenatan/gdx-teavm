@@ -65,7 +65,7 @@ public class GdxWebRendererListener {
         indexHtml = indexHtml.replace("%HEIGHT%", String.valueOf(config.htmlHeight));
         indexHtml = indexHtml.replace("%ARGS%", config.mainClassArgs);
 
-        writeString(buildTarget, "index.html", indexHtml);
+        writeString(buildTarget, config.webappIndexPath, indexHtml);
         writeString(buildTarget, "WEB-INF/web.xml", webXML);
     }
 

@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 public class GdxTeaVMPluginConfig {
     public static final String WEBAPP_ENABLED = "gdx.teavm.webapp.enabled";
+    public static final String WEBAPP_INDEX_PATH = "gdx.teavm.webapp.indexPath";
     public static final String ENTRY_POINT_NAME = "gdx.teavm.entryPointName";
     public static final String MAIN_CLASS_ARGS = "gdx.teavm.mainClassArgs";
     public static final String HTML_TITLE = "gdx.teavm.html.title";
@@ -41,6 +42,7 @@ public class GdxTeaVMPluginConfig {
     public static final String IOS_XCODE_PROJECT_DIR = "gdx.teavm.ios.xcode.projectDir";
 
     public final boolean webappEnabled;
+    public final String webappIndexPath;
     public final String entryPointName;
     public final String mainClassArgs;
     public final String htmlTitle;
@@ -70,6 +72,7 @@ public class GdxTeaVMPluginConfig {
 
     private GdxTeaVMPluginConfig(Properties properties) {
         webappEnabled = getBoolean(properties, WEBAPP_ENABLED, false);
+        webappIndexPath = getString(properties, WEBAPP_INDEX_PATH, "index.html");
         entryPointName = getString(properties, ENTRY_POINT_NAME, "main");
         mainClassArgs = getString(properties, MAIN_CLASS_ARGS, "");
         htmlTitle = getString(properties, HTML_TITLE, "gdx-teavm");

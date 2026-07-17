@@ -8,6 +8,16 @@ import org.junit.Test;
 
 public class GdxTeaVMPluginConfigTest {
     @Test
+    public void readsCustomWebappIndexPath() {
+        Properties properties = new Properties();
+        properties.setProperty(GdxTeaVMPluginConfig.WEBAPP_INDEX_PATH, "__gdx_teavm_index.html");
+
+        GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(properties);
+
+        assertThat(config.webappIndexPath).isEqualTo("__gdx_teavm_index.html");
+    }
+
+    @Test
     public void readsIndexedCMakeDefinitionsInDeclaredOrder() {
         Properties properties = new Properties();
         putDefinition(properties, "00000001", "SECOND", "native resources");

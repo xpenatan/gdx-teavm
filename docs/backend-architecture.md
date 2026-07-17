@@ -70,7 +70,9 @@ Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx
 | `ios {}` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_regenerate_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator` |
 | `android {}` | `gdx_teavm_android_generate` |
 
-The web run tasks use `GdxTeaVMRunWebTask`, which loads `backend-web`'s `JettyServer` by reflection from the target runtime classpath. This keeps server behavior shared with `WebBackend`.
+Web run tasks use `GdxTeaVMRunWebTask` by default, loading `backend-web`'s `JettyServer` by reflection from the target runtime classpath. When the target's `devServer.enabled` property is true, the same public run task delegates compilation to TeaVM's `javaScriptDevServer` or `wasmGCDevServer` task. With `autoBuild` enabled, the run task registers a Gradle `DeploymentHandle`; Gradle detects that reloadable deployment, automatically enters continuous-build mode for the same invocation, and reruns Java compilation and TeaVM generation when task inputs change. With `autoBuild` disabled, the task blocks directly to keep both servers alive without registering a reloadable deployment. Local project class directories precede external JARs on the development classpath so TeaVM observes recompiled classes, and the plugin invalidates TeaVM's compiler cache before each rebuild. Cancelling the overall Gradle invocation stops both the TeaVM server and entry adapter in either mode.
+
+The entry adapter supplies the generated page at `/` with an HTML content type, working around TeaVM serving generated `.html` files as plain text. When `autoReload` is enabled, it also installs a shared JS/Wasm client for TeaVM's build-status WebSocket. The plugin applies the same backend-filtered classpath and gdx-teavm properties to normal generation and development-server compilation.
 
 ## TeaVM Runtime Plugins
 

@@ -31,7 +31,7 @@
 
 static void teavm_throw_spritebatch_not_drawing(void) {
     void* exception = meth_otr_Allocator_allocate(&jl_IllegalStateException_Cls);
-    meth_jl_RuntimeException__init_(exception);
+    meth_jl_IllegalStateException__init_(exception, NULL);
     meth_otr_ExceptionHandling_throwException(exception);
 }
 

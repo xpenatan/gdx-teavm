@@ -100,6 +100,11 @@ gdxTeaVM {
         targetFileName.set("app.js")
         optimization.set(OptimizationLevel.BALANCED)
         obfuscated.set(true)
+        devServer {
+            enabled.set(true)
+            autoBuild.set(true)
+            autoReload.set(true)
+        }
     }
 
     wasm {
@@ -113,6 +118,11 @@ gdxTeaVM {
         obfuscated.set(true)
         copyRuntime.set(true)
         modularRuntime.set(false)
+        devServer {
+            enabled.set(true)
+            autoBuild.set(true)
+            autoReload.set(true)
+        }
     }
 }
 ```
@@ -122,9 +132,9 @@ Generated tasks:
 | Task | Description |
 | --- | --- |
 | `gdx_teavm_web_js_build` | Build the JavaScript web app |
-| `gdx_teavm_web_js_run` | Build and serve the JavaScript web app |
+| `gdx_teavm_web_js_run` | Build and serve the JavaScript web app, or use TeaVM's JS dev server when enabled |
 | `gdx_teavm_web_wasm_build` | Build the Wasm web app |
-| `gdx_teavm_web_wasm_run` | Build and serve the Wasm web app |
+| `gdx_teavm_web_wasm_run` | Build and serve the Wasm web app, or use TeaVM's WasmGC dev server when enabled |
 
 Default output:
 
@@ -133,7 +143,47 @@ Default output:
 | JS | `build/dist/js/webapp` |
 | Wasm | `build/dist/wasm/webapp` |
 
-The run tasks use `JettyServer` from `backend-web`, not a separate HTTP server implementation.
+By default, the run tasks build the selected target and serve its output with `JettyServer` from `backend-web`. Enabling `devServer` keeps the same public run task but delegates internally to TeaVM's persistent development server:
+
+```kotlin
+js {
+    mainClass.set("com.example.game.teavm.WebLauncher")
+    serverPort.set(8080)
+    devServer {
+        enabled.set(true)
+        autoBuild.set(true)
+        autoReload.set(true)
+    }
+}
+```
+
+TeaVM's development server supplies its own source maps, Java sources, and debug metadata, so `sourceMap`, `sourceFilePolicy`, and `debugInformation` do not need to be enabled for the run task. Those target properties continue to control normal build output. `autoBuild` defaults to `true`, keeping the Gradle invocation active and recompiling Java changes while the existing server remains available. A failed rebuild leaves the previous application running and waits for another change.
+
+Set `autoBuild` to `false` to keep the development server running without automatically compiling source changes. Classes can still be rebuilt explicitly from the IDE or another Gradle invocation, and TeaVM will detect the updated class files. `autoReload` is independent: when enabled, it reloads connected JavaScript and Wasm pages after any successful TeaVM rebuild.
+
+The plugin serves the generated entry page with an HTML content type at `/`, while TeaVM continues to serve the compiled code and debug artifacts. Stop the Gradle task with Ctrl+C, or the IDE's stop action, to stop both the entry adapter and TeaVM server and release the port. `serverPort` controls either Jetty or the TeaVM development server, depending on the selected mode.
+
+### Checking Browser Debugging
+
+1. Run `./gradlew gdx_teavm_web_js_run` or `./gradlew gdx_teavm_web_wasm_run`.
+2. Open `http://localhost:8080`, using the configured `serverPort` if it differs.
+3. Open the browser's developer tools, find the Java launcher under Sources, set a breakpoint, and reload the page.
+4. With `autoBuild` enabled, edit and save a Java source file. The active Gradle run recompiles and rebuilds the target; `autoReload.set(true)` then refreshes the page. When `autoBuild` is disabled, trigger compilation explicitly instead.
+5. Stop the active Gradle run task with Ctrl+C, or the IDE's stop action, when finished.
+
+The development server exposes Java sources and mappings to browser developer tools. Browser developer tools remain the common debugging path for Wasm.
+
+### Debugging JavaScript in IntelliJ IDEA
+
+TeaVM's IntelliJ debugger supports the JavaScript target, not Wasm. The Gradle run task continues to own compilation and the application server; IntelliJ's TeaVM debug server is only the bridge between IntelliJ and Chrome.
+
+1. Install [TeaVM Integration](https://plugins.jetbrains.com/plugin/9779-teavm-integration) in IntelliJ IDEA and install the [TeaVM debugger agent](https://chromewebstore.google.com/detail/teavm-debugger-agent/jmfipnkacgdmdhapfciejmfgfhfonfgl) in Chrome.
+2. Run `gdx_teavm_web_js_run` normally and leave the Gradle task active. Do not create a TeaVM development-server configuration in IntelliJ because the Gradle task already provides it.
+3. In **Run > Edit Configurations**, add **TeaVM debug server**, leave its listen port at `2357`, and start that configuration with IntelliJ's Debug action.
+4. Open the application URL in Chrome, click the TeaVM debugger-agent teapot icon to attach the tab, set a breakpoint in Java source, and reload the page.
+5. IntelliJ should stop at the Java source location. If the breakpoint does not bind, verify that `<application-url>/app.js.teavmdbg` returns HTTP 200, then attach the Chrome agent again and reload.
+
+TeaVM debugging provides Java source breakpoints, stepping, fields, and mapped local variables where metadata is available. Generated `app.js` frames and `js:` temporary variables can still appear, and Java expression watches are more limited than in a normal JVM debug session.
 
 ## Native Targets
 

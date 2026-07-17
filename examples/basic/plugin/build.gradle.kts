@@ -23,12 +23,20 @@ gdxTeaVM {
         debugInformation.set(true)
         sourceMap.set(true)
         sourceFilePolicy.set(SourceFilePolicy.COPY)
+        devServer {
+            enabled.set(true)
+            autoReload.set(true)
+        }
     }
     wasm {
         mainClass.set("TestWebLauncher")
         relativePathInOutputDir.set("webapp")
         optimization.set(OptimizationLevel.NONE)
         obfuscated.set(false)
+        devServer {
+            enabled.set(true)
+            autoReload.set(true)
+        }
     }
     glfw {
         mainClass.set("TestCLauncher")

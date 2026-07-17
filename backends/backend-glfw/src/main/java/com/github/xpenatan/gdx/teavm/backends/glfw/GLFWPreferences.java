@@ -29,7 +29,7 @@ public class GLFWPreferences implements Preferences {
         InputStream in = null;
         try {
             in = new BufferedInputStream(file.read());
-            properties.loadFromXML(in);
+            properties.load(in);
         } catch (Throwable t) {
             t.printStackTrace();
         } finally {
@@ -162,7 +162,7 @@ public class GLFWPreferences implements Preferences {
         OutputStream out = null;
         try {
             out = new BufferedOutputStream(file.write(false));
-            properties.storeToXML(out, null);
+            properties.store(out, null);
         } catch (Exception ex) {
             throw new GdxRuntimeException("Error writing preferences: " + file, ex);
         } finally {

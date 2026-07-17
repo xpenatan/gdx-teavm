@@ -1,13 +1,15 @@
 package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginAssetSupport;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Properties;
 import org.teavm.backend.javascript.TeaVMJavaScriptHost;
 import org.teavm.backend.wasm.TeaVMWasmGCHost;
 import org.teavm.dependency.AbstractDependencyListener;
@@ -28,6 +30,7 @@ import org.teavm.vm.spi.TeaVMPlugin;
  */
 @Before(JSOPlugin.class)
 public class WebPlugin implements TeaVMPlugin {
+    private static final String DEV_SERVER_PROPERTIES = "META-INF/gdx-teavm-devserver.properties";
 
     @Override
     public void install(TeaVMHost host) {
@@ -40,11 +43,12 @@ public class WebPlugin implements TeaVMPlugin {
         host.add(new WebClassTransformer());
         host.add(new JavaObjectExporterDependency());
 
-        GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(host.getProperties());
+        Properties properties = resolveProperties(host);
+        GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(properties);
         ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
         AssetsCopy.AssetPlan webAssetPlan = null;
         String[] manifestEntries = GdxTeaVMPluginAssetSupport.decodeManifest(
-                host.getProperties().getProperty(GdxTeaVMPluginConfig.ASSET_MANIFEST));
+                properties.getProperty(GdxTeaVMPluginConfig.ASSET_MANIFEST));
         if(manifestEntries.length == 0 && config.webappEnabled) {
             webAssetPlan = createWebAssetPlan(config, host.getClassLoader(), classPathURLs);
             manifestEntries = GdxTeaVMPluginAssetSupport.manifestEntries(webAssetPlan);
@@ -76,6 +80,23 @@ public class WebPlugin implements TeaVMPlugin {
                         webAssetPlan);
             }
         }
+    }
+
+    private static Properties resolveProperties(TeaVMHost host) {
+        Properties resolved = new Properties();
+        try(InputStream input = host.getClassLoader().getResourceAsStream(DEV_SERVER_PROPERTIES)) {
+            if(input != null) {
+                resolved.load(input);
+            }
+        } catch(IOException e) {
+            throw new RuntimeException("Unable to read gdx-teavm development-server properties", e);
+        }
+
+        Properties hostProperties = host.getProperties();
+        for(String name : hostProperties.stringPropertyNames()) {
+            resolved.setProperty(name, hostProperties.getProperty(name));
+        }
+        return resolved;
     }
 
     private static AssetsCopy.AssetPlan createWebAssetPlan(

@@ -12,7 +12,6 @@ compileJavaTask.doFirst {
         println(it)
     }
 }
-compileJavaTask.dependsOn("clean")
 compileJavaTask.mustRunAfter("clean")
 
 dependencies {

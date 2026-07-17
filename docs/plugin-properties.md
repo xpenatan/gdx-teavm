@@ -118,7 +118,8 @@ These properties exist inside `js {}` and `wasm {}` only.
 | `htmlHeight` | `Property<Int>` | `600` | Initial canvas height written to generated `index.html`. |
 | `logoPath` | `Property<String>` | `startup-logo.png` | Classpath resource path for the loading logo copied into web app assets. |
 | `copyLoadingAsset` | `Property<Boolean>` | `true` | Copies `logoPath` into the generated web app when true. |
-| `serverPort` | `Property<Int>` | Gradle property `teavmPluginPort`, otherwise `8080` | Port used by this target's plugin web run task. |
+| `serverPort` | `Property<Int>` | Gradle property `teavmPluginPort`, otherwise `8080` | Port used by this target's Jetty or TeaVM development server. |
+| `devServer` | `GdxTeaVMDevServerExtension` | disabled | Configures TeaVM's persistent development server for this target's existing run task. |
 
 Example:
 
@@ -130,9 +131,31 @@ gdxTeaVM {
         htmlWidth.set(1280)
         htmlHeight.set(720)
         serverPort.set(9090)
+        devServer {
+            enabled.set(true)
+            autoBuild.set(true)
+            autoReload.set(true)
+        }
     }
 }
 ```
+
+### Development Server Properties
+
+The same `devServer {}` block is available inside `js {}` and `wasm {}`. It deliberately exposes only options supported by both TeaVM web targets. TeaVM automatically produces and serves source maps, source files, and debug metadata in this mode; normal build properties remain unchanged.
+
+| Property | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `enabled` | `Property<Boolean>` | `false` | Makes the target's existing run task use TeaVM's persistent development server. |
+| `autoBuild` | `Property<Boolean>` | `true` | Automatically watches build inputs, recompiles Java changes, and rebuilds the target while the run task is active. Set to `false` to keep serving without automatic compilation. |
+| `autoReload` | `Property<Boolean>` | `false` | Installs the plugin's shared JS/Wasm reload client, which reloads connected pages after TeaVM rebuilds successfully. It does not itself compile or watch source files. |
+| `processMemory` | `Property<Int>` | Target `processMemory`, normally `512` | Maximum heap size in megabytes for the development-server process. |
+| `staticDirs` | `ConfigurableFileCollection` | empty | Additional directories served as static files. |
+| `staticServePath` | `Property<String>` | unset | URL path prefix for `staticDirs`. |
+| `resourceRoots` | `ListProperty<String>` | empty | Classpath resource roots served as static resources. |
+| `resourceServePath` | `Property<String>` | unset | URL path prefix for `resourceRoots`. |
+
+The HTTP port remains the containing target's `serverPort`; there is no second public dev-server port. The plugin reserves TeaVM's proxy internally so the generated entry page can be served as HTML at `/`. The reload client uses TeaVM's build-status WebSocket and works for both targets, including Wasm where TeaVM does not inject its JavaScript indicator. TeaVM's JavaScript-only indicator and stack-deobfuscation switches are intentionally not part of this common JS/Wasm API.
 
 ### JavaScript Properties
 
