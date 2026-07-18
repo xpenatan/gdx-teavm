@@ -184,7 +184,7 @@ Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSup
 
 The GLFW backend passes arbitrary CMake cache entries from `glfw.cmakeDefinitions` to its generated Windows and Unix configure scripts. Consumers can therefore use standard CMake settings such as `CMAKE_MSVC_RUNTIME_LIBRARY` without a backend-specific enum. Windows keeps its historical MT default when the setting is absent, but an explicit standard CMake selection is never overwritten.
 
-Windows resources remain prebuilt and compact: GLFW and GLEW provide matching MT and MD static archives, and CMake selects the pair that matches the application target. Linux and macOS continue to use the GLFW and GLEW packages selected by their CMake toolchain. Android and iOS use their dedicated native backends and toolchains; MSVC runtime flags are not portable to those targets.
+Windows resources remain prebuilt and compact: GLFW and GLEW provide matching MT and MD static archives, and CMake selects the pair that matches the application target. On Linux and macOS, CMake downloads hash-verified GLFW 3.4 and GLEW 2.3.0 release sources into the native build directory and links them statically; their source trees are not stored in the backend JAR. `GDX_TEAVM_GLFW_USE_SYSTEM_LIBS=ON` restores system-package discovery when a consumer prefers it. Android and iOS use their dedicated native backends and toolchains; MSVC runtime flags are not portable to those targets.
 
 ## JSO Overlay Notes
 

@@ -15,8 +15,15 @@ Before you begin, ensure you have the following installed:
   
 - **CMake** (required for building the C code)
 - **Linux/macOS native dependencies**
-  - A C compiler toolchain
-  - GLFW, OpenGL, and GLEW development packages discoverable by CMake
+  - A C compiler toolchain and OpenGL development files
+  - Linux window-system development headers required to compile GLFW (X11 and Wayland by default)
+  - Network access for the first CMake configure, or a pre-populated FetchContent cache
+
+On Ubuntu/Debian, the Linux build headers can be installed with:
+
+```bash
+sudo apt install libgl1-mesa-dev libwayland-dev libxkbcommon-dev xorg-dev pkg-config
+```
 
 ## Step 1: Generate and Build
 

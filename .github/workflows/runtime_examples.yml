@@ -34,17 +34,19 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Install native runtime dependencies
+      - name: Install native build and runtime dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             ffmpeg \
             imagemagick \
-            libglew-dev \
-            libglfw3-dev \
             libgl1-mesa-dev \
+            libwayland-dev \
+            libxkbcommon-dev \
             mesa-utils \
+            pkg-config \
             x11-apps \
+            xorg-dev \
             xvfb
 
       - name: Change wrapper permissions
@@ -55,6 +57,17 @@ jobs:
           mkdir -p "$PROOF_DIR"
           ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_debug_build --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
           exit "${PIPESTATUS[0]}"
+
+      - name: Verify GLFW and GLEW are statically linked
+        run: |
+          set -euo pipefail
+
+          APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
+          ldd "$APP_ABS" | tee "$PROOF_DIR/native-dependencies.txt"
+          if grep -Eiq 'lib(glfw|glew)' "$PROOF_DIR/native-dependencies.txt"; then
+            echo "The Linux executable still depends on a GLFW or GLEW shared library."
+            exit 1
+          fi
 
       - name: Run and capture proof
         env:
@@ -174,13 +187,49 @@ jobs:
           } > "$PROOF_DIR/system-info.txt" 2>&1
           system_profiler SPDisplaysDataType > "$PROOF_DIR/graphics-info.txt" 2>&1 || true
 
-      - name: Build FreeType desktop-c debug executable
-        env:
-          CMAKE_PREFIX_PATH: ${{ github.workspace }}/.deps/glfw
+      - name: Generate FreeType desktop-c project
         run: |
           mkdir -p "$PROOF_DIR"
-          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_debug_build --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
+          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_generate --stacktrace 2>&1 | tee "$PROOF_DIR/generate.log"
           exit "${PIPESTATUS[0]}"
+
+      - name: Validate pinned macOS static dependencies
+        run: |
+          set -euo pipefail
+
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/freetype/desktop-c/build/dist"
+          BUILD_DIR="$SOURCE_DIR/build/cmake-pinned-dependencies"
+          cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug 2>&1 | tee "$PROOF_DIR/pinned-configure.log"
+          cmake --build "$BUILD_DIR" --target glfw gdx_teavm_glew --parallel 3 2>&1 | tee "$PROOF_DIR/pinned-build.log"
+
+          GLFW_ARCHIVE="$(find "$BUILD_DIR" -type f -name 'libglfw3.a' -print -quit)"
+          GLEW_ARCHIVE="$(find "$BUILD_DIR" -type f -name 'libgdx_teavm_glew.a' -print -quit)"
+          test -n "$GLFW_ARCHIVE"
+          test -n "$GLEW_ARCHIVE"
+          file "$GLFW_ARCHIVE" "$GLEW_ARCHIVE" | tee "$PROOF_DIR/pinned-archives.txt"
+
+      - name: Build FreeType desktop-c debug executable for runtime proof
+        run: |
+          set -euo pipefail
+
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/freetype/desktop-c/build/dist"
+          BUILD_DIR="$SOURCE_DIR/build/cmake-runtime"
+          GLFW_PREFIX="$GITHUB_WORKSPACE/.deps/glfw"
+          GLEW_PREFIX="$(brew --prefix glew)"
+
+          cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DGDX_TEAVM_GLFW_USE_SYSTEM_LIBS=ON \
+            -DGLEW_USE_STATIC_LIBS=TRUE \
+            -DCMAKE_PREFIX_PATH="$GLFW_PREFIX;$GLEW_PREFIX" 2>&1 | tee "$PROOF_DIR/build-configure.log"
+          cmake --build "$BUILD_DIR" --config Debug --parallel 3 2>&1 | tee "$PROOF_DIR/build.log"
+
+          APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
+          otool -L "$APP_ABS" | tee "$PROOF_DIR/native-dependencies.txt"
+          if grep -Eiq 'lib(glfw|glew)' "$PROOF_DIR/native-dependencies.txt"; then
+            echo "The macOS executable still depends on a GLFW or GLEW shared library."
+            exit 1
+          fi
 
       - name: Run and capture proof
         run: |

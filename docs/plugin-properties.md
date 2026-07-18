@@ -263,7 +263,17 @@ gdxTeaVM {
 }
 ```
 
-The same map is passed to the generated shell configure scripts on Linux and macOS, where consumers can supply settings understood by those CMake toolchains. Android and iOS use their own target build integrations rather than the desktop GLFW scripts; MSVC's `/MT` and `/MD` options do not apply to them.
+The same map is passed to the generated shell configure scripts on Linux and macOS. Those builds download pinned, hash-verified GLFW and GLEW release sources and link them statically by default, so the resulting application does not require GLFW or GLEW runtime packages. To use libraries already installed on the build host instead, pass the low-level CMake switch:
+
+```kotlin
+gdxTeaVM {
+    glfw {
+        cmakeDefinition("GDX_TEAVM_GLFW_USE_SYSTEM_LIBS", "ON")
+    }
+}
+```
+
+The system-library path deliberately leaves static-versus-shared selection to the installed packages and ordinary CMake settings. Standard FetchContent settings such as `FETCHCONTENT_BASE_DIR`, `FETCHCONTENT_FULLY_DISCONNECTED`, `FETCHCONTENT_SOURCE_DIR_GDX_TEAVM_GLFW`, and `FETCHCONTENT_SOURCE_DIR_GDX_TEAVM_GLEW_SOURCE` can be passed through the same map for shared caches or offline source directories. Android and iOS use their own target build integrations rather than the desktop GLFW scripts; MSVC's `/MT` and `/MD` options do not apply to them.
 
 Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 

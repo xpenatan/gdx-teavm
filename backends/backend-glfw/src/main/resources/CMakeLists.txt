@@ -25,10 +25,64 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-if (UNIX)
-  find_package(glfw3 CONFIG REQUIRED)
+option(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS
+    "Use GLFW and GLEW installed by the Unix host instead of pinned static sources"
+    OFF)
+
+if(UNIX)
   find_package(OpenGL REQUIRED)
-  find_package(GLEW REQUIRED)
+
+  if(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS)
+    find_package(glfw3 CONFIG REQUIRED)
+    find_package(GLEW REQUIRED)
+    set(TEAVM_GLFW_LIBRARY glfw)
+    set(TEAVM_GLEW_LIBRARY GLEW::GLEW)
+  else()
+    include(FetchContent)
+
+    if(NOT DEFINED GLFW_LIBRARY_TYPE)
+      set(GLFW_LIBRARY_TYPE STATIC CACHE STRING "GLFW library type")
+    endif()
+    foreach(GLFW_OPTION GLFW_BUILD_EXAMPLES GLFW_BUILD_TESTS GLFW_BUILD_DOCS GLFW_INSTALL)
+      if(NOT DEFINED ${GLFW_OPTION})
+        set(${GLFW_OPTION} OFF CACHE BOOL "Disabled for the embedded GLFW build")
+      endif()
+    endforeach()
+
+    FetchContent_Declare(gdx_teavm_glfw
+        URL "https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip"
+        URL_HASH "SHA256=b5ec004b2712fd08e8861dc271428f048775200a2df719ccf575143ba749a3e9")
+    FetchContent_MakeAvailable(gdx_teavm_glfw)
+
+    FetchContent_Declare(gdx_teavm_glew_source
+        URL "https://github.com/nigels-com/glew/releases/download/glew-2.3.0/glew-2.3.0.zip"
+        URL_HASH "SHA256=fe8fdbaa77cfa354ff400da323ea5e32b3641ad58a218607de74d2998b872e66")
+    FetchContent_GetProperties(gdx_teavm_glew_source)
+    if(NOT gdx_teavm_glew_source_POPULATED)
+      FetchContent_Populate(gdx_teavm_glew_source)
+    endif()
+
+    add_library(gdx_teavm_glew STATIC
+        "${gdx_teavm_glew_source_SOURCE_DIR}/src/glew.c")
+    target_include_directories(gdx_teavm_glew PUBLIC
+        "${gdx_teavm_glew_source_SOURCE_DIR}/include")
+    target_compile_definitions(gdx_teavm_glew PUBLIC GLEW_STATIC GLEW_NO_GLU)
+    target_link_libraries(gdx_teavm_glew PUBLIC OpenGL::GL)
+    if(NOT APPLE)
+      find_package(X11 REQUIRED)
+      target_include_directories(gdx_teavm_glew PRIVATE ${X11_INCLUDE_DIR})
+      target_link_libraries(gdx_teavm_glew PUBLIC ${X11_LIBRARIES})
+      if(TARGET OpenGL::GLX)
+        target_link_libraries(gdx_teavm_glew PUBLIC OpenGL::GLX)
+      endif()
+    endif()
+    if(CMAKE_DL_LIBS)
+      target_link_libraries(gdx_teavm_glew PUBLIC ${CMAKE_DL_LIBS})
+    endif()
+
+    set(TEAVM_GLFW_LIBRARY glfw)
+    set(TEAVM_GLEW_LIBRARY gdx_teavm_glew)
+  endif()
 endif()
 
 if (WIN32)
@@ -189,8 +243,12 @@ if (WIN32)
   # Set startup project for Visual Studio
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TEAVM_APP_TARGET})
 endif()
-if (UNIX)
-  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE OpenGL::GL glfw GLEW::GLEW m)
+if(UNIX)
+  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE
+      ${TEAVM_GLFW_LIBRARY}
+      ${TEAVM_GLEW_LIBRARY}
+      OpenGL::GL
+      m)
 endif()
 
 set_target_properties(${TEAVM_APP_TARGET} PROPERTIES

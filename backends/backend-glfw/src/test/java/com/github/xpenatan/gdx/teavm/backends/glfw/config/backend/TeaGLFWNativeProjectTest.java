@@ -94,6 +94,38 @@ public class TeaGLFWNativeProjectTest {
     }
 
     @Test
+    public void unixNativeProjectBuildsPinnedStaticDependenciesByDefault() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("unix-static-dependencies-project");
+        TeaGLFWNativeProject project = new TeaGLFWNativeProject(
+                TeaGLFWNativeProject.class.getClassLoader(),
+                buildRoot,
+                new File(buildRoot, "c/src"),
+                new File(buildRoot, "release"));
+
+        project.write("test_app");
+
+        String cmake = read(buildRoot, "CMakeLists.txt");
+        assertThat(cmake).contains("option(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS");
+        assertThat(cmake).contains("set(GLFW_LIBRARY_TYPE STATIC");
+        assertThat(cmake).contains("FetchContent_Declare(gdx_teavm_glfw");
+        assertThat(cmake).contains("glfw/glfw/releases/download/3.4/glfw-3.4.zip");
+        assertThat(cmake).contains(
+                "SHA256=b5ec004b2712fd08e8861dc271428f048775200a2df719ccf575143ba749a3e9");
+        assertThat(cmake).contains("FetchContent_Declare(gdx_teavm_glew_source");
+        assertThat(cmake).contains("glew/releases/download/glew-2.3.0/glew-2.3.0.zip");
+        assertThat(cmake).contains(
+                "SHA256=fe8fdbaa77cfa354ff400da323ea5e32b3641ad58a218607de74d2998b872e66");
+        assertThat(cmake).contains("add_library(gdx_teavm_glew STATIC");
+        assertThat(cmake).contains(
+                "target_compile_definitions(gdx_teavm_glew PUBLIC GLEW_STATIC GLEW_NO_GLU)");
+        assertThat(cmake).contains("target_link_libraries(gdx_teavm_glew PUBLIC ${X11_LIBRARIES})");
+        assertThat(cmake).contains("if(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS)");
+        assertThat(cmake).contains("find_package(glfw3 CONFIG REQUIRED)");
+        assertThat(cmake).contains("find_package(GLEW REQUIRED)");
+        assertThat(cmake).doesNotContain("set(GLEW_USE_STATIC_LIBS TRUE)");
+    }
+
+    @Test
     public void nativeProjectProvidesWin32WindowHandleBridge() throws Exception {
         File buildRoot = temporaryFolder.newFolder("win32-window-handle-project");
         TeaGLFWNativeProject project = new TeaGLFWNativeProject(
