@@ -388,13 +388,13 @@ adb devices -l
 Build the debug APK:
 
 ```shell
-./gradlew :examples:basic:android:assembleDebug
+./gradlew :examples:basic:platforms:android:assembleDebug
 ```
 
 Install it on the connected device or running emulator:
 
 ```shell
-./gradlew :examples:basic:android:installDebug
+./gradlew :examples:basic:platforms:android:installDebug
 ```
 
 Launch it from the Android launcher as `gdx-teavm basic`, or start the Activity directly with ADB:
@@ -406,29 +406,29 @@ adb shell am start -n com.github.xpenatan.gdx.teavm.examples.basic.android/com.g
 Build the release APKs:
 
 ```shell
-./gradlew :examples:basic:android:assembleRelease
+./gradlew :examples:basic:platforms:android:assembleRelease
 ```
 
 The basic Android demo enables ABI APK splits and disables the universal APK. Debug and release outputs use one APK per ABI:
 
 | Build type | ABI | APK |
 | --- | --- | --- |
-| Debug | `arm64-v8a` | `examples/basic/android/build/outputs/apk/debug/android-arm64-v8a-debug.apk` |
-| Debug | `armeabi-v7a` | `examples/basic/android/build/outputs/apk/debug/android-armeabi-v7a-debug.apk` |
-| Debug | `x86` | `examples/basic/android/build/outputs/apk/debug/android-x86-debug.apk` |
-| Debug | `x86_64` | `examples/basic/android/build/outputs/apk/debug/android-x86_64-debug.apk` |
-| Release | `arm64-v8a` | `examples/basic/android/build/outputs/apk/release/android-arm64-v8a-release.apk` |
-| Release | `armeabi-v7a` | `examples/basic/android/build/outputs/apk/release/android-armeabi-v7a-release.apk` |
-| Release | `x86` | `examples/basic/android/build/outputs/apk/release/android-x86-release.apk` |
-| Release | `x86_64` | `examples/basic/android/build/outputs/apk/release/android-x86_64-release.apk` |
+| Debug | `arm64-v8a` | `examples/basic/platforms/android/build/outputs/apk/debug/android-arm64-v8a-debug.apk` |
+| Debug | `armeabi-v7a` | `examples/basic/platforms/android/build/outputs/apk/debug/android-armeabi-v7a-debug.apk` |
+| Debug | `x86` | `examples/basic/platforms/android/build/outputs/apk/debug/android-x86-debug.apk` |
+| Debug | `x86_64` | `examples/basic/platforms/android/build/outputs/apk/debug/android-x86_64-debug.apk` |
+| Release | `arm64-v8a` | `examples/basic/platforms/android/build/outputs/apk/release/android-arm64-v8a-release.apk` |
+| Release | `armeabi-v7a` | `examples/basic/platforms/android/build/outputs/apk/release/android-armeabi-v7a-release.apk` |
+| Release | `x86` | `examples/basic/platforms/android/build/outputs/apk/release/android-x86-release.apk` |
+| Release | `x86_64` | `examples/basic/platforms/android/build/outputs/apk/release/android-x86_64-release.apk` |
 
 For Play Store distribution, prefer `bundleRelease` and upload the generated Android App Bundle so Play can serve the right ABI split to each device:
 
 ```shell
-./gradlew :examples:basic:android:bundleRelease
+./gradlew :examples:basic:platforms:android:bundleRelease
 ```
 
-Generated TeaVM C output is written under `examples/basic/android/build/generated/gdx-teavm/android`. Android CMake/Ninja staging is configured under the root build folder at `build/android-cxx/examples-basic-android` so AGP's native intermediates do not create an untracked `.cxx` folder in the Android module root.
+Generated TeaVM C output is written under `examples/basic/platforms/android/build/generated/gdx-teavm/android`. Android CMake/Ninja staging is configured under the root build folder at `build/android-cxx/examples-basic-platforms-android` so AGP's native intermediates do not create an untracked `.cxx` folder in the Android module root.
 
 The Android app module uses Java 8 source and target compatibility for APK-side Java code. This avoids Android Gradle Plugin's Java 9+ `androidJdkImage` transform, which can fail when Gradle is running on newer JDKs such as GraalVM JDK 25. The TeaVM launcher source in `src/native/java` is compiled separately for TeaVM generation.
 
@@ -607,30 +607,38 @@ Use concrete class names for individual types and package patterns ending in `**
 Plugin examples:
 
 ```shell
-./gradlew :examples:basic:plugin:gdx_teavm_web_js_run
-./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
-./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:plugin:gdx_teavm_glfw_build
-./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run
-./gradlew :examples:controllers:plugin:gdx_teavm_web_js_run
+./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run
+./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_generate
+./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_build
+./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_js_run
+./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_js_run
 ```
 
-Android example:
+Android TeaVM C examples:
 
 ```shell
-./gradlew :examples:basic:android:assembleDebug
-./gradlew :examples:basic:android:installDebug
-./gradlew :examples:basic:android:assembleRelease
+./gradlew :examples:basic:platforms:android:assembleDebug
+./gradlew :examples:freetype:platforms:android:assembleDebug
+./gradlew :examples:controllers:platforms:android:assembleDebug
+```
+
+iOS TeaVM C examples (simulator builds require macOS):
+
+```shell
+./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_build_simulator
+./gradlew :examples:freetype:platforms:ios:gdx_teavm_ios_build_simulator
+./gradlew :examples:controllers:platforms:ios:gdx_teavm_ios_build_simulator
 ```
 
 Manual builder examples:
 
 ```shell
-./gradlew :examples:basic:web:basic_web_run
-./gradlew :examples:freetype:web:freetype_web_run
-./gradlew :examples:controllers:web:controllers_web_run
-./gradlew :examples:basic:desktop-c:basic_desktop_c_generate
-./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
+./gradlew :examples:basic:platforms:web:builder:basic_web_run
+./gradlew :examples:freetype:platforms:web:builder:freetype_web_run
+./gradlew :examples:controllers:platforms:web:builder:controllers_web_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_generate
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
 ```
 
 ## Snapshot Testing In A Standalone Project

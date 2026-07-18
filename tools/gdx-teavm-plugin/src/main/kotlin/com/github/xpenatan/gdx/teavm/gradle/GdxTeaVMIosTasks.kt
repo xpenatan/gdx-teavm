@@ -114,6 +114,9 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
     abstract val xcodeProjectName: Property<String>
 
     @get:Input
+    abstract val gradleProjectPath: Property<String>
+
+    @get:Input
     abstract val nativeLibraryName: Property<String>
 
     @get:Input
@@ -145,6 +148,7 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
             "../c/release/assets" to relativePath(xcodeRoot, File(release, "assets")),
             "../../c/src/ios_bridge.h" to relativePath(sourcesDir, File(generatedSources, "ios_bridge.h")),
             "com.github.xpenatan.gdxteavm.ios.spike" to bundleIdentifier.get(),
+            "\${IOS_GRADLE_PROJECT_PATH}" to gradleProjectPath.get(),
             "\${IOS_NATIVE_LIBRARY_NAME}" to nativeLibraryName.get(),
             "\${IOS_GRAPHICS_API}" to api,
             "\${IOS_VIEW_CONTROLLER_TEMPLATE}" to viewControllerTemplate(api),

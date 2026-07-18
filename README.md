@@ -32,6 +32,7 @@ The project provides two build styles:
 | `gdx-freetype-web` | FreeType support for TeaVM web builds |
 | `gdx-freetype-c` | FreeType support for TeaVM C native builds |
 | `gdx-controllers-web` | Controller support for TeaVM web builds |
+| `gdx-controllers-ios` | GameController support for TeaVM C iOS builds |
 | `tools/gdx-teavm-plugin` | Gradle plugin implementation |
 
 ## Documentation
@@ -39,7 +40,8 @@ The project provides two build styles:
 - [Usage guide](docs/usage.md): setup, plugin examples, builder examples, and tasks.
 - [Plugin property reference](docs/plugin-properties.md): every `gdxTeaVM` property, grouped by shared and target-specific settings.
 - [Backend architecture](docs/backend-architecture.md): how the builder, Gradle plugin, TeaVM plugins, assets, and reflection work together.
-- [Desktop C native build guide](examples/basic/desktop-c/README.md): native toolchain requirements and manual CMake workflow.
+- [Examples](examples/README.md): portable cores and runnable platform implementations.
+- [Desktop C native build guide](examples/basic/platforms/desktop/teavm-c/builder/README.md): native toolchain requirements and manual CMake workflow.
 
 ## Repositories
 
@@ -124,29 +126,35 @@ Run the Java launcher from Gradle or your IDE. Builder projects add the concrete
 
 ```shell
 # Plugin workflow
-./gradlew :examples:basic:plugin:gdx_teavm_web_js_run
-./gradlew :examples:basic:plugin:gdx_teavm_web_wasm_run
-./gradlew :examples:basic:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:ios:gdx_teavm_ios_generate
-./gradlew :examples:basic:ios:gdx_teavm_ios_init_xcode
+./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run
+./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_generate
+./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_generate
+./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_init_xcode
 
-# Android workflow
-./gradlew :examples:basic:android:assembleDebug
-./gradlew :examples:basic:android:installDebug
+# Android TeaVM C examples
+./gradlew :examples:basic:platforms:android:assembleDebug
+./gradlew :examples:freetype:platforms:android:assembleDebug
+./gradlew :examples:controllers:platforms:android:assembleDebug
+
+# iOS TeaVM C examples (simulator builds require macOS)
+./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_build_simulator
+./gradlew :examples:freetype:platforms:ios:gdx_teavm_ios_build_simulator
+./gradlew :examples:controllers:platforms:ios:gdx_teavm_ios_build_simulator
 
 # FreeType plugin workflow
-./gradlew :examples:freetype:plugin:gdx_teavm_web_js_run
-./gradlew :examples:freetype:plugin:gdx_teavm_web_wasm_run
+./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_js_run
+./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_wasm_run
 
 # gdx-controllers plugin workflow
-./gradlew :examples:controllers:plugin:gdx_teavm_web_js_run
-./gradlew :examples:controllers:plugin:gdx_teavm_web_wasm_run
+./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_js_run
+./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_wasm_run
 
 # Manual builder workflow
-./gradlew :examples:basic:web:basic_web_run
-./gradlew :examples:freetype:web:freetype_web_run
-./gradlew :examples:controllers:web:controllers_web_run
-./gradlew :examples:basic:desktop-c:basic_desktop_c_debug_build
+./gradlew :examples:basic:platforms:web:builder:basic_web_run
+./gradlew :examples:freetype:platforms:web:builder:freetype_web_run
+./gradlew :examples:controllers:platforms:web:builder:controllers_web_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
 ```
 
 ## Support

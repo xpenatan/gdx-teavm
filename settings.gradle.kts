@@ -60,43 +60,46 @@ include(":extensions:web:gdx-freetype-web")
 //include(":tools:generator:ui")
 //include(":tools:generator:desktop")
 
+// Examples
 include(":examples:basic:core")
-include(":examples:basic:desktop")
-include(":examples:basic:graalvm")
-include(":examples:basic:plugin")
-include(":examples:basic:ios")
-include(":examples:basic:web")
-include(":examples:basic:desktop-c")
+include(":examples:basic:platforms:desktop:lwjgl3")
+include(":examples:basic:platforms:desktop:graalvm")
+include(":examples:basic:platforms:desktop:teavm-c:builder")
+include(":examples:basic:platforms:desktop:teavm-c:plugin")
+include(":examples:basic:platforms:web:builder")
+include(":examples:basic:platforms:web:plugin")
+include(":examples:basic:platforms:ios")
 
 if(hasAndroidSdk) {
-    include(":examples:basic:android")
+    include(":examples:basic:platforms:android")
 }
 
+include(":examples:freetype:core")
+include(":examples:freetype:platforms:desktop:lwjgl3")
+include(":examples:freetype:platforms:desktop:teavm-c:builder")
+include(":examples:freetype:platforms:web:builder")
+include(":examples:freetype:platforms:web:plugin")
+include(":examples:freetype:platforms:ios")
+if(hasAndroidSdk) {
+    include(":examples:freetype:platforms:android")
+}
+
+include(":examples:controllers:core")
+include(":examples:controllers:platforms:desktop:lwjgl3")
+include(":examples:controllers:platforms:desktop:teavm-c:builder")
+include(":examples:controllers:platforms:web:builder")
+include(":examples:controllers:platforms:web:plugin")
+include(":examples:controllers:platforms:ios")
+if(hasAndroidSdk) {
+    include(":examples:controllers:platforms:android")
+}
+
+// Benchmarks
 include(":benchmark")
 include(":benchmark:core")
 include(":benchmark:lwjgl3")
 include(":benchmark:graalvm")
 include(":benchmark:glfw")
-
-include(":examples:freetype:core")
-include(":examples:freetype:desktop")
-include(":examples:freetype:desktop-c")
-include(":examples:freetype:plugin")
-include(":examples:freetype:web")
-include(":examples:freetype:ios")
-if(hasAndroidSdk) {
-    include(":examples:freetype:android")
-}
-
-include(":examples:controllers:core")
-include(":examples:controllers:desktop")
-include(":examples:controllers:desktop-c")
-include(":examples:controllers:plugin")
-include(":examples:controllers:web")
-include(":examples:controllers:ios")
-if(hasAndroidSdk) {
-    include(":examples:controllers:android")
-}
 
 val file = File(settingsDir, "gradle.properties")
 
@@ -112,8 +115,8 @@ val includeTeaVMSource = (properties.getOrDefault("includeTeaVMSource", "false")
 
 if(includeLibgdxSource) {
     include(":examples:gdx-tests:core")
-    include(":examples:gdx-tests:desktop")
-    include(":examples:gdx-tests:teavm")
+    include(":examples:gdx-tests:platforms:desktop:lwjgl2")
+    include(":examples:gdx-tests:platforms:web:builder")
     includeBuild(gdxSourcePath)
 }
 

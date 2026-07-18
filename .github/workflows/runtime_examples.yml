@@ -33,8 +33,8 @@ jobs:
             label: Controllers
             executable: controllers
     env:
-      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug
-      BUILD_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_debug_build
+      APP_PATH: examples/${{ matrix.example.id }}/platforms/desktop/teavm-c/builder/build/dist/c/release/${{ matrix.example.executable }}_debug
+      BUILD_TASK: :examples:${{ matrix.example.id }}:platforms:desktop:teavm-c:builder:${{ matrix.example.id }}_desktop_c_debug_build
       PROOF_DIR: runtime-proof/linux/${{ matrix.example.id }}
     steps:
       - name: Checkout code
@@ -156,8 +156,8 @@ jobs:
             label: Controllers
             executable: controllers
     env:
-      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug
-      GENERATE_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_generate
+      APP_PATH: examples/${{ matrix.example.id }}/platforms/desktop/teavm-c/builder/build/dist/c/release/${{ matrix.example.executable }}_debug
+      GENERATE_TASK: :examples:${{ matrix.example.id }}:platforms:desktop:teavm-c:builder:${{ matrix.example.id }}_desktop_c_generate
       PROOF_DIR: runtime-proof/macos/${{ matrix.example.id }}
     steps:
       - name: Checkout code
@@ -209,7 +209,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/desktop-c/build/dist"
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/platforms/desktop/teavm-c/builder/build/dist"
           BUILD_DIR="$SOURCE_DIR/build/cmake-pinned-dependencies"
           cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug 2>&1 | tee "$PROOF_DIR/pinned-configure.log"
           cmake --build "$BUILD_DIR" --target glfw gdx_teavm_glew --parallel 3 2>&1 | tee "$PROOF_DIR/pinned-build.log"
@@ -224,7 +224,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/desktop-c/build/dist"
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/platforms/desktop/teavm-c/builder/build/dist"
           BUILD_DIR="$SOURCE_DIR/build/cmake-runtime"
           GLFW_SRC="$RUNNER_TEMP/glfw"
 
@@ -325,8 +325,8 @@ jobs:
             label: Controllers
             executable: controllers
     env:
-      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug.exe
-      BUILD_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_debug_build
+      APP_PATH: examples/${{ matrix.example.id }}/platforms/desktop/teavm-c/builder/build/dist/c/release/${{ matrix.example.executable }}_debug.exe
+      BUILD_TASK: :examples:${{ matrix.example.id }}:platforms:desktop:teavm-c:builder:${{ matrix.example.id }}_desktop_c_debug_build
       PROOF_DIR: runtime-proof/windows/${{ matrix.example.id }}
     steps:
       - name: Checkout code
@@ -455,10 +455,10 @@ jobs:
             application_id: com.github.xpenatan.gdx.teavm.examples.controllers.android
             activity: com.github.xpenatan.gdx.teavm.examples.controllers.android.MainActivity
     env:
-      APK_PATH: examples/${{ matrix.example.id }}/android/build/outputs/apk/debug/android-x86_64-debug.apk
+      APK_PATH: examples/${{ matrix.example.id }}/platforms/android/build/outputs/apk/debug/android-x86_64-debug.apk
       APP_ID: ${{ matrix.example.application_id }}
       ACTIVITY: ${{ matrix.example.activity }}
-      BUILD_TASK: :examples:${{ matrix.example.id }}:android:assembleDebug
+      BUILD_TASK: :examples:${{ matrix.example.id }}:platforms:android:assembleDebug
       PROOF_DIR: runtime-proof/android/${{ matrix.example.id }}
     steps:
       - name: Checkout code
@@ -553,10 +553,10 @@ jobs:
             label: Controllers
             bundle_id: com.github.xpenatan.gdxteavm.controllers.ios
     env:
-      APP_PATH: examples/${{ matrix.example.id }}/ios/build/xcode-derived/ios/Build/Products/Debug-iphonesimulator/GdxTeaVMIOSSpike.app
-      BUILD_TASK: :examples:${{ matrix.example.id }}:ios:gdx_teavm_ios_build_simulator
+      APP_PATH: examples/${{ matrix.example.id }}/platforms/ios/build/xcode-derived/ios/Build/Products/Debug-iphonesimulator/GdxTeaVMIOSSpike.app
+      BUILD_TASK: :examples:${{ matrix.example.id }}:platforms:ios:gdx_teavm_ios_build_simulator
       BUNDLE_ID: ${{ matrix.example.bundle_id }}
-      EXAMPLE_DIR: examples/${{ matrix.example.id }}/ios
+      EXAMPLE_DIR: examples/${{ matrix.example.id }}/platforms/ios
       PROOF_DIR: runtime-proof/ios/${{ matrix.example.id }}
     steps:
       - name: Checkout code

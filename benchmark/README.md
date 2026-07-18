@@ -55,4 +55,4 @@ Run isolated backends:
 Each run prints `BENCH_RESULT` and can append TSV rows to a report file when `--resultFile=...` is passed by the aggregate tasks.
 
 The GraalVM backend uses the optimized `release` native-image binary for aggregate comparisons. It requires a local
-GraalVM/native-image setup, matching the existing `examples:basic:graalvm` module.
+GraalVM/native-image setup, matching the existing `examples:basic:platforms:desktop:graalvm` module.
