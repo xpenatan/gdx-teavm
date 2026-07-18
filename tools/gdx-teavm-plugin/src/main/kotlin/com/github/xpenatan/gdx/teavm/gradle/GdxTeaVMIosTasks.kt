@@ -114,6 +114,12 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
     abstract val xcodeProjectName: Property<String>
 
     @get:Input
+    abstract val nativeLibraryName: Property<String>
+
+    @get:Input
+    abstract val bundleIdentifier: Property<String>
+
+    @get:Input
     abstract val overwrite: Property<Boolean>
 
     @get:Input
@@ -138,6 +144,8 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
             "../c/src/app_include.c" to relativePath(xcodeRoot, File(generatedSources, "app_include.c")),
             "../c/release/assets" to relativePath(xcodeRoot, File(release, "assets")),
             "../../c/src/ios_bridge.h" to relativePath(sourcesDir, File(generatedSources, "ios_bridge.h")),
+            "com.github.xpenatan.gdxteavm.ios.spike" to bundleIdentifier.get(),
+            "\${IOS_NATIVE_LIBRARY_NAME}" to nativeLibraryName.get(),
             "\${IOS_GRAPHICS_API}" to api,
             "\${IOS_VIEW_CONTROLLER_TEMPLATE}" to viewControllerTemplate(api),
             "\${IOS_FRAMEWORK_SEARCH_PATHS}" to frameworkSearchPaths(api),
@@ -167,6 +175,11 @@ abstract class GdxTeaVMIosInitXcodeTask : DefaultTask() {
         writeTemplate(
             "templates/ios/xcode/Sources/${viewControllerTemplate(api)}",
             File(sourcesDir, "TeaVMViewController.swift"),
+            replacements
+        )
+        writeTemplate(
+            "templates/ios/xcode/Sources/IOSControllerBridge.swift",
+            File(sourcesDir, "IOSControllerBridge.swift"),
             replacements
         )
         writeTemplate(

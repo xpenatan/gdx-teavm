@@ -6,19 +6,20 @@ plugins {
 
 dependencies {
     implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation(project(":examples:basic:core"))
+    implementation(project(":examples:freetype:core"))
+    implementation(project(":extensions:c:gdx-freetype-c"))
 }
 
 gdxTeaVM {
-    assets.from(file("../assets"))
+    assets.from(file("../desktop/assets"))
 
     ios {
-        mainClass.set("TestIOSLauncher")
+        mainClass.set("FreetypeIOSLauncher")
         optimization.set(OptimizationLevel.NONE)
         debugInformation.set(false)
         obfuscated.set(false)
         minHeapSizeMb.set(16)
         maxHeapSizeMb.set(128)
-        bundleIdentifier.set("com.github.xpenatan.gdxteavm.basic.ios")
+        bundleIdentifier.set("com.github.xpenatan.gdxteavm.freetype.ios")
     }
 }

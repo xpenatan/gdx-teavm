@@ -12,6 +12,13 @@
 #include <string.h>
 #include <OpenGLES/ES3/gl.h>
 
+int32_t gdx_teavm_ios_controller_count(void);
+int64_t gdx_teavm_ios_controller_handle_at(int32_t index);
+void gdx_teavm_ios_controller_release(int64_t handle);
+int32_t gdx_teavm_ios_controller_connected(int64_t handle);
+int32_t gdx_teavm_ios_controller_button(int64_t handle, int32_t button_code);
+float gdx_teavm_ios_controller_axis(int64_t handle, int32_t axis_code);
+
 static int teavm_ios_sigwaitinfo(const sigset_t* signals, siginfo_t* info) {
     int signal = 0;
     int result = sigwait(signals, &signal);

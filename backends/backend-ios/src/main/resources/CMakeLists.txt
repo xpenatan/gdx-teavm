@@ -14,9 +14,8 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/stb/include")
 
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/src/app_include.c")
 
-file(GLOB_RECURSE GDX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx/*.c")
-list(APPEND SOURCES ${GDX_SOURCES})
-
+# app_include.c is a unity source that already includes gdx2d and the shared
+# optimization bridges. Keep only native sources that it does not include here.
 file(GLOB_RECURSE ETC1_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1/etc1/*.cpp")
 list(APPEND SOURCES ${ETC1_SOURCES})
 
@@ -24,11 +23,6 @@ set(TEAVM_MEMORY_STATS_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_
 if(EXISTS "${TEAVM_MEMORY_STATS_SOURCE}")
   list(APPEND SOURCES "${TEAVM_MEMORY_STATS_SOURCE}")
 endif()
-
-list(APPEND SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_fastmath.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_matrix4.c"
-)
 
 set(TEAVM_GENERATED_SOURCES_LIST "${CMAKE_CURRENT_SOURCE_DIR}/c/src/all.txt")
 set(TEAVM_SPRITEBATCH_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/teavm/teavm_spritebatch.c")
@@ -57,14 +51,20 @@ if(NOT TEAVM_SPRITEBATCH_GENERATED)
     set(TEAVM_SPRITEBATCH_GENERATED TRUE)
   endif()
 endif()
-if(EXISTS "${TEAVM_SPRITEBATCH_SOURCE}" AND TEAVM_SPRITEBATCH_GENERATED)
-  list(APPEND SOURCES "${TEAVM_SPRITEBATCH_SOURCE}")
+set(TEAVM_EXTENSION_PRE_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/pre_target")
+if(EXISTS "${TEAVM_EXTENSION_PRE_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_PRE_TARGET_FILES "${TEAVM_EXTENSION_PRE_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_PRE_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_PRE_TARGET_FILE IN LISTS TEAVM_EXTENSION_PRE_TARGET_FILES)
+    include("${TEAVM_EXTENSION_PRE_TARGET_FILE}")
+  endforeach()
 endif()
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+set(TEAVM_APP_TARGET "${PROJECT_NAME}")
+add_library(${TEAVM_APP_TARGET} STATIC ${SOURCES})
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  target_compile_options(${PROJECT_NAME} PRIVATE
+  target_compile_options(${TEAVM_APP_TARGET} PRIVATE
       -Wno-incompatible-pointer-types-discards-qualifiers
       -Wno-parentheses-equality
       -Wno-pointer-sign
@@ -72,5 +72,31 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(TEAVM_SPRITEBATCH_SHORT_HEADERS)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
+  target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
 endif()
+
+set(TEAVM_IOS_STATIC_DEPENDENCY_TARGETS "")
+set(TEAVM_EXTENSION_POST_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/post_target")
+if(EXISTS "${TEAVM_EXTENSION_POST_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_POST_TARGET_FILES "${TEAVM_EXTENSION_POST_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_POST_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_POST_TARGET_FILE IN LISTS TEAVM_EXTENSION_POST_TARGET_FILES)
+    include("${TEAVM_EXTENSION_POST_TARGET_FILE}")
+  endforeach()
+endif()
+
+set(TEAVM_IOS_BUNDLE_ARCHIVE "${CMAKE_BINARY_DIR}/lib${PROJECT_NAME}_bundle.a")
+set(TEAVM_IOS_BUNDLE_INPUTS "$<TARGET_FILE:${TEAVM_APP_TARGET}>")
+set(TEAVM_IOS_BUNDLE_DEPENDS ${TEAVM_APP_TARGET})
+foreach(TEAVM_IOS_DEPENDENCY_TARGET IN LISTS TEAVM_IOS_STATIC_DEPENDENCY_TARGETS)
+  list(APPEND TEAVM_IOS_BUNDLE_INPUTS "$<TARGET_FILE:${TEAVM_IOS_DEPENDENCY_TARGET}>")
+  list(APPEND TEAVM_IOS_BUNDLE_DEPENDS ${TEAVM_IOS_DEPENDENCY_TARGET})
+endforeach()
+
+add_custom_command(
+  OUTPUT "${TEAVM_IOS_BUNDLE_ARCHIVE}"
+  COMMAND "${CMAKE_COMMAND}" -E rm -f "${TEAVM_IOS_BUNDLE_ARCHIVE}"
+  COMMAND /usr/bin/libtool -static -o "${TEAVM_IOS_BUNDLE_ARCHIVE}" ${TEAVM_IOS_BUNDLE_INPUTS}
+  DEPENDS ${TEAVM_IOS_BUNDLE_DEPENDS}
+  VERBATIM)
+add_custom_target("${PROJECT_NAME}_bundle" ALL DEPENDS "${TEAVM_IOS_BUNDLE_ARCHIVE}")

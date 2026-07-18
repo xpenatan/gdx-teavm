@@ -433,15 +433,131 @@ jobs:
           path: runtime-proof/windows/${{ matrix.example.id }}
           if-no-files-found: warn
 
-  basic-ios-simulator:
-    name: Basic backend-ios simulator runtime
+  android:
+    name: ${{ matrix.example.label }} backend-android runtime
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - id: basic
+            label: Basic
+            application_id: com.github.xpenatan.gdx.teavm.examples.basic.android
+            activity: com.github.xpenatan.gdx.teavm.examples.basic.android.MainActivity
+          - id: freetype
+            label: FreeType
+            application_id: com.github.xpenatan.gdx.teavm.examples.freetype.android
+            activity: com.github.xpenatan.gdx.teavm.examples.freetype.android.MainActivity
+          - id: controllers
+            label: Controllers
+            application_id: com.github.xpenatan.gdx.teavm.examples.controllers.android
+            activity: com.github.xpenatan.gdx.teavm.examples.controllers.android.MainActivity
+    env:
+      APK_PATH: examples/${{ matrix.example.id }}/android/build/outputs/apk/debug/android-x86_64-debug.apk
+      APP_ID: ${{ matrix.example.application_id }}
+      ACTIVITY: ${{ matrix.example.activity }}
+      BUILD_TASK: :examples:${{ matrix.example.id }}:android:assembleDebug
+      PROOF_DIR: runtime-proof/android/${{ matrix.example.id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android native toolchain
+        run: sdkmanager "platforms;android-36" "ndk;27.0.12077973" "cmake;3.22.1"
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build backend-android debug APKs
+        run: |
+          set -o pipefail
+          mkdir -p "$PROOF_DIR"
+          ./gradlew "$BUILD_TASK" --console=plain --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
+
+          if [ ! -s "$APK_PATH" ]; then
+            echo "Expected x86_64 APK was not built at $APK_PATH"
+            exit 1
+          fi
+
+      - name: Run Android emulator and capture proof
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -no-audio -gpu swiftshader_indirect -no-boot-anim
+          script: |
+            set -euo pipefail
+
+            collect_diagnostics() {
+              adb shell dumpsys activity activities > "$PROOF_DIR/activities.txt" 2>&1 || true
+              adb logcat -d > "$PROOF_DIR/logcat.txt" 2>&1 || true
+            }
+            trap collect_diagnostics EXIT
+
+            adb install -r "$APK_PATH" | tee "$PROOF_DIR/install.log"
+            adb logcat -c
+            adb shell am force-stop "$APP_ID"
+            adb shell am start -W -n "$APP_ID/$ACTIVITY" | tee "$PROOF_DIR/launch.log"
+
+            sleep 12
+            APP_PROCESS="$(adb shell pidof "$APP_ID" | tr -d '\r')"
+            if [ -z "$APP_PROCESS" ]; then
+              echo "${{ matrix.example.label }} Android process exited before proof capture."
+              exit 1
+            fi
+            echo "$APP_PROCESS" > "$PROOF_DIR/process.txt"
+
+            adb exec-out screencap -p > "$PROOF_DIR/screenshot.png"
+            test -s "$PROOF_DIR/screenshot.png"
+
+      - name: Upload runtime proof
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.example.id }}-android-runtime-proof
+          path: runtime-proof/android/${{ matrix.example.id }}
+          if-no-files-found: warn
+
+  ios-simulator:
+    name: ${{ matrix.example.label }} backend-ios simulator runtime
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-15
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - id: basic
+            label: Basic
+            bundle_id: com.github.xpenatan.gdxteavm.basic.ios
+          - id: freetype
+            label: FreeType
+            bundle_id: com.github.xpenatan.gdxteavm.freetype.ios
+          - id: controllers
+            label: Controllers
+            bundle_id: com.github.xpenatan.gdxteavm.controllers.ios
     env:
-      APP_PATH: examples/basic/ios/build/xcode-derived/ios/Build/Products/Debug-iphonesimulator/GdxTeaVMIOSSpike.app
-      BUNDLE_ID: com.github.xpenatan.gdxteavm.ios.spike
-      PROOF_DIR: runtime-proof/ios
+      APP_PATH: examples/${{ matrix.example.id }}/ios/build/xcode-derived/ios/Build/Products/Debug-iphonesimulator/GdxTeaVMIOSSpike.app
+      BUILD_TASK: :examples:${{ matrix.example.id }}:ios:gdx_teavm_ios_build_simulator
+      BUNDLE_ID: ${{ matrix.example.bundle_id }}
+      EXAMPLE_DIR: examples/${{ matrix.example.id }}/ios
+      PROOF_DIR: runtime-proof/ios/${{ matrix.example.id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -472,7 +588,7 @@ jobs:
           } > "$PROOF_DIR/system-info.txt" 2>&1
           xcrun simctl list devices available -j > "$PROOF_DIR/devices.json"
 
-      - name: Build basic backend-ios simulator app
+      - name: Build backend-ios simulator app
         run: |
           set -uo pipefail
 
@@ -521,23 +637,23 @@ jobs:
           }
 
           set +e
-          ./gradlew :examples:basic:ios:gdx_teavm_ios_build_simulator --console=plain 2>&1 | tee "$PROOF_DIR/build.log"
+          ./gradlew "$BUILD_TASK" --console=plain 2>&1 | tee "$PROOF_DIR/build.log"
           status="${PIPESTATUS[0]}"
           set -e
 
           if [ "$status" -ne 0 ]; then
-            XCODE_PROJECT="$GITHUB_WORKSPACE/examples/basic/ios/build/dist/ios/xcode/GdxTeaVMIOSSpike.xcodeproj"
+            XCODE_PROJECT="$GITHUB_WORKSPACE/$EXAMPLE_DIR/build/dist/ios/xcode/GdxTeaVMIOSSpike.xcodeproj"
             if [ -d "$XCODE_PROJECT" ]; then
               xcodebuild \
                 -project "$XCODE_PROJECT" \
                 -scheme GdxTeaVMIOSSpike \
                 -sdk iphonesimulator \
                 -configuration Debug \
-                -derivedDataPath "$GITHUB_WORKSPACE/examples/basic/ios/build/xcode-derived/ios" \
+                -derivedDataPath "$GITHUB_WORKSPACE/$EXAMPLE_DIR/build/xcode-derived/ios" \
                 CODE_SIGNING_ALLOWED=NO \
                 build > "$PROOF_DIR/xcodebuild.log" 2>&1 || true
             fi
-            emit_text_error "backend-ios generated Xcode project" "$(find "$GITHUB_WORKSPACE/examples/basic/ios/build/dist/ios" -maxdepth 3 -print 2>&1 | tail -n 80)"
+            emit_text_error "backend-ios generated Xcode project" "$(find "$GITHUB_WORKSPACE/$EXAMPLE_DIR/build/dist/ios" -maxdepth 3 -print 2>&1 | tail -n 80)"
             emit_file_tail_error "backend-ios direct xcodebuild tail" "$PROOF_DIR/xcodebuild.log"
             emit_file_tail_error "backend-ios Gradle build tail" "$PROOF_DIR/build.log"
             emit_github_error "backend-ios simulator build failed"
@@ -683,6 +799,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: basic-ios-simulator-runtime-proof
-          path: runtime-proof/ios
+          name: ${{ matrix.example.id }}-ios-simulator-runtime-proof
+          path: runtime-proof/ios/${{ matrix.example.id }}
           if-no-files-found: warn

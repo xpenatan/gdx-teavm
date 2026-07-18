@@ -60,11 +60,21 @@ if(EXISTS "${TEAVM_SPRITEBATCH_SOURCE}" AND TEAVM_SPRITEBATCH_GENERATED)
   list(APPEND SOURCES "${TEAVM_SPRITEBATCH_SOURCE}")
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-z,max-page-size=16384")
+set(TEAVM_EXTENSION_PRE_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/pre_target")
+if(EXISTS "${TEAVM_EXTENSION_PRE_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_PRE_TARGET_FILES "${TEAVM_EXTENSION_PRE_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_PRE_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_PRE_TARGET_FILE IN LISTS TEAVM_EXTENSION_PRE_TARGET_FILES)
+    include("${TEAVM_EXTENSION_PRE_TARGET_FILE}")
+  endforeach()
+endif()
+
+set(TEAVM_APP_TARGET "${PROJECT_NAME}")
+add_library(${TEAVM_APP_TARGET} SHARED ${SOURCES})
+set_target_properties(${TEAVM_APP_TARGET} PROPERTIES LINK_FLAGS "-Wl,-z,max-page-size=16384")
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  target_compile_options(${PROJECT_NAME} PRIVATE
+  target_compile_options(${TEAVM_APP_TARGET} PRIVATE
       -Wno-incompatible-pointer-types-discards-qualifiers
       -Wno-parentheses-equality
       -Wno-pointer-sign
@@ -72,7 +82,16 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(TEAVM_SPRITEBATCH_SHORT_HEADERS)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
+  target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE TEAVM_GENERATED_SHORT_FILE_NAMES=1)
 endif()
 
-target_link_libraries(${PROJECT_NAME} android log GLESv3)
+set(TEAVM_EXTENSION_POST_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/cmake/post_target")
+if(EXISTS "${TEAVM_EXTENSION_POST_TARGET_DIR}")
+  file(GLOB TEAVM_EXTENSION_POST_TARGET_FILES "${TEAVM_EXTENSION_POST_TARGET_DIR}/*.cmake")
+  list(SORT TEAVM_EXTENSION_POST_TARGET_FILES)
+  foreach(TEAVM_EXTENSION_POST_TARGET_FILE IN LISTS TEAVM_EXTENSION_POST_TARGET_FILES)
+    include("${TEAVM_EXTENSION_POST_TARGET_FILE}")
+  endforeach()
+endif()
+
+target_link_libraries(${TEAVM_APP_TARGET} PRIVATE android log GLESv3)

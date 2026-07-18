@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		1E2A00000000000000000001 /* GdxTeaVMIOSSpikeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */; };
 		1E2A00000000000000000002 /* TeaVMViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000012 /* TeaVMViewController.swift */; };
-		1E2A00000000000000000003 /* app_include.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000014 /* app_include.c */; };
 		1E2A00000000000000000004 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000015 /* LaunchScreen.storyboard */; };
+		1E2A000000000000000000A1 /* IOSControllerBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A000000000000000000B1 /* IOSControllerBridge.swift */; };
+		1E2A000000000000000000A2 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E2A000000000000000000B2 /* GameController.framework */; };
+		1E2A000000000000000000A3 /* lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E2A000000000000000000B3 /* lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a */; };
 ${IOS_GLES_BUILD_FILES}
 		1E2A00000000000000000006 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 1E2A00000000000000000017 /* assets */; };
 ${IOS_ANGLE_BUILD_FILES}
@@ -22,8 +24,10 @@ ${IOS_ANGLE_COPY_BUILD_PHASE}
 		1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdxTeaVMIOSSpikeApp.swift; sourceTree = "<group>"; };
 		1E2A00000000000000000012 /* TeaVMViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaVMViewController.swift; sourceTree = "<group>"; };
 		1E2A00000000000000000013 /* GdxTeaVMIOSSpike-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GdxTeaVMIOSSpike-Bridging-Header.h"; sourceTree = "<group>"; };
-		1E2A00000000000000000014 /* app_include.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = app_include.c; path = "../c/src/app_include.c"; sourceTree = SOURCE_ROOT; };
 		1E2A00000000000000000015 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1E2A000000000000000000B1 /* IOSControllerBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSControllerBridge.swift; sourceTree = "<group>"; };
+		1E2A000000000000000000B2 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		1E2A000000000000000000B3 /* lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a"; path = "../build/cmake-simulator/lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a"; sourceTree = SOURCE_ROOT; };
 ${IOS_GLES_FILE_REFERENCES}
 		1E2A00000000000000000017 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../c/release/assets"; sourceTree = SOURCE_ROOT; };
 ${IOS_ANGLE_FILE_REFERENCES}
@@ -34,6 +38,8 @@ ${IOS_ANGLE_FILE_REFERENCES}
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E2A000000000000000000A2 /* GameController.framework in Frameworks */,
+				1E2A000000000000000000A3 /* lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a in Frameworks */,
 ${IOS_GLES_FRAMEWORK_FILES}
 ${IOS_ANGLE_FRAMEWORK_FILES}
 			);
@@ -57,6 +63,7 @@ ${IOS_ANGLE_FRAMEWORK_FILES}
 			children = (
 				1E2A00000000000000000011 /* GdxTeaVMIOSSpikeApp.swift */,
 				1E2A00000000000000000012 /* TeaVMViewController.swift */,
+				1E2A000000000000000000B1 /* IOSControllerBridge.swift */,
 				1E2A00000000000000000013 /* GdxTeaVMIOSSpike-Bridging-Header.h */,
 				1E2A00000000000000000015 /* LaunchScreen.storyboard */,
 			);
@@ -66,9 +73,9 @@ ${IOS_ANGLE_FRAMEWORK_FILES}
 		1E2A00000000000000000032 /* Generated TeaVM C */ = {
 			isa = PBXGroup;
 			children = (
-				1E2A00000000000000000014 /* app_include.c */,
+				1E2A000000000000000000B3 /* lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a */,
 			);
-			name = "Generated TeaVM C";
+			name = "Generated TeaVM native library";
 			sourceTree = "<group>";
 		};
 		1E2A00000000000000000033 /* Products */ = {
@@ -82,6 +89,7 @@ ${IOS_ANGLE_FRAMEWORK_FILES}
 		1E2A00000000000000000034 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1E2A000000000000000000B2 /* GameController.framework */,
 ${IOS_ANGLE_FRAMEWORK_GROUP_FILES}
 ${IOS_GLES_FRAMEWORK_GROUP_FILES}
 			);
@@ -95,6 +103,7 @@ ${IOS_GLES_FRAMEWORK_GROUP_FILES}
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1E2A00000000000000000041 /* Build configuration list for PBXNativeTarget "GdxTeaVMIOSSpike" */;
 			buildPhases = (
+				1E2A000000000000000000C1 /* Build TeaVM native library */,
 				1E2A00000000000000000050 /* Sources */,
 				1E2A00000000000000000020 /* Frameworks */,
 				1E2A00000000000000000051 /* Resources */,
@@ -154,6 +163,30 @@ ${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1E2A000000000000000000C1 /* Build TeaVM native library */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build TeaVM native library";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/../build/cmake-simulator/lib${IOS_NATIVE_LIBRARY_NAME}_bundle.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nARCH=\"${CURRENT_ARCH:-}\"\nif [ -z \"$ARCH\" ] || [ \"$ARCH\" = \"undefined_arch\" ]; then\n  ARCH=\"$(uname -m)\"\nfi\nCMAKE_BUILD_DIR=\"$PROJECT_DIR/../build/cmake-simulator\"\ncmake -S \"$PROJECT_DIR/..\" -B \"$CMAKE_BUILD_DIR\" -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=iphonesimulator -DCMAKE_OSX_ARCHITECTURES=\"$ARCH\" -DCMAKE_OSX_DEPLOYMENT_TARGET=\"$IPHONEOS_DEPLOYMENT_TARGET\" -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY -DCMAKE_BUILD_TYPE=\"$CONFIGURATION\"\ncmake --build \"$CMAKE_BUILD_DIR\" --config \"$CONFIGURATION\" --target \"${IOS_NATIVE_LIBRARY_NAME}_bundle\" --parallel 3\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1E2A00000000000000000050 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -161,7 +194,7 @@ ${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 			files = (
 				1E2A00000000000000000001 /* GdxTeaVMIOSSpikeApp.swift in Sources */,
 				1E2A00000000000000000002 /* TeaVMViewController.swift in Sources */,
-				1E2A00000000000000000003 /* app_include.c in Sources */,
+				1E2A000000000000000000A1 /* IOSControllerBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

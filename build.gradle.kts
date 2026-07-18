@@ -4,13 +4,9 @@ plugins {
 
 LibExt.initProperties(rootDir)
 
-val androidApplicationProjects = setOf(
-    ":examples:basic:android",
-    ":examples:controllers:android"
-)
-
 subprojects {
-    if(path !in androidApplicationProjects) {
+    val isAndroidApplicationExample = path.startsWith(":examples:") && path.endsWith(":android")
+    if(!isAndroidApplicationExample) {
         apply {
             plugin("java")
         }

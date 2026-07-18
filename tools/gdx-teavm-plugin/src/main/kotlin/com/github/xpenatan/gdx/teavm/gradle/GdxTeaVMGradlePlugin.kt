@@ -971,6 +971,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
             releasePath.convention(extension.ios.releasePath)
             xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            nativeLibraryName.convention(extension.ios.targetFileName)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
             overwrite.convention(extension.ios.overwriteXcodeProject)
             graphicsApi.convention(extension.ios.graphicsApi)
             outputs.upToDateWhen { false }
@@ -984,6 +986,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
             releasePath.convention(extension.ios.releasePath)
             xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            nativeLibraryName.convention(extension.ios.targetFileName)
+            bundleIdentifier.convention(extension.ios.bundleIdentifier)
             overwrite.convention(true)
             graphicsApi.convention(extension.ios.graphicsApi)
             outputs.upToDateWhen { false }

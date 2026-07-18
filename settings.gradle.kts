@@ -49,6 +49,7 @@ else {
 include(":extensions:asset-loader")
 include(":extensions:c:gdx-freetype-c")
 include(":extensions:c:gdx-controllers-glfw")
+include(":extensions:ios:gdx-controllers-ios")
 if(hasAndroidSdk) {
     include(":extensions:android:gdx-controllers-android")
 }
@@ -82,12 +83,17 @@ include(":examples:freetype:desktop")
 include(":examples:freetype:desktop-c")
 include(":examples:freetype:plugin")
 include(":examples:freetype:web")
+include(":examples:freetype:ios")
+if(hasAndroidSdk) {
+    include(":examples:freetype:android")
+}
 
 include(":examples:controllers:core")
 include(":examples:controllers:desktop")
 include(":examples:controllers:desktop-c")
 include(":examples:controllers:plugin")
 include(":examples:controllers:web")
+include(":examples:controllers:ios")
 if(hasAndroidSdk) {
     include(":examples:controllers:android")
 }
