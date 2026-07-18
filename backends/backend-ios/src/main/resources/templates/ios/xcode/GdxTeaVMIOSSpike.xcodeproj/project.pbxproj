@@ -182,7 +182,7 @@ ${IOS_ANGLE_COPY_BUILD_PHASE_REF}
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nARCH=\"${CURRENT_ARCH:-}\"\nif [ -z \"$ARCH\" ] || [ \"$ARCH\" = \"undefined_arch\" ]; then\n  ARCH=\"$(uname -m)\"\nfi\nCMAKE_BUILD_DIR=\"$PROJECT_DIR/../build/cmake-simulator\"\ncmake -S \"$PROJECT_DIR/..\" -B \"$CMAKE_BUILD_DIR\" -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=iphonesimulator -DCMAKE_OSX_ARCHITECTURES=\"$ARCH\" -DCMAKE_OSX_DEPLOYMENT_TARGET=\"$IPHONEOS_DEPLOYMENT_TARGET\" -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY -DCMAKE_BUILD_TYPE=\"$CONFIGURATION\"\ncmake --build \"$CMAKE_BUILD_DIR\" --config \"$CONFIGURATION\" --target \"${IOS_NATIVE_LIBRARY_NAME}_bundle\" --parallel 3\n";
+			shellScript = "set -e\nXCODE_ARCHS=\"${ARCHS:-${CURRENT_ARCH:-}}\"\nif [ -z \"$XCODE_ARCHS\" ] || [ \"$XCODE_ARCHS\" = \"undefined_arch\" ]; then\n  XCODE_ARCHS=\"$(uname -m)\"\nfi\nCMAKE_ARCHS=\"$(printf '%s' \"$XCODE_ARCHS\" | tr ' ' ';')\"\nCMAKE_BUILD_DIR=\"$PROJECT_DIR/../build/cmake-simulator\"\ncmake -S \"$PROJECT_DIR/..\" -B \"$CMAKE_BUILD_DIR\" -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=iphonesimulator -DCMAKE_OSX_ARCHITECTURES=\"$CMAKE_ARCHS\" -DCMAKE_OSX_DEPLOYMENT_TARGET=\"$IPHONEOS_DEPLOYMENT_TARGET\" -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY -DCMAKE_BUILD_TYPE=\"$CONFIGURATION\"\ncmake --build \"$CMAKE_BUILD_DIR\" --config \"$CONFIGURATION\" --target \"${IOS_NATIVE_LIBRARY_NAME}_bundle\" --parallel 3\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
