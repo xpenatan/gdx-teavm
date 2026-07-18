@@ -33,6 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.github.xpenatan.gdx.teavm.examples.shared.ExampleFpsLogger;
 
 public class UITest implements ApplicationListener {
     Object[] listEntries = {"This is a list entry1", "And another one1", "The meaning of life1", "Is hard to come by1",
@@ -46,9 +47,11 @@ public class UITest implements ApplicationListener {
     Texture texture1;
     Texture texture2;
     Label fpsLabel;
+    ExampleFpsLogger fpsLogger;
 
     @Override
     public void create () {
+        fpsLogger = new ExampleFpsLogger();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         texture1 = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
         texture2 = new Texture(Gdx.files.internal("data/badlogic.jpg"));
@@ -198,6 +201,7 @@ public class UITest implements ApplicationListener {
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
+        fpsLogger.log();
     }
 
     @Override

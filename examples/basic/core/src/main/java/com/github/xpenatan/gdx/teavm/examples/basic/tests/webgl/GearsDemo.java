@@ -30,6 +30,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.xpenatan.gdx.teavm.examples.shared.ExampleFpsLogger;
 
 /**
  * @author xpenatan
@@ -60,11 +61,13 @@ public class GearsDemo implements ApplicationListener {
     SpriteBatch batch;
     long time;
     int fps;
+    ExampleFpsLogger fpsLogger;
 
     CameraInputController cameraController;
 
     @Override
     public void create() {
+        fpsLogger = new ExampleFpsLogger();
 
         String runtime = System.getProperty("java.runtime.name");
         String osName = System.getProperty("os.name");
@@ -181,6 +184,7 @@ public class GearsDemo implements ApplicationListener {
                 font.draw(batch, "FPS: " + fps, 15, Gdx.graphics.getHeight() - 15);
             batch.end();
         }
+        fpsLogger.log();
     }
 
     @Override

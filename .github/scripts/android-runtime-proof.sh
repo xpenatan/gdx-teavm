@@ -22,3 +22,10 @@ echo "$APP_PROCESS" > "$PROOF_DIR/process.txt"
 
 adb exec-out screencap -p > "$PROOF_DIR/screenshot.png"
 test -s "$PROOF_DIR/screenshot.png"
+
+if adb exec-out run-as "$APP_ID" cat files/fps.log > "$PROOF_DIR/fps.log" 2> "$PROOF_DIR/fps-pull.log" &&
+  [ -s "$PROOF_DIR/fps.log" ]; then
+  cat "$PROOF_DIR/fps.log"
+else
+  echo "::warning title=Missing FPS log::$EXAMPLE_LABEL backend-android did not write fps.log"
+fi

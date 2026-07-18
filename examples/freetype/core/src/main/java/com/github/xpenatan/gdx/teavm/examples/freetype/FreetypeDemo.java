@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.github.xpenatan.gdx.teavm.examples.shared.ExampleFpsLogger;
 
 /**
  * @author xpenatan
@@ -17,9 +18,11 @@ public class FreetypeDemo implements ApplicationListener {
     BitmapFont font;
     SpriteBatch batch;
     BitmapFont ftFont;
+    ExampleFpsLogger fpsLogger;
 
     @Override
     public void create() {
+        fpsLogger = new ExampleFpsLogger();
         boolean flip = false;
         batch = new SpriteBatch();
         if(flip) {
@@ -65,6 +68,7 @@ public class FreetypeDemo implements ApplicationListener {
         batch.draw(ftFont.getRegion(), 350, 0);
 // batch.enableBlending();
         batch.end();
+        fpsLogger.log();
     }
 
     @Override

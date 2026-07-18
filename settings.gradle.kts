@@ -61,6 +61,7 @@ include(":extensions:web:gdx-freetype-web")
 //include(":tools:generator:desktop")
 
 // Examples
+include(":examples:shared")
 include(":examples:basic:core")
 include(":examples:basic:platforms:desktop:lwjgl3")
 include(":examples:basic:platforms:desktop:graalvm")

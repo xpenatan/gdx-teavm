@@ -1,4 +1,6 @@
 dependencies {
+    implementation(project(":examples:shared"))
+
     implementation("io.github.quillraven.fleks:Fleks:2.12")
     implementation("com.kotcrab.vis:vis-ui:1.5.8")
 
@@ -11,4 +13,3 @@ dependencies {
 
     implementation("net.onedaybeard.artemis:artemis-odb:2.3.0")
 }
-

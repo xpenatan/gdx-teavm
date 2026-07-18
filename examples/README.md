@@ -23,6 +23,11 @@ Only leaf projects under `platforms` contain launchers and runnable Gradle tasks
 
 A leaf is omitted when an example does not support that runtime or build style.
 Platform leaves depend directly on their example's `core`; they do not depend on sibling platform projects.
+Reusable example-only instrumentation lives in the sibling `shared` project and is consumed by the example core projects.
+
+## CI runtime proofs
+
+The `Runtime Examples` workflow publishes one `runtime-examples-proof` artifact per run. Its directories are organized by platform and example, each proof includes the raw `fps.log`, and `fps-summary.md` reports the sample count, average, minimum, maximum, and latest FPS captured from each runtime's libGDX `FPSLogger` output.
 
 ## Available examples
 

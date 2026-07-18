@@ -129,12 +129,23 @@ jobs:
           ffmpeg -y -f x11grab -video_size 1280x720 -framerate 15 -i "$DISPLAY.0" -t 5 "$PROOF_DIR/video.mp4" || true
           test -s "$PROOF_DIR/screenshot.png"
 
+      - name: Collect FPS log
+        if: always()
+        run: |
+          FPS_SOURCE="$(dirname "$GITHUB_WORKSPACE/$APP_PATH")/fps.log"
+          if [ -s "$FPS_SOURCE" ]; then
+            cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
+            cat "$PROOF_DIR/fps.log"
+          else
+            echo "::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c Linux did not write fps.log"
+          fi
+
       - name: Upload runtime proof
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: ${{ matrix.example.id }}-desktop-c-linux-runtime-proof
-          path: runtime-proof/linux/${{ matrix.example.id }}
+          path: runtime-proof
           if-no-files-found: warn
 
   desktop-c-macos:
@@ -298,12 +309,23 @@ jobs:
             exit 1
           fi
 
+      - name: Collect FPS log
+        if: always()
+        run: |
+          FPS_SOURCE="$(dirname "$GITHUB_WORKSPACE/$APP_PATH")/fps.log"
+          if [ -s "$FPS_SOURCE" ]; then
+            cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
+            cat "$PROOF_DIR/fps.log"
+          else
+            echo "::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c macOS did not write fps.log"
+          fi
+
       - name: Upload runtime proof
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: ${{ matrix.example.id }}-desktop-c-macos-runtime-proof
-          path: runtime-proof/macos/${{ matrix.example.id }}
+          path: runtime-proof
           if-no-files-found: warn
 
   desktop-c-windows:
@@ -460,12 +482,26 @@ jobs:
             }
           }
 
+      - name: Collect FPS log
+        if: always()
+        shell: pwsh
+        run: |
+          $source = Join-Path (Split-Path -Parent (Join-Path $env:GITHUB_WORKSPACE $env:APP_PATH)) 'fps.log'
+          $destination = Join-Path (Join-Path $env:GITHUB_WORKSPACE $env:PROOF_DIR) 'fps.log'
+          if ((Test-Path -LiteralPath $source -PathType Leaf) -and (Get-Item -LiteralPath $source).Length -gt 0) {
+            Copy-Item -LiteralPath $source -Destination $destination -Force
+            Get-Content -LiteralPath $destination
+          }
+          else {
+            Write-Output '::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c Windows did not write fps.log'
+          }
+
       - name: Upload runtime proof
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: ${{ matrix.example.id }}-desktop-c-windows-runtime-proof
-          path: runtime-proof/windows/${{ matrix.example.id }}
+          path: runtime-proof
           if-no-files-found: warn
 
   android:
@@ -550,7 +586,7 @@ jobs:
         if: always()
         with:
           name: ${{ matrix.example.id }}-android-runtime-proof
-          path: runtime-proof/android/${{ matrix.example.id }}
+          path: runtime-proof
           if-no-files-found: warn
 
   ios-simulator:
@@ -814,10 +850,67 @@ jobs:
             wait "$APP_PID" 2>/dev/null || true
           fi
 
+          DATA_CONTAINER="$(xcrun simctl get_app_container "$DEVICE_UDID" "$BUNDLE_ID" data 2>> "$PROOF_DIR/simulator.log" || true)"
+          FPS_SOURCE=""
+          if [ -n "$DATA_CONTAINER" ] && [ -d "$DATA_CONTAINER" ]; then
+            FPS_SOURCE="$(find "$DATA_CONTAINER" -type f -name fps.log -print -quit 2>/dev/null || true)"
+          fi
+          if [ -n "$FPS_SOURCE" ] && [ -s "$FPS_SOURCE" ]; then
+            cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
+            cat "$PROOF_DIR/fps.log"
+          else
+            echo "::warning title=Missing FPS log::${{ matrix.example.label }} backend-ios did not write fps.log"
+          fi
+
       - name: Upload runtime proof
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: ${{ matrix.example.id }}-ios-simulator-runtime-proof
-          path: runtime-proof/ios/${{ matrix.example.id }}
+          path: runtime-proof
           if-no-files-found: warn
+
+  merge-runtime-proofs:
+    name: Merge runtime proofs
+    if: ${{ always() && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success') }}
+    needs:
+      - desktop-c-linux
+      - desktop-c-macos
+      - desktop-c-windows
+      - android
+      - ios-simulator
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout FPS summary script
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Download runtime proofs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: '*-runtime-proof'
+          path: runtime-proof
+          merge-multiple: true
+
+      - name: Create FPS summary
+        run: |
+          python3 .github/scripts/runtime-fps-summary.py runtime-proof
+          cat runtime-proof/fps-summary.md
+          cat runtime-proof/fps-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload FPS summary for merge
+        uses: actions/upload-artifact@v7
+        with:
+          name: fps-summary-runtime-proof
+          path: runtime-proof/fps-summary.md
+          if-no-files-found: error
+
+      - name: Merge runtime proof artifacts
+        uses: actions/upload-artifact/merge@v7
+        with:
+          name: runtime-examples-proof
+          pattern: '*-runtime-proof'
+          separate-directories: false
+          delete-merged: true

@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.github.xpenatan.gdx.teavm.examples.shared.ExampleFpsLogger;
 
 public class ControllerDemo implements ApplicationListener, ControllerListener {
 
@@ -31,6 +32,7 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
     private ShapeRenderer shapes;
     private SpriteBatch batch;
     private BitmapFont font;
+    private ExampleFpsLogger fpsLogger;
     private float width = BASE_WIDTH;
     private float height = BASE_HEIGHT;
     private float markerX = 378f;
@@ -45,6 +47,7 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
 
     @Override
     public void create() {
+        fpsLogger = new ExampleFpsLogger();
         shapes = new ShapeRenderer();
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -93,6 +96,7 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
         font.draw(batch, "Button: " + buttonText(), textX, textY - lineHeight * 4f);
         font.draw(batch, "Event: " + lastEvent, textX, textY - lineHeight * 5f);
         batch.end();
+        fpsLogger.log();
     }
 
     private void updateControllerState() {
