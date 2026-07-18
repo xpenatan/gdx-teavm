@@ -3,8 +3,10 @@ project(${PROJECT_NAME} C)
 
 set(CMAKE_C_STANDARD 11)
 
-if(MSVC)
-  # Packaged Windows native archives use the release static CRT in every configuration.
+# Keep the existing MT behavior as the default, but preserve an explicit
+# standard CMake runtime selection supplied by the consumer.
+if(MSVC AND (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY
+    OR "${CMAKE_MSVC_RUNTIME_LIBRARY}" STREQUAL ""))
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
@@ -160,8 +162,29 @@ if (WIN32)
   # Set Visual Studio debugger working directory
   set_target_properties(${TEAVM_APP_TARGET} PROPERTIES
       VS_DEBUGGER_WORKING_DIRECTORY "${RELEASE_PATH}")
-  # Link libraries
-  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE glfw3_mt opengl32 glew32s)
+  if(MSVC)
+    get_target_property(TEAVM_MSVC_RUNTIME_LIBRARY
+        ${TEAVM_APP_TARGET} MSVC_RUNTIME_LIBRARY)
+    if(NOT TEAVM_MSVC_RUNTIME_LIBRARY
+        OR TEAVM_MSVC_RUNTIME_LIBRARY MATCHES "-NOTFOUND$")
+      set(TEAVM_MSVC_RUNTIME_LIBRARY "${CMAKE_MSVC_RUNTIME_LIBRARY}")
+    endif()
+    string(TOUPPER "${TEAVM_MSVC_RUNTIME_LIBRARY}" TEAVM_MSVC_RUNTIME_LIBRARY)
+    if(TEAVM_MSVC_RUNTIME_LIBRARY MATCHES "DLL")
+      set(TEAVM_GLFW_LIBRARY glfw3)
+      set(TEAVM_GLEW_LIBRARY glew32s_md)
+    else()
+      set(TEAVM_GLFW_LIBRARY glfw3_mt)
+      set(TEAVM_GLEW_LIBRARY glew32s)
+    endif()
+  else()
+    set(TEAVM_GLFW_LIBRARY glfw3_mt)
+    set(TEAVM_GLEW_LIBRARY glew32s)
+  endif()
+  target_link_libraries(${TEAVM_APP_TARGET} PRIVATE
+      ${TEAVM_GLFW_LIBRARY}
+      opengl32
+      ${TEAVM_GLEW_LIBRARY})
 
   # Set startup project for Visual Studio
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TEAVM_APP_TARGET})

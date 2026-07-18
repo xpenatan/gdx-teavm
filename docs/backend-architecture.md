@@ -180,6 +180,12 @@ TeaReflectionSupplier
 
 Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSupplier`. Built-in default reflection patterns are owned by `TeaReflectionSupplier`; the Gradle plugin only passes the `reflectionDefaults` flag and user-provided `reflection(...)` patterns.
 
+## Native Toolchain Policy
+
+The GLFW backend passes arbitrary CMake cache entries from `glfw.cmakeDefinitions` to its generated Windows and Unix configure scripts. Consumers can therefore use standard CMake settings such as `CMAKE_MSVC_RUNTIME_LIBRARY` without a backend-specific enum. Windows keeps its historical MT default when the setting is absent, but an explicit standard CMake selection is never overwritten.
+
+Windows resources remain prebuilt and compact: GLFW and GLEW provide matching MT and MD static archives, and CMake selects the pair that matches the application target. Linux and macOS continue to use the GLFW and GLEW packages selected by their CMake toolchain. Android and iOS use their dedicated native backends and toolchains; MSVC runtime flags are not portable to those targets.
+
 ## JSO Overlay Notes
 
 TeaVM Wasm strict mode performs runtime checks for non-transparent `@JSClass` types. If a Java class is only a facade over a JavaScript object and no real JavaScript global constructor exists for it, mark it transparent:

@@ -252,7 +252,18 @@ gdxTeaVM {
 }
 ```
 
-`cmakeDefinitions` is a low-level integration hook for arbitrary CMake cache entries. Libraries should expose typed settings for user-facing choices instead of requiring consumers to know internal cache keys or values.
+`cmakeDefinitions` is an intentional low-level pass-through for ordinary CMake cache entries and toolchain settings. Windows keeps the existing MT default, while an explicit standard CMake setting selects MD or MT without a gdx-teavm-specific enum:
+
+```kotlin
+gdxTeaVM {
+    glfw {
+        cmakeDefinition("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL") // /MD
+        // cmakeDefinition("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded") // /MT
+    }
+}
+```
+
+The same map is passed to the generated shell configure scripts on Linux and macOS, where consumers can supply settings understood by those CMake toolchains. Android and iOS use their own target build integrations rather than the desktop GLFW scripts; MSVC's `/MT` and `/MD` options do not apply to them.
 
 Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 

@@ -23,6 +23,7 @@ public class TeaGLFWNativeProjectTest {
         LinkedHashMap<String, String> definitions = new LinkedHashMap<>();
         definitions.put("EXAMPLE_FEATURE", "ENABLED");
         definitions.put("RESOURCE_ROOT", "native resources!");
+        definitions.put("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL");
 
         TeaGLFWNativeProject project = new TeaGLFWNativeProject(
                 TeaGLFWNativeProject.class.getClassLoader(),
@@ -36,7 +37,8 @@ public class TeaGLFWNativeProjectTest {
         assertThat(batchScript).contains(
                 "\"%CMAKE_PATH%\" -S . -B build\\cmake "
                         + "\"-DEXAMPLE_FEATURE=ENABLED\" "
-                        + "\"-DRESOURCE_ROOT=native resources!\"");
+                        + "\"-DRESOURCE_ROOT=native resources!\" "
+                        + "\"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL\"");
         assertThat(batchScript).contains("setlocal disabledelayedexpansion");
         assertWindowsCMakeDiscovery(batchScript);
 
@@ -47,7 +49,8 @@ public class TeaGLFWNativeProjectTest {
         assertThat(shellScript).contains(
                 "cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=\"$BUILD_CONFIG\" "
                         + "'-DEXAMPLE_FEATURE=ENABLED' "
-                        + "'-DRESOURCE_ROOT=native resources!'");
+                        + "'-DRESOURCE_ROOT=native resources!' "
+                        + "'-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'");
     }
 
     @Test
@@ -62,8 +65,8 @@ public class TeaGLFWNativeProjectTest {
     }
 
     @Test
-    public void windowsNativeProjectUsesStaticRuntimeDependencies() throws Exception {
-        File buildRoot = temporaryFolder.newFolder("static-runtime-project");
+    public void windowsNativeProjectSelectsMatchingPrebuiltRuntimeLibraries() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("runtime-flexible-project");
         TeaGLFWNativeProject project = new TeaGLFWNativeProject(
                 TeaGLFWNativeProject.class.getClassLoader(),
                 buildRoot,
@@ -73,11 +76,21 @@ public class TeaGLFWNativeProjectTest {
         project.write("test_app");
 
         String cmake = read(buildRoot, "CMakeLists.txt");
+        assertThat(cmake).contains("NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY");
         assertThat(cmake).contains("set(CMAKE_MSVC_RUNTIME_LIBRARY \"MultiThreaded\")");
-        assertThat(cmake).contains("_ITERATOR_DEBUG_LEVEL=0");
-        assertThat(cmake).contains("glfw3_mt opengl32 glew32s");
+        assertThat(cmake).contains("get_target_property(TEAVM_MSVC_RUNTIME_LIBRARY");
+        assertThat(cmake).contains("set(TEAVM_GLFW_LIBRARY glfw3_mt)");
+        assertThat(cmake).contains("set(TEAVM_GLFW_LIBRARY glfw3)");
+        assertThat(cmake).contains("set(TEAVM_GLEW_LIBRARY glew32s)");
+        assertThat(cmake).contains("set(TEAVM_GLEW_LIBRARY glew32s_md)");
         assertThat(TeaGLFWNativeProject.class.getClassLoader().getResource(
                 "external_cpp/glfw/lib-vc2022/glfw3_mt.lib")).isNotNull();
+        assertThat(TeaGLFWNativeProject.class.getClassLoader().getResource(
+                "external_cpp/glfw/lib-vc2022/glfw3.lib")).isNotNull();
+        assertThat(TeaGLFWNativeProject.class.getClassLoader().getResource(
+                "external_cpp/glew-2.3.0/lib/Release/x64/glew32s.lib")).isNotNull();
+        assertThat(TeaGLFWNativeProject.class.getClassLoader().getResource(
+                "external_cpp/glew-2.3.0/lib/Release/x64/glew32s_md.lib")).isNotNull();
     }
 
     @Test

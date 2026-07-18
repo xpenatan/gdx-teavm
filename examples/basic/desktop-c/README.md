@@ -74,9 +74,12 @@ The Gradle tasks delegate native build/run behavior to ```TeaGLFWBackend```. A J
 ```java
 TeaGLFWBackend backend = new TeaGLFWBackend()
         .setBuildType(TeaGLFWBackend.NativeBuildType.DEBUG)
+        .cmakeDefinition("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL")
         .setBuildExecutableAfterBuild(true)
         .setRunExecutableAfterBuild(true);
 ```
+
+The CMake definition above selects `/MD` on MSVC. Use `MultiThreaded` for `/MT`, or omit it to keep gdx-teavm's existing MT default. `cmakeDefinition(...)` is generic and can pass other CMake settings on Windows, Linux, and macOS.
 
 The example Gradle tasks pass normal launcher arguments:
 
@@ -111,9 +114,9 @@ Run the script for your platform. It will:
 1. Open a terminal in the ```build/dist``` folder
 2. Run CMake to generate build files:
    ```
-   cmake .
+   cmake -S . -B build/cmake -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
    ```
-3. Open the generated Visual Studio solution file
+3. Open the generated Visual Studio solution file in `build/cmake`
 4. Build the project in Visual Studio
 
 ### Linux/macOS
