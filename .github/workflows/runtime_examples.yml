@@ -380,6 +380,40 @@ jobs:
             throw 'The Windows executable still depends on a GLFW or GLEW DLL.'
           }
 
+      - name: Install Mesa software OpenGL
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: mingw-w64-x86_64-mesa
+
+      - name: Deploy Mesa software OpenGL
+        shell: pwsh
+        env:
+          MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+        run: |
+          $app = Join-Path $env:GITHUB_WORKSPACE $env:APP_PATH
+          $appDir = Split-Path -Parent $app
+          $mesaBin = Join-Path $env:MSYS2_LOCATION 'mingw64\bin'
+          $mesaFiles = @(
+            (Join-Path $mesaBin 'opengl32.dll')
+            (Join-Path $mesaBin 'libgallium_wgl.dll')
+          )
+
+          foreach ($mesaFile in $mesaFiles) {
+            if (-not (Test-Path -LiteralPath $mesaFile -PathType Leaf)) {
+              throw "Mesa runtime file was not installed at $mesaFile"
+            }
+            Copy-Item -LiteralPath $mesaFile -Destination $appDir -Force
+          }
+
+          $mesaBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Get-FileHash -Algorithm SHA256 -LiteralPath $mesaFiles |
+            Format-Table -AutoSize |
+            Out-String |
+            Set-Content -Path "$env:PROOF_DIR/mesa-files.txt"
+
       - name: Run and capture proof
         shell: pwsh
         run: |
@@ -388,6 +422,7 @@ jobs:
           $proofDir = Join-Path $env:GITHUB_WORKSPACE $env:PROOF_DIR
           $stdout = Join-Path $proofDir 'app.log'
           $stderr = Join-Path $proofDir 'app-error.log'
+          $env:GALLIUM_DRIVER = 'llvmpipe'
           $process = Start-Process -FilePath $app -WorkingDirectory $appDir -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
 
           try {
@@ -459,6 +494,7 @@ jobs:
       APP_ID: ${{ matrix.example.application_id }}
       ACTIVITY: ${{ matrix.example.activity }}
       BUILD_TASK: :examples:${{ matrix.example.id }}:platforms:android:assembleDebug
+      EXAMPLE_LABEL: ${{ matrix.example.label }}
       PROOF_DIR: runtime-proof/android/${{ matrix.example.id }}
     steps:
       - name: Checkout code
@@ -507,31 +543,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -no-audio -gpu swiftshader_indirect -no-boot-anim
-          script: |
-            bash -euo pipefail <<'BASH'
-
-            collect_diagnostics() {
-              adb shell dumpsys activity activities > "$PROOF_DIR/activities.txt" 2>&1 || true
-              adb logcat -d > "$PROOF_DIR/logcat.txt" 2>&1 || true
-            }
-            trap collect_diagnostics EXIT
-
-            adb install -r "$APK_PATH" | tee "$PROOF_DIR/install.log"
-            adb logcat -c
-            adb shell am force-stop "$APP_ID"
-            adb shell am start -W -n "$APP_ID/$ACTIVITY" | tee "$PROOF_DIR/launch.log"
-
-            sleep 12
-            APP_PROCESS="$(adb shell pidof "$APP_ID" | tr -d '\r')"
-            if [ -z "$APP_PROCESS" ]; then
-              echo "${{ matrix.example.label }} Android process exited before proof capture."
-              exit 1
-            fi
-            echo "$APP_PROCESS" > "$PROOF_DIR/process.txt"
-
-            adb exec-out screencap -p > "$PROOF_DIR/screenshot.png"
-            test -s "$PROOF_DIR/screenshot.png"
-            BASH
+          script: bash .github/scripts/android-runtime-proof.sh
 
       - name: Upload runtime proof
         uses: actions/upload-artifact@v4
