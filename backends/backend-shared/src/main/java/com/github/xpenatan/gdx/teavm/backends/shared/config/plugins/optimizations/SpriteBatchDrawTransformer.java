@@ -92,6 +92,11 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             GdxTeaVMSpriteBatchSubstitution.class, "drawSpriteArrayNative", GdxTeaVMSpriteBatchSubstitution.class,
             GdxTeaVMSpriteSubstitution[].class, int.class, float.class, float.class, void.class)
             .getDescriptor();
+    private static final MethodDescriptor DRAW_SPRITE_ARRAY_UNCHECKED_NATIVE = new MethodReference(
+            GdxTeaVMSpriteBatchSubstitution.class, "drawSpriteArrayUncheckedNative",
+            GdxTeaVMSpriteBatchSubstitution.class, GdxTeaVMSpriteSubstitution[].class, int.class, float.class,
+            float.class, void.class)
+            .getDescriptor();
     private static final MethodReference DRAW_SPRITE_ARRAY_NATIVE_TARGET = new MethodReference(
             SPRITE_BATCH_CLASS, "drawSpriteArrayNative", ValueType.object(SPRITE_BATCH_CLASS),
             ValueType.arrayOf(ValueType.object(SPRITE_CLASS)), ValueType.INTEGER, ValueType.FLOAT, ValueType.FLOAT,
@@ -133,6 +138,8 @@ public class SpriteBatchDrawTransformer implements ClassHolderTransformer {
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS, DRAW_SPRITE_NATIVE);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,
                     DRAW_SPRITE_ARRAY_NATIVE);
+            replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,
+                    DRAW_SPRITE_ARRAY_UNCHECKED_NATIVE);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,
                     DRAW_TEXTURE_TRANSFORM_NATIVE);
             replaceMethod(cls, context, SPRITE_BATCH_SUBSTITUTION_CLASS, SPRITE_BATCH_CLASS,

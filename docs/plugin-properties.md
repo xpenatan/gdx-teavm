@@ -147,7 +147,7 @@ The same `devServer {}` block is available inside `js {}` and `wasm {}`. It deli
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `enabled` | `Property<Boolean>` | `false` | Makes the target's existing run task use TeaVM's persistent development server. |
-| `autoBuild` | `Property<Boolean>` | `true` | Automatically watches build inputs, recompiles Java changes, and rebuilds the target while the run task is active. Set to `false` to keep serving without automatic compilation. |
+| `autoBuild` | `Property<Boolean>` | `true` | Automatically watches build inputs, recompiles Java changes, and incrementally rebuilds through the same TeaVM server while the run task is active. Set to `false` to keep serving without automatic compilation. |
 | `autoReload` | `Property<Boolean>` | `false` | Installs the plugin's shared JS/Wasm reload client, which reloads connected pages after TeaVM rebuilds successfully. It does not itself compile or watch source files. |
 | `processMemory` | `Property<Int>` | Target `processMemory`, normally `512` | Maximum heap size in megabytes for the development-server process. |
 | `staticDirs` | `ConfigurableFileCollection` | empty | Additional directories served as static files. |

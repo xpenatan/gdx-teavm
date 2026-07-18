@@ -1,22 +1,13 @@
 #include <stdint.h>
 #include <string.h>
 #include "../../../src/core.h"
-#include "../../../src/exceptions.h"
 
 #ifdef TEAVM_GENERATED_SHORT_FILE_NAMES
 #include "../../../src/c/c/b/g/g/g/Sprite.h"
 #include "../../../src/c/c/b/g/g/g/SpriteBatch.h"
-#include "../../../src/c/j/l/IllegalStateException.h"
-#include "../../../src/c/j/l/RuntimeException.h"
-#include "../../../src/c/o/t/r/Allocator.h"
-#include "../../../src/c/o/t/r/ExceptionHandling.h"
 #else
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/Sprite.h"
 #include "../../../src/classes/com/badlogic/gdx/graphics/g2d/SpriteBatch.h"
-#include "../../../src/classes/java/lang/IllegalStateException.h"
-#include "../../../src/classes/java/lang/RuntimeException.h"
-#include "../../../src/classes/org/teavm/runtime/Allocator.h"
-#include "../../../src/classes/org/teavm/runtime/ExceptionHandling.h"
 #endif
 
 #include "../pure/spritebatch.h"
@@ -28,12 +19,6 @@
 #else
 #define TEAVM_SPRITEBATCH_INLINE static inline
 #endif
-
-static void teavm_throw_spritebatch_not_drawing(void) {
-    void* exception = meth_otr_Allocator_allocate(&jl_IllegalStateException_Cls);
-    meth_jl_IllegalStateException__init_(exception, NULL);
-    meth_otr_ExceptionHandling_throwException(exception);
-}
 
 TEAVM_SPRITEBATCH_INLINE void teavm_spritebatch_apply_texture_size(cls_cbggg_SpriteBatch* batch,
         int32_t texture_width, int32_t texture_height) {
@@ -133,10 +118,6 @@ void teavm_spritebatch_draw_sprite(void* batch_obj, void* sprite_obj, int32_t te
     sprite_obj = teavm_nullCheck(sprite_obj);
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
     cls_cbggg_Sprite* sprite = (cls_cbggg_Sprite*)sprite_obj;
-    if (!batch->fld_drawing) {
-        teavm_throw_spritebatch_not_drawing();
-        return;
-    }
 
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;
@@ -161,10 +142,6 @@ void teavm_spritebatch_draw_sprite_array(void* batch_obj, void* sprites_array_ob
 
     batch_obj = teavm_nullCheck(batch_obj);
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
-    if (!batch->fld_drawing) {
-        teavm_throw_spritebatch_not_drawing();
-        return;
-    }
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;
     teavm_spritebatch_append_sprite(batch_obj, batch, sprite, batch_vertices_array, &current_idx, 0, 0);
@@ -183,10 +160,6 @@ void teavm_spritebatch_draw_texture_transform(void* batch_obj, void* texture,
         float origin_x, float origin_y, float width, float height, float scale_x, float scale_y, float rotation,
         int32_t src_x, int32_t src_y, int32_t src_width, int32_t src_height, int32_t flip_x, int32_t flip_y) {
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
-    if (!batch->fld_drawing) {
-        teavm_throw_spritebatch_not_drawing();
-        return;
-    }
 
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;
@@ -215,10 +188,6 @@ void teavm_spritebatch_draw_texture_rect(void* batch_obj, void* texture,
         int32_t texture_width, int32_t texture_height, float x, float y,
         float width, float height) {
     cls_cbggg_SpriteBatch* batch = (cls_cbggg_SpriteBatch*)batch_obj;
-    if (!batch->fld_drawing) {
-        teavm_throw_spritebatch_not_drawing();
-        return;
-    }
 
     TeaVM_Array* batch_vertices_array = batch->fld_vertices;
     int32_t current_idx = batch->fld_idx;

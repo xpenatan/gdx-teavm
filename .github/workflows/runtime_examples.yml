@@ -14,14 +14,28 @@ permissions:
   contents: read
 
 jobs:
-  freetype-desktop-c-linux:
-    name: FreeType desktop-c Linux runtime
+  desktop-c-linux:
+    name: ${{ matrix.example.label }} desktop-c Linux runtime
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - id: basic
+            label: Basic
+            executable: app
+          - id: freetype
+            label: FreeType
+            executable: freetype
+          - id: controllers
+            label: Controllers
+            executable: controllers
     env:
-      APP_PATH: examples/freetype/desktop-c/build/dist/c/release/freetype_debug
-      PROOF_DIR: runtime-proof/linux
+      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug
+      BUILD_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_debug_build
+      PROOF_DIR: runtime-proof/linux/${{ matrix.example.id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,7 +53,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             ffmpeg \
-            imagemagick \
             libgl1-mesa-dev \
             libwayland-dev \
             libxkbcommon-dev \
@@ -52,10 +65,10 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Build FreeType desktop-c debug executable
+      - name: Build desktop-c debug executable
         run: |
           mkdir -p "$PROOF_DIR"
-          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_debug_build --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
+          ./gradlew "$BUILD_TASK" --stacktrace 2>&1 | tee "$PROOF_DIR/build.log"
           exit "${PIPESTATUS[0]}"
 
       - name: Verify GLFW and GLEW are statically linked
@@ -107,7 +120,7 @@ jobs:
 
           sleep 8
           if ! kill -0 "$APP_PID" 2>/dev/null; then
-            echo "FreeType desktop-c process exited before proof capture."
+            echo "${{ matrix.example.label }} desktop-c process exited before proof capture."
             cat "$PROOF_DIR/app.log" || true
             exit 1
           fi
@@ -120,18 +133,32 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: freetype-desktop-c-linux-runtime-proof
-          path: runtime-proof/linux
+          name: ${{ matrix.example.id }}-desktop-c-linux-runtime-proof
+          path: runtime-proof/linux/${{ matrix.example.id }}
           if-no-files-found: warn
 
-  freetype-desktop-c-macos:
-    name: FreeType desktop-c macOS runtime
+  desktop-c-macos:
+    name: ${{ matrix.example.label }} desktop-c macOS runtime
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-15
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - id: basic
+            label: Basic
+            executable: app
+          - id: freetype
+            label: FreeType
+            executable: freetype
+          - id: controllers
+            label: Controllers
+            executable: controllers
     env:
-      APP_PATH: examples/freetype/desktop-c/build/dist/c/release/freetype_debug
-      PROOF_DIR: runtime-proof/macos
+      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug
+      GENERATE_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_generate
+      PROOF_DIR: runtime-proof/macos/${{ matrix.example.id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -144,32 +171,16 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Install native runtime dependencies
-        env:
-          HOMEBREW_NO_AUTO_UPDATE: 1
-          HOMEBREW_NO_INSTALL_CLEANUP: 1
-        run: brew install glew
-
-      - name: Build GLFW with macOS software renderer retry
+      - name: Prepare GLFW macOS software renderer retry source
         run: |
           set -euo pipefail
 
           GLFW_SRC="$RUNNER_TEMP/glfw"
-          GLFW_BUILD="$RUNNER_TEMP/glfw-build"
-          GLFW_PREFIX="$GITHUB_WORKSPACE/.deps/glfw"
 
           git init "$GLFW_SRC"
           git -C "$GLFW_SRC" remote add origin https://github.com/glfw/glfw.git
           git -C "$GLFW_SRC" fetch --depth 1 origin pull/2571/head
           git -C "$GLFW_SRC" checkout FETCH_HEAD
-
-          cmake -S "$GLFW_SRC" -B "$GLFW_BUILD" \
-            -DCMAKE_INSTALL_PREFIX="$GLFW_PREFIX" \
-            -DBUILD_SHARED_LIBS=OFF \
-            -DGLFW_BUILD_EXAMPLES=OFF \
-            -DGLFW_BUILD_TESTS=OFF \
-            -DGLFW_BUILD_DOCS=OFF
-          cmake --build "$GLFW_BUILD" --target install --parallel 3
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
@@ -187,17 +198,18 @@ jobs:
           } > "$PROOF_DIR/system-info.txt" 2>&1
           system_profiler SPDisplaysDataType > "$PROOF_DIR/graphics-info.txt" 2>&1 || true
 
-      - name: Generate FreeType desktop-c project
+      - name: Generate desktop-c project
         run: |
           mkdir -p "$PROOF_DIR"
-          ./gradlew :examples:freetype:desktop-c:freetype_desktop_c_generate --stacktrace 2>&1 | tee "$PROOF_DIR/generate.log"
+          ./gradlew "$GENERATE_TASK" --stacktrace 2>&1 | tee "$PROOF_DIR/generate.log"
           exit "${PIPESTATUS[0]}"
 
       - name: Validate pinned macOS static dependencies
+        if: ${{ matrix.example.id == 'basic' }}
         run: |
           set -euo pipefail
 
-          SOURCE_DIR="$GITHUB_WORKSPACE/examples/freetype/desktop-c/build/dist"
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/desktop-c/build/dist"
           BUILD_DIR="$SOURCE_DIR/build/cmake-pinned-dependencies"
           cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug 2>&1 | tee "$PROOF_DIR/pinned-configure.log"
           cmake --build "$BUILD_DIR" --target glfw gdx_teavm_glew --parallel 3 2>&1 | tee "$PROOF_DIR/pinned-build.log"
@@ -208,20 +220,17 @@ jobs:
           test -n "$GLEW_ARCHIVE"
           file "$GLFW_ARCHIVE" "$GLEW_ARCHIVE" | tee "$PROOF_DIR/pinned-archives.txt"
 
-      - name: Build FreeType desktop-c debug executable for runtime proof
+      - name: Build desktop-c debug executable for runtime proof
         run: |
           set -euo pipefail
 
-          SOURCE_DIR="$GITHUB_WORKSPACE/examples/freetype/desktop-c/build/dist"
+          SOURCE_DIR="$GITHUB_WORKSPACE/examples/${{ matrix.example.id }}/desktop-c/build/dist"
           BUILD_DIR="$SOURCE_DIR/build/cmake-runtime"
-          GLFW_PREFIX="$GITHUB_WORKSPACE/.deps/glfw"
-          GLEW_PREFIX="$(brew --prefix glew)"
+          GLFW_SRC="$RUNNER_TEMP/glfw"
 
           cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" \
             -DCMAKE_BUILD_TYPE=Debug \
-            -DGDX_TEAVM_GLFW_USE_SYSTEM_LIBS=ON \
-            -DGLEW_USE_STATIC_LIBS=TRUE \
-            -DCMAKE_PREFIX_PATH="$GLFW_PREFIX;$GLEW_PREFIX" 2>&1 | tee "$PROOF_DIR/build-configure.log"
+            -DFETCHCONTENT_SOURCE_DIR_GDX_TEAVM_GLFW="$GLFW_SRC" 2>&1 | tee "$PROOF_DIR/build-configure.log"
           cmake --build "$BUILD_DIR" --config Debug --parallel 3 2>&1 | tee "$PROOF_DIR/build.log"
 
           APP_ABS="$GITHUB_WORKSPACE/$APP_PATH"
@@ -271,21 +280,21 @@ jobs:
 
           sleep 12
           if ! kill -0 "$APP_PID" 2>/dev/null; then
-            echo "FreeType desktop-c process exited before proof capture."
+            echo "${{ matrix.example.label }} desktop-c process exited before proof capture."
             cat "$PROOF_DIR/app.log" || true
             pushd "$APP_DIR"
             lldb --batch -o run -o "bt all" -- "./$APP_NAME" > "$GITHUB_WORKSPACE/$PROOF_DIR/lldb.log" 2>&1 || true
             popd
-            emit_github_error "FreeType desktop-c macOS app exited before proof"
+            emit_github_error "${{ matrix.example.label }} desktop-c macOS app exited before proof"
             exit 1
           fi
 
           if ! screencapture -x "$PROOF_DIR/screenshot.png" 2> "$PROOF_DIR/screencapture.log"; then
-            emit_github_error "FreeType desktop-c macOS screencapture failed"
+            emit_github_error "${{ matrix.example.label }} desktop-c macOS screencapture failed"
             exit 1
           fi
           if [ ! -s "$PROOF_DIR/screenshot.png" ]; then
-            emit_github_error "FreeType desktop-c macOS screenshot was empty"
+            emit_github_error "${{ matrix.example.label }} desktop-c macOS screenshot was empty"
             exit 1
           fi
 
@@ -293,8 +302,135 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: freetype-desktop-c-macos-runtime-proof
-          path: runtime-proof/macos
+          name: ${{ matrix.example.id }}-desktop-c-macos-runtime-proof
+          path: runtime-proof/macos/${{ matrix.example.id }}
+          if-no-files-found: warn
+
+  desktop-c-windows:
+    name: ${{ matrix.example.label }} desktop-c Windows runtime
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - id: basic
+            label: Basic
+            executable: app
+          - id: freetype
+            label: FreeType
+            executable: freetype
+          - id: controllers
+            label: Controllers
+            executable: controllers
+    env:
+      APP_PATH: examples/${{ matrix.example.id }}/desktop-c/build/dist/c/release/${{ matrix.example.executable }}_debug.exe
+      BUILD_TASK: :examples:${{ matrix.example.id }}:desktop-c:${{ matrix.example.id }}_desktop_c_debug_build
+      PROOF_DIR: runtime-proof/windows/${{ matrix.example.id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Record runner info
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:PROOF_DIR | Out-Null
+          @(
+            [System.Environment]::OSVersion.VersionString
+            "Architecture: $env:PROCESSOR_ARCHITECTURE"
+            (cmake --version | Select-Object -First 1)
+          ) | Set-Content -Path "$env:PROOF_DIR/system-info.txt"
+
+      - name: Build desktop-c debug executable
+        shell: pwsh
+        run: |
+          & .\gradlew.bat $env:BUILD_TASK --stacktrace 2>&1 |
+            Tee-Object -FilePath "$env:PROOF_DIR/build.log"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify GLFW and GLEW are statically linked
+        shell: pwsh
+        run: |
+          $app = Join-Path $env:GITHUB_WORKSPACE $env:APP_PATH
+          if (-not (Test-Path -LiteralPath $app -PathType Leaf)) {
+            throw "Desktop-C executable was not built at $app"
+          }
+
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $dumpbin = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find 'VC\Tools\MSVC\**\bin\Hostx64\x64\dumpbin.exe' |
+            Select-Object -First 1
+          if (-not $dumpbin) {
+            throw 'Could not locate dumpbin.exe'
+          }
+
+          $dependencies = & $dumpbin /DEPENDENTS $app 2>&1
+          $dependencies | Tee-Object -FilePath "$env:PROOF_DIR/native-dependencies.txt"
+          if (($dependencies -join "`n") -match '(?i)(glfw|glew).*\.dll') {
+            throw 'The Windows executable still depends on a GLFW or GLEW DLL.'
+          }
+
+      - name: Run and capture proof
+        shell: pwsh
+        run: |
+          $app = Join-Path $env:GITHUB_WORKSPACE $env:APP_PATH
+          $appDir = Split-Path -Parent $app
+          $proofDir = Join-Path $env:GITHUB_WORKSPACE $env:PROOF_DIR
+          $stdout = Join-Path $proofDir 'app.log'
+          $stderr = Join-Path $proofDir 'app-error.log'
+          $process = Start-Process -FilePath $app -WorkingDirectory $appDir -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
+
+          try {
+            Start-Sleep -Seconds 10
+            $process.Refresh()
+            if ($process.HasExited) {
+              Get-Content -LiteralPath $stdout, $stderr -ErrorAction SilentlyContinue
+              throw '${{ matrix.example.label }} desktop-c process exited before proof capture.'
+            }
+
+            Add-Type -AssemblyName System.Windows.Forms
+            Add-Type -AssemblyName System.Drawing
+            $bounds = [System.Windows.Forms.SystemInformation]::VirtualScreen
+            $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            try {
+              $graphics.CopyFromScreen($bounds.Left, $bounds.Top, 0, 0, $bounds.Size)
+              $screenshot = Join-Path $proofDir 'screenshot.png'
+              $bitmap.Save($screenshot, [System.Drawing.Imaging.ImageFormat]::Png)
+            }
+            finally {
+              $graphics.Dispose()
+              $bitmap.Dispose()
+            }
+
+            if (-not (Test-Path -LiteralPath $screenshot) -or
+                (Get-Item -LiteralPath $screenshot).Length -eq 0) {
+              throw '${{ matrix.example.label }} desktop-c Windows screenshot was empty.'
+            }
+          }
+          finally {
+            if (-not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force
+              $process.WaitForExit()
+            }
+          }
+
+      - name: Upload runtime proof
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.example.id }}-desktop-c-windows-runtime-proof
+          path: runtime-proof/windows/${{ matrix.example.id }}
           if-no-files-found: warn
 
   basic-ios-simulator:

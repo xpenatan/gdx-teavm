@@ -20,6 +20,8 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
     }
 
     public void drawSprite(GdxTeaVMSpriteSubstitution sprite) {
+        if (!drawing)
+            throw new IllegalStateException("SpriteBatch.begin must be called before draw.");
         Texture texture = sprite.getTexture();
         if (texture != lastTexture) {
             switchTexture(texture);
@@ -32,13 +34,24 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
             GdxTeaVMSpriteSubstitution sprite, int textureWidth, int textureHeight);
 
     @Import(name = "teavm_spritebatch_draw_sprite_array")
-    public static native void drawSpriteArrayNative(GdxTeaVMSpriteBatchSubstitution batch,
+    private static native void drawSpriteArrayUncheckedNative(GdxTeaVMSpriteBatchSubstitution batch,
             GdxTeaVMSpriteSubstitution[] sprites, int count, float rotationDelta, float scale);
+
+    public static void drawSpriteArrayNative(GdxTeaVMSpriteBatchSubstitution batch,
+            GdxTeaVMSpriteSubstitution[] sprites, int count, float rotationDelta, float scale) {
+        if (count <= 0)
+            return;
+        if (!batch.drawing)
+            throw new IllegalStateException("SpriteBatch.begin must be called before draw.");
+        drawSpriteArrayUncheckedNative(batch, sprites, count, rotationDelta, scale);
+    }
 
     @Override
     public void draw(Texture texture, float x, float y, float originX, float originY, float width, float height,
             float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
             boolean flipX, boolean flipY) {
+        if (!drawing)
+            throw new IllegalStateException("SpriteBatch.begin must be called before draw.");
         int textureWidth = texture.getWidth();
         int textureHeight = texture.getHeight();
         if (texture != lastTexture) {
@@ -56,6 +69,8 @@ public final class GdxTeaVMSpriteBatchSubstitution extends SpriteBatch {
 
     @Override
     public void draw(Texture texture, float x, float y, float width, float height) {
+        if (!drawing)
+            throw new IllegalStateException("SpriteBatch.begin must be called before draw.");
         int textureWidth = texture.getWidth();
         int textureHeight = texture.getHeight();
         if (texture != lastTexture) {

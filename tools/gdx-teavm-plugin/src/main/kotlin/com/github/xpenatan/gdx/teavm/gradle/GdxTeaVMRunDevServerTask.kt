@@ -16,7 +16,6 @@ import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.work.DisableCachingByDefault
 import org.teavm.gradle.tasks.DevServerManager
 import org.teavm.gradle.tasks.DevServerTask
-import org.teavm.gradle.tasks.ProjectDevServerManager
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -56,35 +55,6 @@ internal fun rewriteTeaVMDevServerStderr(
         return null
     }
     return message
-}
-
-/**
- * TeaVM's Gradle integration disables the development server's classpath watcher. The gdx-teavm
- * run task is long-lived, so the watcher must remain enabled to notice class directories rebuilt
- * automatically or by an external build. Its compiler caches also need invalidating before an
- * explicit rebuild so the new class bytes are read.
- */
-internal fun prepareTeaVMDevServerBuild(projectPath: String) {
-    val manager = DevServerManager.instance().getProjectManager(projectPath)
-    try {
-        val client = teaVMDevServerClientField.get(manager)
-        client.javaClass.getMethod("setNoWatch", Boolean::class.javaPrimitiveType).invoke(client, false)
-        val running = client.javaClass.getMethod("isRunning").invoke(client) as Boolean
-        if(running) {
-            client.javaClass.getMethod("invalidateCache").invoke(client)
-        }
-    }
-    catch(t: Throwable) {
-        throw GradleException("Could not prepare TeaVM's development-server rebuild", t)
-    }
-}
-
-private val teaVMDevServerClientField by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    ProjectDevServerManager::class.java.getDeclaredField("client").also { field ->
-        if(!field.trySetAccessible()) {
-            throw GradleException("TeaVM's development-server client is not accessible")
-        }
-    }
 }
 
 @DisableCachingByDefault(because = "Runs a persistent TeaVM development-server session")

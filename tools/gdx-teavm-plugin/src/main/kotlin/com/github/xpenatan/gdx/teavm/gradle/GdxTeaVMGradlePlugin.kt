@@ -808,10 +808,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getProxyUrl().set(entryServerPort.map { port -> "http://127.0.0.1:$port" })
                 getProxyPath().set("/")
                 getProperties().put(WEBAPP_INDEX_PATH, GDX_TEAVM_DEV_SERVER_INDEX_FILE)
-                val configuredTask = this
-                doFirst {
-                    prepareTeaVMDevServerBuild(configuredTask.getProjectPath().get())
-                }
             }
             project.tasks.register<GdxTeaVMRunDevServerTask>("gdx_teavm_web_js_run") {
                 group = TASK_GROUP
@@ -854,10 +850,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getProxyUrl().set(entryServerPort.map { port -> "http://127.0.0.1:$port" })
                 getProxyPath().set("/")
                 getProperties().put(WEBAPP_INDEX_PATH, GDX_TEAVM_DEV_SERVER_INDEX_FILE)
-                val configuredTask = this
-                doFirst {
-                    prepareTeaVMDevServerBuild(configuredTask.getProjectPath().get())
-                }
             }
             project.tasks.register<GdxTeaVMRunDevServerTask>("gdx_teavm_web_wasm_run") {
                 group = TASK_GROUP

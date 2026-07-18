@@ -157,11 +157,11 @@ js {
 }
 ```
 
-TeaVM's development server supplies its own source maps, Java sources, and debug metadata, so `sourceMap`, `sourceFilePolicy`, and `debugInformation` do not need to be enabled for the run task. Those target properties continue to control normal build output. `autoBuild` defaults to `true`, keeping the Gradle invocation active and recompiling Java changes while the existing server remains available. A failed rebuild leaves the previous application running and waits for another change.
+TeaVM's development server supplies its own source maps, Java sources, and debug metadata, so `sourceMap`, `sourceFilePolicy`, and `debugInformation` do not need to be enabled for the run task. Those target properties continue to control normal build output. `autoBuild` defaults to `true`, keeping the Gradle invocation active and recompiling Java changes while reusing the same TeaVM server and its incremental compiler caches. A failed rebuild leaves the previous application running and waits for another change.
 
 Set `autoBuild` to `false` to keep the development server running without automatically compiling source changes. Classes can still be rebuilt explicitly from the IDE or another Gradle invocation, and TeaVM will detect the updated class files. `autoReload` is independent: when enabled, it reloads connected JavaScript and Wasm pages after any successful TeaVM rebuild.
 
-The plugin serves the generated entry page with an HTML content type at `/`, while TeaVM continues to serve the compiled code and debug artifacts. Stop the Gradle task with Ctrl+C, or the IDE's stop action, to stop both the entry adapter and TeaVM server and release the port. `serverPort` controls either Jetty or the TeaVM development server, depending on the selected mode.
+The plugin serves the generated entry page with an HTML content type at `/`, while TeaVM continues to serve the compiled code and debug artifacts. The run task remains active as the visible owner of the development session. Automatic rebuilds reuse the same TeaVM server process and its incremental compiler caches; they do not restart it. Stop the run task with Ctrl+C, or the IDE's stop action, only when the session is finished. This stops both the entry adapter and TeaVM server and releases the port. `serverPort` controls either Jetty or the TeaVM development server, depending on the selected mode.
 
 ### Checking Browser Debugging
 
