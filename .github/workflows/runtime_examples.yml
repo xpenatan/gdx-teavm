@@ -309,7 +309,7 @@ jobs:
   desktop-c-windows:
     name: ${{ matrix.example.label }} desktop-c Windows runtime
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -475,6 +475,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Install Android native toolchain
         run: sdkmanager "platforms;android-36" "ndk;27.0.12077973" "cmake;3.22.1"
 
@@ -502,7 +508,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-snapshot -no-window -no-audio -gpu swiftshader_indirect -no-boot-anim
           script: |
-            set -euo pipefail
+            bash -euo pipefail <<'BASH'
 
             collect_diagnostics() {
               adb shell dumpsys activity activities > "$PROOF_DIR/activities.txt" 2>&1 || true
@@ -525,6 +531,7 @@ jobs:
 
             adb exec-out screencap -p > "$PROOF_DIR/screenshot.png"
             test -s "$PROOF_DIR/screenshot.png"
+            BASH
 
       - name: Upload runtime proof
         uses: actions/upload-artifact@v4

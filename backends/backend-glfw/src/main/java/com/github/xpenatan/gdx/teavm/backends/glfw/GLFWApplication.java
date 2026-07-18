@@ -535,7 +535,7 @@ public class GLFWApplication implements GLFWApplicationBase {
                     openGL ? sharedContextWindow : 0);
         }
         if (windowHandle == 0) {
-            throw new GdxRuntimeException("Couldn't create window");
+            throw new GdxRuntimeException("Couldn't create window: " + GLFW.getErrorMessage());
         }
         GLFWWindow.setSizeLimits(windowHandle, config.windowMinWidth, config.windowMinHeight, config.windowMaxWidth,
                 config.windowMaxHeight);

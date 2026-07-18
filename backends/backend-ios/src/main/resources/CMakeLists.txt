@@ -4,7 +4,9 @@ project(${PROJECT_NAME} C CXX)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/src")
+# app_include.c lives in c/src and resolves generated quoted headers relative to
+# itself. Do not add c/src globally: TeaVM emits headers such as string.h and
+# uchar.h whose names would otherwise shadow the iOS SDK headers.
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/etc1")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/gdx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/c/external_cpp/teavm_optimizations/pure")

@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.teavm.backends.glfw.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.github.xpenatan.gdx.teavm.backends.glfw.GLFWCallbacks;
+import org.teavm.backend.c.runtime.Memory;
 import org.teavm.interop.Address;
 import org.teavm.interop.Function;
 import org.teavm.interop.Import;
@@ -806,6 +807,22 @@ public class GLFW {
 
     public static void setErrorCallback(GLFWErrorCallback glfwErrorCallback) {
         glfwSetErrorCallback(glfwErrorCallback);
+    }
+
+    public static String getErrorMessage() {
+        Address description = Memory.malloc(Address.sizeOf());
+        description.putAddress(Address.fromInt(0));
+        try {
+            int error = glfwGetError(description);
+            Address textAddress = description.getAddress();
+            String text = textAddress.toLong() == 0 ? "" : Strings.fromC(textAddress);
+            if (error == GLFW_NO_ERROR) {
+                return "GLFW reported no error";
+            }
+            return text.isEmpty() ? "GLFW error " + error : "GLFW error " + error + ": " + text;
+        } finally {
+            Memory.free(description);
+        }
     }
 
     @Import(name = "glfwSetWindowFocusCallback")
