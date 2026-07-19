@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -80,20 +81,26 @@ def build_summary(root: Path) -> tuple[str, list[str]]:
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print(f"Usage: {Path(sys.argv[0]).name} <runtime-proof-directory>", file=sys.stderr)
-        return 2
+    parser = argparse.ArgumentParser()
+    parser.add_argument("root", type=Path, help="runtime proof directory")
+    parser.add_argument(
+        "--require-complete",
+        action="store_true",
+        help="fail when any platform/example proof has no FPS samples",
+    )
+    args = parser.parse_args()
 
-    root = Path(sys.argv[1])
+    root = args.root
     summary, missing = build_summary(root)
     output = root / "fps-summary.md"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(summary, encoding="utf-8")
 
+    annotation = "error" if args.require_complete else "warning"
     for proof in missing:
-        print(f"::warning title=Missing FPS samples::{proof} did not contain FPSLogger output")
+        print(f"::{annotation} title=Missing FPS samples::{proof} did not contain FPSLogger output")
     print(f"Wrote {output} with {len(PLATFORMS) * len(EXAMPLES) - len(missing)} FPS result(s).")
-    return 0
+    return 1 if args.require_complete and missing else 0
 
 
 if __name__ == "__main__":

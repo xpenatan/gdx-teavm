@@ -11,6 +11,8 @@ dependencies {
 }
 
 gdxTeaVM {
+    assets.from(file("../../../assets"))
+
     js {
         mainClass.set("ControllerWebLauncher")
         optimization.set(OptimizationLevel.BALANCED)

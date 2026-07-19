@@ -27,5 +27,6 @@ if adb exec-out run-as "$APP_ID" cat files/fps.log > "$PROOF_DIR/fps.log" 2> "$P
   [ -s "$PROOF_DIR/fps.log" ]; then
   cat "$PROOF_DIR/fps.log"
 else
-  echo "::warning title=Missing FPS log::$EXAMPLE_LABEL backend-android did not write fps.log"
+  echo "::error title=Missing FPS log::$EXAMPLE_LABEL backend-android did not write fps.log"
+  exit 1
 fi

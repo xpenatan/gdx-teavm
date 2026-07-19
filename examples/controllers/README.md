@@ -1,6 +1,6 @@
 # Controllers example
 
-The portable controller demo lives in `core`. Each platform leaf selects the matching gdx-controllers backend or gdx-teavm extension.
+The portable controller demo lives in `core`, and its shared font lives in `assets`. Each platform leaf consumes those assets and selects the matching gdx-controllers backend or gdx-teavm extension.
 
 | Platform | Gradle project | Representative task |
 | --- | --- | --- |

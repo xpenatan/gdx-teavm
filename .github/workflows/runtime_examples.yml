@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: read
 
 jobs:
@@ -137,7 +138,8 @@ jobs:
             cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
             cat "$PROOF_DIR/fps.log"
           else
-            echo "::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c Linux did not write fps.log"
+            echo "::error title=Missing FPS log::${{ matrix.example.label }} desktop-c Linux did not write fps.log"
+            exit 1
           fi
 
       - name: Upload runtime proof
@@ -147,6 +149,7 @@ jobs:
           name: ${{ matrix.example.id }}-desktop-c-linux-runtime-proof
           path: runtime-proof
           if-no-files-found: warn
+          overwrite: true
 
   desktop-c-macos:
     name: ${{ matrix.example.label }} desktop-c macOS runtime
@@ -317,7 +320,8 @@ jobs:
             cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
             cat "$PROOF_DIR/fps.log"
           else
-            echo "::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c macOS did not write fps.log"
+            echo "::error title=Missing FPS log::${{ matrix.example.label }} desktop-c macOS did not write fps.log"
+            exit 1
           fi
 
       - name: Upload runtime proof
@@ -327,6 +331,7 @@ jobs:
           name: ${{ matrix.example.id }}-desktop-c-macos-runtime-proof
           path: runtime-proof
           if-no-files-found: warn
+          overwrite: true
 
   desktop-c-windows:
     name: ${{ matrix.example.label }} desktop-c Windows runtime
@@ -493,7 +498,7 @@ jobs:
             Get-Content -LiteralPath $destination
           }
           else {
-            Write-Output '::warning title=Missing FPS log::${{ matrix.example.label }} desktop-c Windows did not write fps.log'
+            throw '${{ matrix.example.label }} desktop-c Windows did not write fps.log'
           }
 
       - name: Upload runtime proof
@@ -503,6 +508,7 @@ jobs:
           name: ${{ matrix.example.id }}-desktop-c-windows-runtime-proof
           path: runtime-proof
           if-no-files-found: warn
+          overwrite: true
 
   android:
     name: ${{ matrix.example.label }} backend-android runtime
@@ -588,6 +594,7 @@ jobs:
           name: ${{ matrix.example.id }}-android-runtime-proof
           path: runtime-proof
           if-no-files-found: warn
+          overwrite: true
 
   ios-simulator:
     name: ${{ matrix.example.label }} backend-ios simulator runtime
@@ -857,10 +864,17 @@ jobs:
           fi
           if [ -n "$FPS_SOURCE" ] && [ -s "$FPS_SOURCE" ]; then
             cp "$FPS_SOURCE" "$PROOF_DIR/fps.log"
-            cat "$PROOF_DIR/fps.log"
           else
-            echo "::warning title=Missing FPS log::${{ matrix.example.label }} backend-ios did not write fps.log"
+            grep -hE 'FPSLogger.*fps:[[:space:]]*[0-9]+' "$PROOF_DIR/launch.log" > "$PROOF_DIR/fps.log" || true
+            if [ ! -s "$PROOF_DIR/fps.log" ]; then
+              grep -hE 'FPSLogger.*fps:[[:space:]]*[0-9]+' "$PROOF_DIR/app.log" > "$PROOF_DIR/fps.log" || true
+            fi
           fi
+          if [ ! -s "$PROOF_DIR/fps.log" ]; then
+            echo "::error title=Missing FPS log::${{ matrix.example.label }} backend-ios did not produce FPSLogger output"
+            exit 1
+          fi
+          cat "$PROOF_DIR/fps.log"
 
       - name: Upload runtime proof
         uses: actions/upload-artifact@v7
@@ -869,6 +883,7 @@ jobs:
           name: ${{ matrix.example.id }}-ios-simulator-runtime-proof
           path: runtime-proof
           if-no-files-found: warn
+          overwrite: true
 
   merge-runtime-proofs:
     name: Merge runtime proofs
@@ -887,6 +902,14 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
+      - name: Restore previous final proof
+        if: ${{ github.run_attempt != '1' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          name: runtime-examples-proof
+          path: runtime-proof
+
       - name: Download runtime proofs
         uses: actions/download-artifact@v8
         with:
@@ -900,17 +923,35 @@ jobs:
           cat runtime-proof/fps-summary.md
           cat runtime-proof/fps-summary.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload FPS summary for merge
+      - name: Upload final runtime proof
         uses: actions/upload-artifact@v7
         with:
-          name: fps-summary-runtime-proof
-          path: runtime-proof/fps-summary.md
-          if-no-files-found: error
-
-      - name: Merge runtime proof artifacts
-        uses: actions/upload-artifact/merge@v7
-        with:
           name: runtime-examples-proof
-          pattern: '*-runtime-proof'
-          separate-directories: false
-          delete-merged: true
+          path: runtime-proof
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Delete temporary runtime proof artifacts
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: Number(process.env.GITHUB_RUN_ID),
+              per_page: 100,
+            });
+            const temporaryArtifacts = artifacts.filter((artifact) =>
+              artifact.name.endsWith('-runtime-proof')
+            );
+            for (const artifact of temporaryArtifacts) {
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+              });
+              core.info(`Deleted temporary artifact ${artifact.name} (${artifact.id})`);
+            }
+
+      - name: Require complete FPS coverage
+        run: python3 .github/scripts/runtime-fps-summary.py runtime-proof --require-complete

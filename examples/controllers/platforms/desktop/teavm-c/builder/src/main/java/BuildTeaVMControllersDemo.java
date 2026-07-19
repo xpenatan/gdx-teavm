@@ -1,4 +1,5 @@
 import com.github.xpenatan.gdx.teavm.backends.glfw.config.backend.TeaGLFWBackend;
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ public class BuildTeaVMControllersDemo {
     private static final int NATIVE_MIN_DIRECT_BUFFER_SIZE = 64 * 1024 * 1024;
 
     public static void main(String[] args) throws IOException {
+        AssetFileHandle assetsPath = new AssetFileHandle("../../../../assets");
         BuildOptions buildOptions = BuildOptions.fromArgs(args);
         TeaGLFWBackend cBackend = new TeaGLFWBackend()
                 .setBuildType(buildOptions.buildType)
@@ -20,6 +22,7 @@ public class BuildTeaVMControllersDemo {
                 .setRunExecutableWithConsoleLog(buildOptions.consoleLog);
 
         new TeaBuilder(cBackend)
+                .addAssets(assetsPath)
                 .setOutputName("controllers")
                 .setObfuscated(false)
                 .setOptimizationLevel(TeaVMOptimizationLevel.FULL)

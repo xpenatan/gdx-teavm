@@ -1,3 +1,4 @@
+import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import com.github.xpenatan.gdx.teavm.backends.web.config.backend.WebBackend;
 import java.io.File;
@@ -14,6 +15,7 @@ public class BuildTeaVMControllersWeb {
                 .setHtmlTitle("gdx-teavm controllers");
 
         new TeaBuilder(backend)
+                .addAssets(new AssetFileHandle("../../../assets"))
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(ControllerWebLauncher.class.getName())
                 .setObfuscated(false)

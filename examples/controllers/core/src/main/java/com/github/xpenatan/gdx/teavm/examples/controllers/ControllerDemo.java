@@ -50,7 +50,7 @@ public class ControllerDemo implements ApplicationListener, ControllerListener {
         fpsLogger = new ExampleFpsLogger();
         shapes = new ShapeRenderer();
         batch = new SpriteBatch();
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("com/badlogic/gdx/utils/lsans-15.fnt"), false);
         updateUiScale();
         Controllers.addListener(this);
         refreshControllerSummary();

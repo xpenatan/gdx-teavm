@@ -1,3 +1,5 @@
+val assetsDir = file("../../../assets")
+
 dependencies {
     implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
@@ -11,7 +13,7 @@ tasks.register<JavaExec>("controllers_desktop_run") {
     description = "Run gdx-controllers desktop example"
     mainClass.set("ControllerDesktopLauncher")
     classpath = sourceSets["main"].runtimeClasspath
-    workingDir = file(".")
+    workingDir = assetsDir
 
     if(org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
         jvmArgs?.add("-XstartOnFirstThread")

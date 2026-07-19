@@ -11,6 +11,7 @@ dependencies {
 }
 
 gdxTeaVM {
+    assets.from(file("../../assets"))
     reflection("com.badlogic.gdx.controllers.IosControllerManager")
 
     ios {
