@@ -187,8 +187,7 @@ public class GdxTeaVMPluginConfig {
     private static Set<String> sortedChildKeys(Properties properties, String key) {
         TreeSet<String> result = new TreeSet<>();
         String prefix = key + ".";
-        for(Object objectKey : properties.keySet()) {
-            String propertyKey = String.valueOf(objectKey);
+        for(String propertyKey : properties.stringPropertyNames()) {
             if(propertyKey.startsWith(prefix)) {
                 result.add(propertyKey);
             }
@@ -200,8 +199,7 @@ public class GdxTeaVMPluginConfig {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
         String prefix = key + ".";
         TreeSet<String> indexes = new TreeSet<>();
-        for(Object objectKey : properties.keySet()) {
-            String propertyKey = String.valueOf(objectKey);
+        for(String propertyKey : properties.stringPropertyNames()) {
             if(!propertyKey.startsWith(prefix)) {
                 continue;
             }
