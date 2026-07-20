@@ -188,7 +188,7 @@ open class GdxTeaVMWasmExtension @Inject constructor(
         outputDir.convention(project.layout.buildDirectory.dir("dist/wasm"))
         relativePathInOutputDir.convention("webapp")
         targetFileName.convention("app.wasm")
-        optimization.convention(OptimizationLevel.AGGRESSIVE)
+        optimization.convention(OptimizationLevel.BALANCED)
         debugInformation.convention(false)
         fastGlobalAnalysis.convention(false)
         outOfProcess.convention(false)
