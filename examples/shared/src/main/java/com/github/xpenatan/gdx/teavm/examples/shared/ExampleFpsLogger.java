@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.examples.shared;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -36,18 +37,27 @@ public final class ExampleFpsLogger {
     }
 
     private FileHandle prepareOutput() {
-        FileHandle[] candidates = {
-                Gdx.files.local("fps.log"),
-                Gdx.files.external("fps.log")
-        };
-        for(FileHandle candidate : candidates) {
-            try {
-                candidate.writeString("", false);
-                return candidate;
-            }
-            catch(RuntimeException ignored) {
+        if(Gdx.files.isLocalStorageAvailable()) {
+            FileHandle output = prepareOutput(FileType.Local);
+            if(output != null) {
+                return output;
             }
         }
+
+        if(Gdx.files.isExternalStorageAvailable()) {
+            return prepareOutput(FileType.External);
+        }
         return null;
+    }
+
+    private FileHandle prepareOutput(FileType type) {
+        try {
+            FileHandle candidate = Gdx.files.getFileHandle("fps.log", type);
+            candidate.writeString("", false);
+            return candidate;
+        }
+        catch(RuntimeException ignored) {
+            return null;
+        }
     }
 }
