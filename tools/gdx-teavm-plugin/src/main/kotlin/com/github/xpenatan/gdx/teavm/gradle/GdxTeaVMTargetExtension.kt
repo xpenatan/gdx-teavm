@@ -50,7 +50,7 @@ open class GdxTeaVMTargetExtension internal constructor(
     /**
      * TeaVM optimization level used for this target.
      *
-     * Default: JS `BALANCED`, Wasm `AGGRESSIVE`.
+     * Default: JS `BALANCED`, Wasm `BALANCED`.
      */
     val optimization: Property<OptimizationLevel>
         get() = teavmConfig.optimization as Property<OptimizationLevel>
