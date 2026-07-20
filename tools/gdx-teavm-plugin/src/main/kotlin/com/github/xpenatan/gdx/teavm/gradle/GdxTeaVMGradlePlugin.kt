@@ -43,11 +43,18 @@ import java.util.zip.ZipFile
 
 class GdxTeaVMGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        configureTeaVMBuildDaemonOutput(project)
         if(isAndroidProject(project)) {
             applyAndroidProject(project)
             return
         }
         applyJavaProject(project)
+    }
+
+    private fun configureTeaVMBuildDaemonOutput(project: Project) {
+        project.tasks.withType(TeaVMTask::class.java).configureEach {
+            restoreTeaVMBuildDaemonStderr(this)
+        }
     }
 
     private fun applyJavaProject(project: Project) {
