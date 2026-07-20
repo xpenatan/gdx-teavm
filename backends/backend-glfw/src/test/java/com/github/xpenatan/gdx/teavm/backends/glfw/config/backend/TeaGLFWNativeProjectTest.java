@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.github.xpenatan.gdx.teavm.backends.glfw.utils.GLFWNative;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -120,14 +122,20 @@ public class TeaGLFWNativeProjectTest {
                 "target_compile_definitions(gdx_teavm_glew PUBLIC GLEW_STATIC GLEW_NO_GLU)");
         assertThat(cmake).contains("target_link_libraries(gdx_teavm_glew PUBLIC ${X11_LIBRARIES})");
         assertThat(cmake).contains("if(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS)");
-        assertThat(cmake).contains("find_package(glfw3 CONFIG REQUIRED)");
+        assertThat(cmake).contains("find_package(glfw3 3.4 CONFIG REQUIRED)");
         assertThat(cmake).contains("find_package(GLEW REQUIRED)");
+        assertThat(cmake).contains("option(GDX_TEAVM_GLFW_NATIVE_X11");
+        assertThat(cmake).contains("option(GDX_TEAVM_GLFW_NATIVE_WAYLAND");
+        assertThat(cmake).contains("set(GDX_TEAVM_GLFW_NATIVE_X11 ${GLFW_BUILD_X11})");
+        assertThat(cmake).contains("set(GDX_TEAVM_GLFW_NATIVE_WAYLAND ${GLFW_BUILD_WAYLAND})");
+        assertThat(cmake).contains("GDX_TEAVM_GLFW_NATIVE_X11=1");
+        assertThat(cmake).contains("GDX_TEAVM_GLFW_NATIVE_WAYLAND=1");
         assertThat(cmake).doesNotContain("set(GLEW_USE_STATIC_LIBS TRUE)");
     }
 
     @Test
-    public void nativeProjectProvidesWin32WindowHandleBridge() throws Exception {
-        File buildRoot = temporaryFolder.newFolder("win32-window-handle-project");
+    public void nativeProjectProvidesCrossPlatformWindowHandleBridge() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("native-window-handle-project");
         TeaGLFWNativeProject project = new TeaGLFWNativeProject(
                 TeaGLFWNativeProject.class.getClassLoader(),
                 buildRoot,
@@ -137,9 +145,40 @@ public class TeaGLFWNativeProjectTest {
         project.write("test_app");
 
         String appInclude = read(new File(buildRoot, "c/src"), "app_include.c");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_platform");
         assertThat(appInclude).contains("GLFW_EXPOSE_NATIVE_WIN32");
+        assertThat(appInclude).contains("GLFW_EXPOSE_NATIVE_X11");
+        assertThat(appInclude).contains("GLFW_EXPOSE_NATIVE_WAYLAND");
+        assertThat(appInclude).contains("GLFW_EXPOSE_NATIVE_COCOA");
         assertThat(appInclude).contains("gdx_teavm_glfw_get_win32_window");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_x11_display");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_x11_window");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_wayland_display");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_wayland_window");
+        assertThat(appInclude).contains("gdx_teavm_glfw_get_cocoa_window");
+        assertThat(appInclude).contains("glfwGetPlatform");
         assertThat(appInclude).contains("glfwGetWin32Window");
+        assertThat(appInclude).contains("glfwGetX11Display");
+        assertThat(appInclude).contains("glfwGetX11Window");
+        assertThat(appInclude).contains("glfwGetWaylandDisplay");
+        assertThat(appInclude).contains("glfwGetWaylandWindow");
+        assertThat(appInclude).contains("glfwGetCocoaWindow");
+        assertThat(appInclude).doesNotContain("dlsym");
+    }
+
+    @Test
+    public void exposesGenericNativeHandleApi() throws Exception {
+        assertThat(GLFWNative.class.getDeclaredMethod("getPlatform").getReturnType()).isEqualTo(int.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getWin32Window", long.class).getReturnType())
+                .isEqualTo(long.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getX11Display").getReturnType()).isEqualTo(long.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getX11Window", long.class).getReturnType())
+                .isEqualTo(long.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getWaylandDisplay").getReturnType()).isEqualTo(long.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getWaylandWindow", long.class).getReturnType())
+                .isEqualTo(long.class);
+        assertThat(GLFWNative.class.getDeclaredMethod("getCocoaWindow", long.class).getReturnType())
+                .isEqualTo(long.class);
     }
 
     @Test

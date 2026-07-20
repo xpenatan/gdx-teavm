@@ -33,7 +33,7 @@ if(UNIX)
   find_package(OpenGL REQUIRED)
 
   if(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS)
-    find_package(glfw3 CONFIG REQUIRED)
+    find_package(glfw3 3.4 CONFIG REQUIRED)
     find_package(GLEW REQUIRED)
     set(TEAVM_GLFW_LIBRARY glfw)
     set(TEAVM_GLEW_LIBRARY GLEW::GLEW)
@@ -180,6 +180,25 @@ list(APPEND SOURCES ${EXTERNAL_SOURCES_2})
 # Add executable
 set(TEAVM_APP_TARGET "${PROJECT_NAME}_app")
 add_executable(${TEAVM_APP_TARGET} ${SOURCES})
+
+if(UNIX AND NOT APPLE)
+  if(GDX_TEAVM_GLFW_USE_SYSTEM_LIBS)
+    option(GDX_TEAVM_GLFW_NATIVE_X11
+        "The system GLFW library provides X11 native access" ON)
+    option(GDX_TEAVM_GLFW_NATIVE_WAYLAND
+        "The system GLFW library provides Wayland native access" ON)
+  else()
+    set(GDX_TEAVM_GLFW_NATIVE_X11 ${GLFW_BUILD_X11})
+    set(GDX_TEAVM_GLFW_NATIVE_WAYLAND ${GLFW_BUILD_WAYLAND})
+  endif()
+
+  if(GDX_TEAVM_GLFW_NATIVE_X11)
+    target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE GDX_TEAVM_GLFW_NATIVE_X11=1)
+  endif()
+  if(GDX_TEAVM_GLFW_NATIVE_WAYLAND)
+    target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE GDX_TEAVM_GLFW_NATIVE_WAYLAND=1)
+  endif()
+endif()
 
 if(MSVC)
   target_compile_definitions(${TEAVM_APP_TARGET} PRIVATE _ITERATOR_DEBUG_LEVEL=0)
