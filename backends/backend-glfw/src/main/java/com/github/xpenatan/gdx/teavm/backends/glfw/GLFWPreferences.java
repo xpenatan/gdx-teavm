@@ -8,8 +8,11 @@ import com.badlogic.gdx.utils.StreamUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -159,14 +162,73 @@ public class GLFWPreferences implements Preferences {
 
     @Override
     public void flush() {
-        OutputStream out = null;
+        Writer writer = null;
         try {
-            out = new BufferedOutputStream(file.write(false));
-            properties.store(out, null);
+            writer = new OutputStreamWriter(new BufferedOutputStream(file.write(false)), StandardCharsets.UTF_8);
+            storeProperties(writer);
         } catch (Exception ex) {
             throw new GdxRuntimeException("Error writing preferences: " + file, ex);
         } finally {
-            StreamUtils.closeQuietly(out);
+            StreamUtils.closeQuietly(writer);
+        }
+    }
+
+    private void storeProperties(Writer writer) throws IOException {
+        StringBuilder line = new StringBuilder(128);
+        for (Entry<Object, Object> entry : properties.entrySet()) {
+            appendEscaped(line, (String)entry.getKey(), true);
+            line.append('=');
+            appendEscaped(line, (String)entry.getValue(), false);
+            line.append('\n');
+            writer.write(line.toString());
+            line.setLength(0);
+        }
+        writer.flush();
+    }
+
+    private static void appendEscaped(StringBuilder out, String value, boolean key) {
+        for (int i = 0; i < value.length(); i++) {
+            char character = value.charAt(i);
+            switch (character) {
+                case ' ':
+                    if (key || i == 0) out.append('\\');
+                    out.append(' ');
+                    break;
+                case '\t':
+                    out.append("\\t");
+                    break;
+                case '\n':
+                    out.append("\\n");
+                    break;
+                case '\f':
+                    out.append("\\f");
+                    break;
+                case '\r':
+                    out.append("\\r");
+                    break;
+                case '\\':
+                case '#':
+                case '!':
+                case '=':
+                case ':':
+                    out.append('\\').append(character);
+                    break;
+                default:
+                    if (character < ' ' || character > '~') {
+                        appendUnicodeEscape(out, character);
+                    } else {
+                        out.append(character);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private static void appendUnicodeEscape(StringBuilder out, char character) {
+        out.append("\\u");
+        for (int shift = 12; shift >= 0; shift -= 4) {
+            int digit = character >> shift & 0xF;
+            out.append((char)(digit < 10 ? '0' + digit : 'A' + digit - 10));
         }
     }
 
