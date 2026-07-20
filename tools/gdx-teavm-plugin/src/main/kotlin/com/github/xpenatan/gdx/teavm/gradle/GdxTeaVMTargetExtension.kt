@@ -74,7 +74,7 @@ open class GdxTeaVMTargetExtension internal constructor(
     /**
      * Runs TeaVM compilation out of the Gradle process when supported by TeaVM.
      *
-     * Default: `false`.
+     * Default: `true`.
      */
     val outOfProcess: Property<Boolean>
         get() = teavmConfig.outOfProcess as Property<Boolean>
@@ -82,7 +82,7 @@ open class GdxTeaVMTargetExtension internal constructor(
     /**
      * Memory limit in megabytes for out-of-process TeaVM compilation.
      *
-     * Default: `512`.
+     * Default: `1024`.
      */
     val processMemory: Property<Int>
         get() = teavmConfig.processMemory as Property<Int>
@@ -117,8 +117,8 @@ open class GdxTeaVMJsExtension @Inject constructor(
         optimization.convention(OptimizationLevel.BALANCED)
         debugInformation.convention(false)
         fastGlobalAnalysis.convention(false)
-        outOfProcess.convention(false)
-        processMemory.convention(512)
+        outOfProcess.convention(true)
+        processMemory.convention(1024)
         entryPointName.convention("main")
         obfuscated.convention(true)
         strict.convention(false)
@@ -191,8 +191,8 @@ open class GdxTeaVMWasmExtension @Inject constructor(
         optimization.convention(OptimizationLevel.BALANCED)
         debugInformation.convention(false)
         fastGlobalAnalysis.convention(false)
-        outOfProcess.convention(false)
-        processMemory.convention(512)
+        outOfProcess.convention(true)
+        processMemory.convention(1024)
         obfuscated.convention(true)
         strict.convention(false)
         copyRuntime.convention(true)
@@ -422,10 +422,10 @@ open class GdxTeaVMNativeTargetExtension @Inject constructor(
     /**
      * TeaVM C optimization level used for this native target.
      *
-     * Default: `AGGRESSIVE`.
+     * Default: `BALANCED`.
      */
     val optimization: Property<OptimizationLevel> = objects.property(OptimizationLevel::class.java)
-        .convention(OptimizationLevel.AGGRESSIVE)
+        .convention(OptimizationLevel.BALANCED)
 
     /**
      * Includes TeaVM C debug information in generated output when supported.

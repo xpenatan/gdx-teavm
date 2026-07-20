@@ -92,11 +92,16 @@ class GdxTeaVMWebDevServerTest {
 
         val jsRun = project.tasks.getByName("gdx_teavm_web_js_run")
         val wasmRun = project.tasks.getByName("gdx_teavm_web_wasm_run")
+        val extension = project.extensions.getByType(GdxTeaVMExtension::class.java)
 
         assertTrue(jsRun is GdxTeaVMRunWebTask)
         assertTrue(wasmRun is GdxTeaVMRunWebTask)
         assertTrue(dependencyNames(jsRun).contains("gdx_teavm_web_js_build"))
         assertTrue(dependencyNames(wasmRun).contains("gdx_teavm_web_wasm_build"))
+        assertTrue(extension.js.outOfProcess.get())
+        assertTrue(extension.wasm.outOfProcess.get())
+        assertEquals(1024, extension.js.processMemory.get())
+        assertEquals(1024, extension.wasm.processMemory.get())
     }
 
     @Test
@@ -135,8 +140,8 @@ class GdxTeaVMWebDevServerTest {
         assertEquals(8282, wasmDevServer.port.get())
         assertFalse(jsDevServer.autoReload.get())
         assertFalse(wasmDevServer.autoReload.get())
-        assertEquals(512, jsDevServer.processMemory.get())
-        assertEquals(512, wasmDevServer.processMemory.get())
+        assertEquals(1024, jsDevServer.processMemory.get())
+        assertEquals(1024, wasmDevServer.processMemory.get())
         assertEquals("/", jsDevServer.targetFilePath.get())
         assertEquals("/", wasmDevServer.targetFilePath.get())
         assertFalse(jsDevServer.projectPath.get() == wasmDevServer.projectPath.get())
