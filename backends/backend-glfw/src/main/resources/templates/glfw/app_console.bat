@@ -8,4 +8,15 @@ if errorlevel 1 (
 )
 
 "${EXECUTABLE_PATH}"
-exit %ERRORLEVEL%
+set "APP_EXIT_CODE=%ERRORLEVEL%"
+
+echo.
+if "%APP_EXIT_CODE%"=="0" (
+    echo Application closed normally.
+) else (
+    echo Application terminated with exit code %APP_EXIT_CODE%.
+)
+
+echo Press any key to close this console...
+pause >nul
+exit /b %APP_EXIT_CODE%

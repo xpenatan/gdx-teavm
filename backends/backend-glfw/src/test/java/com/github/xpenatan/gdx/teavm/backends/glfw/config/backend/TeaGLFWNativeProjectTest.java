@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -64,6 +65,23 @@ public class TeaGLFWNativeProjectTest {
         assertThat(new ArrayList<>(backend.getCMakeDefinitions().keySet()))
                 .containsExactly("FIRST", "SECOND")
                 .inOrder();
+    }
+
+    @Test
+    public void windowsConsoleRunWaitsBeforeClosingAndPreservesExitCode() throws Exception {
+        String script = readResource("templates/glfw/app_console.bat");
+
+        assertThat(script).contains("set \"APP_EXIT_CODE=%ERRORLEVEL%\"");
+        assertThat(script).contains("Application terminated with exit code %APP_EXIT_CODE%.");
+        assertThat(script).contains("pause >nul");
+        assertThat(script).contains("exit /b %APP_EXIT_CODE%");
+
+        int captureExitCode = script.indexOf("set \"APP_EXIT_CODE=%ERRORLEVEL%\"");
+        int pause = script.indexOf("pause >nul");
+        int restoreExitCode = script.indexOf("exit /b %APP_EXIT_CODE%");
+        assertThat(captureExitCode).isAtLeast(0);
+        assertThat(captureExitCode).isLessThan(pause);
+        assertThat(pause).isLessThan(restoreExitCode);
     }
 
     @Test
@@ -199,6 +217,13 @@ public class TeaGLFWNativeProjectTest {
 
     private String read(File root, String name) throws Exception {
         return Files.readString(new File(root, name).toPath(), StandardCharsets.UTF_8);
+    }
+
+    private String readResource(String name) throws Exception {
+        try(InputStream input = TeaGLFWNativeProject.class.getClassLoader().getResourceAsStream(name)) {
+            assertThat(input).isNotNull();
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     private void assertWindowsCMakeDiscovery(String script) {

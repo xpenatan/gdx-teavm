@@ -234,7 +234,7 @@ These properties exist in native target blocks.
 | `buildType` | `Property<String>` | `Debug` | Native build type used by generated GLFW build scripts, typically `Debug` or `Release`. |
 | `buildExecutable` | `Property<Boolean>` | `false` | Lets the backend invoke the generated GLFW build script when true. |
 | `runExecutable` | `Property<Boolean>` | `false` | Lets the backend run the generated GLFW executable after building when true. |
-| `consoleLog` | `Property<Boolean>` | `false` | Opens or attaches native console logging for GLFW run tasks when supported by the platform. |
+| `consoleLog` | `Property<Boolean>` | `false` | Opens or attaches native console logging for GLFW run tasks when supported by the platform. On Windows, the opened console remains visible after the application exits until a key is pressed. |
 | `cmakeDefinitions` | `MapProperty<String, String>` | empty | Advanced ordered CMake cache definitions passed to the generated GLFW configure scripts. Use `cmakeDefinition(name, value)` to add one definition. |
 
 Example:
