@@ -57,6 +57,100 @@ public class TypedArrays {
         throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
     }
 
+    /**
+     * Returns a byte view covering the buffer's active range, from its current position to its limit.
+     * The source buffer's position, limit, and mark are not changed.
+     */
+    public static Int8Array getTypedArrayRange(Buffer buffer) {
+        ArrayBufferView typedArray = getTypedArray(getConversionBuffer(buffer));
+        return new Int8Array(typedArray.getBuffer(), typedArray.getByteOffset() + getRangeByteOffset(buffer),
+                getRangeByteLength(buffer));
+    }
+
+    static Buffer getConversionBuffer(Buffer buffer) {
+        if(PlatformDetector.isJavaScript() || buffer.isDirect() || hasArray(buffer)) {
+            return buffer;
+        }
+        // The Wasm-GC fallback for heap views without an accessible array copies data by temporarily rewinding its
+        // input. Convert a duplicate so that operation cannot discard the caller's mark.
+        if(buffer instanceof ByteBuffer) {
+            return ((ByteBuffer)buffer).duplicate();
+        }
+        else if(buffer instanceof ShortBuffer) {
+            return ((ShortBuffer)buffer).duplicate();
+        }
+        else if(buffer instanceof IntBuffer) {
+            return ((IntBuffer)buffer).duplicate();
+        }
+        else if(buffer instanceof FloatBuffer) {
+            return ((FloatBuffer)buffer).duplicate();
+        }
+        throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
+    }
+
+    private static boolean hasArray(Buffer buffer) {
+        if(buffer instanceof ByteBuffer) {
+            return ((ByteBuffer)buffer).hasArray();
+        }
+        else if(buffer instanceof ShortBuffer) {
+            return ((ShortBuffer)buffer).hasArray();
+        }
+        else if(buffer instanceof IntBuffer) {
+            return ((IntBuffer)buffer).hasArray();
+        }
+        else if(buffer instanceof FloatBuffer) {
+            return ((FloatBuffer)buffer).hasArray();
+        }
+        throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
+    }
+
+    static int getRangeByteOffset(Buffer buffer) {
+        int position = buffer.position();
+        // JS and direct-buffer views already start at a sliced buffer's base. The heap fallback copies the
+        // complete backing array, so its array offset must be included here.
+        if(!PlatformDetector.isJavaScript() && !buffer.isDirect()) {
+            position += getArrayOffset(buffer);
+        }
+        return position * getElementSize(buffer);
+    }
+
+    static int getRangeByteLength(Buffer buffer) {
+        return buffer.remaining() * getElementSize(buffer);
+    }
+
+    private static int getElementSize(Buffer buffer) {
+        if(buffer instanceof ByteBuffer) {
+            return 1;
+        }
+        else if(buffer instanceof ShortBuffer) {
+            return 2;
+        }
+        else if(buffer instanceof IntBuffer || buffer instanceof FloatBuffer) {
+            return 4;
+        }
+        throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
+    }
+
+    private static int getArrayOffset(Buffer buffer) {
+        if(buffer instanceof ByteBuffer) {
+            ByteBuffer byteBuffer = (ByteBuffer)buffer;
+            return byteBuffer.hasArray() ? byteBuffer.arrayOffset() : 0;
+        }
+        else if(buffer instanceof ShortBuffer) {
+            ShortBuffer shortBuffer = (ShortBuffer)buffer;
+            return shortBuffer.hasArray() ? shortBuffer.arrayOffset() : 0;
+        }
+        else if(buffer instanceof IntBuffer) {
+            IntBuffer intBuffer = (IntBuffer)buffer;
+            return intBuffer.hasArray() ? intBuffer.arrayOffset() : 0;
+        }
+        else if(buffer instanceof FloatBuffer) {
+            FloatBuffer floatBuffer = (FloatBuffer)buffer;
+            return floatBuffer.hasArray() ? floatBuffer.arrayOffset() : 0;
+        }
+        throw new GdxRuntimeException("No support for buffer " + buffer.getClass());
+    }
+
     public static Int8Array getInt8Array(Buffer buff) {
         if(PlatformDetector.isJavaScript() || buff.isDirect()) {
             return Int8Array.fromJavaBuffer(buff);

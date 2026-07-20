@@ -142,14 +142,14 @@ public class WebGL20 implements GL20 {
             gl.bufferData(target, size, usage);
         }
         else {
-            ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
+            ArrayBufferView typedArray = TypedArrays.getTypedArrayRange(data);
             gl.bufferData(target, typedArray, usage);
         }
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
+        ArrayBufferView typedArray = TypedArrays.getTypedArrayRange(data);
         gl.bufferSubData(target, offset, typedArray);
     }
 
