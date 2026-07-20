@@ -908,20 +908,27 @@ jobs:
             echo "GdxTeaVMIOSSpike was not visible in simulator ps output; continuing to screenshot proof." >> "$PROOF_DIR/simulator.log"
           fi
 
-          echo "Recording iOS runtime proof..."
-          xcrun simctl io "$DEVICE_UDID" recordVideo "$PROOF_DIR/video.mp4" > "$PROOF_DIR/video.log" 2>&1 &
-          VIDEO_PID=$!
-          sleep 6
-
+          echo "Capturing iOS runtime screenshot..."
           if ! run_bounded_command 60 "simulator screenshot" \
             xcrun simctl io "$DEVICE_UDID" screenshot "$PROOF_DIR/screenshot.png" > "$PROOF_DIR/screenshot.log" 2>&1; then
-            emit_github_error "backend-ios simulator screenshot failed"
-            exit 1
+            echo "Initial simulator screenshot attempt failed; retrying once." | tee -a "$PROOF_DIR/screenshot.log"
+            rm -f "$PROOF_DIR/screenshot.png"
+            sleep 3
+            if ! run_bounded_command 60 "simulator screenshot retry" \
+              xcrun simctl io "$DEVICE_UDID" screenshot "$PROOF_DIR/screenshot.png" >> "$PROOF_DIR/screenshot.log" 2>&1; then
+              emit_github_error "backend-ios simulator screenshot failed"
+              exit 1
+            fi
           fi
           if [ ! -s "$PROOF_DIR/screenshot.png" ]; then
             emit_github_error "backend-ios simulator screenshot was empty"
             exit 1
           fi
+
+          echo "Recording iOS runtime proof..."
+          xcrun simctl io "$DEVICE_UDID" recordVideo "$PROOF_DIR/video.mp4" > "$PROOF_DIR/video.log" 2>&1 &
+          VIDEO_PID=$!
+          sleep 6
 
           echo "Stopping iOS capture processes..."
           stop_background_process "$VIDEO_PID" INT "simulator video capture"
