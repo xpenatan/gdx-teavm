@@ -145,6 +145,8 @@ class GdxTeaVMWebDevServerTest {
         assertEquals("/", jsDevServer.targetFilePath.get())
         assertEquals("/", wasmDevServer.targetFilePath.get())
         assertFalse(jsDevServer.projectPath.get() == wasmDevServer.projectPath.get())
+        assertTrue(jsDevServer.projectPath.get().contains("#gdx-teavm-js-"))
+        assertTrue(wasmDevServer.projectPath.get().contains("#gdx-teavm-wasm-"))
         assertTrue(jsDevServer.allProjectPaths.get().contains(jsDevServer.projectPath.get()))
         assertTrue(wasmDevServer.allProjectPaths.get().contains(wasmDevServer.projectPath.get()))
         assertFalse(jsDevServer.allProjectPaths.get().contains(wasmDevServer.projectPath.get()))

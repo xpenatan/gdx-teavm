@@ -225,7 +225,7 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
  * session when automatic builds are disabled.
  */
 open class GdxTeaVMDevServerDeployment @Inject constructor(
-    private val devServerProjectPath: String,
+    internal val devServerProjectPath: String,
     private val publicPort: Int,
     val entryServerPort: Int,
     initialIndexHtml: ByteArray

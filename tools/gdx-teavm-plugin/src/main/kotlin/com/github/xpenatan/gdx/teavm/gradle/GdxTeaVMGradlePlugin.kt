@@ -39,6 +39,7 @@ import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.nio.file.Paths
 import java.util.Properties
+import java.util.UUID
 import java.util.zip.ZipFile
 
 class GdxTeaVMGradlePlugin : Plugin<Project> {
@@ -441,9 +442,20 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             return
         }
         restoreTeaVMDevServerStderr(this)
-        // TeaVM keeps one development-server client per project path. Use a target-specific
-        // internal path so switching between JS and Wasm discards the stopped client cleanly.
-        val managerPath = "${project.path}#gdx-teavm-$devServerTarget"
+        // TeaVM keeps one development-server client per project path. A stopped 0.15.0 client can
+        // deliver its delayed process-exit callback after the next process starts, incorrectly
+        // failing that build with "Dev server process stopped unexpectedly". Give each run session
+        // a fresh client, while reusing the active deployment's path for continuous rebuilds.
+        val deploymentId = devServerDeploymentId(project, devServerTarget)
+        val newManagerPath = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            "${project.path}#gdx-teavm-$devServerTarget-${UUID.randomUUID()}"
+        }
+        val managerPath = project.provider {
+            val deploymentRegistry = (project as ProjectInternal).services.get(DeploymentRegistry::class.java)
+            deploymentRegistry.get(deploymentId, GdxTeaVMDevServerDeployment::class.java)
+                ?.devServerProjectPath
+                ?: newManagerPath.value
+        }
         getProjectPath().set(managerPath)
         getAllProjectPaths().add(managerPath)
 
