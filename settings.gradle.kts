@@ -101,6 +101,7 @@ include(":benchmark:core")
 include(":benchmark:lwjgl3")
 include(":benchmark:graalvm")
 include(":benchmark:glfw")
+include(":benchmark:plugin")
 
 val file = File(settingsDir, "gradle.properties")
 
