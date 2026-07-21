@@ -60,6 +60,10 @@ public class BenchmarkApplication extends ApplicationAdapter {
 
     @Override
     public void render() {
+        if(finished) {
+            return;
+        }
+
         benchmarkCase.render();
         secondFrames++;
 

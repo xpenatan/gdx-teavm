@@ -20,7 +20,6 @@ fun benchmarkProperty(name: String, defaultValue: String): String {
 fun benchmarkArgs(): List<String> {
     return listOf(
         "--test=${benchmarkProperty("benchTest", "spritebatch_default")}",
-        "--sprites=${benchmarkProperty("benchSprites", "8191")}",
         "--seconds=${benchmarkProperty("benchSeconds", "15")}",
         "--warmup=${benchmarkProperty("benchWarmup", "3")}",
         "--width=${benchmarkProperty("benchWidth", "640")}",

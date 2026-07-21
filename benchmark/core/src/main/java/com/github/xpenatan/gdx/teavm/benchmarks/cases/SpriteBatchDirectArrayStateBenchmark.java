@@ -35,7 +35,7 @@ public class SpriteBatchDirectArrayStateBenchmark implements BenchmarkCase {
     public void create(BenchmarkBackend backend, BenchmarkConfig config) {
         this.config = config;
         viewport = new ScreenViewport();
-        spriteBatch = (SpriteBatch)backend.createSpriteBatch(config.sprites);
+        spriteBatch = (SpriteBatch)backend.createSpriteBatch(config.spriteBatchSize());
         texture = backend.createTexture("data/badlogicsmall.jpg");
         spriteX = new float[config.sprites];
         spriteY = new float[config.sprites];

@@ -1,10 +1,11 @@
 package com.github.xpenatan.gdx.teavm.benchmarks;
 
 public class BenchmarkConfig {
+    public static final int MAX_SPRITES_PER_BATCH = 8191;
     public static final boolean VSYNC_ENABLED = false;
 
     public String testName = "spritebatch_default";
-    public int sprites = 8191;
+    public final int sprites = 60000;
     public int width = 640;
     public int height = 480;
     public int warmupSeconds = 3;
@@ -32,9 +33,6 @@ public class BenchmarkConfig {
 
             if("test".equalsIgnoreCase(key)) {
                 config.testName = value;
-            }
-            else if("sprites".equalsIgnoreCase(key)) {
-                config.sprites = positiveInt(key, value);
             }
             else if("width".equalsIgnoreCase(key)) {
                 config.width = positiveInt(key, value);
@@ -69,6 +67,10 @@ public class BenchmarkConfig {
 
     public int runtimeTimeoutSeconds() {
         return warmupSeconds + seconds + 20;
+    }
+
+    public int spriteBatchSize() {
+        return Math.min(sprites, MAX_SPRITES_PER_BATCH);
     }
 
     private static int positiveInt(String key, String value) {

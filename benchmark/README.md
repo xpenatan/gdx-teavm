@@ -24,7 +24,15 @@ benchmark/build/benchmark-results/matrix/results.md
 Configure runs with Gradle properties:
 
 ```bash
-./gradlew :benchmark:compareSpriteBatch -PbenchSprites=8191 -PbenchWarmup=3 -PbenchSeconds=15
+./gradlew :benchmark:compareSpriteBatch -PbenchWarmup=3 -PbenchSeconds=15
+```
+
+The sprite count has one source of truth: `BenchmarkConfig.sprites`. The benchmark caps each
+`SpriteBatch` buffer at libGDX's 8191-sprite limit and automatically flushes it as needed while drawing the full
+sprite count. For example:
+
+```bash
+./gradlew :benchmark:plugin:gdx_teavm_web_wasm_run
 ```
 
 Useful properties:
@@ -32,7 +40,6 @@ Useful properties:
 - `benchTest`: `spritebatch_default`, `spritebatch_fast`, `spritebatch_direct_getters`,
   `spritebatch_direct_array_state`, `spritebatch_simple_direct`, `spritebatch_precomputed_arraycopy`,
   or `spritebatch_begin_end`
-- `benchSprites`: sprite count, default `8191`
 - `benchWarmup`: warmup seconds, default `3`
 - `benchSeconds`: measured seconds, default `15`
 - `benchWidth`: window width, default `640`
@@ -54,8 +61,8 @@ Run isolated backends:
 ./gradlew :benchmark:plugin:gdx_teavm_web_wasm_run
 ```
 
-The web tasks use the same `benchTest`, `benchSprites`, `benchWarmup`, `benchSeconds`, size, and draw-option
-properties as the desktop benchmark tasks. Results are printed to the browser console.
+The web tasks use the same `benchTest`, `benchWarmup`, `benchSeconds`, size, and draw-option properties as the
+desktop benchmark tasks. Results are printed to the browser console.
 
 Each run prints `BENCH_RESULT` and can append TSV rows to a report file when `--resultFile=...` is passed by the aggregate tasks.
 

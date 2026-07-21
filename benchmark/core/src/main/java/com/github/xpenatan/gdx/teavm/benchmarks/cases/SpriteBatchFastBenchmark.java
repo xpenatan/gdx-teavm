@@ -33,7 +33,7 @@ public class SpriteBatchFastBenchmark implements BenchmarkCase {
     public void create(BenchmarkBackend backend, BenchmarkConfig config) {
         this.config = config;
         viewport = new ScreenViewport();
-        spriteBatch = new FastSpriteBatch(config.sprites);
+        spriteBatch = new FastSpriteBatch(config.spriteBatchSize());
         texture = backend.createTexture("data/badlogicsmall.jpg");
         sprites = new Sprite[config.sprites];
     }

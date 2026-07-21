@@ -21,7 +21,7 @@ public class SpriteBatchBeginEndBenchmark implements BenchmarkCase {
     public void create(BenchmarkBackend backend, BenchmarkConfig config) {
         this.config = config;
         viewport = new ScreenViewport();
-        spriteBatch = (SpriteBatch)backend.createSpriteBatch(config.sprites);
+        spriteBatch = (SpriteBatch)backend.createSpriteBatch(config.spriteBatchSize());
     }
 
     @Override

@@ -36,7 +36,6 @@ fun benchmarkArgs(
 ): List<String> {
     val args = mutableListOf(
         "--test=$testName",
-        "--sprites=${benchmarkProperty("benchSprites", "8191")}",
         "--seconds=${benchmarkProperty("benchSeconds", "15")}",
         "--warmup=${benchmarkProperty("benchWarmup", "3")}",
         "--width=${benchmarkProperty("benchWidth", "640")}",
