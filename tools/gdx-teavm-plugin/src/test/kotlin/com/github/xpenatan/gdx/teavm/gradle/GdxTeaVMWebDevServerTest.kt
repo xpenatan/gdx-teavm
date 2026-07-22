@@ -10,6 +10,7 @@ import org.gradle.internal.logging.events.OutputEvent
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.logging.events.StyledTextOutputEvent
 import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.api.tasks.bundling.Jar
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -172,6 +173,20 @@ class GdxTeaVMWebDevServerTest {
         assertEquals("http://127.0.0.1:${wasmRun.entryServerPort.get()}", wasmDevServer.proxyUrl.get())
         assertEquals("/", jsDevServer.proxyPath.get())
         assertEquals("/", wasmDevServer.proxyPath.get())
+        assertFalse(jsDevServer.properties.get().containsKey("gdx.teavm.classpath"))
+        assertFalse(wasmDevServer.properties.get().containsKey("gdx.teavm.classpath"))
+        if(System.getProperty("os.name", "").startsWith("Windows", ignoreCase = true)) {
+            val pathingJar = project.tasks.getByName("gdxTeaVMDevServerClasspathJar")
+            assertTrue(pathingJar is Jar)
+            assertEquals(
+                setOf("gdx-teavm-dev-server-classpath.jar"),
+                jsDevServer.serverClasspath.files.mapTo(linkedSetOf()) { file -> file.name }
+            )
+            assertEquals(
+                setOf("gdx-teavm-dev-server-classpath.jar"),
+                wasmDevServer.serverClasspath.files.mapTo(linkedSetOf()) { file -> file.name }
+            )
+        }
     }
 
     @Test

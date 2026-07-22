@@ -13,7 +13,9 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.kotlin.dsl.create
@@ -399,13 +401,20 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun configureTeaVMTaskClasspaths(project: Project, extension: GdxTeaVMExtension) {
+        val devServerRunnerClasspath = if(extension.isTargetDeclared(GdxTeaVMTarget.JS)
+            || extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
+            createDevServerRunnerClasspath(project)
+        }
+        else {
+            null
+        }
         if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
             project.tasks.named(TeaVMPlugin.JS_TASK_NAME, GenerateJavaScriptTask::class.java).configure {
                 filterBackendClasspath(WEB_BACKEND)
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
             project.tasks.named(TeaVMPlugin.JS_DEV_SERVER_TASK_NAME, DevServerTask::class.java).configure {
-                filterBackendClasspath(WEB_BACKEND, "js")
+                filterBackendClasspath(WEB_BACKEND, "js", devServerRunnerClasspath)
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
@@ -415,7 +424,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
             project.tasks.named(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME, DevServerTask::class.java).configure {
-                filterBackendClasspath(WEB_BACKEND, "wasm")
+                filterBackendClasspath(WEB_BACKEND, "wasm", devServerRunnerClasspath)
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
@@ -437,11 +446,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         })
     }
 
-    private fun DevServerTask.filterBackendClasspath(targetBackend: String?, devServerTarget: String) {
+    private fun DevServerTask.filterBackendClasspath(
+        targetBackend: String?,
+        devServerTarget: String,
+        devServerRunnerClasspath: FileCollection?
+    ) {
         if(targetBackend == null) {
             return
         }
         restoreTeaVMDevServerStderr(this)
+        if(devServerRunnerClasspath != null) {
+            getServerClasspath().setFrom(devServerRunnerClasspath)
+        }
         // TeaVM keeps one development-server client per project path. A stopped 0.15.0 client can
         // deliver its delayed process-exit callback after the next process starts, incorrectly
         // failing that build with "Dev server process stopped unexpectedly". Give each run session
@@ -462,14 +478,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val classpath = devServerClasspath(project, targetBackend)
         val propertiesRoot = project.layout.buildDirectory.dir("gdx-teavm/dev-server/$devServerTarget")
         getClasspath().setFrom(propertiesRoot, classpath)
-        getProperties().put(PLUGIN_CLASSPATH, project.provider {
-            classpath.files.joinToString(File.pathSeparator) { file -> file.absolutePath }
-        })
         val devServerTask = this
         doFirst {
             val propertiesFile = propertiesRoot.get().file(DEV_SERVER_PROPERTIES_PATH).asFile
             val properties = Properties()
             properties.putAll(devServerTask.getProperties().get())
+            // TeaVM forwards task properties as child-process arguments. Passing the full classpath
+            // there duplicates --classpath and can exceed the Windows CreateProcess command limit.
+            // WebPlugin reads this generated resource before applying TeaVM's process properties.
+            properties.setProperty(
+                PLUGIN_CLASSPATH,
+                classpath.files.joinToString(File.pathSeparator) { file -> file.absolutePath }
+            )
             val currentProperties = Properties()
             if(propertiesFile.isFile) {
                 propertiesFile.inputStream().buffered().use(currentProperties::load)
@@ -481,6 +501,34 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 }
             }
         }
+    }
+
+    private fun createDevServerRunnerClasspath(project: Project): FileCollection? {
+        if(!isWindows()) {
+            return null
+        }
+        val runnerClasspath = project.configurations.detachedConfiguration(
+            project.dependencies.create(ArtifactCoordinates.DEV_SERVER_RUNNER)
+        )
+        val pathingJar = project.tasks.register<Jar>(DEV_SERVER_CLASSPATH_TASK_NAME) {
+            group = null
+            description = "Creates a short TeaVM development-server classpath for Windows."
+            archiveFileName.set(DEV_SERVER_CLASSPATH_JAR_NAME)
+            destinationDirectory.set(project.layout.buildDirectory.dir("gdx-teavm/dev-server/launcher"))
+            inputs.files(runnerClasspath)
+                .withPropertyName("teaVMDevServerRunnerClasspath")
+                .withNormalizer(ClasspathNormalizer::class.java)
+            doFirst {
+                manifest.attributes["Class-Path"] = runnerClasspath.files.joinToString(" ") { file ->
+                    file.toURI().toASCIIString()
+                }
+            }
+        }
+        return project.files(pathingJar.flatMap { task -> task.archiveFile }).builtBy(pathingJar)
+    }
+
+    private fun isWindows(): Boolean {
+        return System.getProperty("os.name", "").startsWith("Windows", ignoreCase = true)
     }
 
     private fun targetClasspath(project: Project, targetBackend: String): FileCollection {
@@ -1171,6 +1219,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val IOS_BACKEND = "ios"
         const val PLUGIN_CLASSPATH = "gdx.teavm.classpath"
         const val DEV_SERVER_PROPERTIES_PATH = "META-INF/gdx-teavm-devserver.properties"
+        const val DEV_SERVER_CLASSPATH_TASK_NAME = "gdxTeaVMDevServerClasspathJar"
+        const val DEV_SERVER_CLASSPATH_JAR_NAME = "gdx-teavm-dev-server-classpath.jar"
         const val WEBAPP_INDEX_PATH = "gdx.teavm.webapp.indexPath"
         const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
         const val VALIDATION_ONLY_MAIN_CLASS = "com.github.xpenatan.gdx.teavm.gradle.ValidationOnlyMainClass"
