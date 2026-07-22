@@ -9,6 +9,6 @@ repositories {
 kotlin {
     sourceSets.named("main") {
         kotlin.srcDir("../../../buildSrc/src/main/kotlin")
-        kotlin.include("LibExt.kt", "GdxTeaVMPublishTarget.kt")
+        kotlin.include("LibExt.kt")
     }
 }

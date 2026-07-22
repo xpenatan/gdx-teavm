@@ -4,10 +4,13 @@ import java.util.*
 object LibExt {
     const val groupId = "com.github.xpenatan.gdx-teavm"
     const val libName = "gdx-teavm"
+    const val snapshotVersion = "-SNAPSHOT"
     var isRelease = false
+    val releaseVersion: String
+        get() = readReleaseVersion()
     var libVersion: String = ""
         get() {
-            return getVersion()
+            return if(isRelease) releaseVersion else snapshotVersion
         }
 
     const val gdxVersion = "1.14.2"
@@ -30,8 +33,10 @@ object LibExt {
     var teavmPath = ""
     var includeLibgdxSource = false
     var includeTeaVMSource = false
+    private var propertiesRootDir: File? = null
 
     fun initProperties(rootDir: File) {
+        propertiesRootDir = rootDir
         val properties = getProperties(rootDir)
         updateProperties(properties)
     }
@@ -65,22 +70,14 @@ object LibExt {
         return properties
     }
 
-    private fun getVersion(): String {
-        var libVersion = "-SNAPSHOT"
-        val file = File("gradle.properties")
+    private fun readReleaseVersion(): String {
+        val file = propertiesRootDir?.resolve("gradle.properties") ?: File("gradle.properties")
         if(file.exists()) {
             val properties = Properties()
             properties.load(file.inputStream())
-            val version = properties.getProperty("version")
-            if(LibExt.isRelease) {
-                libVersion = version
-            }
+            return properties.getProperty("version")
+                ?: throw RuntimeException("version property should exist")
         }
-        else {
-            if(LibExt.isRelease) {
-                throw RuntimeException("properties should exist")
-            }
-        }
-        return libVersion
+        throw RuntimeException("properties should exist")
     }
 }

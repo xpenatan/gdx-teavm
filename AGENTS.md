@@ -39,11 +39,11 @@
 - Gradle plugin gdx-controllers web example:
   - `./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_wasm_run`
-- Publishing entry points are root tasks from `buildSrc/src/main/kotlin/publish.gradle.kts`:
+- Publishing entry points are root tasks provided by `com.github.xpenatan.easy-publishing` and shown under the `easy-publishing` task group:
+  - `prepareSnapshot`
+  - `prepareRelease`
   - `publishSnapshot`
   - `publishRelease`
-  - `prepareSnapshotDeploy`
-  - `prepareReleaseDeploy`
 
 ## Project Shape
 - This is a multi-module Gradle build. Active modules live under `backends/`, `extensions/`, `tools/gdx-teavm-plugin`, and `examples/`.

@@ -1,13 +1,15 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.bundling.Jar
 
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
+    id("com.github.xpenatan.easy-publishing") version "-SNAPSHOT"
 }
 
-extra["gdxTeaVMPublishTarget"] = GdxTeaVMPublishTarget.GRADLE_PLUGIN
-apply(from = "../../buildSrc/src/main/kotlin/publish.gradle.kts")
+LibExt.isRelease = rootProject.extra["easyPublishing.releaseRequested"] as Boolean
+LibExt.initProperties(rootDir.resolve("../.."))
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -57,7 +59,7 @@ tasks.withType<KotlinCompile>().configureEach {
     compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
 }
 
-tasks.named("sourcesJar").configure {
+tasks.withType<Jar>().matching { it.name == "sourcesJar" }.configureEach {
     dependsOn(generateGdxTeaVMPluginInfo)
 }
 
@@ -68,4 +70,28 @@ gradlePlugin {
             implementationClass = "com.github.xpenatan.gdx.teavm.gradle.GdxTeaVMGradlePlugin"
         }
     }
+}
+
+easyPublishing {
+    groupId.set(LibExt.groupId)
+    releaseVersion.set(LibExt.releaseVersion)
+    snapshotVersion.set(LibExt.snapshotVersion)
+
+    snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
+    releaseRepositoryUrl.set("https://central.sonatype.com")
+    username.set(providers.environmentVariable("CENTRAL_PORTAL_USERNAME"))
+    password.set(providers.environmentVariable("CENTRAL_PORTAL_PASSWORD"))
+    signingKey.set(providers.environmentVariable("SIGNING_KEY"))
+    signingPassword.set(providers.environmentVariable("SIGNING_PASSWORD"))
+
+    pomName.set("gdx-teavm Gradle plugin")
+    pomDescription.set("Gradle plugin for building libGDX TeaVM web and native targets")
+    projectUrl.set("https://github.com/xpenatan/gdx-teavm")
+
+    developerId.set("Xpe")
+    developerName.set("Natan")
+
+    scmUrl.set("https://github.com/xpenatan/gdx-teavm")
+    scmConnection.set("scm:git:https://github.com/xpenatan/gdx-teavm.git")
+    scmDeveloperConnection.set("scm:git:ssh://git@github.com/xpenatan/gdx-teavm.git")
 }
