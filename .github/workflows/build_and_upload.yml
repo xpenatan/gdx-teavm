@@ -51,7 +51,7 @@ jobs:
 
       - name: Prepare Release deploy files
         if: ${{ inputs.shouldUpload && inputs.isRelease }}
-        run: ./gradlew prepareReleaseDeploy
+        run: ./gradlew prepareRelease
 
       - name: Upload Release deploy files artifact
         uses: actions/upload-artifact@v7
@@ -71,7 +71,7 @@ jobs:
 
       - name: Prepare Snapshot deploy files
         if: ${{ inputs.shouldUpload && !inputs.isRelease }}
-        run: ./gradlew prepareSnapshotDeploy
+        run: ./gradlew prepareSnapshot
 
       - name: Upload Snapshot deploy files artifact
         uses: actions/upload-artifact@v7
