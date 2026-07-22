@@ -35,6 +35,7 @@ internal class GdxTeaVMAutomaticContinuousOutput internal constructor(
 
     private var state = State.IDLE
     private var owners = 1
+    private var detachAfterEvent = false
 
     fun arm() {
         synchronized(lock) {
@@ -66,7 +67,13 @@ internal class GdxTeaVMAutomaticContinuousOutput internal constructor(
 
     override fun onOutput(event: OutputEvent) {
         val forward = synchronized(lock) {
-            shouldForward(event)
+            val result = shouldForward(event)
+            if(detachAfterEvent) {
+                detachAfterEvent = false
+                owners = 0
+                uninstall(this)
+            }
+            result
         }
         if(forward) {
             delegate.onOutput(event)
@@ -84,12 +91,14 @@ internal class GdxTeaVMAutomaticContinuousOutput internal constructor(
                 }
                 if(text?.contains(GRADLE_CONTINUOUS_WAITING_MESSAGE) == true) {
                     state = State.IDLE
+                    detachAfterEvent = true
                 }
                 return true
             }
             State.FILTERING -> {
                 if(text?.contains(GRADLE_CONTINUOUS_WAITING_MESSAGE) == true) {
                     state = State.IDLE
+                    detachAfterEvent = true
                     return false
                 }
                 if(text?.contains("Change detected, executing build...") == true

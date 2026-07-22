@@ -50,8 +50,11 @@ class GdxTeaVMWebDevServerTest {
         val realRebuild = LogEvent(6L, "test", LogLevel.LIFECYCLE, "real rebuild", null)
 
         output.arm()
-        listOf(before, transition, duplicateTaskOutput, serverError, waiting, realRebuild).forEach(output::onOutput)
+        listOf(before, transition, duplicateTaskOutput, serverError, waiting).forEach(output::onOutput)
 
+        assertEquals(listOf(before, serverError), forwarded)
+        assertTrue(uninstalled)
+        output.onOutput(realRebuild)
         assertEquals(listOf(before, serverError, realRebuild), forwarded)
         output.close()
         assertTrue(uninstalled)
