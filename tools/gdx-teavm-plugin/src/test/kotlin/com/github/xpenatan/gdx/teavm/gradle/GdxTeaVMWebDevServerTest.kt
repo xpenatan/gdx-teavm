@@ -5,11 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.LogLevel
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.internal.logging.events.LogEvent
-import org.gradle.internal.logging.events.OutputEvent
-import org.gradle.internal.logging.events.OutputEventListener
-import org.gradle.internal.logging.events.StyledTextOutputEvent
-import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.api.tasks.bundling.Jar
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -20,46 +15,6 @@ import org.teavm.gradle.TeaVMPlugin
 import org.teavm.gradle.tasks.DevServerTask
 
 class GdxTeaVMWebDevServerTest {
-    @Test
-    fun `automatic continuous bootstrap output is hidden without hiding errors or real rebuilds`() {
-        val forwarded = arrayListOf<OutputEvent>()
-        var uninstalled = false
-        val output = GdxTeaVMAutomaticContinuousOutput(
-            OutputEventListener { event -> forwarded.add(event) },
-            Any()
-        ) {
-            uninstalled = true
-        }
-        val before = LogEvent(1L, "test", LogLevel.LIFECYCLE, "initial build", null)
-        val transition = StyledTextOutputEvent(
-            2L,
-            "test",
-            LogLevel.QUIET,
-            OperationIdentifier(1L),
-            GRADLE_DEPLOYMENT_TRANSITION_MESSAGE
-        )
-        val duplicateTaskOutput = LogEvent(3L, "test", LogLevel.LIFECYCLE, "duplicate task", null)
-        val serverError = LogEvent(4L, "test", LogLevel.ERROR, "server stderr: failure", null)
-        val waiting = StyledTextOutputEvent(
-            5L,
-            "test",
-            LogLevel.QUIET,
-            OperationIdentifier(2L),
-            "$GRADLE_CONTINUOUS_WAITING_MESSAGE..."
-        )
-        val realRebuild = LogEvent(6L, "test", LogLevel.LIFECYCLE, "real rebuild", null)
-
-        output.arm()
-        listOf(before, transition, duplicateTaskOutput, serverError, waiting).forEach(output::onOutput)
-
-        assertEquals(listOf(before, serverError), forwarded)
-        assertTrue(uninstalled)
-        output.onOutput(realRebuild)
-        assertEquals(listOf(before, serverError, realRebuild), forwarded)
-        output.close()
-        assertTrue(uninstalled)
-    }
-
     @Test
     fun `TeaVM child stderr is restored to error output`() {
         val message = "server stderr: | Copied [Classpath] example.txt"
@@ -146,6 +101,8 @@ class GdxTeaVMWebDevServerTest {
         assertFalse(wasmDevServer.autoReload.get())
         assertEquals(1024, jsDevServer.processMemory.get())
         assertEquals(1024, wasmDevServer.processMemory.get())
+        assertEquals(LogLevel.INFO, jsDevServer.logging.level)
+        assertEquals(LogLevel.INFO, wasmDevServer.logging.level)
         assertEquals("/", jsDevServer.targetFilePath.get())
         assertEquals("/", wasmDevServer.targetFilePath.get())
         assertFalse(jsDevServer.projectPath.get() == wasmDevServer.projectPath.get())

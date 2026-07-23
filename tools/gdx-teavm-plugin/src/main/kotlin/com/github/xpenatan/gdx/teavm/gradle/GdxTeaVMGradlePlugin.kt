@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RelativePath
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
@@ -18,6 +19,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.deployment.internal.DeploymentRegistry
+import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
@@ -454,7 +456,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         if(targetBackend == null) {
             return
         }
+        (logging as LoggingManagerInternal).setLevelInternal(LogLevel.INFO)
         restoreTeaVMDevServerStderr(this)
+        doLast {
+            logger.lifecycle("TeaVM development server URL: http://localhost:${port.get()}")
+            logger.lifecycle("Watching for changes...")
+        }
         if(devServerRunnerClasspath != null) {
             getServerClasspath().setFrom(devServerRunnerClasspath)
         }

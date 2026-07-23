@@ -111,26 +111,19 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
             return
         }
 
-        val deployment = deploymentRegistry.start(
+        deploymentRegistry.start(
             id,
             DeploymentRegistry.ChangeBehavior.NONE,
             GdxTeaVMDevServerDeployment::class.java,
             devServerProjectPath.get(),
-            port.get(),
             entryServerPort.get(),
             indexHtml
         )
-        if(!project.gradle.startParameter.isContinuous) {
-            GdxTeaVMAutomaticContinuousOutput.install(project)?.let { output ->
-                deployment.hideAutomaticContinuousTransition(output)
-            }
-        }
     }
 
     private fun runWithoutAutomaticBuild(indexHtml: ByteArray) {
         val session = GdxTeaVMDevServerDeployment(
             devServerProjectPath.get(),
-            port.get(),
             entryServerPort.get(),
             indexHtml
         )
@@ -138,6 +131,7 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
         Runtime.getRuntime().addShutdownHook(shutdownHook)
         try {
             session.startStandalone()
+            logger.lifecycle("TeaVM development server URL: http://localhost:${port.get()}")
             CountDownLatch(1).await()
         }
         finally {
@@ -226,36 +220,30 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
  */
 open class GdxTeaVMDevServerDeployment @Inject constructor(
     internal val devServerProjectPath: String,
-    private val publicPort: Int,
     val entryServerPort: Int,
     initialIndexHtml: ByteArray
 ) : DeploymentHandle {
     private val indexHtml = AtomicReference(initialIndexHtml.copyOf())
     private val running = AtomicBoolean()
     private var entryServer: HttpServer? = null
-    private var automaticContinuousOutput: GdxTeaVMAutomaticContinuousOutput? = null
 
     override fun isRunning(): Boolean = running.get()
 
     override fun start(deployment: Deployment) {
-        startSession(watchingForChanges = true)
+        startSession()
     }
 
     internal fun startStandalone() {
-        startSession(watchingForChanges = false)
+        startSession()
     }
 
-    private fun startSession(watchingForChanges: Boolean) {
+    private fun startSession() {
         if(!running.compareAndSet(false, true)) {
             return
         }
 
         try {
             entryServer = startEntryServer()
-            logger.lifecycle("TeaVM development server is running at http://localhost:$publicPort")
-            if(watchingForChanges) {
-                logger.lifecycle("Watching for changes...")
-            }
         }
         catch(t: Throwable) {
             running.set(false)
@@ -278,24 +266,9 @@ open class GdxTeaVMDevServerDeployment @Inject constructor(
         indexHtml.set(content.copyOf())
     }
 
-    internal fun hideAutomaticContinuousTransition(output: GdxTeaVMAutomaticContinuousOutput) {
-        synchronized(this) {
-            if(automaticContinuousOutput != null) {
-                output.close()
-                return
-            }
-            automaticContinuousOutput = output
-            output.arm()
-        }
-    }
-
     override fun stop() {
         if(!running.compareAndSet(true, false)) {
             return
-        }
-        synchronized(this) {
-            automaticContinuousOutput?.close()
-            automaticContinuousOutput = null
         }
         entryServer?.stop(0)
         entryServer = null
