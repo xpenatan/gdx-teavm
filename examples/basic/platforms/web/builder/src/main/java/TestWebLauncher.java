@@ -1,6 +1,6 @@
 import com.github.xpenatan.gdx.teavm.backends.web.WebApplication;
 import com.github.xpenatan.gdx.teavm.backends.web.WebApplicationConfiguration;
-import com.github.xpenatan.gdx.teavm.examples.basic.tests.modelinstance.ModelInstancedRenderingTest;
+import com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.ModelInstancedRenderingTest;
 
 public class TestWebLauncher {
 

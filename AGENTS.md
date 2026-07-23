@@ -54,7 +54,7 @@
 - Dependency aliases and dependency, plugin, release, and snapshot versions are centralized in
   `gradle/libs.versions.toml`.
 - Local source paths and composite-build switches remain in `gradle.properties`.
-- Root `build.gradle.kts` applies shared Java 11 settings and Maven repositories to subprojects.
+- Root `build.gradle.kts` applies shared Java 17 settings and Maven repositories to subprojects.
 - `gradle.properties` can enable composite builds for local libGDX or TeaVM source:
   - `includeLibgdxSource`
   - `includeTeaVMSource`

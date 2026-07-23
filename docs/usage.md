@@ -136,39 +136,18 @@ Generated tasks:
 | `gdx_teavm_web_wasm_build` | Build the Wasm web app |
 | `gdx_teavm_web_wasm_run` | Build and serve the Wasm web app, or use TeaVM's WasmGC dev server when enabled |
 
-Default output:
+By default, each run task builds its target and serves the result with `JettyServer`. Setting `devServer.enabled` to `true`, as shown above, makes the same task and URL use TeaVM's persistent development server instead.
 
-| Target | Output |
-| --- | --- |
-| JS | `build/dist/js/webapp` |
-| Wasm | `build/dist/wasm/webapp` |
+`autoBuild` defaults to `true` and rebuilds after source, resource, asset, or static-file changes. Set it to `false` for a serve-only session. `autoReload` independently refreshes connected pages after successful rebuilds. Compilation failures leave the previous application running while the task waits for another change.
 
-By default, the run tasks build the selected target and serve its output with `JettyServer` from `backend-web`. Enabling `devServer` keeps the same public run task but delegates internally to TeaVM's persistent development server:
-
-```kotlin
-js {
-    mainClass.set("com.example.game.teavm.WebLauncher")
-    serverPort.set(8080)
-    devServer {
-        enabled.set(true)
-        autoBuild.set(true)
-        autoReload.set(true)
-    }
-}
-```
-
-TeaVM's development server supplies its own source maps, Java sources, and debug metadata, so `sourceMap`, `sourceFilePolicy`, and `debugInformation` do not need to be enabled for the run task. Those target properties continue to control normal build output. `autoBuild` defaults to `true`, keeping the Gradle invocation active and recompiling Java changes while reusing the same TeaVM server and its incremental compiler caches. A failed rebuild leaves the previous application running and waits for another change.
-
-Set `autoBuild` to `false` to keep the development server running without automatically compiling source changes. Classes can still be rebuilt explicitly from the IDE or another Gradle invocation, and TeaVM will detect the updated class files. `autoReload` is independent: when enabled, it reloads connected JavaScript and Wasm pages after any successful TeaVM rebuild.
-
-The plugin serves the generated entry page with an HTML content type at `/`, while TeaVM continues to serve the compiled code and debug artifacts. The run task remains active as the visible owner of the development session. Automatic rebuilds reuse the same TeaVM server process and its incremental compiler caches; they do not restart it. Stop the run task with Ctrl+C, or the IDE's stop action, only when the session is finished. This stops both the entry adapter and TeaVM server and releases the port. `serverPort` controls either Jetty or the TeaVM development server, depending on the selected mode.
+The development server supplies the source maps, Java sources, and debug metadata used by browser tools; the corresponding target properties still control normal build output. Keep the run task active for the development session and stop it with Ctrl+C or the IDE stop action. See the [development-server property reference](plugin-properties.md#development-server-properties) for all options.
 
 ### Checking Browser Debugging
 
 1. Run `./gradlew gdx_teavm_web_js_run` or `./gradlew gdx_teavm_web_wasm_run`.
 2. Open `http://localhost:8080`, using the configured `serverPort` if it differs.
 3. Open the browser's developer tools, find the Java launcher under Sources, set a breakpoint, and reload the page.
-4. With `autoBuild` enabled, edit and save a Java source file. The active Gradle run recompiles and rebuilds the target; `autoReload.set(true)` then refreshes the page. When `autoBuild` is disabled, trigger compilation explicitly instead.
+4. Edit and save a project file. The active run task rebuilds it; `autoReload.set(true)` also refreshes the page.
 5. Stop the active Gradle run task with Ctrl+C, or the IDE's stop action, when finished.
 
 The development server exposes Java sources and mappings to browser developer tools. Browser developer tools remain the common debugging path for Wasm.
@@ -226,13 +205,6 @@ Generated native plugin tasks:
 | `gdx_teavm_ios_open_xcode` | Create the experimental iOS Xcode project if missing and open it in Xcode |
 | `gdx_teavm_ios_build_simulator` | Generate and build the experimental iOS app for the simulator |
 | `gdx_teavm_ios_run_simulator` | Generate, build, install, and launch the experimental iOS app on a simulator |
-
-Default output:
-
-| Target | Output |
-| --- | --- |
-| GLFW | `build/dist/glfw` |
-| iOS | `build/dist/ios` |
 
 ## Android Target
 
@@ -601,61 +573,3 @@ gdxTeaVM {
 ```
 
 Use concrete class names for individual types and package patterns ending in `**` for package trees.
-
-## Example Project Tasks
-
-Plugin examples:
-
-```shell
-./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run
-./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run
-./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_build
-./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_js_run
-./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_js_run
-```
-
-Android TeaVM C examples:
-
-```shell
-./gradlew :examples:basic:platforms:android:assembleDebug
-./gradlew :examples:freetype:platforms:android:assembleDebug
-./gradlew :examples:controllers:platforms:android:assembleDebug
-```
-
-iOS TeaVM C examples (simulator builds require macOS):
-
-```shell
-./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_build_simulator
-./gradlew :examples:freetype:platforms:ios:gdx_teavm_ios_build_simulator
-./gradlew :examples:controllers:platforms:ios:gdx_teavm_ios_build_simulator
-```
-
-Manual builder examples:
-
-```shell
-./gradlew :examples:basic:platforms:web:builder:basic_web_run
-./gradlew :examples:freetype:platforms:web:builder:freetype_web_run
-./gradlew :examples:controllers:platforms:web:builder:controllers_web_run
-./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_generate
-./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
-```
-
-## Snapshot Testing In A Standalone Project
-
-Use the snapshot repository in both `pluginManagement` and regular repositories:
-
-```kotlin
-pluginManagement {
-    repositories {
-        mavenCentral()
-        maven("https://central.sonatype.com/repository/maven-snapshots/")
-    }
-}
-```
-
-```kotlin
-plugins {
-    id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
-}
-```

@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RelativePath
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
@@ -18,7 +17,6 @@ import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -458,27 +456,17 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         (logging as LoggingManagerInternal).setLevelInternal(LogLevel.INFO)
         restoreTeaVMDevServerStderr(this)
-        doLast {
-            logger.lifecycle("TeaVM development server URL: http://localhost:${port.get()}")
-            logger.lifecycle("Watching for changes...")
-        }
         if(devServerRunnerClasspath != null) {
             getServerClasspath().setFrom(devServerRunnerClasspath)
         }
         // TeaVM keeps one development-server client per project path. A stopped 0.15.0 client can
         // deliver its delayed process-exit callback after the next process starts, incorrectly
         // failing that build with "Dev server process stopped unexpectedly". Give each run session
-        // a fresh client, while reusing the active deployment's path for continuous rebuilds.
-        val deploymentId = devServerDeploymentId(project, devServerTarget)
+        // a fresh client. The public run task reuses this path for its direct incremental rebuilds.
         val newManagerPath = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             "${project.path}#gdx-teavm-$devServerTarget-${UUID.randomUUID()}"
         }
-        val managerPath = project.provider {
-            val deploymentRegistry = (project as ProjectInternal).services.get(DeploymentRegistry::class.java)
-            deploymentRegistry.get(deploymentId, GdxTeaVMDevServerDeployment::class.java)
-                ?.devServerProjectPath
-                ?: newManagerPath.value
-        }
+        val managerPath = project.provider { newManagerPath.value }
         getProjectPath().set(managerPath)
         getAllProjectPaths().add(managerPath)
 
@@ -589,6 +577,23 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             }
             result.toList()
         }
+    }
+
+    private fun runtimeProjectWatchDirs(project: Project): Provider<List<File>> {
+        return project.provider {
+            val result = linkedSetOf<File>()
+            addMainSourceDirs(project, result)
+            for(dependencyProject in runtimeProjectDependencies(project)) {
+                addMainSourceDirs(dependencyProject, result)
+            }
+            result.toList()
+        }
+    }
+
+    private fun addMainSourceDirs(project: Project, result: MutableSet<File>) {
+        val sourceSets = project.extensions.findByType(SourceSetContainer::class.java) ?: return
+        val main = sourceSets.findByName("main") ?: return
+        result.addAll(main.allSource.srcDirs)
     }
 
     private fun runtimeProjectOutputDirs(project: Project, targetBackend: String): Provider<List<File>> {
@@ -874,8 +879,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         if(extension.js.devServer.enabled.get()) {
             val devServerTask = project.tasks.named(TeaVMPlugin.JS_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
-            val deploymentId = devServerDeploymentId(project, "js")
-            val entryServerPort = devServerEntryPort(project, extension.js.serverPort, deploymentId)
+            val entryServerPort = devServerEntryPort(project, extension.js.serverPort)
             devServerTask.configure {
                 getTargetFilePath().set("/")
                 getAutoReload().set(false)
@@ -887,13 +891,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 group = TASK_GROUP
                 description = "Run the gdx-teavm JavaScript web application with TeaVM's development server."
                 dependsOn(devServerTask)
-                this.deploymentId.convention(deploymentId)
                 devServerProjectPath.convention(devServerTask.flatMap { task -> task.projectPath })
                 port.convention(extension.js.serverPort)
                 this.entryServerPort.convention(entryServerPort)
                 autoBuild.convention(extension.js.devServer.autoBuild)
                 autoReload.convention(extension.js.devServer.autoReload)
                 reloadEndpoint.convention(extension.js.targetFileName.map(::devServerReloadEndpoint))
+                rebuildTaskPath.convention(project.tasks.named(JavaPlugin.CLASSES_TASK_NAME).map { task -> task.path })
+                watchFiles.from(
+                    runtimeProjectWatchDirs(project),
+                    extension.assets,
+                    extension.js.devServer.staticDirs
+                )
             }
         }
         else {
@@ -916,8 +925,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         if(extension.wasm.devServer.enabled.get()) {
             val devServerTask = project.tasks.named(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
-            val deploymentId = devServerDeploymentId(project, "wasm")
-            val entryServerPort = devServerEntryPort(project, extension.wasm.serverPort, deploymentId)
+            val entryServerPort = devServerEntryPort(project, extension.wasm.serverPort)
             devServerTask.configure {
                 getTargetFilePath().set("/")
                 getAutoReload().set(false)
@@ -929,13 +937,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 group = TASK_GROUP
                 description = "Run the gdx-teavm Wasm web application with TeaVM's development server."
                 dependsOn(devServerTask)
-                this.deploymentId.convention(deploymentId)
                 devServerProjectPath.convention(devServerTask.flatMap { task -> task.projectPath })
                 port.convention(extension.wasm.serverPort)
                 this.entryServerPort.convention(entryServerPort)
                 autoBuild.convention(extension.wasm.devServer.autoBuild)
                 autoReload.convention(extension.wasm.devServer.autoReload)
                 reloadEndpoint.convention(extension.wasm.targetFileName.map(::devServerReloadEndpoint))
+                rebuildTaskPath.convention(project.tasks.named(JavaPlugin.CLASSES_TASK_NAME).map { task -> task.path })
+                watchFiles.from(
+                    runtimeProjectWatchDirs(project),
+                    extension.assets,
+                    extension.wasm.devServer.staticDirs
+                )
             }
         }
         else {
@@ -950,28 +963,18 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun devServerDeploymentId(project: Project, target: String): String {
-        val projectDirectory = project.projectDir.toPath().toAbsolutePath().normalize()
-        return "gdx-teavm:$projectDirectory:$target"
-    }
-
     private fun devServerReloadEndpoint(targetFileName: String): String {
         return "/${targetFileName.trimStart('/')}.ws"
     }
 
     private fun devServerEntryPort(
         project: Project,
-        publicPort: Provider<Int>,
-        deploymentId: String
+        publicPort: Provider<Int>
     ): Provider<Int> {
         val selectedPort = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             findAvailableLoopbackPort(publicPort.get())
         }
-        return project.provider {
-            val deploymentRegistry = (project as ProjectInternal).services.get(DeploymentRegistry::class.java)
-            deploymentRegistry.get(deploymentId, GdxTeaVMDevServerDeployment::class.java)?.entryServerPort
-                ?: selectedPort.value
-        }
+        return project.provider { selectedPort.value }
     }
 
     private fun findAvailableLoopbackPort(excludedPort: Int): Int {

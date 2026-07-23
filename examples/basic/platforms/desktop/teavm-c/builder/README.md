@@ -6,9 +6,8 @@ This guide explains how to compile Java code to C using TeaVM and build a native
 
 Before you begin, ensure you have the following installed:
 
-- **Java 21** (or compatible version)
-  - Set the correct Java version in Project Settings -> Gradle JVM
-  ![img.png](images/img.png)
+- **Java 17 or newer**
+  - Select it as the Gradle JVM in the IDE.
   
 - **Visual Studio Community 2022** (or later) with C++ development tools on Windows
   - Older versions may work but have not been tested
@@ -30,48 +29,34 @@ sudo apt install libgl1-mesa-dev libwayland-dev libxkbcommon-dev xorg-dev pkg-co
 Run a Gradle task to generate C code using TeaVM and build the native executable:
 
 **Debug build**
-```
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
+```shell
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
 ```
 
 **Release build**
-```
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_build
+```shell
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_build
 ```
 
 The launcher always uses `TeaVMOptimizationLevel.FULL`.
 
 **Generate C code only**
+```shell
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_generate
 ```
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_generate
-```
 
-**Using IntelliJ Run Configuration**
+### Generated project
 
-<img src="images/config.png" width="300" alt="Run configuration" />
-
-### Output
-
-By default, the generated files are placed in ```build/dist``` and should look like this:
-
-<img src="images/generated_files.png" width="200" alt="generated files" />
-
-**Note:** You can customize the output destination in ```BuildTeaVMTestDemo``` by calling ```build(new File("your/custom/path"))```
+Generated C sources, CMake files, scripts, and assets are written under `build/dist`. To use another destination, change the `build(File)` argument in `BuildTeaVMTestDemo`.
 
 ## Step 2: Run
 
-Run the debug executable through Gradle:
+Choose the desired configuration:
 
-```
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_run
-```
-
-You can also choose the configuration explicitly:
-
-```
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_run
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_run
-gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_console_run
+```shell
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_run
+./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_console_run
 ```
 
 The run tasks generate C code, compile the native executable, and start it. On Windows, debug run and release console run open a console window and run the native executable inside it, so stdout/stderr logs are visible while the app is running.
@@ -87,6 +72,8 @@ TeaGLFWBackend backend = new TeaGLFWBackend()
 ```
 
 The CMake definition above selects `/MD` on MSVC. Use `MultiThreaded` for `/MT`, or omit it to keep gdx-teavm's existing MT default. `cmakeDefinition(...)` is generic and can pass other CMake settings on Windows, Linux, and macOS.
+
+See the shared [native toolchain policy](../../../../../../docs/backend-architecture.md#native-toolchain-policy) for library selection, FetchContent, and platform behavior.
 
 The example Gradle tasks pass normal launcher arguments:
 
@@ -142,7 +129,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug
 make
 ```
 
-## Output
+## Native artifacts
 
 After successful compilation, you will find:
 - The executable in ```build/dist/c/release/```

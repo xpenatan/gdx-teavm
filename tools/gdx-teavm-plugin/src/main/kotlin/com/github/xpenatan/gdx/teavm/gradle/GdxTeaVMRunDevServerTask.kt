@@ -4,24 +4,33 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.deployment.internal.Deployment
-import org.gradle.deployment.internal.DeploymentHandle
-import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
+import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.teavm.gradle.tasks.DevServerManager
 import org.teavm.gradle.tasks.DevServerTask
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.URI
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributes
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Base64
+import java.util.Locale
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -29,6 +38,28 @@ import javax.inject.Inject
 
 internal const val GDX_TEAVM_DEV_SERVER_INDEX_FILE = "__gdx_teavm_index.html"
 internal const val TEAVM_DEV_SERVER_STDERR_PREFIX = "server stderr:"
+private const val DEV_SERVER_STATUS_BORDER = "#################################################################"
+private const val FILE_WATCH_POLL_MILLIS = 250L
+private const val FILE_WATCH_QUIET_MILLIS = 300L
+private val DEV_SERVER_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+internal fun devServerStatusMessage(port: Int, watching: Boolean = true): String {
+    val lines = mutableListOf(
+        DEV_SERVER_STATUS_BORDER,
+        "|",
+        "| TeaVM development server URL: http://localhost:$port"
+    )
+    if(watching) {
+        lines.add("| Watching for changes...")
+    }
+    lines.add("|")
+    lines.add(DEV_SERVER_STATUS_BORDER)
+    return lines.joinToString("\n")
+}
+
+internal fun changeDetectedMessage(time: LocalTime = LocalTime.now()): String {
+    return "[${time.format(DEV_SERVER_TIME_FORMATTER)}] Change detected. Rebuilding..."
+}
 
 /**
  * TeaVM forwards every line from its child process' stderr as a Gradle WARN message. Gradle sends
@@ -57,11 +88,17 @@ internal fun rewriteTeaVMDevServerStderr(
     return message
 }
 
+internal fun suppressTeaVMRebuildNoise(level: LogLevel, message: String): String? {
+    return if(level == LogLevel.WARN && message.startsWith(TEAVM_DEV_SERVER_STDERR_PREFIX)) {
+        null
+    }
+    else {
+        message
+    }
+}
+
 @DisableCachingByDefault(because = "Runs a persistent TeaVM development-server session")
 abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
-    @get:Input
-    abstract val deploymentId: Property<String>
-
     @get:Input
     abstract val devServerProjectPath: Property<String>
 
@@ -80,8 +117,14 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
     @get:Input
     abstract val reloadEndpoint: Property<String>
 
+    @get:Input
+    abstract val rebuildTaskPath: Property<String>
+
+    @get:Internal
+    abstract val watchFiles: ConfigurableFileCollection
+
     @get:Inject
-    protected abstract val deploymentRegistry: DeploymentRegistry
+    protected abstract val execOperations: ExecOperations
 
     @TaskAction
     fun run() {
@@ -94,35 +137,7 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
             throw t
         }
 
-        if(!autoBuild.get()) {
-            runWithoutAutomaticBuild(indexHtml)
-            return
-        }
-
-        val id = deploymentId.get()
-        val existing = deploymentRegistry.get(id, GdxTeaVMDevServerDeployment::class.java)
-        if(existing != null) {
-            existing.update(
-                devServerProjectPath.get(),
-                entryServerPort.get(),
-                indexHtml
-            )
-            logger.lifecycle("TeaVM development server rebuilt successfully.")
-            return
-        }
-
-        deploymentRegistry.start(
-            id,
-            DeploymentRegistry.ChangeBehavior.NONE,
-            GdxTeaVMDevServerDeployment::class.java,
-            devServerProjectPath.get(),
-            entryServerPort.get(),
-            indexHtml
-        )
-    }
-
-    private fun runWithoutAutomaticBuild(indexHtml: ByteArray) {
-        val session = GdxTeaVMDevServerDeployment(
+        val session = GdxTeaVMDevServerSession(
             devServerProjectPath.get(),
             entryServerPort.get(),
             indexHtml
@@ -130,13 +145,105 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
         val shutdownHook = Thread(session::stop, "gdx-teavm-dev-server-shutdown")
         Runtime.getRuntime().addShutdownHook(shutdownHook)
         try {
-            session.startStandalone()
-            logger.lifecycle("TeaVM development server URL: http://localhost:${port.get()}")
-            CountDownLatch(1).await()
+            session.start()
+            logger.error(devServerStatusMessage(port.get(), autoBuild.get()))
+            if(autoBuild.get()) {
+                suppressRebuildNoise()
+                watchAndRebuild(manager, session)
+            }
+            else {
+                CountDownLatch(1).await()
+            }
         }
         finally {
             session.stop()
             removeShutdownHook(shutdownHook)
+        }
+    }
+
+    private fun suppressRebuildNoise() {
+        val contextLogger = logger as? ContextAwareTaskLogger ?: return
+        contextLogger.setMessageRewriter(::suppressTeaVMRebuildNoise)
+    }
+
+    private fun watchAndRebuild(
+        manager: org.teavm.gradle.tasks.ProjectDevServerManager,
+        session: GdxTeaVMDevServerSession
+    ) {
+        val watcher = GdxTeaVMFileWatcher(watchFiles.files)
+        while(true) {
+            watcher.awaitChange()
+            logger.lifecycle(changeDetectedMessage())
+            val started = System.nanoTime()
+            try {
+                compileProjectClasses()
+                manager.runBuild(logger, null)
+                session.update(loadIndexHtml())
+                logger.lifecycle("Rebuild successful in ${formatDuration(System.nanoTime() - started)}.")
+            }
+            catch(e: InterruptedException) {
+                throw e
+            }
+            catch(t: Throwable) {
+                if(t is GdxTeaVMRebuildException && t.details.isNotBlank()) {
+                    logger.error(t.details)
+                }
+                logger.lifecycle("Rebuild failed. Waiting for changes...")
+                logger.debug("TeaVM development-server rebuild failed", t)
+            }
+        }
+    }
+
+    private fun compileProjectClasses() {
+        val output = ByteArrayOutputStream()
+        val result = execOperations.exec {
+            commandLine(gradleCommand())
+            workingDir(project.rootDir)
+            standardOutput = output
+            errorOutput = output
+            isIgnoreExitValue = true
+        }
+        if(result.exitValue != 0) {
+            throw GdxTeaVMRebuildException(output.toString(Charsets.UTF_8).trim())
+        }
+    }
+
+    private fun gradleCommand(): List<String> {
+        val gradleHome = project.gradle.gradleHomeDir
+        val windows = System.getProperty("os.name", "").startsWith("Windows", ignoreCase = true)
+        val executable = File(gradleHome, if(windows) "bin/gradle.bat" else "bin/gradle")
+        if(!executable.isFile) {
+            throw GradleException("Could not find the Gradle executable at ${executable.absolutePath}")
+        }
+
+        val command = mutableListOf<String>()
+        if(windows) {
+            command.add(System.getenv("ComSpec") ?: "cmd.exe")
+            command.add("/d")
+            command.add("/c")
+        }
+        command.add(executable.absolutePath)
+        command.add("--project-dir")
+        command.add(project.rootDir.absolutePath)
+        command.add("--quiet")
+        command.add("--console=plain")
+        if(project.gradle.startParameter.isOffline) {
+            command.add("--offline")
+        }
+        for((key, value) in project.gradle.startParameter.projectProperties.toSortedMap()) {
+            command.add("-P$key=$value")
+        }
+        command.add(rebuildTaskPath.get())
+        return command
+    }
+
+    private fun formatDuration(nanos: Long): String {
+        val millis = nanos / 1_000_000
+        return if(millis < 1_000) {
+            "${millis}ms"
+        }
+        else {
+            String.format(Locale.ROOT, "%.1fs", millis / 1_000.0)
         }
     }
 
@@ -213,27 +320,88 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
     }
 }
 
-/**
- * With automatic builds enabled, Gradle keeps this handle alive between build iterations and calls
- * [stop] when the invocation is cancelled. The same lifecycle also supports a directly blocking
- * session when automatic builds are disabled.
- */
-open class GdxTeaVMDevServerDeployment @Inject constructor(
+private class GdxTeaVMRebuildException(val details: String) : RuntimeException()
+
+internal data class GdxTeaVMFileStamp(
+    val modifiedMillis: Long,
+    val size: Long
+)
+
+internal class GdxTeaVMFileWatcher(
+    roots: Collection<File>,
+    private val pollMillis: Long = FILE_WATCH_POLL_MILLIS,
+    private val quietMillis: Long = FILE_WATCH_QUIET_MILLIS
+) {
+    private val roots = roots.mapTo(linkedSetOf()) { file ->
+        file.toPath().toAbsolutePath().normalize()
+    }
+    private var snapshot = snapshot()
+
+    fun awaitChange() {
+        while(true) {
+            Thread.sleep(pollMillis)
+            var current = snapshot()
+            if(current == snapshot) {
+                continue
+            }
+
+            do {
+                snapshot = current
+                Thread.sleep(quietMillis)
+                current = snapshot()
+            }
+            while(current != snapshot)
+            snapshot = current
+            return
+        }
+    }
+
+    private fun snapshot(): Map<Path, GdxTeaVMFileStamp> {
+        val result = linkedMapOf<Path, GdxTeaVMFileStamp>()
+        for(root in roots) {
+            if(Files.isRegularFile(root)) {
+                addFile(root, result)
+            }
+            else if(Files.isDirectory(root)) {
+                try {
+                    Files.walk(root).use { paths ->
+                        paths.filter(Files::isRegularFile).forEach { path ->
+                            addFile(path, result)
+                        }
+                    }
+                }
+                catch(_: IOException) {
+                    // A safe-save operation can replace a directory while it is being scanned.
+                }
+            }
+        }
+        return result
+    }
+
+    private fun addFile(path: Path, result: MutableMap<Path, GdxTeaVMFileStamp>) {
+        try {
+            val attributes = Files.readAttributes(path, BasicFileAttributes::class.java)
+            result[path.toAbsolutePath().normalize()] = GdxTeaVMFileStamp(
+                attributes.lastModifiedTime().toMillis(),
+                attributes.size()
+            )
+        }
+        catch(_: IOException) {
+            // The next poll observes files that were replaced while this snapshot was collected.
+        }
+    }
+}
+
+internal class GdxTeaVMDevServerSession(
     internal val devServerProjectPath: String,
     val entryServerPort: Int,
     initialIndexHtml: ByteArray
-) : DeploymentHandle {
+) {
     private val indexHtml = AtomicReference(initialIndexHtml.copyOf())
     private val running = AtomicBoolean()
     private var entryServer: HttpServer? = null
 
-    override fun isRunning(): Boolean = running.get()
-
-    override fun start(deployment: Deployment) {
-        startSession()
-    }
-
-    internal fun startStandalone() {
+    fun start() {
         startSession()
     }
 
@@ -252,21 +420,11 @@ open class GdxTeaVMDevServerDeployment @Inject constructor(
         }
     }
 
-    fun update(projectPath: String, expectedEntryPort: Int, content: ByteArray) {
-        if(projectPath != devServerProjectPath) {
-            throw GradleException(
-                "TeaVM development-server project changed from '$devServerProjectPath' to '$projectPath'"
-            )
-        }
-        if(expectedEntryPort != entryServerPort) {
-            throw GradleException(
-                "TeaVM development entry port changed from $entryServerPort to $expectedEntryPort"
-            )
-        }
+    fun update(content: ByteArray) {
         indexHtml.set(content.copyOf())
     }
 
-    override fun stop() {
+    fun stop() {
         if(!running.compareAndSet(true, false)) {
             return
         }
@@ -329,7 +487,7 @@ open class GdxTeaVMDevServerDeployment @Inject constructor(
     }
 
     private companion object {
-        val logger = Logging.getLogger(GdxTeaVMDevServerDeployment::class.java)
+        val logger = Logging.getLogger(GdxTeaVMDevServerSession::class.java)
         const val LOOPBACK_ADDRESS = "127.0.0.1"
     }
 }

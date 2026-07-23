@@ -1,4 +1,4 @@
-package com.github.xpenatan.gdx.teavm.examples.basic.tests.modelinstance;
+package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -43,7 +43,7 @@ import java.nio.FloatBuffer;
  */
 public class ModelInstancedRenderingTest extends ApplicationAdapter {
 
-    private static final int WEB_INSTANCE_COUNT_SIDE = 29;
+    private static final int WEB_INSTANCE_COUNT_SIDE = 54;
     private static final int DESKTOP_INSTANCE_COUNT_SIDE = 101;
     private static final int FLOATS_PER_MATRIX = 16;
     private static final int CUBE_INDEX_COUNT = 36;
@@ -315,7 +315,7 @@ public class ModelInstancedRenderingTest extends ApplicationAdapter {
         camera = new PerspectiveCamera(45f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.near = 0.001f;
         camera.far = 2f;
-        camera.position.set(0f, 0f, 0f);
+        camera.position.set(0.1f, 0f, 0f);
         camera.direction.set(Vector3.Z);
         camera.up.set(Vector3.Y);
         camera.update();

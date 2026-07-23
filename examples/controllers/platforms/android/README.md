@@ -1,38 +1,14 @@
 # Android Controller Verification
 
-This module has been verified to run on Android with controller support enabled.
+## Verified setup
 
-## Verification Result
+The controller demo was verified with a MuMu Android device at ADB target `127.0.0.1:16384`. MuMu was used because gamepad passthrough is not reliable in every Android Studio emulator setup.
 
-- Emulator: MuMu Android device
-- ADB target: `127.0.0.1:16384`
-- App module: `:examples:controllers:platforms:android`
-- Result: controller detected and button input received by the demo
-
-## Why MuMu Was Used
-
-This verification was performed with a third-party emulator that is known to expose controller input to the Android guest.
-
-The default Android Studio emulator may not reliably expose gamepad functionality in every host setup, so MuMu was used here as a practical verification environment for Android controller support.
-
-The screenshot below shows the Android controller example running successfully and receiving a button event:
+The captured run shows the controller in the demo UI and a button-down event reaching libGDX:
 
 ![MuMu controller success](docs/mumu-controller-success.png)
 
-## What Was Confirmed
-
-- The Android example launches successfully.
-- The controller is listed in the demo UI.
-- Button input reaches the libGDX controller layer.
-- The demo event text updates when a controller button is pressed.
-
-## Proof In Screenshot
-
-- `Controllers: Android Controller 6`
-- `Button: 7`
-- `Event: Android Controller 6 button down 7`
-
-## Typical Run Flow
+## Reproduce
 
 Build and install:
 

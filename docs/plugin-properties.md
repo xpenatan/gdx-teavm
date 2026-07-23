@@ -1,24 +1,6 @@
 # Gradle Plugin Property Reference
 
-This page lists the properties available in the `gdxTeaVM` Gradle extension.
-
-The plugin creates tasks only for target blocks that are declared. Declaring `js {}` or `wasm {}` adds `backend-web`; declaring `glfw {}` adds `backend-glfw`; declaring experimental `ios {}` adds `backend-ios`; declaring `android {}` adds `backend-android`. Regular Java targets add their backend to both `implementation` and TeaVM's generation classpath. Android modules use the dedicated TeaVM configuration and generated runtime bridge sources described in the usage guide.
-
-## Minimal Shape
-
-```kotlin
-plugins {
-    id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
-}
-
-gdxTeaVM {
-    assets("assets")
-
-    js {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-    }
-}
-```
+This page is the authoritative list of properties available in the `gdxTeaVM` Gradle extension. See the [usage guide](usage.md#recommended-gradle-plugin) for setup and complete configurations.
 
 ## Shared Properties
 
@@ -42,25 +24,17 @@ Helper methods:
 | `classpathAssets(vararg paths)` | Adds classpath resource roots to `classpathAssets`. |
 | `reflection(vararg patterns)` | Adds reflection class names or package patterns to `reflection`. |
 
-Example:
-
-```kotlin
-gdxTeaVM {
-    assets("assets", "../shared-assets")
-    classpathAssets("com/example/game/shaders")
-    reflection("com.example.game.save**")
-}
-```
-
 ## Target Declaration Methods
 
-| Block | Backend | Tasks created |
-| --- | --- | --- |
-| `js { ... }` | `backend-web` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
-| `wasm { ... }` | `backend-web` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
-| `glfw { ... }` | `backend-glfw` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
-| `ios { ... }` | `backend-ios` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_regenerate_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator` |
-| `android { ... }` | `backend-android` | `gdx_teavm_android_generate` |
+| Block | Backend |
+| --- | --- |
+| `js { ... }` | `backend-web` |
+| `wasm { ... }` | `backend-web` |
+| `glfw { ... }` | `backend-glfw` |
+| `ios { ... }` | `backend-ios` |
+| `android { ... }` | `backend-android` |
+
+Only declared targets create tasks or add backend dependencies. Task behavior is covered in the [usage guide](usage.md#web-targets).
 
 ## Common TeaVM Target Properties
 
@@ -71,38 +45,18 @@ The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. 
 | `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files. |
 | `mainClass` | `Property<String>` | none | Fully qualified launcher class used as TeaVM main class. This must be set for every target you build. |
 | `relativePathInOutputDir` | `Property<String>` | web `webapp`, native `c/src` | Path inside `outputDir` where TeaVM writes generated files. |
-| `optimization` | `Property<OptimizationLevel>` | JS `BALANCED`, Wasm/native `AGGRESSIVE` | TeaVM optimization level. |
+| `optimization` | `Property<OptimizationLevel>` | `BALANCED` | TeaVM optimization level. |
 | `debugInformation` | `Property<Boolean>` | `false` | Includes TeaVM debug information when supported by the target. |
 | `fastGlobalAnalysis` | `Property<Boolean>` | `false` | Enables faster TeaVM global analysis, trading precision for speed. |
-| `outOfProcess` | `Property<Boolean>` | `false` | Runs TeaVM compilation out of the Gradle process when supported by TeaVM. |
-| `processMemory` | `Property<Int>` | `512` | Memory limit in megabytes for out-of-process TeaVM compilation. |
+| `outOfProcess` | `Property<Boolean>` | Web `true`, native `false` | Runs TeaVM compilation out of the Gradle process when supported by TeaVM. |
+| `processMemory` | `Property<Int>` | Web `1024`, native `512` | Memory limit in megabytes for out-of-process TeaVM compilation. |
 | `preservedClasses` | `ListProperty<String>` | empty | Classes TeaVM should preserve from aggressive removal or renaming. |
 
-Target-specific default output:
-
-| Target | `outputDir` | `relativePathInOutputDir` | `targetFileName` |
-| --- | --- | --- | --- |
-| JS | `build/dist/js` | `webapp` | `app.js` |
-| Wasm | `build/dist/wasm` | `webapp` | `app.wasm` |
-| GLFW | `build/dist/glfw` | `c/src` | `app` |
-| iOS | `build/dist/ios` | `c/src` | `app` |
-| Android | `build/generated/gdx-teavm/android` | `c/src` | `app` |
+`outputDir` defaults to `build/dist/js`, `build/dist/wasm`, `build/dist/glfw`, `build/dist/ios`, or `build/generated/gdx-teavm/android` for the corresponding target.
 
 ## Web Targets
 
 Web targets use `backend-web` and can be built as JavaScript or Wasm. JS and Wasm usually share the same launcher class because both start `WebApplication`.
-
-```kotlin
-gdxTeaVM {
-    js {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-    }
-
-    wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-    }
-}
-```
 
 ### Web Common Properties
 
@@ -121,41 +75,22 @@ These properties exist inside `js {}` and `wasm {}` only.
 | `serverPort` | `Property<Int>` | Gradle property `teavmPluginPort`, otherwise `8080` | Port used by this target's Jetty or TeaVM development server. |
 | `devServer` | `GdxTeaVMDevServerExtension` | disabled | Configures TeaVM's persistent development server for this target's existing run task. |
 
-Example:
-
-```kotlin
-gdxTeaVM {
-    js {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("Example Game")
-        htmlWidth.set(1280)
-        htmlHeight.set(720)
-        serverPort.set(9090)
-        devServer {
-            enabled.set(true)
-            autoBuild.set(true)
-            autoReload.set(true)
-        }
-    }
-}
-```
-
 ### Development Server Properties
 
-The same `devServer {}` block is available inside `js {}` and `wasm {}`. It deliberately exposes only options supported by both TeaVM web targets. TeaVM automatically produces and serves source maps, source files, and debug metadata in this mode; normal build properties remain unchanged.
+The same `devServer {}` block is available inside `js {}` and `wasm {}` and exposes only options supported by both targets.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `enabled` | `Property<Boolean>` | `false` | Makes the target's existing run task use TeaVM's persistent development server. |
-| `autoBuild` | `Property<Boolean>` | `true` | Automatically watches build inputs, recompiles Java changes, and incrementally rebuilds through the same TeaVM server while the run task is active. Set to `false` to keep serving without automatic compilation. |
-| `autoReload` | `Property<Boolean>` | `false` | Installs the plugin's shared JS/Wasm reload client, which reloads connected pages after TeaVM rebuilds successfully. It does not itself compile or watch source files. |
-| `processMemory` | `Property<Int>` | Target `processMemory`, normally `512` | Maximum heap size in megabytes for the development-server process. |
+| `autoBuild` | `Property<Boolean>` | `true` | Rebuilds when project sources, resources, assets, or static files change. Set to `false` for a serve-only session. |
+| `autoReload` | `Property<Boolean>` | `false` | Reloads connected pages after successful rebuilds. |
+| `processMemory` | `Property<Int>` | Target `processMemory`, normally `1024` | Maximum heap size in megabytes for the development-server process. |
 | `staticDirs` | `ConfigurableFileCollection` | empty | Additional directories served as static files. |
 | `staticServePath` | `Property<String>` | unset | URL path prefix for `staticDirs`. |
 | `resourceRoots` | `ListProperty<String>` | empty | Classpath resource roots served as static resources. |
 | `resourceServePath` | `Property<String>` | unset | URL path prefix for `resourceRoots`. |
 
-The HTTP port remains the containing target's `serverPort`; there is no second public dev-server port. The plugin reserves TeaVM's proxy internally so the generated entry page can be served as HTML at `/`. The reload client uses TeaVM's build-status WebSocket and works for both targets, including Wasm where TeaVM does not inject its JavaScript indicator. TeaVM's JavaScript-only indicator and stack-deobfuscation switches are intentionally not part of this common JS/Wasm API.
+The development server uses the containing target's `serverPort`. TeaVM's JavaScript-only indicator and stack-deobfuscation switches are intentionally not part of this common JS/Wasm API.
 
 ### JavaScript Properties
 
@@ -164,19 +99,8 @@ The HTTP port remains the containing target's `serverPort`; there is no second p
 | `targetFileName` | `Property<String>` | `app.js` | Name of the generated JavaScript output file. |
 | `obfuscated` | `Property<Boolean>` | `true` | Minifies and renames generated JavaScript output. |
 | `strict` | `Property<Boolean>` | `false` | Enables TeaVM strict JavaScript generation checks. |
-
-Example:
-
-```kotlin
-gdxTeaVM {
-    js {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
-        strict.set(false)
-    }
-}
-```
+| `sourceMap` | `Property<Boolean>` | `false` | Generates browser source maps. |
+| `sourceFilePolicy` | `Property<SourceFilePolicy>` | `LINK_LOCAL_FILES` | Controls how Java sources referenced by source maps are exposed. |
 
 ### Wasm Properties
 
@@ -187,22 +111,12 @@ gdxTeaVM {
 | `strict` | `Property<Boolean>` | `false` | Enables TeaVM strict Wasm generation checks. |
 | `copyRuntime` | `Property<Boolean>` | `true` | Copies TeaVM's Wasm runtime JavaScript next to the generated `.wasm` file. |
 | `modularRuntime` | `Property<Boolean>` | `false` | Copies TeaVM's ES module Wasm runtime instead of the global script runtime. The generated gdx-teavm web app expects the default global runtime. |
-
-Example:
-
-```kotlin
-gdxTeaVM {
-    wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
-        obfuscated.set(false)
-    }
-}
-```
+| `sourceMap` | `Property<Boolean>` | `false` | Generates browser source maps. |
+| `sourceFilePolicy` | `Property<SourceFilePolicy>` | `LINK_LOCAL_FILES` | Controls how Java sources referenced by source maps are exposed. |
 
 ## Native Targets
 
-Native targets use TeaVM C output. Declare `glfw {}` for the desktop backend, experimental `ios {}` for WIP native payloads, or `android {}` in an Android application module. Native targets normally need their own launcher classes because each starts a different backend application type.
+Native targets use TeaVM C output and add the following properties to the common target settings.
 
 ### Native Target Properties
 
@@ -210,17 +124,8 @@ These properties exist in native target blocks.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `mainClass` | `Property<String>` | none | Native launcher class used as the TeaVM C main class. |
-| `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files for this native backend. |
-| `relativePathInOutputDir` | `Property<String>` | `c/src` | Path inside `outputDir` where TeaVM writes C source files. |
 | `targetFileName` | `Property<String>` | `app` | Name of the generated native target. |
 | `releasePath` | `DirectoryProperty` | `[outputDir]/c/release` | Directory where native runtime assets and build output support files are prepared. |
-| `optimization` | `Property<OptimizationLevel>` | `AGGRESSIVE` | TeaVM C optimization level. |
-| `debugInformation` | `Property<Boolean>` | `false` | Includes TeaVM C debug information when supported. |
-| `fastGlobalAnalysis` | `Property<Boolean>` | `false` | Enables faster TeaVM global analysis, trading precision for speed. |
-| `outOfProcess` | `Property<Boolean>` | `false` | Runs TeaVM C compilation out of the Gradle process when supported by TeaVM. |
-| `processMemory` | `Property<Int>` | `512` | Memory limit in megabytes for out-of-process TeaVM compilation. |
-| `preservedClasses` | `ListProperty<String>` | empty | Classes TeaVM should preserve from aggressive removal or renaming. |
 | `minHeapSizeMb` | `Property<Int>` | `4` | Initial native heap size in megabytes. |
 | `maxHeapSizeMb` | `Property<Int>` | `128` | Maximum native heap size in megabytes. |
 | `heapDump` | `Property<Boolean>` | `false` | Enables TeaVM heap dump support for native output when supported. |
@@ -237,50 +142,7 @@ These properties exist in native target blocks.
 | `consoleLog` | `Property<Boolean>` | `false` | Opens or attaches native console logging for GLFW run tasks when supported by the platform. On Windows, the opened console remains visible after the application exits until a key is pressed. |
 | `cmakeDefinitions` | `MapProperty<String, String>` | empty | Advanced ordered CMake cache definitions passed to the generated GLFW configure scripts. Use `cmakeDefinition(name, value)` to add one definition. |
 
-Example:
-
-```kotlin
-gdxTeaVM {
-    glfw {
-        mainClass.set("com.example.game.teavm.GlfwLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
-        minHeapSizeMb.set(64)
-        maxHeapSizeMb.set(512)
-        buildType.set("Release")
-        consoleLog.set(true)
-    }
-}
-```
-
-`cmakeDefinitions` is an intentional low-level pass-through for ordinary CMake cache entries and toolchain settings. Windows keeps the existing MT default, while an explicit standard CMake setting selects MD or MT without a gdx-teavm-specific enum:
-
-```kotlin
-gdxTeaVM {
-    glfw {
-        cmakeDefinition("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL") // /MD
-        // cmakeDefinition("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded") // /MT
-    }
-}
-```
-
-The same map is passed to the generated shell configure scripts on Linux and macOS. Those builds download pinned, hash-verified GLFW and GLEW release sources and link them statically by default, so the resulting application does not require GLFW or GLEW runtime packages. To use libraries already installed on the build host instead, pass the low-level CMake switch:
-
-```kotlin
-gdxTeaVM {
-    glfw {
-        cmakeDefinition("GDX_TEAVM_GLFW_USE_SYSTEM_LIBS", "ON")
-    }
-}
-```
-
-The system-library path deliberately leaves static-versus-shared selection to the installed packages and ordinary CMake settings. Standard FetchContent settings such as `FETCHCONTENT_BASE_DIR`, `FETCHCONTENT_FULLY_DISCONNECTED`, `FETCHCONTENT_SOURCE_DIR_GDX_TEAVM_GLFW`, and `FETCHCONTENT_SOURCE_DIR_GDX_TEAVM_GLEW_SOURCE` can be passed through the same map for shared caches or offline source directories. Android and iOS use their own target build integrations rather than the desktop GLFW scripts; MSVC's `/MT` and `/MD` options do not apply to them.
-
-Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
-
-| Task | Build type |
-| --- | --- |
-| `gdx_teavm_glfw_build` | `glfw.buildType` |
-| `gdx_teavm_glfw_run` | `glfw.buildType` |
+Platform-specific CMake behavior is documented under [Native Toolchain Policy](backend-architecture.md#native-toolchain-policy).
 
 ### iOS Properties
 
@@ -296,49 +158,3 @@ Plugin GLFW build and run tasks use the `buildType` configured in `glfw {}`.
 | `xcodeDerivedDataPath` | `DirectoryProperty` | `build/xcode-derived/ios` | Derived data directory used by simulator build and run tasks. |
 | `openSimulator` | `Property<Boolean>` | `true` | Opens Simulator.app when running the simulator task. |
 | `overwriteXcodeProject` | `Property<Boolean>` | Gradle property `gdx.teavm.ios.xcode.overwrite`, otherwise `false` | Rewrites the generated Xcode project during Xcode initialization when true. |
-
-iOS Xcode tasks are experimental and require macOS. The default `angle` graphics API downloads a pinned MetalANGLEKit framework bundle; set `graphicsApi` to `gles` to generate the older OpenGL ES / GLKit project.
-
-## Complete Multi-Target Example
-
-```kotlin
-import org.teavm.gradle.api.OptimizationLevel
-
-plugins {
-    id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
-}
-
-dependencies {
-    implementation("com.badlogicgames.gdx:gdx:1.14.2")
-    implementation(project(":core"))
-}
-
-gdxTeaVM {
-    assets("assets")
-    reflection("com.example.game.save**")
-
-    js {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("Example Game")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
-    }
-
-    wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("Example Game")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
-        obfuscated.set(false)
-    }
-
-    glfw {
-        mainClass.set("com.example.game.teavm.GlfwLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
-        minHeapSizeMb.set(64)
-        maxHeapSizeMb.set(512)
-        obfuscated.set(false)
-        consoleLog.set(false)
-    }
-
-}
-```

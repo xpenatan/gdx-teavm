@@ -60,19 +60,13 @@ Android projects use a dedicated path instead: the Android Gradle Plugin remains
 
 Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options. Android projects currently support only the `android {}` target.
 
-## Gradle Plugin Tasks
+## Gradle Task Integration
 
-| Target block | Tasks |
-| --- | --- |
-| `js {}` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
-| `wasm {}` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
-| `glfw {}` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
-| `ios {}` | `gdx_teavm_ios_generate`, `gdx_teavm_ios_prepare_angle`, `gdx_teavm_ios_init_xcode`, `gdx_teavm_ios_regenerate_xcode`, `gdx_teavm_ios_open_xcode`, `gdx_teavm_ios_build_simulator`, `gdx_teavm_ios_run_simulator` |
-| `android {}` | `gdx_teavm_android_generate` |
+Each declared target registers only its own public `gdx_teavm_*` tasks. The [usage guide](usage.md#web-targets) is the user-facing task reference; this section covers the implementation behind web run tasks.
 
-Web run tasks use `GdxTeaVMRunWebTask` by default, loading `backend-web`'s `JettyServer` by reflection from the target runtime classpath. When the target's `devServer.enabled` property is true, the same public run task delegates compilation to TeaVM's `javaScriptDevServer` or `wasmGCDevServer` task. With `autoBuild` enabled, the run task registers a Gradle `DeploymentHandle`; Gradle detects that reloadable deployment, automatically enters continuous-build mode for the same invocation, and reruns Java compilation and TeaVM generation when task inputs change. With `autoBuild` disabled, the task blocks directly to keep both servers alive without registering a reloadable deployment. Local project class directories precede external JARs on the development classpath so TeaVM observes recompiled classes, and the plugin invalidates TeaVM's compiler cache before each rebuild. Cancelling the overall Gradle invocation stops both the TeaVM server and entry adapter in either mode.
+Web run tasks use `GdxTeaVMRunWebTask` and `backend-web`'s `JettyServer` unless `devServer.enabled` selects the TeaVM server. In development-server mode, the public run task starts TeaVM compilation, an entry-page adapter, and an optional file watcher. The watcher invokes only the target project's `classes` task, then requests an incremental build from the existing TeaVM process. Local project output directories precede external JARs so the compiler sees the updated classes.
 
-The entry adapter supplies the generated page at `/` with an HTML content type, working around TeaVM serving generated `.html` files as plain text. When `autoReload` is enabled, it also installs a shared JS/Wasm client for TeaVM's build-status WebSocket. The plugin applies the same backend-filtered classpath and gdx-teavm properties to normal generation and development-server compilation.
+The entry adapter serves the generated page as HTML at `/`. With `autoReload` enabled, it also injects a JS/Wasm client for TeaVM's build-status WebSocket. Cancelling the run task stops both servers and releases the public port.
 
 ## TeaVM Runtime Plugins
 
@@ -200,14 +194,4 @@ This is required for facade/helper types such as DOM extension wrappers and `Web
 
 ## Output Layout
 
-Plugin defaults:
-
-| Target | Root | Generated files |
-| --- | --- | --- |
-| JS | `build/dist/js` | `webapp` |
-| Wasm | `build/dist/wasm` | `webapp` |
-| GLFW | `build/dist/glfw` | `c/src`, `c/release`, build scripts |
-| iOS | `build/dist/ios` | `c/src`, `c/release`, generated Xcode project |
-| Android | `build/generated/gdx-teavm/android` | `c/src`, `CMakeLists.txt`, native resources |
-
-Builder defaults depend on the `build(new File(...))` output directory and the concrete backend. `WebBackend` defaults to a `webapp` folder, while `TeaGLFWBackend` defaults to `c/src` plus `c/release`.
+Plugin defaults are maintained in the [property reference](plugin-properties.md#common-teavm-target-properties). Builder output is rooted at the directory passed to `build(File)` and organized by the concrete backend.

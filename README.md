@@ -16,7 +16,7 @@ The project provides two build styles:
 | gdx-teavm | libGDX | TeaVM  |
 |:---------:|:------:|:------:|
 | -SNAPSHOT | 1.14.2 | 0.15.0 |
-|   1.6.0   | 1.14.2 | 0.15.0 |
+|   1.6.1   | 1.14.2 | 0.15.0 |
 |   1.5.5   | 1.14.0 | 0.14.0 |
 |   1.5.4   | 1.14.0 | 0.13.1 |
 
@@ -43,32 +43,9 @@ The project provides two build styles:
 - [Examples](examples/README.md): portable cores and runnable platform implementations.
 - [Desktop C native build guide](examples/basic/platforms/desktop/teavm-c/builder/README.md): native toolchain requirements and manual CMake workflow.
 
-## Repositories
+## Setup
 
-Release artifacts are published to Maven Central. Snapshots are published to Central Portal snapshots.
-
-```kotlin
-repositories {
-    mavenCentral()
-    maven("https://central.sonatype.com/repository/maven-snapshots/")
-
-    // TeaVM artifacts may be needed while using TeaVM snapshots or non-central builds.
-    maven("https://teavm.org/maven/repository/")
-}
-```
-
-When using the Gradle plugin from Maven, add the same repositories to `pluginManagement` in `settings.gradle.kts`.
-
-```kotlin
-pluginManagement {
-    repositories {
-        mavenCentral()
-        maven("https://central.sonatype.com/repository/maven-snapshots/")
-    }
-}
-```
-
-The gdx-teavm plugin marker is published to Maven with the rest of the artifacts, so Gradle Plugin Portal is not required for this plugin.
+Release artifacts are available from Maven Central. Snapshot and plugin repository configuration is documented once in the [usage guide](docs/usage.md#repositories).
 
 ## Gradle Plugin Quick Start
 
@@ -76,7 +53,7 @@ Apply the plugin in the TeaVM target module:
 
 ```kotlin
 plugins {
-    id("com.github.xpenatan.gdx-teavm") version "-SNAPSHOT"
+    id("com.github.xpenatan.gdx-teavm") version "<latest-release>"
 }
 
 dependencies {
@@ -111,51 +88,11 @@ For native targets and every available property, see the [usage guide](docs/usag
 
 ## Manual Builder Quick Start
 
-Use the builder API when you need full programmatic control or a custom build launcher. See the [usage guide](docs/usage.md) for complete builder examples.
-
-```kotlin
-dependencies {
-    implementation("com.github.xpenatan.gdx-teavm:backend-web:-SNAPSHOT")
-    implementation(project(":core"))
-}
-```
-
-Run the Java launcher from Gradle or your IDE. Builder projects add the concrete backend dependency they use, such as `backend-web` or `backend-glfw`.
+Use the builder API when you need full programmatic control or a custom build launcher. The [manual builder guide](docs/usage.md#manual-builder-api) contains dependencies and complete Web and GLFW examples.
 
 ## Examples In This Repository
 
-```shell
-# Plugin workflow
-./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run
-./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run
-./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_generate
-./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_generate
-./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_init_xcode
-
-# Android TeaVM C examples
-./gradlew :examples:basic:platforms:android:assembleDebug
-./gradlew :examples:freetype:platforms:android:assembleDebug
-./gradlew :examples:controllers:platforms:android:assembleDebug
-
-# iOS TeaVM C examples (simulator builds require macOS)
-./gradlew :examples:basic:platforms:ios:gdx_teavm_ios_build_simulator
-./gradlew :examples:freetype:platforms:ios:gdx_teavm_ios_build_simulator
-./gradlew :examples:controllers:platforms:ios:gdx_teavm_ios_build_simulator
-
-# FreeType plugin workflow
-./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_js_run
-./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_wasm_run
-
-# gdx-controllers plugin workflow
-./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_js_run
-./gradlew :examples:controllers:platforms:web:plugin:gdx_teavm_web_wasm_run
-
-# Manual builder workflow
-./gradlew :examples:basic:platforms:web:builder:basic_web_run
-./gradlew :examples:freetype:platforms:web:builder:freetype_web_run
-./gradlew :examples:controllers:platforms:web:builder:controllers_web_run
-./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build
-```
+The [examples index](examples/README.md) describes the project layout and links to the task inventory for each example.
 
 ## Support
 

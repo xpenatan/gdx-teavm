@@ -13,8 +13,42 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.teavm.gradle.TeaVMPlugin
 import org.teavm.gradle.tasks.DevServerTask
+import java.time.LocalTime
 
 class GdxTeaVMWebDevServerTest {
+    @Test
+    fun `change detection message includes the local time`() {
+        assertEquals(
+            "[14:37:05] Change detected. Rebuilding...",
+            changeDetectedMessage(LocalTime.of(14, 37, 5))
+        )
+    }
+
+    @Test
+    fun `development server status is framed for stderr output`() {
+        assertEquals(
+            """
+                #################################################################
+                |
+                | TeaVM development server URL: http://localhost:8080
+                | Watching for changes...
+                |
+                #################################################################
+            """.trimIndent(),
+            devServerStatusMessage(8080)
+        )
+        assertEquals(
+            """
+                #################################################################
+                |
+                | TeaVM development server URL: http://localhost:8080
+                |
+                #################################################################
+            """.trimIndent(),
+            devServerStatusMessage(8080, watching = false)
+        )
+    }
+
     @Test
     fun `TeaVM child stderr is restored to error output`() {
         val message = "server stderr: | Copied [Classpath] example.txt"
@@ -35,6 +69,20 @@ class GdxTeaVMWebDevServerTest {
             rewriteTeaVMDevServerStderr(LogLevel.ERROR, message) {
                 throw AssertionError("Already-red error output must not be rerouted")
             }
+        )
+    }
+
+    @Test
+    fun `routine TeaVM child output is hidden during watched rebuilds`() {
+        assertNull(
+            suppressTeaVMRebuildNoise(
+                LogLevel.WARN,
+                "server stderr: TeaVM development server rebuilt successfully."
+            )
+        )
+        assertEquals(
+            "Compilation failed",
+            suppressTeaVMRebuildNoise(LogLevel.ERROR, "Compilation failed")
         )
     }
 
@@ -116,9 +164,10 @@ class GdxTeaVMWebDevServerTest {
         wasmRun as GdxTeaVMRunDevServerTask
         assertEquals(jsDevServer.projectPath.get(), jsRun.devServerProjectPath.get())
         assertEquals(wasmDevServer.projectPath.get(), wasmRun.devServerProjectPath.get())
-        assertTrue(jsRun.deploymentId.get().endsWith(":js"))
-        assertTrue(wasmRun.deploymentId.get().endsWith(":wasm"))
-        assertFalse(jsRun.deploymentId.get() == wasmRun.deploymentId.get())
+        assertEquals(":classes", jsRun.rebuildTaskPath.get())
+        assertEquals(":classes", wasmRun.rebuildTaskPath.get())
+        assertTrue(jsRun.watchFiles.files.any { file -> file.invariantSeparatorsPath.endsWith("/src/main/java") })
+        assertTrue(wasmRun.watchFiles.files.any { file -> file.invariantSeparatorsPath.endsWith("/src/main/java") })
         assertEquals(8181, jsRun.port.get())
         assertEquals(8282, wasmRun.port.get())
         assertTrue(jsRun.autoBuild.get())
