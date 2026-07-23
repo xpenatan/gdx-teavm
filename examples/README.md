@@ -10,7 +10,6 @@ Only leaf projects under `platforms` contain launchers and runnable Gradle tasks
 `-- platforms/
     |-- desktop/
     |   |-- lwjgl3/
-    |   |-- graalvm/
     |   `-- teavm-c/
     |       |-- builder/            # Manual TeaBuilder API
     |       `-- plugin/             # gdx-teavm Gradle plugin

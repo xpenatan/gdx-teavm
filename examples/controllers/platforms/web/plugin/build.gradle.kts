@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     implementation(project(":examples:controllers:core"))
     implementation(project(":extensions:web:gdx-controllers-web"))
 }

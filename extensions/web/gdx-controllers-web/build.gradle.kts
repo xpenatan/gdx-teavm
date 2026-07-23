@@ -2,8 +2,8 @@ val moduleName = "gdx-controllers-web"
 
 dependencies {
     implementation(project(":backends:backend-web"))
-    implementation(libs.gdx.core)
-    implementation(libs.gdx.controllers.core)
+    implementation(libs.gdxCore)
+    implementation(libs.gdxControllersCore)
 }
 
 publishing {

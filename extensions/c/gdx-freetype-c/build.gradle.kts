@@ -2,8 +2,8 @@ val moduleName = "gdx-freetype-c"
 
 dependencies {
     implementation(project(":backends:backend-shared"))
-    implementation(libs.gdx.core)
-    implementation(libs.gdx.freetype.core)
+    implementation(libs.gdxCore)
+    implementation(libs.gdxFreetypeCore)
 }
 
 publishing {

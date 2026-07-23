@@ -6,8 +6,8 @@ val moduleName = "gdx-controllers-android"
 
 dependencies {
     implementation(project(":backends:backend-android"))
-    implementation(libs.gdx.core)
-    implementation(libs.gdx.controllers.core)
+    implementation(libs.gdxCore)
+    implementation(libs.gdxControllersCore)
 }
 
 publishing {

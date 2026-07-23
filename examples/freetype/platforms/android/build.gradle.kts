@@ -1,7 +1,7 @@
 import org.teavm.gradle.api.OptimizationLevel
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.androidApplication)
     id("com.github.xpenatan.gdx-teavm")
 }
 

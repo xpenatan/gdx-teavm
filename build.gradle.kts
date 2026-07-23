@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    alias(libs.plugins.easy.publishing)
+    alias(libs.plugins.easyPublishing)
 }
 
 val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
@@ -57,8 +57,8 @@ easyPublishing {
     modules(publishingModules)
 
     groupId.set(gdxTeaVMGroup)
-    releaseVersion.set(libs.versions.gdx.teavm.release)
-    snapshotVersion.set(libs.versions.gdx.teavm.snapshot)
+    releaseVersion.set(libs.versions.gdxTeavmRelease)
+    snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
 
     snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
     releaseRepositoryUrl.set("https://central.sonatype.com")

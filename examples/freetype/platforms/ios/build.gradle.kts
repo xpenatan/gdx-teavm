@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     implementation(project(":examples:freetype:core"))
     implementation(project(":extensions:c:gdx-freetype-c"))
 }

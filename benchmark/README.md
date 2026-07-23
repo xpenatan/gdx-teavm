@@ -1,6 +1,6 @@
 # gdx-teavm benchmark tests
 
-This module contains backend-agnostic benchmark cases plus launchers for stock libGDX LWJGL3, GraalVM native image,
+This module contains backend-agnostic benchmark cases plus launchers for stock libGDX LWJGL3,
 TeaVM GLFW native C, TeaVM JavaScript, and TeaVM Wasm.
 
 Run the standard SpriteBatch comparison:
@@ -54,8 +54,6 @@ Run isolated backends:
 
 ```bash
 ./gradlew :benchmark:lwjgl3:benchmark
-./gradlew :benchmark:graalvm:benchmarkJvm
-./gradlew :benchmark:graalvm:benchmarkRelease
 ./gradlew :benchmark:glfw:benchmarkRelease
 ./gradlew :benchmark:plugin:gdx_teavm_web_js_run
 ./gradlew :benchmark:plugin:gdx_teavm_web_wasm_run
@@ -65,6 +63,3 @@ The web tasks use the same `benchTest`, `benchWarmup`, `benchSeconds`, size, and
 desktop benchmark tasks. Results are printed to the browser console.
 
 Each run prints `BENCH_RESULT` and can append TSV rows to a report file when `--resultFile=...` is passed by the aggregate tasks.
-
-The GraalVM backend uses the optimized `release` native-image binary for aggregate comparisons. It requires a local
-GraalVM/native-image setup, matching the existing `examples:basic:platforms:desktop:graalvm` module.

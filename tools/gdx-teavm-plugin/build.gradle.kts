@@ -5,7 +5,7 @@ import org.gradle.api.tasks.bundling.Jar
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
-    alias(libs.plugins.easy.publishing)
+    alias(libs.plugins.easyPublishing)
 }
 
 val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
@@ -16,7 +16,7 @@ java {
 }
 
 dependencies {
-    implementation(libs.teavm.gradle.plugin)
+    implementation(libs.teavmGradlePlugin)
     testImplementation(libs.junit)
 }
 
@@ -73,8 +73,8 @@ gradlePlugin {
 
 easyPublishing {
     groupId.set(gdxTeaVMGroup)
-    releaseVersion.set(libs.versions.gdx.teavm.release)
-    snapshotVersion.set(libs.versions.gdx.teavm.snapshot)
+    releaseVersion.set(libs.versions.gdxTeavmRelease)
+    snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
 
     snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
     releaseRepositoryUrl.set("https://central.sonatype.com")

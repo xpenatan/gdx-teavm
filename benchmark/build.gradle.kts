@@ -2,7 +2,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.internal.os.OperatingSystem
 import java.time.Instant
-import java.util.concurrent.TimeUnit
 
 data class BenchmarkReportRow(
     val backend: String,
@@ -122,53 +121,6 @@ fun JavaExec.configureLwjgl3BenchmarkProcess(benchmarkArgs: List<String>) {
     }
 }
 
-fun nativeExecutableName(imageName: String): String {
-    return if(OperatingSystem.current().isWindows) "$imageName.exe" else imageName
-}
-
-fun benchmarkTimeoutSeconds(): Long {
-    val warmup = benchmarkProperty("benchWarmup", "3").toLong()
-    val seconds = benchmarkProperty("benchSeconds", "15").toLong()
-    return warmup + seconds + 30
-}
-
-fun runNativeBenchmark(executable: File, workingDir: File, benchmarkArgs: List<String>, backendName: String) {
-    if(!executable.isFile) {
-        throw GradleException("Expected $backendName benchmark executable was not built: ${executable.absolutePath}")
-    }
-
-    val processBuilder = ProcessBuilder(listOf(executable.absolutePath) + benchmarkArgs)
-        .directory(workingDir)
-        .redirectErrorStream(true)
-    val process = processBuilder.start()
-    val outputThread = Thread {
-        process.inputStream.bufferedReader().useLines { lines ->
-            lines.forEach { println(it) }
-        }
-    }
-    outputThread.isDaemon = true
-    outputThread.start()
-
-    val timeoutSeconds = benchmarkTimeoutSeconds()
-    val completed = process.waitFor(timeoutSeconds, TimeUnit.SECONDS)
-    if(!completed) {
-        process.destroyForcibly()
-        process.waitFor(5, TimeUnit.SECONDS)
-        outputThread.join(1000)
-        throw GradleException("$backendName benchmark timed out after ${timeoutSeconds}s")
-    }
-    outputThread.join(1000)
-    if(process.exitValue() != 0) {
-        throw GradleException("$backendName benchmark failed with exit code ${process.exitValue()}")
-    }
-}
-
-fun runGraalvmReleaseBenchmark(benchmarkArgs: List<String>) {
-    val outputDir = project(":benchmark:graalvm").layout.buildDirectory.dir("native/nativeReleaseCompile").get().asFile
-    val executable = outputDir.resolve(nativeExecutableName("benchmark-graalvm-release"))
-    runNativeBenchmark(executable, outputDir, benchmarkArgs, "GraalVM")
-}
-
 fun JavaExec.configureGlfwBenchmarkProcess(benchmarkArgs: List<String>, buildAction: String = "run") {
     mainClass.set("com.github.xpenatan.gdx.teavm.benchmarks.glfw.BuildTeaVMBenchmark")
     classpath = runtimeClasspath(":benchmark:glfw")
@@ -217,21 +169,10 @@ val compareSpriteBatchLwjgl3 = tasks.register<JavaExec>("compareSpriteBatchLwjgl
     configureLwjgl3BenchmarkProcess(benchmarkArgs("spritebatch_default", spriteBatchResultFile.get().asFile))
 }
 
-val compareSpriteBatchGraalvm = tasks.register("compareSpriteBatchGraalvm") {
-    group = "benchmark"
-    description = "Run SpriteBatch default benchmark on GraalVM native image Release"
-    dependsOn(":benchmark:graalvm:copyBenchmarkAssetsToReleaseNativeCompile", prepareSpriteBatchReport)
-    mustRunAfter(compareSpriteBatchLwjgl3)
-
-    doLast {
-        runGraalvmReleaseBenchmark(benchmarkArgs("spritebatch_default", spriteBatchResultFile.get().asFile))
-    }
-}
-
 tasks.register("compareSpriteBatch") {
     group = "benchmark"
-    description = "Compare SpriteBatch default mode on LWJGL3, GraalVM native image Release, and TeaVM GLFW Release"
-    dependsOn(compareSpriteBatchGlfw, compareSpriteBatchLwjgl3, compareSpriteBatchGraalvm)
+    description = "Compare SpriteBatch default mode on LWJGL3 and TeaVM GLFW Release"
+    dependsOn(compareSpriteBatchGlfw, compareSpriteBatchLwjgl3)
 
     doLast {
         val resultFile = spriteBatchResultFile.get().asFile
@@ -256,21 +197,10 @@ val compareLwjgl3 = tasks.register<JavaExec>("compareLwjgl3") {
     configureLwjgl3BenchmarkProcess(benchmarkArgs())
 }
 
-val compareGraalvm = tasks.register("compareGraalvm") {
-    group = "benchmark"
-    description = "Run selected benchmark on GraalVM native image Release"
-    dependsOn(":benchmark:graalvm:copyBenchmarkAssetsToReleaseNativeCompile")
-    mustRunAfter(compareLwjgl3)
-
-    doLast {
-        runGraalvmReleaseBenchmark(benchmarkArgs())
-    }
-}
-
 tasks.register("compare") {
     group = "benchmark"
-    description = "Run selected benchmark on LWJGL3, GraalVM native image Release, and TeaVM GLFW Release"
-    dependsOn(compareGlfw, compareLwjgl3, compareGraalvm)
+    description = "Run selected benchmark on LWJGL3 and TeaVM GLFW Release"
+    dependsOn(compareGlfw, compareLwjgl3)
 }
 
 val prepareMatrixReport = tasks.register("prepareBenchmarkMatrixReport") {
@@ -300,12 +230,6 @@ val glfwMatrixBuild = tasks.register<JavaExec>("benchmarkMatrixGlfwBuild") {
     configureGlfwBenchmarkProcess(emptyList(), "build")
 }
 
-val graalvmMatrixBuild = tasks.register("benchmarkMatrixGraalvmBuild") {
-    group = "benchmark"
-    description = "Build the GraalVM native image Release benchmark executable once for matrix runs"
-    dependsOn(":benchmark:graalvm:copyBenchmarkAssetsToReleaseNativeCompile", prepareMatrixReport)
-}
-
 var previousMatrixTask: TaskProvider<out Task>? = null
 val matrixTasks = mutableListOf<TaskProvider<out Task>>()
 
@@ -332,19 +256,6 @@ for(scenario in matrixScenarios) {
     }
     previousMatrixTask = lwjgl3Task
     matrixTasks += lwjgl3Task
-
-    val graalvmTask = tasks.register("benchmarkMatrix${taskSuffix}Graalvm") {
-        group = "benchmark"
-        description = "Run $testName benchmark on GraalVM native image Release"
-        dependsOn(graalvmMatrixBuild)
-        mustRunAfter(lwjgl3Task)
-
-        doLast {
-            runGraalvmReleaseBenchmark(benchmarkArgs(testName, matrixResultFile.get().asFile, scenario.clear))
-        }
-    }
-    previousMatrixTask = graalvmTask
-    matrixTasks += graalvmTask
 }
 
 tasks.register("benchmarkMatrix") {

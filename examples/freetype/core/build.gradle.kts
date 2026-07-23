@@ -1,9 +1,9 @@
 dependencies {
     implementation(project(":examples:shared"))
 
-    implementation(libs.gdx.core)
-    implementation(libs.gdx.box2d.core)
-    implementation(libs.gdx.freetype.core)
+    implementation(libs.gdxCore)
+    implementation(libs.gdxBox2dCore)
+    implementation(libs.gdxFreetypeCore)
 
-    implementation(libs.artemis.odb)
+    implementation(libs.artemisOdb)
 }

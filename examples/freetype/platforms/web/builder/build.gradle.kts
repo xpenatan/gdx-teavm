@@ -1,5 +1,5 @@
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     implementation(project(":examples:freetype:core"))
     implementation(project(":backends:backend-web"))
     implementation(project(":extensions:web:gdx-freetype-web"))

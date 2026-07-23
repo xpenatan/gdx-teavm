@@ -17,8 +17,8 @@ compileJavaTask.mustRunAfter("clean")
 dependencies {
     api(project(":backends:backend-shared"))
 
-    implementation(libs.gdx.core)
-    implementation(libs.j.multiplatform)
+    implementation(libs.gdxCore)
+    implementation(libs.jMultiplatform)
     implementation(libs.bundles.jetty)
 
     testImplementation(libs.truth)

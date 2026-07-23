@@ -1,6 +1,6 @@
 dependencies {
-    implementation(libs.gdx.core)
-//    implementation(variantOf(libs.gdx.core) { classifier("sources") })
+    implementation(libs.gdxCore)
+//    implementation(variantOf(libs.gdxCore) { classifier("sources") })
     implementation(project(":examples:basic:core"))
     implementation(project(":backends:backend-web"))
     implementation(project(":extensions:web:gdx-freetype-web"))

@@ -402,7 +402,7 @@ For Play Store distribution, prefer `bundleRelease` and upload the generated And
 
 Generated TeaVM C output is written under `examples/basic/platforms/android/build/generated/gdx-teavm/android`. Android CMake/Ninja staging is configured under the root build folder at `build/android-cxx/examples-basic-platforms-android` so AGP's native intermediates do not create an untracked `.cxx` folder in the Android module root.
 
-The Android app module uses Java 8 source and target compatibility for APK-side Java code. This avoids Android Gradle Plugin's Java 9+ `androidJdkImage` transform, which can fail when Gradle is running on newer JDKs such as GraalVM JDK 25. The TeaVM launcher source in `src/native/java` is compiled separately for TeaVM generation.
+The Android app module uses Java 8 source and target compatibility for APK-side Java code. This avoids Android Gradle Plugin's Java 9+ `androidJdkImage` transform, which can fail when Gradle is running on newer JDKs. The TeaVM launcher source in `src/native/java` is compiled separately for TeaVM generation.
 
 ## Plugin Properties
 

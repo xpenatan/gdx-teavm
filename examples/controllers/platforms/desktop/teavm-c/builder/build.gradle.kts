@@ -1,5 +1,5 @@
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     implementation(project(":examples:controllers:core"))
     implementation(project(":backends:backend-glfw"))
     implementation(project(":extensions:c:gdx-controllers-glfw"))

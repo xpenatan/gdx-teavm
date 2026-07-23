@@ -2,7 +2,7 @@ val moduleName = "gdx-freetype-web"
 
 dependencies {
     implementation(project(":backends:backend-web"))
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
 }
 
 publishing {

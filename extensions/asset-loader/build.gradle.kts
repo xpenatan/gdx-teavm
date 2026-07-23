@@ -1,8 +1,8 @@
 val moduleName = "asset-loader"
 
 dependencies {
-    implementation(libs.gdx.core)
-    implementation(libs.teavm.classlib)
+    implementation(libs.gdxCore)
+    implementation(libs.teavmClasslib)
 }
 
 publishing {

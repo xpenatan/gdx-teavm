@@ -1,9 +1,9 @@
 dependencies {
     implementation(project(":examples:gdx-tests:core"))
     // need to use lwjgl2 because lwjgl3 call makeCurrent and replace Gdx.input used inside gdx wrapper.
-    implementation(libs.gdx.backend.lwjgl)
-    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
-    implementation(variantOf(libs.gdx.freetype.platform) { classifier("natives-desktop") })
+    implementation(libs.gdxBackendLwjgl)
+    implementation(variantOf(libs.gdxPlatform) { classifier("natives-desktop") })
+    implementation(variantOf(libs.gdxFreetypePlatform) { classifier("natives-desktop") })
 }
 
 val mainClassName = "Main"

@@ -2,10 +2,10 @@ val mainClassName = "Main"
 val assetsDir = File("../../../assets")
 
 dependencies {
-    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
-    implementation(libs.gdx.backend.lwjgl3)
-    implementation(variantOf(libs.gdx.box2d.platform) { classifier("natives-desktop") })
-    implementation(variantOf(libs.gdx.freetype.platform) { classifier("natives-desktop") })
+    implementation(variantOf(libs.gdxPlatform) { classifier("natives-desktop") })
+    implementation(libs.gdxBackendLwjgl3)
+    implementation(variantOf(libs.gdxBox2dPlatform) { classifier("natives-desktop") })
+    implementation(variantOf(libs.gdxFreetypePlatform) { classifier("natives-desktop") })
     implementation(project(":examples:freetype:core"))
 }
 

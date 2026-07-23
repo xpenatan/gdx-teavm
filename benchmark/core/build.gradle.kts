@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(libs.gdx.core)
+    api(libs.gdxCore)
 }

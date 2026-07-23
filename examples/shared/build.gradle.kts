@@ -1,3 +1,3 @@
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
 }

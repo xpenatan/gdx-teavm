@@ -5,6 +5,6 @@ plugins {
 sourceSets["main"].java.setSrcDirs(mutableSetOf("../backend-glfw/emu", "emu", "src/main/java/"))
 
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     api(project(":backends:backend-shared"))
 }

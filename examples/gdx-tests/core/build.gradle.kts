@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":examples:freetype:core"))
 
     // Required
-    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
-    implementation(libs.gdx.backend.lwjgl3)
-    api(libs.gdx.tests)
+    implementation(variantOf(libs.gdxPlatform) { classifier("natives-desktop") })
+    implementation(libs.gdxBackendLwjgl3)
+    api(libs.gdxTests)
 }

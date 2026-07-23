@@ -7,7 +7,7 @@ val moduleName = "backend-glfw"
 sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
 
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     api(project(":backends:backend-shared"))
 
     testImplementation(libs.junit)

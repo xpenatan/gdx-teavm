@@ -2,8 +2,8 @@ val moduleName = "gdx-controllers-glfw"
 
 dependencies {
     implementation(project(":backends:backend-glfw"))
-    implementation(libs.gdx.core)
-    implementation(libs.gdx.controllers.core)
+    implementation(libs.gdxCore)
+    implementation(libs.gdxControllersCore)
 }
 
 publishing {

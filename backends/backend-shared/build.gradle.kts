@@ -7,7 +7,7 @@ val moduleName = "backend-shared"
 sourceSets["main"].java.setSrcDirs(mutableSetOf("emu", "src/main/java/"))
 
 dependencies {
-    implementation(libs.gdx.core)
+    implementation(libs.gdxCore)
     api(project(":extensions:asset-loader"))
     api(libs.reflections)
     api(libs.bundles.teavm)

@@ -1,9 +1,9 @@
 val assetsDir = file("../../../assets")
 
 dependencies {
-    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
-    implementation(libs.gdx.backend.lwjgl3)
-    implementation(libs.gdx.controllers.desktop)
+    implementation(variantOf(libs.gdxPlatform) { classifier("natives-desktop") })
+    implementation(libs.gdxBackendLwjgl3)
+    implementation(libs.gdxControllersDesktop)
     implementation(project(":examples:controllers:core"))
 }
 
