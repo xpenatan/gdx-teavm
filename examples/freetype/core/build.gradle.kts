@@ -1,9 +1,9 @@
 dependencies {
     implementation(project(":examples:shared"))
 
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx-box2d:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx-freetype:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.gdx.box2d.core)
+    implementation(libs.gdx.freetype.core)
 
-    implementation("net.onedaybeard.artemis:artemis-odb:2.3.0")
+    implementation(libs.artemis.odb)
 }

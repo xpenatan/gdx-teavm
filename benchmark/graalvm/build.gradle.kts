@@ -2,14 +2,13 @@ import java.util.concurrent.TimeUnit
 
 plugins {
     id("application")
-    id("org.graalvm.buildtools.native") version "1.1.0"
+    alias(libs.plugins.graalvm.buildtools)
 }
 
 val mainClassName = "com.github.xpenatan.gdx.teavm.benchmarks.graalvm.GraalVMBenchmarkLauncher"
 val nativeImageName = "benchmark-graalvm"
 val assetsDir = file("../../examples/basic/assets")
 val benchmarkTexture = file("../../examples/basic/assets/data/badlogicsmall.jpg")
-val lwjglVersion = "3.3.3"
 val graalvmJavaVersion = JavaVersion.current().majorVersion.toInt()
 val nativeImageThreads = providers.gradleProperty("nativeImageThreads").orElse("2")
 val nativeImageBuilderMaxHeap = providers.gradleProperty("nativeImageBuilderMaxHeap").orElse("4g")
@@ -67,15 +66,15 @@ application {
 
 dependencies {
     implementation(project(":benchmark:core"))
-    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
+    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
+    implementation(libs.gdx.backend.lwjgl3)
 
-    runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-jemalloc:$lwjglVersion:$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives")
+    runtimeOnly(variantOf(libs.lwjgl.core) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.jemalloc) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.openal) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.stb) { classifier(lwjglNatives) })
 }
 
 tasks.register<JavaExec>("benchmarkJvm") {

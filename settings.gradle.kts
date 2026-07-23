@@ -104,17 +104,14 @@ include(":benchmark:graalvm")
 include(":benchmark:glfw")
 include(":benchmark:plugin")
 
-val file = File(settingsDir, "gradle.properties")
-
-val properties = Properties()
-if(file.exists()) {
-    properties.load(file.inputStream())
-}
-
-val gdxSourcePath = properties.getOrDefault("gdxSourcePath", "") as String
-val teavmPath = properties.getOrDefault("teavmPath", "") as String
-val includeLibgdxSource = (properties.getOrDefault("includeLibgdxSource", "false") as String).toBoolean()
-val includeTeaVMSource = (properties.getOrDefault("includeTeaVMSource", "false") as String).toBoolean()
+val gdxSourcePath = providers.gradleProperty("gdxSourcePath").getOrElse("")
+val teavmPath = providers.gradleProperty("teavmPath").getOrElse("")
+val includeLibgdxSource = providers.gradleProperty("includeLibgdxSource")
+    .map { it.toBoolean() }
+    .getOrElse(false)
+val includeTeaVMSource = providers.gradleProperty("includeTeaVMSource")
+    .map { it.toBoolean() }
+    .getOrElse(false)
 
 if(includeLibgdxSource) {
     include(":examples:gdx-tests:core")

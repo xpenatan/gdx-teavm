@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
     implementation(project(":examples:controllers:core"))
     implementation(project(":extensions:ios:gdx-controllers-ios"))
 }

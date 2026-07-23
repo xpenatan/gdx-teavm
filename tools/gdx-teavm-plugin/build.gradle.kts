@@ -5,11 +5,10 @@ import org.gradle.api.tasks.bundling.Jar
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
-    id("com.github.xpenatan.easy-publishing") version "-SNAPSHOT"
+    alias(libs.plugins.easy.publishing)
 }
 
-LibExt.isRelease = rootProject.extra["easyPublishing.releaseRequested"] as Boolean
-LibExt.initProperties(rootDir.resolve("../.."))
+val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -17,20 +16,20 @@ java {
 }
 
 dependencies {
-    implementation("org.teavm:teavm-gradle-plugin:${LibExt.teaVMVersion}")
-    testImplementation("junit:junit:4.13.2")
+    implementation(libs.teavm.gradle.plugin)
+    testImplementation(libs.junit)
 }
 
 val generatedPluginInfoDir = layout.buildDirectory.dir("generated/sources/gdxTeaVMPluginInfo/kotlin")
+val generatedPluginVersion = providers.provider { project.version.toString() }
 
 val generateGdxTeaVMPluginInfo = tasks.register("generateGdxTeaVMPluginInfo") {
-    val groupId = LibExt.groupId
-    val version = LibExt.libVersion
-    inputs.property("groupId", groupId)
-    inputs.property("version", version)
+    inputs.property("groupId", gdxTeaVMGroup)
+    inputs.property("version", generatedPluginVersion)
     outputs.dir(generatedPluginInfoDir)
 
     doLast {
+        val version = generatedPluginVersion.get()
         val outputFile = generatedPluginInfoDir.get()
             .file("com/github/xpenatan/gdx/teavm/gradle/GdxTeaVMPluginInfo.kt")
             .asFile
@@ -40,7 +39,7 @@ val generateGdxTeaVMPluginInfo = tasks.register("generateGdxTeaVMPluginInfo") {
             package com.github.xpenatan.gdx.teavm.gradle
 
             internal object GdxTeaVMPluginInfo {
-                const val GROUP = "$groupId"
+                const val GROUP = "$gdxTeaVMGroup"
                 const val VERSION = "$version"
             }
             """.trimIndent() + "\n"
@@ -66,16 +65,16 @@ tasks.withType<Jar>().matching { it.name == "sourcesJar" }.configureEach {
 gradlePlugin {
     plugins {
         create("gdxTeaVM") {
-            id = LibExt.groupId
+            id = gdxTeaVMGroup
             implementationClass = "com.github.xpenatan.gdx.teavm.gradle.GdxTeaVMGradlePlugin"
         }
     }
 }
 
 easyPublishing {
-    groupId.set(LibExt.groupId)
-    releaseVersion.set(LibExt.releaseVersion)
-    snapshotVersion.set(LibExt.snapshotVersion)
+    groupId.set(gdxTeaVMGroup)
+    releaseVersion.set(libs.versions.gdx.teavm.release)
+    snapshotVersion.set(libs.versions.gdx.teavm.snapshot)
 
     snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
     releaseRepositoryUrl.set("https://central.sonatype.com")

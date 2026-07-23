@@ -1,8 +1,8 @@
 val moduleName = "asset-loader"
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("org.teavm:teavm-classlib:${LibExt.teaVMVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.teavm.classlib)
 }
 
 publishing {

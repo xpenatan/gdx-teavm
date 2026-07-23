@@ -1,10 +1,9 @@
 plugins {
     id("java")
-    id("com.github.xpenatan.easy-publishing") version "-SNAPSHOT"
+    alias(libs.plugins.easy.publishing)
 }
 
-LibExt.isRelease = rootProject.extra["easyPublishing.releaseRequested"] as Boolean
-LibExt.initProperties(rootDir)
+val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
 
 subprojects {
     val isAndroidApplicationExample = path.startsWith(":examples:") && path.endsWith(":android")
@@ -57,9 +56,9 @@ if(findProject(":extensions:android:gdx-controllers-android") != null) {
 easyPublishing {
     modules(publishingModules)
 
-    groupId.set(LibExt.groupId)
-    releaseVersion.set(LibExt.releaseVersion)
-    snapshotVersion.set(LibExt.snapshotVersion)
+    groupId.set(gdxTeaVMGroup)
+    releaseVersion.set(libs.versions.gdx.teavm.release)
+    snapshotVersion.set(libs.versions.gdx.teavm.snapshot)
 
     snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
     releaseRepositoryUrl.set("https://central.sonatype.com")
@@ -68,7 +67,7 @@ easyPublishing {
     signingKey.set(providers.environmentVariable("SIGNING_KEY"))
     signingPassword.set(providers.environmentVariable("SIGNING_PASSWORD"))
 
-    pomName.set(LibExt.libName)
+    pomName.set("gdx-teavm")
     pomDescription.set("Tool to generate libgdx to javascript using teaVM")
     projectUrl.set("https://github.com/xpenatan/gdx-teavm")
 

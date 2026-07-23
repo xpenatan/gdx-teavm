@@ -17,12 +17,11 @@ compileJavaTask.mustRunAfter("clean")
 dependencies {
     api(project(":backends:backend-shared"))
 
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.github.xpenatan:jMultiplatform:${LibExt.jMultiplatform}")
-    implementation("org.eclipse.jetty:jetty-server:${LibExt.jettyVersion}")
-    implementation("org.eclipse.jetty:jetty-webapp:${LibExt.jettyVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.j.multiplatform)
+    implementation(libs.bundles.jetty)
 
-    testImplementation("com.google.truth:truth:${LibExt.truthVersion}")
+    testImplementation(libs.truth)
 }
 
 publishing {

@@ -2,8 +2,8 @@ val moduleName = "gdx-freetype-c"
 
 dependencies {
     implementation(project(":backends:backend-shared"))
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx-freetype:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.gdx.freetype.core)
 }
 
 publishing {

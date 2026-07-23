@@ -1,10 +1,10 @@
 val assetsDir = File("../../../assets")
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx-box2d-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-freetype-platform:${LibExt.gdxVersion}:natives-desktop")
+    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
+    implementation(libs.gdx.backend.lwjgl3)
+    implementation(variantOf(libs.gdx.box2d.platform) { classifier("natives-desktop") })
+    implementation(variantOf(libs.gdx.freetype.platform) { classifier("natives-desktop") })
     implementation(project(":examples:basic:core"))
 }
 

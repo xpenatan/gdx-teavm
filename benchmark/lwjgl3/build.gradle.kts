@@ -9,8 +9,8 @@ val assetsDir = file("../../examples/basic/assets")
 
 dependencies {
     implementation(project(":benchmark:core"))
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
+    implementation(libs.gdx.backend.lwjgl3)
+    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
 }
 
 fun benchmarkProperty(name: String, defaultValue: String): String {

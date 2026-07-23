@@ -1,6 +1,6 @@
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-//    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}:sources")
+    implementation(libs.gdx.core)
+//    implementation(variantOf(libs.gdx.core) { classifier("sources") })
     implementation(project(":examples:basic:core"))
     implementation(project(":backends:backend-glfw"))
 }

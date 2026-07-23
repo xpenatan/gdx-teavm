@@ -51,7 +51,9 @@
 - Desktop implementations are grouped under `platforms/desktop`; TeaVM C and web use `builder` and `plugin` leaves only when both build styles exist.
 - Intermediate example directories are organizational parents. Runnable platform leaves depend directly on their example's `core`, not on sibling platform projects.
 - `settings.gradle.kts` includes the local Gradle plugin build with `includeBuild("tools/gdx-teavm-plugin")`; the included build appears as project path `:gdx-teavm-plugin` in Gradle output.
-- Version numbers and build switches are centralized in `buildSrc/src/main/kotlin/LibExt.kt`.
+- Dependency aliases and dependency, plugin, release, and snapshot versions are centralized in
+  `gradle/libs.versions.toml`.
+- Local source paths and composite-build switches remain in `gradle.properties`.
 - Root `build.gradle.kts` applies shared Java 11 settings and Maven repositories to subprojects.
 - `gradle.properties` can enable composite builds for local libGDX or TeaVM source:
   - `includeLibgdxSource`

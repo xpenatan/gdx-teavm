@@ -1,5 +1,5 @@
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
     implementation(project(":examples:controllers:core"))
     implementation(project(":backends:backend-glfw"))
     implementation(project(":extensions:c:gdx-controllers-glfw"))

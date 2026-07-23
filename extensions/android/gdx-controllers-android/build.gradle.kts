@@ -6,8 +6,8 @@ val moduleName = "gdx-controllers-android"
 
 dependencies {
     implementation(project(":backends:backend-android"))
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx-controllers:gdx-controllers-core:${LibExt.gdxControllerVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.gdx.controllers.core)
 }
 
 publishing {

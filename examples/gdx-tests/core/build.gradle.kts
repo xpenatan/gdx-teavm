@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":examples:freetype:core"))
 
     // Required
-    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
-    api("com.badlogicgames.gdx:gdx-tests")
+    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
+    implementation(libs.gdx.backend.lwjgl3)
+    api(libs.gdx.tests)
 }

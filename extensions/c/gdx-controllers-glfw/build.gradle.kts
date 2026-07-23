@@ -2,8 +2,8 @@ val moduleName = "gdx-controllers-glfw"
 
 dependencies {
     implementation(project(":backends:backend-glfw"))
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx-controllers:gdx-controllers-core:${LibExt.gdxControllerVersion}")
+    implementation(libs.gdx.core)
+    implementation(libs.gdx.controllers.core)
 }
 
 publishing {

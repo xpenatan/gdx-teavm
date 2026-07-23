@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
     implementation(project(":examples:basic:core"))
     implementation(project(":extensions:web:gdx-freetype-web"))
 }

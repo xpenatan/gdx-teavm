@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    api(libs.gdx.core)
 }

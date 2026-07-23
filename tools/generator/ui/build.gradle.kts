@@ -2,24 +2,23 @@ val moduleName = "generator-ui"
 
 dependencies {
     implementation(project(":tools:generator:core"))
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
     implementation(project(":backends:backend-teavm"))
 
-    implementation("com.github.xpenatan.gdx-imgui:imgui-core:${LibExt.gdxImGuiVersion}")
-    implementation("com.github.xpenatan.gdx-imgui:gdx-impl:${LibExt.gdxImGuiVersion}")
+    implementation(libs.gdx.imgui.core)
+    implementation(libs.gdx.imgui.impl)
 
     implementation(project(":extensions:web:gdx-freetype-web"))
 
-    implementation("org.eclipse.jetty:jetty-server:${LibExt.jettyVersion}")
-    implementation("org.eclipse.jetty:jetty-webapp:${LibExt.jettyVersion}")
+    implementation(libs.bundles.jetty)
 }
 
 //publishing {
 //    publications {
 //        create<MavenPublication>("maven") {
 //            artifactId = moduleName
-//            group = LibExt.groupId
-//            version = LibExt.libVersion
+//            group = "com.github.xpenatan.gdx-teavm"
+//            version = project.version
 //            from(components["java"])
 //        }
 //    }

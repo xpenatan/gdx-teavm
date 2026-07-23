@@ -2,7 +2,7 @@ val moduleName = "gdx-freetype-web"
 
 dependencies {
     implementation(project(":backends:backend-web"))
-    implementation("com.badlogicgames.gdx:gdx:${LibExt.gdxVersion}")
+    implementation(libs.gdx.core)
 }
 
 publishing {

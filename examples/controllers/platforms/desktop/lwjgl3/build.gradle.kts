@@ -1,9 +1,9 @@
 val assetsDir = file("../../../assets")
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx-platform:${LibExt.gdxVersion}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${LibExt.gdxVersion}")
-    implementation("com.badlogicgames.gdx-controllers:gdx-controllers-desktop:${LibExt.gdxControllerVersion}")
+    implementation(variantOf(libs.gdx.platform) { classifier("natives-desktop") })
+    implementation(libs.gdx.backend.lwjgl3)
+    implementation(libs.gdx.controllers.desktop)
     implementation(project(":examples:controllers:core"))
 }
 
