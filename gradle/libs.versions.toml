@@ -16,7 +16,7 @@ fleks = "2.12"
 vis-ui = "1.5.8"
 artemis-odb = "2.3.0"
 lwjgl = "3.3.3"
-easy-publishing = "-SNAPSHOT"
+easy-publishing = "0.1.0"
 android-gradle-plugin = "8.12.0"
 graalvm-buildtools = "1.1.0"
 
