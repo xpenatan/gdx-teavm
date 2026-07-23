@@ -57,10 +57,6 @@ if(hasAndroidSdk) {
 include(":extensions:web:gdx-controllers-web")
 include(":extensions:web:gdx-freetype-web")
 
-//include(":tools:generator:core")
-//include(":tools:generator:ui")
-//include(":tools:generator:desktop")
-
 // Examples
 include(":examples:shared")
 include(":examples:basic:core")

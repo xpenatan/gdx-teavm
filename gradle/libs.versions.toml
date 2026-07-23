@@ -4,7 +4,6 @@ gdx-teavm-snapshot = "-SNAPSHOT"
 gdx = "1.14.2"
 teavm = "0.15.0"
 j-multiplatform = "0.1.3"
-gdx-imgui = "-SNAPSHOT"
 reflections = "0.10.2"
 jetty = "11.0.13"
 gdx-gltf = "2.3.0"
@@ -44,9 +43,6 @@ teavm-jso-impl = { module = "org.teavm:teavm-jso-impl", version.ref = "teavm" }
 teavm-gradle-plugin = { module = "org.teavm:teavm-gradle-plugin", version.ref = "teavm" }
 
 j-multiplatform = { module = "com.github.xpenatan:jMultiplatform", version.ref = "j-multiplatform" }
-gdx-imgui-core = { module = "com.github.xpenatan.gdx-imgui:imgui-core", version.ref = "gdx-imgui" }
-gdx-imgui-desktop = { module = "com.github.xpenatan.gdx-imgui:imgui-desktop", version.ref = "gdx-imgui" }
-gdx-imgui-impl = { module = "com.github.xpenatan.gdx-imgui:gdx-impl", version.ref = "gdx-imgui" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
 jetty-webapp = { module = "org.eclipse.jetty:jetty-webapp", version.ref = "jetty" }
