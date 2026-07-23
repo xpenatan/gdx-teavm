@@ -47,7 +47,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
 
       - name: Prepare Release deploy files
         if: ${{ inputs.shouldUpload && inputs.isRelease }}
