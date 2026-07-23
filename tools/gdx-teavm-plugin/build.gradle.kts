@@ -1,3 +1,5 @@
+import com.github.xpenatan.easypublishing.EasyPublishingExtension
+import com.github.xpenatan.easypublishing.EasyPublishingPlugin
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.bundling.Jar
@@ -7,8 +9,6 @@ plugins {
     `java-gradle-plugin`
     alias(libs.plugins.easyPublishing)
 }
-
-val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -21,14 +21,25 @@ dependencies {
 }
 
 val generatedPluginInfoDir = layout.buildDirectory.dir("generated/sources/gdxTeaVMPluginInfo/kotlin")
-val generatedPluginVersion = providers.provider { project.version.toString() }
+val easyPublishingExtension = extensions.getByType<EasyPublishingExtension>()
+val generatedPluginVersion = providers.provider {
+    val releaseRequested = extensions.extraProperties
+        .get(EasyPublishingPlugin.RELEASE_REQUESTED_EXTRA) as Boolean
+    if(releaseRequested) {
+        easyPublishingExtension.releaseVersion.get()
+    }
+    else {
+        easyPublishingExtension.snapshotVersion.get()
+    }
+}
 
 val generateGdxTeaVMPluginInfo = tasks.register("generateGdxTeaVMPluginInfo") {
-    inputs.property("groupId", gdxTeaVMGroup)
+    inputs.property("groupId", libs.versions.gdxTeavmGroup)
     inputs.property("version", generatedPluginVersion)
     outputs.dir(generatedPluginInfoDir)
 
     doLast {
+        val groupId = libs.versions.gdxTeavmGroup.get()
         val version = generatedPluginVersion.get()
         val outputFile = generatedPluginInfoDir.get()
             .file("com/github/xpenatan/gdx/teavm/gradle/GdxTeaVMPluginInfo.kt")
@@ -39,7 +50,7 @@ val generateGdxTeaVMPluginInfo = tasks.register("generateGdxTeaVMPluginInfo") {
             package com.github.xpenatan.gdx.teavm.gradle
 
             internal object GdxTeaVMPluginInfo {
-                const val GROUP = "$gdxTeaVMGroup"
+                const val GROUP = "$groupId"
                 const val VERSION = "$version"
             }
             """.trimIndent() + "\n"
@@ -65,14 +76,14 @@ tasks.withType<Jar>().matching { it.name == "sourcesJar" }.configureEach {
 gradlePlugin {
     plugins {
         create("gdxTeaVM") {
-            id = gdxTeaVMGroup
+            id = libs.versions.gdxTeavmGroup.get()
             implementationClass = "com.github.xpenatan.gdx.teavm.gradle.GdxTeaVMGradlePlugin"
         }
     }
 }
 
 easyPublishing {
-    groupId.set(gdxTeaVMGroup)
+    groupId.set(libs.versions.gdxTeavmGroup)
     releaseVersion.set(libs.versions.gdxTeavmRelease)
     snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
 

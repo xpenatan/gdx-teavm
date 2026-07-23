@@ -1,20 +1,22 @@
 package com.github.xpenatan.gdx.teavm.gradle
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.GradleException
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RelativePath
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.internal.logging.LoggingManagerInternal
@@ -111,11 +113,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun configureAndroidRuntimeSourceRoot(project: Project) {
-        val runtimeSourceDir = project.layout.buildDirectory.dir(ANDROID_RUNTIME_GENERATED_SOURCE_DIR)
-        addAndroidMainJavaSourceDir(project, runtimeSourceDir)
-        val generateTask = project.tasks.register<Copy>("generateGdxTeaVMAndroidRuntimeJava") {
+        val generateTask = project.tasks.register<GdxTeaVMGenerateAndroidRuntimeTask>("generateGdxTeaVMAndroidRuntimeJava") {
             description = "Internal task used by Android javac to compile the gdx-teavm Android runtime bridge."
-            into(runtimeSourceDir)
+            outputDirectory.convention(project.layout.buildDirectory.dir(ANDROID_RUNTIME_GENERATED_SOURCE_DIR))
             val localRuntimeSourceDir = localAndroidRuntimeSourceDir(project)
             if(localRuntimeSourceDir != null) {
                 from(localRuntimeSourceDir)
@@ -129,12 +129,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 }
             }
         }
-
-        project.tasks.withType(JavaCompile::class.java).configureEach {
-            if(isAndroidJavacTask(name)) {
-                dependsOn(generateTask)
-            }
-        }
+        addAndroidVariantJavaSourceDirs(project, generateTask)
     }
 
     private fun localAndroidRuntimeSourceDir(project: Project): File? {
@@ -177,8 +172,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
     private fun configureAndroidNativeSourceRoot(project: Project) {
         val nativeSourceDir = project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR).asFile
-        addAndroidMainJavaSourceDir(project, nativeSourceDir)
-
         val nativeSourcePath = nativeSourceDir.toPath().toAbsolutePath().normalize()
         project.tasks.withType(JavaCompile::class.java).configureEach {
             if(isAndroidJavacTask(name)) {
@@ -189,12 +182,36 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun addAndroidMainJavaSourceDir(project: Project, sourceDir: Any) {
-        val android = project.extensions.findByName("android") ?: return
-        val sourceSets = android.javaClass.getMethod("getSourceSets").invoke(android)
-        val mainSourceSet = sourceSets.javaClass.getMethod("getByName", String::class.java).invoke(sourceSets, "main")
-        val javaSourceSet = mainSourceSet.javaClass.getMethod("getJava").invoke(mainSourceSet)
-        javaSourceSet.javaClass.getMethod("srcDir", Any::class.java).invoke(javaSourceSet, sourceDir)
+    private fun addAndroidVariantJavaSourceDirs(
+        project: Project,
+        generateTask: TaskProvider<GdxTeaVMGenerateAndroidRuntimeTask>
+    ) {
+        val androidComponents = project.extensions.findByName("androidComponents")
+            ?: throw GradleException("Android Components extension is unavailable")
+        val selector = androidComponents.javaClass.getMethod("selector").invoke(androidComponents)
+        val allVariants = selector.javaClass.getMethod("all").invoke(selector)
+        val onVariants = androidComponents.javaClass.methods.firstOrNull { method ->
+            method.name == "onVariants"
+                && method.parameterCount == 2
+                && Action::class.java.isAssignableFrom(method.parameterTypes[1])
+        } ?: throw GradleException("Android Components onVariants API is unavailable")
+
+        val variantAction = object : Action<Any> {
+            override fun execute(variant: Any) {
+                val sources = variant.javaClass.getMethod("getSources").invoke(variant)
+                val javaSources = sources.javaClass.getMethod("getJava").invoke(sources) ?: return
+                val addGeneratedSourceDirectory = javaSources.javaClass.methods.firstOrNull { method ->
+                    method.name == "addGeneratedSourceDirectory" && method.parameterCount == 2
+                } ?: throw GradleException("Android generated Java Sources API is unavailable")
+                val generatedDirectory: (GdxTeaVMGenerateAndroidRuntimeTask) -> DirectoryProperty =
+                    { task -> task.outputDirectory }
+                addGeneratedSourceDirectory.invoke(javaSources, generateTask, generatedDirectory)
+                javaSources.javaClass
+                    .getMethod("addStaticSourceDirectory", String::class.java)
+                    .invoke(javaSources, ANDROID_NATIVE_SOURCE_DIR)
+            }
+        }
+        onVariants.invoke(androidComponents, allVariants, variantAction)
     }
 
     private fun isAndroidJavacTask(taskName: String): Boolean {

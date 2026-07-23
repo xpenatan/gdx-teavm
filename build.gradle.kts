@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.easyPublishing)
 }
 
-val gdxTeaVMGroup = "com.github.xpenatan.gdx-teavm"
-
 subprojects {
     val isAndroidApplicationExample = path.startsWith(":examples:") && path.endsWith(":android")
     if(!isAndroidApplicationExample) {
@@ -56,7 +54,7 @@ if(findProject(":extensions:android:gdx-controllers-android") != null) {
 easyPublishing {
     modules(publishingModules)
 
-    groupId.set(gdxTeaVMGroup)
+    groupId.set(libs.versions.gdxTeavmGroup)
     releaseVersion.set(libs.versions.gdxTeavmRelease)
     snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
 
@@ -67,7 +65,7 @@ easyPublishing {
     signingKey.set(providers.environmentVariable("SIGNING_KEY"))
     signingPassword.set(providers.environmentVariable("SIGNING_PASSWORD"))
 
-    pomName.set("gdx-teavm")
+    pomName.set(libs.versions.gdxTeavmName)
     pomDescription.set("Tool to generate libgdx to javascript using teaVM")
     projectUrl.set("https://github.com/xpenatan/gdx-teavm")
 
