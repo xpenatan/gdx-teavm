@@ -4,7 +4,7 @@ gdxTeavmName = "gdx-teavm"
 gdxTeavmRelease = "1.6.1"
 gdxTeavmSnapshot = "-SNAPSHOT"
 
-gdx = "1.14.2"
+libgdx = "1.14.2"
 teavm = "0.15.0"
 jMultiplatform = "0.1.3"
 reflections = "0.10.2"
@@ -17,20 +17,20 @@ junit = "4.13.2"
 fleks = "2.12"
 visUi = "1.5.8"
 artemisOdb = "2.3.0"
-easyPublishing = "0.1.0"
+easyPublishing = "0.1.1"
 androidGradlePlugin = "9.1.1"
 
 [libraries]
-gdxCore = { module = "com.badlogicgames.gdx:gdx", version.ref = "gdx" }
-gdxBackendLwjgl = { module = "com.badlogicgames.gdx:gdx-backend-lwjgl", version.ref = "gdx" }
-gdxBackendLwjgl3 = { module = "com.badlogicgames.gdx:gdx-backend-lwjgl3", version.ref = "gdx" }
-gdxPlatform = { module = "com.badlogicgames.gdx:gdx-platform", version.ref = "gdx" }
-gdxBox2dCore = { module = "com.badlogicgames.gdx:gdx-box2d", version.ref = "gdx" }
-gdxBox2dPlatform = { module = "com.badlogicgames.gdx:gdx-box2d-platform", version.ref = "gdx" }
-gdxFreetypeCore = { module = "com.badlogicgames.gdx:gdx-freetype", version.ref = "gdx" }
-gdxFreetypePlatform = { module = "com.badlogicgames.gdx:gdx-freetype-platform", version.ref = "gdx" }
+gdxCore = { module = "com.badlogicgames.gdx:gdx", version.ref = "libgdx" }
+gdxBackendLwjgl = { module = "com.badlogicgames.gdx:gdx-backend-lwjgl", version.ref = "libgdx" }
+gdxBackendLwjgl3 = { module = "com.badlogicgames.gdx:gdx-backend-lwjgl3", version.ref = "libgdx" }
+gdxPlatform = { module = "com.badlogicgames.gdx:gdx-platform", version.ref = "libgdx" }
+gdxBox2dCore = { module = "com.badlogicgames.gdx:gdx-box2d", version.ref = "libgdx" }
+gdxBox2dPlatform = { module = "com.badlogicgames.gdx:gdx-box2d-platform", version.ref = "libgdx" }
+gdxFreetypeCore = { module = "com.badlogicgames.gdx:gdx-freetype", version.ref = "libgdx" }
+gdxFreetypePlatform = { module = "com.badlogicgames.gdx:gdx-freetype-platform", version.ref = "libgdx" }
 gdxAi = { module = "com.badlogicgames.gdx:gdx-ai", version.ref = "gdxAi" }
-gdxTests = { module = "com.badlogicgames.gdx:gdx-tests", version.ref = "gdx" }
+gdxTests = { module = "com.badlogicgames.gdx:gdx-tests", version.ref = "libgdx" }
 gdxControllersCore = { module = "com.badlogicgames.gdx-controllers:gdx-controllers-core", version.ref = "gdxControllers" }
 gdxControllersDesktop = { module = "com.badlogicgames.gdx-controllers:gdx-controllers-desktop", version.ref = "gdxControllers" }
 
