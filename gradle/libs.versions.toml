@@ -17,7 +17,7 @@ junit = "4.13.2"
 fleks = "2.12"
 visUi = "1.5.8"
 artemisOdb = "2.3.0"
-easyPublishing = "0.1.1"
+easyPublishing = "0.1.2"
 androidGradlePlugin = "9.1.1"
 
 [libraries]
