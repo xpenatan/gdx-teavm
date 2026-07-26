@@ -7,6 +7,12 @@ import org.teavm.jso.webgl.WebGLRenderingContext;
 public interface WebGLRenderingContextExt extends WebGLRenderingContext {
     void texImage2D(int target, int level, int internalformat, int format, int type, HTMLVideoElement video);
 
+    @JSMethod("getTexParameter")
+    int getTexParameteri(int target, int pname);
+
+    @JSMethod("getTexParameter")
+    float getTexParameterf(int target, int pname);
+
     // Returning an int but GL type is GLint64 and GL30 interface uses LongBuffer. JS does not support long
     // so we return an int, not sure how else to preserve the long values at this time.
     @JSMethod("getParameter")

@@ -49,7 +49,7 @@ public class WebGL20 implements GL20 {
         @JSBody(params = { "key" }, script = "var value = this[key]; delete this[key]; return value;")
         public native T remove (int key);
 
-        @JSBody(params = { "value" }, script = "for (var i = 0; i < this.length; i++) { if (value === this[i]) { return i; } }")
+        @JSBody(params = { "value" }, script = "for (var i = 0; i < this.length; i++) { if (value === this[i]) { return i; } } return 0;")
         public native int getKey (T value);
     }
 
@@ -546,21 +546,31 @@ public class WebGL20 implements GL20 {
                 || pname == GL20.GL_STENCIL_WRITEMASK || pname == GL20.GL_SUBPIXEL_BITS || pname == GL20.GL_UNPACK_ALIGNMENT) {
             params.put(0, gl.getParameteri(pname));
         }
-        else if(pname == GL20.GL_VIEWPORT) {
+        else if(pname == GL20.GL_VIEWPORT || pname == GL20.GL_SCISSOR_BOX) {
             Int32Array array = (Int32Array)gl.getParameter(pname);
             params.put(0, array.get(0));
             params.put(1, array.get(1));
             params.put(2, array.get(2));
             params.put(3, array.get(3));
         }
+        else if(pname == GL20.GL_CURRENT_PROGRAM) {
+            params.put(0, currProgram);
+        }
+        else if(pname == GL20.GL_ARRAY_BUFFER_BINDING || pname == GL20.GL_ELEMENT_ARRAY_BUFFER_BINDING) {
+            WebGLBuffer buffer = (WebGLBuffer)gl.getParameter(pname);
+            params.put(0, buffer == null ? 0 : buffers.getKey(buffer));
+        }
         else if(pname == GL20.GL_FRAMEBUFFER_BINDING) {
             WebGLFramebuffer fbo = (WebGLFramebuffer)gl.getParameter(pname);
-            if(fbo == null) {
-                params.put(0, 0);
-            }
-            else {
-                params.put(0, frameBuffers.getKey(fbo));
-            }
+            params.put(0, fbo == null ? 0 : frameBuffers.getKey(fbo));
+        }
+        else if(pname == GL20.GL_RENDERBUFFER_BINDING) {
+            WebGLRenderbuffer renderBuffer = (WebGLRenderbuffer)gl.getParameter(pname);
+            params.put(0, renderBuffer == null ? 0 : renderBuffers.getKey(renderBuffer));
+        }
+        else if(pname == GL20.GL_TEXTURE_BINDING_2D || pname == GL20.GL_TEXTURE_BINDING_CUBE_MAP) {
+            WebGLTexture texture = (WebGLTexture)gl.getParameter(pname);
+            params.put(0, texture == null ? 0 : textures.getKey(texture));
         }
         else
             throw new GdxRuntimeException("glGetInteger not supported by WebGL backend");
@@ -617,12 +627,12 @@ public class WebGL20 implements GL20 {
 
     @Override
     public void glGetTexParameterfv(int target, int pname, FloatBuffer params) {
-        throw new GdxRuntimeException("glGetTexParameter not supported by WebGL backend");
+        params.put(0, gl.getTexParameterf(target, pname));
     }
 
     @Override
     public void glGetTexParameteriv(int target, int pname, IntBuffer params) {
-        throw new GdxRuntimeException("glGetTexParameter not supported by WebGL backend");
+        params.put(0, gl.getTexParameteri(target, pname));
     }
 
     @Override
