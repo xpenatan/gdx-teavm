@@ -29,13 +29,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - name: Get version
-        uses: madhead/read-java-properties@latest
+      - name: Get release version
         id: version
-        with:
-          file: "./gradle.properties"
-          property: version
-          default: 0.0.1
+        run: |
+          python3 - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          catalog_path = Path("gradle/libs.versions.toml")
+          catalog = tomllib.loads(catalog_path.read_text(encoding="utf-8"))
+          version = catalog.get("versions", {}).get("gdxTeavmRelease")
+          if not isinstance(version, str) or not version.strip():
+              raise SystemExit(
+                  f"{catalog_path}: versions.gdxTeavmRelease must be a non-empty string"
+              )
+
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"value={version}\n")
+          PY
 
       - name: Set up JDK
         uses: actions/setup-java@v5
