@@ -61,6 +61,17 @@ internal fun changeDetectedMessage(time: LocalTime = LocalTime.now()): String {
     return "[${time.format(DEV_SERVER_TIME_FORMATTER)}] Change detected. Rebuilding..."
 }
 
+internal fun rebuildSuccessfulMessage(nanos: Long): String {
+    val millis = nanos / 1_000_000
+    val duration = if(millis < 1_000) {
+        "${millis}ms"
+    }
+    else {
+        String.format(Locale.ROOT, "%.1fs", millis / 1_000.0)
+    }
+    return "Rebuild successful in $duration."
+}
+
 /**
  * TeaVM forwards every line from its child process' stderr as a Gradle WARN message. Gradle sends
  * WARN messages to stdout, which loses the red stderr rendering used by IDE consoles. Re-emit only
@@ -173,13 +184,13 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
         val watcher = GdxTeaVMFileWatcher(watchFiles.files)
         while(true) {
             watcher.awaitChange()
-            logger.lifecycle(changeDetectedMessage())
+            logger.error(changeDetectedMessage())
             val started = System.nanoTime()
             try {
                 compileProjectClasses()
                 manager.runBuild(logger, null)
                 session.update(loadIndexHtml())
-                logger.lifecycle("Rebuild successful in ${formatDuration(System.nanoTime() - started)}.")
+                logger.error(rebuildSuccessfulMessage(System.nanoTime() - started))
             }
             catch(e: InterruptedException) {
                 throw e
@@ -188,7 +199,7 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
                 if(t is GdxTeaVMRebuildException && t.details.isNotBlank()) {
                     logger.error(t.details)
                 }
-                logger.lifecycle("Rebuild failed. Waiting for changes...")
+                logger.error("Rebuild failed. Waiting for changes...")
                 logger.debug("TeaVM development-server rebuild failed", t)
             }
         }
@@ -235,16 +246,6 @@ abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
         }
         command.add(rebuildTaskPath.get())
         return command
-    }
-
-    private fun formatDuration(nanos: Long): String {
-        val millis = nanos / 1_000_000
-        return if(millis < 1_000) {
-            "${millis}ms"
-        }
-        else {
-            String.format(Locale.ROOT, "%.1fs", millis / 1_000.0)
-        }
     }
 
     private fun removeShutdownHook(shutdownHook: Thread) {

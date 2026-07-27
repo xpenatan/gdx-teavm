@@ -25,6 +25,12 @@ class GdxTeaVMWebDevServerTest {
     }
 
     @Test
+    fun `successful rebuild message includes elapsed time`() {
+        assertEquals("Rebuild successful in 875ms.", rebuildSuccessfulMessage(875_000_000))
+        assertEquals("Rebuild successful in 1.5s.", rebuildSuccessfulMessage(1_500_000_000))
+    }
+
+    @Test
     fun `development server status is framed for stderr output`() {
         assertEquals(
             """
