@@ -1,7 +1,7 @@
 [versions]
 gdxTeavmGroup = "com.github.xpenatan.gdx-teavm"
 gdxTeavmName = "gdx-teavm"
-gdxTeavmRelease = "1.6.1"
+gdxTeavmRelease = "1.6.2"
 gdxTeavmSnapshot = "-SNAPSHOT"
 
 libgdx = "1.14.2"
