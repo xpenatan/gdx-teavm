@@ -39,12 +39,23 @@ public class GdxWebRendererListener {
 
     public void write(BuildTarget buildTarget, TargetType targetType, String outputName) throws IOException {
         writeWebApp(buildTarget, targetType, outputName);
+        if(config.copyLoadingAsset || config.copyAssets) {
+            TeaLogHelper.logHeader("COPYING ASSETS");
+        }
+        writeLoadingAsset(buildTarget);
         writeAssets(buildTarget);
     }
 
     private void writeWebApp(BuildTarget buildTarget, TargetType targetType, String outputName) throws IOException {
-        String indexHtml = readString("webapp/index.html");
         String webXML = readString("webapp/WEB-INF/web.xml");
+        if(config.generateIndexHtml) {
+            writeIndexHtml(buildTarget, targetType, outputName);
+        }
+        writeString(buildTarget, "WEB-INF/web.xml", webXML);
+    }
+
+    private void writeIndexHtml(BuildTarget buildTarget, TargetType targetType, String outputName) throws IOException {
+        String indexHtml = readString("webapp/index.html");
         String mode;
         String jsScript;
 
@@ -66,17 +77,22 @@ public class GdxWebRendererListener {
         indexHtml = indexHtml.replace("%ARGS%", config.mainClassArgs);
 
         writeString(buildTarget, config.webappIndexPath, indexHtml);
-        writeString(buildTarget, "WEB-INF/web.xml", webXML);
+    }
+
+    private void writeLoadingAsset(BuildTarget buildTarget) throws IOException {
+        if(!config.copyLoadingAsset) {
+            return;
+        }
+        AssetOutput output = AssetOutput.buildTarget(buildTarget);
+        AssetsCopy.copyClasspathResources(classLoader, Collections.singletonList(config.logoPath),
+                null, output, "assets");
     }
 
     private void writeAssets(BuildTarget buildTarget) throws IOException {
-        AssetOutput output = AssetOutput.buildTarget(buildTarget);
-        TeaLogHelper.logHeader("COPYING ASSETS");
-        if(config.copyLoadingAsset) {
-            AssetsCopy.copyClasspathResources(classLoader, Collections.singletonList(config.logoPath),
-                    null, output, "assets");
+        if(!config.copyAssets) {
+            return;
         }
-
+        AssetOutput output = AssetOutput.buildTarget(buildTarget);
         AssetsCopy.AssetPlan plan = assetPlan != null
                 ? assetPlan
                 : GdxTeaVMPluginAssetSupport.createWebAssetPlan(config, classLoader, classPathURLs);

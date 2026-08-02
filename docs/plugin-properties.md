@@ -65,13 +65,15 @@ These properties exist inside `js {}` and `wasm {}` only.
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `webappEnabled` | `Property<Boolean>` | `true` | Enables generated gdx-teavm web app files around web TeaVM output. |
+| `generateIndexHtml` | `Property<Boolean>` | `true` | Generates the web entry page. Set to `false` to leave an existing `index.html` untouched while continuing other web generation. |
 | `entryPointName` | `Property<String>` | `main` | Entry point function name called by the generated web app. |
 | `mainClassArgs` | `Property<String>` | empty string | Arguments passed by generated web app to the TeaVM entry point. Use JavaScript array element syntax without surrounding brackets. |
 | `htmlTitle` | `Property<String>` | `gdx-teavm` | Browser document title used by generated `index.html`. |
 | `htmlWidth` | `Property<Int>` | `800` | Initial canvas width written to generated `index.html`. |
 | `htmlHeight` | `Property<Int>` | `600` | Initial canvas height written to generated `index.html`. |
+| `copyAssets` | `Property<Boolean>` | `true` | Copies configured assets, contributed classpath assets, and support scripts. This does not control the loading logo. |
 | `logoPath` | `Property<String>` | `startup-logo.png` | Default startup-logo asset path compiled into `WebPreloadApplicationListener`; when `copyLoadingAsset` is true, the same path is copied from the build classpath. |
-| `copyLoadingAsset` | `Property<Boolean>` | `true` | Copies `logoPath` into the generated web app when true. |
+| `copyLoadingAsset` | `Property<Boolean>` | `true` | Independently copies `logoPath` into the generated web app, even when `copyAssets` is false. |
 | `serverPort` | `Property<Int>` | Gradle property `teavmPluginPort`, otherwise `8080` | Port used by this target's Jetty or TeaVM development server. |
 | `devServer` | `GdxTeaVMDevServerExtension` | disabled | Configures TeaVM's persistent development server for this target's existing run task. |
 

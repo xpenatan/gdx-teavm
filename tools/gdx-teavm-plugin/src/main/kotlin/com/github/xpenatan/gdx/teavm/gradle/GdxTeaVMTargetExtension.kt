@@ -305,6 +305,16 @@ open class GdxTeaVMWebExtension @Inject constructor(
     val webappEnabled: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
 
     /**
+     * Generates the web app `index.html` entry page when true.
+     *
+     * When false, an existing `index.html` is left untouched. Other web app files and TeaVM output are still
+     * generated according to their own settings.
+     *
+     * Default: `true`.
+     */
+    val generateIndexHtml: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+
+    /**
      * Browser document title used by the generated `index.html`.
      *
      * Default: `gdx-teavm`.
@@ -324,6 +334,15 @@ open class GdxTeaVMWebExtension @Inject constructor(
      * Default: `600`.
      */
     val htmlHeight: Property<Int> = objects.property(Int::class.javaObjectType).convention(600)
+
+    /**
+     * Copies configured assets, contributed classpath assets, and support scripts into the generated web app.
+     *
+     * This does not control the loading logo; use [copyLoadingAsset] for that resource.
+     *
+     * Default: `true`.
+     */
+    val copyAssets: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
 
     /**
      * Default startup-logo asset path compiled into `WebPreloadApplicationListener`.

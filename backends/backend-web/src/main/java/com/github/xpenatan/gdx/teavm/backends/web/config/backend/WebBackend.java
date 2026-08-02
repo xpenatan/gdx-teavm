@@ -22,6 +22,11 @@ public class WebBackend extends TeaBackend {
     public String mainClassArgs = "";
     public int htmlWidth = 800;
     public int htmlHeight = 600;
+    /** Generates and replaces {@code index.html} when true. */
+    public boolean generateIndexHtml = true;
+    /** Copies configured assets, classpath assets, and support scripts when true. */
+    public boolean copyAssets = true;
+    /** Copies {@link #logoPath} independently of {@link #copyAssets}. */
     public boolean copyLoadingAsset = true;
     public String webappFolderName = "webapp";
     public boolean isWebAssembly;
@@ -63,6 +68,19 @@ public class WebBackend extends TeaBackend {
 
     public WebBackend setHtmlHeight(int htmlHeight) {
         this.htmlHeight = htmlHeight;
+        return this;
+    }
+
+    public WebBackend setGenerateIndexHtml(boolean generateIndexHtml) {
+        this.generateIndexHtml = generateIndexHtml;
+        return this;
+    }
+
+    /**
+     * Controls physical asset and support-script copying. Asset planning and manifest generation still run when false.
+     */
+    public WebBackend setCopyAssets(boolean copyAssets) {
+        this.copyAssets = copyAssets;
         return this;
     }
 
@@ -182,7 +200,9 @@ public class WebBackend extends TeaBackend {
         FileHandle assetsFolder = releasePath.child(ASSETS_FOLDER_NAME);
         FileHandle indexHandler = releasePath.child("index.html");
         FileHandle webXMLFile = releasePath.child("WEB-INF").child("web.xml");
-        indexHandler.writeString(indexHtml, false);
+        if(generateIndexHtml) {
+            indexHandler.writeString(indexHtml, false);
+        }
         webXMLFile.writeString(webXML, false);
         try {
             AssetsCopy.copyClasspathResources(classLoader, rootAssets, null,
@@ -216,7 +236,12 @@ public class WebBackend extends TeaBackend {
             cppFiles.addAll(plan.cppFiles);
 
             AssetOutput output = AssetOutput.fileHandle(releasePath);
-            AssetsCopy.copyPlanAssets(classLoader, plan, output, ASSETS_FOLDER_NAME);
+            if(copyAssets) {
+                AssetsCopy.copyPlanAssets(classLoader, plan, output, ASSETS_FOLDER_NAME);
+            }
+            else {
+                AssetsCopy.measureAssetLengths(classLoader, plan);
+            }
             tool.getProperties().setProperty(GdxTeaVMPluginConfig.ASSET_MANIFEST,
                     GdxTeaVMPluginAssetSupport.encodeManifest(plan));
         } catch(IOException e) {
@@ -224,11 +249,13 @@ public class WebBackend extends TeaBackend {
         }
 
         FileHandle scriptsFolder = releasePath.child("scripts");
-        try {
-            AssetsCopy.copyClasspathResources(classLoader, scripts, scriptFilter,
-                    AssetOutput.fileHandle(scriptsFolder), "");
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        if(copyAssets) {
+            try {
+                AssetsCopy.copyClasspathResources(classLoader, scripts, scriptFilter,
+                        AssetOutput.fileHandle(scriptsFolder), "");
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

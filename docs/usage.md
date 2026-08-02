@@ -138,6 +138,8 @@ Generated tasks:
 
 By default, each run task builds its target and serves the result with `JettyServer`. Setting `devServer.enabled` to `true`, as shown above, makes the same task and URL use TeaVM's persistent development server instead.
 
+Web output ownership can be split between gdx-teavm and another frontend build. Set `generateIndexHtml` to `false` to leave an existing `index.html` untouched, and set `copyAssets` to `false` to leave configured assets and support scripts untouched. `copyLoadingAsset` controls the loading logo independently. These settings do not disable TeaVM JavaScript or Wasm compilation. TeaVM's persistent development-server workflow requires `generateIndexHtml` because it serves the generated entry page.
+
 `autoBuild` defaults to `true` and rebuilds after source, resource, asset, or static-file changes. Set it to `false` for a serve-only session. `autoReload` independently refreshes connected pages after successful rebuilds. Compilation failures leave the previous application running while the task waits for another change.
 
 The development server supplies the source maps, Java sources, and debug metadata used by browser tools; the corresponding target properties still control normal build output. Keep the run task active for the development session and stop it with Ctrl+C or the IDE stop action. See the [development-server property reference](plugin-properties.md#development-server-properties) for all options.
@@ -466,6 +468,17 @@ WebBackend backend = new WebBackend()
         .setWebAssembly(true)
         .setStartJettyAfterBuild(true);
 ```
+
+The manual web backend exposes the same independent output controls as the Gradle plugin:
+
+```java
+WebBackend backend = new WebBackend()
+        .setGenerateIndexHtml(false)
+        .setCopyAssets(false)
+        .setCopyLoadingAsset(true);
+```
+
+This continues compiling the JavaScript or Wasm application, leaves an existing `index.html` and ordinary assets or support scripts untouched, and still refreshes the loading logo. Asset planning and manifest generation continue when `copyAssets` is false. Set `copyLoadingAsset(false)` as well to leave the logo untouched.
 
 ### GLFW Builder
 

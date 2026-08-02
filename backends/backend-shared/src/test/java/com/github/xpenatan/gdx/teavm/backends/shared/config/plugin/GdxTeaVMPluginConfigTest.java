@@ -8,6 +8,29 @@ import org.junit.Test;
 
 public class GdxTeaVMPluginConfigTest {
     @Test
+    public void webOutputOptionsDefaultToEnabled() {
+        GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(new Properties());
+
+        assertThat(config.generateIndexHtml).isTrue();
+        assertThat(config.copyAssets).isTrue();
+        assertThat(config.copyLoadingAsset).isTrue();
+    }
+
+    @Test
+    public void readsIndependentWebOutputOptions() {
+        Properties properties = new Properties();
+        properties.setProperty(GdxTeaVMPluginConfig.GENERATE_INDEX_HTML, "false");
+        properties.setProperty(GdxTeaVMPluginConfig.COPY_ASSETS, "false");
+        properties.setProperty(GdxTeaVMPluginConfig.COPY_LOADING_ASSET, "true");
+
+        GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(properties);
+
+        assertThat(config.generateIndexHtml).isFalse();
+        assertThat(config.copyAssets).isFalse();
+        assertThat(config.copyLoadingAsset).isTrue();
+    }
+
+    @Test
     public void readsCustomWebappIndexPath() {
         Properties properties = new Properties();
         properties.setProperty(GdxTeaVMPluginConfig.WEBAPP_INDEX_PATH, "__gdx_teavm_index.html");

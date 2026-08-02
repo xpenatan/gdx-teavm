@@ -115,6 +115,41 @@ class GdxTeaVMWebDevServerTest {
         assertTrue(extension.wasm.outOfProcess.get())
         assertEquals(1024, extension.js.processMemory.get())
         assertEquals(1024, extension.wasm.processMemory.get())
+        assertTrue(extension.js.generateIndexHtml.get())
+        assertTrue(extension.wasm.generateIndexHtml.get())
+        assertTrue(extension.js.copyAssets.get())
+        assertTrue(extension.wasm.copyAssets.get())
+        assertTrue(extension.js.copyLoadingAsset.get())
+        assertTrue(extension.wasm.copyLoadingAsset.get())
+    }
+
+    @Test
+    fun `web output options are configured independently per target`() {
+        val project = configuredProject { extension ->
+            extension.js(Action {
+                mainClass.set("example.JsMain")
+                generateIndexHtml.set(false)
+                copyAssets.set(false)
+                copyLoadingAsset.set(true)
+            })
+            extension.wasm(Action {
+                mainClass.set("example.WasmMain")
+                generateIndexHtml.set(true)
+                copyAssets.set(true)
+                copyLoadingAsset.set(false)
+            })
+        }
+
+        val extension = project.extensions.getByType(GdxTeaVMExtension::class.java)
+        val jsProperties = extension.toWebProperties(project, extension.js).get()
+        val wasmProperties = extension.toWebProperties(project, extension.wasm).get()
+
+        assertEquals("false", jsProperties["gdx.teavm.webapp.generateIndexHtml"])
+        assertEquals("false", jsProperties["gdx.teavm.copyAssets"])
+        assertEquals("true", jsProperties["gdx.teavm.copyLoadingAsset"])
+        assertEquals("true", wasmProperties["gdx.teavm.webapp.generateIndexHtml"])
+        assertEquals("true", wasmProperties["gdx.teavm.copyAssets"])
+        assertEquals("false", wasmProperties["gdx.teavm.copyLoadingAsset"])
     }
 
     @Test

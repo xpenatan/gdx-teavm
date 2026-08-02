@@ -13,11 +13,13 @@ import java.util.TreeSet;
 public class GdxTeaVMPluginConfig {
     public static final String WEBAPP_ENABLED = "gdx.teavm.webapp.enabled";
     public static final String WEBAPP_INDEX_PATH = "gdx.teavm.webapp.indexPath";
+    public static final String GENERATE_INDEX_HTML = "gdx.teavm.webapp.generateIndexHtml";
     public static final String ENTRY_POINT_NAME = "gdx.teavm.entryPointName";
     public static final String MAIN_CLASS_ARGS = "gdx.teavm.mainClassArgs";
     public static final String HTML_TITLE = "gdx.teavm.html.title";
     public static final String HTML_WIDTH = "gdx.teavm.html.width";
     public static final String HTML_HEIGHT = "gdx.teavm.html.height";
+    public static final String COPY_ASSETS = "gdx.teavm.copyAssets";
     public static final String LOGO_PATH = "gdx.teavm.logoPath";
     public static final String COPY_LOADING_ASSET = "gdx.teavm.copyLoadingAsset";
     public static final String CLASSPATH = "gdx.teavm.classpath";
@@ -43,11 +45,13 @@ public class GdxTeaVMPluginConfig {
 
     public final boolean webappEnabled;
     public final String webappIndexPath;
+    public final boolean generateIndexHtml;
     public final String entryPointName;
     public final String mainClassArgs;
     public final String htmlTitle;
     public final int htmlWidth;
     public final int htmlHeight;
+    public final boolean copyAssets;
     public final String logoPath;
     public final boolean copyLoadingAsset;
     public final List<String> classpath;
@@ -73,11 +77,13 @@ public class GdxTeaVMPluginConfig {
     private GdxTeaVMPluginConfig(Properties properties) {
         webappEnabled = getBoolean(properties, WEBAPP_ENABLED, false);
         webappIndexPath = getString(properties, WEBAPP_INDEX_PATH, "index.html");
+        generateIndexHtml = getBoolean(properties, GENERATE_INDEX_HTML, true);
         entryPointName = getString(properties, ENTRY_POINT_NAME, "main");
         mainClassArgs = getString(properties, MAIN_CLASS_ARGS, "");
         htmlTitle = getString(properties, HTML_TITLE, "gdx-teavm");
         htmlWidth = getInt(properties, HTML_WIDTH, 800);
         htmlHeight = getInt(properties, HTML_HEIGHT, 600);
+        copyAssets = getBoolean(properties, COPY_ASSETS, true);
         logoPath = getString(properties, LOGO_PATH, "startup-logo.png");
         copyLoadingAsset = getBoolean(properties, COPY_LOADING_ASSET, true);
         classpath = Collections.unmodifiableList(readPathList(properties, CLASSPATH));

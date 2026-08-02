@@ -239,11 +239,13 @@ open class GdxTeaVMExtension @Inject constructor(
         return project.provider {
             linkedMapOf<String, String>().also { properties ->
                 properties[WEBAPP_ENABLED] = web.webappEnabled.get().toString()
+                properties[GENERATE_INDEX_HTML] = web.generateIndexHtml.get().toString()
                 properties[ENTRY_POINT_NAME] = web.entryPointName.get()
                 properties[MAIN_CLASS_ARGS] = web.mainClassArgs.get()
                 properties[HTML_TITLE] = web.htmlTitle.get()
                 properties[HTML_WIDTH] = web.htmlWidth.get().toString()
                 properties[HTML_HEIGHT] = web.htmlHeight.get().toString()
+                properties[COPY_ASSETS] = web.copyAssets.get().toString()
                 properties[LOGO_PATH] = web.logoPath.get()
                 properties[COPY_LOADING_ASSET] = web.copyLoadingAsset.get().toString()
             }
@@ -365,11 +367,13 @@ open class GdxTeaVMExtension @Inject constructor(
 
     private companion object {
         const val WEBAPP_ENABLED = "gdx.teavm.webapp.enabled"
+        const val GENERATE_INDEX_HTML = "gdx.teavm.webapp.generateIndexHtml"
         const val ENTRY_POINT_NAME = "gdx.teavm.entryPointName"
         const val MAIN_CLASS_ARGS = "gdx.teavm.mainClassArgs"
         const val HTML_TITLE = "gdx.teavm.html.title"
         const val HTML_WIDTH = "gdx.teavm.html.width"
         const val HTML_HEIGHT = "gdx.teavm.html.height"
+        const val COPY_ASSETS = "gdx.teavm.copyAssets"
         const val LOGO_PATH = "gdx.teavm.logoPath"
         const val COPY_LOADING_ASSET = "gdx.teavm.copyLoadingAsset"
         const val ASSETS = "gdx.teavm.assets"
