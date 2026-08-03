@@ -7,6 +7,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import org.teavm.classlib.PlatformDetector;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
+import org.teavm.jso.core.JSWeakMap;
+import org.teavm.jso.typedarrays.ArrayBuffer;
 import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int16Array;
@@ -20,6 +24,10 @@ import org.teavm.jso.typedarrays.Uint8Array;
  * @author xpenatan
  */
 public class TypedArrays {
+
+    // Wasm direct buffers share one backing ArrayBuffer, so retain several recent ranges without growing unbounded.
+    private static final int MAX_CACHED_RANGES = 16;
+    private static final JSWeakMap<ArrayBuffer, JSObject> typedArrayRangeCache = new JSWeakMap<>();
 
     // Obtain the array reference from ArrayBufferView
     public static byte[] toByteArray(TypedArray array) {
@@ -59,13 +67,40 @@ public class TypedArrays {
 
     /**
      * Returns a byte view covering the buffer's active range, from its current position to its limit.
-     * The source buffer's position, limit, and mark are not changed.
+     * Reuses the source view when it already covers that range and otherwise caches recent partial ranges for each
+     * backing buffer. The source buffer's position, limit, and mark are not changed.
      */
-    public static Int8Array getTypedArrayRange(Buffer buffer) {
+    public static ArrayBufferView getTypedArrayRange(Buffer buffer) {
         ArrayBufferView typedArray = getTypedArray(getConversionBuffer(buffer));
-        return new Int8Array(typedArray.getBuffer(), typedArray.getByteOffset() + getRangeByteOffset(buffer),
-                getRangeByteLength(buffer));
+        int byteOffset = typedArray.getByteOffset() + getRangeByteOffset(buffer);
+        int byteLength = getRangeByteLength(buffer);
+        if(typedArray.getByteOffset() == byteOffset && typedArray.getByteLength() == byteLength) {
+            return typedArray;
+        }
+        ArrayBuffer arrayBuffer = typedArray.getBuffer();
+        return getOrCreateRange(typedArrayRangeCache, arrayBuffer, byteOffset, byteLength, MAX_CACHED_RANGES);
     }
+
+    // A Wasm memory growth replaces arrayBuffer, so its old cache becomes unreachable without explicit invalidation.
+    @JSBody(params = { "cache", "arrayBuffer", "byteOffset", "byteLength", "maxRanges" }, script =
+            "var ranges = cache.get(arrayBuffer);"
+                    + " if (ranges === undefined) { ranges = []; cache.set(arrayBuffer, ranges); }"
+                    + " for (var i = ranges.length - 1; i >= 0; i--) {"
+                    + "  var range = ranges[i];"
+                    + "  if (range.byteOffset === byteOffset && range.byteLength === byteLength) {"
+                    + "   for (var j = i; j < ranges.length - 1; j++) ranges[j] = ranges[j + 1];"
+                    + "   ranges[ranges.length - 1] = range; return range;"
+                    + "  }"
+                    + " }"
+                    + " var range = new Int8Array(arrayBuffer, byteOffset, byteLength);"
+                    + " if (ranges.length < maxRanges) ranges.push(range);"
+                    + " else {"
+                    + "  for (var i = 1; i < ranges.length; i++) ranges[i - 1] = ranges[i];"
+                    + "  ranges[ranges.length - 1] = range;"
+                    + " }"
+                    + " return range;")
+    private static native Int8Array getOrCreateRange(JSWeakMap<ArrayBuffer, JSObject> cache, ArrayBuffer arrayBuffer,
+            int byteOffset, int byteLength, int maxRanges);
 
     static Buffer getConversionBuffer(Buffer buffer) {
         if(PlatformDetector.isJavaScript() || buffer.isDirect() || hasArray(buffer)) {
