@@ -12,22 +12,17 @@ internal const val TEAVM_BUILD_DAEMON_STDERR_PREFIX = "Build daemon [stderr]:"
  * transport detail while preserving ERROR-level logging so stderr remains red in Gradle consoles.
  */
 internal fun restoreTeaVMBuildDaemonStderr(task: TeaVMTask) {
-    val taskLogger = task.logger
-    val contextLogger = taskLogger as? ContextAwareTaskLogger
+    val contextLogger = task.logger as? ContextAwareTaskLogger
         ?: throw GradleException("The Gradle task logger cannot restore TeaVM build-daemon stderr output")
-    contextLogger.setMessageRewriter { level, message ->
-        rewriteTeaVMBuildDaemonStderr(level, message, taskLogger::error)
-    }
+    contextLogger.setMessageRewriter(::rewriteTeaVMBuildDaemonStderr)
 }
 
 internal fun rewriteTeaVMBuildDaemonStderr(
     level: LogLevel,
-    message: String,
-    reportError: (String) -> Unit
-): String? {
+    message: String
+): String {
     if(level == LogLevel.ERROR && message.startsWith(TEAVM_BUILD_DAEMON_STDERR_PREFIX)) {
-        reportError(message.removePrefix(TEAVM_BUILD_DAEMON_STDERR_PREFIX).trimStart())
-        return null
+        return message.removePrefix(TEAVM_BUILD_DAEMON_STDERR_PREFIX).trimStart()
     }
     return message
 }

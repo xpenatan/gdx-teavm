@@ -14,7 +14,6 @@ import org.gradle.api.file.RelativePath
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
@@ -472,7 +471,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             return
         }
         (logging as LoggingManagerInternal).setLevelInternal(LogLevel.INFO)
-        restoreTeaVMDevServerStderr(this)
         if(devServerRunnerClasspath != null) {
             getServerClasspath().setFrom(devServerRunnerClasspath)
         }
@@ -492,6 +490,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         getClasspath().setFrom(propertiesRoot, classpath)
         val devServerTask = this
         doFirst {
+            restoreTeaVMDevServerStderr(devServerTask)
             val propertiesFile = propertiesRoot.get().file(DEV_SERVER_PROPERTIES_PATH).asFile
             val properties = Properties()
             properties.putAll(devServerTask.getProperties().get())
@@ -522,19 +521,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val runnerClasspath = project.configurations.detachedConfiguration(
             project.dependencies.create(ArtifactCoordinates.DEV_SERVER_RUNNER)
         )
-        val pathingJar = project.tasks.register<Jar>(DEV_SERVER_CLASSPATH_TASK_NAME) {
+        val pathingJar = project.tasks.register<GdxTeaVMDevServerClasspathJar>(DEV_SERVER_CLASSPATH_TASK_NAME) {
             group = null
             description = "Creates a short TeaVM development-server classpath for Windows."
             archiveFileName.set(DEV_SERVER_CLASSPATH_JAR_NAME)
             destinationDirectory.set(project.layout.buildDirectory.dir("gdx-teavm/dev-server/launcher"))
-            inputs.files(runnerClasspath)
-                .withPropertyName("teaVMDevServerRunnerClasspath")
-                .withNormalizer(ClasspathNormalizer::class.java)
-            doFirst {
-                manifest.attributes["Class-Path"] = runnerClasspath.files.joinToString(" ") { file ->
-                    file.toURI().toASCIIString()
-                }
-            }
+            classpath.from(runnerClasspath)
         }
         return project.files(pathingJar.flatMap { task -> task.archiveFile }).builtBy(pathingJar)
     }
