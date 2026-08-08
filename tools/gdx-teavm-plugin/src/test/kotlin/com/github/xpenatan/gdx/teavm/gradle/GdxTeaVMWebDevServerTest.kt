@@ -8,10 +8,12 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.api.tasks.bundling.Jar
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.teavm.gradle.TeaVMPlugin
+import org.teavm.gradle.tasks.DevServerManager
 import org.teavm.gradle.tasks.DevServerTask
 import java.time.LocalTime
 
@@ -254,6 +256,26 @@ class GdxTeaVMWebDevServerTest {
         val jsRun = project.tasks.getByName("gdx_teavm_web_js_run") as GdxTeaVMRunDevServerTask
 
         assertFalse(jsRun.autoBuild.get())
+    }
+
+    @Test
+    fun `development server starts each invocation with a fresh TeaVM client`() {
+        val project = configuredProject { extension ->
+            extension.wasm(Action {
+                mainClass.set("example.WasmMain")
+                devServer(Action {
+                    enabled.set(true)
+                })
+            })
+        }
+        val devServer = project.tasks.getByName(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME) as DevServerTask
+        val manager = DevServerManager.instance()
+        val projectPath = devServer.projectPath.get()
+        val previousClient = manager.getProjectManager(projectPath)
+
+        resetTeaVMDevServerClient(devServer)
+
+        assertNotSame(previousClient, manager.getProjectManager(projectPath))
     }
 
     private fun configuredProject(configure: (GdxTeaVMExtension) -> Unit): Project {

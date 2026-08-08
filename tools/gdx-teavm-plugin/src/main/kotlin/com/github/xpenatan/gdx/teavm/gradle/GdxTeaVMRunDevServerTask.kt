@@ -108,6 +108,20 @@ internal fun suppressTeaVMRebuildNoise(level: LogLevel, message: String): String
     }
 }
 
+/**
+ * TeaVM 0.15.0 keeps a client object for each project path. Reusing a stopped client can deliver
+ * its delayed process-exit event to the next run, either failing that build or leaving its HTTP
+ * server unresponsive. Remove the current path from TeaVM's manager before starting a new run so
+ * the task action creates a fresh client while retaining managers for the other project paths.
+ */
+internal fun resetTeaVMDevServerClient(task: DevServerTask) {
+    val currentPath = task.projectPath.get()
+    val retainedPaths = task.allProjectPaths.get().filterTo(linkedSetOf()) { path ->
+        path != currentPath
+    }
+    DevServerManager.instance().cleanup(retainedPaths, task.logger)
+}
+
 @DisableCachingByDefault(because = "Runs a persistent TeaVM development-server session")
 abstract class GdxTeaVMRunDevServerTask : DefaultTask() {
     @get:Input

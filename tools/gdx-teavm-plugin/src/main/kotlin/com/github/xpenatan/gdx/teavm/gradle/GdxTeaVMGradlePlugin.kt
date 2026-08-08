@@ -490,6 +490,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         getClasspath().setFrom(propertiesRoot, classpath)
         val devServerTask = this
         doFirst {
+            resetTeaVMDevServerClient(devServerTask)
             restoreTeaVMDevServerStderr(devServerTask)
             val propertiesFile = propertiesRoot.get().file(DEV_SERVER_PROPERTIES_PATH).asFile
             val properties = Properties()
