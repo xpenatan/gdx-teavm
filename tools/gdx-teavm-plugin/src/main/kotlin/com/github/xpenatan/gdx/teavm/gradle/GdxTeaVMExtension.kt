@@ -8,6 +8,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.teavm.gradle.api.TeaVMExtension
+import org.teavm.gradle.api.TeaVMJSConfiguration
+import org.teavm.gradle.api.TeaVMWasmGCConfiguration
 import java.io.File
 import javax.inject.Inject
 
@@ -17,6 +19,11 @@ open class GdxTeaVMExtension @Inject constructor(
 ) {
     private var teavm: TeaVMExtension? = null
     private val declaredTargets = linkedSetOf<GdxTeaVMTarget>()
+    private val declaredDefaultTargets = linkedSetOf<GdxTeaVMTarget>()
+    private val namedJsTargets = linkedMapOf<String, GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>>()
+    private val namedWasmTargets = linkedMapOf<String, GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>>()
+    private val namedGlfwTargets = linkedMapOf<String, GdxTeaVMTargetRegistration<GdxTeaVMGlfwExtension>>()
+    private val namedIosTargets = linkedMapOf<String, GdxTeaVMTargetRegistration<GdxTeaVMIosExtension>>()
 
     constructor(
         objects: ObjectFactory,
@@ -87,6 +94,12 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     val reflection: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
 
+    /** Optional conventions inherited by every declared JavaScript and Wasm target. */
+    val webDefaults: GdxTeaVMWebDefaults = objects.newInstance(GdxTeaVMWebDefaults::class.java)
+
+    /** Optional conventions inherited by every declared TeaVM C/native target. */
+    val nativeDefaults: GdxTeaVMNativeDefaults = objects.newInstance(GdxTeaVMNativeDefaults::class.java)
+
     /**
      * JavaScript web target configuration.
      *
@@ -96,7 +109,9 @@ open class GdxTeaVMExtension @Inject constructor(
         objects.newInstance(
             GdxTeaVMJsExtension::class.java,
             project,
-            requireTeaVMExtension().getJs()
+            requireTeaVMExtension().getJs(),
+            webDefaults,
+            "dist/js"
         )
     }
 
@@ -109,7 +124,9 @@ open class GdxTeaVMExtension @Inject constructor(
         objects.newInstance(
             GdxTeaVMWasmExtension::class.java,
             project,
-            requireTeaVMExtension().getWasmGC()
+            requireTeaVMExtension().getWasmGC(),
+            webDefaults,
+            "dist/wasm"
         )
     }
 
@@ -122,7 +139,8 @@ open class GdxTeaVMExtension @Inject constructor(
         GdxTeaVMGlfwExtension::class.java,
         project,
         "dist/glfw",
-        "app"
+        "app",
+        nativeDefaults
     )
 
     /**
@@ -134,7 +152,8 @@ open class GdxTeaVMExtension @Inject constructor(
         GdxTeaVMAndroidExtension::class.java,
         project,
         "generated/gdx-teavm/android",
-        "app"
+        "app",
+        nativeDefaults
     )
 
     /**
@@ -146,7 +165,9 @@ open class GdxTeaVMExtension @Inject constructor(
         GdxTeaVMIosExtension::class.java,
         project,
         "dist/ios",
-        "app"
+        "app",
+        "xcode-derived/ios",
+        nativeDefaults
     )
 
     /**
@@ -156,7 +177,14 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     fun js(action: Action<in GdxTeaVMJsExtension>) {
         declaredTargets.add(GdxTeaVMTarget.JS)
+        declaredDefaultTargets.add(GdxTeaVMTarget.JS)
         action.execute(js)
+    }
+
+    /** Configures and declares an independently named JavaScript web target. */
+    fun js(name: String, action: Action<in GdxTeaVMJsExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.JS)
+        action.execute(namedJsTarget(name))
     }
 
     /**
@@ -166,7 +194,14 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     fun wasm(action: Action<in GdxTeaVMWasmExtension>) {
         declaredTargets.add(GdxTeaVMTarget.WASM)
+        declaredDefaultTargets.add(GdxTeaVMTarget.WASM)
         action.execute(wasm)
+    }
+
+    /** Configures and declares an independently named Wasm web target. */
+    fun wasm(name: String, action: Action<in GdxTeaVMWasmExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.WASM)
+        action.execute(namedWasmTarget(name))
     }
 
     /**
@@ -176,7 +211,14 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     fun glfw(action: Action<in GdxTeaVMGlfwExtension>) {
         declaredTargets.add(GdxTeaVMTarget.GLFW)
+        declaredDefaultTargets.add(GdxTeaVMTarget.GLFW)
         action.execute(glfw)
+    }
+
+    /** Configures and declares an independently named GLFW TeaVM C target. */
+    fun glfw(name: String, action: Action<in GdxTeaVMGlfwExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.GLFW)
+        action.execute(namedGlfwTarget(name))
     }
 
     /**
@@ -186,6 +228,7 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     fun android(action: Action<in GdxTeaVMAndroidExtension>) {
         declaredTargets.add(GdxTeaVMTarget.ANDROID)
+        declaredDefaultTargets.add(GdxTeaVMTarget.ANDROID)
         action.execute(android)
     }
 
@@ -196,7 +239,24 @@ open class GdxTeaVMExtension @Inject constructor(
      */
     fun ios(action: Action<in GdxTeaVMIosExtension>) {
         declaredTargets.add(GdxTeaVMTarget.IOS)
+        declaredDefaultTargets.add(GdxTeaVMTarget.IOS)
         action.execute(ios)
+    }
+
+    /** Configures and declares an independently named experimental iOS TeaVM C target. */
+    fun ios(name: String, action: Action<in GdxTeaVMIosExtension>) {
+        declaredTargets.add(GdxTeaVMTarget.IOS)
+        action.execute(namedIosTarget(name))
+    }
+
+    /** Configures optional conventions inherited by JavaScript and Wasm targets. */
+    fun webDefaults(action: Action<in GdxTeaVMWebDefaults>) {
+        action.execute(webDefaults)
+    }
+
+    /** Configures optional conventions inherited by TeaVM C/native targets. */
+    fun nativeDefaults(action: Action<in GdxTeaVMNativeDefaults>) {
+        action.execute(nativeDefaults)
     }
 
     /** Adds local asset files or directories to [assets]. */
@@ -214,12 +274,121 @@ open class GdxTeaVMExtension @Inject constructor(
         reflection.addAll(patterns.toList())
     }
 
+    private fun namedJsTarget(name: String): GdxTeaVMJsExtension {
+        val identity = namedTargetIdentity(name, namedJsTargets, "JavaScript")
+        identity.existing?.let { return it.target }
+        val config = objects.newInstance(TeaVMJSConfiguration::class.java)
+        val target = objects.newInstance(
+            GdxTeaVMJsExtension::class.java,
+            project,
+            config,
+            webDefaults,
+            "dist/js/${identity.segment}"
+        )
+        namedJsTargets[identity.segment] = GdxTeaVMTargetRegistration(identity.name, identity.segment, target)
+        return target
+    }
+
+    private fun namedWasmTarget(name: String): GdxTeaVMWasmExtension {
+        val identity = namedTargetIdentity(name, namedWasmTargets, "Wasm")
+        identity.existing?.let { return it.target }
+        val config = objects.newInstance(TeaVMWasmGCConfiguration::class.java)
+        val target = objects.newInstance(
+            GdxTeaVMWasmExtension::class.java,
+            project,
+            config,
+            webDefaults,
+            "dist/wasm/${identity.segment}"
+        )
+        namedWasmTargets[identity.segment] = GdxTeaVMTargetRegistration(identity.name, identity.segment, target)
+        return target
+    }
+
+    private fun namedGlfwTarget(name: String): GdxTeaVMGlfwExtension {
+        val identity = namedTargetIdentity(name, namedGlfwTargets, "GLFW")
+        identity.existing?.let { return it.target }
+        val target = objects.newInstance(
+            GdxTeaVMGlfwExtension::class.java,
+            project,
+            "dist/glfw/${identity.segment}",
+            "app",
+            nativeDefaults
+        )
+        namedGlfwTargets[identity.segment] = GdxTeaVMTargetRegistration(identity.name, identity.segment, target)
+        return target
+    }
+
+    private fun namedIosTarget(name: String): GdxTeaVMIosExtension {
+        val identity = namedTargetIdentity(name, namedIosTargets, "iOS")
+        identity.existing?.let { return it.target }
+        val target = objects.newInstance(
+            GdxTeaVMIosExtension::class.java,
+            project,
+            "dist/ios/${identity.segment}",
+            "app",
+            "xcode-derived/ios/${identity.segment}",
+            nativeDefaults
+        )
+        namedIosTargets[identity.segment] = GdxTeaVMTargetRegistration(identity.name, identity.segment, target)
+        return target
+    }
+
+    private fun <T> namedTargetIdentity(
+        name: String,
+        targets: Map<String, GdxTeaVMTargetRegistration<T>>,
+        targetType: String
+    ): NamedTargetIdentity<T> {
+        val trimmedName = name.trim()
+        val segment = normalizeGdxTeaVMTargetName(trimmedName)
+        val existing = targets[segment]
+        if(existing != null && existing.name != trimmedName) {
+            throw IllegalArgumentException(
+                "$targetType target names '${existing.name}' and '$trimmedName' both normalize to '$segment'"
+            )
+        }
+        return NamedTargetIdentity(trimmedName, segment, existing)
+    }
+
+    internal fun jsTargets(): List<GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>> = buildList {
+        if(isDefaultTargetDeclared(GdxTeaVMTarget.JS)) {
+            add(GdxTeaVMTargetRegistration(null, null, js))
+        }
+        addAll(namedJsTargets.values)
+    }
+
+    internal fun wasmTargets(): List<GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>> = buildList {
+        if(isDefaultTargetDeclared(GdxTeaVMTarget.WASM)) {
+            add(GdxTeaVMTargetRegistration(null, null, wasm))
+        }
+        addAll(namedWasmTargets.values)
+    }
+
+    internal fun glfwTargets(): List<GdxTeaVMTargetRegistration<GdxTeaVMGlfwExtension>> = buildList {
+        if(isDefaultTargetDeclared(GdxTeaVMTarget.GLFW)) {
+            add(GdxTeaVMTargetRegistration(null, null, glfw))
+        }
+        addAll(namedGlfwTargets.values)
+    }
+
+    internal fun iosTargets(): List<GdxTeaVMTargetRegistration<GdxTeaVMIosExtension>> = buildList {
+        if(isDefaultTargetDeclared(GdxTeaVMTarget.IOS)) {
+            add(GdxTeaVMTargetRegistration(null, null, ios))
+        }
+        addAll(namedIosTargets.values)
+    }
+
     private fun requireTeaVMExtension(): TeaVMExtension {
         return teavm ?: throw IllegalStateException(
             "This gdx-teavm project is configured for Android-only generation. " +
                 "Move js/wasm/glfw/ios targets to a Java project or apply gdx-teavm to a non-Android module."
         )
     }
+
+    private data class NamedTargetIdentity<T>(
+        val name: String,
+        val segment: String,
+        val existing: GdxTeaVMTargetRegistration<T>?
+    )
 
     internal fun toGlobalProperties(project: Project): Provider<Map<String, String>> {
         return project.provider {
@@ -284,16 +453,16 @@ open class GdxTeaVMExtension @Inject constructor(
 
     internal fun nativeTargetForBackendName(backendName: String?): GdxTeaVMNativeTargetExtension? {
         return when(backendName) {
-            "glfw" -> if(isTargetDeclared(GdxTeaVMTarget.GLFW)) glfw else null
-            "android" -> if(isTargetDeclared(GdxTeaVMTarget.ANDROID)) android else null
-            "ios" -> if(isTargetDeclared(GdxTeaVMTarget.IOS)) ios else null
+            "glfw" -> if(isDefaultTargetDeclared(GdxTeaVMTarget.GLFW)) glfw else null
+            "android" -> if(isDefaultTargetDeclared(GdxTeaVMTarget.ANDROID)) android else null
+            "ios" -> if(isDefaultTargetDeclared(GdxTeaVMTarget.IOS)) ios else null
             else -> null
         }
     }
 
     internal fun defaultNativeTargetOrNull(): GdxTeaVMNativeTargetExtension? {
         var firstNativeTarget: GdxTeaVMNativeTargetExtension? = null
-        for(target in declaredTargets) {
+        for(target in declaredDefaultTargets) {
             val nativeTarget = nativeTargetForDeclaredTarget(target) ?: continue
             if(firstNativeTarget == null) {
                 firstNativeTarget = nativeTarget
@@ -318,6 +487,10 @@ open class GdxTeaVMExtension @Inject constructor(
         return declaredTargets.contains(target)
     }
 
+    internal fun isDefaultTargetDeclared(target: GdxTeaVMTarget): Boolean {
+        return declaredDefaultTargets.contains(target)
+    }
+
     internal fun isWebTargetDeclared(): Boolean {
         return isTargetDeclared(GdxTeaVMTarget.JS) || isTargetDeclared(GdxTeaVMTarget.WASM)
     }
@@ -326,9 +499,9 @@ open class GdxTeaVMExtension @Inject constructor(
         val requestedTasks = project.gradle.startParameter.taskNames
             .map { it.lowercase() }
             .map { it.substringAfterLast(':') }
-        val glfwRequested = requestedTasks.any { it.startsWith("gdx_teavm_glfw") }
-        val androidRequested = requestedTasks.any { it.startsWith("gdx_teavm_android") }
-        val iosRequested = requestedTasks.any { it.startsWith("gdx_teavm_ios") }
+        val glfwRequested = requestedTasks.any { it in DEFAULT_GLFW_TASK_NAMES }
+        val androidRequested = requestedTasks.any { it in DEFAULT_ANDROID_TASK_NAMES }
+        val iosRequested = requestedTasks.any { it in DEFAULT_IOS_TASK_NAMES }
         val requestedNativeTargets = listOf(glfwRequested, androidRequested, iosRequested).count { it }
         if(requestedNativeTargets > 1) {
             throw IllegalStateException("Only one gdx-teavm native backend can be selected in a single Gradle invocation")
@@ -366,6 +539,21 @@ open class GdxTeaVMExtension @Inject constructor(
     }
 
     private companion object {
+        val DEFAULT_GLFW_TASK_NAMES = setOf(
+            "gdx_teavm_glfw_generate",
+            "gdx_teavm_glfw_build",
+            "gdx_teavm_glfw_run"
+        )
+        val DEFAULT_ANDROID_TASK_NAMES = setOf("gdx_teavm_android_generate")
+        val DEFAULT_IOS_TASK_NAMES = setOf(
+            "gdx_teavm_ios_generate",
+            "gdx_teavm_ios_prepare_angle",
+            "gdx_teavm_ios_init_xcode",
+            "gdx_teavm_ios_regenerate_xcode",
+            "gdx_teavm_ios_open_xcode",
+            "gdx_teavm_ios_build_simulator",
+            "gdx_teavm_ios_run_simulator"
+        )
         const val WEBAPP_ENABLED = "gdx.teavm.webapp.enabled"
         const val GENERATE_INDEX_HTML = "gdx.teavm.webapp.generateIndexHtml"
         const val ENTRY_POINT_NAME = "gdx.teavm.entryPointName"

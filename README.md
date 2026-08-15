@@ -65,13 +65,13 @@ gdxTeaVM {
     assets("assets")
     reflection("com.example.game.save**")
 
-    js {
+    webDefaults {
         mainClass.set("com.example.game.teavm.WebLauncher")
+        htmlTitle.set("My Game")
     }
 
-    wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-    }
+    js {}
+    wasm {}
 }
 ```
 
@@ -81,6 +81,8 @@ Run:
 ./gradlew gdx_teavm_web_js_run
 ./gradlew gdx_teavm_web_wasm_run
 ```
+
+The optional `webDefaults {}` block supplies conventions shared by JavaScript and Wasm. It does not declare a target: `js {}` and `wasm {}` still do that, and either block can set all of its own properties instead. Unnamed blocks keep the task names shown above; named blocks such as `js("release") { ... }` create isolated variants and tasks such as `gdx_teavm_web_js_release_build` and `gdx_teavm_web_js_release_run`.
 
 The web run tasks build the app, copy assets, generate the web app files, and serve the output with the backend Jetty server. The plugin adds the required gdx-teavm backend dependencies automatically for each declared target.
 

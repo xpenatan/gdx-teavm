@@ -58,11 +58,13 @@ For regular Java projects, the plugin:
 
 Android projects use a dedicated path instead: the Android Gradle Plugin remains responsible for the application build, while gdx-teavm creates its TeaVM configuration, adds `backend-android`, registers the runtime bridge sources, and generates the native C/CMake payload.
 
-Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options. Android projects currently support only the `android {}` target.
+Target blocks are opt-in. If a build file declares only `wasm {}`, only Wasm gdx-teavm tasks are created. `webDefaults {}` and `nativeDefaults {}` provide optional Gradle conventions without declaring targets. Unnamed target blocks retain the original tasks, while overloads such as `wasm("release") {}` create independently configured named targets. Native TeaVM C settings live inside target blocks such as `glfw {}` because logical targets can have different launchers and native options. Android projects currently support only the unnamed `android {}` target.
 
 ## Gradle Task Integration
 
-Each declared target registers only its own public `gdx_teavm_*` tasks. The [usage guide](usage.md#web-targets) is the user-facing task reference; this section covers the implementation behind web run tasks.
+Each declared target registers only its own public `gdx_teavm_*` tasks. Named targets insert their normalized name immediately before the lifecycle action, such as `gdx_teavm_web_js_release_build` or `gdx_teavm_glfw_release_run`. The [usage guide](usage.md#shared-defaults-and-named-targets) is the user-facing task reference; this section covers the implementation behind web run tasks.
+
+Unnamed JS, Wasm, and native targets keep delegating to TeaVM's standard singleton generation tasks for compatibility. Named JS, Wasm, GLFW, and iOS targets register independent TeaVM generation tasks with isolated output directories. The plugin still hides those low-level generation helpers so users are guided toward the public lifecycle tasks.
 
 Web run tasks use `GdxTeaVMRunWebTask` and `backend-web`'s `JettyServer` unless `devServer.enabled` selects the TeaVM server. In development-server mode, the public run task starts TeaVM compilation, an entry-page adapter, and an optional file watcher. The watcher invokes only the target project's `classes` task, then requests an incremental build from the existing TeaVM process. Local project output directories precede external JARs so the compiler sees the updated classes.
 
@@ -104,7 +106,7 @@ They install:
 - target-specific render/build listeners
 - native asset and external C/C++ resource copying
 
-The native backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)`. Running multiple native plugin targets in the same Gradle invocation is rejected because TeaVM has one C task. The selected native block is applied to TeaVM's C configuration for that Gradle invocation.
+For legacy unnamed native targets, the backend is selected from requested Gradle task names in `GdxTeaVMExtension.selectedNativeBackendName(...)` and applied to TeaVM's singleton C task. Only one unnamed native backend can use that singleton in a Gradle invocation. Named GLFW and iOS targets use their own `GenerateCTask` instances, so their configuration and output do not overwrite another native variant. Android C generation remains integrated with its Android application module and Android Gradle Plugin lifecycle.
 
 ## Assets
 
@@ -194,4 +196,4 @@ This is required for facade/helper types such as DOM extension wrappers and `Web
 
 ## Output Layout
 
-Plugin defaults are maintained in the [property reference](plugin-properties.md#common-teavm-target-properties). Builder output is rooted at the directory passed to `build(File)` and organized by the concrete backend.
+Plugin defaults are maintained in the [property reference](plugin-properties.md#common-teavm-target-properties). Unnamed plugin output uses `build/dist/<platform>`; named targets use `build/dist/<platform>/<normalized-name>`. Builder output is rooted at the directory passed to `build(File)` and organized by the concrete backend.

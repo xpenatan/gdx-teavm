@@ -26,15 +26,41 @@ Helper methods:
 
 ## Target Declaration Methods
 
-| Block | Backend |
-| --- | --- |
-| `js { ... }` | `backend-web` |
-| `wasm { ... }` | `backend-web` |
-| `glfw { ... }` | `backend-glfw` |
-| `ios { ... }` | `backend-ios` |
-| `android { ... }` | `backend-android` |
+| Block | Backend | Variants |
+| --- | --- | --- |
+| `js { ... }` / `js("name") { ... }` | `backend-web` | Unnamed and named |
+| `wasm { ... }` / `wasm("name") { ... }` | `backend-web` | Unnamed and named |
+| `glfw { ... }` / `glfw("name") { ... }` | `backend-glfw` | Unnamed and named |
+| `ios { ... }` / `ios("name") { ... }` | `backend-ios` | Unnamed and named |
+| `android { ... }` | `backend-android` | One unnamed target; variants are owned by AGP |
 
-Only declared targets create tasks or add backend dependencies. Task behavior is covered in the [usage guide](usage.md#web-targets).
+Only declared targets create tasks or add backend dependencies. The string is optional: use the original unnamed form when only one configuration is needed. Every named declaration creates independent configuration, output, and lifecycle tasks. Repeating the exact same named declaration configures the same target again.
+
+Names are normalized to lowercase snake case in task and default output paths. For example, `js("previewBuild")` uses `preview_build`. Two names for the same platform type cannot normalize to the same value.
+
+The optional `webDefaults {}` and `nativeDefaults {}` blocks configure conventions; they do not declare targets. A target's explicit value wins over a defaults value, and a defaults value wins over the built-in convention. Declaration order does not change that precedence.
+
+### Web Defaults
+
+`webDefaults {}` accepts the properties shared safely by JS and Wasm:
+
+| Property group | Supported properties |
+| --- | --- |
+| Common TeaVM | `mainClass`, `relativePathInOutputDir`, `optimization`, `debugInformation`, `fastGlobalAnalysis`, `outOfProcess`, `processMemory`, `preservedClasses` |
+| Generated web app | `entryPointName`, `mainClassArgs`, `webappEnabled`, `generateIndexHtml`, `htmlTitle`, `htmlWidth`, `htmlHeight`, `copyAssets`, `logoPath`, `copyLoadingAsset`, `serverPort` |
+| Common JS/Wasm output | `obfuscated`, `strict`, `sourceMap`, `sourceFilePolicy` |
+
+`outputDir`, `targetFileName`, `copyRuntime`, `modularRuntime`, and `devServer` remain target-specific. This preserves distinct built-in output names and lets each development server have its own port and lifecycle.
+
+### Native Defaults
+
+`nativeDefaults {}` accepts:
+
+`mainClass`, `relativePathInOutputDir`, `targetFileName`, `optimization`, `debugInformation`, `fastGlobalAnalysis`, `outOfProcess`, `processMemory`, `preservedClasses`, `minHeapSizeMb`, `maxHeapSizeMb`, `heapDump`, `shortFileNames`, and `obfuscated`.
+
+`outputDir`, `releasePath`, and backend-specific settings remain in `glfw {}`, `ios {}`, or `android {}`. Native platforms often use different launcher classes, so set `nativeDefaults.mainClass` only when all native targets in that module can share it.
+
+Task behavior and a complete multi-target configuration are covered in the [usage guide](usage.md#shared-defaults-and-named-targets).
 
 ## Common TeaVM Target Properties
 
@@ -43,7 +69,7 @@ The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `outputDir` | `DirectoryProperty` | target-specific | Root directory for generated files. |
-| `mainClass` | `Property<String>` | none | Fully qualified launcher class used as TeaVM main class. This must be set for every target you build. |
+| `mainClass` | `Property<String>` | none | Fully qualified launcher class used as TeaVM main class. It must resolve from the target block or the matching defaults block for every target you build. |
 | `relativePathInOutputDir` | `Property<String>` | web `webapp`, native `c/src` | Path inside `outputDir` where TeaVM writes generated files. |
 | `optimization` | `Property<OptimizationLevel>` | `BALANCED` | TeaVM optimization level. |
 | `debugInformation` | `Property<Boolean>` | `false` | Includes TeaVM debug information when supported by the target. |
@@ -52,7 +78,7 @@ The `js {}` and `wasm {}` blocks expose these TeaVM Gradle properties directly. 
 | `processMemory` | `Property<Int>` | Web `1024`, native `512` | Memory limit in megabytes for out-of-process TeaVM compilation. |
 | `preservedClasses` | `ListProperty<String>` | empty | Classes TeaVM should preserve from aggressive removal or renaming. |
 
-`outputDir` defaults to `build/dist/js`, `build/dist/wasm`, `build/dist/glfw`, `build/dist/ios`, or `build/generated/gdx-teavm/android` for the corresponding target.
+The unnamed `outputDir` defaults to `build/dist/js`, `build/dist/wasm`, `build/dist/glfw`, `build/dist/ios`, or `build/generated/gdx-teavm/android` for the corresponding target. A named target defaults to `build/dist/<platform>/<normalized-name>`, such as `build/dist/js/release` or `build/dist/glfw/release`.
 
 ## Web Targets
 
@@ -60,7 +86,7 @@ Web targets use `backend-web` and can be built as JavaScript or Wasm. JS and Was
 
 ### Web Common Properties
 
-These properties exist inside `js {}` and `wasm {}` only.
+These properties exist inside `js {}` and `wasm {}`. All except `devServer` can also be conventions in `webDefaults {}`.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -96,6 +122,8 @@ The development server uses the containing target's `serverPort`. TeaVM's JavaSc
 
 ### JavaScript Properties
 
+`obfuscated`, `strict`, `sourceMap`, and `sourceFilePolicy` can also be set in `webDefaults {}`. `targetFileName` remains specific to each JS target.
+
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | `targetFileName` | `Property<String>` | `app.js` | Name of the generated JavaScript output file. |
@@ -105,6 +133,8 @@ The development server uses the containing target's `serverPort`. TeaVM's JavaSc
 | `sourceFilePolicy` | `Property<SourceFilePolicy>` | `LINK_LOCAL_FILES` | Controls how Java sources referenced by source maps are exposed. |
 
 ### Wasm Properties
+
+`obfuscated`, `strict`, `sourceMap`, and `sourceFilePolicy` can also be set in `webDefaults {}`. `targetFileName`, `copyRuntime`, and `modularRuntime` remain specific to each Wasm target.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -122,7 +152,7 @@ Native targets use TeaVM C output and add the following properties to the common
 
 ### Native Target Properties
 
-These properties exist in native target blocks.
+These properties exist in native target blocks. All except `releasePath` can also be set in `nativeDefaults {}`; `outputDir` is always target-specific.
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -157,6 +187,6 @@ Platform-specific CMake behavior is documented under [Native Toolchain Policy](b
 | `xcodeConfiguration` | `Property<String>` | `Debug` | Xcode build configuration used by simulator build tasks. |
 | `simulatorDevice` | `Property<String>` | `iPhone 12 Pro` | Simulator device name or UDID used by `gdx_teavm_ios_run_simulator`. |
 | `bundleIdentifier` | `Property<String>` | `com.github.xpenatan.gdxteavm.ios.spike` | App bundle identifier used by `gdx_teavm_ios_run_simulator`. |
-| `xcodeDerivedDataPath` | `DirectoryProperty` | `build/xcode-derived/ios` | Derived data directory used by simulator build and run tasks. |
+| `xcodeDerivedDataPath` | `DirectoryProperty` | Unnamed `build/xcode-derived/ios`; named `build/xcode-derived/ios/<name>` | Derived data directory used by simulator build and run tasks. |
 | `openSimulator` | `Property<Boolean>` | `true` | Opens Simulator.app when running the simulator task. |
 | `overwriteXcodeProject` | `Property<Boolean>` | Gradle property `gdx.teavm.ios.xcode.overwrite`, otherwise `false` | Rewrites the generated Xcode project during Xcode initialization when true. |

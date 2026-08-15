@@ -15,10 +15,13 @@ gdxTeaVM {
     assets.from(file("../../../assets"))
     reflection.add("com.badlogic.gdx.math.Vector2")
 
-    js {
+    webDefaults {
         mainClass.set("TestWebLauncher")
         optimization.set(OptimizationLevel.NONE)
         obfuscated.set(false)
+    }
+
+    js {
         debugInformation.set(true)
         sourceMap.set(true)
         sourceFilePolicy.set(SourceFilePolicy.COPY)
@@ -28,13 +31,21 @@ gdxTeaVM {
         }
     }
     wasm {
-        mainClass.set("TestWebLauncher")
-        relativePathInOutputDir.set("webapp")
-        optimization.set(OptimizationLevel.NONE)
-        obfuscated.set(false)
         devServer {
             enabled.set(true)
             autoReload.set(true)
         }
+    }
+
+    js("release") {
+        optimization.set(OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+        serverPort.set(8181)
+    }
+
+    wasm("release") {
+        optimization.set(OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+        serverPort.set(8282)
     }
 }

@@ -63,13 +63,12 @@ gdxTeaVM {
     classpathAssets("com/example/game/assets")
     reflection("com.example.game.save**")
 
-    js {
+    webDefaults {
         mainClass.set("com.example.game.teavm.WebLauncher")
     }
 
-    wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-    }
+    js {}
+    wasm {}
 }
 ```
 
@@ -81,6 +80,101 @@ For regular Java modules, those dependencies are added to both `implementation` 
 
 Android uses a dedicated integration path: `backend-android` is added to TeaVM's configuration, and the plugin registers generated runtime bridge sources with the Android compile. The Android Gradle Plugin owns APK packaging, install tasks, build types, signing, manifests, resources, and native CMake execution. Apply `gdx-teavm` to a real Android application module and declare an `android {}` target there; the plugin generates the TeaVM C/CMake payload, while Android Gradle tasks build and install the APK.
 
+### Shared Defaults And Named Targets
+
+`webDefaults {}` and `nativeDefaults {}` are optional convention blocks. They never declare targets or create tasks. A target can inherit them, override individual values, or omit them and configure everything in its own platform block. Values resolve in this order:
+
+1. A value set in the target block.
+2. A value set in `webDefaults {}` or `nativeDefaults {}`.
+3. The plugin's built-in value.
+
+The original unnamed blocks remain supported and are the simplest choice when a module has one configuration of a target. A name is required only when creating an additional independent variant:
+
+```kotlin
+import org.teavm.gradle.api.OptimizationLevel
+
+gdxTeaVM {
+    assets(rootProject.file("assets"))
+    reflection("com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator")
+
+    // Shared by every JS and Wasm target in this module.
+    webDefaults {
+        mainClass.set("com.example.game.teavm.WebLauncher")
+        htmlTitle.set("My Game")
+        htmlWidth.set(1280)
+        htmlHeight.set(720)
+        obfuscated.set(false)
+    }
+
+    // Unnamed development targets keep the original task names.
+    js {
+        serverPort.set(8080)
+        devServer {
+            enabled.set(true)
+            autoBuild.set(true)
+            autoReload.set(true)
+        }
+    }
+
+    wasm {
+        serverPort.set(8081)
+        outOfProcess.set(true)
+        processMemory.set(1024)
+    }
+
+    // Named release targets have independent properties, output, and tasks.
+    js("release") {
+        optimization.set(OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+        serverPort.set(8180)
+    }
+
+    wasm("release") {
+        optimization.set(OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+        outOfProcess.set(true)
+        processMemory.set(2048)
+        serverPort.set(8181)
+    }
+
+    // Shared by every TeaVM C/native target in this module. This module's
+    // native variants both use the same GLFW launcher.
+    nativeDefaults {
+        mainClass.set("com.example.game.teavm.GlfwLauncher")
+        minHeapSizeMb.set(64)
+        maxHeapSizeMb.set(512)
+    }
+
+    glfw {
+        buildType.set("Debug")
+        debugInformation.set(true)
+    }
+
+    glfw("release") {
+        buildType.set("Release")
+        optimization.set(OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+    }
+}
+```
+
+This example creates these public lifecycle tasks:
+
+| Target block | Tasks |
+| --- | --- |
+| `js {}` | `gdx_teavm_web_js_build`, `gdx_teavm_web_js_run` |
+| `js("release") {}` | `gdx_teavm_web_js_release_build`, `gdx_teavm_web_js_release_run` |
+| `wasm {}` | `gdx_teavm_web_wasm_build`, `gdx_teavm_web_wasm_run` |
+| `wasm("release") {}` | `gdx_teavm_web_wasm_release_build`, `gdx_teavm_web_wasm_release_run` |
+| `glfw {}` | `gdx_teavm_glfw_generate`, `gdx_teavm_glfw_build`, `gdx_teavm_glfw_run` |
+| `glfw("release") {}` | `gdx_teavm_glfw_release_generate`, `gdx_teavm_glfw_release_build`, `gdx_teavm_glfw_release_run` |
+
+Named JS, Wasm, GLFW, and iOS targets are supported. Their names are normalized to lowercase snake case for task names, so `js("previewBuild")` produces the segment `preview_build`. Names within one platform type must remain unique after normalization. Repeating the exact same named block configures the same target again rather than creating another one.
+
+Named output is isolated by default under `build/dist/<platform>/<name>`. For example, `wasm("release")` writes under `build/dist/wasm/release`, while the unnamed Wasm target remains under `build/dist/wasm`. If two web run tasks may be active at the same time, give them different `serverPort` values.
+
+iOS named variants use the same action suffixes as the unnamed target, with the normalized name inserted before the action; for example, `ios("simulator")` creates `gdx_teavm_ios_simulator_generate`, `gdx_teavm_ios_simulator_init_xcode`, `gdx_teavm_ios_simulator_build_simulator`, and the rest of the existing iOS lifecycle. Android remains a single unnamed `android {}` target because build variants and lifecycle tasks are owned by the Android Gradle Plugin; it can still inherit `nativeDefaults {}`.
+
 ## Web Targets
 
 Use `js {}` for JavaScript and `wasm {}` for Wasm.
@@ -91,15 +185,18 @@ import org.teavm.gradle.api.OptimizationLevel
 gdxTeaVM {
     assets("assets")
 
-    js {
+    webDefaults {
         mainClass.set("com.example.game.teavm.WebLauncher")
         htmlTitle.set("My Game")
         htmlWidth.set(1280)
         htmlHeight.set(720)
         serverPort.set(8080)
-        targetFileName.set("app.js")
         optimization.set(OptimizationLevel.BALANCED)
         obfuscated.set(true)
+    }
+
+    js {
+        targetFileName.set("app.js")
         devServer {
             enabled.set(true)
             autoBuild.set(true)
@@ -108,14 +205,8 @@ gdxTeaVM {
     }
 
     wasm {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("My Game")
-        htmlWidth.set(1280)
-        htmlHeight.set(720)
-        serverPort.set(8080)
         targetFileName.set("app.wasm")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
-        obfuscated.set(true)
+        optimization.set(OptimizationLevel.BALANCED)
         copyRuntime.set(true)
         modularRuntime.set(false)
         devServer {
@@ -135,6 +226,8 @@ Generated tasks:
 | `gdx_teavm_web_js_run` | Build and serve the JavaScript web app, or use TeaVM's JS dev server when enabled |
 | `gdx_teavm_web_wasm_build` | Build the Wasm web app |
 | `gdx_teavm_web_wasm_run` | Build and serve the Wasm web app, or use TeaVM's WasmGC dev server when enabled |
+
+For a named target, insert its normalized name before `build` or `run`. For example, `wasm("release") {}` creates `gdx_teavm_web_wasm_release_build` and `gdx_teavm_web_wasm_release_run`.
 
 By default, each run task builds its target and serves the result with `JettyServer`. Setting `devServer.enabled` to `true`, as shown above, makes the same task and URL use TeaVM's persistent development server instead.
 
@@ -176,11 +269,14 @@ import org.teavm.gradle.api.OptimizationLevel
 gdxTeaVM {
     assets("assets")
 
-    glfw {
-        mainClass.set("com.example.game.teavm.GlfwLauncher")
-        optimization.set(OptimizationLevel.AGGRESSIVE)
+    nativeDefaults {
         minHeapSizeMb.set(64)
         maxHeapSizeMb.set(512)
+    }
+
+    glfw {
+        mainClass.set("com.example.game.teavm.GlfwLauncher")
+        optimization.set(OptimizationLevel.BALANCED)
         buildType.set("Debug")
         consoleLog.set(false)
     }
@@ -207,6 +303,8 @@ Generated native plugin tasks:
 | `gdx_teavm_ios_open_xcode` | Create the experimental iOS Xcode project if missing and open it in Xcode |
 | `gdx_teavm_ios_build_simulator` | Generate and build the experimental iOS app for the simulator |
 | `gdx_teavm_ios_run_simulator` | Generate, build, install, and launch the experimental iOS app on a simulator |
+
+Named GLFW and iOS targets insert their normalized name before the action suffix. For example, `glfw("release") {}` creates `gdx_teavm_glfw_release_generate`, `gdx_teavm_glfw_release_build`, and `gdx_teavm_glfw_release_run`.
 
 ## Android Target
 

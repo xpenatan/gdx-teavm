@@ -5,6 +5,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -24,9 +25,11 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.teavm.gradle.TeaVMPlugin
+import org.teavm.gradle.api.DevServerTargetType
 import org.teavm.gradle.api.TeaVMCConfiguration
 import org.teavm.gradle.api.TeaVMExtension
 import org.teavm.gradle.config.ArtifactCoordinates
+import org.teavm.gradle.tasks.CopyWasmGCRuntimeTask
 import org.teavm.gradle.tasks.GenerateCTask
 import org.teavm.gradle.tasks.GenerateJavaScriptTask
 import org.teavm.gradle.tasks.GenerateWasmGCTask
@@ -71,10 +74,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             configureBackendDependencies(project, extension)
             configureTeaVM(project, extension)
             configureNativeTeaVM(project, extension)
-            configureTeaVMTaskClasspaths(project, extension)
+            val devServerRunnerClasspath = configureTeaVMTaskClasspaths(project, extension)
             forceTeaVMGenerationTasksToRun(project, extension)
             hideTeaVMTasks(project)
-            registerTasks(project, extension)
+            registerTasks(project, extension, devServerRunnerClasspath)
         }
     }
 
@@ -293,13 +296,13 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun forceTeaVMGenerationTasksToRun(project: Project, extension: GdxTeaVMExtension) {
-        if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.JS)) {
             forceTaskToRun(project, TeaVMPlugin.JS_TASK_NAME)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.WASM)) {
             forceTaskToRun(project, TeaVMPlugin.WASM_GC_TASK_NAME)
         }
-        if(extension.isNativeTargetDeclared()) {
+        if(extension.isDefaultNativeTargetDeclared()) {
             forceTaskToRun(project, TeaVMPlugin.C_TASK_NAME)
         }
     }
@@ -348,7 +351,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val teavm = project.extensions.getByType<TeaVMExtension>()
         val globalProperties = extension.toGlobalProperties(project)
 
-        if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.JS)) {
             val js = teavm.getJs()
             val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
             js.preservedClasses.addAll(reflectionClasses)
@@ -357,7 +360,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             js.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         }
 
-        if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.WASM)) {
             val wasm = teavm.getWasmGC()
             val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
             wasm.preservedClasses.addAll(reflectionClasses)
@@ -368,6 +371,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun configureNativeTeaVM(project: Project, extension: GdxTeaVMExtension) {
+        if(!extension.isDefaultNativeTargetDeclared()) {
+            return
+        }
         val selectedNativeBackend = extension.selectedNativeBackendName(project)
         val nativeTarget = if(selectedNativeBackend != null) {
             extension.nativeTargetForBackendName(selectedNativeBackend) ?: return
@@ -416,15 +422,17 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         c.obfuscated.set(nativeTarget.obfuscated)
     }
 
-    private fun configureTeaVMTaskClasspaths(project: Project, extension: GdxTeaVMExtension) {
-        val devServerRunnerClasspath = if(extension.isTargetDeclared(GdxTeaVMTarget.JS)
-            || extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
+    private fun configureTeaVMTaskClasspaths(
+        project: Project,
+        extension: GdxTeaVMExtension
+    ): FileCollection? {
+        val devServerRunnerClasspath = if(extension.isWebTargetDeclared()) {
             createDevServerRunnerClasspath(project)
         }
         else {
             null
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.JS)) {
             project.tasks.named(TeaVMPlugin.JS_TASK_NAME, GenerateJavaScriptTask::class.java).configure {
                 filterBackendClasspath(WEB_BACKEND)
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
@@ -434,7 +442,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
+        if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.WASM)) {
             project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME, GenerateWasmGCTask::class.java).configure {
                 filterBackendClasspath(WEB_BACKEND)
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
@@ -444,11 +452,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getSourceFiles().from(runtimeProjectSourceDirs(project))
             }
         }
-        if(extension.isNativeTargetDeclared()) {
+        if(extension.isDefaultNativeTargetDeclared()) {
             project.tasks.named(TeaVMPlugin.C_TASK_NAME, TeaVMTask::class.java).configure {
                 filterBackendClasspath(extension.selectedNativeTargetOrNull(project)?.backendName)
             }
         }
+        return devServerRunnerClasspath
     }
 
     private fun TeaVMTask.filterBackendClasspath(targetBackend: String?) {
@@ -863,33 +872,62 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         return values.map(String::trim).filter(String::isNotEmpty).joinToString(",")
     }
 
-    private fun registerTasks(project: Project, extension: GdxTeaVMExtension) {
-        if(extension.isTargetDeclared(GdxTeaVMTarget.JS)) {
-            registerJsTasks(project, extension)
+    private fun registerTasks(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        devServerRunnerClasspath: FileCollection?
+    ) {
+        extension.jsTargets().forEach { target ->
+            registerJsTasks(project, extension, target, devServerRunnerClasspath)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.WASM)) {
-            registerWasmTasks(project, extension)
+        extension.wasmTargets().forEach { target ->
+            registerWasmTasks(project, extension, target, devServerRunnerClasspath)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.GLFW)) {
-            registerGlfwTasks(project, extension)
+        extension.glfwTargets().forEach { target ->
+            registerGlfwTasks(project, extension, target)
         }
         if(extension.isTargetDeclared(GdxTeaVMTarget.ANDROID)) {
             registerAndroidTasks(project)
         }
-        if(extension.isTargetDeclared(GdxTeaVMTarget.IOS)) {
-            registerIosTasks(project, extension)
+        extension.iosTargets().forEach { target ->
+            registerIosTasks(project, extension, target)
         }
     }
 
-    private fun registerJsTasks(project: Project, extension: GdxTeaVMExtension) {
-        val jsBuild = project.tasks.register("gdx_teavm_web_js_build") {
-            group = TASK_GROUP
-            description = "Build the gdx-teavm JavaScript web application."
-            dependsOn(project.tasks.named(TeaVMPlugin.JS_TASK_NAME))
+    private fun registerJsTasks(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>,
+        devServerRunnerClasspath: FileCollection?
+    ) {
+        val target = registration.target
+        val taskPrefix = registration.taskPrefix("gdx_teavm_web_js")
+        val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
+        val compilationTask: TaskProvider<out Task> = if(registration.isDefault) {
+            project.tasks.named(TeaVMPlugin.JS_TASK_NAME)
         }
-        if(extension.js.devServer.enabled.get()) {
-            val devServerTask = project.tasks.named(TeaVMPlugin.JS_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
-            val entryServerPort = devServerEntryPort(project, extension.js.serverPort)
+        else {
+            registerNamedJsCompilationTask(project, extension, registration, reflectionClasses)
+        }
+        val jsBuild = project.tasks.register("${taskPrefix}_build") {
+            group = TASK_GROUP
+            description = namedDescription("Build the gdx-teavm JavaScript web application", registration)
+            dependsOn(compilationTask)
+        }
+        if(target.devServer.enabled.get()) {
+            val devServerTask = if(registration.isDefault) {
+                project.tasks.named(TeaVMPlugin.JS_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
+            }
+            else {
+                registerNamedJsDevServerTask(
+                    project,
+                    extension,
+                    registration,
+                    reflectionClasses,
+                    devServerRunnerClasspath
+                )
+            }
+            val entryServerPort = devServerEntryPort(project, target.serverPort)
             devServerTask.configure {
                 getTargetFilePath().set("/")
                 getAutoReload().set(false)
@@ -897,45 +935,78 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getProxyPath().set("/")
                 getProperties().put(WEBAPP_INDEX_PATH, GDX_TEAVM_DEV_SERVER_INDEX_FILE)
             }
-            project.tasks.register<GdxTeaVMRunDevServerTask>("gdx_teavm_web_js_run") {
+            project.tasks.register<GdxTeaVMRunDevServerTask>("${taskPrefix}_run") {
                 group = TASK_GROUP
-                description = "Run the gdx-teavm JavaScript web application with TeaVM's development server."
+                description = namedDescription(
+                    "Run the gdx-teavm JavaScript web application with TeaVM's development server",
+                    registration
+                )
                 dependsOn(devServerTask)
                 devServerProjectPath.convention(devServerTask.flatMap { task -> task.projectPath })
-                port.convention(extension.js.serverPort)
+                port.convention(target.serverPort)
                 this.entryServerPort.convention(entryServerPort)
-                autoBuild.convention(extension.js.devServer.autoBuild)
-                autoReload.convention(extension.js.devServer.autoReload)
-                reloadEndpoint.convention(extension.js.targetFileName.map(::devServerReloadEndpoint))
+                autoBuild.convention(target.devServer.autoBuild)
+                autoReload.convention(target.devServer.autoReload)
+                reloadEndpoint.convention(target.targetFileName.map(::devServerReloadEndpoint))
                 rebuildTaskPath.convention(project.tasks.named(JavaPlugin.CLASSES_TASK_NAME).map { task -> task.path })
                 watchFiles.from(
                     runtimeProjectWatchDirs(project),
                     extension.assets,
-                    extension.js.devServer.staticDirs
+                    target.devServer.staticDirs
                 )
             }
         }
         else {
-            project.tasks.register<GdxTeaVMRunWebTask>("gdx_teavm_web_js_run") {
+            project.tasks.register<GdxTeaVMRunWebTask>("${taskPrefix}_run") {
                 group = TASK_GROUP
-                description = "Build and serve the gdx-teavm JavaScript web application."
+                description = namedDescription("Build and serve the gdx-teavm JavaScript web application", registration)
                 dependsOn(jsBuild)
-                webappDir.convention(extension.js.webappDir())
-                port.convention(extension.js.serverPort)
+                webappDir.convention(target.webappDir())
+                port.convention(target.serverPort)
                 serverClasspath.from(targetClasspath(project, WEB_BACKEND))
             }
         }
     }
 
-    private fun registerWasmTasks(project: Project, extension: GdxTeaVMExtension) {
-        val wasmBuild = project.tasks.register("gdx_teavm_web_wasm_build") {
-            group = TASK_GROUP
-            description = "Build the gdx-teavm Wasm web application."
-            dependsOn(project.tasks.named(TeaVMPlugin.BUILD_WASM_GC_TASK_NAME))
+    private fun registerWasmTasks(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
+        devServerRunnerClasspath: FileCollection?
+    ) {
+        val target = registration.target
+        val taskPrefix = registration.taskPrefix("gdx_teavm_web_wasm")
+        val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
+        val compilationTask: TaskProvider<out Task>
+        val buildDependencies = mutableListOf<Any>()
+        if(registration.isDefault) {
+            compilationTask = project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME)
+            buildDependencies.add(project.tasks.named(TeaVMPlugin.BUILD_WASM_GC_TASK_NAME))
         }
-        if(extension.wasm.devServer.enabled.get()) {
-            val devServerTask = project.tasks.named(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
-            val entryServerPort = devServerEntryPort(project, extension.wasm.serverPort)
+        else {
+            compilationTask = registerNamedWasmCompilationTask(project, extension, registration, reflectionClasses)
+            buildDependencies.add(compilationTask)
+            buildDependencies.add(registerNamedWasmRuntimeTask(project, registration, compilationTask))
+        }
+        val wasmBuild = project.tasks.register("${taskPrefix}_build") {
+            group = TASK_GROUP
+            description = namedDescription("Build the gdx-teavm Wasm web application", registration)
+            dependsOn(buildDependencies)
+        }
+        if(target.devServer.enabled.get()) {
+            val devServerTask = if(registration.isDefault) {
+                project.tasks.named(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME, DevServerTask::class.java)
+            }
+            else {
+                registerNamedWasmDevServerTask(
+                    project,
+                    extension,
+                    registration,
+                    reflectionClasses,
+                    devServerRunnerClasspath
+                )
+            }
+            val entryServerPort = devServerEntryPort(project, target.serverPort)
             devServerTask.configure {
                 getTargetFilePath().set("/")
                 getAutoReload().set(false)
@@ -943,34 +1014,236 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 getProxyPath().set("/")
                 getProperties().put(WEBAPP_INDEX_PATH, GDX_TEAVM_DEV_SERVER_INDEX_FILE)
             }
-            project.tasks.register<GdxTeaVMRunDevServerTask>("gdx_teavm_web_wasm_run") {
+            project.tasks.register<GdxTeaVMRunDevServerTask>("${taskPrefix}_run") {
                 group = TASK_GROUP
-                description = "Run the gdx-teavm Wasm web application with TeaVM's development server."
+                description = namedDescription(
+                    "Run the gdx-teavm Wasm web application with TeaVM's development server",
+                    registration
+                )
                 dependsOn(devServerTask)
                 devServerProjectPath.convention(devServerTask.flatMap { task -> task.projectPath })
-                port.convention(extension.wasm.serverPort)
+                port.convention(target.serverPort)
                 this.entryServerPort.convention(entryServerPort)
-                autoBuild.convention(extension.wasm.devServer.autoBuild)
-                autoReload.convention(extension.wasm.devServer.autoReload)
-                reloadEndpoint.convention(extension.wasm.targetFileName.map(::devServerReloadEndpoint))
+                autoBuild.convention(target.devServer.autoBuild)
+                autoReload.convention(target.devServer.autoReload)
+                reloadEndpoint.convention(target.targetFileName.map(::devServerReloadEndpoint))
                 rebuildTaskPath.convention(project.tasks.named(JavaPlugin.CLASSES_TASK_NAME).map { task -> task.path })
                 watchFiles.from(
                     runtimeProjectWatchDirs(project),
                     extension.assets,
-                    extension.wasm.devServer.staticDirs
+                    target.devServer.staticDirs
                 )
             }
         }
         else {
-            project.tasks.register<GdxTeaVMRunWebTask>("gdx_teavm_web_wasm_run") {
+            project.tasks.register<GdxTeaVMRunWebTask>("${taskPrefix}_run") {
                 group = TASK_GROUP
-                description = "Build and serve the gdx-teavm Wasm web application."
+                description = namedDescription("Build and serve the gdx-teavm Wasm web application", registration)
                 dependsOn(wasmBuild)
-                webappDir.convention(extension.wasm.webappDir())
-                port.convention(extension.wasm.serverPort)
+                webappDir.convention(target.webappDir())
+                port.convention(target.serverPort)
                 serverClasspath.from(targetClasspath(project, WEB_BACKEND))
             }
         }
+    }
+
+    private fun registerNamedJsCompilationTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>,
+        reflectionClasses: Provider<List<String>>
+    ): TaskProvider<GenerateJavaScriptTask> {
+        val target = registration.target
+        val taskName = "${registration.taskPrefix("gdx_teavm_web_js")}_compile"
+        val template = project.tasks.named(TeaVMPlugin.JS_TASK_NAME, GenerateJavaScriptTask::class.java).get()
+        return project.tasks.register<GenerateJavaScriptTask>(taskName) {
+            configureNamedWebCompilation(project, extension, target, reflectionClasses, template)
+            getTargetFileName().set(target.targetFileName)
+            getObfuscated().set(target.obfuscated)
+            getStrict().set(target.strict)
+            getModuleType().set(target.jsConfig.moduleType)
+            getSourceMap().set(target.sourceMap)
+            getEntryPointName().set(target.entryPointName)
+            getSourceFilePolicy().set(target.sourceFilePolicy)
+            getMaxTopLevelNames().convention(target.jsConfig.maxTopLevelNames)
+            getSourceFiles().from(template.sourceFiles, runtimeProjectSourceDirs(project))
+        }
+    }
+
+    private fun registerNamedWasmCompilationTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
+        reflectionClasses: Provider<List<String>>
+    ): TaskProvider<GenerateWasmGCTask> {
+        val target = registration.target
+        val taskName = "${registration.taskPrefix("gdx_teavm_web_wasm")}_compile"
+        val template = project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME, GenerateWasmGCTask::class.java).get()
+        return project.tasks.register<GenerateWasmGCTask>(taskName) {
+            configureNamedWebCompilation(project, extension, target, reflectionClasses, template)
+            getTargetFileName().set(target.targetFileName)
+            getObfuscated().set(target.obfuscated)
+            getStrict().set(target.strict)
+            getSourceMap().set(target.sourceMap)
+            getSourceFilePolicy().set(target.sourceFilePolicy)
+            getDebugInfoLocation().set(target.wasmConfig.debugInfoLocation)
+            getDebugInfoLevel().set(target.wasmConfig.debugInfoLevel)
+            getMinDirectBuffersSize().set(target.wasmConfig.minDirectBuffersSize)
+            getSharedBuffer().set(target.wasmConfig.sharedBuffer)
+            getSourceFiles().from(template.sourceFiles, runtimeProjectSourceDirs(project))
+        }
+    }
+
+    private fun TeaVMTask.configureNamedWebCompilation(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        target: GdxTeaVMWebExtension,
+        reflectionClasses: Provider<List<String>>,
+        template: TeaVMTask
+    ) {
+        group = null
+        description = "Internal TeaVM compilation task for a named gdx-teavm web target."
+        getMainClass().set(target.mainClass)
+        getDaemonClasspath().from(template.daemonClasspath)
+        getOutputDir().set(target.outputSubDir().map { directory -> directory.asFile })
+        getDebugInformation().set(target.debugInformation)
+        getOptimization().set(target.optimization)
+        getFastGlobalAnalysis().set(target.fastGlobalAnalysis)
+        getOutOfProcess().set(target.outOfProcess)
+        getProcessMemory().set(target.processMemory)
+        getPreservedClasses().addAll(target.preservedClasses)
+        getPreservedClasses().addAll(reflectionClasses)
+        getProperties().putAll(target.teavmConfig.properties)
+        getProperties().putAll(extension.toGlobalProperties(project))
+        getProperties().putAll(extension.toWebProperties(project, target))
+        getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
+        filterBackendClasspath(WEB_BACKEND)
+        outputs.upToDateWhen { false }
+    }
+
+    private fun registerNamedWasmRuntimeTask(
+        project: Project,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
+        compilationTask: TaskProvider<GenerateWasmGCTask>
+    ): TaskProvider<CopyWasmGCRuntimeTask> {
+        val target = registration.target
+        val taskName = "${registration.taskPrefix("gdx_teavm_web_wasm")}_copy_runtime"
+        return project.tasks.register<CopyWasmGCRuntimeTask>(taskName) {
+            group = null
+            description = "Copies TeaVM's runtime for a named gdx-teavm Wasm target."
+            dependsOn(compilationTask)
+            enabled = target.copyRuntime.get()
+            getOutputFile().set(target.outputSubDir().flatMap { directory ->
+                target.targetFileName.map { fileName -> directory.file("$fileName-runtime.js") }
+            })
+            getDeobfuscatorOutputFile().set(target.outputSubDir().flatMap { directory ->
+                target.targetFileName.map { fileName -> directory.file("$fileName-deobfuscator.wasm") }
+            })
+            getDeobfuscator().set(target.debugInformation)
+            getModular().set(target.modularRuntime)
+            getObfuscated().set(target.obfuscated)
+        }
+    }
+
+    private fun registerNamedJsDevServerTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>,
+        reflectionClasses: Provider<List<String>>,
+        devServerRunnerClasspath: FileCollection?
+    ): TaskProvider<DevServerTask> {
+        val target = registration.target
+        val template = project.tasks.named(TeaVMPlugin.JS_DEV_SERVER_TASK_NAME, DevServerTask::class.java).get()
+        val taskName = "${registration.taskPrefix("gdx_teavm_web_js")}_dev_server"
+        return project.tasks.register<DevServerTask>(taskName) {
+            configureNamedDevServerTask(
+                project,
+                extension,
+                target,
+                reflectionClasses,
+                template,
+                WEB_BACKEND,
+                "js-${registration.taskNameSegment}",
+                devServerRunnerClasspath
+            )
+            getTargetType().set(DevServerTargetType.JS)
+            getJsModuleType().set(target.jsConfig.moduleType)
+            getStackDeobfuscated().set(target.jsConfig.devServer.stackDeobfuscated)
+            getIndicator().set(target.jsConfig.devServer.indicator)
+        }
+    }
+
+    private fun registerNamedWasmDevServerTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
+        reflectionClasses: Provider<List<String>>,
+        devServerRunnerClasspath: FileCollection?
+    ): TaskProvider<DevServerTask> {
+        val target = registration.target
+        val template = project.tasks.named(TeaVMPlugin.WASM_GC_DEV_SERVER_TASK_NAME, DevServerTask::class.java).get()
+        val taskName = "${registration.taskPrefix("gdx_teavm_web_wasm")}_dev_server"
+        return project.tasks.register<DevServerTask>(taskName) {
+            configureNamedDevServerTask(
+                project,
+                extension,
+                target,
+                reflectionClasses,
+                template,
+                WEB_BACKEND,
+                "wasm-${registration.taskNameSegment}",
+                devServerRunnerClasspath
+            )
+            getTargetType().set(DevServerTargetType.WASM_GC)
+            getWasmSharedBuffer().set(target.wasmConfig.sharedBuffer)
+            getWasmModularRuntime().set(target.modularRuntime)
+        }
+    }
+
+    private fun DevServerTask.configureNamedDevServerTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        target: GdxTeaVMWebExtension,
+        reflectionClasses: Provider<List<String>>,
+        template: DevServerTask,
+        targetBackend: String,
+        devServerTarget: String,
+        devServerRunnerClasspath: FileCollection?
+    ) {
+        group = null
+        description = "Internal TeaVM development-server task for a named gdx-teavm web target."
+        getAllProjectPaths().addAll(template.allProjectPaths)
+        getMainClass().set(target.mainClass)
+        getTargetFileName().set(
+            when(target) {
+                is GdxTeaVMJsExtension -> target.targetFileName
+                is GdxTeaVMWasmExtension -> target.targetFileName
+                else -> throw IllegalArgumentException("Unsupported named web target: ${target.javaClass.name}")
+            }
+        )
+        getProperties().putAll(target.teavmConfig.properties)
+        getProperties().putAll(extension.toGlobalProperties(project))
+        getProperties().putAll(extension.toWebProperties(project, target))
+        getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
+        getPreservedClasses().addAll(target.preservedClasses)
+        getPreservedClasses().addAll(reflectionClasses)
+        getPort().set(target.serverPort)
+        getProcessMemory().set(target.devServer.processMemory)
+        getAutoReload().set(false)
+        getStaticDirs().from(target.devServer.staticDirs)
+        getStaticServePath().convention(target.devServer.staticServePath)
+        getResourceRoots().addAll(target.devServer.resourceRoots)
+        getResourceServePath().convention(target.devServer.resourceServePath)
+        getServerClasspath().from(template.serverClasspath)
+        filterBackendClasspath(targetBackend, devServerTarget, devServerRunnerClasspath)
+        getSourceFiles().from(template.sourceFiles, runtimeProjectSourceDirs(project))
+    }
+
+    private fun namedDescription(
+        description: String,
+        registration: GdxTeaVMTargetRegistration<*>
+    ): String {
+        return if(registration.name == null) "$description." else "$description '${registration.name}'."
     }
 
     private fun devServerReloadEndpoint(targetFileName: String): String {
@@ -998,31 +1271,49 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         throw GradleException("Could not reserve an internal loopback port for the TeaVM development entry page")
     }
 
-    private fun registerGlfwTasks(project: Project, extension: GdxTeaVMExtension) {
-        val glfwGenerate = project.tasks.register("gdx_teavm_glfw_generate") {
-            group = TASK_GROUP
-            description = "Generate the gdx-teavm GLFW native C project."
-            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+    private fun registerGlfwTasks(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMGlfwExtension>
+    ) {
+        val target = registration.target
+        val taskPrefix = registration.taskPrefix("gdx_teavm_glfw")
+        val generateTaskName = "${taskPrefix}_generate"
+        val glfwGenerate: TaskProvider<out Task> = if(registration.isDefault) {
+            project.tasks.register(generateTaskName) {
+                group = TASK_GROUP
+                description = "Generate the gdx-teavm GLFW native C project."
+                dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
+            }
         }
-        val glfwBuild = project.tasks.register<GdxTeaVMNativeBuildTask>("gdx_teavm_glfw_build") {
+        else {
+            registerNamedNativeGenerateTask(
+                project,
+                extension,
+                target,
+                generateTaskName,
+                namedDescription("Generate the gdx-teavm GLFW native C project", registration)
+            )
+        }
+        val glfwBuild = project.tasks.register<GdxTeaVMNativeBuildTask>("${taskPrefix}_build") {
             group = TASK_GROUP
-            description = "Generate and build the GLFW executable for glfw.buildType."
+            description = namedDescription("Generate and build the GLFW executable", registration)
             dependsOn(glfwGenerate)
-            buildRoot.convention(extension.glfw.outputDir)
-            scriptBaseName.convention(extension.glfw.buildType.map { buildType ->
+            buildRoot.convention(target.outputDir)
+            scriptBaseName.convention(target.buildType.map { buildType ->
                 glfwBuildScriptBaseName(buildType)
             })
         }
-        project.tasks.register<GdxTeaVMGlfwRunTask>("gdx_teavm_glfw_run") {
+        project.tasks.register<GdxTeaVMGlfwRunTask>("${taskPrefix}_run") {
             group = TASK_GROUP
-            description = "Generate, build, and run the GLFW executable for glfw.buildType."
+            description = namedDescription("Generate, build, and run the GLFW executable", registration)
             dependsOn(glfwBuild)
-            buildRoot.convention(extension.glfw.outputDir)
-            generatedSourcesDir.convention(extension.glfw.generatedSourcesDir())
-            releaseDir.convention(extension.glfw.releasePath)
-            projectName.convention(extension.glfw.targetFileName)
-            buildType.convention(extension.glfw.buildType)
-            consoleLog.convention(extension.glfw.consoleLog)
+            buildRoot.convention(target.outputDir)
+            generatedSourcesDir.convention(target.generatedSourcesDir())
+            releaseDir.convention(target.releasePath)
+            projectName.convention(target.targetFileName)
+            buildType.convention(target.buildType)
+            consoleLog.convention(target.consoleLog)
             backendClasspath.from(targetClasspath(project, GLFW_BACKEND))
         }
     }
@@ -1035,81 +1326,153 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun registerIosTasks(project: Project, extension: GdxTeaVMExtension) {
-        val iosGenerate = project.tasks.register("gdx_teavm_ios_generate") {
-            group = TASK_GROUP
-            description = "Generate the experimental gdx-teavm iOS native C/assets."
-            dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
-        }
-        val iosPrepareAngle = project.tasks.register<GdxTeaVMIosPrepareAngleTask>("gdx_teavm_ios_prepare_angle") {
-            group = TASK_GROUP
-            description = "Download and extract the MetalANGLEKit frameworks used by the iOS ANGLE graphics API."
-            frameworksDir.convention(extension.ios.xcodeProjectDir.map { it.dir("Frameworks/ANGLE") })
-            onlyIf("ios.graphicsApi is angle") {
-                extension.normalizeIosGraphicsApi(extension.ios.graphicsApi.get()) == "angle"
+    private fun registerIosTasks(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        registration: GdxTeaVMTargetRegistration<GdxTeaVMIosExtension>
+    ) {
+        val target = registration.target
+        val taskPrefix = registration.taskPrefix("gdx_teavm_ios")
+        val generateTaskName = "${taskPrefix}_generate"
+        val iosGenerate: TaskProvider<out Task> = if(registration.isDefault) {
+            project.tasks.register(generateTaskName) {
+                group = TASK_GROUP
+                description = "Generate the experimental gdx-teavm iOS native C/assets."
+                dependsOn(project.tasks.named(TeaVMPlugin.C_TASK_NAME))
             }
         }
-        val iosInitXcode = project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_init_xcode") {
+        else {
+            registerNamedNativeGenerateTask(
+                project,
+                extension,
+                target,
+                generateTaskName,
+                namedDescription("Generate the experimental gdx-teavm iOS native C/assets", registration)
+            )
+        }
+        val iosPrepareAngle = project.tasks.register<GdxTeaVMIosPrepareAngleTask>("${taskPrefix}_prepare_angle") {
             group = TASK_GROUP
-            description = "Create the experimental gdx-teavm iOS Xcode project if missing, preserving an existing project."
+            description = namedDescription(
+                "Download and extract the MetalANGLEKit frameworks used by the iOS ANGLE graphics API",
+                registration
+            )
+            frameworksDir.convention(target.xcodeProjectDir.map { it.dir("Frameworks/ANGLE") })
+            enabled = extension.normalizeIosGraphicsApi(target.graphicsApi.get()) == "angle"
+        }
+        val iosInitXcode = project.tasks.register<GdxTeaVMIosInitXcodeTask>("${taskPrefix}_init_xcode") {
+            group = TASK_GROUP
+            description = namedDescription(
+                "Create the experimental gdx-teavm iOS Xcode project if missing, preserving an existing project",
+                registration
+            )
             dependsOn(iosPrepareAngle)
             backendClasspath.from(targetClasspath(project, IOS_BACKEND))
-            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
-            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
-            releasePath.convention(extension.ios.releasePath)
-            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            xcodeProjectDir.convention(target.xcodeProjectDir)
+            generatedSourcesDir.convention(target.generatedSourcesDir())
+            releasePath.convention(target.releasePath)
+            xcodeProjectName.convention(target.xcodeProjectName)
             gradleProjectPath.convention(project.path)
-            nativeLibraryName.convention(extension.ios.targetFileName)
-            bundleIdentifier.convention(extension.ios.bundleIdentifier)
-            overwrite.convention(extension.ios.overwriteXcodeProject)
-            graphicsApi.convention(extension.ios.graphicsApi)
+            gradleTaskPrefix.convention(taskPrefix)
+            nativeLibraryName.convention(target.targetFileName)
+            bundleIdentifier.convention(target.bundleIdentifier)
+            overwrite.convention(target.overwriteXcodeProject)
+            graphicsApi.convention(target.graphicsApi)
             outputs.upToDateWhen { false }
         }
-        project.tasks.register<GdxTeaVMIosInitXcodeTask>("gdx_teavm_ios_regenerate_xcode") {
+        project.tasks.register<GdxTeaVMIosInitXcodeTask>("${taskPrefix}_regenerate_xcode") {
             group = TASK_GROUP
-            description = "Regenerate the experimental gdx-teavm iOS Xcode project from the template, overwriting manual project edits."
+            description = namedDescription(
+                "Regenerate the experimental gdx-teavm iOS Xcode project from the template, overwriting manual project edits",
+                registration
+            )
             dependsOn(iosPrepareAngle)
             backendClasspath.from(targetClasspath(project, IOS_BACKEND))
-            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
-            generatedSourcesDir.convention(extension.ios.generatedSourcesDir())
-            releasePath.convention(extension.ios.releasePath)
-            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            xcodeProjectDir.convention(target.xcodeProjectDir)
+            generatedSourcesDir.convention(target.generatedSourcesDir())
+            releasePath.convention(target.releasePath)
+            xcodeProjectName.convention(target.xcodeProjectName)
             gradleProjectPath.convention(project.path)
-            nativeLibraryName.convention(extension.ios.targetFileName)
-            bundleIdentifier.convention(extension.ios.bundleIdentifier)
+            gradleTaskPrefix.convention(taskPrefix)
+            nativeLibraryName.convention(target.targetFileName)
+            bundleIdentifier.convention(target.bundleIdentifier)
             overwrite.convention(true)
-            graphicsApi.convention(extension.ios.graphicsApi)
+            graphicsApi.convention(target.graphicsApi)
             outputs.upToDateWhen { false }
         }
-        project.tasks.register<GdxTeaVMIosOpenXcodeTask>("gdx_teavm_ios_open_xcode") {
+        project.tasks.register<GdxTeaVMIosOpenXcodeTask>("${taskPrefix}_open_xcode") {
             group = TASK_GROUP
-            description = "Create the experimental gdx-teavm iOS Xcode project if missing and open it in Xcode."
+            description = namedDescription(
+                "Create the experimental gdx-teavm iOS Xcode project if missing and open it in Xcode",
+                registration
+            )
             dependsOn(iosInitXcode)
-            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
-            xcodeProjectName.convention(extension.ios.xcodeProjectName)
+            xcodeProjectDir.convention(target.xcodeProjectDir)
+            xcodeProjectName.convention(target.xcodeProjectName)
         }
-        val iosBuildSimulator = project.tasks.register<GdxTeaVMIosBuildSimulatorTask>("gdx_teavm_ios_build_simulator") {
+        val iosBuildSimulator = project.tasks.register<GdxTeaVMIosBuildSimulatorTask>("${taskPrefix}_build_simulator") {
             group = TASK_GROUP
-            description = "Generate and build the experimental gdx-teavm iOS app for the simulator."
+            description = namedDescription(
+                "Generate and build the experimental gdx-teavm iOS app for the simulator",
+                registration
+            )
             dependsOn(iosGenerate, iosInitXcode)
-            buildRoot.convention(extension.ios.outputDir)
-            xcodeProjectDir.convention(extension.ios.xcodeProjectDir)
-            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
-            xcodeProjectName.convention(extension.ios.xcodeProjectName)
-            scheme.convention(extension.ios.xcodeScheme)
-            configuration.convention(extension.ios.xcodeConfiguration)
+            buildRoot.convention(target.outputDir)
+            xcodeProjectDir.convention(target.xcodeProjectDir)
+            derivedDataPath.convention(target.xcodeDerivedDataPath)
+            xcodeProjectName.convention(target.xcodeProjectName)
+            scheme.convention(target.xcodeScheme)
+            configuration.convention(target.xcodeConfiguration)
         }
-        project.tasks.register<GdxTeaVMIosRunSimulatorTask>("gdx_teavm_ios_run_simulator") {
+        project.tasks.register<GdxTeaVMIosRunSimulatorTask>("${taskPrefix}_run_simulator") {
             group = TASK_GROUP
-            description = "Generate, build, install, and launch the experimental gdx-teavm iOS app on a simulator."
+            description = namedDescription(
+                "Generate, build, install, and launch the experimental gdx-teavm iOS app on a simulator",
+                registration
+            )
             dependsOn(iosBuildSimulator)
-            buildRoot.convention(extension.ios.outputDir)
-            derivedDataPath.convention(extension.ios.xcodeDerivedDataPath)
-            xcodeProjectName.convention(extension.ios.xcodeProjectName)
-            configuration.convention(extension.ios.xcodeConfiguration)
-            simulatorDevice.convention(extension.ios.simulatorDevice)
-            bundleIdentifier.convention(extension.ios.bundleIdentifier)
-            openSimulator.convention(extension.ios.openSimulator)
+            buildRoot.convention(target.outputDir)
+            derivedDataPath.convention(target.xcodeDerivedDataPath)
+            xcodeProjectName.convention(target.xcodeProjectName)
+            configuration.convention(target.xcodeConfiguration)
+            simulatorDevice.convention(target.simulatorDevice)
+            bundleIdentifier.convention(target.bundleIdentifier)
+            openSimulator.convention(target.openSimulator)
+        }
+    }
+
+    private fun registerNamedNativeGenerateTask(
+        project: Project,
+        extension: GdxTeaVMExtension,
+        target: GdxTeaVMNativeTargetExtension,
+        taskName: String,
+        taskDescription: String
+    ): TaskProvider<GenerateCTask> {
+        val template = project.tasks.named(TeaVMPlugin.C_TASK_NAME, GenerateCTask::class.java).get()
+        val reflectionClasses = reflectionClasses(project, extension, target.backendName)
+        return project.tasks.register<GenerateCTask>(taskName) {
+            group = TASK_GROUP
+            description = taskDescription
+            getMainClass().set(target.mainClass)
+            getDaemonClasspath().from(template.daemonClasspath)
+            getOutputDir().set(target.generatedSourcesDir().map { directory -> directory.asFile })
+            getTargetFileName().set(target.targetFileName)
+            getDebugInformation().set(target.debugInformation)
+            getOptimization().set(target.optimization)
+            getFastGlobalAnalysis().set(target.fastGlobalAnalysis)
+            getOutOfProcess().set(target.outOfProcess)
+            getProcessMemory().set(target.processMemory)
+            getPreservedClasses().addAll(target.preservedClasses)
+            getPreservedClasses().addAll(reflectionClasses)
+            getProperties().putAll(extension.toGlobalProperties(project))
+            getProperties().putAll(extension.toNativeProperties(project, target))
+            getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
+            getMinHeapSize().set(target.minHeapSizeMb)
+            getMaxHeapSize().set(target.maxHeapSizeMb)
+            getHeapDump().set(target.heapDump)
+            getShortFileNames().set(target.shortFileNames)
+            getObfuscated().set(target.obfuscated)
+            filterBackendClasspath(target.backendName)
+            outputs.upToDateWhen { false }
         }
     }
 
@@ -1196,10 +1559,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun GdxTeaVMExtension.isNativeTargetDeclared(): Boolean {
-        return isTargetDeclared(GdxTeaVMTarget.GLFW)
-            || isTargetDeclared(GdxTeaVMTarget.ANDROID)
-            || isTargetDeclared(GdxTeaVMTarget.IOS)
+    private fun GdxTeaVMExtension.isDefaultNativeTargetDeclared(): Boolean {
+        return isDefaultTargetDeclared(GdxTeaVMTarget.GLFW)
+            || isDefaultTargetDeclared(GdxTeaVMTarget.ANDROID)
+            || isDefaultTargetDeclared(GdxTeaVMTarget.IOS)
     }
 
     private fun glfwBuildScriptBaseName(buildType: String): String {

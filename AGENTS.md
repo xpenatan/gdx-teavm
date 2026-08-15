@@ -30,9 +30,12 @@
 - Gradle plugin basic example:
   - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run`
+  - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_release_build`
+  - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_release_build`
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_generate`
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_build`
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_run`
+  - `./gradlew :examples:basic:platforms:desktop:teavm-c:plugin:gdx_teavm_glfw_release_generate`
 - Gradle plugin FreeType web example:
   - `./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:freetype:platforms:web:plugin:gdx_teavm_web_wasm_run`
@@ -92,10 +95,9 @@
 - Extension block: `gdxTeaVM { ... }`.
 - The plugin applies Java and TeaVM's Gradle plugin internally.
 - Target blocks are declarative. Tasks are created only for declared blocks:
-  - `js { ... }`
-  - `wasm { ... }`
-  - `glfw { ... }`
-  - `ios { ... }`
+  - Unnamed `js { ... }`, `wasm { ... }`, `glfw { ... }`, `ios { ... }`, and `android { ... }` blocks retain their legacy task names.
+  - Named `js("name") { ... }`, `wasm("name") { ... }`, `glfw("name") { ... }`, and `ios("name") { ... }` blocks create independent target variants.
+  - `webDefaults { ... }` and `nativeDefaults { ... }` are optional conventions and do not declare targets.
 - Plugin-generated tasks use group `gdx-teavm`.
 - TeaVM's own low-level tasks still exist internally, but the plugin clears their task group so normal users are guided toward the `gdx_teavm_*` tasks.
 - The plugin forces TeaVM generation tasks to run each invocation so assets and generated web/native wrappers are refreshed.
@@ -124,17 +126,22 @@
   - `gdx_teavm_ios_open_xcode`
   - `gdx_teavm_ios_build_simulator`
   - `gdx_teavm_ios_run_simulator`
+- Named task patterns insert the normalized target name before the action:
+  - Web: `gdx_teavm_web_<js|wasm>_<name>_<build|run>`
+  - GLFW: `gdx_teavm_glfw_<name>_<generate|build|run>`
+  - iOS: `gdx_teavm_ios_<name>_<existing-action>`
 
 ## Plugin Configuration Model
-- Shared plugin properties are defined in `GdxTeaVMExtension`.
+- Shared plugin properties and target registries are defined in `GdxTeaVMExtension`.
 - Only backend-agnostic settings belong in the root `gdxTeaVM { ... }` block, such as assets and reflection.
+- Optional inherited target conventions are defined in `GdxTeaVMWebDefaults` and `GdxTeaVMNativeDefaults`. An explicit target value wins over defaults, which win over built-in conventions.
 - Per-target TeaVM properties are defined in `GdxTeaVMTargetExtension` and subclasses:
   - `GdxTeaVMWebExtension`
   - `GdxTeaVMJsExtension`
   - `GdxTeaVMWasmExtension`
   - `GdxTeaVMGlfwExtension`
   - `GdxTeaVMIosExtension`
-- Web-only settings such as `htmlTitle`, `htmlWidth`, `htmlHeight`, `entryPointName`, `mainClassArgs`, `logoPath`, `copyLoadingAsset`, `webappEnabled`, and `serverPort` belong in `js {}` or `wasm {}`, not in the root extension.
+- Web-only settings such as `htmlTitle`, `htmlWidth`, `htmlHeight`, `entryPointName`, `mainClassArgs`, `logoPath`, `copyLoadingAsset`, `webappEnabled`, and `serverPort` belong in `webDefaults {}`, `js {}`, or `wasm {}`, not in the root extension.
 - GLFW build mode is selected with `glfw.buildType` (`Debug` or `Release`); plugin tasks are not split by build type.
 - Web targets usually share the same launcher class.
 - Native targets usually need native-specific launcher classes because they start different backend application classes.
@@ -144,6 +151,7 @@
   - Wasm: `build/dist/wasm`
   - GLFW: `build/dist/glfw`
   - iOS: `build/dist/ios`
+  - Named target: the matching directory above plus `/<normalized-name>`
 - Default generated app subdirectories:
   - Web targets: `webapp`
   - Native targets: `c/src`

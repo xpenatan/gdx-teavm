@@ -9,18 +9,35 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.teavm.gradle.api.JSModuleType
 import org.teavm.gradle.api.OptimizationLevel
 import org.teavm.gradle.api.SourceFilePolicy
 import org.teavm.gradle.api.TeaVMConfiguration
 import org.teavm.gradle.api.TeaVMDevServerConfiguration
 import org.teavm.gradle.api.TeaVMJSConfiguration
 import org.teavm.gradle.api.TeaVMWasmGCConfiguration
+import org.teavm.gradle.api.WasmDebugInfoLevel
+import org.teavm.gradle.api.WasmDebugInfoLocation
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
 open class GdxTeaVMTargetExtension internal constructor(
-    internal val teavmConfig: TeaVMConfiguration
+    internal val teavmConfig: TeaVMConfiguration,
+    defaults: GdxTeaVMWebDefaults
 ) {
+    init {
+        mainClass.convention(defaults.mainClass)
+        relativePathInOutputDir.convention(defaults.relativePathInOutputDir.orElse("webapp"))
+        optimization.convention(defaults.optimization.orElse(OptimizationLevel.BALANCED))
+        debugInformation.convention(defaults.debugInformation.orElse(false))
+        fastGlobalAnalysis.convention(defaults.fastGlobalAnalysis.orElse(false))
+        outOfProcess.convention(defaults.outOfProcess.orElse(true))
+        processMemory.convention(defaults.processMemory.orElse(1024))
+        preservedClasses.convention(defaults.preservedClasses.orElse(emptyList()))
+        teavmConfig.properties.convention(emptyMap())
+        teavmConfig.skip.convention(false)
+    }
+
     /**
      * Root directory for generated files for this target.
      *
@@ -108,22 +125,23 @@ open class GdxTeaVMTargetExtension internal constructor(
 open class GdxTeaVMJsExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
-    private val jsConfig: TeaVMJSConfiguration
-) : GdxTeaVMWebExtension(objects, project, jsConfig, jsConfig.devServer) {
+    internal val jsConfig: TeaVMJSConfiguration,
+    defaults: GdxTeaVMWebDefaults,
+    outputDirName: String
+) : GdxTeaVMWebExtension(objects, project, jsConfig, jsConfig.devServer, defaults) {
     init {
-        outputDir.convention(project.layout.buildDirectory.dir("dist/js"))
-        relativePathInOutputDir.convention("webapp")
+        outputDir.convention(project.layout.buildDirectory.dir(outputDirName))
         targetFileName.convention("app.js")
-        optimization.convention(OptimizationLevel.BALANCED)
-        debugInformation.convention(false)
-        fastGlobalAnalysis.convention(false)
-        outOfProcess.convention(true)
-        processMemory.convention(1024)
-        entryPointName.convention("main")
-        obfuscated.convention(true)
-        strict.convention(false)
-        sourceMap.convention(false)
-        sourceFilePolicy.convention(SourceFilePolicy.LINK_LOCAL_FILES)
+        entryPointName.convention(defaults.entryPointName.orElse("main"))
+        obfuscated.convention(defaults.obfuscated.orElse(true))
+        strict.convention(defaults.strict.orElse(false))
+        sourceMap.convention(defaults.sourceMap.orElse(false))
+        sourceFilePolicy.convention(defaults.sourceFilePolicy.orElse(SourceFilePolicy.LINK_LOCAL_FILES))
+        jsConfig.moduleType.convention(JSModuleType.UMD)
+        jsConfig.addedToWebApp.convention(false)
+        jsConfig.devServer.stackDeobfuscated.convention(false)
+        jsConfig.devServer.indicator.convention(false)
+        jsConfig.devServer.resourceRoots.convention(emptyList())
     }
 
     /**
@@ -182,23 +200,33 @@ open class GdxTeaVMJsExtension @Inject constructor(
 open class GdxTeaVMWasmExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
-    private val wasmConfig: TeaVMWasmGCConfiguration
-) : GdxTeaVMWebExtension(objects, project, wasmConfig, wasmConfig.devServer) {
+    internal val wasmConfig: TeaVMWasmGCConfiguration,
+    defaults: GdxTeaVMWebDefaults,
+    outputDirName: String
+) : GdxTeaVMWebExtension(objects, project, wasmConfig, wasmConfig.devServer, defaults) {
     init {
-        outputDir.convention(project.layout.buildDirectory.dir("dist/wasm"))
-        relativePathInOutputDir.convention("webapp")
+        outputDir.convention(project.layout.buildDirectory.dir(outputDirName))
         targetFileName.convention("app.wasm")
-        optimization.convention(OptimizationLevel.BALANCED)
-        debugInformation.convention(false)
-        fastGlobalAnalysis.convention(false)
-        outOfProcess.convention(true)
-        processMemory.convention(1024)
-        obfuscated.convention(true)
-        strict.convention(false)
+        obfuscated.convention(defaults.obfuscated.orElse(true))
+        strict.convention(defaults.strict.orElse(false))
         copyRuntime.convention(true)
         modularRuntime.convention(false)
-        sourceMap.convention(false)
-        sourceFilePolicy.convention(SourceFilePolicy.LINK_LOCAL_FILES)
+        sourceMap.convention(defaults.sourceMap.orElse(false))
+        sourceFilePolicy.convention(defaults.sourceFilePolicy.orElse(SourceFilePolicy.LINK_LOCAL_FILES))
+        wasmConfig.addedToWebApp.convention(false)
+        wasmConfig.disassembly.convention(false)
+        wasmConfig.debugInfoLocation.convention(WasmDebugInfoLocation.EXTERNAL)
+        wasmConfig.debugInfoLevel.convention(WasmDebugInfoLevel.DEOBFUSCATION)
+        wasmConfig.minDirectBuffersSize.convention(2)
+        @Suppress("DEPRECATION")
+        wasmConfig.maxDirectBuffersSize.convention(32)
+        @Suppress("DEPRECATION")
+        wasmConfig.importedWasmMemory.convention(false)
+        wasmConfig.sharedBuffer.convention(false)
+        wasmConfig.emscripten.enabled.convention(false)
+        wasmConfig.emscripten.compilerArgs.convention(emptyList())
+        wasmConfig.emscripten.exportedFunctions.convention(emptyList())
+        wasmConfig.devServer.resourceRoots.convention(emptyList())
     }
 
     /**
@@ -206,8 +234,6 @@ open class GdxTeaVMWasmExtension @Inject constructor(
      *
      * Default: `main`.
      */
-    override val entryPointName: Property<String> = objects.property(String::class.java).convention("main")
-
     /**
      * Name of the generated Wasm output file.
      *
@@ -276,14 +302,16 @@ open class GdxTeaVMWebExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     teavmConfig: TeaVMConfiguration,
-    teavmDevServerConfig: TeaVMDevServerConfiguration
-) : GdxTeaVMTargetExtension(teavmConfig) {
+    teavmDevServerConfig: TeaVMDevServerConfiguration,
+    defaults: GdxTeaVMWebDefaults
+) : GdxTeaVMTargetExtension(teavmConfig, defaults) {
     /**
      * JavaScript entry point function name called by the generated web app.
      *
      * Default: `main`.
      */
-    open val entryPointName: Property<String> = objects.property(String::class.java).convention("main")
+    open val entryPointName: Property<String> = objects.property(String::class.java)
+        .convention(defaults.entryPointName.orElse("main"))
 
     /**
      * Arguments passed by the generated web app to the TeaVM entry point.
@@ -292,7 +320,8 @@ open class GdxTeaVMWebExtension @Inject constructor(
      *
      * Default: empty string.
      */
-    val mainClassArgs: Property<String> = objects.property(String::class.java).convention("")
+    val mainClassArgs: Property<String> = objects.property(String::class.java)
+        .convention(defaults.mainClassArgs.orElse(""))
 
     /**
      * Enables generation of the gdx-teavm web app files around the TeaVM output.
@@ -302,7 +331,8 @@ open class GdxTeaVMWebExtension @Inject constructor(
      *
      * Default: `true`.
      */
-    val webappEnabled: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val webappEnabled: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.webappEnabled.orElse(true))
 
     /**
      * Generates the web app `index.html` entry page when true.
@@ -312,28 +342,32 @@ open class GdxTeaVMWebExtension @Inject constructor(
      *
      * Default: `true`.
      */
-    val generateIndexHtml: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val generateIndexHtml: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.generateIndexHtml.orElse(true))
 
     /**
      * Browser document title used by the generated `index.html`.
      *
      * Default: `gdx-teavm`.
      */
-    val htmlTitle: Property<String> = objects.property(String::class.java).convention("gdx-teavm")
+    val htmlTitle: Property<String> = objects.property(String::class.java)
+        .convention(defaults.htmlTitle.orElse("gdx-teavm"))
 
     /**
      * Initial canvas width written to the generated `index.html`.
      *
      * Default: `800`.
      */
-    val htmlWidth: Property<Int> = objects.property(Int::class.javaObjectType).convention(800)
+    val htmlWidth: Property<Int> = objects.property(Int::class.javaObjectType)
+        .convention(defaults.htmlWidth.orElse(800))
 
     /**
      * Initial canvas height written to the generated `index.html`.
      *
      * Default: `600`.
      */
-    val htmlHeight: Property<Int> = objects.property(Int::class.javaObjectType).convention(600)
+    val htmlHeight: Property<Int> = objects.property(Int::class.javaObjectType)
+        .convention(defaults.htmlHeight.orElse(600))
 
     /**
      * Copies configured assets, contributed classpath assets, and support scripts into the generated web app.
@@ -342,7 +376,8 @@ open class GdxTeaVMWebExtension @Inject constructor(
      *
      * Default: `true`.
      */
-    val copyAssets: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val copyAssets: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.copyAssets.orElse(true))
 
     /**
      * Default startup-logo asset path compiled into `WebPreloadApplicationListener`.
@@ -352,14 +387,16 @@ open class GdxTeaVMWebExtension @Inject constructor(
      *
      * Default: `startup-logo.png`.
      */
-    val logoPath: Property<String> = objects.property(String::class.java).convention("startup-logo.png")
+    val logoPath: Property<String> = objects.property(String::class.java)
+        .convention(defaults.logoPath.orElse("startup-logo.png"))
 
     /**
      * Copies [logoPath] into the generated web app when true.
      *
      * Default: `true`.
      */
-    val copyLoadingAsset: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val copyLoadingAsset: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.copyLoadingAsset.orElse(true))
 
     /**
      * Port used by this target's plugin web run task.
@@ -367,7 +404,11 @@ open class GdxTeaVMWebExtension @Inject constructor(
      * Default: Gradle property `teavmPluginPort` when present, otherwise `8080`.
      */
     val serverPort: Property<Int> = objects.property(Int::class.javaObjectType)
-        .convention(project.providers.gradleProperty("teavmPluginPort").map(String::toInt).orElse(8080))
+        .convention(
+            defaults.serverPort.orElse(
+                project.providers.gradleProperty("teavmPluginPort").map(String::toInt).orElse(8080)
+            )
+        )
 
     /**
      * Configures TeaVM's persistent development server for this web target.
@@ -397,7 +438,8 @@ open class GdxTeaVMNativeTargetExtension @Inject constructor(
     project: Project,
     outputDirName: String,
     targetFileNameValue: String,
-    val backendName: String
+    val backendName: String,
+    defaults: GdxTeaVMNativeDefaults
 ) {
     /**
      * Root directory for generated files for this native target.
@@ -415,20 +457,23 @@ open class GdxTeaVMNativeTargetExtension @Inject constructor(
      * Default: none. This must be set for every native target you build.
      */
     val mainClass: Property<String> = objects.property(String::class.java)
+        .convention(defaults.mainClass)
 
     /**
      * Path inside [outputDir] where TeaVM writes generated C source files.
      *
      * Default: `c/src`.
      */
-    val relativePathInOutputDir: Property<String> = objects.property(String::class.java).convention("c/src")
+    val relativePathInOutputDir: Property<String> = objects.property(String::class.java)
+        .convention(defaults.relativePathInOutputDir.orElse("c/src"))
 
     /**
      * Name of the generated native target.
      *
      * Default: `app`.
      */
-    val targetFileName: Property<String> = objects.property(String::class.java).convention(targetFileNameValue)
+    val targetFileName: Property<String> = objects.property(String::class.java)
+        .convention(defaults.targetFileName.orElse(targetFileNameValue))
 
     /**
      * Directory where native runtime assets and build output support files are prepared.
@@ -444,63 +489,71 @@ open class GdxTeaVMNativeTargetExtension @Inject constructor(
      * Default: `BALANCED`.
      */
     val optimization: Property<OptimizationLevel> = objects.property(OptimizationLevel::class.java)
-        .convention(OptimizationLevel.BALANCED)
+        .convention(defaults.optimization.orElse(OptimizationLevel.BALANCED))
 
     /**
      * Includes TeaVM C debug information in generated output when supported.
      *
      * Default: `false`.
      */
-    val debugInformation: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val debugInformation: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.debugInformation.orElse(false))
 
     /**
      * Enables TeaVM fast global analysis, trading precision for faster native compilation.
      *
      * Default: `false`.
      */
-    val fastGlobalAnalysis: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val fastGlobalAnalysis: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.fastGlobalAnalysis.orElse(false))
 
     /**
      * Runs TeaVM C compilation out of the Gradle process when supported by TeaVM.
      *
      * Default: `false`.
      */
-    val outOfProcess: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val outOfProcess: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.outOfProcess.orElse(false))
 
     /**
      * Memory limit in megabytes for out-of-process TeaVM C compilation.
      *
      * Default: `512`.
      */
-    val processMemory: Property<Int> = objects.property(Int::class.javaObjectType).convention(512)
+    val processMemory: Property<Int> = objects.property(Int::class.javaObjectType)
+        .convention(defaults.processMemory.orElse(512))
 
     /**
      * Classes TeaVM should preserve from aggressive removal or renaming for this native target.
      *
      * Default: empty list.
      */
-    val preservedClasses: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
+    val preservedClasses: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(defaults.preservedClasses.orElse(emptyList()))
 
     /**
      * Initial native heap size in megabytes.
      *
      * Default: `4`.
      */
-    val minHeapSizeMb: Property<Int> = objects.property(Int::class.javaObjectType).convention(4)
+    val minHeapSizeMb: Property<Int> = objects.property(Int::class.javaObjectType)
+        .convention(defaults.minHeapSizeMb.orElse(4))
 
     /**
      * Maximum native heap size in megabytes.
      *
      * Default: `128`.
      */
-    val maxHeapSizeMb: Property<Int> = objects.property(Int::class.javaObjectType).convention(128)
+    val maxHeapSizeMb: Property<Int> = objects.property(Int::class.javaObjectType)
+        .convention(defaults.maxHeapSizeMb.orElse(128))
 
     /**
      * Enables TeaVM heap dump support for native output when supported by TeaVM.
      *
      * Default: `false`.
      */
-    val heapDump: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(false)
+    val heapDump: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.heapDump.orElse(false))
 
     /**
      * Asks TeaVM to generate shorter C file names.
@@ -509,14 +562,16 @@ open class GdxTeaVMNativeTargetExtension @Inject constructor(
      *
      * Default: `true`.
      */
-    val shortFileNames: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val shortFileNames: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.shortFileNames.orElse(true))
 
     /**
      * Obfuscates generated native C symbols when true.
      *
      * Default: `true`.
      */
-    val obfuscated: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
+    val obfuscated: Property<Boolean> = objects.property(Boolean::class.javaObjectType)
+        .convention(defaults.obfuscated.orElse(true))
 
     internal fun generatedSourcesDir(): Provider<Directory> {
         return outputDir.flatMap { output ->
@@ -531,8 +586,9 @@ open class GdxTeaVMGlfwExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "glfw") {
+    targetFileNameValue: String,
+    defaults: GdxTeaVMNativeDefaults
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "glfw", defaults) {
     /**
      * Native build type used by generated GLFW build scripts, typically `Debug` or `Release`.
      *
@@ -583,15 +639,18 @@ open class GdxTeaVMAndroidExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "android")
+    targetFileNameValue: String,
+    defaults: GdxTeaVMNativeDefaults
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "android", defaults)
 
 open class GdxTeaVMIosExtension @Inject constructor(
     objects: ObjectFactory,
     project: Project,
     outputDirName: String,
-    targetFileNameValue: String
-) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "ios") {
+    targetFileNameValue: String,
+    xcodeDerivedDataDirName: String,
+    defaults: GdxTeaVMNativeDefaults
+) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "ios", defaults) {
     /**
      * Generated Xcode project name.
      *
@@ -659,7 +718,7 @@ open class GdxTeaVMIosExtension @Inject constructor(
      * Default: `build/xcode-derived/ios`.
      */
     val xcodeDerivedDataPath: DirectoryProperty = objects.directoryProperty()
-        .convention(project.layout.buildDirectory.dir("xcode-derived/ios"))
+        .convention(project.layout.buildDirectory.dir(xcodeDerivedDataDirName))
 
     /**
      * Opens Simulator.app when running the simulator task.

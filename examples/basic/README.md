@@ -13,3 +13,5 @@ Portable test applications live in `core`, shared runtime assets live in `assets
 | iOS | `:examples:basic:platforms:ios` | `gdx_teavm_ios_build_simulator` |
 
 See the [manual TeaVM C guide](platforms/desktop/teavm-c/builder/README.md) for native toolchain requirements.
+
+The basic web plugin build also demonstrates shared `webDefaults {}` plus named JS and Wasm release variants. Their build tasks are `gdx_teavm_web_js_release_build` and `gdx_teavm_web_wasm_release_build`. The TeaVM C plugin build demonstrates `nativeDefaults {}` and a named GLFW release variant with `gdx_teavm_glfw_release_generate`, `gdx_teavm_glfw_release_build`, and `gdx_teavm_glfw_release_run`.
