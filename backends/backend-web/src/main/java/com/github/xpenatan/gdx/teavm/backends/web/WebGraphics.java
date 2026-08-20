@@ -370,7 +370,7 @@ public abstract class WebGraphics implements Graphics {
     }
 
     @JSBody(script = "return devicePixelRatio || 1;")
-    private static native int getNativeScreenDensityNATIVE();
+    private static native double getNativeScreenDensityNATIVE();
 
     @JSBody(script = "return screen.width;")
     private static native int getScreenWidthNATIVE();
