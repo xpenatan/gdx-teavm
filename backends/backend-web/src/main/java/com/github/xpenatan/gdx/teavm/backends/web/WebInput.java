@@ -60,8 +60,6 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
     private int[] deltaX = new int[MAX_TOUCHES];
     private int[] deltaY = new int[MAX_TOUCHES];
     IntSet pressedButtons = new IntSet();
-    int pressedKeyCount = 0;
-    boolean keyJustPressed = false;
     boolean[] justPressedButtons = new boolean[5];
     InputProcessor processor;
     long currentEventTimeStamp;
