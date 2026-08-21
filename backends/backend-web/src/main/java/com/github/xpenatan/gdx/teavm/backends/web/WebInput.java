@@ -87,6 +87,8 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
         document.addEventListener("keyup", this, false);
         document.addEventListener("keypress", this, false);
 
+        Window.current().addEventListener("blur", this, false);
+
         canvas.addEventListener("touchstart", this, true);
         canvas.addEventListener("touchmove", this, true);
         canvas.addEventListener("touchcancel", this, true);
@@ -364,7 +366,21 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
                 e.stopPropagation();
             }
         }
-
+        else if(type.equals("blur")) {
+            // The keyup for keys held while focus moves away (DevTools, browser shortcuts,
+            // switching windows) is delivered elsewhere, which would leave those keys reported
+            // as pressed forever. Mirror GLFW, which generates synthetic key releases when a
+            // window loses input focus.
+            for(int code = 0; code < pressedKeys.length; code++) {
+                if(pressedKeys[code]) {
+                    pressedKeyCount--;
+                    pressedKeys[code] = false;
+                    if(processor != null) {
+                        processor.keyUp(code);
+                    }
+                }
+            }
+        }
         else if(type.equals("keyup") && hasFocus) {
             KeyboardEvent keyboardEvent = (KeyboardEvent)e;
             int code = resolveKeyCode(keyboardEvent);
