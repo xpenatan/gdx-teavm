@@ -63,6 +63,7 @@ public class WebGL20 implements GL20 {
     final CustomIntMap<WebGLTexture> textures = CustomIntMap.create();
     final CustomIntMap<CustomIntMap<WebGLUniformLocation>> uniforms = CustomIntMap.create();
     private int currProgram = 0;
+    private WebGLBufferUpload bufferUpload;
 
     public WebGL20(WebGLRenderingContextExt gl) {
         this.gl = gl;
@@ -142,15 +143,22 @@ public class WebGL20 implements GL20 {
             gl.bufferData(target, size, usage);
         }
         else {
-            ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
+            ArrayBufferView typedArray = getBufferUpload().getWebGL1View(data);
             gl.bufferData(target, typedArray, usage);
         }
     }
 
     @Override
     public void glBufferSubData(int target, int offset, int size, Buffer data) {
-        ArrayBufferView typedArray = TypedArrays.getTypedArray(data);
+        ArrayBufferView typedArray = getBufferUpload().getWebGL1View(data);
         gl.bufferSubData(target, offset, typedArray);
+    }
+
+    private WebGLBufferUpload getBufferUpload() {
+        if(bufferUpload == null) {
+            bufferUpload = new WebGLBufferUpload();
+        }
+        return bufferUpload;
     }
 
     @Override

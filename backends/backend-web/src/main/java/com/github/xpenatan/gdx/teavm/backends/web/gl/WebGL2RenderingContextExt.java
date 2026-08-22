@@ -2,6 +2,7 @@ package com.github.xpenatan.gdx.teavm.backends.web.gl;
 
 import org.teavm.jso.JSMethod;
 import org.teavm.jso.core.JSArray;
+import org.teavm.jso.typedarrays.ArrayBufferView;
 import org.teavm.jso.typedarrays.Int32Array;
 import org.teavm.jso.typedarrays.Uint32Array;
 import org.teavm.jso.webgl.WebGL2RenderingContext;
@@ -11,6 +12,12 @@ import org.teavm.jso.webgl.WebGLSampler;
 import org.teavm.jso.webgl.WebGLUniformLocation;
 
 public interface WebGL2RenderingContextExt extends WebGLRenderingContextExt, WebGL2RenderingContext {
+
+    @JSMethod("bufferData")
+    void bufferData(int target, ArrayBufferView source, int usage, int sourceOffset, int sourceLength);
+
+    @JSMethod("bufferSubData")
+    void bufferSubData(int target, int destinationByteOffset, ArrayBufferView source, int sourceOffset, int sourceLength);
 
     @JSMethod("getActiveUniformBlockParameter")
     int getActiveUniformBlockParameteri(WebGLProgram program, int uniformBlockIndex, int pname);

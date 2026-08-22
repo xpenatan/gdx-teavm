@@ -41,6 +41,31 @@ public class WebGL30 extends WebGL20 implements GL30 {
         this.gl = gl;
     }
 
+    @Override
+    public void glBufferData(int target, int size, Buffer data, int usage) {
+        if(data == null) {
+            gl.bufferData(target, size, usage);
+        }
+        else {
+            ArrayBufferView typedArray = WebGLBufferUpload.getTypedArray(data);
+            int sourceLength = WebGLBufferUpload.getRangeElementLength(data);
+            int sourceOffset = sourceLength == 0
+                    ? typedArray.getLength()
+                    : WebGLBufferUpload.getRangeElementOffset(data);
+            gl.bufferData(target, typedArray, usage, sourceOffset, sourceLength);
+        }
+    }
+
+    @Override
+    public void glBufferSubData(int target, int offset, int size, Buffer data) {
+        ArrayBufferView typedArray = WebGLBufferUpload.getTypedArray(data);
+        int sourceLength = WebGLBufferUpload.getRangeElementLength(data);
+        int sourceOffset = sourceLength == 0
+                ? typedArray.getLength()
+                : WebGLBufferUpload.getRangeElementOffset(data);
+        gl.bufferSubData(target, offset, typedArray, sourceOffset, sourceLength);
+    }
+
     private void deallocateQueryId(int id) {
         queries.remove(id);
     }
