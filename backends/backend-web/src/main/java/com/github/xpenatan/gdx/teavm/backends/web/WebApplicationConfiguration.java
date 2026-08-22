@@ -9,11 +9,9 @@ import com.github.xpenatan.gdx.teavm.backends.web.utils.WebDefaultBaseUrlProvide
  */
 public class WebApplicationConfiguration {
 
-    /** Experimental, whether to enable OpenGL ES 30 (aka WebGL2) if supported. If not supported it will fall-back to OpenGL ES
-     * 2.0. When GL ES 30 is enabled, {@link com.badlogic.gdx.Gdx#gl30} can be used to access its functionality.
-     * @deprecated this option is currently experimental and not yet fully supported, expect issues. */
-    @Deprecated
-    public boolean useGL30 = false;
+    /** Whether to enable OpenGL ES 3.0 (aka WebGL2) if supported. If not supported it will fall back to OpenGL ES 2.0. When GL ES
+     * 3.0 is enabled, {@link com.badlogic.gdx.Gdx#gl30} can be used to access its functionality. */
+    public boolean useGL30 = true;
 
     /** Sets the {@link WebWindowListener} which will be informed about teavm events. */
     public WebWindowListener windowListener;

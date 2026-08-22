@@ -95,6 +95,11 @@ public class WebGLGraphics extends WebGraphics {
 
 
     @Override
+    public boolean isGL30Available() {
+        return gl30 != null;
+    }
+
+    @Override
     public GL20 getGL20() {
         return gl20;
     }
