@@ -31,12 +31,12 @@ public class SharedApplicationLogger implements ApplicationLogger {
 
     @Override
     public void debug(String tag, String message) {
-        System.err.println(tag + ": " + message);
+        System.out.println(tag + ": " + message);
     }
 
     @Override
     public void debug(String tag, String message, Throwable exception) {
-        System.err.println(tag + ": " + message);
+        System.out.println(tag + ": " + message);
         exception.printStackTrace(System.out);
     }
 }
