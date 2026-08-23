@@ -23,8 +23,14 @@ public class Gdx2DPixmapNative implements Disposable {
     private Int32Array nativeData;
     private ByteBuffer buffer;
 
-    public Gdx2DPixmapNative(byte[] encodedData, int offset, int len, int requestedFormat) {
+    /**
+     * @throws GdxRuntimeException if the image data could not be loaded.
+     */
+    public Gdx2DPixmapNative(byte[] encodedData, int offset, int len, int requestedFormat) throws GdxRuntimeException {
         nativeData = loadNative(encodedData, offset, len);
+        if(nativeData == null) {
+            throw new GdxRuntimeException("Couldn't load pixmap from image data");
+        }
         updateNativeData();
 
         if(requestedFormat != 0 && requestedFormat != format) {
@@ -37,6 +43,9 @@ public class Gdx2DPixmapNative implements Disposable {
      */
     public Gdx2DPixmapNative(int width, int height, int format) throws GdxRuntimeException {
         nativeData = newPixmapNative(width, height, format);
+        if(nativeData == null) {
+            throw new GdxRuntimeException("Couldn't allocate pixmap");
+        }
         updateNativeData();
     }
 
@@ -200,6 +209,9 @@ public class Gdx2DPixmapNative implements Disposable {
             "Gdx.writeArrayToMemory(buffer, cBuffer);" +
             "var pixmap = Gdx.Gdx.prototype.g2d_load(cBuffer, offset, len);" +
             "Gdx._free(cBuffer);" +
+            "if(pixmap === null || Gdx.getPointer(pixmap) === 0) {" +
+            "   return null;" +
+            "}" +
             "var pixels = Gdx.Gdx.prototype.g2d_get_pixels(pixmap);" +
             "var pixmapAddr = Gdx.getPointer(pixmap);" +
             "var format = pixmap.get_format();" +
@@ -239,6 +251,9 @@ public class Gdx2DPixmapNative implements Disposable {
 
     @JSBody(params = {"width", "height", "format"}, script = "" +
             "var pixmap = Gdx.Gdx.prototype.g2d_new(width, height, format);" +
+            "if(pixmap === null || Gdx.getPointer(pixmap) === 0) {" +
+            "   return null;" +
+            "}" +
             "var pixels = Gdx.Gdx.prototype.g2d_get_pixels(pixmap);" +
             "var pixmapAddr = Gdx.getPointer(pixmap);" +
             "var format = pixmap.get_format();" +
