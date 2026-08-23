@@ -24,7 +24,6 @@ import java.io.Writer;
  */
 public class WebFileHandle extends FileHandle {
     private final String file;
-    private final FileType type;
 
     private WebFiles teaFiles;
 
