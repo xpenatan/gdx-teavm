@@ -11,24 +11,23 @@ dependencies {
 
 gdxTeaVM {
     assets.from(file("../../../../assets"))
-    reflection.add("com.badlogic.gdx.math.Vector2")
 
     nativeDefaults {
-        mainClass.set("TestCLauncher")
-        minHeapSizeMb.set(64)
-        maxHeapSizeMb.set(512)
+        mainClass = "TestCLauncher"
+        minHeapSizeMb = 64
+        maxHeapSizeMb = 512
     }
 
     glfw {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
-        buildType.set("Debug")
-        consoleLog.set(true)
+        optimization = OptimizationLevel.NONE
+        obfuscated = false
+        buildType = "Debug"
+        consoleLog = true
     }
 
     glfw("release") {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
-        buildType.set("Release")
+        optimization = OptimizationLevel.NONE
+        obfuscated = true
+        buildType = "Release"
     }
 }

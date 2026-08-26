@@ -9,6 +9,7 @@ val assetsDir = file("../../examples/basic/assets")
 
 dependencies {
     implementation(project(":benchmark:core"))
+    implementation(project(":examples:basic:core"))
     implementation(libs.gdxBackendLwjgl3)
     implementation(variantOf(libs.gdxPlatform) { classifier("natives-desktop") })
 }
@@ -19,22 +20,18 @@ fun benchmarkProperty(name: String, defaultValue: String): String {
 
 fun benchmarkArgs(): List<String> {
     return listOf(
-        "--test=${benchmarkProperty("benchTest", "spritebatch_default")}",
         "--seconds=${benchmarkProperty("benchSeconds", "15")}",
         "--warmup=${benchmarkProperty("benchWarmup", "3")}",
         "--width=${benchmarkProperty("benchWidth", "640")}",
-        "--height=${benchmarkProperty("benchHeight", "480")}",
-        "--rotate=${benchmarkProperty("benchRotate", "true")}",
-        "--scale=${benchmarkProperty("benchScale", "true")}",
-        "--clear=${benchmarkProperty("benchClear", "true")}"
+        "--height=${benchmarkProperty("benchHeight", "480")}"
     )
 }
 
 tasks.register<JavaExec>("benchmark") {
     group = "benchmark"
-    description = "Run benchmark on stock libGDX LWJGL3"
+    description = "Run the configured test object on Java/LWJGL3"
     dependsOn("classes")
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = assetsDir
     args(benchmarkArgs())

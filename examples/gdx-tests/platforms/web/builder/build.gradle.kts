@@ -13,7 +13,7 @@ val gdxTestsAssetsDir = file(providers.gradleProperty("gdxSourcePath").get())
 tasks.register<JavaExec>("gdx_tests_build_web") {
     group = "examples-teavm"
     description = "Build gdx-tests example"
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     args = mutableListOf(gdxTestsAssetsDir.absolutePath)
     classpath = sourceSets["main"].runtimeClasspath
 }

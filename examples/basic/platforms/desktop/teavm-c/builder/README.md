@@ -1,6 +1,7 @@
-# TeaVM Desktop C Build Instructions
+# Basic Example TeaVM Desktop C Build Instructions
 
-This guide explains how to compile Java code to C using TeaVM and build a native executable with CMake.
+This guide explains how to compile the basic example's selected desktop test to C using TeaVM and build a
+native GLFW executable with CMake. This is an interactive example launcher, not a benchmark harness.
 
 ## Prerequisites
 
@@ -38,7 +39,7 @@ Run a Gradle task to generate C code using TeaVM and build the native executable
 ./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_release_build
 ```
 
-The launcher always uses `TeaVMOptimizationLevel.FULL`.
+The launcher does not force an optimization level, so `TeaVMTool` keeps its default `SIMPLE` level.
 
 **Generate C code only**
 ```shell

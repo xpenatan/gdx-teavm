@@ -15,12 +15,12 @@ gdxTeaVM {
     reflection("com.badlogic.gdx.controllers.IosControllerManager")
 
     ios {
-        mainClass.set("ControllerIOSLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        debugInformation.set(false)
-        obfuscated.set(false)
-        minHeapSizeMb.set(16)
-        maxHeapSizeMb.set(128)
-        bundleIdentifier.set("com.github.xpenatan.gdxteavm.controllers.ios")
+        mainClass = "ControllerIOSLauncher"
+        optimization = OptimizationLevel.NONE
+        debugInformation = false
+        obfuscated = false
+        minHeapSizeMb = 16
+        maxHeapSizeMb = 128
+        bundleIdentifier = "com.github.xpenatan.gdxteavm.controllers.ios"
     }
 }

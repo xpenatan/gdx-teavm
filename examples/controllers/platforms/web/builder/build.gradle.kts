@@ -11,7 +11,7 @@ val webTaskGroup = "example-web"
 tasks.register<JavaExec>("controllers_web_run") {
     group = webTaskGroup
     description = "Generate and serve the gdx-controllers JavaScript web example"
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     args("js")
 }
@@ -19,7 +19,7 @@ tasks.register<JavaExec>("controllers_web_run") {
 tasks.register<JavaExec>("controllers_web_wasm_run") {
     group = webTaskGroup
     description = "Generate and serve the gdx-controllers Wasm web example"
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     args("wasm")
 }

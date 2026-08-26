@@ -5,8 +5,6 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflection
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.compat.TeaVMCCompatibilityTarget;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.ClassResourceTransformer;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.SmartArrayFastPathTransformer;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.optimizations.SpriteBatchDrawTransformer;
 import java.net.URL;
 import java.util.ArrayList;
 import org.teavm.backend.c.TeaVMCHost;
@@ -24,8 +22,6 @@ public class IOSPlugin implements TeaVMPlugin {
         if(cHost != null) {
             TeaVMCCompatibilityTarget.install(host);
             host.add(new ClassResourceTransformer());
-            host.add(new SpriteBatchDrawTransformer());
-            host.add(new SmartArrayFastPathTransformer());
             if(config.nativeOutputRoot.isBlank()) {
                 return;
             }

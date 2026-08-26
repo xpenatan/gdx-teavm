@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,244 +10,137 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import java.util.Random;
 
-public class SpriteBatchTest extends ApplicationAdapter implements InputProcessor {
-    int SPRITES = 100 / 2;
+public class SpriteBatchTest extends ApplicationAdapter {
+    private static final String LOG_TAG = "SpriteBatchTest";
+    private static final String TEXTURE_PATH = "data/badlogicsmall.jpg";
+    private static final int MAX_SPRITES = 8191;
+    private static final int SPRITE_SIZE = 32;
+    private static final long POSITION_SEED = 0x51F15E2DL;
+    private static final long NANOS_PER_SECOND = 1_000_000_000L;
+    private static final float ROTATION_SPEED = 20f;
+    private static final float MIN_SCALE = 0.5f;
+    private static final float MAX_SCALE = 1f;
+    private static final float SCALE_SPEED = 0.5f;
 
-    long startTime = TimeUtils.nanoTime();
-    int frames = 0;
-
-    Texture texture;
-    Texture texture2;
-    // Font font;
-    SpriteBatch spriteBatch;
-    float sprites[] = new float[SPRITES * 6];
-    float sprites2[] = new float[SPRITES * 6];
-    Sprite[] sprites3 = new Sprite[SPRITES * 2];
-    float angle = 0;
-    float ROTATION_SPEED = 20;
-    float scale = 1;
-    float SCALE_SPEED = -1;
-    int renderMethod = 0;
-
-    @Override
-    public void render() {
-        if(renderMethod == 0) renderNormal();
-        ;
-        if(renderMethod == 1) renderSprites();
-    }
-
-    private void renderNormal() {
-        ScreenUtils.clear(0.7f, 0.7f, 0.7f, 1);
-
-        float begin = 0;
-        float end = 0;
-        float draw1 = 0;
-        float draw2 = 0;
-        float drawText = 0;
-
-        angle += ROTATION_SPEED * Gdx.graphics.getDeltaTime();
-        scale += SCALE_SPEED * Gdx.graphics.getDeltaTime();
-        if(scale < 0.5f) {
-            scale = 0.5f;
-            SCALE_SPEED = 1;
-        }
-        if(scale > 1.0f) {
-            scale = 1.0f;
-            SCALE_SPEED = -1;
-        }
-
-        long start = TimeUtils.nanoTime();
-        spriteBatch.begin();
-        begin = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-        for(int i = 0; i < sprites.length; i += 6)
-            spriteBatch.draw(texture, sprites[i], sprites[i + 1], 16, 16, 32, 32, scale, scale, angle, 0, 0, 32, 32, false, false);
-        draw1 = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-        for(int i = 0; i < sprites2.length; i += 6)
-            spriteBatch.draw(texture2, sprites2[i], sprites2[i + 1], 16, 16, 32, 32, scale, scale, angle, 0, 0, 32, 32, false,
-                    false);
-        draw2 = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-// spriteBatch.drawText(font, "Question?", 100, 300, Color.RED);
-// spriteBatch.drawText(font, "and another this is a test", 200, 100, Color.WHITE);
-// spriteBatch.drawText(font, "all hail and another this is a test", 200, 200, Color.WHITE);
-// spriteBatch.drawText(font, "normal fps: " + Gdx.graphics.getFramesPerSecond(), 10, 30, Color.RED);
-        drawText = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-        spriteBatch.end();
-        end = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        if(TimeUtils.nanoTime() - startTime > 1000000000) {
-            Gdx.app.log("SpriteBatch", "fps: " + frames + ", render calls: " + spriteBatch.renderCalls + ", " + begin + ", " + draw1
-                    + ", " + draw2 + ", " + drawText + ", " + end);
-            frames = 0;
-            startTime = TimeUtils.nanoTime();
-        }
-        frames++;
-
-    }
-
-    private void renderSprites() {
-        ScreenUtils.clear(0.7f, 0.7f, 0.7f, 1);
-
-        float begin = 0;
-        float end = 0;
-        float draw1 = 0;
-        float draw2 = 0;
-        float drawText = 0;
-
-        long start = TimeUtils.nanoTime();
-        spriteBatch.begin();
-        begin = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        float angleInc = ROTATION_SPEED * Gdx.graphics.getDeltaTime();
-        scale += SCALE_SPEED * Gdx.graphics.getDeltaTime();
-        if(scale < 0.5f) {
-            scale = 0.5f;
-            SCALE_SPEED = 1;
-        }
-        if(scale > 1.0f) {
-            scale = 1.0f;
-            SCALE_SPEED = -1;
-        }
-
-        start = TimeUtils.nanoTime();
-        for(int i = 0; i < SPRITES; i++) {
-            if(angleInc != 0) sprites3[i].rotate(angleInc); // this is aids
-            if(scale != 1) sprites3[i].setScale(scale); // this is aids
-            sprites3[i].draw(spriteBatch);
-        }
-        draw1 = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-        for(int i = SPRITES; i < SPRITES << 1; i++) {
-            if(angleInc != 0) sprites3[i].rotate(angleInc); // this is aids
-            if(scale != 1) sprites3[i].setScale(scale); // this is aids
-            sprites3[i].draw(spriteBatch);
-        }
-        draw2 = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-// spriteBatch.drawText(font, "Question?", 100, 300, Color.RED);
-// spriteBatch.drawText(font, "and another this is a test", 200, 100, Color.WHITE);
-// spriteBatch.drawText(font, "all hail and another this is a test", 200, 200, Color.WHITE);
-// spriteBatch.drawText(font, "Sprite fps: " + Gdx.graphics.getFramesPerSecond(), 10, 30, Color.RED);
-        drawText = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        start = TimeUtils.nanoTime();
-        spriteBatch.end();
-        end = (TimeUtils.nanoTime() - start) / 1000000000.0f;
-
-        if(TimeUtils.nanoTime() - startTime > 1000000000) {
-            Gdx.app.log("SpriteBatch", "fps: " + frames + ", render calls: " + spriteBatch.renderCalls + ", " + begin + ", " + draw1
-                    + ", " + draw2 + ", " + drawText + ", " + end);
-            frames = 0;
-            startTime = TimeUtils.nanoTime();
-        }
-        frames++;
-    }
+    private SpriteBatch spriteBatch;
+    private Texture texture;
+    private Sprite[] sprites;
+    private float scale = MAX_SCALE;
+    private float scaleDirection = -1f;
+    private long fpsLogStartNanos;
+    private int renderedFrames;
 
     @Override
     public void create() {
-        spriteBatch = new SpriteBatch(1000);
+        spriteBatch = new SpriteBatch(MAX_SPRITES);
+        texture = createTexture();
+        sprites = new Sprite[MAX_SPRITES];
 
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("data/badlogicsmall.jpg"));
-        texture = new Texture(32, 32, Format.RGB565);
-        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        texture.draw(pixmap, 0, 0);
-        pixmap.dispose();
-
-        pixmap = new Pixmap(32, 32, Format.RGBA8888);
-        pixmap.setColor(1, 1, 0, 0.5f);
-        pixmap.fill();
-        texture2 = new Texture(pixmap);
-        pixmap.dispose();
-
-        for(int i = 0; i < sprites.length; i += 6) {
-            sprites[i] = (int)(Math.random() * (Gdx.graphics.getWidth() - 32));
-            sprites[i + 1] = (int)(Math.random() * (Gdx.graphics.getHeight() - 32));
-            sprites[i + 2] = 0;
-            sprites[i + 3] = 0;
-            sprites[i + 4] = 32;
-            sprites[i + 5] = 32;
-            sprites2[i] = (int)(Math.random() * (Gdx.graphics.getWidth() - 32));
-            sprites2[i + 1] = (int)(Math.random() * (Gdx.graphics.getHeight() - 32));
-            sprites2[i + 2] = 0;
-            sprites2[i + 3] = 0;
-            sprites2[i + 4] = 32;
-            sprites2[i + 5] = 32;
+        for(int i = 0; i < sprites.length; i++) {
+            Sprite sprite = new Sprite(texture, SPRITE_SIZE, SPRITE_SIZE);
+            sprite.setOrigin(SPRITE_SIZE * 0.5f, SPRITE_SIZE * 0.5f);
+            sprite.setRotation(360f * i / sprites.length);
+            sprites[i] = sprite;
         }
 
-        for(int i = 0; i < SPRITES * 2; i++) {
-            int x = (int)(Math.random() * (Gdx.graphics.getWidth() - 32));
-            int y = (int)(Math.random() * (Gdx.graphics.getHeight() - 32));
+        layoutSprites(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        fpsLogStartNanos = TimeUtils.nanoTime();
+        Gdx.app.log(LOG_TAG, "started sprites=" + sprites.length + " batchCapacity=" + MAX_SPRITES);
+    }
 
-            if(i >= SPRITES)
-                sprites3[i] = new Sprite(texture2, 32, 32);
-            else
-                sprites3[i] = new Sprite(texture, 32, 32);
-            sprites3[i].setPosition(x, y);
-            sprites3[i].setOrigin(16, 16);
+    @Override
+    public void render() {
+        ScreenUtils.clear(0.08f, 0.08f, 0.1f, 1f);
+
+        float delta = Gdx.graphics.getDeltaTime();
+        float rotationDelta = ROTATION_SPEED * delta;
+        updateScale(delta);
+
+        spriteBatch.begin();
+        for(int i = 0; i < sprites.length; i++) {
+            Sprite sprite = sprites[i];
+            sprite.rotate(rotationDelta);
+            sprite.setScale(scale);
+            sprite.draw(spriteBatch);
         }
+        spriteBatch.end();
 
-        Gdx.input.setInputProcessor(this);
+        logFps();
     }
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log("SpriteBatchTest", "resized: " + width + ", " + height);
+        if(spriteBatch == null || sprites == null) {
+            return;
+        }
+        spriteBatch.getProjectionMatrix().setToOrtho2D(0f, 0f, width, height);
+        layoutSprites(width, height);
+        Gdx.app.log(LOG_TAG, "resized width=" + width + " height=" + height);
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        return false;
+    public void dispose() {
+        if(spriteBatch != null) {
+            spriteBatch.dispose();
+            spriteBatch = null;
+        }
+        if(texture != null) {
+            texture.dispose();
+            texture = null;
+        }
     }
 
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
+    protected Pixmap loadSpritePixmap() {
+        return new Pixmap(Gdx.files.internal(TEXTURE_PATH));
     }
 
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
+    private Texture createTexture() {
+        Pixmap pixmap = loadSpritePixmap();
+        Texture spriteTexture = new Texture(SPRITE_SIZE, SPRITE_SIZE, Format.RGB565);
+        spriteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        spriteTexture.draw(pixmap, 0, 0);
+        pixmap.dispose();
+        return spriteTexture;
     }
 
-    @Override
-    public boolean touchDown(int x, int y, int pointer, int newParam) {
-        return false;
+    private void updateScale(float delta) {
+        scale += scaleDirection * SCALE_SPEED * delta;
+        if(scale <= MIN_SCALE) {
+            scale = MIN_SCALE;
+            scaleDirection = 1f;
+        }
+        else if(scale >= MAX_SCALE) {
+            scale = MAX_SCALE;
+            scaleDirection = -1f;
+        }
     }
 
-    @Override
-    public boolean touchDragged(int x, int y, int pointer) {
-        return false;
+    private void layoutSprites(int width, int height) {
+        Random random = new Random(POSITION_SEED);
+        float availableWidth = Math.max(0, width - SPRITE_SIZE);
+        float availableHeight = Math.max(0, height - SPRITE_SIZE);
+        for(int i = 0; i < sprites.length; i++) {
+            sprites[i].setPosition(random.nextFloat() * availableWidth, random.nextFloat() * availableHeight);
+        }
     }
 
-    @Override
-    public boolean touchUp(int x, int y, int pointer, int button) {
-        renderMethod = (renderMethod + 1) % 2;
-        return false;
-    }
+    private void logFps() {
+        renderedFrames++;
+        long now = TimeUtils.nanoTime();
+        long elapsed = now - fpsLogStartNanos;
+        if(elapsed < NANOS_PER_SECOND) {
+            return;
+        }
 
-    @Override
-    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        return false;
+        long fps = ((long)renderedFrames * NANOS_PER_SECOND + elapsed / 2L) / elapsed;
+        Gdx.app.log(LOG_TAG, "fps=" + fps
+                + " sprites=" + sprites.length
+                + " renderCalls=" + spriteBatch.renderCalls
+                + " maxSpritesInBatch=" + spriteBatch.maxSpritesInBatch
+                + " scale=" + scale);
+        renderedFrames = 0;
+        fpsLogStartNanos = now;
     }
-
-    @Override
-    public boolean mouseMoved(int x, int y) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
-    }
-
 }

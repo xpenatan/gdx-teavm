@@ -11,7 +11,7 @@ tasks.register<JavaExec>("controllers_desktop_run") {
     dependsOn("classes")
     group = "example-desktop"
     description = "Run gdx-controllers desktop example"
-    mainClass.set("ControllerDesktopLauncher")
+    mainClass = "ControllerDesktopLauncher"
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = assetsDir
 

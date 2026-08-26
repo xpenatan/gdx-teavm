@@ -1,53 +1,17 @@
 import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.internal.os.OperatingSystem
 import java.time.Instant
 
 data class BenchmarkReportRow(
     val backend: String,
     val test: String,
-    val sprites: String,
     val width: String,
     val height: String,
-    val rotate: String,
-    val scale: String,
-    val clear: String,
     val vsync: String,
     val avgFps: String,
     val minFps: String,
     val maxFps: String,
     val samples: String
 )
-
-data class BenchmarkScenario(
-    val name: String,
-    val clear: String
-)
-
-fun benchmarkProperty(name: String, defaultValue: String): String {
-    return (findProperty(name) as String?) ?: defaultValue
-}
-
-fun benchmarkArgs(
-    testName: String = benchmarkProperty("benchTest", "spritebatch_default"),
-    resultFile: File? = null,
-    clearValue: String = benchmarkProperty("benchClear", "true")
-): List<String> {
-    val args = mutableListOf(
-        "--test=$testName",
-        "--seconds=${benchmarkProperty("benchSeconds", "15")}",
-        "--warmup=${benchmarkProperty("benchWarmup", "3")}",
-        "--width=${benchmarkProperty("benchWidth", "640")}",
-        "--height=${benchmarkProperty("benchHeight", "480")}",
-        "--rotate=${benchmarkProperty("benchRotate", "true")}",
-        "--scale=${benchmarkProperty("benchScale", "true")}",
-        "--clear=$clearValue"
-    )
-    if(resultFile != null) {
-        args += "--resultFile=${resultFile.absolutePath}"
-    }
-    return args
-}
 
 fun parseBenchmarkReportRows(file: File): List<BenchmarkReportRow> {
     if(!file.isFile) {
@@ -58,7 +22,7 @@ fun parseBenchmarkReportRows(file: File): List<BenchmarkReportRow> {
         .filter { it.isNotBlank() }
         .mapNotNull { line ->
             val parts = line.split('\t')
-            if(parts.size < 13) {
+            if(parts.size < 9) {
                 null
             }
             else {
@@ -71,11 +35,7 @@ fun parseBenchmarkReportRows(file: File): List<BenchmarkReportRow> {
                     parts[5],
                     parts[6],
                     parts[7],
-                    parts[8],
-                    parts[9],
-                    parts[10],
-                    parts[11],
-                    parts[12]
+                    parts[8]
                 )
             }
         }
@@ -91,10 +51,12 @@ fun writeBenchmarkMarkdownReport(resultFile: File, reportFile: File, title: Stri
         appendLine()
         appendLine("Missing backend rows mean that run did not reach `BENCH_RESULT`; check the console output for the failure.")
         appendLine()
-        appendLine("| Backend | Test | Sprites | Size | Rotate | Scale | Clear | VSync | Avg FPS | Min FPS | Max FPS | Samples |")
-        appendLine("|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+        appendLine("Each workload is an unchanged test object supplied by its launcher; workload behavior remains owned by its test class.")
+        appendLine()
+        appendLine("| Backend | Test | Size | VSync | Avg FPS | Min FPS | Max FPS | Samples |")
+        appendLine("|---|---|---:|---:|---:|---:|---:|---:|")
         for(row in rows) {
-            appendLine("| ${row.backend} | ${row.test} | ${row.sprites} | ${row.width}x${row.height} | ${row.rotate} | ${row.scale} | ${row.clear} | ${row.vsync} | ${row.avgFps} | ${row.minFps} | ${row.maxFps} | ${row.samples} |")
+            appendLine("| ${row.backend} | ${row.test} | ${row.width}x${row.height} | ${row.vsync} | ${row.avgFps} | ${row.minFps} | ${row.maxFps} | ${row.samples} |")
         }
         if(rows.isEmpty()) {
             appendLine()
@@ -103,170 +65,44 @@ fun writeBenchmarkMarkdownReport(resultFile: File, reportFile: File, title: Stri
     })
 }
 
-fun runtimeClasspath(projectPath: String) =
-    project(projectPath).extensions.getByType(SourceSetContainer::class.java)
-        .named("main").get().runtimeClasspath
+val benchmarkResultFile = layout.buildDirectory.file("benchmark-results/results.tsv")
+val benchmarkReportFile = layout.buildDirectory.file("benchmark-results/results.md")
 
-fun JavaExec.configureLwjgl3BenchmarkProcess(benchmarkArgs: List<String>) {
-    mainClass.set("com.github.xpenatan.gdx.teavm.benchmarks.lwjgl3.Lwjgl3BenchmarkLauncher")
-    classpath = runtimeClasspath(":benchmark:lwjgl3")
-    workingDir = file("../examples/basic/assets")
-    args(benchmarkArgs)
-    standardInput = System.`in`
-    standardOutput = System.out
-    errorOutput = System.err
-
-    if(OperatingSystem.current().isMacOsX) {
-        jvmArgs("-XstartOnFirstThread")
-    }
-}
-
-fun JavaExec.configureGlfwBenchmarkProcess(benchmarkArgs: List<String>, buildAction: String = "run") {
-    mainClass.set("com.github.xpenatan.gdx.teavm.benchmarks.glfw.BuildTeaVMBenchmark")
-    classpath = runtimeClasspath(":benchmark:glfw")
-    workingDir = project(":benchmark:glfw").projectDir
-    val processArgs = mutableListOf("Release", buildAction)
-    if(buildAction != "build" && benchmarkProperty("benchGlfwConsole", "true").toBoolean()) {
-        processArgs += "console"
-    }
-    if(buildAction != "build") {
-        processArgs += "--continueOnTimeout=${benchmarkProperty("benchGlfwContinueOnTimeout", "true")}"
-    }
-    processArgs += benchmarkArgs
-    args(processArgs)
-    standardInput = System.`in`
-    standardOutput = System.out
-    errorOutput = System.err
-}
-
-val spriteBatchResultFile = layout.buildDirectory.file("benchmark-results/spritebatch/results.tsv")
-val spriteBatchReportFile = layout.buildDirectory.file("benchmark-results/spritebatch/results.md")
-val matrixResultFile = layout.buildDirectory.file("benchmark-results/matrix/results.tsv")
-val matrixReportFile = layout.buildDirectory.file("benchmark-results/matrix/results.md")
-
-val prepareSpriteBatchReport = tasks.register("prepareSpriteBatchReport") {
-    group = "benchmark"
-    description = "Clear previous SpriteBatch benchmark report data"
+val prepareBenchmarkReport = tasks.register("prepareBenchmarkReport") {
+    description = "Clear previous desktop benchmark report data before a comparison"
 
     doLast {
-        spriteBatchResultFile.get().asFile.delete()
-        spriteBatchReportFile.get().asFile.delete()
+        benchmarkResultFile.get().asFile.delete()
+        benchmarkReportFile.get().asFile.delete()
     }
 }
 
-val compareSpriteBatchGlfw = tasks.register<JavaExec>("compareSpriteBatchGlfw") {
-    group = "benchmark"
-    description = "Run SpriteBatch default benchmark on TeaVM GLFW Release"
-    dependsOn(":benchmark:glfw:classes", prepareSpriteBatchReport)
-    configureGlfwBenchmarkProcess(benchmarkArgs("spritebatch_default", spriteBatchResultFile.get().asFile))
+evaluationDependsOn(":benchmark:glfw")
+evaluationDependsOn(":benchmark:lwjgl3")
+
+val resultArgument = "--resultFile=${benchmarkResultFile.get().asFile.absolutePath}"
+
+val glfwBenchmark = project(":benchmark:glfw").tasks.named<JavaExec>("benchmarkRelease") {
+    dependsOn(prepareBenchmarkReport)
+    args(resultArgument)
 }
 
-val compareSpriteBatchLwjgl3 = tasks.register<JavaExec>("compareSpriteBatchLwjgl3") {
-    group = "benchmark"
-    description = "Run SpriteBatch default benchmark on stock libGDX LWJGL3"
-    dependsOn(":benchmark:lwjgl3:classes", prepareSpriteBatchReport)
-    mustRunAfter(compareSpriteBatchGlfw)
-    configureLwjgl3BenchmarkProcess(benchmarkArgs("spritebatch_default", spriteBatchResultFile.get().asFile))
-}
-
-tasks.register("compareSpriteBatch") {
-    group = "benchmark"
-    description = "Compare SpriteBatch default mode on LWJGL3 and TeaVM GLFW Release"
-    dependsOn(compareSpriteBatchGlfw, compareSpriteBatchLwjgl3)
-
-    doLast {
-        val resultFile = spriteBatchResultFile.get().asFile
-        val reportFile = spriteBatchReportFile.get().asFile
-        writeBenchmarkMarkdownReport(resultFile, reportFile, "SpriteBatch Benchmark")
-        println("BENCH_REPORT $reportFile")
-    }
-}
-
-val compareGlfw = tasks.register<JavaExec>("compareGlfw") {
-    group = "benchmark"
-    description = "Run selected benchmark on TeaVM GLFW Release"
-    dependsOn(":benchmark:glfw:classes")
-    configureGlfwBenchmarkProcess(benchmarkArgs())
-}
-
-val compareLwjgl3 = tasks.register<JavaExec>("compareLwjgl3") {
-    group = "benchmark"
-    description = "Run selected benchmark on stock libGDX LWJGL3"
-    dependsOn(":benchmark:lwjgl3:classes")
-    mustRunAfter(compareGlfw)
-    configureLwjgl3BenchmarkProcess(benchmarkArgs())
+val lwjgl3Benchmark = project(":benchmark:lwjgl3").tasks.named<JavaExec>("benchmark") {
+    dependsOn(prepareBenchmarkReport)
+    mustRunAfter(glfwBenchmark)
+    args(resultArgument)
 }
 
 tasks.register("compare") {
     group = "benchmark"
-    description = "Run selected benchmark on LWJGL3 and TeaVM GLFW Release"
-    dependsOn(compareGlfw, compareLwjgl3)
-}
-
-val prepareMatrixReport = tasks.register("prepareBenchmarkMatrixReport") {
-    group = "benchmark"
-    description = "Clear previous benchmark matrix report data"
+    description = "Compare the configured test object on TeaVM C/GLFW and Java/LWJGL3"
+    dependsOn(glfwBenchmark, lwjgl3Benchmark)
 
     doLast {
-        matrixResultFile.get().asFile.delete()
-        matrixReportFile.get().asFile.delete()
-    }
-}
-
-val matrixScenarios = listOf(
-    BenchmarkScenario("spritebatch_default", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_fast", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_direct_getters", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_direct_array_state", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_simple_direct", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_precomputed_arraycopy", benchmarkProperty("benchClear", "true")),
-    BenchmarkScenario("spritebatch_begin_end", benchmarkProperty("benchClear", "false"))
-)
-
-val glfwMatrixBuild = tasks.register<JavaExec>("benchmarkMatrixGlfwBuild") {
-    group = "benchmark"
-    description = "Build the TeaVM GLFW benchmark executable once for matrix runs"
-    dependsOn(":benchmark:glfw:classes", prepareMatrixReport)
-    configureGlfwBenchmarkProcess(emptyList(), "build")
-}
-
-var previousMatrixTask: TaskProvider<out Task>? = null
-val matrixTasks = mutableListOf<TaskProvider<out Task>>()
-
-for(scenario in matrixScenarios) {
-    val testName = scenario.name
-    val taskSuffix = testName.split('_').joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
-    val previousBeforeGlfw = previousMatrixTask
-    val glfwTask = tasks.register<JavaExec>("benchmarkMatrix${taskSuffix}Glfw") {
-        group = "benchmark"
-        description = "Run $testName benchmark on TeaVM GLFW Release"
-        dependsOn(glfwMatrixBuild)
-        previousBeforeGlfw?.let { mustRunAfter(it) }
-        configureGlfwBenchmarkProcess(benchmarkArgs(testName, matrixResultFile.get().asFile, scenario.clear), "runExisting")
-    }
-    previousMatrixTask = glfwTask
-    matrixTasks += glfwTask
-
-    val lwjgl3Task = tasks.register<JavaExec>("benchmarkMatrix${taskSuffix}Lwjgl3") {
-        group = "benchmark"
-        description = "Run $testName benchmark on stock libGDX LWJGL3"
-        dependsOn(":benchmark:lwjgl3:classes", prepareMatrixReport)
-        mustRunAfter(glfwTask)
-        configureLwjgl3BenchmarkProcess(benchmarkArgs(testName, matrixResultFile.get().asFile, scenario.clear))
-    }
-    previousMatrixTask = lwjgl3Task
-    matrixTasks += lwjgl3Task
-}
-
-tasks.register("benchmarkMatrix") {
-    group = "benchmark"
-    description = "Run benchmark matrix and write a Markdown report"
-    dependsOn(matrixTasks)
-
-    doLast {
-        val resultFile = matrixResultFile.get().asFile
-        val reportFile = matrixReportFile.get().asFile
-        writeBenchmarkMarkdownReport(resultFile, reportFile, "gdx-teavm Benchmark Matrix")
-        println("BENCH_MATRIX_DONE Report written to ${reportFile.absolutePath}")
+        val resultFile = benchmarkResultFile.get().asFile
+        val reportFile = benchmarkReportFile.get().asFile
+        writeBenchmarkMarkdownReport(resultFile, reportFile,
+            "Desktop Benchmark (TeaVM C/GLFW vs Java/LWJGL3)")
+        println("BENCH_REPORT $reportFile")
     }
 }

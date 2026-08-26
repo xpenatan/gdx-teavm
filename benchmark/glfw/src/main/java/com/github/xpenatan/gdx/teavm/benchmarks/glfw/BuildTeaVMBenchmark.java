@@ -7,14 +7,11 @@ import com.github.xpenatan.gdx.teavm.benchmarks.BenchmarkConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class BuildTeaVMBenchmark {
     private static final String OUTPUT_NAME = "benchmark";
@@ -34,17 +31,16 @@ public class BuildTeaVMBenchmark {
     }
 
     private static void build(File outputDir, BuildOptions buildOptions) {
-        AssetFileHandle assetsPath = new AssetFileHandle("../../examples/basic/assets/data/badlogicsmall.jpg");
-        assetsPath.assetsChildDir = "data";
+        AssetFileHandle assetsPath = new AssetFileHandle("../../examples/basic/assets");
         TeaGLFWBackend cBackend = new TeaGLFWBackend()
                 .setBuildType(buildOptions.buildType)
                 .setBuildExecutableAfterBuild(buildOptions.action.buildExecutable)
                 .setRunExecutableAfterBuild(false);
 
+        System.out.println("TEAVM_MODE optimizer=default(SIMPLE)");
         new TeaBuilder(cBackend)
                 .addAssets(assetsPath)
                 .setObfuscated(false)
-                .setOptimizationLevel(TeaVMOptimizationLevel.FULL)
                 .setMinHeapSize(NATIVE_MIN_HEAP_SIZE)
                 .setMaxHeapSize(NATIVE_MAX_HEAP_SIZE)
                 .setMinDirectBuffersSize(NATIVE_MIN_DIRECT_BUFFER_SIZE)
@@ -83,9 +79,7 @@ public class BuildTeaVMBenchmark {
         boolean completed = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
         if(!completed) {
             killProcess(process, outputThread);
-            System.out.println("BENCH_TIMEOUT backend=teavm-glfw test=" + benchmarkConfig.testName
-                    + " timeoutSeconds=" + timeoutSeconds);
-            writeTimeoutResult(benchmarkConfig);
+            System.out.println("BENCH_TIMEOUT backend=teavm-glfw timeoutSeconds=" + timeoutSeconds);
             if(buildOptions.continueOnTimeout) {
                 return;
             }
@@ -150,40 +144,6 @@ public class BuildTeaVMBenchmark {
         if(outputThread != null) {
             outputThread.join(1000);
         }
-    }
-
-    private static void writeTimeoutResult(BenchmarkConfig config) throws IOException {
-        if(config.resultFile == null || config.resultFile.length() == 0) {
-            return;
-        }
-
-        File file = new File(config.resultFile);
-        File parent = file.getParentFile();
-        if(parent != null && !parent.exists() && !parent.mkdirs()) {
-            throw new IOException("Unable to create benchmark result directory: " + parent.getAbsolutePath());
-        }
-
-        boolean writeHeader = !file.isFile() || file.length() == 0;
-        StringBuilder builder = new StringBuilder();
-        if(writeHeader) {
-            builder.append("backend\ttest\tsprites\twidth\theight\trotate\tscale\tclear\tvsync\tavgFps\tminFps\tmaxFps\tsamples\n");
-        }
-        builder.append("teavm-glfw")
-                .append('\t').append(config.testName)
-                .append('\t').append(config.sprites)
-                .append('\t').append(config.width)
-                .append('\t').append(config.height)
-                .append('\t').append(config.rotate)
-                .append('\t').append(config.scale)
-                .append('\t').append(config.clear)
-                .append('\t').append(BenchmarkConfig.VSYNC_ENABLED)
-                .append('\t').append("TIMEOUT")
-                .append('\t').append(0)
-                .append('\t').append(0)
-                .append('\t').append(0)
-                .append('\n');
-        Files.writeString(file.toPath(), builder.toString(), StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
     private static class BuildOptions {

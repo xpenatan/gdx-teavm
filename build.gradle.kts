@@ -54,29 +54,29 @@ if(findProject(":extensions:android:gdx-controllers-android") != null) {
 easyPublishing {
     modules(publishingModules)
 
-    groupId.set(libs.versions.gdxTeavmGroup)
-    releaseVersion.set(libs.versions.gdxTeavmRelease)
-    snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
+    groupId = libs.versions.gdxTeavmGroup
+    releaseVersion = libs.versions.gdxTeavmRelease
+    snapshotVersion = libs.versions.gdxTeavmSnapshot
 
-    snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
-    releaseRepositoryUrl.set("https://central.sonatype.com")
-    username.set(providers.environmentVariable("CENTRAL_PORTAL_USERNAME"))
-    password.set(providers.environmentVariable("CENTRAL_PORTAL_PASSWORD"))
-    signingKey.set(providers.environmentVariable("SIGNING_KEY"))
-    signingPassword.set(providers.environmentVariable("SIGNING_PASSWORD"))
+    snapshotRepositoryUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+    releaseRepositoryUrl = "https://central.sonatype.com"
+    username = providers.environmentVariable("CENTRAL_PORTAL_USERNAME")
+    password = providers.environmentVariable("CENTRAL_PORTAL_PASSWORD")
+    signingKey = providers.environmentVariable("SIGNING_KEY")
+    signingPassword = providers.environmentVariable("SIGNING_PASSWORD")
 
-    pomName.set(libs.versions.gdxTeavmName)
-    pomDescription.set("Tool to generate libgdx to javascript using teaVM")
-    projectUrl.set("https://github.com/xpenatan/gdx-teavm")
+    pomName = libs.versions.gdxTeavmName
+    pomDescription = "Tool to generate libgdx to javascript using teaVM"
+    projectUrl = "https://github.com/xpenatan/gdx-teavm"
 
-    developerId.set("Xpe")
-    developerName.set("Natan")
+    developerId = "Xpe"
+    developerName = "Natan"
 
-    scmUrl.set("https://github.com/xpenatan/gdx-teavm")
-    scmConnection.set("scm:git:https://github.com/xpenatan/gdx-teavm.git")
-    scmDeveloperConnection.set("scm:git:ssh://git@github.com/xpenatan/gdx-teavm.git")
+    scmUrl = "https://github.com/xpenatan/gdx-teavm"
+    scmConnection = "scm:git:https://github.com/xpenatan/gdx-teavm.git"
+    scmDeveloperConnection = "scm:git:ssh://git@github.com/xpenatan/gdx-teavm.git"
 
     nestedBuild("gradle-plugin") {
-        directory.set(layout.projectDirectory.dir("tools/gdx-teavm-plugin"))
+        directory = layout.projectDirectory.dir("tools/gdx-teavm-plugin")
     }
 }

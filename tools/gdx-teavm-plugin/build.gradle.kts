@@ -66,7 +66,7 @@ kotlin {
 
 tasks.withType<KotlinCompile>().configureEach {
     dependsOn(generateGdxTeaVMPluginInfo)
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+    compilerOptions.jvmTarget = JvmTarget.JVM_17
 }
 
 tasks.withType<Jar>().matching { it.name == "sourcesJar" }.configureEach {
@@ -83,25 +83,25 @@ gradlePlugin {
 }
 
 easyPublishing {
-    groupId.set(libs.versions.gdxTeavmGroup)
-    releaseVersion.set(libs.versions.gdxTeavmRelease)
-    snapshotVersion.set(libs.versions.gdxTeavmSnapshot)
+    groupId = libs.versions.gdxTeavmGroup
+    releaseVersion = libs.versions.gdxTeavmRelease
+    snapshotVersion = libs.versions.gdxTeavmSnapshot
 
-    snapshotRepositoryUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
-    releaseRepositoryUrl.set("https://central.sonatype.com")
-    username.set(providers.environmentVariable("CENTRAL_PORTAL_USERNAME"))
-    password.set(providers.environmentVariable("CENTRAL_PORTAL_PASSWORD"))
-    signingKey.set(providers.environmentVariable("SIGNING_KEY"))
-    signingPassword.set(providers.environmentVariable("SIGNING_PASSWORD"))
+    snapshotRepositoryUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+    releaseRepositoryUrl = "https://central.sonatype.com"
+    username = providers.environmentVariable("CENTRAL_PORTAL_USERNAME")
+    password = providers.environmentVariable("CENTRAL_PORTAL_PASSWORD")
+    signingKey = providers.environmentVariable("SIGNING_KEY")
+    signingPassword = providers.environmentVariable("SIGNING_PASSWORD")
 
-    pomName.set("gdx-teavm Gradle plugin")
-    pomDescription.set("Gradle plugin for building libGDX TeaVM web and native targets")
-    projectUrl.set("https://github.com/xpenatan/gdx-teavm")
+    pomName = "gdx-teavm Gradle plugin"
+    pomDescription = "Gradle plugin for building libGDX TeaVM web and native targets"
+    projectUrl = "https://github.com/xpenatan/gdx-teavm"
 
-    developerId.set("Xpe")
-    developerName.set("Natan")
+    developerId = "Xpe"
+    developerName = "Natan"
 
-    scmUrl.set("https://github.com/xpenatan/gdx-teavm")
-    scmConnection.set("scm:git:https://github.com/xpenatan/gdx-teavm.git")
-    scmDeveloperConnection.set("scm:git:ssh://git@github.com/xpenatan/gdx-teavm.git")
+    scmUrl = "https://github.com/xpenatan/gdx-teavm"
+    scmConnection = "scm:git:https://github.com/xpenatan/gdx-teavm.git"
+    scmDeveloperConnection = "scm:git:ssh://git@github.com/xpenatan/gdx-teavm.git"
 }

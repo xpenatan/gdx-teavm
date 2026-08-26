@@ -12,8 +12,8 @@ val mainClassName = "Main"
 tasks.register<JavaExec>("basic_desktop_run") {
     dependsOn("classes")
     group = "example-desktop"
-    description = "Run basic example"
-    mainClass.set(mainClassName)
+    description = "Run SpriteBatchTest on Java/LWJGL3"
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = assetsDir
 

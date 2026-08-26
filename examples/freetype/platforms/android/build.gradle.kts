@@ -92,12 +92,12 @@ dependencies {
 
 gdxTeaVM {
     android {
-        mainClass.set("FreetypeAndroidLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        debugInformation.set(false)
-        obfuscated.set(false)
-        minHeapSizeMb.set(16)
-        maxHeapSizeMb.set(128)
+        mainClass = "FreetypeAndroidLauncher"
+        optimization = OptimizationLevel.NONE
+        debugInformation = false
+        obfuscated = false
+        minHeapSizeMb = 16
+        maxHeapSizeMb = 128
     }
 }
 

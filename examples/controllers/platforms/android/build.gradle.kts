@@ -94,12 +94,12 @@ gdxTeaVM {
     reflection("com.badlogic.gdx.controllers.android.AndroidControllers")
 
     android {
-        mainClass.set("ControllerAndroidLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        debugInformation.set(false)
-        obfuscated.set(false)
-        minHeapSizeMb.set(16)
-        maxHeapSizeMb.set(128)
+        mainClass = "ControllerAndroidLauncher"
+        optimization = OptimizationLevel.NONE
+        debugInformation = false
+        obfuscated = false
+        minHeapSizeMb = 16
+        maxHeapSizeMb = 128
     }
 }
 

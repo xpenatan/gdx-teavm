@@ -14,13 +14,13 @@ gdxTeaVM {
     assets.from(file("../../../assets"))
 
     js {
-        mainClass.set("ControllerWebLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
+        mainClass = "ControllerWebLauncher"
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = false
     }
     wasm {
-        mainClass.set("ControllerWebLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
+        mainClass = "ControllerWebLauncher"
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = false
     }
 }

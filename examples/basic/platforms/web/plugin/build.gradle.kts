@@ -16,36 +16,36 @@ gdxTeaVM {
     reflection.add("com.badlogic.gdx.math.Vector2")
 
     webDefaults {
-        mainClass.set("TestWebLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        obfuscated.set(false)
+        mainClass = "TestWebLauncher"
+        optimization = OptimizationLevel.NONE
+        obfuscated = false
     }
 
     js {
-        debugInformation.set(true)
-        sourceMap.set(true)
-        sourceFilePolicy.set(SourceFilePolicy.COPY)
+        debugInformation = true
+        sourceMap = true
+        sourceFilePolicy = SourceFilePolicy.COPY
         devServer {
-            enabled.set(true)
-            autoReload.set(true)
+            enabled = true
+            autoReload = true
         }
     }
     wasm {
         devServer {
-            enabled.set(true)
-            autoReload.set(true)
+            enabled = true
+            autoReload = true
         }
     }
 
     js("release") {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
-        serverPort.set(8181)
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
+        serverPort = 8181
     }
 
     wasm("release") {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
-        serverPort.set(8282)
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
+        serverPort = 8282
     }
 }

@@ -96,7 +96,6 @@ include(":benchmark")
 include(":benchmark:core")
 include(":benchmark:lwjgl3")
 include(":benchmark:glfw")
-include(":benchmark:plugin")
 
 val gdxSourcePath = providers.gradleProperty("gdxSourcePath").getOrElse("")
 val teavmPath = providers.gradleProperty("teavmPath").getOrElse("")

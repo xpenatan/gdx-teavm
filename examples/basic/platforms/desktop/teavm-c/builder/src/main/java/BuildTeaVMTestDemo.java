@@ -4,7 +4,6 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
-import org.teavm.vm.TeaVMOptimizationLevel;
 
 public class BuildTeaVMTestDemo {
 
@@ -24,14 +23,10 @@ public class BuildTeaVMTestDemo {
         new TeaBuilder(cBackend)
                 .addAssets(assetsPath)
                 .setObfuscated(false)
-                .setOptimizationLevel(TeaVMOptimizationLevel.FULL)
                 .setMinHeapSize(NATIVE_MIN_HEAP_SIZE)
                 .setMaxHeapSize(NATIVE_MAX_HEAP_SIZE)
                 .setMinDirectBuffersSize(NATIVE_MIN_DIRECT_BUFFER_SIZE)
                 .setMainClass(TestCLauncher.class.getName())
-                .addReflectionClass("com.badlogic.gdx.math.Vector2")
-                .addReflectionClass("com.github.xpenatan.gdx.teavm.examples.basic.tests.webgl.JsonTest**")
-                .addReflectionClass("com.badlogic.gdx.utils.IntIntMap**")
                 .build(new File("build/dist"));
     }
 

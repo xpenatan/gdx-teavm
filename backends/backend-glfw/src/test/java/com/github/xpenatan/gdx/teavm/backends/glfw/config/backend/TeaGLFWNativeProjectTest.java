@@ -68,6 +68,22 @@ public class TeaGLFWNativeProjectTest {
     }
 
     @Test
+    public void nativeProjectHasNoSpriteBatchOptimizationBridge() throws Exception {
+        File buildRoot = temporaryFolder.newFolder("pure-teavm-spritebatch-project");
+        TeaGLFWNativeProject project = new TeaGLFWNativeProject(
+                TeaGLFWNativeProject.class.getClassLoader(),
+                buildRoot,
+                new File(buildRoot, "c/src"),
+                new File(buildRoot, "release"));
+
+        project.write("test_app");
+
+        String cmake = read(buildRoot, "CMakeLists.txt");
+        assertThat(cmake).doesNotContain("teavm_spritebatch");
+        assertThat(cmake).doesNotContain("GDX_TEAVM_SPRITEBATCH");
+    }
+
+    @Test
     public void windowsConsoleRunWaitsBeforeClosingAndPreservesExitCode() throws Exception {
         String script = readResource("templates/glfw/app_console.bat");
 

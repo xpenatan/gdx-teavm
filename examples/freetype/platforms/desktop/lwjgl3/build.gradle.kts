@@ -13,7 +13,7 @@ tasks.register<JavaExec>("freetype_desktop_run") {
     dependsOn("classes")
     group = "example-desktop"
     description = "Run Freetype example"
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = assetsDir
 

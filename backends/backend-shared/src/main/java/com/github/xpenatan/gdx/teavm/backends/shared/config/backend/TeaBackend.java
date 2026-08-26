@@ -82,7 +82,9 @@ public abstract class TeaBackend {
     private void initializeTeavmTool(TeaBuilderData data) {
         tool = new TeaVMTool();
         tool.setObfuscated(data.obfuscated);
-        tool.setOptimizationLevel(data.optimizationLevel);
+        if(data.optimizationLevel != null) {
+            tool.setOptimizationLevel(data.optimizationLevel);
+        }
         tool.setMainClass(data.mainClass);
         tool.setClassLoader(classLoader);
         tool.setSourceFilePolicy(data.sourceFilePolicy);

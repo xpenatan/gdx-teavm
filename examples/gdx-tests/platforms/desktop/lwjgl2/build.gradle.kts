@@ -16,7 +16,7 @@ tasks.register<JavaExec>("gdx_tests_run_desktop") {
     dependsOn("classes")
     group = "examples-desktop"
     description = "Run gdx tests example"
-    mainClass.set(mainClassName)
+    mainClass = mainClassName
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = gdxTestsAssetsDir
 }

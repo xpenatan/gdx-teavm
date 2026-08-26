@@ -14,13 +14,13 @@ gdxTeaVM {
     assets.from(file("../../../assets"))
 
     js {
-        mainClass.set("FreetypeTestLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
+        mainClass = "FreetypeTestLauncher"
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = false
     }
     wasm {
-        mainClass.set("FreetypeTestLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(false)
+        mainClass = "FreetypeTestLauncher"
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = false
     }
 }
