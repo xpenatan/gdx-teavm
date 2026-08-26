@@ -66,8 +66,8 @@ gdxTeaVM {
     reflection("com.example.game.save**")
 
     webDefaults {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("My Game")
+        mainClass = "com.example.game.teavm.WebLauncher"
+        htmlTitle = "My Game"
     }
 
     js {}

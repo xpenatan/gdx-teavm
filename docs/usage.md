@@ -64,7 +64,7 @@ gdxTeaVM {
     reflection("com.example.game.save**")
 
     webDefaults {
-        mainClass.set("com.example.game.teavm.WebLauncher")
+        mainClass = "com.example.game.teavm.WebLauncher"
     }
 
     js {}
@@ -99,61 +99,61 @@ gdxTeaVM {
 
     // Shared by every JS and Wasm target in this module.
     webDefaults {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("My Game")
-        htmlWidth.set(1280)
-        htmlHeight.set(720)
-        obfuscated.set(false)
+        mainClass = "com.example.game.teavm.WebLauncher"
+        htmlTitle = "My Game"
+        htmlWidth = 1280
+        htmlHeight = 720
+        obfuscated = false
     }
 
     // Unnamed development targets keep the original task names.
     js {
-        serverPort.set(8080)
+        serverPort = 8080
         devServer {
-            enabled.set(true)
-            autoBuild.set(true)
-            autoReload.set(true)
+            enabled = true
+            autoBuild = true
+            autoReload = true
         }
     }
 
     wasm {
-        serverPort.set(8081)
-        outOfProcess.set(true)
-        processMemory.set(1024)
+        serverPort = 8081
+        outOfProcess = true
+        processMemory = 1024
     }
 
     // Named release targets have independent properties, output, and tasks.
     js("release") {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
-        serverPort.set(8180)
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
+        serverPort = 8180
     }
 
     wasm("release") {
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
-        outOfProcess.set(true)
-        processMemory.set(2048)
-        serverPort.set(8181)
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
+        outOfProcess = true
+        processMemory = 2048
+        serverPort = 8181
     }
 
     // Shared by every TeaVM C/native target in this module. This module's
     // native variants both use the same GLFW launcher.
     nativeDefaults {
-        mainClass.set("com.example.game.teavm.GlfwLauncher")
-        minHeapSizeMb.set(64)
-        maxHeapSizeMb.set(512)
+        mainClass = "com.example.game.teavm.GlfwLauncher"
+        minHeapSizeMb = 64
+        maxHeapSizeMb = 512
     }
 
     glfw {
-        buildType.set("Debug")
-        debugInformation.set(true)
+        buildType = "Debug"
+        debugInformation = true
     }
 
     glfw("release") {
-        buildType.set("Release")
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
+        buildType = "Release"
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
     }
 }
 ```
@@ -186,33 +186,33 @@ gdxTeaVM {
     assets("assets")
 
     webDefaults {
-        mainClass.set("com.example.game.teavm.WebLauncher")
-        htmlTitle.set("My Game")
-        htmlWidth.set(1280)
-        htmlHeight.set(720)
-        serverPort.set(8080)
-        optimization.set(OptimizationLevel.BALANCED)
-        obfuscated.set(true)
+        mainClass = "com.example.game.teavm.WebLauncher"
+        htmlTitle = "My Game"
+        htmlWidth = 1280
+        htmlHeight = 720
+        serverPort = 8080
+        optimization = OptimizationLevel.BALANCED
+        obfuscated = true
     }
 
     js {
-        targetFileName.set("app.js")
+        targetFileName = "app.js"
         devServer {
-            enabled.set(true)
-            autoBuild.set(true)
-            autoReload.set(true)
+            enabled = true
+            autoBuild = true
+            autoReload = true
         }
     }
 
     wasm {
-        targetFileName.set("app.wasm")
-        optimization.set(OptimizationLevel.BALANCED)
-        copyRuntime.set(true)
-        modularRuntime.set(false)
+        targetFileName = "app.wasm"
+        optimization = OptimizationLevel.BALANCED
+        copyRuntime = true
+        modularRuntime = false
         devServer {
-            enabled.set(true)
-            autoBuild.set(true)
-            autoReload.set(true)
+            enabled = true
+            autoBuild = true
+            autoReload = true
         }
     }
 }
@@ -242,7 +242,7 @@ The development server supplies the source maps, Java sources, and debug metadat
 1. Run `./gradlew gdx_teavm_web_js_run` or `./gradlew gdx_teavm_web_wasm_run`.
 2. Open `http://localhost:8080`, using the configured `serverPort` if it differs.
 3. Open the browser's developer tools, find the Java launcher under Sources, set a breakpoint, and reload the page.
-4. Edit and save a project file. The active run task rebuilds it; `autoReload.set(true)` also refreshes the page.
+4. Edit and save a project file. The active run task rebuilds it; `autoReload = true` also refreshes the page.
 5. Stop the active Gradle run task with Ctrl+C, or the IDE's stop action, when finished.
 
 The development server exposes Java sources and mappings to browser developer tools. Browser developer tools remain the common debugging path for Wasm.
@@ -270,21 +270,21 @@ gdxTeaVM {
     assets("assets")
 
     nativeDefaults {
-        minHeapSizeMb.set(64)
-        maxHeapSizeMb.set(512)
+        minHeapSizeMb = 64
+        maxHeapSizeMb = 512
     }
 
     glfw {
-        mainClass.set("com.example.game.teavm.GlfwLauncher")
-        optimization.set(OptimizationLevel.BALANCED)
-        buildType.set("Debug")
-        consoleLog.set(false)
+        mainClass = "com.example.game.teavm.GlfwLauncher"
+        optimization = OptimizationLevel.BALANCED
+        buildType = "Debug"
+        consoleLog = false
     }
 
     ios {
-        mainClass.set("com.example.game.teavm.IosLauncher")
-        optimization.set(OptimizationLevel.NONE)
-        xcodeProjectDir.set(layout.buildDirectory.dir("dist/ios/xcode"))
+        mainClass = "com.example.game.teavm.IosLauncher"
+        optimization = OptimizationLevel.NONE
+        xcodeProjectDir = layout.buildDirectory.dir("dist/ios/xcode")
     }
 }
 ```
@@ -369,7 +369,7 @@ dependencies {
 
 gdxTeaVM {
     android {
-        mainClass.set("com.example.game.teavm.AndroidLauncher")
+        mainClass = "com.example.game.teavm.AndroidLauncher"
     }
 }
 ```
@@ -620,8 +620,8 @@ iOS is experimental. The Gradle plugin exposes `ios {}` for TeaVM C/assets gener
 ```kotlin
 gdxTeaVM {
     ios {
-        mainClass.set("com.example.game.teavm.IosLauncher")
-        graphicsApi.set("angle")
+        mainClass = "com.example.game.teavm.IosLauncher"
+        graphicsApi = "angle"
     }
 }
 ```
@@ -679,7 +679,7 @@ Plugin:
 ```kotlin
 gdxTeaVM {
     reflection("com.example.game.save**")
-    reflectionDebug.set(false)
+    reflectionDebug = false
 }
 ```
 
