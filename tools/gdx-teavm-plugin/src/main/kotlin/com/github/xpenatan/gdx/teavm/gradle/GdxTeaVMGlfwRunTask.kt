@@ -34,7 +34,7 @@ abstract class GdxTeaVMGlfwRunTask : DefaultTask() {
     abstract val projectName: Property<String>
 
     @get:Input
-    abstract val buildType: Property<String>
+    abstract val buildType: Property<GlfwBuildType>
 
     @get:Input
     abstract val consoleLog: Property<Boolean>
@@ -90,7 +90,7 @@ abstract class GdxTeaVMGlfwRunTask : DefaultTask() {
         return try {
             nativeBuildTypeClass
                 .getMethod("fromString", String::class.java)
-                .invoke(null, buildType.get())
+                .invoke(null, buildType.get().backendValue)
         }
         catch(e: InvocationTargetException) {
             throw e.targetException

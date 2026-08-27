@@ -1,3 +1,4 @@
+import com.github.xpenatan.gdx.teavm.gradle.GlfwBuildType
 import org.teavm.gradle.api.OptimizationLevel
 
 plugins {
@@ -21,14 +22,14 @@ gdxTeaVM {
     glfw("debug") {
         optimization = OptimizationLevel.NONE
         obfuscated = false
-        buildType = "Debug"
+        buildType = GlfwBuildType.DEBUG
         consoleLog = true
     }
 
     glfw("release") {
-        optimization = OptimizationLevel.NONE
+        optimization = OptimizationLevel.BALANCED
         obfuscated = false
         consoleLog = true
-        buildType = "Release"
+        buildType = GlfwBuildType.RELEASE
     }
 }

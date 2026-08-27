@@ -151,11 +151,11 @@ class GdxTeaVMNamedTargetsTest {
                 maxHeapSizeMb.set(512)
             })
             extension.glfw("debug", Action {
-                buildType.set("Debug")
+                buildType.set(GlfwBuildType.DEBUG)
                 debugInformation.set(true)
             })
             extension.glfw("release", Action {
-                buildType.set("Release")
+                buildType.set(GlfwBuildType.RELEASE)
                 optimization.set(OptimizationLevel.BALANCED)
             })
         }
@@ -166,10 +166,14 @@ class GdxTeaVMNamedTargetsTest {
         assertEquals(64, debugGenerate.minHeapSize.get())
         assertEquals(512, releaseGenerate.maxHeapSize.get())
         assertFalse(debugGenerate.outputDir.get() == releaseGenerate.outputDir.get())
-        assertTrue(project.tasks.findByName("gdx_teavm_glfw_debug_build") is GdxTeaVMNativeBuildTask)
-        assertTrue(project.tasks.findByName("gdx_teavm_glfw_debug_run") is GdxTeaVMGlfwRunTask)
-        assertTrue(project.tasks.findByName("gdx_teavm_glfw_release_build") is GdxTeaVMNativeBuildTask)
-        assertTrue(project.tasks.findByName("gdx_teavm_glfw_release_run") is GdxTeaVMGlfwRunTask)
+        val debugBuild = project.tasks.getByName("gdx_teavm_glfw_debug_build") as GdxTeaVMNativeBuildTask
+        val debugRun = project.tasks.getByName("gdx_teavm_glfw_debug_run") as GdxTeaVMGlfwRunTask
+        val releaseBuild = project.tasks.getByName("gdx_teavm_glfw_release_build") as GdxTeaVMNativeBuildTask
+        val releaseRun = project.tasks.getByName("gdx_teavm_glfw_release_run") as GdxTeaVMGlfwRunTask
+        assertEquals("app_debug", debugBuild.scriptBaseName.get())
+        assertEquals(GlfwBuildType.DEBUG, debugRun.buildType.get())
+        assertEquals("app_release", releaseBuild.scriptBaseName.get())
+        assertEquals(GlfwBuildType.RELEASE, releaseRun.buildType.get())
     }
 
     @Test

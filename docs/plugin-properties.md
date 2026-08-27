@@ -168,7 +168,7 @@ These properties exist in native target blocks. All except `releasePath` can als
 
 | Property | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `buildType` | `Property<String>` | `Debug` | Native build type used by generated GLFW build scripts, typically `Debug` or `Release`. |
+| `buildType` | `Property<GlfwBuildType>` | `GlfwBuildType.DEBUG` | Native build type used by generated GLFW build scripts. Supported values are `GlfwBuildType.DEBUG` and `GlfwBuildType.RELEASE`. |
 | `buildExecutable` | `Property<Boolean>` | `false` | Lets the backend invoke the generated GLFW build script when true. |
 | `runExecutable` | `Property<Boolean>` | `false` | Lets the backend run the generated GLFW executable after building when true. |
 | `consoleLog` | `Property<Boolean>` | `false` | Opens or attaches native console logging for GLFW run tasks when supported by the platform. On Windows, the opened console remains visible after the application exits until a key is pressed. |

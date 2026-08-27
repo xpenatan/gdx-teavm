@@ -1301,7 +1301,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             dependsOn(glfwGenerate)
             buildRoot.convention(target.outputDir)
             scriptBaseName.convention(target.buildType.map { buildType ->
-                glfwBuildScriptBaseName(buildType)
+                buildType.scriptBaseName
             })
         }
         project.tasks.register<GdxTeaVMGlfwRunTask>("${taskPrefix}_run") {
@@ -1563,14 +1563,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         return isDefaultTargetDeclared(GdxTeaVMTarget.GLFW)
             || isDefaultTargetDeclared(GdxTeaVMTarget.ANDROID)
             || isDefaultTargetDeclared(GdxTeaVMTarget.IOS)
-    }
-
-    private fun glfwBuildScriptBaseName(buildType: String): String {
-        return when(buildType.trim().lowercase()) {
-            "debug" -> "app_debug"
-            "release" -> "app_release"
-            else -> throw IllegalArgumentException("Unsupported GLFW native build type: $buildType")
-        }
     }
 
     private companion object {

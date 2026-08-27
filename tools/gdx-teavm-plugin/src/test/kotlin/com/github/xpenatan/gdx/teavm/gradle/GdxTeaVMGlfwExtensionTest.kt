@@ -7,6 +7,25 @@ import org.junit.Test
 
 class GdxTeaVMGlfwExtensionTest {
     @Test
+    fun `build type is strongly typed and serialized for the backend`() {
+        val project = ProjectBuilder.builder().build()
+        val extension = GdxTeaVMExtension(project.objects, project)
+
+        assertEquals(GlfwBuildType.DEBUG, extension.glfw.buildType.get())
+        assertEquals(
+            "Debug",
+            extension.toNativeProperties(project, extension.glfw).get()["gdx.teavm.native.buildType"]
+        )
+
+        extension.glfw.buildType.set(GlfwBuildType.RELEASE)
+
+        assertEquals(
+            "Release",
+            extension.toNativeProperties(project, extension.glfw).get()["gdx.teavm.native.buildType"]
+        )
+    }
+
+    @Test
     fun `cmake definitions use ordered indexed native properties`() {
         val project = ProjectBuilder.builder().build()
         val extension = GdxTeaVMExtension(project.objects, project)

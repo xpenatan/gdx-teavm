@@ -91,6 +91,7 @@ Android uses a dedicated integration path: `backend-android` is added to TeaVM's
 The original unnamed blocks remain supported and are the simplest choice when a module has one configuration of a target. A name is required only when creating an additional independent variant:
 
 ```kotlin
+import com.github.xpenatan.gdx.teavm.gradle.GlfwBuildType
 import org.teavm.gradle.api.OptimizationLevel
 
 gdxTeaVM {
@@ -146,12 +147,12 @@ gdxTeaVM {
     }
 
     glfw {
-        buildType = "Debug"
+        buildType = GlfwBuildType.DEBUG
         debugInformation = true
     }
 
     glfw("release") {
-        buildType = "Release"
+        buildType = GlfwBuildType.RELEASE
         optimization = OptimizationLevel.BALANCED
         obfuscated = true
     }
@@ -264,6 +265,7 @@ TeaVM debugging provides Java source breakpoints, stepping, fields, and mapped l
 Declare `glfw {}` for desktop native backend tasks. An experimental `ios {}` block is also available for WIP TeaVM C payloads. Each native target block contains its own TeaVM C settings, so plugin targets can keep different launcher classes, heap sizes, optimization levels, and backend-specific options.
 
 ```kotlin
+import com.github.xpenatan.gdx.teavm.gradle.GlfwBuildType
 import org.teavm.gradle.api.OptimizationLevel
 
 gdxTeaVM {
@@ -277,7 +279,7 @@ gdxTeaVM {
     glfw {
         mainClass = "com.example.game.teavm.GlfwLauncher"
         optimization = OptimizationLevel.BALANCED
-        buildType = "Debug"
+        buildType = GlfwBuildType.DEBUG
         consoleLog = false
     }
 

@@ -590,11 +590,12 @@ open class GdxTeaVMGlfwExtension @Inject constructor(
     defaults: GdxTeaVMNativeDefaults
 ) : GdxTeaVMNativeTargetExtension(objects, project, outputDirName, targetFileNameValue, "glfw", defaults) {
     /**
-     * Native build type used by generated GLFW build scripts, typically `Debug` or `Release`.
+     * Native build type used by generated GLFW build scripts.
      *
-     * Default: `Debug`.
+     * Default: [GlfwBuildType.DEBUG].
      */
-    val buildType: Property<String> = objects.property(String::class.java).convention("Debug")
+    val buildType: Property<GlfwBuildType> = objects.property(GlfwBuildType::class.java)
+        .convention(GlfwBuildType.DEBUG)
 
     /**
      * Lets the backend invoke the generated GLFW build script when true.

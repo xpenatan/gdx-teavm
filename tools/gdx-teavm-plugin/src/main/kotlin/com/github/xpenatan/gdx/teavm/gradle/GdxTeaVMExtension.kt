@@ -429,7 +429,7 @@ open class GdxTeaVMExtension @Inject constructor(
                 properties[NATIVE_GENERATED_SOURCES] = native.generatedSourcesDir().get().asFile.absolutePath
                 properties[NATIVE_RELEASE_PATH] = native.releasePath.get().asFile.absolutePath
                 if(native is GdxTeaVMGlfwExtension) {
-                    properties[NATIVE_BUILD_TYPE] = native.buildType.get()
+                    properties[NATIVE_BUILD_TYPE] = native.buildType.get().backendValue
                     properties[NATIVE_BUILD_EXECUTABLE] = native.buildExecutable.get().toString()
                     properties[NATIVE_RUN_EXECUTABLE] = native.runExecutable.get().toString()
                     properties[NATIVE_CONSOLE_LOG] = native.consoleLog.get().toString()

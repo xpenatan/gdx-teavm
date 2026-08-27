@@ -142,7 +142,7 @@
   - `GdxTeaVMGlfwExtension`
   - `GdxTeaVMIosExtension`
 - Web-only settings such as `htmlTitle`, `htmlWidth`, `htmlHeight`, `entryPointName`, `mainClassArgs`, `logoPath`, `copyLoadingAsset`, `webappEnabled`, and `serverPort` belong in `webDefaults {}`, `js {}`, or `wasm {}`, not in the root extension.
-- GLFW build mode is selected with `glfw.buildType` (`Debug` or `Release`); plugin tasks are not split by build type.
+- GLFW build mode is selected with `glfw.buildType` (`GlfwBuildType.DEBUG` or `GlfwBuildType.RELEASE`); plugin tasks are not split by build type.
 - Web targets usually share the same launcher class.
 - Native targets usually need native-specific launcher classes because they start different backend application classes.
 - iOS is an experimental native plugin target with TeaVM C/assets generation plus WIP Xcode and simulator tasks.
