@@ -138,8 +138,7 @@ public class SpriteBatchTest extends ApplicationAdapter {
         Gdx.app.log(LOG_TAG, "fps=" + fps
                 + " sprites=" + sprites.length
                 + " renderCalls=" + spriteBatch.renderCalls
-                + " maxSpritesInBatch=" + spriteBatch.maxSpritesInBatch
-                + " scale=" + scale);
+                + " maxSpritesInBatch=" + spriteBatch.maxSpritesInBatch);
         renderedFrames = 0;
         fpsLogStartNanos = now;
     }
