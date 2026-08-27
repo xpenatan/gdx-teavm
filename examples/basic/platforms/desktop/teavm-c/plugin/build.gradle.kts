@@ -18,7 +18,7 @@ gdxTeaVM {
         maxHeapSizeMb = 512
     }
 
-    glfw {
+    glfw("debug") {
         optimization = OptimizationLevel.NONE
         obfuscated = false
         buildType = "Debug"
@@ -27,7 +27,8 @@ gdxTeaVM {
 
     glfw("release") {
         optimization = OptimizationLevel.NONE
-        obfuscated = true
+        obfuscated = false
+        consoleLog = true
         buildType = "Release"
     }
 }
