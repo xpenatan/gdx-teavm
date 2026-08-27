@@ -27,7 +27,21 @@ gdxTeaVM {
     }
 
     glfw("release") {
+        optimization = OptimizationLevel.NONE
+        obfuscated = false
+        consoleLog = true
+        buildType = GlfwBuildType.RELEASE
+    }
+
+    glfw("release_balanced") {
         optimization = OptimizationLevel.BALANCED
+        obfuscated = false
+        consoleLog = true
+        buildType = GlfwBuildType.RELEASE
+    }
+
+    glfw("release_aggressive") {
+        optimization = OptimizationLevel.AGGRESSIVE
         obfuscated = false
         consoleLog = true
         buildType = GlfwBuildType.RELEASE
