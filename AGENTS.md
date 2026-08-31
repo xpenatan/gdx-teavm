@@ -27,6 +27,9 @@
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_generate`
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_build`
   - `./gradlew :examples:basic:platforms:desktop:teavm-c:builder:basic_desktop_c_debug_run`
+- GraalVM Native Image basic example:
+  - `./gradlew :examples:basic:platforms:desktop:graalvm:basic_desktop_graalvm_build`
+  - `./gradlew :examples:basic:platforms:desktop:graalvm:basic_desktop_graalvm_run`
 - Gradle plugin basic example:
   - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_js_run`
   - `./gradlew :examples:basic:platforms:web:plugin:gdx_teavm_web_wasm_run`

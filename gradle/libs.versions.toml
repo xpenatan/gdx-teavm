@@ -17,6 +17,7 @@ junit = "4.13.2"
 fleks = "2.12"
 visUi = "1.5.8"
 artemisOdb = "2.3.0"
+lwjgl = "3.3.3"
 easyPublishing = "0.1.2"
 androidGradlePlugin = "9.1.1"
 
@@ -53,6 +54,13 @@ junit = { module = "junit:junit", version.ref = "junit" }
 fleks = { module = "io.github.quillraven.fleks:Fleks", version.ref = "fleks" }
 visUi = { module = "com.kotcrab.vis:vis-ui", version.ref = "visUi" }
 artemisOdb = { module = "net.onedaybeard.artemis:artemis-odb", version.ref = "artemisOdb" }
+
+lwjglCore = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl" }
+lwjglGlfw = { module = "org.lwjgl:lwjgl-glfw", version.ref = "lwjgl" }
+lwjglJemalloc = { module = "org.lwjgl:lwjgl-jemalloc", version.ref = "lwjgl" }
+lwjglOpenal = { module = "org.lwjgl:lwjgl-openal", version.ref = "lwjgl" }
+lwjglOpengl = { module = "org.lwjgl:lwjgl-opengl", version.ref = "lwjgl" }
+lwjglStb = { module = "org.lwjgl:lwjgl-stb", version.ref = "lwjgl" }
 
 [bundles]
 teavm = ["teavmTooling", "teavmCore", "teavmClasslib", "teavmExtensionSpi", "teavmJsoCore", "teavmJsoApis", "teavmJsoImpl"]

@@ -1,0 +1,12 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": ".*\\.(dll|so|dylib)$"
+      },
+      {
+        "pattern": "META-INF/.*\\.(sha1|git)$"
+      }
+    ]
+  }
+}
