@@ -1,5 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.web.webaudio.howler;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.Music;
@@ -9,10 +10,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.xpenatan.gdx.teavm.backends.web.WebAudio;
 
 public class HowlTeaAudio implements WebAudio {
-    private HowlerAudioManager webAudioAPIManager = null;
+    private final HowlerAudioManager webAudioAPIManager;
 
     public HowlTeaAudio() {
         webAudioAPIManager = new HowlerAudioManager();
+        Gdx.app.addLifecycleListener(webAudioAPIManager);
     }
 
     @Override
@@ -47,5 +49,6 @@ public class HowlTeaAudio implements WebAudio {
 
     @Override
     public void dispose() {
+        Gdx.app.removeLifecycleListener(webAudioAPIManager);
     }
 }
