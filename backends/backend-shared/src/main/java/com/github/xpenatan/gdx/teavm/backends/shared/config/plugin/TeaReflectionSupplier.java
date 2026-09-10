@@ -10,9 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -21,17 +19,12 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.teavm.classlib.ReflectionContext;
-import org.teavm.classlib.ReflectionSupplier;
 import org.teavm.dependency.AbstractDependencyListener;
 import org.teavm.dependency.DependencyAgent;
-import org.teavm.model.ClassReader;
-import org.teavm.model.FieldReader;
-import org.teavm.model.MethodDescriptor;
-import org.teavm.model.MethodReader;
 import org.teavm.vm.spi.TeaVMHost;
 
-public class TeaReflectionSupplier implements ReflectionSupplier {
+/** Shared class registry for {@link TeaReflectionPolicy} and the backend reflection generators. */
+public class TeaReflectionSupplier {
 
     public static boolean printDebugLogs = false;
 
@@ -233,66 +226,4 @@ public class TeaReflectionSupplier implements ReflectionSupplier {
     public TeaReflectionSupplier() {
     }
 
-    @Override
-    public Collection<String> getAccessibleFields(ReflectionContext context, String className) {
-        ClassReader cls = context.getClassSource().get(className);
-        if(cls == null) {
-            return Collections.emptyList();
-        }
-        Set<String> fields = new HashSet<>();
-
-        if(cls != null) {
-            if(canHaveReflection(className)) {
-                for(FieldReader field : cls.getFields()) {
-                    String name = field.getName();
-                    fields.add(name);
-                }
-            }
-        }
-        if(printDebugLogs) {
-            System.out.println("getAccessibleFields: " + className + " = " + fields);
-        }
-        return fields;
-    }
-
-    @Override
-    public Collection<MethodDescriptor> getAccessibleMethods(ReflectionContext context, String className) {
-        ClassReader cls = context.getClassSource().get(className);
-        if(cls == null) {
-            return Collections.emptyList();
-        }
-        Set<MethodDescriptor> methods = new HashSet<>();
-        if(canHaveReflection(className)) {
-            Collection<? extends MethodReader> methods2 = cls.getMethods();
-            for(MethodReader method : methods2) {
-                MethodDescriptor descriptor = method.getDescriptor();
-                methods.add(descriptor);
-            }
-        }
-        if(printDebugLogs) {
-            System.out.println("getAccessibleMethods: " + className + " = " + methods);
-        }
-        return methods;
-    }
-
-    @Override
-    public boolean isClassFoundByName(ReflectionContext context, String name) {
-        boolean b = canHaveReflection(name);
-        if(printDebugLogs) {
-            System.out.println("isClassFoundByName: " + name + " = " + b);
-        }
-        return b;
-    }
-
-    private boolean canHaveReflection(String className) {
-        boolean flag = false;
-        for(int i = 0; i < clazzList.size(); i++) {
-            String name = clazzList.get(i);
-            if(className.contains(name)) {
-                flag = true;
-                break;
-            }
-        }
-        return flag;
-    }
 }

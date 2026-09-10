@@ -176,6 +176,8 @@ TeaReflectionSupplier
 
 Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSupplier`. Built-in default reflection patterns are owned by `TeaReflectionSupplier`; the Gradle plugin only passes the `reflectionDefaults` flag and user-provided `reflection(...)` patterns.
 
+`TeaReflectionSupplier` maintains the shared class registry and dependency support. `TeaReflectionPolicy` extends TeaVM's `SimpleReflectionPolicy` and is registered through `META-INF/services/org.teavm.extension.spi.reflection.ReflectionPolicy`. It consults the registry to enable class lookup by name and reflection for all fields, methods, and constructors, including non-public members. This replaces the deprecated `ReflectionSupplier` SPI without narrowing reflection defaults or changing builder/plugin configuration.
+
 ## Native Toolchain Policy
 
 The GLFW backend passes arbitrary CMake cache entries from `glfw.cmakeDefinitions` to its generated Windows and Unix configure scripts. Consumers can therefore use standard CMake settings such as `CMAKE_MSVC_RUNTIME_LIBRARY` without a backend-specific enum. Windows keeps its historical MT default when the setting is absent, but an explicit standard CMake selection is never overwritten.
