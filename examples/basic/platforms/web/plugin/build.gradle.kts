@@ -21,7 +21,7 @@ gdxTeaVM {
         obfuscated = false
     }
 
-    js {
+    js("devServer") {
         debugInformation = true
         sourceMap = true
         sourceFilePolicy = SourceFilePolicy.COPY
@@ -30,7 +30,7 @@ gdxTeaVM {
             autoReload = true
         }
     }
-    wasm {
+    wasm("devServer") {
         devServer {
             enabled = true
             autoReload = true
