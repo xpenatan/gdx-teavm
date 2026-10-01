@@ -26,7 +26,7 @@ The flow is:
 
 1. `TeaBuilder` stores configuration in `TeaBuilderData`.
 2. `TeaBuilder.build(...)` calls `TeaBackend.compile(...)`.
-3. `TeaBackend` configures TeaVM, reflection, source providers, assets, and resources.
+3. `TeaBackend` configures TeaVM, explicit class preservation, source providers, assets, and resources.
 4. The concrete backend customizes the target and packaging.
 
 Concrete builder backends:
@@ -91,7 +91,6 @@ The Gradle plugin writes the properties consumed by these runtime plugins. The r
 - `JavaObjectExporterDependency`
 - `TeaAssetManifestTransformer` for the compiled preload manifest
 - `TeaWebRuntimeConfigTransformer` for web runtime defaults such as `logoPath`
-- `TeaReflectionSupplier` reflection metadata setup
 - `GdxWebTargetWrapper` when webapp generation is enabled
 
 For JavaScript and Wasm, the same wrapper path is used so asset copying and web app generation do not diverge.
@@ -102,7 +101,6 @@ For JavaScript and Wasm, the same wrapper path is used so asset copying and web 
 
 They install:
 
-- reflection support
 - target-specific render/build listeners
 - native asset and external C/C++ resource copying
 
@@ -154,29 +152,13 @@ Supported keys:
 
 ## Reflection
 
-Reflection metadata is required because TeaVM compiles ahead of time.
+TeaVM discovers application-owned `ReflectionPolicy` implementations through standard service metadata. Both compiler entry points supply the application/compiler classpath to TeaVM. gdx-teavm registers no reflection policy or class registry. Applications may call `GdxReflectionHelper.applyDefaults(this::selectClasses)` inside their own `SimpleReflectionPolicy.setup()` to grant the former library defaults through TeaVM's `ClassPolicy`. The helper performs no scanning, preservation, or automatic registration.
 
-Builder path:
+The libGDX adapters in the web and native `emu` source sets use `java.lang.Class`, `java.lang.reflect.Constructor`, `Method`, `Field`, and generic type metadata. TeaVM controls which operations are available. Constructor lookup honors the exact parameter signature.
 
-```text
-TeaBuilder.addReflectionClass(...)
-DefaultReflectionListener
-TeaBackend.setupReflection(...)
-TeaReflectionSupplier
-```
+The manual builder copies its explicit `TeaBuilderData.preservedClasses` into `TeaVMTool.getClassesToPreserve()`. Gradle targets forward their existing `preservedClasses` to compilation and development-server tasks. Preservation grants no reflective member access and performs no package scanning.
 
-Plugin path:
-
-```text
-gdxTeaVM.reflection(...)
-GdxTeaVMPluginConfig
-WebPlugin / native runtime plugin
-TeaReflectionSupplier
-```
-
-Runtime reflection emulation in backend `emu` source sets uses `TeaReflectionSupplier`. Built-in default reflection patterns are owned by `TeaReflectionSupplier`; the Gradle plugin only passes the `reflectionDefaults` flag and user-provided `reflection(...)` patterns.
-
-`TeaReflectionSupplier` maintains the shared class registry and dependency support. `TeaReflectionPolicy` extends TeaVM's `SimpleReflectionPolicy` and is registered through `META-INF/services/org.teavm.extension.spi.reflection.ReflectionPolicy`. It consults the registry to enable class lookup by name and reflection for all fields, methods, and constructors, including non-public members. This replaces the deprecated `ReflectionSupplier` SPI without narrowing reflection defaults or changing builder/plugin configuration.
+See [reflection setup and migration](usage.md#reflection), including the pinned TeaVM runtime limitations.
 
 ## Native Toolchain Policy
 

@@ -37,3 +37,11 @@ The `Runtime Examples` workflow publishes one `runtime-examples-proof` artifact 
 | [FreeType](freetype/README.md) | FreeType extension across web and native targets |
 | [Controllers](controllers/README.md) | Controller extension across desktop, web, Android, and iOS |
 | [gdx-tests](gdx-tests/README.md) | libGDX test suite integration; enabled with `includeLibgdxSource` |
+
+## TeaVM reflection configuration
+
+TeaVM platform projects keep their application-owned policy beside the launcher: `src/main/java/example/policy` for web, desktop C, and iOS, or `src/native/java/example/policy` for Android. Plugin projects use `@Autoregistered` with the automatically supplied processor; manual builders register their policy in `src/main/resources/META-INF/services`. There are no separate policy modules or explicit processor dependencies. Native controller launchers also preserve the manager class they load by name.
+
+Basic platform policies reuse the former library defaults with `GdxReflectionHelper.applyDefaults(this::selectClasses)` and add application-specific rules. The helper is opt-in and does not register or preserve classes automatically.
+
+See [reflection setup](../docs/usage.md#reflection) for registration, preservation, and pinned TeaVM limitations.

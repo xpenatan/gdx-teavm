@@ -10,11 +10,6 @@ These properties live directly inside `gdxTeaVM { ... }`.
 | --- | --- | --- | --- |
 | `assets` | `ConfigurableFileCollection` | empty | Local files or directories copied as libGDX internal assets. Directories are copied recursively. |
 | `classpathAssets` | `ListProperty<String>` | empty | Classpath resource roots copied as libGDX classpath assets. |
-| `reflection` | `ListProperty<String>` | empty | Reflection class names or package patterns to preserve. |
-| `reflectionEnabled` | `Property<Boolean>` | `true` | Enables gdx-teavm reflection metadata generation. |
-| `reflectionDefaults` | `Property<Boolean>` | `true` | Adds default reflection configuration required by common libGDX runtime types. |
-| `reflectionScan` | `Property<Boolean>` | `true` | Scans reachable classes and configured packages for reflection metadata. |
-| `reflectionDebug` | `Property<Boolean>` | `false` | Prints extra reflection metadata diagnostics during TeaVM generation. |
 
 Helper methods:
 
@@ -22,7 +17,8 @@ Helper methods:
 | --- | --- |
 | `assets(vararg paths)` | Adds local asset files or directories to `assets`. |
 | `classpathAssets(vararg paths)` | Adds classpath resource roots to `classpathAssets`. |
-| `reflection(vararg patterns)` | Adds reflection class names or package patterns to `reflection`. |
+
+Reflection is configured through an application-owned TeaVM `ReflectionPolicy`. See [registration and migration](usage.md#reflection). Class preservation remains available through each target's `preservedClasses`.
 
 ## Target Declaration Methods
 

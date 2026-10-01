@@ -11,10 +11,10 @@ public class BuildTeaVMTestDemo {
 
         new TeaBuilder(new WebBackend().setStartJettyAfterBuild(true))
                 .addAssets(assetsPath)
+                .addPreservedClass("com.badlogic.gdx.math.Vector2")
                 .setOptimizationLevel(TeaVMOptimizationLevel.SIMPLE)
                 .setMainClass(TestWebLauncher.class.getName())
                 .setObfuscated(false)
-                .addReflectionClass("com.badlogic.gdx.math.Vector2")
                 .build(new File("build/dist"));
     }
 }

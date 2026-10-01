@@ -74,7 +74,7 @@
 - `TeaBackend.compile(...)` performs shared setup:
   - classpath collection
   - TeaVM tool configuration
-  - reflection metadata setup
+  - explicit class preservation
   - asset planning and copying
   - backend-specific build hooks
 - Put behavior in `TeaBackend` only when it is shared by all targets. Keep target-specific behavior in:
@@ -136,7 +136,7 @@
 
 ## Plugin Configuration Model
 - Shared plugin properties and target registries are defined in `GdxTeaVMExtension`.
-- Only backend-agnostic settings belong in the root `gdxTeaVM { ... }` block, such as assets and reflection.
+- Only backend-agnostic settings belong in the root `gdxTeaVM { ... }` block, such as assets.
 - Optional inherited target conventions are defined in `GdxTeaVMWebDefaults` and `GdxTeaVMNativeDefaults`. An explicit target value wins over defaults, which win over built-in conventions.
 - Per-target TeaVM properties are defined in `GdxTeaVMTargetExtension` and subclasses:
   - `GdxTeaVMWebExtension`
@@ -167,7 +167,6 @@
 - `WebPlugin` installs:
   - `WebClassTransformer`
   - `JavaObjectExporterDependency`
-  - reflection support
   - `GdxWebTargetWrapper` when webapp generation is enabled
 - `GLFWPlugin`, `AndroidPlugin`, and `IOSPlugin` support TeaVM C output by checking `TeaVMCHost`.
 - Native plugins use `gdx.teavm.native.backend` to decide which native backend is selected.
@@ -196,20 +195,13 @@
   - `backends/backend-glfw/src/main/resources/META-INF/gdx-teavm.properties`
 
 ## Reflection
-- libGDX reflection emulation is backed by generated TeaVM metadata.
-- Builder API:
-  - `TeaBuilder.addReflectionClass(Class<?>)`
-  - `TeaBuilder.addReflectionClass(String)`
-  - `TeaBuilder.setReflectionListener(DefaultReflectionListener)`
-- Gradle plugin API:
-  - `reflection("com.example.Type")`
-  - `reflection("com.example.package**")`
-  - `reflectionEnabled`
-  - `reflectionDefaults`
-  - `reflectionScan`
-  - `reflectionDebug`
-- Runtime emulation classes read reflection metadata through `TeaReflectionSupplier`.
-- Plugin generation installs reflection support through `TeaVMPluginReflectionSupport`.
+- Applications own and register TeaVM `ReflectionPolicy` or `SimpleReflectionPolicy` implementations.
+- There is no gdx-teavm reflection DSL, superclass, registry, or automatic default policy.
+- Applications may explicitly call `GdxReflectionHelper.applyDefaults(this::selectClasses)` inside `SimpleReflectionPolicy.setup()` to reuse `DEFAULT_REFLECTION_PATTERNS`. It grants name lookup and all members through TeaVM's `ClassPolicy`, without preservation, scanning, or automatic registration.
+- Register via TeaVM `@Autoregistered` and its annotation processor or the standard policy service file.
+- Builder `addPreservedClass(String)` / `addPreservedClass(Class<?>)` and Gradle target `preservedClasses` retain concrete classes independently of reflective access.
+- Runtime adapters consume TeaVM's standard Java reflection metadata, including exact constructor signatures and generic field types.
+- Example policies live beside their TeaVM platform launchers (`src/main/java`, or Android `src/native/java`). Plugin Java compilation supplies the annotation processor automatically; manual builders use service files. Do not create separate example policy modules or require explicit processor dependencies.
 
 ## JSO And Wasm Strict Mode
 - TeaVM Wasm strict mode emits runtime checks for non-transparent `@JSClass` overlays.

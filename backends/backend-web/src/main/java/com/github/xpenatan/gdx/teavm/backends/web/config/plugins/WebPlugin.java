@@ -3,7 +3,6 @@ package com.github.xpenatan.gdx.teavm.backends.web.config.plugins;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginAssetSupport;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,17 +55,6 @@ public class WebPlugin implements TeaVMPlugin {
         host.add(new TeaAssetManifestTransformer(manifestEntries));
         host.add(new TeaWebRuntimeConfigTransformer(config.logoPath));
 
-        TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
-        if(config.reflectionEnabled) {
-            TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
-            if(config.reflectionDefaults) {
-                TeaReflectionSupplier.addDefaultReflectionClasses(classPathURLs);
-            }
-            TeaReflectionSupplier.installReflectionDependencySupport(host);
-            if(config.reflectionDebug) {
-                TeaReflectionSupplier.printReflectionClasses();
-            }
-        }
         if(javaScriptHost != null) {
             installJavaScriptAbstractConstructorFix(host, javaScriptHost);
         }

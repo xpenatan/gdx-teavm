@@ -7,7 +7,6 @@ import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetsCopy;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaClassLoader;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.TeaLogHelper;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.builder.TeaBuilderData;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,8 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.teavm.callgraph.CallGraph;
 import org.teavm.diagnostics.DefaultProblemTextConsumer;
 import org.teavm.diagnostics.Problem;
@@ -92,8 +89,7 @@ public abstract class TeaBackend {
             tool.addSourceFileProvider(data.sourceFileProviders.get(i));
         }
         List<String> classesToPreserve = tool.getClassesToPreserve();
-        classesToPreserve.addAll(data.finalReflectionClasses);
-        TeaReflectionSupplier.addReflectionClass(data.finalReflectionClasses);
+        classesToPreserve.addAll(data.preservedClasses);
         tool.setDebugInformationGenerated(data.debugInformationGenerated);
         tool.setSourceMapsFileGenerated(data.sourceMapsFileGenerated);
         tool.setMinHeapSize(data.minHeapSize);
@@ -122,7 +118,6 @@ public abstract class TeaBackend {
         }
 
         sortAcceptedClassPath(acceptedURL);
-        setupReflection(data, acceptedURL);
         TeaLogHelper.logHeader("ACCEPTED CLASSPATH");
         for(int i = 0; i < acceptedURL.size(); i++) {
             TeaLogHelper.log(i + " true: " + acceptedURL.get(i).getPath());
@@ -154,34 +149,6 @@ public abstract class TeaBackend {
                 acceptedURL.remove(i);
                 acceptedURL.add(0, url);
                 break;
-            }
-        }
-    }
-
-    private void setupReflection(TeaBuilderData data, ArrayList<URL> acceptedURL) {
-        for(URL classPath : acceptedURL) {
-            try {
-                if(!new File(classPath.getFile()).exists()) {
-                    continue;
-                }
-                ZipInputStream zip = new ZipInputStream(classPath.openStream());
-                for(ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                    if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-                        // This ZipEntry represents a class. Now, what class does it represent?
-                        String className = entry.getName().replace('/', '.'); // including ".class"
-                        String name = className.substring(0, className.length() - ".class".length());
-                        boolean add = false;
-                        if(data.reflectionListener != null) {
-                            add = data.reflectionListener.shouldEnableReflection(name);
-                        }
-                        if(add) {
-                            data.finalReflectionClasses.add(name);
-                        }
-                    }
-                }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
             }
         }
     }

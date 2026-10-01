@@ -61,7 +61,6 @@ The extension block is named `gdxTeaVM`.
 gdxTeaVM {
     assets("assets")
     classpathAssets("com/example/game/assets")
-    reflection("com.example.game.save**")
 
     webDefaults {
         mainClass = "com.example.game.teavm.WebLauncher"
@@ -96,7 +95,6 @@ import org.teavm.gradle.api.OptimizationLevel
 
 gdxTeaVM {
     assets(rootProject.file("assets"))
-    reflection("com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator")
 
     // Shared by every JS and Wasm target in this module.
     webDefaults {
@@ -666,23 +664,124 @@ ignore-resources=unused/file.txt
 
 ## Reflection
 
-TeaVM needs ahead-of-time metadata for reflection. gdx-teavm generates the metadata used by the libGDX reflection emulation classes.
+Applications configure reflection with TeaVM's `ReflectionPolicy` or `SimpleReflectionPolicy`, for both the Gradle plugin and manual builder. gdx-teavm does not automatically register a policy or scan packages. Your application policy can explicitly reuse the former library defaults with `GdxReflectionHelper`.
 
-Builder:
+**Also preserve the classes you use through reflection:** add them to the Gradle target's `preservedClasses`, or call `TeaBuilder.addPreservedClass(...)` in a manual builder. The policy grants access to members; it does not keep the classes available by itself. See [class preservation](#class-preservation) for both configurations.
+
+For example, this Java policy enables JSON fields and a no-argument constructor for one model:
 
 ```java
-new TeaBuilder(backend)
-        .addReflectionClass("com.example.game.save**")
-        .addReflectionClass("com.badlogic.gdx.math.Vector2");
-```
+package com.example.compiler;
 
-Plugin:
+import org.teavm.extension.Autoregistered;
+import org.teavm.extension.spi.reflection.SimpleReflectionPolicy;
 
-```kotlin
-gdxTeaVM {
-    reflection("com.example.game.save**")
-    reflectionDebug = false
+@Autoregistered
+public class GameReflectionPolicy extends SimpleReflectionPolicy {
+    @Override
+    protected void setup() {
+        selectClass("com.example.game.Player")
+                .foundByName()
+                .reflectableFields(named("health"))
+                .reflectableMethods(method -> method.isConstructor()
+                        && withParameterCount(0).test(method));
+    }
 }
 ```
 
-Use concrete class names for individual types and package patterns ending in `**` for package trees.
+To expose a particular constructor use `method.isConstructor() && withSignature(String.class).test(method)`. Fields, constructors, and ordinary methods are separate grants. To allow all members of a selected class explicitly, use `.reflectableMembers(member -> true)`.
+
+TeaVM combines matching grants. An exact class rule cannot remove permissions granted by a package rule or another policy.
+
+### Reusing the former defaults
+
+Import `com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.GdxReflectionHelper` and call it inside your `SimpleReflectionPolicy`:
+
+```java
+@Override
+protected void setup() {
+    GdxReflectionHelper.applyDefaults(this::selectClasses);
+    // Add application-specific rules here.
+}
+```
+
+This grants name lookup and all fields, methods, and constructors (including non-public members) for the former `DEFAULT_REFLECTION_PATTERNS`: `com.badlogic.gdx.scenes.scene2d.**`, `net.mgsx.gltf.data.**`, and the libGDX `Array`, `ArrayMap`, `IntIntMap`, `IntMap`, `IntSet`, `LongMap`, `ObjectFloatMap`, `ObjectIntMap`, `ObjectMap`, `ObjectSet`, and `Queue` classes, including their nested classes. The immutable list is available as `GdxReflectionHelper.DEFAULT_REFLECTION_PATTERNS`.
+
+The helper works with both build styles using the existing backend dependency. Register your policy as below and preserve the classes your application needs through `preservedClasses` or `addPreservedClass(...)`. The helper does not preserve classes or force initialization. These broad grants are additive, so omit the helper and select members yourself when you need narrower access. Application models and other library types still need their own rules.
+
+### Registering a policy
+
+Use the registration method that matches the example's build style:
+
+| Build style | Policy registration | Explicit processor dependency |
+| --- | --- | --- |
+| gdx-teavm Gradle plugin | Java policy annotated with `@Autoregistered` | None; the plugin configures it |
+| Manual `TeaBuilder` | Policy named in a `META-INF/services/org.teavm.extension.spi.reflection.ReflectionPolicy` resource | None; no annotation processing needed |
+
+Put the policy directly in the TeaVM platform project, beside its launcher:
+
+- Web, desktop TeaVM C, and iOS: `src/main/java/com/example/compiler/GameReflectionPolicy.java`.
+- Android TeaVM: `src/native/java/com/example/compiler/GameReflectionPolicy.java`, alongside the native launcher.
+
+For Java projects using the gdx-teavm Gradle plugin, use `@Autoregistered` as above. TeaVM's plugin supplies the annotation processor automatically. The gdx-teavm Android compile task also configures it automatically. During Java compilation, the processor generates the service registration file. No handwritten service file, separate policy module, or explicit `annotationProcessor` dependency is needed.
+
+For a manual builder, put the policy in the builder platform's `src/main/java`, omit the `@Autoregistered` annotation and its import, and create this file:
+
+```text
+src/main/resources/META-INF/services/org.teavm.extension.spi.reflection.ReflectionPolicy
+```
+
+Its contents are the policy's fully qualified class name, one provider per line:
+
+```text
+com.example.compiler.GameReflectionPolicy
+```
+
+The builder's existing backend dependency supplies the policy API. Its `JavaExec` runtime classpath includes the compiled policy and service file. No additional dependency is needed. The builder runs after Java compilation, so it cannot enable annotation processing for that compilation; the service file registers the policy directly. See the [web builder policy](../examples/basic/platforms/web/builder/src/main/java/example/policy/BasicReflectionPolicy.java), its [service file](../examples/basic/platforms/web/builder/src/main/resources/META-INF/services/org.teavm.extension.spi.reflection.ReflectionPolicy), and the [web plugin policy](../examples/basic/platforms/web/plugin/src/main/java/example/policy/BasicReflectionPolicy.java).
+
+Use a public policy class with a public no-argument constructor. Java annotation processing does not process Kotlin policies; use a service file, or configure Kotlin `kapt` if automatic registration is preferred. Register each policy once; do not also add a manual service descriptor for an annotation-registered policy in the same source set.
+
+### Class preservation
+
+These are independent settings:
+
+- Preservation keeps a concrete class reachable for compilation.
+- `foundByName()` grants discovery through `Class.forName` / `ClassReflection.forName`.
+- Member predicates grant access to the selected fields, constructors, and methods.
+
+Configure preservation alongside the reflection policy. Classes already reachable through ordinary code may be retained without an explicit entry, but do not rely on a policy rule alone to keep a class. Include types instantiated through JSON deserialization, generic collection element types, and classes looked up by name. Preserving only the root model may be insufficient: for glTF loading, preserve the data model classes used by the asset as well. The [basic web plugin example](../examples/basic/platforms/web/plugin/build.gradle.kts) lists the glTF data classes in `webDefaults.preservedClasses`.
+
+Manual builder:
+
+```java
+new TeaBuilder(backend)
+        .setMainClass("com.example.Launcher")
+        .addPreservedClass("com.example.game.Player")
+        .addPreservedClass(GameSettings.class)
+        .build(new File("build/web"));
+```
+
+Gradle plugin:
+
+```kotlin
+gdxTeaVM {
+    js {
+        mainClass = "com.example.Launcher"
+        preservedClasses.add("com.example.game.Player")
+    }
+}
+```
+
+The builder accepts concrete binary class names, including nested names such as `com.example.Outer$Inner`. It deduplicates registrations and rejects null, blank, and wildcard names. It does not scan packages or grant reflection access. Target `preservedClasses` is also available for Wasm/native targets and their defaults.
+
+**Pinned-version limitation:** verification with TeaVM `0.16.0-dev-6` found that a preserved, policy-approved class referenced only by its runtime name can still fail `ClassReflection.forName`. The policy is loaded and grants lookup, but the generated lookup table lacks the class name. Preservation is not a workaround for this compiler issue, and the migration's full runtime acceptance remains pending a TeaVM fix.
+
+### Migrating existing applications
+
+Remove `reflection(...)`, `reflection.add(...)`, `reflectionEnabled`, `reflectionDefaults`, `reflectionScan`, and `reflectionDebug` from Gradle configuration. Remove builder `addReflectionClass(...)` and `setReflectionListener(...)`. These APIs and their underlying registry have been deleted; no deprecated wrappers remain.
+
+Replace class/package registrations with an explicitly registered TeaVM policy. Add explicit preservation for types previously discovered by the scanner that have no other reachability path. Do not mechanically preserve every class in a package.
+
+There are no automatic scene2d, collection, or glTF grants. For `Json`, expose the model fields and constructors it needs. For `Skin`, expose fields and no-argument constructors of the style types in the skin, including relevant inherited fields; applications using skin methods such as style copying may also need the corresponding methods/constructors. For reflection-backed pools, expose the pooled type's no-argument constructor. Grant access to collection subclasses or dynamically named library types when your application's serialization requires it.
+
+The application-owned [basic example policy](../examples/basic/platforms/web/plugin/src/main/java/example/policy/BasicReflectionPolicy.java) demonstrates these choices. Each TeaVM platform keeps its own policy beside its launcher. These rules are never installed by a backend dependency alone.

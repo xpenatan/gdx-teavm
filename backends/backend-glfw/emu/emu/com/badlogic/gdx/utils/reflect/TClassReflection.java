@@ -1,19 +1,17 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
-import com.badlogic.gdx.utils.reflect.ClassGen;
-import com.badlogic.gdx.utils.reflect.ConstructorGen;
-import com.badlogic.gdx.utils.reflect.InstanceGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.Modifier;
 
 public final class TClassReflection {
 
     static public Class forName(String name) throws ReflectionException {
-        Class type = ClassGen.forName(name);
-        if(type == null) {
-            throw new ReflectionException("Class not found: " + name);
+        try {
+            return Class.forName(name);
         }
-        return type;
+        catch(ClassNotFoundException e) {
+            throw new ReflectionException("Class not found: " + name, e);
+        }
     }
 
     static public String getSimpleName(Class c) {
@@ -70,29 +68,7 @@ public final class TClassReflection {
     }
 
     static public <T> T newInstance(Class<T> c) throws ReflectionException {
-//        try {
-//            return c.newInstance();
-//        }
-//        catch(InstantiationException e) {
-//            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-//        }
-//        catch(IllegalAccessException e) {
-//            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-//        }
-            if(c == java.util.HashMap.class) {
-                return (T)new java.util.HashMap();
-            }
-            if(c == java.util.LinkedHashMap.class) {
-                return (T)new java.util.LinkedHashMap();
-            }
-            if(c == java.util.ArrayList.class) {
-                return (T)new java.util.ArrayList();
-            }
-            Object o = InstanceGen.newInstance(c);
-            if(o == null) {
-                throw new ReflectionException("Could not instantiate instance of class: " + c.getName());
-            }
-            return (T)o;
+        return (T)getConstructor(c).newInstance();
     }
 
     static public Class getComponentType(Class c) {
@@ -103,37 +79,35 @@ public final class TClassReflection {
         java.lang.reflect.Constructor[] constructors = c.getConstructors();
         TConstructor[] result = new TConstructor[constructors.length];
         for(int i = 0, j = constructors.length; i < j; i++) {
-            result[i] = new TConstructor(c, constructors[i]);
+            result[i] = new TConstructor(constructors[i]);
         }
         return result;
     }
 
-    static private TConstructor getNoArgPublicConstructor(Class c) {
-        java.lang.reflect.Constructor[] constructors = c.getConstructors();
-        if(constructors.length > 0)
-            return new TConstructor(c, constructors[0]);
-        return null;
-    }
-
     static public TConstructor getConstructor(Class c, Class... parameterTypes) throws ReflectionException {
-        try {
 
-            Object constructor = ConstructorGen.getConstructor(c, parameterTypes);
-            return (TConstructor)constructor;
+        try {
+            java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes == null ? new Class[0] : parameterTypes);
+            return new TConstructor(constructor);
         }
-        catch(Exception e) {
+        catch(SecurityException e) {
+            throw new ReflectionException("Security violation occurred while getting constructor for class: '" + c.getName() + "'.",
+                    e);
+        }
+        catch(NoSuchMethodException e) {
             throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
         }
     }
 
     static public TConstructor getDeclaredConstructor(Class c, Class... parameterTypes) throws ReflectionException {
         try {
-            return new TConstructor(c, null);
+            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes == null ? new Class[0] : parameterTypes);
+            return new TConstructor(declaredConstructor);
         }
         catch(SecurityException e) {
             throw new ReflectionException("Security violation while getting constructor for class: " + c.getName(), e);
         }
-        catch(Exception e) {
+        catch(NoSuchMethodException e) {
             throw new ReflectionException("Constructor not found for class: " + c.getName(), e);
         }
     }
@@ -201,10 +175,12 @@ public final class TClassReflection {
             java.lang.reflect.Field field = c.getField(name);
             return new TField(field);
         }
-        catch(Throwable e) {
-            e.printStackTrace();
+        catch(SecurityException e) {
+            throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
         }
-        return null;
+        catch(NoSuchFieldException e) {
+            throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+        }
     }
 
     static public TField[] getDeclaredFields(Class c) {
@@ -221,10 +197,12 @@ public final class TClassReflection {
             java.lang.reflect.Field declaredField = c.getDeclaredField(name);
             return new TField(declaredField);
         }
-        catch(Throwable e) {
-            e.printStackTrace();
+        catch(SecurityException e) {
+            throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
         }
-        return null;
+        catch(NoSuchFieldException e) {
+            throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+        }
     }
 
     static public boolean isAnnotationPresent(Class c, Class<? extends java.lang.annotation.Annotation> annotationType) {

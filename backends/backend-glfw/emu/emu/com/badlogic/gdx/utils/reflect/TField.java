@@ -1,8 +1,10 @@
 package emu.com.badlogic.gdx.utils.reflect;
 
-import com.badlogic.gdx.utils.reflect.FieldGen;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.GenericArrayType;
 
 public final class TField {
 
@@ -25,10 +27,11 @@ public final class TField {
     }
 
     public boolean isAccessible() {
-        return true;
+        return field.isAccessible();
     }
 
     public void setAccessible(boolean accessible) {
+        field.setAccessible(accessible);
     }
 
     public boolean isDefaultAccess() {
@@ -68,8 +71,20 @@ public final class TField {
     }
 
     public Class getElementType(int index) {
-        Class<?> declaringClass = field.getDeclaringClass();
-        return FieldGen.getElementType(declaringClass, field.getName(), index);
+        Type genericType = field.getGenericType();
+        if(genericType instanceof ParameterizedType) {
+            Type[] arguments = ((ParameterizedType)genericType).getActualTypeArguments();
+            if(index >= 0 && index < arguments.length) {
+                Type argument = arguments[index];
+                if(argument instanceof Class) return (Class)argument;
+                if(argument instanceof ParameterizedType) return (Class)((ParameterizedType)argument).getRawType();
+                if(argument instanceof GenericArrayType) {
+                    Type component = ((GenericArrayType)argument).getGenericComponentType();
+                    if(component instanceof Class) return java.lang.reflect.Array.newInstance((Class)component, 0).getClass();
+                }
+            }
+        }
+        return null;
     }
 
     public boolean isAnnotationPresent(Class<? extends java.lang.annotation.Annotation> annotationType) {
@@ -99,8 +114,14 @@ public final class TField {
         return null;
     }
 
-    public Object get(Object obj) throws IllegalArgumentException, IllegalAccessException {
-        return field.get(obj);
+    public Object get(Object obj) throws ReflectionException {
+        try {
+            return field.get(obj);
+        } catch(IllegalArgumentException e) {
+            throw new ReflectionException("Argument not valid for field: " + getName(), e);
+        } catch(IllegalAccessException e) {
+            throw new ReflectionException("Illegal access to field: " + getName(), e);
+        }
     }
 
     public void set(Object obj, Object value) throws ReflectionException {

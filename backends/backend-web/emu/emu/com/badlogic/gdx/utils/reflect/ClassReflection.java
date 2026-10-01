@@ -68,15 +68,7 @@ public final class ClassReflection {
     }
 
     static public <T> T newInstance(Class<T> c) throws ReflectionException {
-        try {
-            return c.newInstance();
-        }
-        catch(InstantiationException e) {
-            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-        }
-        catch(IllegalAccessException e) {
-            throw new ReflectionException("Could not instantiate instance of class: " + c.getName(), e);
-        }
+        return (T)getConstructor(c).newInstance();
     }
 
     static public Class getComponentType(Class c) {
@@ -92,22 +84,10 @@ public final class ClassReflection {
         return result;
     }
 
-    static private Constructor getNoArgPublicConstructor(Class c) {
-        java.lang.reflect.Constructor[] constructors = c.getConstructors();
-        if(constructors.length > 0)
-            return new Constructor(constructors[0]);
-        return null;
-    }
-
     static public Constructor getConstructor(Class c, Class... parameterTypes) throws ReflectionException {
 
-        if(parameterTypes == null || parameterTypes.length == 0) {
-            //Teavm does not accept null parameter to get public no args constructor. Need to do it manually
-            return getNoArgPublicConstructor(c);
-        }
-
         try {
-            java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
+            java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes == null ? new Class[0] : parameterTypes);
             return new Constructor(constructor);
         }
         catch(SecurityException e) {
@@ -121,7 +101,7 @@ public final class ClassReflection {
 
     static public Constructor getDeclaredConstructor(Class c, Class... parameterTypes) throws ReflectionException {
         try {
-            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes);
+            java.lang.reflect.Constructor declaredConstructor = c.getDeclaredConstructor(parameterTypes == null ? new Class[0] : parameterTypes);
             return new Constructor(declaredConstructor);
         }
         catch(SecurityException e) {
@@ -195,10 +175,12 @@ public final class ClassReflection {
             java.lang.reflect.Field field = c.getField(name);
             return new Field(field);
         }
-        catch(Throwable e) {
-            e.printStackTrace();
+        catch(SecurityException e) {
+            throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
         }
-        return null;
+        catch(NoSuchFieldException e) {
+            throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+        }
     }
 
     static public Field[] getDeclaredFields(Class c) {
@@ -215,10 +197,12 @@ public final class ClassReflection {
             java.lang.reflect.Field declaredField = c.getDeclaredField(name);
             return new Field(declaredField);
         }
-        catch(Throwable e) {
-            e.printStackTrace();
+        catch(SecurityException e) {
+            throw new ReflectionException("Security violation while getting field: " + name + ", for class: " + c.getName(), e);
         }
-        return null;
+        catch(NoSuchFieldException e) {
+            throw new ReflectionException("Field not found: " + name + ", for class: " + c.getName(), e);
+        }
     }
 
     static public boolean isAnnotationPresent(Class c, Class<? extends java.lang.annotation.Annotation> annotationType) {

@@ -2,7 +2,6 @@ package com.github.xpenatan.gdx.teavm.backends.shared.config.builder;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.backend.TeaBackend;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
 import java.io.File;
 import org.teavm.tooling.TeaVMSourceFilePolicy;
 import org.teavm.tooling.sources.SourceFileProvider;
@@ -94,19 +93,22 @@ public class TeaBuilder {
         return this;
     }
 
-    public TeaBuilder setReflectionListener(DefaultReflectionListener reflectionListener) {
-        data.reflectionListener = reflectionListener;
+    /** Keeps a concrete class reachable; reflection access is configured separately with TeaVM policies. */
+    public TeaBuilder addPreservedClass(String className) {
+        if(className == null || className.isBlank()
+                || !javax.lang.model.SourceVersion.isName(className)) {
+            throw new IllegalArgumentException("Expected a concrete binary class name: " + className);
+        }
+        data.preservedClasses.add(className);
         return this;
     }
 
-    public TeaBuilder addReflectionClass(Class<?> type) {
-        data.reflectionListener.addClassOrPackage(type.getName());
-        return this;
-    }
-
-    public TeaBuilder addReflectionClass(String classOrPackage) {
-        data.reflectionListener.addClassOrPackage(classOrPackage);
-        return this;
+    /** Keeps a class reachable without granting access to its members. */
+    public TeaBuilder addPreservedClass(Class<?> type) {
+        if(type == null || type.isPrimitive() || type.isArray()) {
+            throw new IllegalArgumentException("Expected a non-array reference class");
+        }
+        return addPreservedClass(type.getName());
     }
 
     public TeaBuilder setOutputName(String outputName) {

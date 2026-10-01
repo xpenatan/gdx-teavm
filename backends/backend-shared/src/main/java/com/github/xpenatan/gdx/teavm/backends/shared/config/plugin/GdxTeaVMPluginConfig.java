@@ -26,12 +26,6 @@ public class GdxTeaVMPluginConfig {
     public static final String ASSETS = "gdx.teavm.assets";
     public static final String CLASSPATH_ASSETS = "gdx.teavm.classpathAssets";
     public static final String ASSET_MANIFEST = "gdx.teavm.assets.manifest";
-    public static final String REFLECTION_ENABLED = "gdx.teavm.reflection.enabled";
-    public static final String REFLECTION_DEFAULTS = "gdx.teavm.reflection.defaults";
-    public static final String REFLECTION_SCAN = "gdx.teavm.reflection.scan";
-    public static final String REFLECTION = "gdx.teavm.reflection";
-    public static final String REFLECTION_CLASSES = "gdx.teavm.reflection.classes";
-    public static final String REFLECTION_DEBUG = "gdx.teavm.reflection.debug";
     public static final String NATIVE_BACKEND = "gdx.teavm.native.backend";
     public static final String NATIVE_OUTPUT_ROOT = "gdx.teavm.native.outputRoot";
     public static final String NATIVE_RELEASE_PATH = "gdx.teavm.native.releasePath";
@@ -57,12 +51,6 @@ public class GdxTeaVMPluginConfig {
     public final List<String> classpath;
     public final List<String> assets;
     public final List<String> classpathAssets;
-    public final boolean reflectionEnabled;
-    public final boolean reflectionDefaults;
-    public final boolean reflectionScan;
-    public final List<String> reflectionPatterns;
-    public final List<String> reflectionClasses;
-    public final boolean reflectionDebug;
     public final String nativeBackend;
     public final String nativeOutputRoot;
     public final String nativeReleasePath;
@@ -89,12 +77,6 @@ public class GdxTeaVMPluginConfig {
         classpath = Collections.unmodifiableList(readPathList(properties, CLASSPATH));
         assets = Collections.unmodifiableList(readPathList(properties, ASSETS));
         classpathAssets = Collections.unmodifiableList(readTokenList(properties, CLASSPATH_ASSETS));
-        reflectionEnabled = getBoolean(properties, REFLECTION_ENABLED, true);
-        reflectionDefaults = getBoolean(properties, REFLECTION_DEFAULTS, true);
-        reflectionScan = getBoolean(properties, REFLECTION_SCAN, true);
-        reflectionPatterns = Collections.unmodifiableList(readTokenList(properties, REFLECTION));
-        reflectionClasses = Collections.unmodifiableList(readTokenList(properties, REFLECTION_CLASSES));
-        reflectionDebug = getBoolean(properties, REFLECTION_DEBUG, false);
         nativeBackend = getString(properties, NATIVE_BACKEND, "");
         nativeOutputRoot = getString(properties, NATIVE_OUTPUT_ROOT, "");
         nativeReleasePath = getString(properties, NATIVE_RELEASE_PATH, "");

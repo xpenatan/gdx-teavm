@@ -1,7 +1,6 @@
 package com.github.xpenatan.gdx.teavm.backends.ios.config.plugins;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.GdxTeaVMPluginConfig;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaReflectionSupplier;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.TeaVMPluginClasspath;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugin.compat.TeaVMCCompatibilityTarget;
 import com.github.xpenatan.gdx.teavm.backends.shared.config.plugins.ClassResourceTransformer;
@@ -26,17 +25,6 @@ public class IOSPlugin implements TeaVMPlugin {
                 return;
             }
             ArrayList<URL> classPathURLs = TeaVMPluginClasspath.getURLs(host.getClassLoader(), config.classpath);
-            TeaReflectionSupplier.printDebugLogs = config.reflectionDebug;
-            if(config.reflectionEnabled) {
-                TeaReflectionSupplier.addReflectionClass(config.reflectionClasses);
-                if(config.reflectionDefaults) {
-                    TeaReflectionSupplier.addDefaultReflectionClasses(classPathURLs);
-                }
-                TeaReflectionSupplier.installReflectionDependencySupport(host);
-                if(config.reflectionDebug) {
-                    TeaReflectionSupplier.printReflectionClasses();
-                }
-            }
             GdxIOSTargetWrapper.install(host, config, classPathURLs);
         }
     }

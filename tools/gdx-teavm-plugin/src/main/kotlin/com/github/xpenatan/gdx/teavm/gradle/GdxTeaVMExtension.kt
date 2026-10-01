@@ -34,40 +34,6 @@ open class GdxTeaVMExtension @Inject constructor(
     }
 
     /**
-     * Enables gdx-teavm reflection metadata generation.
-     *
-     * Keep this enabled when code or libraries use reflection at runtime.
-     *
-     * Default: `true`.
-     */
-    val reflectionEnabled: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
-
-    /**
-     * Adds the default reflection configuration required by common libGDX runtime types.
-     *
-     * Default: `true`.
-     */
-    val reflectionDefaults: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
-
-    /**
-     * Scans reachable classes and configured packages for reflection metadata when enabled.
-     *
-     * Default: `true`.
-     */
-    val reflectionScan: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(true)
-
-    /**
-     * Prints extra reflection metadata diagnostics during TeaVM generation when enabled.
-     *
-     * Default: `false`.
-     */
-    val reflectionDebug: Property<Boolean> = objects.property(Boolean::class.javaObjectType).convention(
-        project.providers.gradleProperty(REFLECTION_DEBUG)
-            .map(String::toBoolean)
-            .orElse(false)
-    )
-
-    /**
      * Local files or directories copied as libGDX internal assets.
      *
      * Directories are copied recursively and included in the generated preload manifest.
@@ -84,15 +50,6 @@ open class GdxTeaVMExtension @Inject constructor(
      * Default: empty list.
      */
     val classpathAssets: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
-
-    /**
-     * Reflection class names or package patterns to preserve.
-     *
-     * Values are passed to the gdx-teavm reflection support during TeaVM generation.
-     *
-     * Default: empty list.
-     */
-    val reflection: ListProperty<String> = objects.listProperty(String::class.java).convention(emptyList())
 
     /** Optional conventions inherited by every declared JavaScript and Wasm target. */
     val webDefaults: GdxTeaVMWebDefaults = objects.newInstance(GdxTeaVMWebDefaults::class.java)
@@ -269,10 +226,6 @@ open class GdxTeaVMExtension @Inject constructor(
         classpathAssets.addAll(paths.toList())
     }
 
-    /** Adds reflection class names or package patterns to [reflection]. */
-    fun reflection(vararg patterns: String) {
-        reflection.addAll(patterns.toList())
-    }
 
     private fun namedJsTarget(name: String): GdxTeaVMJsExtension {
         val identity = namedTargetIdentity(name, namedJsTargets, "JavaScript")
@@ -393,13 +346,8 @@ open class GdxTeaVMExtension @Inject constructor(
     internal fun toGlobalProperties(project: Project): Provider<Map<String, String>> {
         return project.provider {
             linkedMapOf<String, String>().also { properties ->
-                properties[REFLECTION_ENABLED] = reflectionEnabled.get().toString()
-                properties[REFLECTION_DEFAULTS] = reflectionDefaults.get().toString()
-                properties[REFLECTION_SCAN] = reflectionScan.get().toString()
-                properties[REFLECTION_DEBUG] = reflectionDebug.get().toString()
                 putPathList(properties, ASSETS, assets.files.map(File::getAbsolutePath))
                 putTokenList(properties, CLASSPATH_ASSETS, classpathAssets.get())
-                putTokenList(properties, REFLECTION, reflection.get())
             }
         }
     }
@@ -566,11 +514,6 @@ open class GdxTeaVMExtension @Inject constructor(
         const val COPY_LOADING_ASSET = "gdx.teavm.copyLoadingAsset"
         const val ASSETS = "gdx.teavm.assets"
         const val CLASSPATH_ASSETS = "gdx.teavm.classpathAssets"
-        const val REFLECTION_ENABLED = "gdx.teavm.reflection.enabled"
-        const val REFLECTION_DEFAULTS = "gdx.teavm.reflection.defaults"
-        const val REFLECTION_SCAN = "gdx.teavm.reflection.scan"
-        const val REFLECTION = "gdx.teavm.reflection"
-        const val REFLECTION_DEBUG = "gdx.teavm.reflection.debug"
         const val NATIVE_BACKEND = "gdx.teavm.native.backend"
         const val NATIVE_OUTPUT_ROOT = "gdx.teavm.native.outputRoot"
         const val NATIVE_RELEASE_PATH = "gdx.teavm.native.releasePath"

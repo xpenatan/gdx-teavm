@@ -63,7 +63,6 @@ dependencies {
 
 gdxTeaVM {
     assets("assets")
-    reflection("com.example.game.save**")
 
     webDefaults {
         mainClass = "com.example.game.teavm.WebLauncher"

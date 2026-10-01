@@ -269,6 +269,31 @@ class GdxTeaVMNamedTargetsTest {
         assertEquals(384, extension.android.maxHeapSizeMb.get())
     }
 
+    @Test
+    fun `explicit preserved classes survive defaults and reach compilation and dev server tasks`() {
+        val project = configuredProject { extension ->
+            extension.webDefaults(Action { preservedClasses.add("example.Dynamic") })
+            extension.nativeDefaults(Action { preservedClasses.add("example.NativeDynamic") })
+            extension.js(Action { mainClass.set("example.Main") })
+            extension.wasm("test", Action { mainClass.set("example.Main") })
+            extension.js("live", Action {
+                mainClass.set("example.Main")
+                devServer(Action { enabled.set(true) })
+            })
+            extension.glfw("test", Action { mainClass.set("example.Main") })
+        }
+        assertEquals(listOf("example.Dynamic"),
+            (project.tasks.getByName("generateJavaScript") as GenerateJavaScriptTask).getPreservedClasses().get())
+        assertEquals(listOf("example.Dynamic"),
+            (project.tasks.getByName("gdx_teavm_web_wasm_test_compile") as GenerateWasmGCTask).getPreservedClasses().get())
+        val devServer = project.tasks.withType(DevServerTask::class.java).first {
+            it.getPreservedClasses().get().contains("example.Dynamic")
+        }
+        assertEquals(listOf("example.Dynamic"), devServer.getPreservedClasses().get())
+        assertEquals(listOf("example.NativeDynamic"),
+            (project.tasks.getByName("gdx_teavm_glfw_test_generate") as GenerateCTask).getPreservedClasses().get())
+    }
+
     private fun configuredProject(configure: (GdxTeaVMExtension) -> Unit): Project {
         val project = ProjectBuilder.builder().build()
         project.pluginManager.apply(GdxTeaVMGradlePlugin::class.java)

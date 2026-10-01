@@ -58,13 +58,13 @@ public class GdxTeaVMPluginConfigTest {
     @Test
     public void readsIndexedPropertiesInheritedFromDefaults() {
         Properties defaults = new Properties();
-        defaults.setProperty(GdxTeaVMPluginConfig.REFLECTION + ".00000000", "com.example.Shared");
+        defaults.setProperty(GdxTeaVMPluginConfig.CLASSPATH_ASSETS + ".00000000", "com.example.Shared");
         putDefinition(defaults, "00000000", "CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL");
         Properties properties = new Properties(defaults);
 
         GdxTeaVMPluginConfig config = GdxTeaVMPluginConfig.from(properties);
 
-        assertThat(config.reflectionPatterns).containsExactly("com.example.Shared");
+        assertThat(config.classpathAssets).containsExactly("com.example.Shared");
         assertThat(config.nativeCMakeDefinitions)
                 .containsExactly("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL");
     }

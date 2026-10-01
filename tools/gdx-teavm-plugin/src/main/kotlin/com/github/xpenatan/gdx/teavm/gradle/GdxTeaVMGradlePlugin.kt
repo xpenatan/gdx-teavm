@@ -36,17 +36,11 @@ import org.teavm.gradle.tasks.GenerateWasmGCTask
 import org.teavm.gradle.tasks.DevServerTask
 import org.teavm.gradle.tasks.TeaVMTask
 import java.io.File
-import java.io.IOException
 import java.net.InetAddress
 import java.net.ServerSocket
-import java.nio.file.FileSystems
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.PathMatcher
-import java.nio.file.Paths
 import java.util.Properties
 import java.util.UUID
-import java.util.zip.ZipFile
 
 class GdxTeaVMGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -353,20 +347,14 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
 
         if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.JS)) {
             val js = teavm.getJs()
-            val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
-            js.preservedClasses.addAll(reflectionClasses)
             js.properties.putAll(globalProperties)
             js.properties.putAll(extension.toWebProperties(project, extension.js))
-            js.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         }
 
         if(extension.isDefaultTargetDeclared(GdxTeaVMTarget.WASM)) {
             val wasm = teavm.getWasmGC()
-            val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
-            wasm.preservedClasses.addAll(reflectionClasses)
             wasm.properties.putAll(globalProperties)
             wasm.properties.putAll(extension.toWebProperties(project, extension.wasm))
-            wasm.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         }
     }
 
@@ -383,15 +371,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
         val teavm = project.extensions.getByType<TeaVMExtension>()
         val c = teavm.getC()
-        val reflectionClasses = reflectionClasses(project, extension, nativeTarget.backendName)
         applyNativeTargetConfiguration(c, nativeTarget)
         if(!nativeTarget.mainClass.isPresent) {
             c.mainClass.set(VALIDATION_ONLY_MAIN_CLASS)
         }
-        c.preservedClasses.addAll(reflectionClasses)
         c.properties.putAll(extension.toGlobalProperties(project))
         c.properties.putAll(extension.toNativeProperties(project, nativeTarget))
-        c.properties.put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         project.tasks.named(TeaVMPlugin.C_TASK_NAME, GenerateCTask::class.java).configure {
             getTargetFileName().set(nativeTarget.targetFileName)
             if(selectedNativeBackend == null) {
@@ -689,189 +674,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun reflectionClasses(
-        project: Project,
-        extension: GdxTeaVMExtension,
-        targetBackend: String
-    ): Provider<List<String>> {
-        return reflectionClasses(project, extension, targetBackend, project.provider {
-            targetClasspath(project, targetBackend).files
-        })
-    }
-
-    private fun reflectionClasses(
-        project: Project,
-        extension: GdxTeaVMExtension,
-        targetBackend: String,
-        classpathProvider: Provider<Set<File>>
-    ) = project.provider {
-        val debug = extension.reflectionDebug.get()
-        if(!extension.reflectionEnabled.get()) {
-            if(debug) {
-                project.logger.lifecycle("[gdx-teavm] Reflection disabled for target '$targetBackend'")
-            }
-            return@provider emptyList()
-        }
-
-        val patterns = reflectionPatterns(extension)
-        if(patterns.isEmpty()) {
-            if(debug) {
-                project.logger.lifecycle("[gdx-teavm] Reflection enabled for target '$targetBackend', but no Gradle reflection patterns were configured")
-            }
-            return@provider emptyList()
-        }
-
-        val classes = linkedSetOf<String>()
-        val classpathFiles = if(extension.reflectionScan.get()) {
-            classpathProvider.get()
-        }
-        else {
-            emptySet()
-        }
-        if(extension.reflectionScan.get()) {
-            val matchers = patterns.map { pattern ->
-                FileSystems.getDefault().getPathMatcher("glob:" + pattern.replace('.', '/'))
-            }
-            for(file in classpathFiles) {
-                scanReflectionClasses(file, matchers, classes)
-            }
-        }
-        else {
-            classes.addAll(patterns.filter(::isExactClassName))
-        }
-        if(debug) {
-            logReflectionClasses(project, targetBackend, extension.reflectionScan.get(), patterns, classpathFiles, classes)
-        }
-        classes.toList()
-    }
-
-    private fun logReflectionClasses(
-        project: Project,
-        targetBackend: String,
-        scanEnabled: Boolean,
-        patterns: List<String>,
-        classpathFiles: Collection<File>,
-        classes: Collection<String>
-    ) {
-        project.logger.lifecycle("[gdx-teavm] Reflection debug for target '$targetBackend'")
-        project.logger.lifecycle("[gdx-teavm]   scan: $scanEnabled")
-        project.logger.lifecycle("[gdx-teavm]   patterns (${patterns.size}):")
-        for(pattern in patterns) {
-            project.logger.lifecycle("[gdx-teavm]     pattern: $pattern")
-        }
-        if(scanEnabled) {
-            project.logger.lifecycle("[gdx-teavm]   scanned classpath entries (${classpathFiles.size}):")
-            for(file in classpathFiles.sortedBy(File::getAbsolutePath)) {
-                project.logger.lifecycle("[gdx-teavm]     classpath: ${file.absolutePath}")
-            }
-        }
-        project.logger.lifecycle("[gdx-teavm]   classes added to TeaVM preservedClasses (${classes.size}):")
-        for(className in classes.sorted()) {
-            project.logger.lifecycle("[gdx-teavm]     class: $className")
-        }
-    }
-
-    private fun reflectionPatterns(extension: GdxTeaVMExtension): List<String> {
-        return extension.reflection.get()
-            .map(String::trim)
-            .filter(String::isNotEmpty)
-            .distinct()
-    }
-
-    private fun scanReflectionClasses(
-        file: File,
-        matchers: List<PathMatcher>,
-        out: MutableSet<String>
-    ) {
-        if(!file.exists()) {
-            return
-        }
-        if(file.isDirectory) {
-            scanReflectionDirectory(file.toPath(), matchers, out)
-        }
-        else if(file.isFile && file.name.endsWith(".jar")) {
-            scanReflectionJar(file, matchers, out)
-        }
-    }
-
-    private fun scanReflectionDirectory(
-        root: Path,
-        matchers: List<PathMatcher>,
-        out: MutableSet<String>
-    ) {
-        try {
-            Files.walk(root).use { stream ->
-                stream.filter { path -> Files.isRegularFile(path) }
-                    .filter { path -> path.fileName.toString().endsWith(".class") }
-                    .forEach { path ->
-                        addReflectionClass(root.relativize(path).toString(), matchers, out)
-                    }
-            }
-        }
-        catch(ignored: IOException) {
-        }
-    }
-
-    private fun scanReflectionJar(
-        file: File,
-        matchers: List<PathMatcher>,
-        out: MutableSet<String>
-    ) {
-        try {
-            ZipFile(file).use { zipFile ->
-                val entries = zipFile.entries()
-                while(entries.hasMoreElements()) {
-                    val entry = entries.nextElement()
-                    if(!entry.isDirectory && entry.name.endsWith(".class")) {
-                        addReflectionClass(entry.name, matchers, out)
-                    }
-                }
-            }
-        }
-        catch(ignored: IOException) {
-        }
-    }
-
-    private fun addReflectionClass(
-        classFileName: String,
-        matchers: List<PathMatcher>,
-        out: MutableSet<String>
-    ) {
-        val className = classFileName
-            .removeSuffix(".class")
-            .replace('\\', '.')
-            .replace('/', '.')
-        if(className == "module-info" || className.endsWith(".package-info")) {
-            return
-        }
-        if(matchesReflectionPattern(className, matchers)) {
-            out.add(className)
-        }
-    }
-
-    private fun matchesReflectionPattern(className: String, matchers: List<PathMatcher>): Boolean {
-        var currentClassName = className
-        while(true) {
-            val path = Paths.get(currentClassName.replace('.', '/'))
-            if(matchers.any { matcher -> matcher.matches(path) }) {
-                return true
-            }
-            val nestedIndex = currentClassName.lastIndexOf('$')
-            if(nestedIndex < 0) {
-                return false
-            }
-            currentClassName = currentClassName.substring(0, nestedIndex)
-        }
-    }
-
-    private fun isExactClassName(pattern: String): Boolean {
-        return pattern.none { char -> char == '*' || char == '?' || char == '[' || char == '{' }
-    }
-
-    private fun joinTokenList(values: Iterable<String>): String {
-        return values.map(String::trim).filter(String::isNotEmpty).joinToString(",")
-    }
-
     private fun registerTasks(
         project: Project,
         extension: GdxTeaVMExtension,
@@ -902,12 +704,11 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     ) {
         val target = registration.target
         val taskPrefix = registration.taskPrefix("gdx_teavm_web_js")
-        val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
         val compilationTask: TaskProvider<out Task> = if(registration.isDefault) {
             project.tasks.named(TeaVMPlugin.JS_TASK_NAME)
         }
         else {
-            registerNamedJsCompilationTask(project, extension, registration, reflectionClasses)
+            registerNamedJsCompilationTask(project, extension, registration)
         }
         val jsBuild = project.tasks.register("${taskPrefix}_build") {
             group = TASK_GROUP
@@ -923,7 +724,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                     project,
                     extension,
                     registration,
-                    reflectionClasses,
                     devServerRunnerClasspath
                 )
             }
@@ -976,7 +776,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     ) {
         val target = registration.target
         val taskPrefix = registration.taskPrefix("gdx_teavm_web_wasm")
-        val reflectionClasses = reflectionClasses(project, extension, WEB_BACKEND)
         val compilationTask: TaskProvider<out Task>
         val buildDependencies = mutableListOf<Any>()
         if(registration.isDefault) {
@@ -984,7 +783,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             buildDependencies.add(project.tasks.named(TeaVMPlugin.BUILD_WASM_GC_TASK_NAME))
         }
         else {
-            compilationTask = registerNamedWasmCompilationTask(project, extension, registration, reflectionClasses)
+            compilationTask = registerNamedWasmCompilationTask(project, extension, registration)
             buildDependencies.add(compilationTask)
             buildDependencies.add(registerNamedWasmRuntimeTask(project, registration, compilationTask))
         }
@@ -1002,7 +801,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                     project,
                     extension,
                     registration,
-                    reflectionClasses,
                     devServerRunnerClasspath
                 )
             }
@@ -1051,13 +849,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         registration: GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>,
-        reflectionClasses: Provider<List<String>>
     ): TaskProvider<GenerateJavaScriptTask> {
         val target = registration.target
         val taskName = "${registration.taskPrefix("gdx_teavm_web_js")}_compile"
         val template = project.tasks.named(TeaVMPlugin.JS_TASK_NAME, GenerateJavaScriptTask::class.java).get()
         return project.tasks.register<GenerateJavaScriptTask>(taskName) {
-            configureNamedWebCompilation(project, extension, target, reflectionClasses, template)
+            configureNamedWebCompilation(project, extension, target, template)
             getTargetFileName().set(target.targetFileName)
             getObfuscated().set(target.obfuscated)
             getStrict().set(target.strict)
@@ -1074,13 +871,12 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
-        reflectionClasses: Provider<List<String>>
     ): TaskProvider<GenerateWasmGCTask> {
         val target = registration.target
         val taskName = "${registration.taskPrefix("gdx_teavm_web_wasm")}_compile"
         val template = project.tasks.named(TeaVMPlugin.WASM_GC_TASK_NAME, GenerateWasmGCTask::class.java).get()
         return project.tasks.register<GenerateWasmGCTask>(taskName) {
-            configureNamedWebCompilation(project, extension, target, reflectionClasses, template)
+            configureNamedWebCompilation(project, extension, target, template)
             getTargetFileName().set(target.targetFileName)
             getObfuscated().set(target.obfuscated)
             getStrict().set(target.strict)
@@ -1098,7 +894,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         target: GdxTeaVMWebExtension,
-        reflectionClasses: Provider<List<String>>,
         template: TeaVMTask
     ) {
         group = null
@@ -1112,11 +907,9 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         getOutOfProcess().set(target.outOfProcess)
         getProcessMemory().set(target.processMemory)
         getPreservedClasses().addAll(target.preservedClasses)
-        getPreservedClasses().addAll(reflectionClasses)
         getProperties().putAll(target.teavmConfig.properties)
         getProperties().putAll(extension.toGlobalProperties(project))
         getProperties().putAll(extension.toWebProperties(project, target))
-        getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         filterBackendClasspath(WEB_BACKEND)
         outputs.upToDateWhen { false }
     }
@@ -1149,7 +942,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         registration: GdxTeaVMTargetRegistration<GdxTeaVMJsExtension>,
-        reflectionClasses: Provider<List<String>>,
         devServerRunnerClasspath: FileCollection?
     ): TaskProvider<DevServerTask> {
         val target = registration.target
@@ -1160,7 +952,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 project,
                 extension,
                 target,
-                reflectionClasses,
                 template,
                 WEB_BACKEND,
                 "js-${registration.taskNameSegment}",
@@ -1177,7 +968,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         registration: GdxTeaVMTargetRegistration<GdxTeaVMWasmExtension>,
-        reflectionClasses: Provider<List<String>>,
         devServerRunnerClasspath: FileCollection?
     ): TaskProvider<DevServerTask> {
         val target = registration.target
@@ -1188,7 +978,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
                 project,
                 extension,
                 target,
-                reflectionClasses,
                 template,
                 WEB_BACKEND,
                 "wasm-${registration.taskNameSegment}",
@@ -1204,7 +993,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         project: Project,
         extension: GdxTeaVMExtension,
         target: GdxTeaVMWebExtension,
-        reflectionClasses: Provider<List<String>>,
         template: DevServerTask,
         targetBackend: String,
         devServerTarget: String,
@@ -1224,9 +1012,7 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         getProperties().putAll(target.teavmConfig.properties)
         getProperties().putAll(extension.toGlobalProperties(project))
         getProperties().putAll(extension.toWebProperties(project, target))
-        getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
         getPreservedClasses().addAll(target.preservedClasses)
-        getPreservedClasses().addAll(reflectionClasses)
         getPort().set(target.serverPort)
         getProcessMemory().set(target.devServer.processMemory)
         getAutoReload().set(false)
@@ -1448,7 +1234,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         taskDescription: String
     ): TaskProvider<GenerateCTask> {
         val template = project.tasks.named(TeaVMPlugin.C_TASK_NAME, GenerateCTask::class.java).get()
-        val reflectionClasses = reflectionClasses(project, extension, target.backendName)
         return project.tasks.register<GenerateCTask>(taskName) {
             group = TASK_GROUP
             description = taskDescription
@@ -1462,10 +1247,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             getOutOfProcess().set(target.outOfProcess)
             getProcessMemory().set(target.processMemory)
             getPreservedClasses().addAll(target.preservedClasses)
-            getPreservedClasses().addAll(reflectionClasses)
             getProperties().putAll(extension.toGlobalProperties(project))
             getProperties().putAll(extension.toNativeProperties(project, target))
-            getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
             getMinHeapSize().set(target.minHeapSizeMb)
             getMaxHeapSize().set(target.maxHeapSizeMb)
             getHeapDump().set(target.heapDump)
@@ -1483,18 +1266,19 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         val compilerConfiguration = project.configurations.detachedConfiguration(
             project.dependencies.create(ArtifactCoordinates.TOOLS)
         )
+        val extensionProcessor = project.configurations.detachedConfiguration(
+            project.dependencies.create(ArtifactCoordinates.EXTENSION_PROCESSOR)
+        )
         val compileTask = project.tasks.register<JavaCompile>("compileGdxTeaVMAndroidJava") {
             description = "Internal task used by gdx_teavm_android_generate to compile Android TeaVM launcher sources."
             source(project.layout.projectDirectory.dir(ANDROID_NATIVE_SOURCE_DIR))
             classpath = project.configurations.getByName(TeaVMPlugin.CONFIGURATION_NAME)
+            options.annotationProcessorPath = extensionProcessor
             destinationDirectory.set(project.layout.buildDirectory.dir("classes/java/gdxTeaVMAndroid"))
             sourceCompatibility = JavaVersion.VERSION_17.toString()
             targetCompatibility = JavaVersion.VERSION_17.toString()
         }
         val classpath = androidTeaVMClasspath(project, compileTask)
-        val reflectionClasses = reflectionClasses(project, extension, ANDROID_BACKEND, project.provider {
-            classpath.files
-        })
         val generateTask = project.tasks.register<GenerateCTask>("gdx_teavm_android_generate") {
             group = TASK_GROUP
             description = "Generate the gdx-teavm Android native C/CMake payload."
@@ -1510,10 +1294,8 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
             getOutOfProcess().set(extension.android.outOfProcess)
             getProcessMemory().set(extension.android.processMemory)
             getPreservedClasses().addAll(extension.android.preservedClasses)
-            getPreservedClasses().addAll(reflectionClasses)
             getProperties().putAll(extension.toGlobalProperties(project))
             getProperties().putAll(extension.toNativeProperties(project, extension.android))
-            getProperties().put(REFLECTION_CLASSES, reflectionClasses.map(::joinTokenList))
             getProperties().put(PLUGIN_CLASSPATH, project.provider {
                 classpath.files.joinToString(File.pathSeparator) { file -> file.absolutePath }
             })
@@ -1597,7 +1379,6 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
         const val DEV_SERVER_CLASSPATH_TASK_NAME = "gdxTeaVMDevServerClasspathJar"
         const val DEV_SERVER_CLASSPATH_JAR_NAME = "gdx-teavm-dev-server-classpath.jar"
         const val WEBAPP_INDEX_PATH = "gdx.teavm.webapp.indexPath"
-        const val REFLECTION_CLASSES = "gdx.teavm.reflection.classes"
         const val VALIDATION_ONLY_MAIN_CLASS = "com.github.xpenatan.gdx.teavm.gradle.ValidationOnlyMainClass"
     }
 }

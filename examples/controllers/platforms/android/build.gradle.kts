@@ -91,9 +91,9 @@ dependencies {
 }
 
 gdxTeaVM {
-    reflection("com.badlogic.gdx.controllers.android.AndroidControllers")
 
     android {
+        preservedClasses.add("com.badlogic.gdx.controllers.android.AndroidControllers")
         mainClass = "ControllerAndroidLauncher"
         optimization = OptimizationLevel.NONE
         debugInformation = false

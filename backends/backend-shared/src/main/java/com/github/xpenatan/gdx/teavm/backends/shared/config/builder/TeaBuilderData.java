@@ -1,9 +1,10 @@
 package com.github.xpenatan.gdx.teavm.backends.shared.config.builder;
 
 import com.github.xpenatan.gdx.teavm.backends.shared.config.AssetFileHandle;
-import com.github.xpenatan.gdx.teavm.backends.shared.config.reflection.DefaultReflectionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.teavm.tooling.TeaVMSourceFilePolicy;
 import org.teavm.tooling.sources.SourceFileProvider;
 import org.teavm.vm.TeaVMOptimizationLevel;
@@ -23,7 +24,6 @@ public class TeaBuilderData {
     public int minHeapSize = 4 * (1 << 20);
     public int maxHeapSize = 128 * (1 << 20);
     public int minDirectBuffersSize = 2 * (1 << 20);
-    public final ArrayList<String> finalReflectionClasses = new ArrayList<>(); // used internally
-    public DefaultReflectionListener reflectionListener = new DefaultReflectionListener();
+    public final Set<String> preservedClasses = new LinkedHashSet<>();
     public boolean shortFileNames;
 }
