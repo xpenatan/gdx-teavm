@@ -720,7 +720,9 @@ public class WebGL30 extends WebGL20 implements GL30 {
     @Override
     public void glTexImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format, int type, Buffer pixels) {
         if(pixels == null) {
-            gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, (ArrayBufferView)null);
+            // Avoid a strict TeaVM cast check against the nonexistent ArrayBufferView constructor.
+            ArrayBufferView nullPixels = null;
+            gl.texImage3D(target, level, internalformat, width, height, depth, border, format, type, nullPixels);
             return;
         }
         ArrayBufferView arrayBuffer;
