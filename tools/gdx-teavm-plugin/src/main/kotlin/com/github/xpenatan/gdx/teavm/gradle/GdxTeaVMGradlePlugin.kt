@@ -510,12 +510,10 @@ class GdxTeaVMGradlePlugin : Plugin<Project> {
     }
 
     private fun createDevServerRunnerClasspath(project: Project): FileCollection? {
+        val runnerClasspath = devServerRunnerClasspath(project)
         if(!isWindows()) {
-            return null
+            return runnerClasspath
         }
-        val runnerClasspath = project.configurations.detachedConfiguration(
-            project.dependencies.create(ArtifactCoordinates.DEV_SERVER_RUNNER)
-        )
         val pathingJar = project.tasks.register<GdxTeaVMDevServerClasspathJar>(DEV_SERVER_CLASSPATH_TASK_NAME) {
             group = null
             description = "Creates a short TeaVM development-server classpath for Windows."
