@@ -43,6 +43,8 @@ pluginManagement {
 
 The gdx-teavm plugin marker is published to Maven with the library artifacts, so Gradle Plugin Portal is not required for this plugin.
 
+> **Snapshot plugin:** When using the `-SNAPSHOT` version of the Gradle plugin, also add `maven("https://central.sonatype.com/repository/maven-snapshots/")` inside `pluginManagement { repositories { ... } }` in your root `settings.gradle.kts`. Adding it only to `repositories` in `build.gradle.kts` does not enable plugin resolution.
+
 ## Recommended: Gradle Plugin
 
 Apply the plugin to the module that should produce TeaVM output.
