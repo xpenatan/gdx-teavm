@@ -106,14 +106,25 @@ public class Pixmap implements Disposable, PixmapNativeInterface {
     }
 
     public Pixmap(ByteBuffer encodedData, int offset, int len) {
-        throw new GdxRuntimeException("Pixmap constructor not supported");
-//        if (!encodedData.isDirect()) throw new GdxRuntimeException("Couldn't load pixmap from non-direct ByteBuffer");
-//        try {
-//            nativePixmap = new Gdx2DPixmapEmu(encodedData, offset, len, 0);
-//            initPixmapEmu(-1, -1, null, null);
-//        } catch (IOException e) {
-//            throw new GdxRuntimeException("Couldn't load pixmap from image data", e);
-//        }
+        if (!encodedData.isDirect()) throw new GdxRuntimeException("Couldn't load pixmap from non-direct ByteBuffer");
+        byte[] bytes = copyEncodedData(encodedData, offset, len);
+        nativePixmap = new Gdx2DPixmap(bytes, 0, bytes.length, 0);
+    }
+
+    public Pixmap(ByteBuffer encodedData) {
+        this(encodedData, encodedData.position(), encodedData.remaining());
+    }
+
+    static byte[] copyEncodedData(ByteBuffer encodedData, int offset, int len) {
+        if (offset < 0 || len < 0 || offset > encodedData.limit() - len) {
+            throw new IndexOutOfBoundsException("Invalid ByteBuffer region: offset=" + offset + ", length=" + len
+                    + ", limit=" + encodedData.limit());
+        }
+        byte[] bytes = new byte[len];
+        for (int i = 0; i < len; i++) {
+            bytes[i] = encodedData.get(offset + i);
+        }
+        return bytes;
     }
 
     public Pixmap(int width, int height, Format format) {
