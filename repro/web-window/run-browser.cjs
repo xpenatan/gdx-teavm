@@ -34,11 +34,12 @@ async function main() {
   });
 
   await new Promise((resolve) => server.listen(18101, "127.0.0.1", resolve));
-  const browser = await chromium.launch({
-    executablePath: process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  const launchOptions = {
     headless: true,
     args: ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader"],
-  });
+  };
+  if (process.env.CHROME_PATH) launchOptions.executablePath = process.env.CHROME_PATH;
+  const browser = await chromium.launch(launchOptions);
   try {
     const page = await browser.newPage();
     page.on("pageerror", (error) => console.error("pageerror:", error));
