@@ -16,7 +16,7 @@ public abstract class IndexedDBFileData implements JSObject {
     @JSProperty
     public abstract int getType();
 
-    @JSProperty
+    @JSProperty("date")
     public abstract JSDate getTimestamp();
 
     @JSBody(params = { "type", "timestamp" }, script = "return {type: type, date: timestamp};")

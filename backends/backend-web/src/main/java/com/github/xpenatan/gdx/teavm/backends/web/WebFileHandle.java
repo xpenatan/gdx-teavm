@@ -591,7 +591,10 @@ public class WebFileHandle extends FileHandle {
      */
     @Override
     public long lastModified() {
-        return 0;
+        if(type != FileType.Local) {
+            return 0;
+        }
+        return teaFiles.getFileDB(type).lastModified(this);
     }
 
     @Override

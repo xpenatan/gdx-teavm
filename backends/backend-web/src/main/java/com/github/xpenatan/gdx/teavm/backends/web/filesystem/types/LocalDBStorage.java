@@ -65,7 +65,7 @@ public class LocalDBStorage extends MemoryFileStorage {
         IDBTransaction transaction = dataBase.transaction(KEY_OBJECT_STORE, "readwrite");
         IDBObjectStore objectStore = transaction.objectStore(KEY_OBJECT_STORE);
 
-        IndexedDBFileData dbFileData = IndexedDBFileData.create(fileData.getType(), new JSDate());
+        IndexedDBFileData dbFileData = IndexedDBFileData.create(fileData.getType(), new JSDate(fileData.getLastModified()));
         if(!fileData.isDirectory()) {
             dbFileData.setContents(fileData.getBytes());
         }
@@ -99,14 +99,16 @@ public class LocalDBStorage extends MemoryFileStorage {
                 JSObject value = cursor.getValue();
                 IndexedDBFileData dbFileData = getFileData(value);
                 int type = dbFileData.getType();
+                JSDate timestamp = dbFileData.getTimestamp();
+                long lastModified = timestamp != null ? (long)timestamp.getTime() : 0;
 
                 if(type == FileData.TYPE_DIRECTORY) {
-                    putFolderInternal(key, false);
+                    putFolderInternal(key, lastModified, false);
                 }
                 else {
                     Int8Array contents = dbFileData.getContents();
                     byte[] bytes = TypedArrays.toByteArray(contents);
-                    putFileInternal(key, bytes, false);
+                    putFileInternal(key, bytes, lastModified, false);
                 }
 
                 cursor.doContinue();

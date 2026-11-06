@@ -113,5 +113,7 @@ public abstract class FileDB {
 
     public abstract long length(WebFileHandle file);
 
+    public abstract long lastModified(WebFileHandle file);
+
     public abstract void rename(WebFileHandle source, WebFileHandle target);
 }

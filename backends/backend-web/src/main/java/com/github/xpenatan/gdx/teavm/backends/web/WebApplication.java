@@ -85,6 +85,8 @@ public class WebApplication implements Application {
     private final Array<Runnable> runnablesHelper = new Array<>();
 
     private boolean stepError;
+    private volatile boolean pageHidden;
+    private boolean lifecycleDisposed;
 
     public WebApplication(ApplicationListener appListener, WebApplicationConfiguration config) {
         this(appListener, null, config);
@@ -157,39 +159,37 @@ public class WebApplication implements Application {
         window.addEventListener("pagehide", new EventListener() {
             @Override
             public void handleEvent(Event evt) {
-                if(curListener != null) {
-                    curListener.pause();
-                    curListener.dispose();
-                    curListener = null;
-                }
+                pageHidden = true;
+                executeLifecycleCallback(() -> {
+                    if(lifecycleDisposed) return;
+                    if(curListener != null) {
+                        curListener.pause();
+                        curListener.dispose();
+                        curListener = null;
+                    }
+                    lifecycleDisposed = true;
+                });
             }
         });
 
         window.getDocument().addEventListener("visibilitychange", new EventListener<Event>() {
             @Override
             public void handleEvent(Event evt) {
-                // notify of state change
-                if(initState == AppState.APP_LOOP) {
-                    String state = window.getDocument().getVisibilityState();
-                    if (state.equals("hidden")) {
-                        // hidden: i.e. we are paused
-                        synchronized (lifecycleListeners) {
-                            for (LifecycleListener listener : lifecycleListeners) {
-                                listener.pause();
-                            }
+                if(initState != AppState.APP_LOOP) return;
+                String state = window.getDocument().getVisibilityState();
+                boolean hidden = state.equals("hidden");
+                if(!hidden && !state.equals("visible")) return;
+                executeLifecycleCallback(() -> {
+                    if(lifecycleDisposed || curListener == null) return;
+                    synchronized (lifecycleListeners) {
+                        for (LifecycleListener listener : lifecycleListeners) {
+                            if(hidden) listener.pause();
+                            else listener.resume();
                         }
-                        curListener.pause();
                     }
-                    else if(state.equals("visible")){
-                        // visible: i.e. we resume
-                        synchronized (lifecycleListeners) {
-                            for (LifecycleListener listener : lifecycleListeners) {
-                                listener.resume();
-                            }
-                        }
-                        curListener.resume();
-                    }
-                }
+                    if(hidden) curListener.pause();
+                    else curListener.resume();
+                });
             }
         });
 
@@ -214,8 +214,9 @@ public class WebApplication implements Application {
         Runnable appLoop = new Runnable() {
             @Override
             public void run() {
+                if(stepError || pageHidden || curListener == null) return;
                 step(curListener);
-                if(stepError) {
+                if(stepError || pageHidden || curListener == null) {
                     return;
                 }
                 window.requestAnimationFrame(this);
@@ -225,6 +226,7 @@ public class WebApplication implements Application {
         Runnable initialization = new Runnable() {
             @Override
             public void run() {
+                if(stepError || pageHidden) return;
                 AppState state = initState;
                 switch(state) {
                     case APP_LOOP:
@@ -236,7 +238,7 @@ public class WebApplication implements Application {
                         }
                         break;
                 }
-                if(stepError) {
+                if(stepError || pageHidden) {
                     return;
                 }
                 if(isPreloadReady) {
@@ -252,6 +254,17 @@ public class WebApplication implements Application {
             }
         };
         window.requestAnimationFrame(initialization);
+    }
+
+    private void executeLifecycleCallback(Runnable callback) {
+        window.executeOnRenderThread(() -> {
+            try {
+                callback.run();
+            } catch(Throwable t) {
+                stepError = true;
+                onError(t);
+            }
+        });
     }
 
     private void step(ApplicationListener appListener) {

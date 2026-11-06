@@ -191,6 +191,13 @@ public class MemoryFileStorage extends FileDB {
     }
 
     @Override
+    public long lastModified(WebFileHandle file) {
+        String path = fixPath(file.path());
+        FileData data = getInternal(path);
+        return data != null ? data.getLastModified() : 0;
+    }
+
+    @Override
     public void rename(WebFileHandle source, WebFileHandle target) {
         String sourcePath = fixPath(source.path());
         String targetPath = fixPath(target.path());
@@ -348,6 +355,10 @@ public class MemoryFileStorage extends FileDB {
     }
 
     final public void putFileInternal(String path, byte[] bytes, boolean callMethod) {
+        putFileInternal(path, bytes, System.currentTimeMillis(), callMethod);
+    }
+
+    final public void putFileInternal(String path, byte[] bytes, long lastModified, boolean callMethod) {
         if(debug) {
             String pathStr = "\"" + path + "\"";
             System.out.println(getClass().getSimpleName() + " PUT FILE: " + pathStr + " Bytes: " + bytes.length);
@@ -355,7 +366,7 @@ public class MemoryFileStorage extends FileDB {
         if(path.isEmpty()  || path.equals(".") || path.equals("/") || path.equals("./")) {
             throw new GdxRuntimeException("Cannot put an empty folder name");
         }
-        FileData fileData = new FileData(path, bytes);
+        FileData fileData = new FileData(path, FileData.TYPE_FILE, bytes, lastModified);
         fileMap.put(path, fileData);
         if(callMethod) {
             putFile(path, fileData);
@@ -367,6 +378,10 @@ public class MemoryFileStorage extends FileDB {
     }
 
     final public void putFolderInternal(String path, boolean callMethod) {
+        putFolderInternal(path, System.currentTimeMillis(), callMethod);
+    }
+
+    final public void putFolderInternal(String path, long lastModified, boolean callMethod) {
         if(debug) {
             String pathStr = "\"" + path + "\"";
             System.out.println(getClass().getSimpleName() + " PUT FOLDER: " + pathStr);
@@ -374,8 +389,8 @@ public class MemoryFileStorage extends FileDB {
         if(path.isEmpty()  || path.equals(".") || path.equals("/") || path.equals("./")) {
             throw new GdxRuntimeException("Cannot put an empty folder name");
         }
-        FileData fileData = new FileData(path);
-        fileMap.put(path, new FileData(path));
+        FileData fileData = new FileData(path, FileData.TYPE_DIRECTORY, null, lastModified);
+        fileMap.put(path, fileData);
         if(callMethod) {
             putFile(path, fileData);
         }
