@@ -51,7 +51,11 @@ public class WebWindow implements AnimationFrameCallback {
     public void onAnimationFrame(double arg0) {
         Runnable toRun = runnable;
         runnable = null;
-        FRAME_EXECUTOR.execute(toRun);
+        executeOnRenderThread(toRun);
+    }
+
+    public void executeOnRenderThread(Runnable runnable) {
+        FRAME_EXECUTOR.execute(runnable);
     }
 
     public Location getLocation() {

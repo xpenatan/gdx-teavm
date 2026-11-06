@@ -13,13 +13,13 @@ import com.github.xpenatan.gdx.teavm.backends.web.dom.DocumentExt;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.ElementExt;
 import com.github.xpenatan.gdx.teavm.backends.web.dom.HTMLElementExt;
 import com.github.xpenatan.gdx.teavm.backends.web.utils.KeyCodes;
+import com.github.xpenatan.gdx.teavm.backends.web.dom.impl.WebWindow;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSProperty;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSArrayReader;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.events.EventListener;
-import org.teavm.jso.dom.events.EventTarget;
 import org.teavm.jso.dom.events.KeyboardEvent;
 import org.teavm.jso.dom.events.MouseEvent;
 import org.teavm.jso.dom.events.Touch;
@@ -33,9 +33,7 @@ import org.teavm.jso.dom.xml.Element;
  */
 public class WebInput extends AbstractInput implements EventListener<Event> {
 
-    private static float getMouseWheelVelocity(WheelEvent event) {
-        double deltaY = event.getDeltaY();
-        int deltaMode = event.getDeltaMode();
+    private static float getMouseWheelVelocity(double deltaY, int deltaMode) {
         if(deltaMode == 2) {
             return 0;
         }
@@ -64,6 +62,9 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
     InputProcessor processor;
     long currentEventTimeStamp;
     boolean hasFocus = true;
+    private boolean domHasFocus = true;
+    private boolean domMousePressed;
+    private int domActiveTouches;
 
     private WebApplication application;
 
@@ -95,94 +96,189 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
 
     @Override
     public void handleEvent(Event e) {
-        try{
-            if(application.getApplicationListener() != null) {
-                handleMouseEvents(e);
-                handleKeyboardEvents(e);
-            }
+        if(application.getApplicationListener() == null) {
+            return;
         }
-        catch(Throwable t) {
+        try {
+            InputEventSnapshot snapshot = captureEvent(e);
+            handleBrowserEventSynchronously(e, snapshot);
+            if(snapshot.ignored) {
+                return;
+            }
+            WebWindow.get().executeOnRenderThread(() -> {
+                try {
+                    if(application.getApplicationListener() != null) {
+                        currentEventTimeStamp = snapshot.timeStamp;
+                        handleMouseEvents(snapshot);
+                        handleKeyboardEvents(snapshot);
+                    }
+                } catch(Throwable t) {
+                    application.onError(t);
+                }
+            });
+        } catch(Throwable t) {
             application.onError(t);
         }
     }
 
-    private void handleMouseEvents(Event e) {
-        String type = e.getType();
-        if(type.equals("mousedown")) {
-            // makes sure the game has keyboard focus (e.g. when embedded in iFrame on itch.io)
-            Window.current().focus();
+    private InputEventSnapshot captureEvent(Event event) {
+        InputEventSnapshot snapshot = new InputEventSnapshot();
+        snapshot.type = event.getType();
+        snapshot.timeStamp = TimeUtils.nanoTime();
 
-            MouseEvent mouseEvent = (MouseEvent)e;
-            EventTarget target = e.getTarget();
-            boolean equals = target == canvas;
-            if(!equals || touched[0]) { // TODO needs check equals bug
-                float mouseX = getRelativeX(mouseEvent, canvas);
-                float mouseY = getRelativeY(mouseEvent, canvas);
-                if(mouseX < 0 || mouseX > Gdx.graphics.getWidth() || mouseY < 0 || mouseY > Gdx.graphics.getHeight()) {
-                    hasFocus = false;
-                }
+        if(snapshot.type.equals("mousedown") || snapshot.type.equals("mouseup") ||
+                snapshot.type.equals("mousemove")) {
+            snapshot.cursorCatched = isCursorCatched();
+            MouseEvent mouse = (MouseEvent)event;
+            snapshot.targetCanvas = event.getTarget() == canvas;
+            snapshot.x = getRelativeX(mouse, canvas);
+            snapshot.y = getRelativeY(mouse, canvas);
+            snapshot.movementX = (int)mouse.getMovementX();
+            snapshot.movementY = (int)mouse.getMovementY();
+            snapshot.button = mouse.getButton();
+        } else if(snapshot.type.equals("wheel")) {
+            WheelEvent wheel = (WheelEvent)event;
+            snapshot.wheelDelta = getMouseWheelVelocity(wheel.getDeltaY(), wheel.getDeltaMode());
+        } else if(snapshot.type.equals("touchstart") || snapshot.type.equals("touchmove") ||
+                snapshot.type.equals("touchcancel") || snapshot.type.equals("touchend")) {
+            JSArrayReader<Touch> touches = ((TouchEvent)event).getChangedTouches();
+            int length = touches.getLength();
+            snapshot.touchIds = new int[length];
+            snapshot.touchX = new int[length];
+            snapshot.touchY = new int[length];
+            for(int i = 0; i < length; i++) {
+                Touch touch = touches.get(i);
+                snapshot.touchIds[i] = touch.getIdentifier();
+                snapshot.touchX[i] = getRelativeX(touch, canvas);
+                snapshot.touchY[i] = getRelativeY(touch, canvas);
+            }
+        } else if(snapshot.type.equals("keydown") || snapshot.type.equals("keyup") ||
+                snapshot.type.equals("keypress")) {
+            KeyboardEvent keyboard = (KeyboardEvent)event;
+            snapshot.keyCode = resolveKeyCode(keyboard.getCode(), keyboard.getKeyCode());
+            snapshot.key = keyboard.getKey();
+            snapshot.charCode = keyboard.getCharCode();
+        }
+        return snapshot;
+    }
+
+    private void handleBrowserEventSynchronously(Event e, InputEventSnapshot snapshot) {
+        String type = snapshot.type;
+        if(type.equals("mousedown")) {
+            Window.current().focus();
+            if(domMousePressed || domActiveTouches > 0) {
+                snapshot.ignored = true;
+                return;
+            }
+            if(snapshot.x < 0 || snapshot.x > Gdx.graphics.getWidth() ||
+                    snapshot.y < 0 || snapshot.y > Gdx.graphics.getHeight()) {
+                domHasFocus = false;
+                snapshot.focusLost = true;
+                return;
+            }
+            if(!snapshot.targetCanvas) {
+                snapshot.ignored = true;
+                return;
+            }
+            domHasFocus = true;
+            domMousePressed = true;
+            snapshot.mouseDownAccepted = true;
+            e.preventDefault();
+            e.stopPropagation();
+        } else if(type.equals("mouseup")) {
+            if(!domMousePressed) {
+                snapshot.ignored = true;
+                return;
+            }
+            domMousePressed = false;
+        } else if(type.equals("touchstart") || type.equals("touchmove") ||
+                type.equals("touchcancel") || type.equals("touchend")) {
+            e.preventDefault();
+            if(type.equals("touchstart")) {
+                domActiveTouches += snapshot.touchIds.length;
+            } else if(type.equals("touchcancel") || type.equals("touchend")) {
+                domActiveTouches = Math.max(0, domActiveTouches - snapshot.touchIds.length);
+            }
+        } else if(type.equals("keydown") && domHasFocus) {
+            int code = snapshot.keyCode;
+            if(isCatchKey(code) || code == Keys.DEL || code == Keys.FORWARD_DEL || code == Keys.TAB) {
+                e.preventDefault();
+            }
+            if(code == Keys.TAB) {
+                e.stopPropagation();
+            }
+        } else if(type.equals("keyup") && domHasFocus) {
+            int code = snapshot.keyCode;
+            if(isCatchKey(code) || code == Keys.TAB) {
+                e.preventDefault();
+            }
+            if(code == Keys.TAB) {
+                e.stopPropagation();
+            }
+        } else if(type.equals("keypress") && domHasFocus && snapshot.charCode == '\t') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    private void handleMouseEvents(InputEventSnapshot event) {
+        String type = event.type;
+        if(type.equals("mousedown")) {
+            if(event.focusLost) {
+                hasFocus = false;
+                return;
+            }
+            if(!event.targetCanvas || !event.mouseDownAccepted) {
                 return;
             }
             hasFocus = true;
             this.justTouched = true;
             this.touched[0] = true;
-            int button = KeyCodes.getButton(mouseEvent.getButton());
+            int button = KeyCodes.getButton(event.button);
             this.pressedButtons.add(button);
             justPressedButtons[button] = true;
             this.deltaX[0] = 0;
             this.deltaY[0] = 0;
-            if(isCursorCatched()) {
-                this.touchX[0] += (int)mouseEvent.getMovementX();
-                this.touchY[0] += (int)mouseEvent.getMovementY();
+            if(event.cursorCatched) {
+                this.touchX[0] += event.movementX;
+                this.touchY[0] += event.movementY;
             }
             else {
-                int relativeX = getRelativeX(mouseEvent, canvas);
-                int relativeY = getRelativeY(mouseEvent, canvas);
-                this.touchX[0] = relativeX;
-                this.touchY[0] = relativeY;
+                this.touchX[0] = event.x;
+                this.touchY[0] = event.y;
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
             if(processor != null)
-                processor.touchDown(touchX[0], touchY[0], 0, KeyCodes.getButton(mouseEvent.getButton()));
-
-            e.preventDefault();
-            e.stopPropagation();
+                processor.touchDown(touchX[0], touchY[0], 0, button);
         }
         else if(type.equals("mouseup")) {
-            MouseEvent mouseEvent = (MouseEvent)e;
             if(!touched[0]) return;
-            this.pressedButtons.remove(KeyCodes.getButton(mouseEvent.getButton()));
+            this.pressedButtons.remove(KeyCodes.getButton(event.button));
             this.touched[0] = pressedButtons.size > 0;
-            if(isCursorCatched()) {
-                setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
-                this.touchX[0] += (int)mouseEvent.getMovementX();
-                this.touchY[0] += (int)mouseEvent.getMovementY();
+            if(event.cursorCatched) {
+                setDelta(0, event.movementX, event.movementY);
+                this.touchX[0] += event.movementX;
+                this.touchY[0] += event.movementY;
             }
             else {
-                setDelta(0, getRelativeX(mouseEvent, canvas) - touchX[0], getRelativeY(mouseEvent, canvas) - touchY[0]);
-                this.touchX[0] = getRelativeX(mouseEvent, canvas);
-                this.touchY[0] = getRelativeY(mouseEvent, canvas);
+                setDelta(0, event.x - touchX[0], event.y - touchY[0]);
+                this.touchX[0] = event.x;
+                this.touchY[0] = event.y;
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
             this.touched[0] = false;
             if(processor != null)
-                processor.touchUp(touchX[0], touchY[0], 0, KeyCodes.getButton(mouseEvent.getButton()));
+                processor.touchUp(touchX[0], touchY[0], 0, KeyCodes.getButton(event.button));
         }
         else if(type.equals("mousemove")) {
-            MouseEvent mouseEvent = (MouseEvent)e;
-            if(isCursorCatched()) {
-                setDelta(0, (int)mouseEvent.getMovementX(), (int)mouseEvent.getMovementY());
-                this.touchX[0] += (int)mouseEvent.getMovementX();
-                this.touchY[0] += (int)mouseEvent.getMovementY();
+            if(event.cursorCatched) {
+                setDelta(0, event.movementX, event.movementY);
+                this.touchX[0] += event.movementX;
+                this.touchY[0] += event.movementY;
             }
             else {
-                int relativeX = getRelativeX(mouseEvent, canvas);
-                int relativeY = getRelativeY(mouseEvent, canvas);
-                setDelta(0, relativeX - touchX[0], relativeY - touchY[0]);
-                this.touchX[0] = relativeX;
-                this.touchY[0] = relativeY;
+                setDelta(0, event.x - touchX[0], event.y - touchY[0]);
+                this.touchX[0] = event.x;
+                this.touchY[0] = event.y;
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
             if(processor != null) {
                 if(touched[0])
                     processor.touchDragged(touchX[0], touchY[0], 0);
@@ -191,62 +287,46 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
             }
         }
         else if(type.equals("wheel")) {
-            WheelEvent wheel = (WheelEvent)e;
             if(processor != null) {
-                float wheelDelta = getMouseWheelVelocity(wheel);
-                processor.scrolled(0, (int)wheelDelta);
+                processor.scrolled(0, (int)event.wheelDelta);
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
         }
         else if(type.equals("touchstart")) {
             this.justTouched = true;
-            TouchEvent touchEvent = (TouchEvent)e;
-            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
-            for(int i = 0, j = touches.getLength(); i < j; i++) {
-                Touch touch = touches.get(i);
-                int real = touch.getIdentifier();
+            for(int i = 0; i < event.touchIds.length; i++) {
+                int real = event.touchIds[i];
                 int touchId;
                 touchMap.put(real, touchId = getAvailablePointer());
                 touched[touchId] = true;
-                touchX[touchId] = getRelativeX(touch, canvas);
-                touchY[touchId] = getRelativeY(touch, canvas);
+                touchX[touchId] = event.touchX[i];
+                touchY[touchId] = event.touchY[i];
                 deltaX[touchId] = 0;
                 deltaY[touchId] = 0;
                 if(processor != null) {
                     processor.touchDown(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
                 }
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
-            e.preventDefault();
         }
         if(type.equals("touchmove")) {
-            TouchEvent touchEvent = (TouchEvent)e;
-            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
-            for(int i = 0, j = touches.getLength(); i < j; i++) {
-                Touch touch = touches.get(i);
-                int real = touch.getIdentifier();
+            for(int i = 0; i < event.touchIds.length; i++) {
+                int real = event.touchIds[i];
                 int touchId = touchMap.get(real);
-                setDelta(touchId, getRelativeX(touch, canvas) - touchX[touchId], getRelativeY(touch, canvas) - touchY[touchId]);
-                touchX[touchId] = getRelativeX(touch, canvas);
-                touchY[touchId] = getRelativeY(touch, canvas);
+                setDelta(touchId, event.touchX[i] - touchX[touchId], event.touchY[i] - touchY[touchId]);
+                touchX[touchId] = event.touchX[i];
+                touchY[touchId] = event.touchY[i];
                 if(processor != null) {
                     processor.touchDragged(touchX[touchId], touchY[touchId], touchId);
                 }
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
-            e.preventDefault();
         }
         if(type.equals("touchcancel")) {
-            TouchEvent touchEvent = (TouchEvent)e;
-            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
-            for(int i = 0, j = touches.getLength(); i < j; i++) {
-                Touch touch = touches.get(i);
-                int real = touch.getIdentifier();
+            for(int i = 0; i < event.touchIds.length; i++) {
+                int real = event.touchIds[i];
                 int touchId = touchMap.get(real);
                 touchMap.remove(real);
                 touched[touchId] = false;
-                int relativeX = getRelativeX(touch, canvas);
-                int relativeY = getRelativeY(touch, canvas);
+                int relativeX = event.touchX[i];
+                int relativeY = event.touchY[i];
                 setDelta(touchId, relativeX - touchX[touchId], relativeY - touchY[touchId]);
                 touchX[touchId] = relativeX;
                 touchY[touchId] = relativeY;
@@ -254,20 +334,15 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
                     processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
                 }
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
-            e.preventDefault();
         }
         if(type.equals("touchend")) {
-            TouchEvent touchEvent = (TouchEvent)e;
-            JSArrayReader<Touch> touches = touchEvent.getChangedTouches();
-            for(int i = 0, j = touches.getLength(); i < j; i++) {
-                Touch touch = touches.get(i);
-                int real = touch.getIdentifier();
+            for(int i = 0; i < event.touchIds.length; i++) {
+                int real = event.touchIds[i];
                 int touchId = touchMap.get(real);
                 touchMap.remove(real);
                 touched[touchId] = false;
-                int relativeX = getRelativeX(touch, canvas);
-                int relativeY = getRelativeY(touch, canvas);
+                int relativeX = event.touchX[i];
+                int relativeY = event.touchY[i];
                 setDelta(touchId, relativeX - touchX[touchId], relativeY - touchY[touchId]);
                 touchX[touchId] = relativeX;
                 touchY[touchId] = relativeY;
@@ -275,8 +350,6 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
                     processor.touchUp(touchX[touchId], touchY[touchId], touchId, Buttons.LEFT);
                 }
             }
-            this.currentEventTimeStamp = TimeUtils.nanoTime();
-            e.preventDefault();
         }
     }
 
@@ -285,9 +358,8 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
      * Prefers KeyboardEvent.code (physical key position, layout-independent) and
      * falls back to the deprecated KeyboardEvent.keyCode for older browsers.
      */
-    private static int resolveKeyCode(KeyboardEvent keyboardEvent) {
+    private static int resolveKeyCode(String codeStr, int keyCode) {
         // Prefer event.code (physical key location, works on all keyboard layouts)
-        String codeStr = keyboardEvent.getCode();
         if (codeStr != null && !codeStr.isEmpty()) {
             int resolved = KeyCodes.keyForCode(codeStr);
             if (resolved != Keys.UNKNOWN) {
@@ -295,26 +367,22 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
             }
         }
         // Fallback to deprecated event.keyCode for unrecognized or missing codes
-        return KeyCodes.keyForCode(keyboardEvent.getKeyCode());
+        return KeyCodes.keyForCode(keyCode);
     }
 
-    private void handleKeyboardEvents(Event e) {
-        String type = e.getType();
+    private void handleKeyboardEvents(InputEventSnapshot event) {
+        String type = event.type;
 
         if(type.equals("keydown") && hasFocus) {
-            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
-            int code = resolveKeyCode(keyboardEvent);
+            int code = event.keyCode;
 
             // Capture the layout-specific label (event.key) for this physical key.
-            // Single-character keys get their label stored so applications can display
-            // the user's actual key cap rather than the QWERTY positional name.
-            String key = keyboardEvent.getKey();
+            String key = event.key;
             if (code != Keys.UNKNOWN && key != null && key.length() == 1) {
                 KeyCodes.setLayoutLabel(code, key.toUpperCase());
             }
 
             char keyChar = 0;
-
             switch(code) {
                 case Keys.DEL:
                     keyChar = 8;
@@ -324,51 +392,25 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
                     break;
             }
 
-            if(isCatchKey(code)) {
-                e.preventDefault();
-            }
-
             if(code == Input.Keys.DEL || code == Keys.FORWARD_DEL) {
-                e.preventDefault();
                 if(processor != null) {
                     processor.keyDown(code);
                     processor.keyTyped(keyChar);
                 }
-            }
-            else {
-                if(!pressedKeys[code]) {
-                    pressedKeyCount++;
-                    pressedKeys[code] = true;
-                    keyJustPressed = true;
-                    justPressedKeys[code] = true;
-                    if(processor != null) {
-                        processor.keyDown(code);
-                    }
+            } else if(!pressedKeys[code]) {
+                pressedKeyCount++;
+                pressedKeys[code] = true;
+                keyJustPressed = true;
+                justPressedKeys[code] = true;
+                if(processor != null) {
+                    processor.keyDown(code);
                 }
             }
-
-            // prevent TAB-key propagation, i.e. we handle ourselves!
-            if(code == Keys.TAB) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }
-        else if(type.equals("keypress") && hasFocus) {
-            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
-            char c = (char)keyboardEvent.getCharCode();
+        } else if(type.equals("keypress") && hasFocus) {
+            char c = (char)event.charCode;
             if(processor != null) processor.keyTyped(c);
-
-            // prevent TAB-key propagation, i.e. we handle ourselves!
-            if(c == '\t') {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }
-        else if(type.equals("blur")) {
-            // The keyup for keys held while focus moves away (DevTools, browser shortcuts,
-            // switching windows) is delivered elsewhere, which would leave those keys reported
-            // as pressed forever. Mirror GLFW, which generates synthetic key releases when a
-            // window loses input focus.
+        } else if(type.equals("blur")) {
+            // Synthesize releases for keys held when focus moves away.
             for(int code = 0; code < pressedKeys.length; code++) {
                 if(pressedKeys[code]) {
                     pressedKeyCount--;
@@ -378,27 +420,14 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
                     }
                 }
             }
-        }
-        else if(type.equals("keyup") && hasFocus) {
-            KeyboardEvent keyboardEvent = (KeyboardEvent)e;
-            int code = resolveKeyCode(keyboardEvent);
-
-            if(isCatchKey(code)) {
-                e.preventDefault();
-            }
-
+        } else if(type.equals("keyup") && hasFocus) {
+            int code = event.keyCode;
             if(pressedKeys[code]) {
                 pressedKeyCount--;
                 pressedKeys[code] = false;
             }
             if(processor != null) {
                 processor.keyUp(code);
-            }
-
-            // prevent TAB-key propagation, i.e. we handle ourselves!
-            if(code == Keys.TAB) {
-                e.preventDefault();
-                e.stopPropagation();
             }
         }
     }
@@ -745,6 +774,28 @@ public class WebInput extends AbstractInput implements EventListener<Event> {
     @Override
     public long getCurrentEventTime() {
         return currentEventTimeStamp;
+    }
+
+    private static final class InputEventSnapshot {
+        String type;
+        long timeStamp;
+        boolean targetCanvas;
+        boolean mouseDownAccepted;
+        boolean cursorCatched;
+        boolean focusLost;
+        boolean ignored;
+        int x;
+        int y;
+        int movementX;
+        int movementY;
+        int button;
+        int keyCode;
+        int charCode;
+        float wheelDelta;
+        String key;
+        int[] touchIds = new int[0];
+        int[] touchX = new int[0];
+        int[] touchY = new int[0];
     }
 
     @Override

@@ -11,6 +11,7 @@ const mimeTypes = {
 };
 
 async function main() {
+  const inputContract = process.argv[2] === "input";
   const server = http.createServer((request, response) => {
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
     const relativePath = pathname === "/" ? "index.html" : pathname.slice(1);
@@ -42,10 +43,20 @@ async function main() {
       if (message.type() === "error") console.error("console:", message.text());
     });
     await page.goto("http://127.0.0.1:18101/", { waitUntil: "load" });
-    await page.waitForFunction(() => document.body.getAttribute("data-result") !== null, null, { timeout: 15000 });
+    if(inputContract) {
+      await page.waitForFunction(() => document.body.getAttribute("data-result") === "READY", null, { timeout: 60000 });
+      await page.locator("#canvas").click({ position: { x: 20, y: 20 } });
+      await page.waitForFunction(() => {
+        const value = document.body.getAttribute("data-result");
+        return value === "PASS" || value?.startsWith("FAIL:");
+      }, null, { timeout: 15000 });
+    } else {
+      await page.waitForFunction(() => document.body.getAttribute("data-result") === "PASS" ||
+        document.body.getAttribute("data-result")?.startsWith("FAIL:"), null, { timeout: 15000 });
+    }
     const result = await page.locator("body").getAttribute("data-result");
-    if (result !== "PASS") throw new Error(`WebWindow frame contract failed: ${result}`);
-    console.log("web-window-frame-contract=PASS");
+    if (result !== "PASS") throw new Error(`WebWindow contract failed: ${result}`);
+    console.log(`${inputContract ? "web-input-suspension" : "web-window-frame"}-contract=PASS`);
   } finally {
     await browser.close();
     await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
