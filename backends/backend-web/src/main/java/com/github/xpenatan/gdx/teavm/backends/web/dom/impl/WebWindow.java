@@ -1,6 +1,10 @@
 package com.github.xpenatan.gdx.teavm.backends.web.dom.impl;
 
 import com.github.xpenatan.gdx.teavm.backends.web.dom.HTMLDocumentExt;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.teavm.jso.browser.AnimationFrameCallback;
 import org.teavm.jso.browser.Location;
 import org.teavm.jso.browser.Window;
@@ -13,6 +17,16 @@ import org.teavm.jso.dom.events.EventListener;
 public class WebWindow implements AnimationFrameCallback {
 
     private static final WebWindow TEA_WINDOW = new WebWindow();;
+    // Keep callbacks on one TeaVM-managed Java thread so frames can suspend and resume serially.
+    private static final ThreadPoolExecutor FRAME_EXECUTOR = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+        new LinkedBlockingQueue<>(), new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, "gdx-web-render");
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
 
     public static WebWindow get() {
         return TEA_WINDOW;
@@ -37,7 +51,7 @@ public class WebWindow implements AnimationFrameCallback {
     public void onAnimationFrame(double arg0) {
         Runnable toRun = runnable;
         runnable = null;
-        toRun.run();
+        FRAME_EXECUTOR.execute(toRun);
     }
 
     public Location getLocation() {
