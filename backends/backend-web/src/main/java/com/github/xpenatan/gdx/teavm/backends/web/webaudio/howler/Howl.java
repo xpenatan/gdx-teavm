@@ -92,6 +92,18 @@ public class Howl implements JSObject {
 
     public native float on(String event, HowlEventFunction function);
 
+    public native float on(String event, HowlEventFunctionWithArgs function, int soundId);
+
+    public native float on(String event, HowlEventFunctionWithArgs function);
+
+    public native float off(String event, HowlEventFunction function, int soundId);
+
+    public native float off(String event, HowlEventFunction function);
+
+    public native float off(String event, HowlEventFunctionWithArgs function, int soundId);
+
+    public native float off(String event, HowlEventFunctionWithArgs function);
+
     @JSMethod("stereo")
     public native void setStereo(float pan);
 

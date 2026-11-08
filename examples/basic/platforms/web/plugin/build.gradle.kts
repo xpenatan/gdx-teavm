@@ -93,6 +93,13 @@ gdxTeaVM {
         serverPort = 8181
     }
 
+    js("musicContract") {
+        mainClass = "HowlMusicContractTest"
+        optimization = OptimizationLevel.NONE
+        obfuscated = false
+        serverPort = 8383
+    }
+
     wasm("release") {
         optimization = OptimizationLevel.BALANCED
         obfuscated = true
