@@ -13,11 +13,11 @@ public class TeaVMPluginClasspathTest {
     @Test
     public void getURLs_usesConfiguredClasspathBeforeClassLoaderFallback() throws Exception {
         List<String> configuredClasspath = Arrays.asList(
-                "fixture/deps/gdx-freetype-web.jar",
-                "fixture/classes/main"
+                "E:/deps/gdx-freetype-web.jar",
+                "E:/classes/main"
         );
 
-        URL ignoredUrl = new File("fixture/deps/ignored.jar").toURI().toURL();
+        URL ignoredUrl = new File("E:/deps/ignored.jar").toURI().toURL();
         URLClassLoader classLoader = new URLClassLoader(new URL[] { ignoredUrl });
 
         Assert.assertEquals(
